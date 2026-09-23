@@ -2573,6 +2573,123 @@ o patch nuova solo se l'appuntata non si installa):
 
 ---
 
+## Il design system della GUI — le fonti del disegno, 2026-09-23
+
+Le fonti che hanno deciso il [disegno del design system](superpowers/specs/2026-09-22-design-system-design.md) stavano nel suo
+diario, coi comandi, e passano qui il **2026-09-23**, alla scrittura del disegno, come il diario prevedeva; nel disegno resta il
+rimando, e il diario com'era sta in [`archivio/consegna-avvio-brainstorming-design-system.md`](archivio/consegna-avvio-brainstorming-design-system.md).
+Le hanno lette le quattro sessioni del brainstorming, tutte il 2026-09-23; la quinta, che ha scritto il disegno, ha **rilanciato**
+le versioni. ⚠️ **Le versioni si riverificano il giorno del piano**, col comando: qui c'è ciò che era vero alla data scritta.
+⚠️ Il sito del W3C risponde **403** a uno `User-Agent` lungo come quello di Chrome, e a uno corto no.
+
+### Le regole dei token — la sezione (a)
+
+| Regola | Fonte primaria, letta il 2026-09-23 |
+|---|---|
+| testo 4,5:1 (1.4.3); bordi e segni che servono a riconoscere un controllo o uno stato 3:1 (1.4.11); testo ingrandibile al 200% (1.4.4); spaziatura del testo (1.4.12); focus visibile (2.4.7), non nascosto (2.4.11), come un contorno di almeno 2 px a 3:1 (2.4.13, livello AAA); bersagli di almeno 24 × 24 (2.5.8); movimento disattivabile (2.3.3, AAA) | WCAG 2.2, Raccomandazione W3C del 12 dicembre 2024, `https://www.w3.org/TR/WCAG22/` |
+| i due livelli, scale e ruoli, e i gradini d'una scala sola letti al contrario nei due temi | Material 3: `@material/web` 2.5.0 del 2026-07-15, file `tokens/versions/latest/sass/` |
+| fondi 1–2, riempimenti 3–5 per normale, sopra e premuto, bordi 6–8 dal debole al forte e al focus, pieni 9–10, testi 11–12 | Radix Colors 3.0.0 del 2023-10-02, MIT — la pagina *Understanding the scale* di radix-ui.com e le scale di `@radix-ui/colors` |
+| la scala dei caratteri 12 · 14 · 16 · 18 · 20 · 24 · 28 · 32 …; e il minimo di Material, `label-small` 11/16 | `@carbon/type` 11.67.0, `scss/_scale.scss`; `@material/web`, `_md-sys-typescale.scss` |
+| gli spazi 2 · 4 · 8 · 12 · 16 · 24 · 32 · 40 · 48 · 64 | `@carbon/layout` 11.59.0, `scss/generated/_spacing.scss` |
+| le durate 70 · 110 · 150 · 240 · 400 · 700 ms e le curve «productive» | `@carbon/motion` 11.52.0, `src/dtcg/motion.json` — nel formato DTCG |
+| gli strati di stato di Material: sopra 8%, focus e premuto 10%, trascinato 16% — **non** presi: gli stati sono colori espliciti, che il test del contrasto sa giudicare | `@material/web`, `_md-sys-state.scss` |
+| `oklch()` nei CSS | Chrome 111, dati di compatibilità di MDN |
+| il formato standard dei token | *Design Tokens Format Module 2025.10*, designtokens.org |
+
+```bash
+python -c "import json,urllib.request as u; [print(n, (lambda d: (d['dist-tags']['latest'], d['time'][d['dist-tags']['latest']][:10]))(json.load(u.urlopen(u.Request('https://registry.npmjs.org/'+n.replace('/','%2F'),headers={'User-Agent':'harness'}))))) for n in ['@material/web','@radix-ui/colors','@carbon/type','@carbon/layout','@carbon/motion','style-dictionary','tailwindcss','@vitest/browser-playwright','playwright']]"
+```
+
+Il 2026-09-23 lo stesso comando dava anche `style-dictionary` 5.5.5 del 2026-09-20 e `tailwindcss` 4.3.3 del 2026-07-16, le due
+strade **scartate** della risposta 14.
+
+### I caratteri — le risposte 6 e 8
+
+| Pacchetto | Per che cosa | Forma | |
+|---|---|---|---|
+| `@fontsource-variable/inter` | il testo | variabile | confrontato |
+| `@fontsource-variable/geist` | il testo | variabile | ✅ scelto |
+| `@fontsource/barlow` | etichette e numeri | pesi fissi | ✅ scelto |
+| `@fontsource/barlow-semi-condensed` | etichette e numeri, più stretta | pesi fissi | confrontato |
+
+Tutti `5.3.0` del 2026-07-19 e `OFL-1.1`. Il peso spacchettato — da 0,18 a 1,9 MB per pacchetto, con tutti i sottoinsiemi e
+tutti i formati — è un **limite superiore**: nel programma va solo ciò che i token importano. Il comando stampa versione, data,
+licenza e peso spacchettato:
+
+```bash
+python -c "import json,urllib.request as u; [print(n, (lambda d: (d['dist-tags']['latest'], d['time'][d['dist-tags']['latest']][:10], d['versions'][d['dist-tags']['latest']].get('license'), d['versions'][d['dist-tags']['latest']]['dist'].get('unpackedSize')))(json.load(u.urlopen(u.Request('https://registry.npmjs.org/'+n.replace('/','%2F'),headers={'User-Agent':'harness'}))))) for n in ['@fontsource-variable/inter','@fontsource/barlow','@fontsource/barlow-semi-condensed','@fontsource-variable/geist']]"
+```
+
+### Le icone — le risposte 9, 10 e 11
+
+| Pacchetto | Licenza | Icone | |
+|---|---|---|---|
+| `lucide` 1.47.0, 2026-09-17 | ISC, e MIT per le icone che vengono da Feather | 1848 moduli d'icona | ✅ scelto |
+| `@tabler/icons` 3.48.0, 2026-09-22 | MIT | 5166 a tratto e 1054 piene | confrontato |
+| `@phosphor-icons/core` 2.1.1, 2024-03-29 | MIT | — | fuori: nessuna uscita dal 2024 |
+| `@heroicons/vue` 2.2.0, 2024-11-18 | MIT | — | fuori: nessuna uscita dal 2024 |
+
+Il set intero di `lucide` 1.47.0, minimizzato, pesa **442 433 byte**, contro circa 500 byte a icona — 935 024 byte per i 1848
+moduli; e in `dist/esm/icons/search.mjs` un'icona è un array come `["circle", { cx, cy, r }]`. Nelle tavole i disegni vengono da
+`lucide-static`, stessa versione e stessa licenza. I tre comandi — versione, data e licenza; il conteggio dei file d'icona; il
+peso:
+
+```bash
+python -c "import json,urllib.request as u; g=lambda x: json.load(u.urlopen(u.Request(x,headers={'User-Agent':'harness'}))); [print(n, (lambda d: (d['dist-tags']['latest'], d['time'][d['dist-tags']['latest']][:10], d['versions'][d['dist-tags']['latest']].get('license')))(g('https://registry.npmjs.org/'+n.replace('/','%2F')))) for n in ['lucide','@tabler/icons','@phosphor-icons/core','@heroicons/vue']]"
+python -c "import json,urllib.request as u; f=lambda p: json.load(u.urlopen(u.Request('https://data.jsdelivr.com/v1/packages/npm/'+p+'?structure=flat',headers={'User-Agent':'harness'})))['files']; print(sum(n['name'].startswith('/dist/esm/icons/') and n['name'].endswith('.mjs') for n in f('lucide@1.47.0')), sum(n['name'].startswith('/icons/outline/') for n in f('@tabler/icons@3.48.0')), sum(n['name'].startswith('/icons/filled/') for n in f('@tabler/icons@3.48.0')))"
+python -c "import json,urllib.request as u; f=json.load(u.urlopen(u.Request('https://data.jsdelivr.com/v1/packages/npm/lucide@1.47.0?structure=flat',headers={'User-Agent':'harness'})))['files']; i=[x for x in f if x['name'].startswith('/dist/esm/icons/') and x['name'].endswith('.mjs')]; print(len(i), sum(x['size'] for x in i), [x['size'] for x in f if x['name']=='/dist/umd/lucide.min.js'])"
+```
+
+### La pagina kit — la risposta 12
+
+`storybook` 10.6.0 del 2026-09-02, e `@storybook/vue3-vite` accetta Vite `^8.0.0`, quindi la vetrina a sé era possibile davvero:
+il nucleo pesa 22 168 203 byte spacchettati, con 17 dipendenze dirette. `histoire` è fermo alla 1.0.0-beta.1 del 2026-01-07 e
+chiede Vite `^7.3.0`: col nostro Vite 8 non regge.
+
+```bash
+python -c "import json,urllib.request as u; g=lambda n: json.load(u.urlopen(u.Request('https://registry.npmjs.org/'+n.replace('/','%2F'),headers={'User-Agent':'harness'}))); [print(n, (lambda d,v: (v, d['time'][v][:10], d['versions'][v]['dist'].get('unpackedSize'), len(d['versions'][v].get('dependencies',{})), d['versions'][v].get('peerDependencies',{}).get('vite')))(d, d['dist-tags']['latest'])) for n,d in ((n,g(n)) for n in ['storybook','@storybook/vue3-vite','histoire'])]"
+```
+
+### Le pagine lette, il 2026-09-23
+
+| Che cosa | Fonte | Per quale sezione |
+|---|---|---|
+| `nativeTheme.themeSource` vale di base `system`, e `prefers-color-scheme` lo segue; `inForcedColorsMode`; l'evento `updated` | la pagina di `nativeTheme` della documentazione di Electron | (a), i temi |
+| `titleBarStyle: 'hidden'` con `titleBarOverlay`, `app-region: drag`, `env(titlebar-area-x, 0px)` e `env(titlebar-area-width, 100%)`, `setTitleBarOverlay({ color, symbolColor, height })` su Windows e su Linux | la guida *Custom Title Bar* di Electron, esempi alla 44.4.5, e l'API di `BrowserWindow` | (d), la finestra |
+| le finestre di Windows 11 hanno gli angoli a **8 px**, e a **0** quando sono ingrandite o agganciate | Microsoft Learn: *Geometry in Windows 11*, aggiornata il 2026-02-19, e *Apply rounded corners in desktop apps*, aggiornata il 2026-07-09 | (d), la striscia |
+| *Base Component Names*, *strongly recommended*: prefisso come `Base`, `App` o `V`; dentro solo elementi HTML, altri pezzi di base e componenti UI di terzi; mai stato globale | la guida di stile di Vue | (b) |
+| Vite serve ogni pagina HTML in sviluppo, e al *build* prende solo gli ingressi elencati | la guida di Vite, *Building for Production*, *Multi-Page App* | (b), la pagina kit |
+
+### I pacchetti installati, letti il 2026-09-23
+
+| Che cosa | Dove, in `gui/node_modules/` |
+|---|---|
+| il tipo `DockviewTheme` di `dockview-core` 8.3.1: `name`, `className`, `colorScheme`, `gap`, `edgeGroupCollapsedSize`, `dndOverlayMounting`, `dndPanelOverlay` | `dockview-core/dist/cjs/dockview/theme.d.ts` |
+| le variabili `--dv-*` che il CSS di `dockview` usa; `--dv-overlay-z-index` a 999; `border-radius: 8px` sui contenitori, sotto le classi dei temi «spaced» | `dockview/dist/styles/dockview.css` |
+| `RovingFocusGroup` di `reka-ui` 2.10.4 è lineare: `ArrowDown` → `"next"`; il radio di `RadioGroup` è un `button` con `role="radio"` | `reka-ui/dist/RovingFocus/utils.js`; `reka-ui/dist/RadioGroup/Radio.js` |
+| `vue/no-restricted-html-elements` c'è in `eslint-plugin-vue` 10.11.0 | `eslint-plugin-vue/` |
+
+### Il browser dei test — la risposta 22
+
+| Che cosa | Fonte |
+|---|---|
+| `@vitest/browser-playwright` 4.1.11, MIT, vuole `vitest` 4.1.11 e un `playwright` qualsiasi, e porta `@vitest/browser` 4.1.11, MIT | il registro npm |
+| `playwright` 1.63.0 del 2026-09-04, Apache-2.0, **senza** script d'installazione, con `playwright-core` 1.63.0: circa 20 MB spacchettati | il registro npm |
+| la configurazione `playwright({ launchOptions: { channel } })` | la pagina *Configuring Playwright* della documentazione di Vitest, alla 5.0.1 |
+| i canali `chrome` e `msedge` usano il browser stabile già installato, senza scaricare | la pagina *Browsers* di Playwright |
+| `ubuntu-latest` è Ubuntu 24.04, immagine 20260907.300.1, con Google Chrome 152 ed Edge 152; `windows-latest` è Windows Server 2025, immagine 20260913.261.1, con Chrome 153 ed Edge 153 | i README di `actions/runner-images` |
+| `vitest` è alla 5.0.1 del 2026-09-15: restare alla 4.1.11 del lockfile è coerente, e salire è un'altra decisione | il registro npm |
+
+### Le versioni rilanciate alla scrittura del disegno
+
+Il 2026-09-23, alla scrittura: `lucide` 1.47.0 del 2026-09-17, ISC; `@fontsource-variable/geist` e `@fontsource/barlow` 5.3.0 del
+2026-07-19, OFL-1.1; `playwright` 1.63.0 del 2026-09-04; `@vitest/browser-playwright` e `vitest` 5.0.1 del 2026-09-15, MIT;
+`reka-ui` **2.10.5** del 2026-09-21, contro la 2.10.4 installata; `dockview-core` 8.3.1 del 2026-09-10.
+
+```bash
+python -c "import json,urllib.request as u; [print(n, (lambda d: (d['dist-tags']['latest'], d['time'][d['dist-tags']['latest']][:10], d['versions'][d['dist-tags']['latest']].get('license')))(json.load(u.urlopen(u.Request('https://registry.npmjs.org/'+n.replace('/','%2F'),headers={'User-Agent':'harness'}))))) for n in ['lucide','@fontsource-variable/geist','@fontsource/barlow','@vitest/browser-playwright','playwright','vitest','reka-ui','dockview-core']]"
+```
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

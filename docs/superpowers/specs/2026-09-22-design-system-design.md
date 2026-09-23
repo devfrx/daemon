@@ -664,6 +664,10 @@ che ha scritto il disegno.
 ⚠️ **È il documento di consegna di questa sessione**, e sta qui perché il repo tiene lo stato in file **tracciati**: chi
 riprende legge **questo** file per intero. Ogni riga è stata **riletta coi comandi** prima di essere scritta, non ricordata.
 
+⚠️ **RICHIAMO DEL 2026-09-23, alla chiusura della sessione:** **prima** della rilettura e del piano viene un mandato del
+proprietario, il ridimensionamento della lettura, con la sua [consegna](2026-09-23-ridimensionamento-lettura-design.md); l'ordine
+lo dice la §6 del compendio. I passi qui sotto valgono **dopo**, e quel mandato può cambiare che cosa dettano di leggere.
+
 ⛔ **DA SAPERE SUBITO: niente è a metà.** Albero pulito, nessuno stash, nessuna operazione git a metà, tutto pushato, nessun
 server acceso, nessun subagente, nessun codice toccato. ⛔ **La rilettura del proprietario non si dà per fatta:** si fa in chat,
 non si deduce da una chiusura.

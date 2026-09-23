@@ -18,7 +18,7 @@
 > (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
 > l'idea è già qui.
 
-**Aggiornato il 2026-09-23**, con la **parte 2 del piano del 2 eseguita** — il sotto-progetto 2 chiuso, la GUI minima sul core finto — e il puntatore della §6 al design system — disegno scritto, da rileggere — e al 13; l'ultimo contenuto di merito è il richiamo sulla stella polare nella §12, dalla risposta 7 del brainstorming del design system. Il testo com'era, con le sedici riprese, è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Manutenzione: §13.
+**Aggiornato il 2026-09-23**, con la **parte 2 del piano del 2 eseguita** — il sotto-progetto 2 chiuso, la GUI minima sul core finto — e il puntatore della §6 al ridimensionamento della lettura, al design system — disegno scritto, da rileggere — e al 13; l'ultimo contenuto di merito è il richiamo sulla stella polare nella §12, dalla risposta 7 del brainstorming del design system. Il testo com'era, con le sedici riprese, è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Manutenzione: §13.
 ⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
 **2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
 correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
@@ -671,7 +671,10 @@ aperte di questa §6, questo puntatore, `CLAUDE.md` — e `AVVIO-CHAT.md` resta 
 più (decisione 32). La misura la rifanno i comandi nel prossimo passo della stella polare; il metodo — misurare prima, ogni
 taglio in A/B, niente si cancella, i puntatori in una casa sola — vale per ogni sfoltimento futuro.
 
-⏭️ **IL PROSSIMO PASSO, IN DUE TEMPI. Uno: il DESIGN SYSTEM da Agentic OS** — stile definito, kit UI, temi e token
+⏭️ **IL PROSSIMO PASSO, IN TRE TEMPI. Zero, prima del piano del design system: il RIDIMENSIONAMENTO della lettura** — handoff,
+documentazione, lettura obbligatoria e opzionale, mandato del proprietario del 2026-09-23: la
+[consegna](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md), che si legge **per intero**.
+**Uno: il DESIGN SYSTEM da Agentic OS** — stile definito, kit UI, temi e token
 centralizzati, per decisione del proprietario (2026-09-21, trentasettesima chiusura del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md)).
 ✅ **Il brainstorming è finito e il disegno è scritto, il 2026-09-23** —
 [`specs/2026-09-22-design-system-design.md`](superpowers/specs/2026-09-22-design-system-design.md), che si legge **per intero**;

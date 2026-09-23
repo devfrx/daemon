@@ -9,19 +9,30 @@ sul posto** — come consegna delle sezioni approvate, o come disegno — e spos
 consegne della [knowledge base](../../archivio/consegna-brainstorming-knowledge-base.md) e del
 [sotto-progetto 2](../../archivio/consegna-avvio-brainstorming-sottoprogetto-2.md).
 
+✅ **RICHIAMO DEL 2026-09-23 — il brainstorming dura più di una sessione, e questo file ne è il diario.** La prima sessione del
+brainstorming lo ha aggiornato **sul posto** a ogni risposta del proprietario, e alla chiusura — sua, *«troppo contesto
+saturo»* — ci ha scritto la ripresa. La riscrittura come disegno e lo spostamento **parola per parola** in archivio si fanno
+quando il **disegno** è scritto, com'è stato per la stella polare; il testo com'era alla nascita lo rende
+`git show 2a674cc:docs/superpowers/specs/2026-09-22-design-system-design.md`.
+
 ⚠️ **Non è una spec e non è un disegno.** Il prossimo passo sta nella §6 del [compendio](../../COMPENDIO.md), in un posto solo.
 
 ## Stato in una riga
 
-Il sotto-progetto 2 è chiuso — il piano della parte 2 per intero, residuo del compito 17 compreso — e il design system è il
-**primo tempo** del prossimo passo della §6: il brainstorming è **cominciato il 2026-09-23**, e le risposte avute stanno in
-*«Le risposte del proprietario, una per domanda»* qui sotto; si riprende dalla prima domanda senza risposta.
+Il sotto-progetto 2 è chiuso, e il design system è il **primo tempo** del prossimo passo della §6. Il brainstorming è **a
+metà**: cominciato il 2026-09-23, cinque risposte nella tabella *«Le risposte del proprietario, una per domanda»* — il
+perimetro, l'idea di stile, la direzione, lo stile approvato coi raggi concentrici, i due temi — e ⛔ **si riprende ESATTAMENTE
+dalla domanda 5, i caratteri, posta e senza risposta**, com'è scritta in *«La domanda 5, com'è stata posta»* qui sotto.
 
 ## ⛔ Da sapere subito
 
-**Il brainstorming è a metà, e nient'altro.** Albero pulito, nessuno stash, nessuna operazione git a metà, tutto pushato,
-nessun server acceso, nessun subagente; nessun file della GUI è stato toccato. Le risposte del proprietario vivono nella tabella
-*«Le risposte del proprietario, una per domanda»*, e una domanda senza riga lì non ha risposta: si ripone, non si deduce.
+**Il brainstorming è a metà, e nient'altro.** Albero pulito, nessuno stash, nessuna operazione git a metà, tutto pushato; il
+visual companion e il server d'anteprima **spenti**, nessun subagente; nessun file della GUI toccato. Le risposte del
+proprietario vivono nella tabella *«Le risposte del proprietario, una per domanda»*, e una domanda senza riga lì non ha
+risposta: si ripone, non si deduce. Le tavole mostrate vivono nello scratchpad della sessione del 2026-09-23, **su questa
+macchina** — `C:\Users\zagor\AppData\Local\Temp\claude\C--Users-zagor-Desktop-harness\db7f9418-81f8-4641-a26c-fdc4ffec03f8\scratchpad\`,
+coi generatori `gen_style_v1.py`, `gen_style_v2.py` e `gen_style_v3.py` — e **solo l'approvata** è nel repository, con la sua
+sonda, in `docs/superpowers/specs/2026-09-22-design-system-tavole/`: dall'altra macchina si riparte da lì.
 
 ⚠️ **Sull'altra macchina** — il clone con `core.autocrlf` `true`, albero `w/crlf` — tre cose prima di credere a un verde o a
 un rosso: un Node che soddisfi `node -p "require('./gui/package.json').engines.node"`; `cargo audit --version` **0.22.2**,
@@ -34,10 +45,10 @@ un'etichetta di fine-riga scritta in un documento è la colonna `w/…` di **chi
 | | Comando | Atteso |
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
-| i commit di questa sessione | `git log --oneline c828f2d..HEAD` | E237 (`c5b1b96`), E236 (`e00cf5e`), la quarantatreesima chiusura (`abd4d13`) e questa consegna |
-| cancello | `bash scripts/gate.sh` | `GATE GREEN`, rilanciato prima di ogni commit di oggi — si rilancia, non si cita |
+| i commit della prima sessione del brainstorming | `git log --oneline 2a674cc..HEAD` | le risposte — `c88d831`, `7c83cf9`, `947dcec`, `8c0bbe6`, `35708f5` — e questa chiusura |
+| cancello | `bash scripts/gate.sh` | `GATE GREEN` all'apertura del 2026-09-23 e prima del commit di chiusura — si rilancia, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
-| la CI | i due comandi del punto 3 della quarantunesima chiusura del piano della parte 2 | due job per corsa, entrambi `success`: così alla chiusura per `c828f2d`, `c5b1b96`, `e00cf5e` e `abd4d13` |
+| la CI | i due comandi del punto 3 della quarantunesima chiusura del piano della parte 2 | due job per corsa, entrambi `success`: così per `c88d831`, `7c83cf9` e `947dcec`; `8c0bbe6`, `35708f5` e questa chiusura erano **in corsa** alla chiusura, e si leggono **per prime** |
 | margine del compendio | `wc -c docs/COMPENDIO.md` contro `grep -n '^ceiling=' scripts/check-docs.sh` | positivo |
 
 ## Che cosa chiede il proprietario, e che cosa vuol dire «da Agentic OS»
@@ -83,8 +94,10 @@ grep -rhoE 'var\(--[a-z0-9-]+\)' gui/src --include=*.vue --include=*.css --inclu
 d'avvio del 2 intera; nel piano della parte 2 il punto 5 della trentasettesima chiusura e la sezione *«Il design system da
 Agentic OS — la risposta, misurata»*; della stella polare la testa e la tabella *«Le decisioni del proprietario, una per
 domanda»*, più le righe che rende `grep -n -i 'jarvis\|design system\|kit UI' docs/superpowers/specs/2026-09-07-direzione-gui-design.md`.
-⛔ **Il resto della stella polare NON è letto**, e la §12 del compendio la vuole **per intero** da chi riprende il fronte GUI:
-è la prima lettura della sessione nuova, dopo questo file.
+✅ **RICHIAMO DEL 2026-09-23: la stella polare è stata letta per intero** dalla prima sessione del brainstorming, e le risposte
+1–5 la presuppongono. Se rileggerla **per intero a ogni ripresa** sia obbligatorio è la registrata della tredicesima ripresa
+della stella stessa — *«se all'apertura la stella polare si legga per intero»* — ed è del **proprietario**: la prima A/B della
+ripresa, **prima** di leggerla.
 
 ## Le voci registrate e non prese che toccano la GUI — del proprietario
 
@@ -110,6 +123,27 @@ quarantatreesima chiusura non le ha ripetute. Il testo intero sta nella voce, ne
 | 4 | **2026-09-23** — la tavola unita: la A con le schede della B, nei due temi, coi pezzi del kit accanto — pulsanti, segni, campo, messaggi di stato, finestra di conferma, lista | **Sì, lo stile è questo**, con una nota: *«sì, passa ai temi, attenzione alla concentricità dei border radius, non voglio casi come come questo che vedi in foto, piccola nota di dettaglio»*. La foto era la finestra di conferma della tavola: una scheda di raggio 14 dentro un riquadro di raggio 10, a dieci pixel. **La regola, decisione del coordinatore dalla nota:** *raggio di fuori = raggio di dentro + distanza*, **per costruzione nei token** e non per convenzione — `--r-card: calc(var(--r-ctl) + var(--pad-card))`, `--r-frame: calc(var(--r-card) + var(--gap))` — così, se cambia un margine, i raggi lo seguono da soli. La scala delle tavole: 6 in linea, 8 i controlli, 18 le schede, 28 la cornice, e le pillole, dove dentro una pillola va una pillola; un elemento che non può stare in un angolo con lo stesso centro **si allontana dall'angolo**: la finestra di conferma sta al centro. **La sonda** è [`sonda-raggi.js`](2026-09-22-design-system-tavole/sonda-raggi.js), accanto alla [tavola approvata](2026-09-22-design-system-tavole/stile-approvato.html), salvata sul precedente dei wireframe della [stella polare](2026-09-07-direzione-gui-design.md): provata nelle **due direzioni**, vuota sulla tavola approvata e rossa su quella precedente, dove coglie proprio la finestra della foto. ⚠️ **La prima forma della sonda NON la coglieva**, perché guardava solo dentro l'arco esterno e la finestra ne stava esattamente sul bordo: il perché sta nel commento della sonda. Il piano la farà diventare un test del kit vero, come `gui/src/tokens/contrast.test.ts` tiene il contrasto. 🔶 **Registrata, non presa:** l'angolo della finestra vera lo disegna Windows, e come si accorda con la cornice da 28 lo decide la cornice della finestra |
 | 5 | **2026-09-23** — la domanda 3, i temi: **A** due temi subito, scuro e chiaro, che di base seguono Windows e si possono scegliere a mano; **B** solo lo scuro adesso, coi token pronti per il chiaro | **A.** Parole sue: *«A, due temi subito»*. Verificato alla fonte il 2026-09-23, la pagina di `nativeTheme` della documentazione di Electron: `themeSource` vale di base `system`, e la query CSS `prefers-color-scheme` della pagina lo segue; `inForcedColorsMode` dice se Windows è in alto contrasto, e l'evento `updated` segnala un cambio. La scelta a mano **non** la tiene la GUI (I1): la conserva il core, come la disposizione — dove, lo dice il disegno. L'alto contrasto di Windows e la riduzione del movimento **non sono temi**: sono regole di G20, sempre rispettate. **Conseguenza, decisione del coordinatore: la domanda 4 cade.** Con due temi `themeAbyss`, che è solo scuro, non può restare: il dock si veste coi **nostri** token con un tema suo — il `DockviewTheme` di `dockview-core` 8.3.1 porta `className`, `colorScheme` e `gap`, letto in `gui/node_modules/dockview-core/dist/cjs/dockview/theme.d.ts` il 2026-09-23 — e le sue variabili di raggio, `--dv-border-radius` fra le altre, seguono la regola dei raggi concentrici della risposta 4 |
 
+## La domanda 5, com'è stata posta — si ripone uguale
+
+Posta il 2026-09-23, alla chiusura, e **senza risposta**: il proprietario ha chiuso la sessione con `session-handoff`. Si ripone
+**uguale**, a parole di tutti i giorni, e i fatti si **riverificano quel giorno**.
+
+- **Il problema.** La tavola approvata usa due caratteri che stanno dentro Windows — Segoe UI per il testo, Bahnschrift per
+  etichette e numeri — e su Linux non esistono; Linux arriva, e senza riscrivere (ADR-0002): lì l'aspetto cambierebbe da solo.
+- **A, i caratteri di sistema.** Niente da aggiungere, ma su Linux l'aspetto cambia.
+- **B, due caratteri aperti dentro il programma.** Uno per il testo, uno da strumento per etichette e numeri: stesso aspetto
+  ovunque, e niente rete a runtime.
+- **Il consiglio: B.** Lo stile va curato nel minimo dettaglio e identico sui due sistemi, e il peso è trascurabile accanto al
+  programma installato — la riga **M2** di `spikes/RISULTATI.md`. È una **dipendenza nuova**, quindi del proprietario.
+- **Verificato il 2026-09-23 al registro npm**, col comando qui sotto: `@fontsource-variable/inter`, `@fontsource/barlow`,
+  `@fontsource/barlow-semi-condensed` e `@fontsource-variable/geist` hanno licenza `OFL-1.1` e l'ultima uscita del 2026-07-19.
+  Sono **candidati**, e **nessuno è scelto**.
+- **Se B**, la domanda dopo è **visiva**: due o tre coppie di caratteri sulla stessa Home della tavola approvata, nel browser.
+
+```bash
+python -c "import json,urllib.request as u; [print(n, (lambda d: (d['dist-tags']['latest'], d['time'][d['dist-tags']['latest']][:10], d['versions'][d['dist-tags']['latest']].get('license')))(json.load(u.urlopen(u.Request('https://registry.npmjs.org/'+n.replace('/','%2F'),headers={'User-Agent':'harness'}))))) for n in ['@fontsource-variable/inter','@fontsource/barlow','@fontsource/barlow-semi-condensed','@fontsource-variable/geist']]"
+```
+
 ## Le domande del brainstorming, una alla volta — proposte del coordinatore, non decisioni
 
 Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una riga: è la forma che il proprietario vuole.
@@ -127,6 +161,23 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 | 7 | dove si guardano i componenti | **A** nella SPA stessa, contro il core finto, come oggi. **B** una vetrina a sé, sul genere di Storybook | **A**: la **B** è una dipendenza e un secondo mondo da tenere verde |
 | 8 | come si cambia vista — ✅ **aggiunta alla ripresa del 2026-09-23**, e mancava: oggi la barra cambia vista con tre pulsanti in fila, e il 2026-09-07 il proprietario disse che la navigazione a schede fra gli stati non gli piace e chiese creatività (la memoria dell'agente, in nessun documento del repository) | da mostrare nel browser | è una domanda **visiva**, e nessun documento ha deciso la forma del cambio di vista: la stella polare dice «la barra delle viste», non come |
 
+## Vicoli ciechi e trappole della prima sessione — per chi riprende le tavole
+
+- Il pannello browser dell'app **non fotografa** una pagina `file://`: la rende come istantanea statica e non accetta comandi.
+  La pagina si serve con `python -m http.server <porta> --bind 127.0.0.1 --directory <cartella>` e si apre con `preview_start`;
+  il server si spegne **per PID**, con `netstat -ano` e `taskkill //F //PID`.
+- Nel pannello lo `zoom` di una regione non è supportato, e uno screenshot preso nella stessa chiamata di uno scorrimento può
+  mostrare la schermata di prima: si scorre il contenitore `.main` della cornice del companion con JavaScript, si aspetta un
+  attimo, e lo screenshot va in una chiamata a sé; la finestra emulata a 800×500 dà la scala uno a uno.
+- Lo script del companion su Windows **resta in primo piano**: si lancia in sottofondo, e l'indirizzo con la chiave sta in
+  `state/server-info` della sua cartella di sessione. Con `--project-dir` sul repository le tavole diventerebbero file non
+  tracciati: `.superpowers/` non è ignorato.
+- La **prima** sonda dei raggi non vedeva proprio il caso segnalato dal proprietario — l'angolo interno stava esattamente sul bordo
+  dell'arco esterno — e il commento di `sonda-raggi.js` dice la cura: una sonda nuova si prova **anche** sul caso che ha fatto
+  nascere la regola.
+- Il disegno che illustra una regola la deve rispettare: il riquadro attorno al disegno dei raggi la violava, ed è stato tolto.
+- Un `cd` in una sottocartella resta per le chiamate dopo: percorsi assoluti, o `cd` alla radice in testa a ogni comando.
+
 ## Decisioni prese dal coordinatore, col perché — il proprietario può ribaltarle
 
 | | Decisione | Perché, e che cosa costa se è sbagliata |
@@ -134,10 +185,19 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 | 1 | la consegna nasce **qui**, al percorso del futuro disegno | la decisione 3 della consegna d'avvio del 2: il repo tiene lo stato in file tracciati, si lavora da due macchine, e il puntatore vive nella sola §6. Costo: una rinomina |
 | 2 | il nome **senza numero** di sotto-progetto | la roadmap non ne ha uno per il design system, e darglielo è del proprietario. Costo: una rinomina |
 | 3 | i commit **senza** `Co-Authored-By` | `CLAUDE.md` dice «senza co-autore»; la direttiva di sistema chiede il contrario, e la divergenza è portata al proprietario, come in ogni sessione di questo repository. Costo: un `--amend` |
+| 4 | il visual companion lavora nello **scratchpad** della sessione, con `--project-dir`, e non nel repository | `.superpowers/` non è ignorato da git — `git check-ignore -v .superpowers/brainstorm/x.html` non rende nulla — e le tavole sarebbero file non tracciati nell'albero. Costo: le tavole non viaggiano fra le macchine, e per questo **l'approvata** si salva nel repository |
+| 5 | ogni tavola si **verifica prima di mostrarla**: un'anteprima privata servita in locale, i contrasti WCAG calcolati dal generatore, e sonde nel browser sul testo tagliato, sugli elementi che sbordano e sui raggi concentrici | *«curato nel minimo dettaglio»*: la prima tavola aveva tre difetti visibili che nessuno avrebbe visto leggendo il codice. Costo: qualche minuto per tavola |
+| 6 | la tavola approvata si salva con una **cornice nostra**, non con quella del plugin del companion | il file resta nostro e si apre senza il plugin. Costo: la cornice minima si tiene coerente a mano |
+| 7 | le parole del proprietario **testuali** nelle risposte, e l'immagine di riferimento **non committata** | è il lavoro di un altro, e il repository è pubblico; gli spunti che se ne prendono stanno a parole nella risposta 2. Costo: se serve di nuovo, la si chiede al proprietario |
+| 8 | la domanda 4, il dock, **non posta**: la risposta 5 la decide | con due temi `themeAbyss`, solo scuro, non può restare, e chiedere una cosa già determinata sarebbe una domanda di rito. Costo: se il proprietario voleva `themeAbyss` nel solo tema scuro, lo dice e si riapre |
 
 ## Decisioni aperte, del proprietario
 
-- le domande **5, 6, 7 e 8**, una per messaggio — la 4 è caduta con la risposta 5 — e la prossima sono **i caratteri**;
+- ⛔ **la domanda 5, i caratteri — posta e senza risposta**: si ripone uguale, *«La domanda 5, com'è stata posta»*; poi la 6,
+  le icone, la 7, dove si guardano i componenti, e la 8, come si cambia vista — una per messaggio; la 4 è caduta con la
+  risposta 5;
+- se la **stella polare** si rilegga **per intero a ogni ripresa** del brainstorming — la registrata della sua tredicesima
+  ripresa: la prima A/B della ripresa;
 - se il design system prenda un **numero**: nella tabella delle decisioni della stella polare, o una riga della roadmap;
 - **AUD-004**, che sbarra il secondo tempo della §6, il sotto-progetto 13;
 - le voci registrate della tabella qui sopra.
@@ -145,17 +205,23 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 ## Prossimo passo, eseguibile
 
 1. Aprire la sessione **nella cartella del repo**; `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa
-   è il commit di questa consegna o uno successivo. Sull'altra macchina, prima i comandi di *«Da sapere subito»*.
-2. La lettura obbligatoria di `CLAUDE.md`, poi la CI dei commit del 2026-09-22, coi comandi della riga «la CI» qui sopra.
-3. **Questo file, per intero**, poi la **stella polare per intero**. Le skill: `anthropic-skills:decision-principles`,
-   `anthropic-skills:session-resume` su questo file, `anthropic-skills:dev-discipline`, `anthropic-skills:dev-communication`,
-   e `superpowers:brainstorming`.
-4. Il visual companion della skill offerto **in un messaggio a sé**, alla **prima domanda che si capisce meglio vedendo** e non
-   in apertura: così dice `superpowers:brainstorming` letta il 2026-09-23 (*just-in-time*); la consegna d'avvio del 2 già diceva
-   che i wireframe si mostrano nel browser.
-5. Al proprietario la prima domanda senza risposta in *«Le risposte del proprietario»*, poi le altre, una per messaggio.
-6. Alla chiusura: riscrivere questo file sul posto, spostarne il testo in archivio parola per parola, muovere il puntatore della
-   §6 se cambia, `bash scripts/check-docs.sh`, commit, push.
+   è il commit di questa chiusura o uno successivo. Sull'altra macchina, prima i comandi di *«Da sapere subito»*.
+2. La lettura obbligatoria di `CLAUDE.md`; poi, **per prima cosa**, la CI di `8c0bbe6`, `35708f5` e di questa chiusura, in corsa
+   alla chiusura, coi comandi della riga «la CI».
+3. **Questo file, per intero**, e la tavola approvata, `2026-09-22-design-system-tavole/stile-approvato.html`, aperta nel
+   browser. La stella polare: la prima A/B, in *«Decisioni aperte»*. Le skill: `anthropic-skills:decision-principles`,
+   `anthropic-skills:session-resume` su questo file, `anthropic-skills:dev-discipline`, `anthropic-skills:dev-communication`, e
+   `superpowers:brainstorming` — il percorso è **architetturale**, già detto al proprietario.
+4. Al proprietario **la domanda 5 com'è stata posta**; poi la 6, la 7 e la 8, una per messaggio. Le domande **visive** — le
+   coppie di caratteri se la 5 è B, le icone, il cambio di vista — vanno nel browser: il visual companion si riavvia con
+   `--project-dir` sullo scratchpad della sessione nuova, in sottofondo, e le tavole nuove partono dalla approvata. Il
+   proprietario ha accettato il companion il 2026-09-23 — *«sì, usa il browser»* — e se la skill vuole di nuovo l'offerta, è una
+   riga.
+5. Dopo l'ultima domanda: gli approcci, poi il **disegno a sezioni**, una approvata per volta — i token a strati coi due temi,
+   la regola dei raggi, il kit e dove vive, il dock, la cornice della finestra, le voci registrate della tabella qui sopra, e le
+   sonde che rendono verificabile ogni regola, contrasto e raggi. Poi il disegno scritto al posto di questo file, questo testo in
+   archivio **parola per parola**, e il piano in una sessione nuova.
+6. Alla chiusura di ogni sessione: questo file aggiornato sul posto, `bash scripts/check-docs.sh`, commit, push.
 
 ## Come tornare operativi
 
@@ -163,4 +229,9 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 git fetch --all --prune && git status -sb && git log --oneline -3
 bash scripts/check-docs.sh
 bash scripts/gate.sh
+bash <cartella della skill brainstorming>/scripts/start-server.sh --project-dir "<scratchpad della sessione>" --open
 ```
+
+Su questa macchina la cartella della skill è
+`C:\Users\zagor\.claude\plugins\cache\claude-plugins-official\superpowers\6.3.0\skills\brainstorming`; sull'altra si
+cerca, e la versione del plugin può essere un'altra.

@@ -2,118 +2,96 @@
 
 ## ⛔ Prima cosa, e unica lettura obbligatoria
 
-Leggi **questo file** e poi **[`docs/COMPENDIO.md`](docs/COMPENDIO.md)**, per intero.
-Poi **fermati**.
+1. **`git fetch --all --prune`**, poi `git status -sb`: si lavora da più macchine. Se il ramo è indietro e l'albero è
+   pulito, `git merge --ff-only` **subito**, prima di leggere qualunque documento di stato.
+2. Leggi **questo file** e **[`docs/COMPENDIO.md`](docs/COMPENDIO.md)**, per intero. Poi **fermati**.
+3. Di [`docs/audit-2026-08-27.md`](docs/audit-2026-08-27.md) **solo due pezzi**: la tabella *«Le voci aperte che NON hanno
+   un numero AUD»* — le sole ancora aperte, in gran parte del proprietario — e *«La disciplina, in cinque passi»*, il metodo
+   con cui qui si rimedia. I 73 finding sono chiusi — lo dice il comando in fondo alla §6 del compendio — e del
+   «Dettaglio» si apre **una** scheda per volta, quella del finding su cui si lavora.
 
-Il compendio contiene **tutte** le decisioni del progetto — le 39 ADR, le sei
-invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo — ciascuna
-compressa a poche righe.
+Il compendio contiene **tutte** le decisioni del progetto — le ADR, le sei invarianti, lo stack, le trappole, lo stato di
+oggi e il prossimo passo — ciascuna compressa a poche righe. ⚠️ **È una compressione, non una selezione:** sparisce il
+ragionamento lungo, non la decisione, quindi nessuna può sfuggirti perché «non sembrava attinente».
 
-⛔ **E di [`docs/audit-2026-08-27.md`](docs/audit-2026-08-27.md) SOLO DUE PEZZI: la tabella
-*«Le voci aperte che NON hanno un numero AUD»* — le sole ancora aperte, in gran parte del
-proprietario — e *«La disciplina, in cinque passi»*, il metodo con cui qui si rimedia.** I 73
-finding sono **tutti chiusi** — quanti, lo dice il comando in fondo alla §6 del compendio — e il
-«Dettaglio» **NON si legge intero**: se ne apre **UNA** scheda per volta, quella del finding su cui
-si lavora. ✅ **RICHIAMO DEL 2026-09-09, decisione 26:** qui stava *«tutta la testa, fino a
-«Dettaglio»»*, in gran parte le due tabelle dei finding chiusi; il testo com'era è in
-[`docs/archivio/lettura-di-apertura-storico.md`](docs/archivio/lettura-di-apertura-storico.md).
+⛔ **Non aprire** [`docs/HANDOFF.md`](docs/HANDOFF.md), la spec del sotto-progetto 1, [`docs/adr/`](docs/adr/) o
+[`docs/archivio/`](docs/archivio/) «per farsi un'idea»: sono la mole maggiore del repository — il conto lo dà
+`find docs -name '*.md' | xargs wc -c | sort -n` — e l'idea è già nel compendio. Per il **perché** di una decisione — le
+alternative scartate, le misure, i costi accettati — si apre **un** file, quello che la §12 del compendio indica.
 
-⚠️ **Quanto costa questa lettura NON è scritto qui, ed è una decisione.** Ogni peso scritto su
-questa riga è invecchiato — sei volte, gotcha **#31**; il verbale in
-[`docs/archivio/lettura-di-apertura-storico.md`](docs/archivio/lettura-di-apertura-storico.md). Ora lo dice il comando, che non marcisce:
+📌 **Il peso di questa lettura lo dà il comando, mai una cifra scritta** — gotcha **#31**. In byte, e in token con
+`tiktoken` (`pip install tiktoken`), che è il tokenizzatore di OpenAI: su italiano con emoji il conto è un **limite
+inferiore**.
 
 ```bash
 wc -c CLAUDE.md docs/COMPENDIO.md
-```
-
-📌 **E in token, se serve** — `pip install tiktoken`; è il tokenizzatore di OpenAI, quindi
-su italiano con emoji il conto di Claude è più alto e questo è un **limite inferiore**:
-
-```bash
 python -c "import tiktoken,io; e=tiktoken.get_encoding('cl100k_base'); print(sum(len(e.encode(io.open(p,encoding='utf-8').read())) for p in ['CLAUDE.md','docs/COMPENDIO.md']))"
 ```
 
-⛔ **Non aprire** [`docs/HANDOFF.md`](docs/HANDOFF.md), la spec del sotto-progetto 1, la
-cartella [`docs/adr/`](docs/adr/) o [`docs/archivio/`](docs/archivio/) «per farsi
-un'idea». Insieme sono **di gran lunga** la mole maggiore del repository — il conto lo dà
-`find docs -name '*.md' | xargs wc -c | sort -n` — e l'idea è già nel compendio.
-Quando ti servirà il **perché** di una decisione — le alternative scartate, le misure, i
-costi accettati — apri **quel** file, uno solo. La §12 del compendio dice quale.
-
-⚠️ **Il compendio è una compressione, non una selezione.** Ci sono dentro tutte le
-decisioni, non quelle pertinenti al compito di oggi. Sparisce il ragionamento lungo,
-non la decisione: nessuna può sfuggirti perché «non sembrava attinente».
-
 ## Cos'è questo progetto, in quattro righe
 
-Assistente desktop locale, utente singolo, Windows primario poi Linux, **GPU singola
-RTX 5080 da 16 GB**, OpenRouter primario con inferenza locale opzionale.
-**Piattaforma a quattro pilastri paritari** — conversazione e conoscenza, agenti e
-coding, voce e gesti, generazione asset 3D — su un **kernel comune** (ADR-0001, col rimando datato in testa).
+Assistente desktop locale, utente singolo, Windows primario poi Linux, **GPU singola RTX 5080 da 16 GB**, OpenRouter
+primario con inferenza locale opzionale. **Piattaforma a quattro pilastri paritari** — conversazione e conoscenza, agenti e
+coding, voce e gesti, generazione asset 3D — su un **kernel comune** (ADR-0001, col rimando datato in testa). Il vincolo
+dominante non è funzionale ma **di risorsa**. Il kernel **non implementa nessuna funzionalità utente**: fornisce i
+meccanismi.
 
-Il vincolo dominante non è funzionale ma **di risorsa**. Il kernel **non implementa
-nessuna funzionalità utente**: fornisce i meccanismi.
-
-⚠️ **Questo non è un repository di sola documentazione.** Il codice del prodotto si
-scrive **qui**, e vive in [`crates/`](crates/): cinque crate, con `kernel` e `simulator`
-in `no_std` — e, dal sotto-progetto 2, in [`gui/`](gui/): la SPA e il core finto, fuori dal workspace e
-provati da `scripts/gate-gui.sh` (richiamo del 2026-09-22). Gli spike in [`spikes/`](spikes/) restano
-**prove**, fuori dal workspace.
-La porta di qualità si lancia con un comando solo — `bash scripts/gate.sh` — e la mappa
-dei controlli è in [`docs/porta-di-qualita.md`](docs/porta-di-qualita.md).
-Lo stato corrente e il prossimo passo stanno nella **§6 del compendio** — non qui, o si
-disallineano.
+⚠️ **Non è un repository di sola documentazione.** Il codice del prodotto vive in [`crates/`](crates/) — cinque crate, con
+`kernel` e `simulator` in `no_std` — e in [`gui/`](gui/): la SPA e il core finto, fuori dal workspace e provati da
+`scripts/gate-gui.sh`. Gli spike in [`spikes/`](spikes/) restano **prove**, fuori dal workspace. La porta di qualità si
+lancia con un comando solo — `bash scripts/gate.sh` — e la mappa dei controlli è in
+[`docs/porta-di-qualita.md`](docs/porta-di-qualita.md). Lo stato corrente e il prossimo passo stanno **solo** nella §6 del
+compendio.
 
 ## Skill da invocare, in questo repository
 
-Vanno invocate **prima** di qualsiasi risposta o esplorazione, non dopo.
+Si invocano **prima** di qualsiasi risposta o esplorazione, quando si applicano — non dopo.
 
 | Skill | Perché qui |
 |---|---|
-| `superpowers:using-superpowers` | è il preambolo: se una skill può applicarsi, si invoca |
+| `superpowers:using-superpowers` | il preambolo: se una skill può applicarsi, si invoca |
+| `anthropic-skills:decision-principles` | governa **ogni** decisione non banale. Prima di chiedere il sì al proprietario: i cinque criteri controllati **esplicitamente**, e verificato, dedotto e assunto **separati** |
 | `anthropic-skills:dev-discipline` | governa il **codice**: esplora prima di scrivere, YAGNI, convenzioni del repo, niente scorciatoie non dichiarate |
 | `anthropic-skills:dev-communication` | governa la **conversazione** intorno al codice: cosa si decide da soli e cosa si porta al proprietario |
+| `anthropic-skills:session-resume` e `anthropic-skills:session-handoff` | per riprendere e per chiudere una sessione, con la regola di questo repository sulla consegna: la dice *«Manutenzione della documentazione»*, in fondo |
 | `superpowers:brainstorming` | prima di qualunque lavoro creativo, e **prima di entrare in plan mode** |
-| `superpowers:writing-plans` | quando si scriverà il piano. Le voci aperte non si aspettano chiuse (richiamo del 2026-08-30: la regola vecchia, *«non prima che le voci aperte siano chiuse»*, era insoddisfacibile, perché alcune voci hanno chiusore *«il traguardo della ritenzione»* o *«nessuno»* — il verbale in archivio): **si SANNO prima di scrivere**. A **sbarrare** è la colonna *«Chi la chiude»* di [`docs/porta-di-qualita.md`](docs/porta-di-qualita.md): una voce il cui chiusore è **questo traguardo** o **il proprietario, prima** va chiusa o portata dal piano; le altre si conoscono e si dichiarano |
-| `superpowers:subagent-driven-development` | per **eseguire** un piano: un subagente fresco per compito, con revisione fra uno e l'altro. È la modalità scelta dal proprietario |
-| `superpowers:test-driven-development` | quando comincerà il codice |
+| `superpowers:writing-plans` | per scrivere un piano. Le voci aperte **si sanno prima di scrivere**: a sbarrare è la colonna *«Chi la chiude»* di [`docs/porta-di-qualita.md`](docs/porta-di-qualita.md) — una voce il cui chiusore è **questo traguardo** o **il proprietario, prima** va chiusa o portata dal piano; le altre si conoscono e si dichiarano |
+| `superpowers:subagent-driven-development` | per **eseguire** un piano: un subagente fresco per compito, con revisione fra uno e l'altro — la modalità scelta dal proprietario. I subagenti con `model: "opus"` (`"sonnet"` per il lavoro meccanico), mai Fable; più di un subagente solo dopo aver detto il costo e avuto il sì |
+| `superpowers:test-driven-development` | per ogni riga di codice di prodotto |
 
 ## Come si lavora qui
 
 | Regola | |
 |---|---|
 | **Spec prima del codice** | nessun sotto-progetto si implementa senza spec approvata |
-| ⛔ **Codice in inglese, documentazione in italiano** | **§1.0 della spec.** Crate, moduli, tipi, funzioni, messaggi d'uscita e commenti nel sorgente sono **in inglese**; i documenti restano **in italiano**; un riferimento al codice dentro un documento si scrive **in inglese, col nome esatto del sorgente**. ⚠️ Non è tipografia: la regola non stava né qui né nel compendio, e un traguardo intero è stato scritto con gli identificatori italiani e poi rifatto — gotcha **#40** |
+| ⛔ **Una fase per sessione** | brainstorming, disegno, piano, pre-controllo, ogni compito: ciascuno nella **sua** sessione, anche quando è breve — decisione del proprietario. Come si passa da una all'altra lo dice *«Manutenzione della documentazione»* |
+| ⛔ **Codice in inglese, documentazione in italiano** | §1.0 della spec: crate, moduli, tipi, funzioni, messaggi d'uscita e commenti nel sorgente **in inglese**; i documenti **in italiano**; un riferimento al codice dentro un documento si scrive col **nome esatto del sorgente**. Un traguardo intero è stato rifatto per questo — gotcha **#40** |
 | **Sezione per sezione** | si presenta, si discute, **si approva**, si scrive. Mai tutto insieme |
 | **Decidere sul merito** | né scorciatoie né sovra-ingegnerizzazione. «Non pigro» **non** significa «più costoso» |
 | **Rendere verificabile** | un principio che non si può controllare è un'intenzione. Gli invarianti diventano test |
 | **Un'evidenza scritta prima della misura è un'ipotesi** | si misura, e dove diverge **si registra la divergenza** invece di allinearsi all'attesa |
 | **Un controllo si prova in due direzioni** | che scatti dove deve, **e che non scatti dove non deve**. La seconda si dimentica |
-| **Schema-first** | tabelle, diagrammi, elenchi numerati. Niente muri di testo |
-| **Ma prima a parole** | quando l'argomento esce dal dominio del proprietario (non è operativo in Rust), si spiega **prima** a parole semplici e **poi** si schematizza |
-| **Stato dell'arte verificato** | se una nozione non è certa si cerca **prima** di scrivere, e la fonte si traccia in [`docs/riferimenti.md`](docs/riferimenti.md). **Mai inventare** |
-| ⛔ **Uno schema è una verifica, e corregge ciò che esiste** | **decisione del proprietario del 2026-09-08, e vale per ogni studio, brainstorming o diagramma futuro:** prima dell'A/B si controllano esplicitamente tre cose — che cosa **esiste già** (codice, ADR, disegni), che cosa **arriva** (la roadmap) e se **regge crescendo** — e si dicono a parole. Se lo schema è più corretto di una logica, di un ADR o del codice, si correggono **quelli**: l'ADR col richiamo datato, il codice come compito del piano, sempre in forma A/B, mai in silenzio |
+| **Schema-first, ma prima a parole** | tabelle, diagrammi, elenchi numerati, niente muri di testo. Quando l'argomento esce dal dominio del proprietario — non è operativo in Rust — si spiega **prima** a parole semplici. Le domande al proprietario: **una per volta**, in forma **A/B**, col costo di ciascuna opzione e il consiglio |
+| **Stato dell'arte verificato** | una nozione incerta si cerca **prima** di scrivere, alla fonte primaria, e la fonte va in [`docs/riferimenti.md`](docs/riferimenti.md). **Mai inventare** |
+| ⛔ **Uno schema è una verifica, e corregge ciò che esiste** | decisione del proprietario del 2026-09-08, per ogni studio, brainstorming o diagramma: prima dell'A/B si dicono a parole che cosa **esiste già** (codice, ADR, disegni), che cosa **arriva** (la roadmap) e se **regge crescendo**. Se lo schema è più corretto di una logica, di un ADR o del codice, si correggono **quelli** — l'ADR col richiamo datato, il codice come compito del piano — in A/B, mai in silenzio |
 | **Dichiarare i costi** | ogni decisione elenca ciò che peggiora. Un ADR senza `Negative (accettate)` è incompleto |
-| **Un'idea nuova può essere già stata scartata** | prima di proporre qualcosa che **sostituisce** una decisione presa, si cerca **dove era già stata valutata e perché era caduta**. Si riapre **solo con una prova nuova**; e se la prova nuova gioca contro, si **registra e si chiude**. Vale anche — soprattutto — per le proprie idee |
+| **Un'idea nuova può essere già stata scartata** | prima di proporre qualcosa che **sostituisce** una decisione presa, si cerca dove era già stata valutata e perché era caduta. Si riapre **solo con una prova nuova**; se la prova gioca contro, si **registra e si chiude**. Vale soprattutto per le proprie idee |
 | **ADR append-only** | superato → `Superseded by`; completato → un **rimando**. Completare una riga di verifica **non** è superare l'ADR |
 | **Richiamo datato** | ogni correzione a una sezione approvata porta il proprio richiamo con la data |
-| ⛔ **Un puntatore o una cifra che vive in PIÙ documenti si TOGLIE, non si ricorregge** | riallinearlo lo rimette nello stato in cui la **regola** è di nuovo l'unica difesa, e quella regola non ha retto **tre volte**. I documenti secondari **rimandano** alla §6 del compendio invece di riscriverla: un rimando non può marcire. ⚠️ Lo stato **per traguardo** resta nelle tabelle di [`docs/roadmap.md`](docs/roadmap.md) e [`docs/README.md`](docs/README.md) — il perimetro di una passata si prende dal drift **misurato**, non dalla categoria. Gotcha **#68** |
-| ⛔ **Un numero misurato non si scrive: si scrive il COMANDO che lo produce** | un numero invecchia al primo commit che tocca ciò che misura; un comando no. Se il numero deve comparire — perché sostiene una decisione — porta accanto il **comando** e la **data**, e vive in **una** casa sola. ⚠️ **Misurato il 2026-08-28:** il **92%** della lettura obbligatoria era storia di numeri corretti, e la testa di questo file aveva sbagliato il proprio peso **sei volte**. Gotcha **#31** |
-| ⛔ **Un verbale di correzione non resta nel documento corretto** | va in [`docs/archivio/`](docs/archivio/), con la data; il documento vivo porta ciò che è **vero adesso**. È la metà mancante della riga qui sopra: senza di essa la regola dice *dove* mettere il numero e non *dove* mettere la sua storia, e la storia si accumula esattamente dove la si è corretta. ⛔ **Il freno è nel cancello**, non nella buona volontà: `check-docs.sh` respinge un compendio sopra il proprio tetto |
+| ⛔ **Un puntatore o una cifra che vive in PIÙ documenti si TOGLIE, non si ricorregge** | riallinearlo lascia di nuovo la regola come unica difesa. I documenti secondari **rimandano** alla §6 del compendio invece di riscriverla: un rimando non marcisce. Lo stato **per traguardo** resta nelle tabelle di [`docs/roadmap.md`](docs/roadmap.md) e [`docs/README.md`](docs/README.md), e il perimetro di una passata si prende dal drift **misurato**, non dalla categoria. Gotcha **#68** |
+| ⛔ **Un numero misurato non si scrive: si scrive il COMANDO che lo produce** | un numero invecchia al primo commit che tocca ciò che misura, un comando no. Se il numero sostiene una decisione, porta accanto il **comando** e la **data**, e vive in **una** casa sola. Gotcha **#31** |
+| ⛔ **Un verbale di correzione non resta nel documento corretto** | va in [`docs/archivio/`](docs/archivio/) parola per parola, con la data; il documento vivo porta ciò che è **vero adesso**. ⛔ **Lo stesso per le chiusure di sessione:** un documento vivo — un piano, un disegno — ne tiene **una**, l'ultima, e a ogni chiusura la precedente va in archivio; i piani già eseguiti restano come sono, perché sono verbali. E per le **note di memoria** dell'agente: regole corte, la storia fuori. Il freno è nel cancello: `check-docs.sh` respinge un compendio sopra il proprio tetto |
 | **Le misure nello scratchpad** | non nel repository, e si ripulisce dopo |
-| ⛔ **I fine-riga sono misti _per file_** | non c'è una convenzione da seguire: c'è **un file da non cambiare**. Uno script che riscrive un sorgente ne normalizza i fine-riga senza dirlo, e `git diff` dichiara **seicento righe cambiate** che nessuno ha toccato — successo **tre volte** (il verbale in archivio). Chi scrive uno strumento che tocca file **conserva i fine-riga di quel file**, e li **rimisura dopo** con `tr -cd '\r' \| wc -c` invece di fidarsi |
-| ⛔ **Una dipendenza si aggiunge in _due_ passi** | dal 2026-08-18 il cancello passa `--locked` a **tutti** i suoi siti `cargo` (il comando che lo verifica sta in [`docs/riferimenti.md`](docs/riferimenti.md)) — quindi il `Cargo.lock` è un **ingresso** e non più un effetto. Toccare un manifesto da solo lascia il cancello **rosso**: il lockfile si rinfresca **fuori** dal cancello — un `cargo build` senza il flag — e si committa **insieme** al manifesto. Il perché: ADR-0031 vuole che aggiungere una voce sia *«un atto deliberato e rivedibile»*; il verbale in archivio. Finding **G-5** |
-| **Audit a ogni chiusura** | `bash scripts/check-docs.sh` prima di ogni commit di documentazione |
+| ⛔ **I fine-riga sono misti _per file_** | non c'è una convenzione da seguire: c'è **un file da non cambiare**. Uno strumento che tocca file **conserva i fine-riga di ciascuno** — in Python con `newline=""`, mai `sed -i` — e li **rimisura dopo** con `tr -cd '\r' \| wc -c`; altrimenti `git diff` dichiara centinaia di righe che nessuno ha toccato |
+| ⛔ **Una dipendenza si aggiunge in _due_ passi** | il cancello passa `--locked` a **tutti** i suoi siti `cargo` — il comando che lo verifica sta in [`docs/riferimenti.md`](docs/riferimenti.md) — quindi il `Cargo.lock` è un **ingresso**. Il lockfile si rinfresca **fuori** dal cancello, con un `cargo build` senza il flag, e si committa **insieme** al manifesto: ADR-0031 vuole che aggiungere una voce sia *«un atto deliberato e rivedibile»*. Finding **G-5** |
+| **Il cancello, uno alla volta** | `bash scripts/check-docs.sh` prima di ogni commit di documentazione; `bash scripts/gate.sh` **da solo** — due cancelli insieme si pestano su `gui/node_modules` (`EBUSY`, successo il 2026-09-23) — e il commit parte **solo sul verde** |
 | **Commit e push** | alla chiusura di ogni voce si **committa e si pusha**, senza chiedere, e **senza co-autore** |
 
 ## Prima di eseguire un compito di un piano
 
-⛔ **Un piano è un'ipotesi, e il pre-controllo di ogni compito _prima_ di dispacciarlo ha
-trovato almeno un difetto reale in TUTTI i compiti dispacciati finora, senza una sola
-eccezione.** ⚠️ **Nessun numeratore qui**, per costruzione: un cumulativo invecchia a ogni
-compito, *«tutti, senza eccezione»* no.
-
-Si fanno **quattro domande**, e **ciascuna coglie ciò che le altre tre non colgono**.
+⛔ **Un piano è un'ipotesi.** Il pre-controllo di ogni compito, **prima** di dispacciarlo, ha trovato almeno un difetto
+reale in **tutti** i compiti dispacciati finora, senza eccezione. Si fanno **quattro domande**, e ciascuna coglie ciò che
+le altre non colgono.
 
 | | Il difetto | Che cosa lo coglie |
 |---|---|---|
@@ -122,9 +100,8 @@ Si fanno **quattro domande**, e **ciascuna coglie ciò che le altre tre non colg
 | 3 | l'**artefatto è sbagliato**, e compila | **solo** scriverne un'implementazione **da fuori dalla crate** |
 | 4 | il **compito è già eseguito** | *ciò che detta di produrre esiste già?* |
 
-⛔ **E tre cose che l'elenco NON coglie, una riga l'una.** Sono istruzioni, non aneddoti:
-il **caso** che ciascuna ha prodotto vive in [`docs/HANDOFF.md`](docs/HANDOFF.md), nel
-gotcha che porta il suo numero, e si apre solo se serve.
+⛔ **E ciò che le quattro domande NON colgono**, una riga l'una. Sono istruzioni, non aneddoti: il caso vive in
+[`docs/HANDOFF.md`](docs/HANDOFF.md), nel gotcha col suo numero, e si apre solo se serve.
 
 | | La regola | Il caso |
 |---|---|---|
@@ -135,20 +112,12 @@ gotcha che porta il suo numero, e si apre solo se serve.
 
 ## Manutenzione della documentazione
 
-Alla chiusura di ogni sotto-progetto si aggiornano **nello stesso passaggio**:
-[`docs/COMPENDIO.md`](docs/COMPENDIO.md), [`docs/roadmap.md`](docs/roadmap.md),
-[`docs/README.md`](docs/README.md), [`docs/tracciabilita.md`](docs/tracciabilita.md),
-lo stato degli spike, [`docs/HANDOFF.md`](docs/HANDOFF.md) se emergono gotcha nuovi, e
-questo file se cambia il modo di lavorare.
+| Quando | Che cosa si aggiorna, nello stesso passaggio |
+|---|---|
+| alla chiusura di ogni **sessione** | la consegna nel documento in corso, sezione *«Come si riprende»* — o, se il lavoro non ha ancora un documento, in un file nuovo al percorso del suo futuro disegno; mai in `.handoff/`, la cartella che la skill vuole fuori da git: qui la consegna deve arrivare anche sulle altre macchine — con la chiusura precedente in archivio; il puntatore della §6 del compendio, se il prossimo passo cambia; commit e push |
+| alla chiusura di ogni **voce** | [`docs/COMPENDIO.md`](docs/COMPENDIO.md) e [`docs/HANDOFF.md`](docs/HANDOFF.md), e [`docs/riferimenti.md`](docs/riferimenti.md) se la voce ha portato una misura o una fonte; commit e push |
+| alla chiusura di ogni **sotto-progetto** | anche [`docs/roadmap.md`](docs/roadmap.md), [`docs/README.md`](docs/README.md), [`docs/tracciabilita.md`](docs/tracciabilita.md), lo stato degli spike, `HANDOFF.md` se emergono gotcha nuovi, e questo file se cambia il modo di lavorare |
 
-Alla chiusura di ogni **voce** — non solo di un sotto-progetto — si aggiornano
-[`docs/COMPENDIO.md`](docs/COMPENDIO.md) e [`docs/HANDOFF.md`](docs/HANDOFF.md), e
-[`docs/riferimenti.md`](docs/riferimenti.md) **se la voce ha portato una misura o una
-fonte**. Poi si committa e si pusha.
-
-⛔ **Il compendio non può restare indietro**, e non è lasciato alla buona volontà:
-`check-docs.sh` pretende una voce in §5 per **ogni** file in `docs/adr/`. Un ADR nuovo
-senza voce è un **rosso**. Vedi §13 del compendio.
-
-Un documento di stato disallineato è peggio di nessun documento: **mente con
-autorevolezza**.
+⛔ **Il compendio non può restare indietro**, e non è lasciato alla buona volontà: `check-docs.sh` pretende una voce in §5
+per **ogni** file in `docs/adr/`, e un ADR nuovo senza voce è un **rosso** (§13 del compendio). Un documento di stato
+disallineato è peggio di nessun documento: **mente con autorevolezza**.

@@ -52,7 +52,7 @@ finito.** ⛔ **Il prossimo passo è scrivere il disegno**, in una sessione nuov
 
 ## ⛔ Da sapere subito
 
-**Il brainstorming è a metà, e nient'altro.** Albero pulito, nessuno stash, nessuna operazione git a metà, tutto pushato; il
+**Il brainstorming è finito e il disegno non è scritto: nient'altro.** Albero pulito, nessuno stash, nessuna operazione git a metà, tutto pushato; il
 visual companion e il server d'anteprima **spenti**, nessun subagente; nessun file della GUI toccato. Le risposte del
 proprietario vivono nella tabella *«Le risposte del proprietario, una per domanda»*, e una domanda senza riga lì non ha
 risposta: si ripone, non si deduce. Le tavole mostrate vivono nello scratchpad della sessione del 2026-09-23, **su questa
@@ -88,10 +88,11 @@ un'etichetta di fine-riga scritta in un documento è la colonna `w/…` di **chi
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
 | i commit della prima sessione del brainstorming | `git log --oneline 2a674cc..fc3f2dc` | le risposte — `c88d831`, `7c83cf9`, `947dcec`, `8c0bbe6`, `35708f5` — e la sua chiusura, `fc3f2dc` |
 | i commit della seconda sessione | `git log --oneline fc3f2dc..6aa5dce` | le risposte — `38d848e`, `35b8c87`, `e1bd1b5`, `e00e5a7`, `e286164`, `8978edd` — e la sua chiusura, `6aa5dce` |
-| i commit della terza sessione | `git log --oneline 6aa5dce..HEAD` | le risposte — `04ca162`, `f3a9b3f`, `f071ea1`, `3bd8961`, `b3dc211` — e questa chiusura |
-| cancello | `bash scripts/gate.sh` | `GATE GREEN` all'apertura e prima del commit di chiusura di **tutte e tre** le sessioni del 2026-09-23 — si rilancia, non si cita |
+| i commit della terza sessione | `git log --oneline 6aa5dce..b12d511` | le risposte — `04ca162`, `f3a9b3f`, `f071ea1`, `3bd8961`, `b3dc211` — e la sua chiusura, `b12d511` |
+| i commit della quarta sessione | `git log --oneline b12d511..HEAD` | le risposte — `36e44be`, `cce1278`, `7c12ea3`, `54e53c0` — e questa chiusura |
+| cancello | `bash scripts/gate.sh` | `GATE GREEN` all'apertura e prima del commit di chiusura di **tutte e quattro** le sessioni del 2026-09-23 — si rilancia, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
-| la CI | i due comandi del punto 3 della quarantunesima chiusura del piano della parte 2 | due job per corsa, entrambi `success`: così per ogni commit del 2026-09-23 fino a `3bd8961`, letti dall'API alla chiusura della terza sessione; `b3dc211` e questa chiusura erano **in corsa**, e si leggono **per prime** |
+| la CI | i due comandi del punto 3 della quarantunesima chiusura del piano della parte 2 | due job per corsa, entrambi `success`: così per ogni commit del 2026-09-23 fino a `7c12ea3`, letti dall'API alla chiusura della quarta sessione — `b3dc211` e `b12d511` compresi, che alla chiusura della terza erano in corsa; `54e53c0` e questa chiusura erano **in corsa**, e si leggono **per prime** |
 | margine del compendio | `wc -c docs/COMPENDIO.md` contro `grep -n '^ceiling=' scripts/check-docs.sh` | positivo |
 
 ## Che cosa chiede il proprietario, e che cosa vuol dire «da Agentic OS»
@@ -315,6 +316,18 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 - Il tool Edit **conserva** i fine-riga CRLF di questo file: contati prima e dopo con `tr -cd '\r' | wc -c`.
 - I server `http.server` delle tavole si spengono per PID, con `netstat -ano` e `taskkill //F //PID`: il compito in sottofondo
   risulta poi «failed» con uscita 1, ed è atteso.
+- **Quarta sessione.** Le sonde dei caratteri e delle icone cercano le righe `.fp` **dentro** un `.ds`: una tavola col `.ds`
+  dentro la riga le fa tornare **vuote**, cioè verdi senza aver guardato niente — colto al primo giro guardando i conteggi.
+  La tavola tiene `.ds` fuori e `.fp` dentro, come `angoli-finestra.html`.
+- `sonda-raggi.js` cerca l'antenato col raggio **maggiore di zero**: un angolo dritto — la finestra ingrandita — non lo
+  confronta mai, e lì la sonda non ha niente da dire.
+- La finestra vera si disegna col **suo** angolo, 8 px, com'è su Windows 11: una tavola che le dà il raggio della nostra
+  cornice, 28 o 32, nasconde proprio il difetto che la risposta 20 ha chiuso.
+- Una tavola da provare prima di mostrarla si apre in una **scheda in secondo piano** del pannello — `tabs_create`, poi
+  `navigate` col suo `tabId` — e si porta davanti con `tabs_select` solo quando è pulita.
+- Il generatore di una tavola nuova non ricopia i token: li legge da `token.html`, fra `<style>` e `the board itself`, e
+  prende le icone di Lucide, con la loro licenza, da `panoramica.html` — `gen_striscia.py`, nello scratchpad della quarta
+  sessione.
 
 ## Decisioni prese dal coordinatore, col perché — il proprietario può ribaltarle
 

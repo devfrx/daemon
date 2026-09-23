@@ -187,6 +187,7 @@ altro, la riga lo dice e il compito segue la misura (`CLAUDE.md`: *«un'evidenza
 | **P-16** | ⛔ **sotto jsdom un `.css` importato è vuoto, e un `gap` letto da un token assente avvelena la disposizione**: `readToken("--space-3")` vale `""`, `parseFloat` rende `NaN`, e `dockview-core` 8.3.1 lo prende senza errori — poi `toJSON()` dice `null` per larghezza, altezza e ogni misura, e un `settle` lo salverebbe nel pacchetto del core | una sonda di diagnosi del 2026-09-23 sulla cartella di prova, sotto jsdom: il token importato vale `""`, lo stesso da uno `<style>` vale `12px`; `createDockview` con `gap: NaN` → `"width":null,"height":null` in `toJSON()` | il compito 6: `readToken` lancia un errore per un token assente, e `src/jsdom-setup.ts` carica `base.css` letto dal file (D9) |
 | **P-17** | ⚠️ **i gruppi galleggianti si impilano per pagina**: `AriaLevelTracker`, un oggetto unico del modulo in `dockview-core` 8.3.1, dà a ogni contenitore galleggiante `calc(var(--dv-overlay-z-index, 999) + 2i)` nell'ordine in cui è stato alzato l'ultima volta, e lo toglie dalla lista solo quando il gruppo è **smontato** | `grep -n 'overlay-z-index' gui/node_modules/dockview-core/dist/package/main.esm.mjs`; nel browser, una prova che non smontava il dock del primo tema ha misurato **52** nel secondo | il compito 6 scrive il limite in `dock.css` — coi valori della tavola, sotto `--z-popover` fino a 25 gruppi aperti e sotto `--z-overlay` fino a 75 — e la sua prova smonta il dock con `api.dispose()` |
 | **P-18** | ⚠️ **`axe` sul dock**: il contrasto non lo giudica — nessuna coppia fra i `passes`, le scritte fra gli `incomplete` con *«overlapped by another element»* — e trova **tre difetti che vengono dalla parte 2**: `nested-interactive` su ogni linguetta, perché i due comandi della presa grande sono pulsanti dentro un `role="tab"`; il nome di ogni linguetta, `aria-label`, è il `title` del pannello o il suo id — `permissions`, non «Permessi» —, e le viste portano un `title` uguale all'id; sul contenitore galleggiante, `role="dialog"` con `aria-level`, che un dialogo non ammette, e un `aria-label` uguale all'id | `axe.run` sul dock nel Chrome installato, 2026-09-23; `role`, `aria-*` e `tabindex` di `.dv-tab` e di `.dv-resize-container`, letti sulla SPA; `grep -n '"aria-label"' gui/node_modules/dockview-core/dist/package/main.esm.mjs` | il compito 6 tiene il contrasto del dock col frammento a mano del passo 17 del compito 1; i tre difetti vanno al proprietario, in *«Le voci aperte che questo piano SA»*: toglierli cambia la presa grande di SP-8, mossa 5 |
+| **P-19** | ⛔ **la prova della tastiera del compito 5 era instabile**: `reka-ui` 2.10.4 clicca il radio in un `setTimeout(0)` dopo il fuoco, e solo se una freccia è ancora premuta — il `keydown` alza il segno, il `keyup` lo toglie —; `userEvent.keyboard("{ArrowDown}")` preme e rilascia subito, e un `keyup` arrivato prima del timer non lascia niente di cliccato | `handleFocus` in `gui/node_modules/reka-ui/dist/RadioGroup/RadioGroupItem.js`, letto; sulla cartella di prova, dieci corse della suite intera: la prova rossa **una** volta sul codice del compito 5 e **due** col compito 7, `expected +0 to be 1` con *«Matcher did not succeed in time»*; col tasto tenuto, **nessuna** su dodici | il passo 1 del compito 5 corretto: `{ArrowDown>}`, l'`Invoke` atteso, `{/ArrowDown}` — il tasto tenuto come lo tiene una mano; e il passo 7 del compito 7 fa girare la suite cinque volte |
 
 ## Le decisioni prese scrivendo il piano
 
@@ -207,6 +208,8 @@ che il disegno lasciava al piano; ciascuna si ribalta con una riga.
 | **D9** | **`readToken` lancia un errore per un token che la pagina non definisce, e sotto jsdom `base.css` si carica dal file**, in `src/jsdom-setup.ts` | P-16: un token assente in silenzio avvelena la disposizione salvata; leggere il file e non ricopiare i valori tiene la casa unica della tavola. Solo `base.css`: nessuna prova sotto jsdom legge un colore. Costo: ogni prova jsdom ha i token di `base.css` sulla radice — misurato, nessuna delle altre cambia esito |
 | **D10** | **il bordo della zona d'arrivo è `--dv-drag-over-border` in `dock.css`**, e il tema TypeScript non porta `dndOverlayBorder` | le due vie erano aperte (R3-22); `updateTheme` di 8.3.1 lascia la variabile al foglio quando il campo manca, e un colore scritto in TypeScript sarebbe una seconda casa. Costo: il bordo non lo vede nessuna prova automatica; si guarda al passo 8 del compito, trascinando una linguetta |
 | **D11** | **la faccia della presa grande è un `.vue`**, `frame/BigTabFace.vue`, che `BigTab.ts` monta come `VueContent` monta un pannello | una funzione `h()` dentro `BigTab.ts` avrebbe fatto lo stesso, ma fuori dalla vista del linter dei template — la trappola 5 in un'altra forma; col `.vue` le regole di `harness/panels-and-frame` e di `no-raw-text` la leggono. Costo: un'app Vue per linguetta, smontata in `dispose` e provata |
+| **D12** | **`saveNamed` riceve da chi la chiama i nomi che la cornice mostra per le tre viste, e due nomi sono lo stesso nome a meno degli spazi intorno e delle maiuscole** | nessun negozio legge le parole di `it.json`, e farlo ne farebbe il primo; «Home» e «home», affiancate nella Panoramica, si leggerebbero come una vista sola. ⚠️ È una **deduzione del piano**, non una parola del proprietario, che su questo non si è espresso: si ribalta con `return a === b;` in `sameName`. Costo: un parametro in più, che la Panoramica del compito 8 passa |
+| **D13** | **`showView(view)` nel negozio: aprire una delle tre viste chiude quella col nome** | la regola vive dov'è lo stato, e una prova del negozio la raggiunge: nessuna prova monta `Frame.vue`. Costo: `Frame.switchTo` chiama `showView` invece di scrivere `view`; le prove che scrivono `view` restano valide, perché lì nessuna vista col nome è aperta |
 
 ## Le voci aperte che questo piano SA, e non chiude
 
@@ -3787,8 +3790,13 @@ it("asks the core on an arrow key as on a click, and keeps the check on the core
   await userEvent.click(radios()[0] as HTMLElement);
   // ⛔ THE SECOND DIRECTION: a click on the current value asks nothing.
   expect(bridge.sent).toEqual([]);
-  await userEvent.keyboard("{ArrowDown}");
+  // ⛔ THE KEY IS HELD, AS A HAND HOLDS IT: `reka-ui` 2.10.4 clicks the radio in a `setTimeout(0)` after the focus, and
+  // only while an arrow is still down -- a `keydown` sets the flag, a `keyup` clears it. `{ArrowDown}` presses and
+  // releases at once, and a `keyup` that arrived before the timer left nothing clicked: red in 1 run in 10 of the whole
+  // suite, measured on 2026-09-23.
+  await userEvent.keyboard("{ArrowDown>}");
   await expect.poll(() => bridge.sent.length).toBe(1);
+  await userEvent.keyboard("{/ArrowDown}");
   expect(bridge.sent).toEqual([{ kind: "Invoke", value: { function: "vram-policy", argument: "local" } }]);
   // The focus sits on the radio the arrow reached; the check stays on the core's value until `Policy` comes back (P-8).
   expect(radios().map((radio) => radio.getAttribute("aria-checked"))).toEqual(["true", "false"]);
@@ -3796,6 +3804,9 @@ it("asks the core on an arrow key as on a click, and keeps the check on the core
   wrapper.unmount();
 });
 ```
+
+⚠️ **Richiamo del 2026-09-23, dalla scrittura del compito 7 (P-19):** il tasto si tiene premuto — `{ArrowDown>}`, l'`Invoke`
+atteso, `{/ArrowDown}` —: premuto e rilasciato insieme, la prova cadeva una volta su dieci corse della suite intera.
 
 ```bash
 (cd gui && npx vitest run --project jsdom src/panels/modules.test.ts src/a11y.test.ts src/frame/frame.test.ts)
@@ -5366,6 +5377,866 @@ che non gli piace è una voce d'errata col suo *«perché»*, non un ritocco di 
 La riga **6** della tabella della posizione — **Stato** `✅ <data>`, e nella riga **5** la colonna **Commit** con l'hash del
 compito 5 (R1-16) —; `bash scripts/gate.sh` da solo, `bash scripts/check-docs.sh`, il commit — `design-system(compito 6): il
 dock vestito …`, con le due righe del pezzo JavaScript — coi fine-riga rimisurati, e `git push`.
+
+---
+## Compito 7: le viste col nome, sotto — il pacchetto, il negozio, il dock, la geometria comune, lo schema
+
+**Da:** la (d) del disegno, *«Le viste salvate col nome»* e le righe *«le miniature»* e *«le frecce nella griglia»* della
+Panoramica; il controllo **18**, e dal **17** l'aiutante della geometria provato coi rettangoli dati a mano; le decisioni
+**19** e **20** del disegno; **D3**, **D4**, **D5**, **D12** e **D13** di questo piano; R3-18 e R3-19 della revisione.
+
+**Files:**
+- Create: `gui/src/frame/nearest.ts`, `gui/src/frame/nearest.test.ts`, `gui/src/frame/schematic.ts`,
+  `gui/src/frame/schematic.test.ts`
+- Rewrite: `gui/src/stores/layout.ts` — **per intero**, col terminatore che ha oggi
+- Modify: `gui/src/stores/stores.test.ts`, `gui/src/frame/moveActive.ts`, `gui/src/frame/dock.ts`,
+  `gui/src/frame/Frame.vue`, `gui/src/frame/frame.test.ts`
+
+**Interfaces:**
+- Consumes: `LayoutPack`, `useLayout`, `pack_` e `unpack` col campo `theme` (compito 1); `createDock` e `apply` col tema
+  nostro (compito 6).
+- Produces, per il compito 8:
+  - in `LayoutPack` i campi `named?: NamedView[]` e `openNamed?: string`, con `interface NamedView { name: string; layout:
+    SerializedDockview }` da `stores/layout.ts`;
+  - in `useLayout()` lo stato `openNamed: string | null`, `showView(view: ViewName): void` — una delle tre, e la vista col
+    nome si chiude —, e `saveNamed(name: string, layout: SerializedDockview, shown: readonly string[]): "saved" | "empty" |
+    "taken"`, dove `shown` sono i nomi che la cornice mostra per le tre viste (D12); per aprire una vista col nome si
+    scrive `openNamed`, come `view` si scriveva;
+  - `apply(api, view, pack, named?)` da `frame/dock.ts`;
+  - `nearest<T extends { rect: Box }>(from: Box, candidates: readonly T[], direction: Direction): T | undefined`, con `type
+    Box` e `type Direction`, da `frame/nearest.ts`;
+  - `schematic(layout: SerializedDockview): Tile[]`, con `interface Tile { x; y; width; height; views: string[]; active?:
+    string }` in frazioni del quadrato unitario, da `frame/schematic.ts`.
+
+⚠️ **Che cosa la scrittura di questo compito ha misurato**, il 2026-09-23 sulla cartella di prova coi compiti 1–6 applicati:
+
+| | Il fatto | Che cosa ne fa il compito |
+|---|---|---|
+| 1 | l'albero di una disposizione salvata: la radice stende i figli lungo `grid.orientation`, ogni ramo sotto sull'altro asse, e la `size` di un nodo è la sua estensione lungo l'asse del genitore — nella Home spedita la radice `HORIZONTAL` ha un figlio solo, e sotto di lui l'area dei pannelli e la striscia si dividono l'altezza | `schematic` segue la regola; la prova la tiene su una disposizione scritta a mano e sulle tre viste spedite |
+| 2 | nessun altro file importa `Direction` | il tipo passa in `nearest.ts` |
+| 3 | nessun negozio legge le parole di `it.json`, e nessuna prova monta `Frame.vue` | `saveNamed` riceve i nomi mostrati da chi la chiama (D12); la regola *«una delle tre chiude la vista col nome»* vive nel negozio, in `showView`, dove una prova la raggiunge (D13) |
+| 4 | la prova della tastiera del compito 5 cadeva una volta su dieci corse della suite intera (**P-19**) | è corretta nel compito 5; qui la si ritrova verde a ogni corsa |
+
+- [ ] **Passo 1: rimisura il punto di partenza**
+
+```bash
+git status --porcelain > <scratchpad>/prima.txt
+grep -rnw 'Direction' gui/src --include=*.ts --include=*.vue
+grep -rln 'i18n' gui/src/stores
+grep -rln 'Frame.vue' gui/src --include=*.test.ts
+```
+
+Atteso: `Direction` nel solo `frame/moveActive.ts` — ⚠️ `-w`, la parola intera: senza, il comando prende anche `flexDirection`
+in `testing/probes.ts`, misurato —; gli ultimi due comandi **non rendono nulla**. Poi, da solo, `bash scripts/gate.sh` →
+`GATE GREEN`.
+
+- [ ] **Passo 2: le prove, prima del codice**
+
+Crea `gui/src/frame/nearest.test.ts` (LF):
+
+```ts
+import { describe, expect, it } from "vitest";
+
+import { nearest, type Box, type Direction } from "./nearest";
+
+/** A card of a grid, as `nearest` sees it: a name for the probe, and a rectangle written by hand -- under jsdom every
+ * rectangle is zero (P-97 of part 2). */
+function card(name: string, left: number, top: number, width = 200, height = 120): { name: string; rect: Box } {
+  return { name, rect: { left, top, right: left + width, bottom: top + height } };
+}
+
+/** Three columns and two rows, 24 px apart: the overview's grid, and the case R3-18 of the review measured. */
+const GRID = [0, 1].flatMap((row) => [0, 1, 2].map((column) => card(`r${row}c${column}`, column * 224, row * 144)));
+
+function from(name: string): Box {
+  const found = GRID.find((candidate) => candidate.name === name);
+  if (found === undefined) throw new Error(`no card ${name}`);
+  return found.rect;
+}
+
+describe("nearest (decision 19 of the design system)", () => {
+  it("goes to the card beyond, in each of the four directions", () => {
+    const moves: [string, Direction, string][] = [
+      ["r0c1", "right", "r0c2"],
+      ["r0c1", "left", "r0c0"],
+      ["r1c2", "up", "r0c2"],
+      ["r0c0", "down", "r1c0"],
+    ];
+    for (const [start, direction, end] of moves) expect(nearest(from(start), GRID, direction)?.name, `${start} ${direction}`).toBe(end);
+  });
+
+  it("breaks a tie on the other axis: down from the middle column is the middle card below (R3-18)", () => {
+    // ⛔ EVERY CARD OF THE ROW BELOW IS EQUALLY FAR on the vertical axis: the gap alone sends "down" to the first column.
+    expect(nearest(from("r0c1"), GRID, "down")?.name).toBe("r1c1");
+    expect(nearest(from("r0c2"), GRID, "down")?.name).toBe("r1c2");
+    expect(nearest(from("r1c2"), GRID, "up")?.name).toBe("r0c2");
+  });
+
+  it("finds nothing beyond an edge, and never the card it starts from", () => {
+    expect(nearest(from("r0c0"), GRID, "up")).toBeUndefined();
+    expect(nearest(from("r0c2"), GRID, "right")).toBeUndefined();
+  });
+});
+```
+
+Crea `gui/src/frame/schematic.test.ts` (LF):
+
+```ts
+import type { SerializedDockview } from "dockview-core";
+import { describe, expect, it } from "vitest";
+
+import { VIEWS } from "../panels/views";
+
+import { schematic } from "./schematic";
+
+/** A leaf of the serialized grid: one group with its panels. */
+function leaf(size: number, ...views: string[]) {
+  return { type: "leaf" as const, size, data: { views, activeView: views[0], id: views.join("+") } };
+}
+
+/**
+ * ⛔ A LAYOUT WRITTEN BY HAND, with sizes chosen so the fractions are exact: the root is VERTICAL -- `a` above, a branch
+ * below -- and the level under it is HORIZONTAL, `b` a quarter and `c` three quarters. And a floating group, which a
+ * miniature does not draw (D5 of the plan).
+ */
+const HAND = {
+  grid: {
+    orientation: "VERTICAL",
+    width: 800,
+    height: 600,
+    root: { type: "branch", size: 800, data: [leaf(30, "a"), { type: "branch", size: 70, data: [leaf(1, "b"), leaf(3, "c", "d")] }] },
+  },
+  panels: {},
+  floatingGroups: [{ data: { views: ["floating"], id: "f" }, position: { left: 0, top: 0, width: 100, height: 100 } }],
+} as unknown as SerializedDockview;
+
+describe("schematic (answer 19 of the design system)", () => {
+  it("cuts the unit square along the tree, the orientation alternating at every level, and leaves the floating out", () => {
+    expect(schematic(HAND)).toEqual([
+      { x: 0, y: 0, width: 1, height: 0.3, views: ["a"], active: "a" },
+      { x: 0, y: 0.3, width: 0.25, height: 0.7, views: ["b"], active: "b" },
+      { x: 0.25, y: 0.3, width: 0.75, height: 0.7, views: ["c", "d"], active: "c" },
+    ]);
+  });
+
+  it("tiles each view that ships without a gap or an overlap, the strip across the bottom", () => {
+    for (const [name, view] of Object.entries(VIEWS)) {
+      const tiles = schematic(view);
+      // ⛔ NON-VACUITY: every view has panels, so every view has tiles.
+      expect(tiles.length, name).toBeGreaterThan(1);
+      const area = tiles.reduce((sum, tile) => sum + tile.width * tile.height, 0);
+      expect(Math.abs(area - 1), `${name}: the areas add up to the square`).toBeLessThan(1e-9);
+      for (const tile of tiles) {
+        expect(tile.x >= 0 && tile.y >= 0 && tile.x + tile.width <= 1 + 1e-9 && tile.y + tile.height <= 1 + 1e-9, `${name}: ${tile.views}`).toBe(true);
+      }
+      const strip = tiles.find((tile) => tile.views.includes("strip"));
+      expect(strip && strip.x === 0 && Math.abs(strip.width - 1) < 1e-9 && Math.abs(strip.y + strip.height - 1) < 1e-9, `${name}: the strip`).toBe(true);
+    }
+  });
+});
+```
+
+In `gui/src/stores/stores.test.ts` (`replace_unique.py`), due sostituzioni. *Trova*:
+
+```ts
+import { pack_, unpack, useLayout } from "./layout";
+```
+
+*Sostituisci con:*
+
+```ts
+import { pack_, unpack, useLayout, type LayoutPack } from "./layout";
+```
+
+*Trova* — la fine del file:
+
+```ts
+    // ⛔ NOT "something was sent": a settle that rebuilt the package from `view` and `layouts` alone would drop
+    // the choice at the first move of a panel.
+    expect(settled).toEqual({ view: "home", layouts: { home }, theme: "dark" });
+  });
+});
+```
+
+*Sostituisci con:*
+
+```ts
+    // ⛔ NOT "something was sent": a settle that rebuilt the package from `view` and `layouts` alone would drop
+    // the choice at the first move of a panel.
+    expect(settled).toEqual({ view: "home", layouts: { home }, theme: "dark" });
+  });
+});
+
+describe("the named views in the package (design system, section (d))", () => {
+  /** A package from the core, as `receive` gets it. */
+  function fromTheCore(pack: LayoutPack): IpcMessage {
+    return { kind: "Layout", value: { state: "Package", bytes: [...pack_(pack)] } };
+  }
+
+  /** What the store sent, read back: the n-th `SaveLayout`. */
+  function sentPack(bridge: ReturnType<typeof createFakeBridge>, index: number): LayoutPack | null {
+    const message = bridge.sent[index];
+    return message?.kind === "SaveLayout" ? unpack({ state: "Package", bytes: message.value }) : null;
+  }
+
+  it("keeps the named views and the open one a package carries, and opens one without them as before (control 18)", () => {
+    const layout = useLayout();
+    const review = { marker: "the owner's review" } as never;
+    layout.receive(fromTheCore({ view: "work", layouts: {}, named: [{ name: "Revisione", layout: review }], openNamed: "Revisione" }));
+    expect(layout.saved?.named).toEqual([{ name: "Revisione", layout: review }]);
+    expect(layout.openNamed).toBe("Revisione");
+    expect(layout.view).toBe("work");
+    // ⛔ THE SECOND DIRECTION: a package written before the list existed opens as before, no named view open.
+    setActivePinia(createPinia());
+    const older = useLayout();
+    older.receive(fromTheCore({ view: "compact", layouts: {} }));
+    expect(older.saved).toEqual({ view: "compact", layouts: {} });
+    expect(older.openNamed).toBeNull();
+  });
+
+  it("drops what it cannot read -- and a key it does not know inside `layouts` stays dropped (row 8 of §2)", () => {
+    const text = JSON.stringify({
+      view: "home",
+      layouts: { home: {}, mine: {} },
+      named: [{ name: "Revisione", layout: {} }, { name: "", layout: {} }, { name: "Senza" }, { layout: {} }, { name: " revisione ", layout: { second: true } }],
+      openNamed: "Sparita",
+    });
+    // ⛔ A NAME ALREADY READ IS A SECOND VIEW UNDER IT (D4): the first stays. An open name the list does not hold is
+    // read as absent, and the view of always opens.
+    expect(unpack({ state: "Package", bytes: [...new TextEncoder().encode(text)] })).toEqual({
+      view: "home",
+      layouts: { home: {} },
+      named: [{ name: "Revisione", layout: {} }],
+    });
+  });
+
+  it("writes a move in an open named view into THAT view, and leaves the three as they were (R3-19)", () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    const home = { marker: "home, as the owner left it" } as never;
+    layout.receive(fromTheCore({ view: "home", layouts: { home }, named: [{ name: "Revisione", layout: { marker: "before" } as never }], openNamed: "Revisione" }));
+    const moved = { marker: "the review, one panel moved" } as never;
+    layout.settle(moved);
+    // ⛔ `layouts.home` AS IT WAS: before R3-19 a settle wrote `layouts[view]` whatever was on screen.
+    expect(sentPack(bridge, 0)).toEqual({ view: "home", layouts: { home }, named: [{ name: "Revisione", layout: moved }], openNamed: "Revisione" });
+    layout.chooseTheme("light");
+    // And a theme chosen meanwhile keeps the named view open.
+    expect(sentPack(bridge, 1)).toEqual({ view: "home", layouts: { home }, named: [{ name: "Revisione", layout: moved }], openNamed: "Revisione", theme: "light" });
+  });
+
+  it("shows one of the three by closing the named view, saves nothing for showing, and settles into the three after", () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    const review = { marker: "review" } as never;
+    layout.receive(fromTheCore({ view: "home", layouts: {}, named: [{ name: "Revisione", layout: review }], openNamed: "Revisione" }));
+    layout.showView("compact");
+    expect(layout.openNamed).toBeNull();
+    expect(layout.view).toBe("compact");
+    // ⛔ SHOWING IS NOT SAVING (decision 11).
+    expect(bridge.sent).toEqual([]);
+    const compact = { marker: "compact, moved" } as never;
+    layout.settle(compact);
+    expect(sentPack(bridge, 0)).toEqual({ view: "compact", layouts: { compact }, named: [{ name: "Revisione", layout: review }] });
+  });
+
+  it("saves the layout on screen under a new name at once and opens it, and refuses an empty or a taken name (D4)", () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    // The names the frame shows for the three views: the words are the locale's, and the store reads none.
+    const shown = ["Home", "Lavoro", "Compatta"];
+    const now = { marker: "on screen" } as never;
+    expect(layout.saveNamed("   ", now, shown)).toBe("empty");
+    expect(layout.saveNamed("home", now, shown)).toBe("taken");
+    expect(bridge.sent).toEqual([]);
+    expect(layout.saveNamed(" Revisione ", now, shown)).toBe("saved");
+    expect(layout.openNamed).toBe("Revisione");
+    expect(sentPack(bridge, 0)).toEqual({ view: "home", layouts: {}, named: [{ name: "Revisione", layout: now }], openNamed: "Revisione" });
+    // ⛔ NOT OVERWRITTEN: the same name again, in another case, is refused and nothing more is sent.
+    expect(layout.saveNamed("REVISIONE", { marker: "another" } as never, shown)).toBe("taken");
+    expect(bridge.sent).toHaveLength(1);
+  });
+});
+```
+
+In `gui/src/frame/frame.test.ts`, *Trova* — la fine del `describe("the dock", …)`:
+
+```ts
+    expect(harnessTheme()).toMatchObject({ name: "harness", className: "dockview-theme-harness" });
+    expect(harnessTheme().gap).toBeGreaterThan(0);
+  });
+});
+```
+
+*Sostituisci con:*
+
+```ts
+    expect(harnessTheme()).toMatchObject({ name: "harness", className: "dockview-theme-harness" });
+    expect(harnessTheme().gap).toBeGreaterThan(0);
+  });
+
+  it("shows the named view that is open, and the view of always once it closes -- saving neither (the (d))", async () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    const api = createDock(host());
+    api.layout(1600, 1000);
+    layout.receive(packageFromTheCore({ view: "home", layouts: {}, named: [{ name: "Revisione", layout: ownersHome() }], openNamed: "Revisione" }));
+    await flush();
+    expect(showing(api)).toEqual(["status"]);
+    layout.showView("home");
+    await flush();
+    // ⛔ THE SHIPPED HOME, NOT THE REVIEW UNDER ITS NAME: the dock watches `openNamed` as it watches `view`.
+    expect(showing(api)).toEqual(Object.keys(VIEWS.home.panels ?? {}).sort());
+    expect(saves(bridge)).toBe(0);
+  });
+});
+```
+
+```bash
+(cd gui && npx vitest run --project jsdom src/frame/nearest.test.ts src/frame/schematic.test.ts src/stores/stores.test.ts src/frame/frame.test.ts)
+```
+
+Atteso: **rosso**, e per le ragioni giuste — misurato il 2026-09-23: `Failed to resolve import "./nearest"` e `Failed to
+resolve import "./schematic"`; le cinque prove nuove del negozio, `expected undefined to deeply equal [ { name: 'Revisione',
+…(1) } ]`, `expected { view: 'home', layouts: { home: {} } } to deeply equal { view: 'home', …(2) }`, `expected { view:
+'home', …(1) } to deeply equal { view: 'home', …(3) }`, `TypeError: layout.showView is not a function` e `TypeError:
+layout.saveNamed is not a function`; e il dock, `expected [ 'activity', 'costs', …(5) ] to deeply equal [ 'status' ]` — la
+Home spedita al posto della vista col nome. Verdi tutte le prove che c'erano.
+
+- [ ] **Passo 3: la geometria comune — `nearest`, e `moveActive` che la usa**
+
+Crea `gui/src/frame/nearest.ts` (LF):
+
+```ts
+/** A rectangle, as `getBoundingClientRect` gives it and as a probe writes it by hand. */
+export interface Box {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
+
+export type Direction = "left" | "right" | "up" | "down";
+
+/**
+ * The candidate nearest to `from` in a direction: the geometry of move 6 of SP-8, the tiles moved with the keyboard, and
+ * of the arrows in the overview's grid (decision 19 of the design system) -- its second occurrence, so it lives here once.
+ * Only what lies BEYOND `from` in that direction counts, and the nearest is the smallest gap on that axis.
+ *
+ * ⛔ A TIE IS BROKEN ON THE OTHER AXIS, by the centre nearest to `from`'s (R3-18 of the design-system review): in a grid
+ * every card of the row below is equally far, and the gap alone sent "down" to the first column from any column.
+ *
+ * ⚠️ UNDER jsdom EVERY RECT IS ZERO: the probes hand rectangles of their own (`nearest.test.ts`, `keys.test.ts`), and the
+ * browser is where the real ones are seen.
+ */
+export function nearest<T extends { rect: Box }>(from: Box, candidates: readonly T[], direction: Direction): T | undefined {
+  const beyond = (rect: Box): boolean =>
+    direction === "left" ? rect.right <= from.left + 1
+    : direction === "right" ? rect.left >= from.right - 1
+    : direction === "up" ? rect.bottom <= from.top + 1
+    : rect.top >= from.bottom - 1;
+  const gap = (rect: Box): number =>
+    direction === "left" ? from.left - rect.right
+    : direction === "right" ? rect.left - from.right
+    : direction === "up" ? from.top - rect.bottom
+    : rect.top - from.bottom;
+  const across = (rect: Box): number =>
+    direction === "left" || direction === "right"
+      ? Math.abs(rect.top + rect.bottom - from.top - from.bottom) / 2
+      : Math.abs(rect.left + rect.right - from.left - from.right) / 2;
+  return candidates
+    .filter(({ rect }) => beyond(rect))
+    .sort((a, b) => gap(a.rect) - gap(b.rect) || across(a.rect) - across(b.rect))[0];
+}
+```
+
+In `gui/src/frame/moveActive.ts` (`replace_unique.py`), due sostituzioni. *Trova*:
+
+```ts
+import type { DockviewApi, Position } from "dockview-core";
+
+export type Direction = "left" | "right" | "up" | "down";
+export type Moved = "moved" | "split" | "none";
+```
+
+*Sostituisci con:*
+
+```ts
+import type { DockviewApi, Position } from "dockview-core";
+
+import { nearest, type Direction } from "./nearest";
+
+export type Moved = "moved" | "split" | "none";
+```
+
+*Trova:*
+
+```ts
+ * instead, and the browser is where the reviewer sees the real thing (rule 5 of the head).
+ */
+export function moveActive(api: DockviewApi, direction: Direction): Moved {
+  const panel = api.activePanel;
+  if (panel === undefined) return "none";
+  const from = panel.group.element.getBoundingClientRect();
+  const beyond = (rect: DOMRect): boolean =>
+    direction === "left" ? rect.right <= from.left + 1
+    : direction === "right" ? rect.left >= from.right - 1
+    : direction === "up" ? rect.bottom <= from.top + 1
+    : rect.top >= from.bottom - 1;
+  const gap = (rect: DOMRect): number =>
+    direction === "left" ? from.left - rect.right
+    : direction === "right" ? rect.left - from.right
+    : direction === "up" ? from.top - rect.bottom
+    : rect.top - from.bottom;
+  const target = api.groups
+    .filter((group) => group !== panel.group && !group.locked)
+    .map((group) => ({ group, rect: group.element.getBoundingClientRect() }))
+    .filter(({ rect }) => beyond(rect))
+    .sort((a, b) => gap(a.rect) - gap(b.rect))[0];
+```
+
+*Sostituisci con:*
+
+```ts
+ * instead, and the browser is where the reviewer sees the real thing (rule 5 of the head).
+ * The geometry itself is `nearest`, shared with the overview's grid since the design system.
+ */
+export function moveActive(api: DockviewApi, direction: Direction): Moved {
+  const panel = api.activePanel;
+  if (panel === undefined) return "none";
+  const candidates = api.groups
+    .filter((group) => group !== panel.group && !group.locked)
+    .map((group) => ({ group, rect: group.element.getBoundingClientRect() }));
+  const target = nearest(panel.group.element.getBoundingClientRect(), candidates, direction);
+```
+
+```bash
+(cd gui && npx vitest run --project jsdom src/frame/nearest.test.ts src/frame/keys.test.ts)
+```
+
+Atteso: **verde** — le tre prove di `nearest`, e le cinque di `keys.test.ts` com'erano: la geometria dei pannelli è la stessa,
+più lo spareggio, che fra i gruppi di una disposizione vera cambia soltanto i pareggi esatti.
+
+- [ ] **Passo 4: lo schema di una disposizione**
+
+Crea `gui/src/frame/schematic.ts` (LF) — D5:
+
+```ts
+import { Orientation, type SerializedDockview } from "dockview-core";
+
+/** One group of a layout, as a miniature draws it: where it sits, in fractions of the whole, and its panels. */
+export interface Tile {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  views: string[];
+  active?: string;
+}
+
+/** A node of the serialized grid, as `toJSON()` writes it: a branch holds nodes, a leaf holds a group. */
+interface GridNode {
+  type: "branch" | "leaf";
+  data: GridNode[] | { views: string[]; activeView?: string };
+  size?: number;
+}
+
+/**
+ * The miniature of a saved layout (answer 19 of the design system): the groups of its grid as rectangles in fractions of
+ * the unit square, drawn from the tree and not from a `dockview` of their own -- they always say what the layout holds,
+ * cost almost nothing and hold with ten views.
+ *
+ * ⛔ THE ORIENTATION ALTERNATES AT EVERY LEVEL, starting from `grid.orientation`: the root lays its children along it and
+ * each branch below along the other axis -- how `dockview-core` 8.3.1 reads the tree back (`_deserializeNode` hands
+ * `orthogonal(orientation)` to the children). A node's `size` is its extent along its parent's axis.
+ * ⛔ THE FLOATING GROUPS ARE NOT DRAWN (D5 of the plan): they have no place in the grid.
+ */
+export function schematic(layout: SerializedDockview): Tile[] {
+  const tiles: Tile[] = [];
+  const place = (node: GridNode, box: Omit<Tile, "views" | "active">, orientation: Orientation): void => {
+    if (node.type === "leaf") {
+      const group = node.data as { views: string[]; activeView?: string };
+      tiles.push(group.activeView === undefined ? { ...box, views: group.views } : { ...box, views: group.views, active: group.activeView });
+      return;
+    }
+    const children = node.data as GridNode[];
+    const total = children.reduce((sum, child) => sum + (child.size ?? 0), 0);
+    const next = orientation === Orientation.HORIZONTAL ? Orientation.VERTICAL : Orientation.HORIZONTAL;
+    let offset = 0;
+    for (const child of children) {
+      const share = total > 0 ? (child.size ?? 0) / total : 1 / children.length;
+      place(
+        child,
+        orientation === Orientation.HORIZONTAL
+          ? { x: box.x + offset * box.width, y: box.y, width: share * box.width, height: box.height }
+          : { x: box.x, y: box.y + offset * box.height, width: box.width, height: share * box.height },
+        next,
+      );
+      offset += share;
+    }
+  };
+  place(layout.grid.root as unknown as GridNode, { x: 0, y: 0, width: 1, height: 1 }, layout.grid.orientation);
+  return tiles;
+}
+```
+
+```bash
+(cd gui && npx vitest run --project jsdom src/frame/schematic.test.ts)
+```
+
+Atteso: **verde**, due prove.
+
+- [ ] **Passo 5: il negozio — le viste col nome, `showView`, `saveNamed`**
+
+Riscrivi `gui/src/stores/layout.ts` per intero, col terminatore che ha oggi — D3, D4, D12, D13 e R3-19:
+
+```ts
+import type { SerializedDockview } from "dockview-core";
+import { defineStore } from "pinia";
+import { computed, ref } from "vue";
+
+import type { IpcMessage, LayoutState } from "../schema/messages";
+import { isThemeChoice, type ThemeChoice } from "../tokens/theme";
+import type { Bridge } from "../transport/bridge";
+
+export type ViewName = "home" | "work" | "compact";
+
+/**
+ * ⛔ ONE LAYOUT PER VIEW, AND THE PACKAGE CARRIES THEM ALL (D80). The opening paragraph of §2 of the
+ * north star makes the layout "which view is open, FOR EVERY VIEW where the panels are", and row 6 has a
+ * saved view win over the default BY NAME. A package with a single `layout` put Home's layout
+ * under the Lavoro tab and lost Home at the next settle -- and it compiled and passed every probe.
+ *
+ * `layouts` IS PARTIAL ON PURPOSE: a view the owner never touched has NO entry and falls back to
+ * the shipped one, which is what keeps decision 11 true -- the shipped views stay in `gui/`, and
+ * an update that improves one still reaches whoever has not touched it.
+ */
+export interface LayoutPack {
+  view: ViewName;
+  layouts: Partial<Record<ViewName, SerializedDockview>>;
+  /** ⛔ OPTIONAL, AND THAT IS THE COMPATIBILITY (answer 16 of the design system): a package written before
+   * the field existed opens as `system`, and the core keeps the bytes without opening them -- the kernel
+   * does not change. */
+  theme?: ThemeChoice;
+  /** The views the owner saved under a name (the (d); §2 of the north star). ⛔ OPTIONAL, AND A LIST OF THEIR
+   * OWN, not keys of `layouts` (D3 of the design-system plan): `view` stays one of the three, so a package
+   * written by this build opens in an older one on the view of always. */
+  named?: NamedView[];
+  /** The named view that is open, by name; absent while one of the three is. */
+  openNamed?: string;
+}
+
+export interface NamedView {
+  name: string;
+  layout: SerializedDockview;
+}
+
+const VIEWS: readonly ViewName[] = ["home", "work", "compact"];
+
+function isViewName(value: unknown): value is ViewName {
+  return typeof value === "string" && (VIEWS as readonly string[]).includes(value);
+}
+
+/** Two names are the same name when they differ only in the spaces around them or in case: side by side in the overview
+ * they would read as one (D12 of the design-system plan -- the plan's reading, not a word of the owner's). */
+function sameName(a: string, b: string): boolean {
+  return a.trim().toLocaleLowerCase("it") === b.trim().toLocaleLowerCase("it");
+}
+
+/** The named views of a package. ⛔ AN ENTRY WITHOUT A NAME OR A LAYOUT IS DROPPED, AND SO IS A SECOND ENTRY UNDER A NAME
+ * ALREADY READ -- the first stays: two views never share a name (D4). */
+function readNamed(value: unknown): NamedView[] {
+  if (!Array.isArray(value)) return [];
+  const read: NamedView[] = [];
+  for (const entry of value) {
+    if (typeof entry !== "object" || entry === null) continue;
+    const { name, layout } = entry as { name?: unknown; layout?: unknown };
+    if (typeof name !== "string" || name.trim() === "" || typeof layout !== "object" || layout === null) continue;
+    if (read.some((kept) => sameName(kept.name, name))) continue;
+    read.push({ name, layout: layout as SerializedDockview });
+  }
+  return read;
+}
+
+function sameBytes(a: readonly number[], b: readonly number[]): boolean {
+  return a.length === b.length && a.every((byte, index) => byte === b[index]);
+}
+
+/**
+ * ⛔ THE PACKAGE IS OPAQUE TO THE CORE AND STRUCTURED ONLY HERE (row 1 of §2 of the north star):
+ * the core keeps bytes and hands them back, and if `dockview` changes format the core does not
+ * change. So the shape above is the gui's business alone, and the wire carries `number[]`.
+ *
+ * ⛔ AND WHAT COMES BACK IS NOT TRUSTED TO BE OURS: an archive can hold a package written by an
+ * older build. `unpack` returns `null` on anything it does not recognise, and the caller falls
+ * back to the committed views -- the same shape as row 8 of §2, where a panel pointing at a type
+ * that is gone says so and closes.
+ */
+export const useLayout = defineStore("layout", () => {
+  const state = ref<LayoutState>({ state: "Nothing" });
+  const view = ref<ViewName>("home");
+  /** The named view on screen, or `null` while one of the three is: the dock watches it as it watches `view`. */
+  const openNamed = ref<string | null>(null);
+  /** The package we hold: the last one the core sent, or our own last save while its echo is in
+   * flight. What `apply` reads. */
+  const saved = ref<LayoutPack | null>(null);
+  /** ⛔ HOW MANY PACKAGES ARRIVED THAT ARE NOT THE ECHO OF OUR OWN SAVE (D89): the dock watches
+   * it and shows what arrived. A counter and not an event, because the dock is a Vue watcher. */
+  const arrivals = ref(0);
+  let wire: Bridge | null = null;
+  let sent: readonly number[] | null = null;
+
+  function attach(bridge: Bridge): void {
+    wire = bridge;
+  }
+
+  function receive(message: IpcMessage): void {
+    if (message.kind !== "Layout") return;
+    state.value = message.value;
+    // ⛔ THE CORE ANSWERS EVERY `SaveLayout` WITH WHAT IT HOLDS (decision 13, task 7), so a package
+    // equal to the bytes we last sent is our own save coming back: nothing new, nothing to show.
+    // Anything else -- the welcome, the OLD package after a write that did not stick, a package
+    // another build wrote -- replaces what we hold, and the dock shows it (D89).
+    if (message.value.state === "Package" && sent !== null && sameBytes(message.value.bytes, sent)) return;
+    saved.value = unpack(message.value);
+    if (saved.value !== null) {
+      view.value = saved.value.view;
+      // ⛔ AND THE NAMED VIEW THAT IS OPEN (R3-19 of the design-system review), or none.
+      openNamed.value = saved.value.openNamed ?? null;
+    }
+    arrivals.value += 1;
+  }
+
+  /** The package we hold, with what is on screen: the view of always, and the named view if one is open. */
+  function onScreen(): LayoutPack {
+    const pack: LayoutPack = { ...(saved.value ?? { layouts: {} }), view: view.value };
+    if (openNamed.value === null) delete pack.openNamed;
+    else pack.openNamed = openNamed.value;
+    return pack;
+  }
+
+  /** ⛔ AUTOMATIC, NOT A BUTTON (decision 12): when the layout settles, and when the window
+   * closes. The cadence is the gui's -- it is presentation, not a kernel decision.
+   *
+   * ⛔ AND IT MERGES (D80): the open view's entry is replaced and the other views keep theirs. A
+   * `settle` that replaced the whole package lost every view but the open one. The rest of the package
+   * -- the theme, the named views -- is kept whole. */
+  function settle(layout: SerializedDockview): void {
+    const pack = onScreen();
+    const open = pack.openNamed;
+    if (open === undefined) {
+      keep({ ...pack, layouts: { ...pack.layouts, [view.value]: layout } });
+      return;
+    }
+    // ⛔ A MOVE IN A NAMED VIEW GOES TO THAT VIEW (R3-19): writing `layouts[view]` here would overwrite the view of
+    // always -- Home or Lavoro -- with the named one, without an error.
+    keep({ ...pack, named: (pack.named ?? []).map((entry) => (entry.name === open ? { name: open, layout } : entry)) });
+  }
+
+  /** One of the three views on screen, which closes the named one. ⛔ SHOWING IS NOT SAVING (decision 11): the choice
+   * reaches the package at the next settle. */
+  function showView(next: ViewName): void {
+    openNamed.value = null;
+    view.value = next;
+  }
+
+  /**
+   * The layout on screen saved under a name, and opened ("Salva questa vista", the (d)). ⛔ SAVED AT ONCE, like a theme:
+   * it is a decision. ⛔ A NAME ALREADY TAKEN IS REFUSED, NOT OVERWRITTEN (D4): overwriting would lose a view in silence.
+   * Taken are the named views' names and `shown` -- the names the frame shows for the three views, which are the locale's
+   * words, and a store reads none.
+   */
+  function saveNamed(name: string, layout: SerializedDockview, shown: readonly string[]): "saved" | "empty" | "taken" {
+    const wanted = name.trim();
+    if (wanted === "") return "empty";
+    const taken = [...shown, ...(saved.value?.named ?? []).map((entry) => entry.name)];
+    if (taken.some((other) => sameName(other, wanted))) return "taken";
+    openNamed.value = wanted;
+    keep({ ...onScreen(), named: [...(saved.value?.named ?? []), { name: wanted, layout }] });
+    return "saved";
+  }
+
+  /** The theme of the package, and `system` when it has none (answer 16). */
+  const theme = computed<ThemeChoice>(() => saved.value?.theme ?? "system");
+
+  /** ⛔ SAVED AT ONCE, NOT AT THE NEXT SETTLE: a choice made in Impostazioni is a decision, not a movement of
+   * panels, and closing the window right after it must not lose it. */
+  function chooseTheme(choice: ThemeChoice): void {
+    keep({ ...onScreen(), theme: choice });
+  }
+
+  function keep(pack: LayoutPack): void {
+    saved.value = pack;
+    const bytes = [...pack_(pack)];
+    sent = bytes;
+    wire?.send({ kind: "SaveLayout", value: bytes });
+  }
+
+  return { state, view, openNamed, saved, arrivals, theme, attach, receive, settle, showView, saveNamed, chooseTheme };
+});
+
+/** The package as bytes: UTF-8 of the JSON. ⚠️ Exported for the probes, which must be able to
+ * build one without a store and a bridge. */
+export function pack_(pack: LayoutPack): Uint8Array {
+  return new TextEncoder().encode(JSON.stringify(pack));
+}
+
+export function unpack(state: LayoutState): LayoutPack | null {
+  if (state.state !== "Package") return null;
+  try {
+    const value: unknown = JSON.parse(new TextDecoder().decode(Uint8Array.from(state.bytes)));
+    if (typeof value !== "object" || value === null) return null;
+    const candidate = value as { view?: unknown; layouts?: unknown };
+    if (!isViewName(candidate.view)) return null;
+    if (typeof candidate.layouts !== "object" || candidate.layouts === null) return null;
+    const held = candidate.layouts as Record<string, unknown>;
+    const layouts: LayoutPack["layouts"] = {};
+    // ⛔ ONLY THE THREE VIEWS THIS BUILD KNOWS ARE READ (decision 11): an entry under another
+    // name is another build's, and is neither shown nor kept -- row 8 of §2, for views.
+    for (const name of VIEWS) {
+      const layout = held[name];
+      if (typeof layout === "object" && layout !== null) layouts[name] = layout as SerializedDockview;
+    }
+    const pack: LayoutPack = { view: candidate.view, layouts };
+    // ⛔ A CHOICE THIS BUILD DOES NOT KNOW IS READ AS ABSENT, and the package still opens: the layouts in it are
+    // worth more than a word we cannot read.
+    const theme = (candidate as { theme?: unknown }).theme;
+    if (isThemeChoice(theme)) pack.theme = theme;
+    const named = readNamed((candidate as { named?: unknown }).named);
+    if (named.length > 0) pack.named = named;
+    // ⛔ AN OPEN NAME THE LIST DOES NOT HOLD IS READ AS ABSENT, and the view of always opens.
+    const open = (candidate as { openNamed?: unknown }).openNamed;
+    if (typeof open === "string" && named.some((entry) => entry.name === open)) pack.openNamed = open;
+    return pack;
+  } catch {
+    // ⛔ A PACKAGE THAT DOES NOT PARSE IS NOT AN ERROR TO SHOW: it is an old build's layout, and
+    // the answer is the committed views. Row 8 of §2 asks the gui to cope, not to complain.
+    return null;
+  }
+}
+```
+
+```bash
+(cd gui && npx vitest run --project jsdom src/stores/stores.test.ts)
+```
+
+Atteso: **verde**, le prove di oggi e le cinque nuove.
+
+- [ ] **Passo 6: il dock guarda anche la vista col nome, e la barra passa da `showView`**
+
+In `gui/src/frame/dock.ts` (`replace_unique.py`), due sostituzioni. *Trova*:
+
+```ts
+  function show(view: ViewName): SerializedDockview {
+    apply(api, view, layout.saved);
+    return api.toJSON();
+  }
+
+  let last = show(layout.view);
+  watch([() => layout.view, () => layout.arrivals], () => {
+    last = show(layout.view);
+  });
+```
+
+*Sostituisci con:*
+
+```ts
+  function show(): SerializedDockview {
+    apply(api, layout.view, layout.saved, layout.openNamed);
+    return api.toJSON();
+  }
+
+  // ⛔ AND THE NAMED VIEW THAT IS OPEN (the (d)): opening one, or closing it for one of the three, shows it here too.
+  let last = show();
+  watch([() => layout.view, () => layout.openNamed, () => layout.arrivals], () => {
+    last = show();
+  });
+```
+
+*Trova:*
+
+```ts
+ * Before D80 the one saved layout was applied under every tab.
+ */
+export function apply(api: DockviewApi, view: ViewName, pack: LayoutPack | null): void {
+  api.fromJSON(pack?.layouts[view] ?? VIEWS[view]);
+```
+
+*Sostituisci con:*
+
+```ts
+ * Before D80 the one saved layout was applied under every tab.
+ * ⛔ A NAMED VIEW WINS WHILE IT IS OPEN (the (d) of the design system), and a name the package no
+ * longer holds falls back to the view of always.
+ */
+export function apply(api: DockviewApi, view: ViewName, pack: LayoutPack | null, named: string | null = null): void {
+  const chosen = named === null ? undefined : pack?.named?.find((entry) => entry.name === named)?.layout;
+  api.fromJSON(chosen ?? pack?.layouts[view] ?? VIEWS[view]);
+```
+
+In `gui/src/frame/Frame.vue`, *Trova*:
+
+```ts
+  // the same path -- and none of them saves a view for merely showing it (decision 11).
+  layout.view = view;
+```
+
+*Sostituisci con:*
+
+```ts
+  // the same path -- and none of them saves a view for merely showing it (decision 11). Through
+  // `showView` since the design system: one of the three closes the named view (the (d)).
+  layout.showView(view);
+```
+
+```bash
+(cd gui && npx vitest run --project jsdom src/frame/frame.test.ts)
+```
+
+Atteso: **verde** — la prova nuova del dock, e quelle di D80, D81 e D89 com'erano.
+
+- [ ] **Passo 7: tutte le prove, il *build*, il linter**
+
+```bash
+(cd gui && npm test && npm run build && npm run lint)
+```
+
+Atteso: **verde** su tutto; i file di prova più alti di quelli del compito 6 di **due**, `nearest.test.ts` e
+`schematic.test.ts`. ⛔ E la suite intera **più volte** — cinque corse di `npm test` — perché la prova della tastiera del
+compito 5 cadeva una volta su dieci (P-19): una sua caduta qui è una voce d'errata, non una corsa da ripetere finché passa.
+
+- [ ] **Passo 8: le due direzioni**
+
+Una violazione alla volta, poi indietro con la **copia salvata** e `cmp` (vincolo 11): `layout.ts` il compito l'ha
+riscritto, e `nearest.ts` e `schematic.ts` sono nati qui (A-1).
+
+| La prova | La violazione messa a mano | Atteso, misurato il 2026-09-23 |
+|---|---|---|
+| `nearest.test.ts`, lo spareggio | in `nearest.ts` tolto `\|\| across(a.rect) - across(b.rect)` dal `sort` | rosso, due prove: `r1c2 up: expected 'r0c0' to be 'r0c2'` e `expected 'r1c0' to be 'r1c1'` — il difetto di R3-18 |
+| `nearest.test.ts`, ciò che sta oltre | in `nearest.ts` tolta la riga `.filter(({ rect }) => beyond(rect))` | rosso, tre prove: `r0c1 right: expected 'r0c0' to be 'r0c2'`, `expected 'r0c1' to be 'r1c1'`, `expected { name: 'r1c0', …(1) } to be undefined` |
+| `schematic.test.ts`, l'alternanza | in `schematic.ts` `const next = orientation;` | rosso, due prove: `expected [ …(3) ] to deeply equal [ …(3) ]` e `home: the strip: expected false to be true` |
+| `schematic.test.ts`, i galleggianti | in `schematic.ts`, dopo la chiamata a `place`, una riga che aggiunge a `tiles` ogni `layout.floatingGroups` | rosso: `expected [ …(4) ] to deeply equal [ …(3) ]` |
+| `stores.test.ts`, i doppioni | in `layout.ts` tolta la riga `if (read.some((kept) => sameName(kept.name, name))) continue;` | rosso: `expected { view: 'home', …(2) } to deeply equal { view: 'home', …(2) }` — due viste sotto un nome |
+| `stores.test.ts`, il nome aperto che non c'è | in `unpack`, `if (typeof open === "string") pack.openNamed = open;` | rosso: `expected { view: 'home', …(3) } to deeply equal { view: 'home', …(2) }` |
+| `stores.test.ts`, la mossa nella vista col nome | in `settle`, `if (true) {` al posto di `if (open === undefined) {` | rosso: `expected { view: 'home', …(3) } to deeply equal { view: 'home', …(3) }` — `layouts.home` sovrascritta, R3-19 |
+| `stores.test.ts`, il nome aperto che arriva | in `receive` tolta la riga di `openNamed` | rosso, due prove: `expected null to be 'Revisione'`, e la mossa che finisce nelle tre |
+| `stores.test.ts`, `showView` | in `showView` tolta la riga `openNamed.value = null;` | rosso: `expected 'Revisione' to be null` |
+| `stores.test.ts`, i nomi delle tre viste | in `saveNamed` tolto `...shown,` da `taken` | rosso: `expected 'saved' to be 'taken'` |
+| `stores.test.ts`, le maiuscole | in `sameName` `return a === b;` | rosso, due prove: i doppioni e `expected 'saved' to be 'taken'` |
+| `stores.test.ts`, lo schermo | in `onScreen` le due righe dell'`if` sostituite da `if (openNamed.value !== null) pack.openNamed = openNamed.value;` | rosso: `expected { view: 'compact', layouts: {}, …(2) } to deeply equal { view: 'compact', …(2) }` — il nome chiuso restava nel pacchetto |
+| `frame.test.ts`, il dock che guarda | in `dock.ts` tolto `() => layout.openNamed,` dal `watch` | rosso: `expected [ 'status' ] to deeply equal [ 'activity', 'costs', …(5) ]` |
+| `frame.test.ts`, `apply` | in `apply` `const chosen = undefined;` | rosso: `expected [ 'activity', 'costs', …(5) ] to deeply equal [ 'status' ]` |
+
+Alla fine `git status --porcelain | diff <scratchpad>/prima.txt -` rende soltanto i file del compito.
+
+- [ ] **Passo 9: il cancello, il commit, la posizione**
+
+La riga **7** della tabella della posizione — **Stato** `✅ <data>`, e nella riga **6** la colonna **Commit** con l'hash del
+compito 6 (R1-16) —; `bash scripts/gate.sh` da solo, `bash scripts/check-docs.sh`, il commit — `design-system(compito 7): le
+viste col nome, sotto …` — coi fine-riga rimisurati, e `git push`.
 
 ---
 ## Come si riprende — il registro applicato, 2026-09-23

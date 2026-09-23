@@ -20,6 +20,13 @@ portato le risposte 6–13 — i caratteri, le icone e il loro componente unico,
 committando questo file a ogni risposta; l'ha chiusa il proprietario, di nuovo *«troppo contesto saturo»*. Si riprende
 **ESATTAMENTE** dagli approcci, dopo la stella polare letta per intero: *«Prossimo passo, eseguibile»*.
 
+✅ **RICHIAMO DEL 2026-09-23, terza sessione — gli approcci e tre sezioni del disegno.** La terza sessione ha letto la stella
+polare per intero, ha ripreso dagli approcci e ha portato le risposte 14–18: la strada **A**, le variabili CSS; la sezione
+**(a)**, i token, rifatta con le regole del mestiere per mandato del proprietario (risposta 15) e approvata con la
+[tavola dei token](2026-09-22-design-system-tavole/token.html); la **(b)**, il kit; la **(c)**, il dock. L'ha chiusa il
+proprietario, di nuovo *«troppo contesto saturo»*, mentre la sessione raccoglieva i fatti per la **(d)**: si riprende
+**ESATTAMENTE** dalla presentazione della (d), coi fatti già verificati scritti nel punto 4 di *«Prossimo passo, eseguibile»*.
+
 ⚠️ **Non è una spec e non è un disegno.** Il prossimo passo sta nella §6 del [compendio](../../COMPENDIO.md), in un posto solo.
 
 ## Stato in una riga
@@ -66,10 +73,11 @@ un'etichetta di fine-riga scritta in un documento è la colonna `w/…` di **chi
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
 | i commit della prima sessione del brainstorming | `git log --oneline 2a674cc..fc3f2dc` | le risposte — `c88d831`, `7c83cf9`, `947dcec`, `8c0bbe6`, `35708f5` — e la sua chiusura, `fc3f2dc` |
-| i commit della seconda sessione | `git log --oneline fc3f2dc..HEAD` | le risposte — `38d848e`, `35b8c87`, `e1bd1b5`, `e00e5a7`, `e286164`, `8978edd` — e questa chiusura |
-| cancello | `bash scripts/gate.sh` | `GATE GREEN` all'apertura e prima del commit di chiusura di **tutte e due** le sessioni del 2026-09-23 — si rilancia, non si cita |
+| i commit della seconda sessione | `git log --oneline fc3f2dc..6aa5dce` | le risposte — `38d848e`, `35b8c87`, `e1bd1b5`, `e00e5a7`, `e286164`, `8978edd` — e la sua chiusura, `6aa5dce` |
+| i commit della terza sessione | `git log --oneline 6aa5dce..HEAD` | le risposte — `04ca162`, `f3a9b3f`, `f071ea1`, `3bd8961`, `b3dc211` — e questa chiusura |
+| cancello | `bash scripts/gate.sh` | `GATE GREEN` all'apertura e prima del commit di chiusura di **tutte e tre** le sessioni del 2026-09-23 — si rilancia, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
-| la CI | i due comandi del punto 3 della quarantunesima chiusura del piano della parte 2 | due job per corsa, entrambi `success`: così per ogni commit del 2026-09-23 fino a `e286164`, letti dall'API job per job; `8978edd` e questa chiusura erano **in corsa** alla chiusura, e si leggono **per prime** |
+| la CI | i due comandi del punto 3 della quarantunesima chiusura del piano della parte 2 | due job per corsa, entrambi `success`: così per ogni commit del 2026-09-23 fino a `3bd8961`, letti dall'API alla chiusura della terza sessione; `b3dc211` e questa chiusura erano **in corsa**, e si leggono **per prime** |
 | margine del compendio | `wc -c docs/COMPENDIO.md` contro `grep -n '^ceiling=' scripts/check-docs.sh` | positivo |
 
 ## Che cosa chiede il proprietario, e che cosa vuol dire «da Agentic OS»
@@ -287,6 +295,8 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 - `location.reload()` dentro lo strumento JavaScript del pannello taglia lo script e ne perde il risultato: si ricarica con
   `navigate` e un `?v=` nuovo, che salta anche la cache della pagina.
 - Il tool Edit **conserva** i fine-riga CRLF di questo file: contati prima e dopo con `tr -cd '\r' | wc -c`.
+- I server `http.server` delle tavole si spengono per PID, con `netstat -ano` e `taskkill //F //PID`: il compito in sottofondo
+  risulta poi «failed» con uscita 1, ed è atteso.
 
 ## Decisioni prese dal coordinatore, col perché — il proprietario può ribaltarle
 
@@ -317,29 +327,55 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
   4 è caduta con la risposta 5;
 - se il design system prenda un **numero**: nella tabella delle decisioni della stella polare, o una riga della roadmap;
 - **AUD-004**, che sbarra il secondo tempo della §6, il sotto-progetto 13;
-- le voci registrate della tabella qui sopra.
+- le voci registrate della tabella qui sopra;
+- registrate nella terza sessione, e non prese: un **terzo carattere** per il codice, come Geist Mono — una dipendenza nuova,
+  del proprietario (decisione 16 del coordinatore); e `sonda-raggi.js` con le **radici come parametro** invece dei selettori
+  della prima tavola, perché su una tavola nuova non renda un verde vuoto — del coordinatore, per il piano, che ne fa un test.
 
 ## Prossimo passo, eseguibile
 
 1. Aprire la sessione **nella cartella del repo**; `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa
    è il commit di questa chiusura o uno successivo. Sull'altra macchina, prima i comandi di *«Da sapere subito»*.
-2. La lettura obbligatoria di `CLAUDE.md`; poi, **per prima cosa**, la CI dei commit della seconda sessione — la chiusura
+2. La lettura obbligatoria di `CLAUDE.md`; poi, **per prima cosa**, la CI dei commit della terza sessione — la chiusura
    compresa — coi comandi della riga «la CI».
-3. **Questo file, per intero**, e le due tavole approvate aperte nel browser, `stile-approvato.html` e `panoramica.html` in
-   `2026-09-22-design-system-tavole/`, con le tre sonde accanto, prese con `cache: "no-store"`. ⛔ **La stella polare PER
-   INTERO**: è il momento della risposta 7, prima del disegno. Le skill: `anthropic-skills:decision-principles`,
-   `anthropic-skills:session-resume` su questo file, `anthropic-skills:dev-discipline`, `anthropic-skills:dev-communication`, e
-   `superpowers:brainstorming` — il percorso è **architetturale**, già detto al proprietario.
-4. Gli **approcci**, due o tre, al proprietario — ✅ **fatti il 2026-09-23, terza sessione: A, risposta 14; e le sezioni (a), (b) e (c)
-   approvate, risposte 16, 17 e 18** — la forma del design system nel codice: dove vivono token, temi e kit, e come
-   le regole diventano controlli — poi il **disegno a sezioni**, una approvata per volta: (a) i token a strati coi due temi —
-   i colori, Geist e Barlow coi loro pesi, la regola dei raggi come `calc`, il tratto delle icone; (b) il kit e dove vive — i
-   componenti con la regola della seconda occorrenza, il componente `Icon` con la sua mappa (risposta 11), la pagina «kit»
-   (risposta 12); (c) il dock vestito coi nostri token (risposta 5); (d) la cornice — la barra col nome della vista, la
-   Panoramica (risposta 13), la cornice della finestra; (e) le voci registrate della tabella qui sopra; (f) le sonde che
-   diventano test — contrasto, raggi, caratteri, icone. Se una sezione ha una domanda visiva, il visual companion si riavvia con
-   `--project-dir` sullo scratchpad della sessione nuova, in sottofondo, e le tavole partono da `gen_style_v5.py` o da
-   `gen_views_v1.py`; il proprietario lo ha accettato il 2026-09-23.
+3. **Questo file, per intero**, e le tre tavole approvate aperte nel browser — `stile-approvato.html`, `panoramica.html` e
+   `token.html` in `2026-09-22-design-system-tavole/` — con le tre sonde accanto, prese con `cache: "no-store"`; su
+   `token.html` la sonda dei raggi si lancia coi selettori sostituiti, com'è scritto nelle trappole. La stella polare è **letta
+   per intero** nella terza sessione, com'era la risposta 7: per le sezioni che restano bastano i suoi pezzi, col `grep`. Le
+   skill: `anthropic-skills:decision-principles`, `anthropic-skills:session-resume` su questo file,
+   `anthropic-skills:dev-discipline`, `anthropic-skills:dev-communication`, e `superpowers:brainstorming` — il percorso è
+   **architetturale**, già detto al proprietario.
+4. Gli **approcci** — ✅ **A**, risposta 14 — e il **disegno a sezioni**, una approvata per volta: ✅ (a) i token, risposte 15 e
+   16; ✅ (b) il kit, 17; ✅ (c) il dock, 18. ⛔ **Si riprende ESATTAMENTE dalla presentazione della (d)**, la cornice — la barra
+   col nome della vista, la Panoramica (risposta 13), la cornice della finestra — coi fatti che la terza sessione ha già
+   verificato il 2026-09-23 e **non** ha presentato:
+   - **oggi**: `gui/src/frame/ViewBar.vue` è un `nav` con tre `<button>` in fila e `aria-current`, la ricerca spenta, il chip
+     del core e il cassetto; `gui/src/frame/Frame.vue` monta `ViewBar`, `Band`, `Confirm` e l'ospite del dock;
+   - **la Panoramica approvata**, [`panoramica.html`](2026-09-22-design-system-tavole/panoramica.html): il nome della vista
+     nella barra con la sua icona; un clic o un tasto apre la griglia — Home, Lavoro, Compatta come finestrella, le viste
+     salvate col loro nome, e l'ultima scheda «Salva questa vista»; i tasti della tavola sono esempi, e `Ctrl+Alt+frecce`
+     sono già dei pannelli; le miniature della tavola sono **schemi** — blocchi `.mini` con dei riquadri — e non rese vive;
+   - **la domanda da portare**, sulle miniature: **A** uno schema disegnato dal JSON della disposizione, col modulo e la sua
+     icona dove sta — costa poco ed è sempre vero; **B** una resa viva di ogni vista, un `dockview` per miniatura — la CPU,
+     contro P3 e M4; **C** un'immagine presa uscendo da una vista — vuole il guscio, e invecchia. La lettura del coordinatore
+     è **A**;
+   - **le viste salvate**: `ViewName` è l'unione chiusa `"home" | "work" | "compact"` di `gui/src/stores/layout.ts`, e
+     `LayoutPack` è `{ view, layouts }`: le viste col nome vogliono una lista aperta **nel pacchetto**, che il core custodisce
+     senza aprirlo, quindi il kernel non cambia; e dare il nome a una vista vuole un campo di testo, che con la ricerca della
+     barra fa **due**: `BaseTextField` entra nel kit per la regola della (b);
+   - **la cornice della finestra**, letta il 2026-09-23 nella guida *Custom Title Bar* di Electron, esempi alla 44.4.5:
+     `titleBarStyle: 'hidden'` con `titleBarOverlay` tiene i pulsanti nativi di Windows sopra la nostra barra; la barra si
+     trascina con `app-region: drag`; lo spazio libero lo danno `env(titlebar-area-x, 0px)` e `env(titlebar-area-width, 100%)`;
+     e l'API di `BrowserWindow` ha `setTitleBarOverlay({ color, symbolColor, height })` su Windows e Linux, per seguire il
+     tema. Gli angoli della finestra li disegna Windows: con la barra e la striscia larghe quanto la finestra nessuna scheda
+     sta in un angolo, e la regola dei raggi regge — chiuderebbe la registrata della risposta 4. Il guscio vero non è del
+     design system: viene dopo M1–M5 e col 10 (§3 della stella polare), e la (d) ne fissa le regole;
+   - **i tasti**: G20 vuole la tastiera ovunque; nella griglia della panoramica il fuoco si muove con le frecce, e se
+     `reka-ui` abbia una primitiva per farlo si verifica quel giorno.
+   Poi (e) le voci registrate della tabella qui sopra, e (f) le sonde che diventano test — contrasto, raggi, caratteri, icone,
+   testo tagliato — col browser vero per le prove di disposizione, che è una **dipendenza nuova** e quindi del proprietario:
+   `@vitest/browser-playwright` 4.1.11 sta accanto al nostro `vitest` 4.1.11, e `playwright` è alla 1.63.0. Se una sezione
+   ha una domanda visiva, la tavola si genera nello scratchpad e si prova con le sonde **prima** di mostrarla, come `token.html`.
 5. Poi il disegno scritto al posto di questo file, questo testo in archivio **parola per parola**, e il piano in una sessione
    nuova.
 6. Alla chiusura di ogni sessione: questo file aggiornato sul posto, `bash scripts/check-docs.sh`, commit, push.

@@ -174,7 +174,7 @@ altro, la riga lo dice e il compito segue la misura (`CLAUDE.md`: *«un'evidenza
 | **P-3** | ⚠️ **la regola «in `components/` nessun import di `pinia`, `stores/`…» morderebbe `Confirm.vue`**, che la (b) stessa tiene in `components/` come pezzo **composto** e che legge due negozi | `grep -n 'stores' gui/src/components/Confirm.vue` | ✅ **scelto dal proprietario il 2026-09-23 — A, due regole** (R2-11 della revisione): i **pezzi di base** — `components/Base*.vue` e `components/icons.ts` — non importano `pinia`, `stores/` né gli strati sopra, com'è la riga *«i pezzi di base … mai lo stato globale»* della (b); **e** tutto `components/`, tranne i `*.test.ts`, non importa gli strati sopra — `panels/`, `frame/`, `transport/`. Il compito 3 scrive le due e le prova nelle due direzioni; nel disegno il richiamo datato sulla tabella *«Le regole»* della (b) |
 | **P-4** | **`base.css` uguale alla tavola non può portare la regola della pagina** `html, body, #app { height: 100%; margin: 0; }`, che oggi sta in `tokens.css` | `sed -n '52,57p' gui/src/tokens/tokens.css` | il compito 1 la sposta in uno `<style>` **non** scoped di `App.vue`, la radice che monta la cornice |
 | **P-5** | **i caratteri non possono entrare da `base.css`**, per la stessa ragione: la tavola li carica con `<link>` da jsDelivr | `grep -n 'fontsource' docs/superpowers/specs/2026-09-22-design-system-tavole/token.html` | li importa `gui/src/tokens/index.ts`, l'ingresso unico dei token, per la SPA e per la pagina kit |
-| **P-6** | **le variabili `--dv-*` del CSS di `dockview` sono 103**, ma quelle d'una tavolozza — `--dv-color-abyss*`, `-gh-`, `-mocha-`, `-monokai-`, `-nord-`, `-sol-` — le legge solo il tema che le porta. *«Ogni variabile che il CSS usa»* si legge come **ogni variabile che il tema di riferimento `.dockview-theme-abyss` imposta**, nei suoi due blocchi | `grep -o 'var(--dv-[a-z0-9-]*' gui/node_modules/dockview/dist/styles/dockview.css \| sort -u \| wc -l`; `awk '/^\.dockview-theme-abyss \{/,/^\}/' …` | il compito 6 lo prova con un test che legge `dockview.css` e `dock.css`: ogni variabile del tema di riferimento è impostata dal nostro, tranne i nove colori dei gruppi di linguette, una funzione che la SPA non accende |
+| **P-6** | **le variabili `--dv-*` del CSS di `dockview` sono 103**, ma quelle d'una tavolozza — `--dv-color-abyss*`, `-gh-`, `-mocha-`, `-monokai-`, `-nord-`, `-sol-` — le legge solo il tema che le porta. *«Ogni variabile che il CSS usa»* si legge come **ogni variabile che il tema di riferimento `.dockview-theme-abyss` imposta**, nei suoi due blocchi | `grep -o 'var(--dv-[a-z0-9-]*' gui/node_modules/dockview/dist/styles/dockview.css \| sort -u \| wc -l`; `awk '/^\.dockview-theme-abyss \{/,/^\}/' …` | il compito 6 lo prova con un test che legge `dockview.css` e `dock.css`: ogni variabile del tema di riferimento è impostata dal nostro, tranne i nove colori dei gruppi di linguette, una funzione che la SPA non accende. ⚠️ **Richiamo del 2026-09-23, dalla scrittura del compito 6 (P-15):** le famiglie fuori sono due, non una — anche le cinque misure dei gruppi di linguette e la tavolozza `--dv-color-*` |
 | **P-7** | **lo spazio attorno al dock lo decide chi chiama `layout`**: `updateTheme` di `dockview-core` 8.3.1 applica `gap` come margine della griglia, e nel JavaScript `--dv-spacing-padding` non compare | `grep -n 'spacing-padding' gui/node_modules/dockview-core/dist/package/main.esm.mjs` non rende nulla; `updateTheme` alla riga che `grep -n 'updateTheme() {'` dà sullo stesso file | il compito 6 mette il margine sul contenitore `.dock` — 0 in alto, 12 ai lati, 24 in basso, la risposta 20 — e passa a `api.layout` il **contenuto** del contenitore |
 | **P-8** | **il radio di `reka-ui` 2.10.4 lo decide chi lo controlla**: `RadioGroupItem` chiama `changeModelValue`, e con un `modelValue` dato la scelta si vede solo quando il valore torna; l'evento `select` si può fermare con `preventDefault` | `gui/node_modules/reka-ui/dist/RadioGroup/RadioGroupItem.js` e `Radio.js`, letti | il compito 5 lega la policy VRAM al valore del core: il radio si muove quando torna `Policy`, e le righe scritte a mano per E184 non servono più — le prove di `modules.test.ts` si riscrivono su `[role=radio]`, senza perdere ciò che provano (trappola 10) |
 | **P-9** | **una carta della Panoramica e il pulsante «moduli» della striscia sono pulsanti**, e la regola del linter vieta `<button>` in `frame/` e `panels/`: servono a `BaseButton` due forme — `variant="card"` e `pill` — la seconda **imposta dalla regola dei raggi**: dentro una pillola va una pillola | (b), (d); la tavola dello stile, `.m-strip .sp` | il compito 3 le mette in `BaseButton`, con la seconda occorrenza scritta accanto: le carte delle viste e *«Salva questa vista»*; il pulsante della striscia e il chip del core |
@@ -183,6 +183,10 @@ altro, la riga lo dice e il compito segue la misura (`CLAUDE.md`: *«un'evidenza
 | **P-12** | **jsdom non ha `matchMedia`** | `grep -rn 'matchMedia' gui/node_modules/jsdom/lib \| head -1` non rende nulla | il tema si prova con un `matchMedia` finto sotto jsdom (compito 1) e con la query vera nel browser (compito 2) |
 | **P-13** | la **provenienza** della chat usa `var(--warn)` come bordo, e il ruolo nuovo per un bordo che deve leggersi a 3:1 non c'è: `--color-border-warn` è una tinta di decoro | `grep -n 'provenance' gui/src/panels/Chat.vue`; la (a), le famiglie di P-1 | il compito 1 usa `--color-text-warn` per quel bordo, detto accanto: supera 4,5:1 sui fondi, quindi 3:1; e sono **le parole** a portare la provenienza (trappola 7) |
 | **P-14** | ⚠️ **il pre-controllo va in una sessione sua**: il punto 7 del *«Come si riprende»* del disegno lo metteva *«nella sessione che scrive il piano»*; `CLAUDE.md`, rivisto dopo lo stesso giorno, dice *«brainstorming, disegno, piano, pre-controllo, ogni compito: ciascuno nella sua sessione»* | la riga *«Una fase per sessione»* di `CLAUDE.md` nasce in `eab020d`, dopo il disegno di `386fc5c`: `git show -s --format='%h %ci' eab020d 386fc5c` | vale `CLAUDE.md`: il pre-controllo è la fase dopo |
+| **P-15** | ⛔ **la prova di P-6 lascia fuori due famiglie, non una**: oltre ai nove colori dei gruppi di linguette, le loro **cinque misure** — le leggono soltanto `.dv-tab-group-chip`, la sua continuazione, la linea del gruppo, il campione del menu dei colori e il colore nell'elenco del trabocco: la stessa funzione, spenta —; e la **tavolozza** `--dv-color-*` di ogni tema, che nominano soltanto i blocchi dei temi | da un file, per i backslash: `awk '/\{$/{sel=$0} /--dv-color-/{print sel}' gui/node_modules/dockview/dist/styles/dockview.css \| sort -u \| grep -vc '^\.dockview-theme-'` → **0** blocchi fuori da un tema, e senza l'ultimo filtro i blocchi sono più di zero; `awk '/\{$/{sel=$0} /var\(--dv-tab-group-/{print sel}' gui/node_modules/dockview/dist/styles/dockview.css \| sort -u` → le regole dei gruppi | il compito 6: la prova esclude `--dv-tab-group-*` e `--dv-color-*`, e il suo commento dice perché |
+| **P-16** | ⛔ **sotto jsdom un `.css` importato è vuoto, e un `gap` letto da un token assente avvelena la disposizione**: `readToken("--space-3")` vale `""`, `parseFloat` rende `NaN`, e `dockview-core` 8.3.1 lo prende senza errori — poi `toJSON()` dice `null` per larghezza, altezza e ogni misura, e un `settle` lo salverebbe nel pacchetto del core | una sonda di diagnosi del 2026-09-23 sulla cartella di prova, sotto jsdom: il token importato vale `""`, lo stesso da uno `<style>` vale `12px`; `createDockview` con `gap: NaN` → `"width":null,"height":null` in `toJSON()` | il compito 6: `readToken` lancia un errore per un token assente, e `src/jsdom-setup.ts` carica `base.css` letto dal file (D9) |
+| **P-17** | ⚠️ **i gruppi galleggianti si impilano per pagina**: `AriaLevelTracker`, un oggetto unico del modulo in `dockview-core` 8.3.1, dà a ogni contenitore galleggiante `calc(var(--dv-overlay-z-index, 999) + 2i)` nell'ordine in cui è stato alzato l'ultima volta, e lo toglie dalla lista solo quando il gruppo è **smontato** | `grep -n 'overlay-z-index' gui/node_modules/dockview-core/dist/package/main.esm.mjs`; nel browser, una prova che non smontava il dock del primo tema ha misurato **52** nel secondo | il compito 6 scrive il limite in `dock.css` — coi valori della tavola, sotto `--z-popover` fino a 25 gruppi aperti e sotto `--z-overlay` fino a 75 — e la sua prova smonta il dock con `api.dispose()` |
+| **P-18** | ⚠️ **`axe` sul dock**: il contrasto non lo giudica — nessuna coppia fra i `passes`, le scritte fra gli `incomplete` con *«overlapped by another element»* — e trova **tre difetti che vengono dalla parte 2**: `nested-interactive` su ogni linguetta, perché i due comandi della presa grande sono pulsanti dentro un `role="tab"`; il nome di ogni linguetta, `aria-label`, è il `title` del pannello o il suo id — `permissions`, non «Permessi» —, e le viste portano un `title` uguale all'id; sul contenitore galleggiante, `role="dialog"` con `aria-level`, che un dialogo non ammette, e un `aria-label` uguale all'id | `axe.run` sul dock nel Chrome installato, 2026-09-23; `role`, `aria-*` e `tabindex` di `.dv-tab` e di `.dv-resize-container`, letti sulla SPA; `grep -n '"aria-label"' gui/node_modules/dockview-core/dist/package/main.esm.mjs` | il compito 6 tiene il contrasto del dock col frammento a mano del passo 17 del compito 1; i tre difetti vanno al proprietario, in *«Le voci aperte che questo piano SA»*: toglierli cambia la presa grande di SP-8, mossa 5 |
 
 ## Le decisioni prese scrivendo il piano
 
@@ -200,6 +204,9 @@ che il disegno lasciava al piano; ciascuna si ribalta con una riga.
 | **D6** | le **icone dei moduli** che le tavole non mostrano le sceglie il piano, una riga ciascuna nella mappa — la **Chat** compresa | le tavole danno Stato, Permessi, Passi, Attività, i moduli, la ricerca, le viste; la Chat no, e `message-square`, che il piano le dà, sulle tavole segna i «Messaggi di stato» (R2-15 della revisione); la presa grande vuole l'icona di **ogni** tipo di modulo. Costo: una riga per cambiarne una |
 | **D7** | la pagina kit mostra i due temi **uno alla volta**, con la scelta in cima, e non affiancati | un dialogo di `reka-ui` va in un portale sul `body` e prenderebbe il tema della radice, non quello della colonna. Costo: per confrontarli si cambia la scelta |
 | **D8** | le parole della pagina kit sono **esemplari** scritti nel file, con un blocco del linter che lo dice, limitato a `src/kit/` | è una pagina di sviluppo fuori dal pacchetto: le sue parole in `it.json` finirebbero nel pacchetto per niente. Costo: una eccezione in più, in un posto solo |
+| **D9** | **`readToken` lancia un errore per un token che la pagina non definisce, e sotto jsdom `base.css` si carica dal file**, in `src/jsdom-setup.ts` | P-16: un token assente in silenzio avvelena la disposizione salvata; leggere il file e non ricopiare i valori tiene la casa unica della tavola. Solo `base.css`: nessuna prova sotto jsdom legge un colore. Costo: ogni prova jsdom ha i token di `base.css` sulla radice — misurato, nessuna delle altre cambia esito |
+| **D10** | **il bordo della zona d'arrivo è `--dv-drag-over-border` in `dock.css`**, e il tema TypeScript non porta `dndOverlayBorder` | le due vie erano aperte (R3-22); `updateTheme` di 8.3.1 lascia la variabile al foglio quando il campo manca, e un colore scritto in TypeScript sarebbe una seconda casa. Costo: il bordo non lo vede nessuna prova automatica; si guarda al passo 8 del compito, trascinando una linguetta |
+| **D11** | **la faccia della presa grande è un `.vue`**, `frame/BigTabFace.vue`, che `BigTab.ts` monta come `VueContent` monta un pannello | una funzione `h()` dentro `BigTab.ts` avrebbe fatto lo stesso, ma fuori dalla vista del linter dei template — la trappola 5 in un'altra forma; col `.vue` le regole di `harness/panels-and-frame` e di `no-raw-text` la leggono. Costo: un'app Vue per linguetta, smontata in `dispose` e provata |
 
 ## Le voci aperte che questo piano SA, e non chiude
 
@@ -214,6 +221,7 @@ Rilette il 2026-09-23 coi due comandi della §6 del compendio e con la tabella d
 | il **terzo carattere** per il codice | del proprietario | niente: il monospazio resta quello del sistema (decisione 16 del disegno) |
 | **AUD-004** | del proprietario | niente: sbarra il sotto-progetto 13, non questo |
 | la **finestra** del guscio — `titleBarOverlay`, `setTitleBarOverlay`, gli angoli di Windows; e la **prima pittura**: i ruoli vivono solo sotto `[data-theme]`, che lo script mette dopo l'analisi del documento, quindi prima dello script la finestra non ha fondo (R1-13 della revisione, dedotto e non misurato) | del sotto-progetto **10** | niente: le regole della (d) restano scritte nel disegno per chi farà il guscio; per la prima pittura il rimedio è del guscio — il `backgroundColor` della finestra, o mostrarla a `ready-to-show` |
+| i **tre difetti di accessibilità** che `axe` trova sul dock — `nested-interactive` sulle linguette, il nome della linguetta uguale all'id del pannello, `aria-level` e `aria-label` sul contenitore galleggiante (P-18) | del proprietario | niente: vengono dalla parte 2 e da `dockview-core`, e toglierli cambia la presa grande giudicata con SP-8 — i comandi fuori dalla linguetta, un `title` in italiano dentro le viste salvate. Il compito 6 li misura e non li nasconde: nessuna prova `axe` sul dock con quelle regole spente |
 
 ---
 ## Compito 1: i token — la tavola copiata, il tema sulla radice, i nomi nuovi
@@ -4417,6 +4425,947 @@ La riga **5** della tabella della posizione — **Stato** `✅ <data>` col verba
 l'hash del compito 4 (R1-16) —; `bash scripts/gate.sh` da solo,
 `bash scripts/check-docs.sh`, il commit — `design-system(compito 5): il kit al lavoro …` — coi fine-riga rimisurati, e
 `git push`.
+
+---
+## Compito 6: il dock vestito — il tema nostro, le schede, la presa grande coi pezzi del kit
+
+**Da:** la (c) del disegno, per intero; i controlli **15** e **16**; le trappole **5** e **9**; **P-6**, **P-7** e
+**P-15**…**P-18** di questo piano; **D9**…**D11**; R3-17, R3-21, R3-22, R1-10 e A-2 della revisione.
+
+**Files:**
+- Create: `gui/src/tokens/readToken.ts`, `gui/src/tokens/dock.test.ts`, `gui/src/frame/BigTabFace.vue`,
+  `gui/src/frame/dock.browser.test.ts`
+- Rewrite: `gui/src/tokens/dock.css`, `gui/src/frame/BigTab.ts`, `gui/src/frame/bigtab.test.ts`, `gui/src/jsdom-setup.ts` —
+  ciascuno **per intero**, col terminatore che ha oggi
+- Modify: `gui/src/frame/dock.ts`, `gui/src/frame/Frame.vue`, `gui/src/frame/frame.test.ts`,
+  `gui/src/tokens/tokens.browser.test.ts`; `gui/eslint.config.js` — un commento
+
+**Interfaces:**
+- Consumes: `shownTheme` di `tokens/theme.ts` (compito 1); il progetto `browser` (compito 2); `BaseLabel`, `BaseButton`,
+  `isIconName` e `type IconName` (compito 3); `concentricRadii` di `testing/probes.ts` (compito 4).
+- Produces: `readToken(name: string, element?: Element): string` da `tokens/readToken.ts` — il valore calcolato di un token,
+  e un **errore** per un token che la pagina non definisce; `harnessTheme(): DockviewTheme` da `frame/dock.ts`; la classe
+  `dockview-theme-harness`, che `tokens/dock.css` veste; `BigTabFace.vue` — props `title: string`, `icon?: IconName`, eventi
+  `float` e `page`. Sotto jsdom, `base.css` caricato da `src/jsdom-setup.ts` (D9).
+
+⚠️ **Che cosa la scrittura di questo compito ha misurato**, il 2026-09-23 nel Chrome installato 154 e sotto jsdom, sulla
+cartella di prova coi compiti 1–5 applicati; le righe intere sono **P-15**…**P-18**, in testa al piano:
+
+| | Il fatto | Che cosa ne fa il compito |
+|---|---|---|
+| 1 | la classe del tema va sul `.dv-shell`, figlio diretto del contenitore; il gruppo galleggiante è un `.dv-resize-container` con `role="dialog"`, e il suo `z-index` è **in linea**: `calc(var(--dv-overlay-z-index, 999) + 2i)` | la regola del livello sul contenitore (R3-17), e una prova con un gruppo galleggiante vero |
+| 2 | P-6 misurato di nuovo: oltre ai nove colori dei gruppi di linguette, fuori le **cinque misure** della stessa funzione e la **tavolozza** `--dv-color-*`, che leggono solo le regole dei temi (P-15) | la prova le vuole tutte le altre nel tema nostro, e il suo rosso le elenca |
+| 3 | sotto jsdom un `.css` importato è vuoto, e un `gap` letto da un token assente vale `NaN`: `dockview-core` lo prende, e `toJSON()` dice `null` per ogni misura (P-16) | `readToken` rifiuta un token assente; `src/jsdom-setup.ts` carica `base.css` dal file (D9) |
+| 4 | i gruppi galleggianti si impilano in una lista **della pagina**, `+ 2` l'uno sull'altro (P-17) | il limite scritto in `dock.css`; la prova del browser smonta il suo dock |
+| 5 | con un **margine** su `.dock`, il guscio di `dockview` occupa esattamente il contenuto: `clientWidth` è già la misura giusta, e la chiamata a `api.layout` resta com'è (P-7) | il margine in `Frame.vue`; `dock.ts` lo dice accanto alla chiamata |
+| 6 | `axe` sul dock non giudica il contrasto — nessuna coppia fra i `passes`, le scritte fra gli `incomplete`, *«overlapped by another element»* — e trova tre difetti della parte 2 (P-18) | il contrasto resta il frammento a mano del passo 17 del compito 1, ripetuto al passo 8; i tre difetti sono del proprietario |
+
+⚠️ **Tre forme della (c) che questo compito lascia com'erano**, dette qui perché chi confronta non le cerchi: `tabGroupIndicator`
+di `themeAbyss` (`"none"`) non si porta, perché governa solo la linea dei gruppi di linguette, spenti (P-15); le **finestre
+staccate** non si vestono, perché nella SPA non ci sono — vogliono `popoutUrl`, che è del guscio (D58 della parte 2); e
+`dndOverlayMounting`, `dndPanelOverlay`, `dndTabIndicator` restano quelli di `themeAbyss`, i predefiniti, su cui le otto
+mosse di SP-8 sono state giudicate.
+
+- [ ] **Passo 1: rimisura il punto di partenza**
+
+```bash
+git status --porcelain > <scratchpad>/prima.txt
+grep -n 'themeAbyss' gui/src/frame/dock.ts
+grep -n -- '--dv-overlay-z-index: var' gui/node_modules/dockview/dist/styles/dockview.css
+grep -n 'overlay-z-index' gui/node_modules/dockview-core/dist/package/main.esm.mjs
+(cd gui && npm run build 2>&1 | grep -E 'assets/index-.*\.js ')
+```
+
+Atteso: `themeAbyss` nell'import e nell'opzione `theme` di `dock.ts`; in `dockview.css` 8.3.1 le due ridefinizioni **su sé
+stesse** — `.dv-resize-container` e `.dv-render-overlay` —, `--dv-overlay-z-index: var(--dv-overlay-z-index, 999);`; in
+`dockview-core` la riga di `AriaLevelTracker`, `` calc(var(--dv-overlay-z-index, 999) + ${i * 2}) ``. La riga del pezzo
+JavaScript è la baseline del compito: va nel commit accanto a quella nuova (**N-2**). Poi, da solo, `bash scripts/gate.sh` →
+`GATE GREEN`.
+
+- [ ] **Passo 2: `readToken` — la prova, poi il modulo**
+
+In `gui/src/tokens/tokens.browser.test.ts` (`replace_unique.py`), due sostituzioni. *Trova*:
+
+```ts
+import "./index";
+import { watchTheme, type ThemeChoice } from "./theme";
+```
+
+*Sostituisci con:*
+
+```ts
+import "./index";
+import { readToken } from "./readToken";
+import { watchTheme, type ThemeChoice } from "./theme";
+```
+
+*Trova* — la fine del file:
+
+```ts
+    await expect.poll(() => root.dataset.theme).toBe("light");
+    stop();
+  });
+});
+```
+
+*Sostituisci con:*
+
+```ts
+    await expect.poll(() => root.dataset.theme).toBe("light");
+    stop();
+  });
+
+  it("reach TypeScript through `readToken` as the layout engine draws them, and a missing one is refused (control 16)", () => {
+    const box = document.createElement("div");
+    box.style.cssText = "position:absolute;width:var(--space-3)";
+    document.body.append(box);
+    // ⛔ TWO ORACLES THAT SHARE NO COPY: the token's text, and the width the engine draws from it.
+    expect(readToken("--space-3")).toBe(`${box.getBoundingClientRect().width}px`);
+    // ⛔ THE SECOND DIRECTION: a token the page does not define is an error, not "" -- a `gap` of NaN is what "" became.
+    expect(() => readToken("--space-that-is-not")).toThrow(/is not defined here/);
+  });
+});
+```
+
+```bash
+(cd gui && npx vitest run --project browser src/tokens/tokens.browser.test.ts)
+```
+
+Atteso: **rosso**, `Failed to import test file …/tokens.browser.test.ts` — il modulo non c'è, e il file intero non si
+carica. Poi crea `gui/src/tokens/readToken.ts` (LF):
+
+```ts
+/**
+ * A design token as the page computes it, for whoever needs it outside CSS (design system, section (c)): the dock's `gap`
+ * today, the canvases of sub-projects 6, 7 and 12 tomorrow. The CSS variables are the truth (answer 14): this reads them,
+ * it keeps no copy.
+ *
+ * ⛔ A TOKEN THE PAGE DOES NOT DEFINE IS AN ERROR, NOT AN EMPTY STRING. Measured under jsdom on 2026-09-23: a `gap`
+ * parsed from "" is NaN, `dockview-core` 8.3.1 takes it without a word, and `toJSON()` then says `null` for every size --
+ * a settle would have saved that into the core's package.
+ */
+export function readToken(name: string, element: Element = document.documentElement): string {
+  const value = getComputedStyle(element).getPropertyValue(name).trim();
+  if (value === "") throw new Error(`the token ${name} is not defined here: are the token sheets loaded?`);
+  return value;
+}
+```
+
+E la stessa corsa è **verde**, sei prove.
+
+- [ ] **Passo 3: le prove del dock, prima del tema**
+
+Crea `gui/src/tokens/dock.test.ts` (LF) — **P-6** e **P-15**:
+
+```ts
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+import { describe, expect, it } from "vitest";
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const DOCKVIEW = join(HERE, "..", "..", "node_modules", "dockview", "dist", "styles", "dockview.css");
+
+/** Every `--dv-*` a stylesheet SETS in the blocks that open with `selector {`, in the order they come. */
+function setIn(css: string, selector: string): string[] {
+  const found: string[] = [];
+  let from = css.indexOf(`${selector} {`);
+  while (from >= 0) {
+    const body = css.slice(from, css.indexOf("}", from));
+    for (const match of body.matchAll(/(--dv-[a-z0-9-]+)\s*:/g)) found.push(match[1] ?? "");
+    from = css.indexOf(`${selector} {`, from + selector.length);
+  }
+  return found;
+}
+
+/**
+ * ⛔ OUR THEME REPLACES `themeAbyss`, SO IT SETS WHAT `themeAbyss` SETS (design system, section (c); P-6 of the plan).
+ * The reference is `.dockview-theme-abyss`, in its two blocks of `dockview.css` 8.3.1: a variable it sets and ours
+ * forgot would fall back to `dockview`'s own default -- a colour by hand from a stylesheet we do not own. Two families
+ * are out, each with its reason, measured in `dockview.css` 8.3.1 on 2026-09-23:
+ *   `--dv-tab-group-*`  the TAB GROUPS, a feature the SPA does not turn on: only `.dv-tab-group-chip` and the
+ *                       group's underline read them -- the nine colours and the five sizes alike;
+ *   `--dv-color-*`      a theme's own PALETTE (`--dv-color-abyss-dark`, ...): every rule that reads one sits under a
+ *                       `.dockview-theme-*` selector, the one that carries it.
+ */
+describe("our dockview theme", () => {
+  const reference = setIn(readFileSync(DOCKVIEW, "utf8"), ".dockview-theme-abyss");
+  const ours = new Set(setIn(readFileSync(join(HERE, "dock.css"), "utf8"), ".dockview-theme-harness"));
+
+  it("sees the reference theme it replaces", () => {
+    // ⛔ NON-VACUITY: a `dockview` that renamed its theme would leave nothing to compare, and a green.
+    expect(reference.length).toBeGreaterThan(40);
+  });
+
+  it("sets every variable the reference theme sets, but the tab groups' and the palette's", () => {
+    const needed = reference.filter((name) => !name.startsWith("--dv-tab-group-") && !name.startsWith("--dv-color-"));
+    expect(needed.filter((name) => !ours.has(name))).toEqual([]);
+  });
+});
+```
+
+Crea `gui/src/frame/dock.browser.test.ts` (LF) — le schede, i raggi e il livello, nei due temi:
+
+```ts
+import "dockview/dist/styles/dockview.css";
+import "../tokens";
+
+import type { DockviewApi } from "dockview-core";
+import { createPinia, setActivePinia } from "pinia";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+
+import { registerModules } from "../panels/modules";
+import { concentricRadii } from "../testing/probes";
+import { readToken } from "../tokens/readToken";
+
+import { createDock } from "./dock";
+
+// ⛔ THE DRESSED DOCK IN THE INSTALLED CHROME (design system, section (c)): what only a layout engine can judge -- the
+// space between the cards, their radius and surface, the level of a floating group. The stylesheets are the SPA's own,
+// in the order `main.ts` loads them: `dockview.css` first, our tokens after it.
+
+const docks: DockviewApi[] = [];
+
+beforeEach(() => {
+  setActivePinia(createPinia());
+  registerModules();
+});
+
+afterEach(() => {
+  // ⛔ DISPOSED, NOT ONLY DETACHED: `dockview-core` 8.3.1 stacks the floating groups of the whole PAGE in one module-level
+  // list, `+ 2` per group, and a group left there lifts the next test's to 52 (measured on 2026-09-23).
+  for (const api of docks.splice(0)) api.dispose();
+  document.body.replaceChildren();
+  delete document.documentElement.dataset.theme;
+});
+
+/** The dock of the Home view in one theme, on a host of the boards' size, once `dockview` has laid it out. */
+async function dock(theme: "light" | "dark") {
+  document.documentElement.dataset.theme = theme;
+  const host = document.createElement("div");
+  host.style.cssText = "width:1400px;height:800px";
+  document.body.append(host);
+  const api = createDock(host);
+  docks.push(api);
+  await new Promise((resolve) => setTimeout(resolve, 50));
+  return { host, api };
+}
+
+/** What a declaration of `property: var(token)` computes to here: the oracle of a role, with no copy of its value. */
+function computed(property: string, token: string): string {
+  const probe = document.createElement("div");
+  probe.style.setProperty(property, `var(${token})`);
+  document.body.append(probe);
+  const value = getComputedStyle(probe).getPropertyValue(property);
+  probe.remove();
+  return value;
+}
+
+for (const theme of ["light", "dark"] as const) {
+  describe(`the dressed dock, ${theme} theme`, () => {
+    it("draws every group as a card, `--space-3` from its neighbours", async () => {
+      const { host } = await dock(theme);
+      const groups = [...host.querySelectorAll(".dv-groupview")];
+      // ⛔ NON-VACUITY: the Home view has groups side by side and one above the other.
+      expect(groups.length).toBeGreaterThan(2);
+      for (const group of groups) {
+        const style = getComputedStyle(group);
+        expect(style.borderTopLeftRadius).toBe(computed("border-top-left-radius", "--radius-card"));
+        expect(style.backgroundColor).toBe(computed("background-color", "--color-bg-surface"));
+      }
+      // The nearest neighbour on the right and below, where the two overlap: the distance between the facing edges.
+      const boxes = groups.map((group) => group.getBoundingClientRect());
+      const gaps: number[] = [];
+      for (const a of boxes) {
+        const right = boxes.filter((b) => b.left >= a.right && Math.min(a.bottom, b.bottom) > Math.max(a.top, b.top));
+        const below = boxes.filter((b) => b.top >= a.bottom && Math.min(a.right, b.right) > Math.max(a.left, b.left));
+        if (right.length > 0) gaps.push(Math.min(...right.map((b) => b.left - a.right)));
+        if (below.length > 0) gaps.push(Math.min(...below.map((b) => b.top - a.bottom)));
+      }
+      expect(gaps.length).toBeGreaterThan(1);
+      const space = Number.parseFloat(computed("width", "--space-3"));
+      expect(gaps.filter((gap) => Math.abs(gap - space) > 0.5)).toEqual([]);
+    });
+
+    it("keeps every radius in it concentric (answer 4)", async () => {
+      const { host } = await dock(theme);
+      const report = concentricRadii([host]);
+      // ⛔ NON-VACUITY (trap 1): a probe that met no corner near another is green for nothing.
+      expect(report.near).toBeGreaterThan(0);
+      expect(report.bad).toEqual([]);
+    });
+
+    it("floats a group BELOW the dialogs: at `--z-floating`, under `--z-overlay` (trap 9, R3-17)", async () => {
+      const { host, api } = await dock(theme);
+      const panel = api.getPanel("status");
+      expect(panel).toBeDefined();
+      if (panel !== undefined) api.addFloatingGroup(panel, { x: 60, y: 60, width: 460, height: 320 });
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      const floating = [...host.querySelectorAll(".dv-resize-container")];
+      expect(floating).toHaveLength(1);
+      const level = Number(getComputedStyle(floating[0] as Element).zIndex);
+      expect(level).toBe(Number(readToken("--z-floating")));
+      expect(level).toBeLessThan(Number(readToken("--z-overlay")));
+    });
+  });
+}
+```
+
+In `gui/src/frame/frame.test.ts` (`replace_unique.py`), due sostituzioni. *Trova*:
+
+```ts
+import { pack_, useLayout, type LayoutPack } from "../stores/layout";
+import { createFakeBridge, type FakeBridge } from "../transport/fakeBridge";
+
+import { createDock } from "./dock";
+```
+
+*Sostituisci con:*
+
+```ts
+import { pack_, useLayout, type LayoutPack } from "../stores/layout";
+import { shownTheme } from "../tokens/theme";
+import { createFakeBridge, type FakeBridge } from "../transport/fakeBridge";
+
+import { createDock, harnessTheme } from "./dock";
+```
+
+*Trova* — la fine del `describe("the dock", …)`:
+
+```ts
+    expect(api.getPanel("strip")?.params ?? {}).toEqual({});
+    // And a module type nobody built still carries its own, from the registry.
+    expect(api.getPanel("knowledge")?.params).toEqual(placeholderParams("knowledge"));
+  });
+});
+```
+
+*Sostituisci con:*
+
+```ts
+    expect(api.getPanel("strip")?.params ?? {}).toEqual({});
+    // And a module type nobody built still carries its own, from the registry.
+    expect(api.getPanel("knowledge")?.params).toEqual(placeholderParams("knowledge"));
+  });
+
+  it("wears our theme, and hands it to dockview again when the theme on screen changes (design system, section (c))", async () => {
+    useLayout().attach(createFakeBridge());
+    const where = host();
+    const api = createDock(where);
+    // ⛔ THE SHELL WEARS OUR CLASS, the one `tokens/dock.css` dresses -- and `themeAbyss`'s is gone (control 15).
+    expect(where.querySelector(".dv-shell")?.classList.contains("dockview-theme-harness")).toBe(true);
+    expect(where.querySelector(".dockview-theme-abyss")).toBeNull();
+    const handed: unknown[] = [];
+    const update = api.updateOptions.bind(api);
+    api.updateOptions = (options) => {
+      handed.push(options.theme?.colorScheme);
+      update(options);
+    };
+    shownTheme.value = "light";
+    await flush();
+    shownTheme.value = "dark";
+    await flush();
+    // ⛔ WHAT THE DOCK WAS HANDED, NOT WHAT IT DRAWS: `colorScheme` draws nothing in `dockview-core` 8.3.1 (R3-21).
+    expect(handed).toEqual(["light", "dark"]);
+  });
+
+  it("refuses a gap that is not a length in px, and builds the theme from the token that is", () => {
+    document.documentElement.style.setProperty("--space-3", "0.75rem");
+    try {
+      // ⛔ `parseFloat` would read 0.75 and shrink the gap without a word.
+      expect(() => harnessTheme()).toThrow(/not a length in px/);
+    } finally {
+      document.documentElement.style.removeProperty("--space-3");
+    }
+    // ⛔ THE SECOND DIRECTION: the token as the board has it, read from `base.css` (`src/jsdom-setup.ts`).
+    expect(harnessTheme()).toMatchObject({ name: "harness", className: "dockview-theme-harness" });
+    expect(harnessTheme().gap).toBeGreaterThan(0);
+  });
+});
+```
+
+```bash
+(cd gui && npx vitest run --project jsdom src/tokens/dock.test.ts src/frame/frame.test.ts)
+(cd gui && npx vitest run --project browser src/frame/dock.browser.test.ts)
+```
+
+Atteso: **rosso**, e per le ragioni giuste. `dock.test.ts`: la guardia verde, e la prova che elenca **tutte** le variabili che
+il tema nostro non imposta ancora — `expected [ …(43) ] to deeply equal []` il 2026-09-23. `frame.test.ts`: `expected false to
+be true` sul guscio, che porta ancora `dockview-theme-abyss`, e `harnessTheme` che non esiste — `expected [Function] to throw
+error matching /not a length in px/ but got '(0 , __vite_ssr_import_13__.harnessTh…'`. `dock.browser.test.ts`, nei due temi:
+`expected '0px' to be '20px'` sulle schede, ed `expected 999 to be 50` sul gruppo galleggiante — il difetto di R3-17 **già
+oggi**; verdi, a questo punto, le due prove dei raggi concentrici. Un rosso per un'altra ragione è una voce d'errata.
+
+- [ ] **Passo 4: il tema nostro — `dock.css`, `dock.ts`, il margine, i token sotto jsdom**
+
+Riscrivi `gui/src/tokens/dock.css` per intero — il **ponte** del compito 1 esce (R1-10), le regole della presa grande
+passano nella sua faccia (passo 5):
+
+```css
+/* OUR `dockview` THEME, `dockview-theme-harness` (design system, section (c); task 6 of its plan): `frame/dock.ts` puts the
+   class on the dock's shell, and this sheet dresses it with our roles and tokens only -- no colour by hand (control 5,
+   `usage.test.ts`). It sets every variable `themeAbyss` set, but the tab groups' and the palette's (`dock.test.ts`).
+
+   ⛔ `frame/VueContent.ts` and `frame/BigTab.ts` hand `dockview` plain elements, because it asks for RENDERERS and not
+   components: the classes they name -- `panel`, `bigtab` -- live here and not in a scoped <style> (E165, E166 of the
+   part-2 plan). */
+
+.dockview-theme-harness {
+  /* ⛔ THE GRAB IS THE CONTAINER'S, NOT THE TAB'S (E170): `dockview` sizes the whole tab strip from this variable and clips
+     `.dv-tabs-container`, so the variable moves and the tab fills it -- 40 px, the grab move 5 of SP-8 was judged on. */
+  --dv-tabs-and-actions-container-height: var(--size-control-lg);
+  --dv-tabs-and-actions-container-font-size: inherit;
+  --dv-tab-font-size: inherit;
+  --dv-tab-margin: 0;
+  --dv-tab-border-radius: 0;
+  --dv-tab-close-icon-size: var(--size-icon-sm);
+  --dv-tabs-container-scrollbar-color: var(--color-border-strong);
+  --dv-icon-hover-background-color: var(--color-bg-fill-hover);
+  --dv-dropdown-border-radius: var(--radius-control);
+
+  /* Every group is a CARD, header included (the (c)). The space AROUND the dock is the margin of `.dock` in `Frame.vue`, the
+     space BETWEEN groups is the theme's `gap`: nothing is padding here (P-7 of the plan). */
+  --dv-group-view-background-color: var(--color-bg-surface);
+  --dv-tabs-and-actions-container-background-color: var(--color-bg-surface);
+  --dv-border-radius: var(--radius-card);
+  --dv-spacing-padding: 0;
+
+  /* The visible tab of a group in full, the hidden ones muted (the (c)); the mark follows, below. */
+  --dv-activegroup-visiblepanel-tab-background-color: var(--color-bg-surface);
+  --dv-activegroup-hiddenpanel-tab-background-color: var(--color-bg-surface);
+  --dv-inactivegroup-visiblepanel-tab-background-color: var(--color-bg-surface);
+  --dv-inactivegroup-hiddenpanel-tab-background-color: var(--color-bg-surface);
+  --dv-activegroup-visiblepanel-tab-color: var(--color-text);
+  --dv-activegroup-hiddenpanel-tab-color: var(--color-text-muted);
+  --dv-inactivegroup-visiblepanel-tab-color: var(--color-text);
+  --dv-inactivegroup-hiddenpanel-tab-color: var(--color-text-muted);
+  --dv-tab-divider-color: var(--color-border);
+  --dv-paneview-header-border-color: var(--color-border);
+  --dv-paneview-active-outline-color: var(--color-focus);
+
+  /* The dividers are invisible until the pointer is on one (the (c)). */
+  --dv-separator-border: transparent;
+  --dv-sash-color: transparent;
+  --dv-active-sash-color: var(--color-border-strong);
+  --dv-sash-border-radius: var(--radius-full);
+  --dv-active-sash-transition-duration: var(--duration-fast);
+  --dv-active-sash-transition-delay: var(--duration-slow);
+
+  /* The drop zone: the accent's subtle tint, the mark around it (the (c)). ⚠️ `--dv-drag-over-border` is this sheet's:
+     `updateTheme` writes it inline only when the theme carries `dndOverlayBorder`, and ours does not -- one house. */
+  --dv-drag-over-background-color: var(--color-bg-accent-subtle);
+  --dv-drag-over-border-color: var(--color-mark);
+  --dv-drag-over-border: var(--border-width) solid var(--color-mark);
+  --dv-edge-dock-indicator-color: var(--color-mark);
+
+  /* A floating group is raised, with the overlay's shadow (the (c)); its level is set on its container, below. */
+  --dv-floating-box-shadow: var(--shadow-overlay);
+  --dv-floating-border: var(--border-width) solid var(--color-border-card);
+  --dv-floating-group-border: none;
+  --dv-floating-group-dragging-opacity: 0.5;
+  --dv-floating-titlebar-height: var(--size-target-min);
+  --dv-floating-titlebar-background-color: var(--color-bg-raised);
+  --dv-floating-titlebar-border-bottom: var(--border-width) solid var(--color-border);
+  --dv-overlay-z-index: var(--z-floating);
+}
+
+/* The card: the radius, the border the dark theme draws and the light one leaves transparent, the shadow the light one
+   casts. `border-box`, or the border would add to the size `dockview` gives the group. */
+.dockview-theme-harness .dv-groupview {
+  box-sizing: border-box;
+  border: var(--border-width) solid var(--color-border-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+/* The mark of the visible tab (the (c)): the icon of its label in `--color-mark`, the hidden tabs' in the tab's own colour.
+   ⛔ Over `BaseLabel`'s scoped colour, which is muted everywhere else: here the tab's colour, above, decides. */
+.dockview-theme-harness .dv-tab .base-label {
+  color: inherit;
+}
+.dockview-theme-harness .dv-tab.dv-inactive-tab .base-label .base-icon {
+  color: inherit;
+}
+
+/* ⛔ THE FLOATING CONTAINER RE-DECLARES THE LEVEL ON ITSELF, AS A CYCLE: `.dv-resize-container { --dv-overlay-z-index:
+   var(--dv-overlay-z-index, 999) }` in `dockview.css` 8.3.1, so a value set on the shell never reaches it and the group
+   floats at 999, over our dialogs at `--z-overlay` (R3-17 of the design-system review). The value goes on the container.
+   ⚠️ DECLARED LIMIT: `dockview-core` lifts each open floating group 2 above the one before -- `+ 2i` inline, in the order
+   they were last raised -- so with n of them the top one sits at `--z-floating` + 2(n - 1): under `--z-popover` up to 25,
+   under `--z-overlay` up to 75, with the board's values of 2026-09-23. */
+.dockview-theme-harness .dv-resize-container {
+  --dv-overlay-z-index: var(--z-floating);
+  --dv-group-view-background-color: var(--color-bg-raised);
+  --dv-tabs-and-actions-container-background-color: var(--color-bg-raised);
+  border-radius: var(--radius-card);
+}
+.dockview-theme-harness .dv-resize-container > .dv-floating-titlebar {
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+}
+/* Inside a floating container the group is not a second card: the container is. */
+.dockview-theme-harness .dv-resize-container .dv-groupview {
+  border: 0;
+  border-radius: 0 0 var(--radius-card) var(--radius-card);
+  box-shadow: none;
+}
+
+/* The element `BigTab` hands to `dockview`, where it mounts the face of the grab: without a height of its own the face's
+   `height: 100%` resolves against nothing. */
+.bigtab {
+  height: 100%;
+}
+
+/* The element `VueContent` hands to `dockview`: the same, for every `height: 100%` inside a panel. */
+.panel {
+  height: 100%;
+}
+```
+
+In `gui/src/frame/dock.ts` (`replace_unique.py`), tre sostituzioni. *Trova*:
+
+```ts
+import { createDockview, themeAbyss, type DockviewApi, type SerializedDockview } from "dockview-core";
+import { watch } from "vue";
+
+import { componentFor, isBuilt, placeholderParams } from "../panels/registry";
+import { useLayout, type LayoutPack, type ViewName } from "../stores/layout";
+import { VIEWS } from "../panels/views";
+
+import { BigTab } from "./BigTab";
+
+const GRID = 24;
+```
+
+*Sostituisci con:*
+
+```ts
+import { createDockview, type DockviewApi, type DockviewTheme, type SerializedDockview } from "dockview-core";
+import { watch } from "vue";
+
+import { componentFor, isBuilt, placeholderParams } from "../panels/registry";
+import { useLayout, type LayoutPack, type ViewName } from "../stores/layout";
+import { VIEWS } from "../panels/views";
+import { readToken } from "../tokens/readToken";
+import { shownTheme } from "../tokens/theme";
+
+import { BigTab } from "./BigTab";
+
+const GRID = 24;
+
+/** A token that is a length in px, as the number `dockview` wants. ⛔ THE UNIT IS CHECKED, NOT
+ * DROPPED: `parseFloat("0.75rem")` is 0.75, and a board that moved a space to `rem` would shrink
+ * the gap to nothing without a word. */
+function pixels(name: string): number {
+  const value = readToken(name);
+  const found = /^(\d+(?:\.\d+)?)px$/.exec(value);
+  if (found === null) throw new Error(`the token ${name} is "${value}", not a length in px`);
+  return Number(found[1]);
+}
+
+/**
+ * OUR `dockview` THEME (design system, section (c)): `tokens/dock.css` dresses its class, and the
+ * space between the groups is the token `--space-3`, read and not retyped.
+ *
+ * ⚠️ `colorScheme` FOLLOWS THE THEME ON SCREEN, AS THE (c) WANTS, AND DRAWS NOTHING: in
+ * `dockview-core` 8.3.1 `updateTheme` reads the class, the gap, the edge groups' size, the drop
+ * border, the overlay's mounting and the tab groups' indicator -- not `colorScheme`, which the
+ * library keeps for whoever reads its options (R3-21 of the design-system review).
+ * ⚠️ NO `dndOverlayBorder`: the drop zone's border is `--dv-drag-over-border` in `dock.css`, which
+ * `updateTheme` leaves to the sheet when the field is absent -- one house for a colour.
+ */
+export function harnessTheme(): DockviewTheme {
+  return { name: "harness", className: "dockview-theme-harness", colorScheme: shownTheme.value, gap: pixels("--space-3") };
+}
+```
+
+*Trova:*
+
+```ts
+  const api = createDockview(host, {
+    // The theme the eight moves were judged on. Our own tokens dress what WE draw -- the bar,
+    // the band, the drawer, the strip, the placeholder -- and the design system is decided in
+    // its own three moments, none of which is this task.
+    theme: themeAbyss,
+```
+
+*Sostituisci con:*
+
+```ts
+  const api = createDockview(host, {
+    // ⛔ OUR THEME AND NOT `themeAbyss`, on which the eight moves were judged: that one is dark
+    // only, and the design system has two themes (section (c), answers 5 and 18).
+    theme: harnessTheme(),
+```
+
+*Trova:*
+
+```ts
+  api.layout(host.clientWidth, host.clientHeight);
+
+  function show(view: ViewName): SerializedDockview {
+```
+
+*Sostituisci con:*
+
+```ts
+  // ⚠️ `clientWidth` IS THE CONTENT: the space around the dock is a MARGIN of `.dock` (`Frame.vue`),
+  // outside the box, so the grid gets exactly the room it has (P-7 of the design-system plan).
+  api.layout(host.clientWidth, host.clientHeight);
+
+  // The theme follows the one on screen (the (c)): `updateOptions` hands it to `updateTheme` again.
+  watch(shownTheme, () => api.updateOptions({ theme: harnessTheme() }));
+
+  function show(view: ViewName): SerializedDockview {
+```
+
+In `gui/src/frame/Frame.vue`, *Trova*:
+
+```css
+.dock {
+  flex: 1;
+  min-height: 0;
+}
+```
+
+*Sostituisci con:*
+
+```css
+/* Answer 20 of the design system: the dock -- the strip is its last row -- 12 px from the sides and 24 from the bottom,
+   away from the window's corners; the bar above has none. A MARGIN and not a padding, so `clientWidth` is the room the
+   grid gets (P-7 of its plan). */
+.dock {
+  flex: 1;
+  min-height: 0;
+  margin: 0 var(--space-3) var(--space-6);
+}
+```
+
+Riscrivi `gui/src/jsdom-setup.ts` per intero — il falso di `ResizeObserver` resta com'è, e sotto arriva `base.css` (D9):
+
+```ts
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+// ⛔ `jsdom` 30.0.1 DOES NOT IMPLEMENT `ResizeObserver`, and `dockview-core` calls it the moment
+// a grid is created (`watchElementResize`): without this, every probe that mounts a grid dies on
+// `ReferenceError: ResizeObserver is not defined` before any layout question is asked --
+// measured on 2026-09-16 (R6-8 of the in-depth review of task 13). Mounted by `test.setupFiles`.
+//
+// ⚠️ THIS FAKES AN ABSENT API, NOT LAYOUT: it observes nothing, and `getBoundingClientRect` still
+// answers zeros under jsdom, which is why the geometry of `moveActive` is probed with rectangles
+// of our own (P-97). The day jsdom ships a `ResizeObserver`, `??=` leaves it alone.
+globalThis.ResizeObserver ??= class {
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+};
+
+// ⛔ THE TOKENS THAT DO NOT CHANGE WITH THE THEME, AS THE BROWSER HAS THEM (design system, task 6):
+// under jsdom Vitest does not process an imported `.css` -- the import is empty -- so `readToken`
+// would find no token, and `createDock` no `gap` (measured on 2026-09-23: `--space-3` reads "" when
+// imported, "12px" from a <style>). `base.css` is READ, not retyped: the values stay in the board's
+// copy. `themes.css` stays out: no probe under jsdom reads a colour.
+const sheet = document.createElement("style");
+sheet.textContent = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "tokens", "base.css"), "utf8");
+document.head.append(sheet);
+```
+
+```bash
+(cd gui && npx vitest run --project jsdom src/tokens src/frame && npx vitest run --project browser src/frame src/tokens)
+```
+
+Atteso: **verde** — P-6, le prove del dock sotto jsdom, le schede a `--space-3` col raggio della scheda, i raggi concentrici
+e il gruppo galleggiante a `--z-floating`, nei due temi; e ancora verdi le prove di `bigtab.test.ts`, che il passo 5
+riscrive. Il 2026-09-23, sulla cartella di prova: jsdom, otto file e 37 prove; browser, due file e dodici prove.
+
+- [ ] **Passo 5: la presa grande coi pezzi del kit — la prova, poi la faccia**
+
+Riscrivi `gui/src/frame/bigtab.test.ts` per intero:
+
+```ts
+import type { TabPartInitParameters } from "dockview-core";
+import { describe, expect, it } from "vitest";
+
+import { i18n } from "../i18n";
+
+import { BigTab } from "./BigTab";
+
+const t = i18n.global.t;
+
+function parameters(id: string, title?: string) {
+  const calls: string[] = [];
+  const api = {
+    id,
+    isMaximized: () => false,
+    maximize: () => calls.push("maximize"),
+    exitMaximized: () => calls.push("exit"),
+  };
+  const containerApi = {
+    getPanel: (wanted: string) => (wanted === id ? { id } : undefined),
+    addFloatingGroup: () => calls.push("float"),
+  };
+  return { calls, init: { api, containerApi, title, params: {} } as unknown as TabPartInitParameters };
+}
+
+describe("the big tab", () => {
+  it("shows a module's Italian name with the module's icon, and a plain panel's own title without one", () => {
+    const status = new BigTab();
+    status.init(parameters("status").init);
+    expect(status.element.querySelector(".base-label")?.textContent?.trim()).toBe(t("modules.status"));
+    expect(status.element.querySelector('.base-label svg[data-icon="status"]')).not.toBeNull();
+    const other = new BigTab();
+    other.init(parameters("not-a-module", "Titolo dato").init);
+    expect(other.element.querySelector(".base-label")?.textContent?.trim()).toBe("Titolo dato");
+    expect(other.element.querySelector(".base-label svg")).toBeNull();
+  });
+
+  it("carries two named commands of the kit, that run and do not start a drag", () => {
+    const { calls, init } = parameters("status");
+    const tab = new BigTab();
+    tab.init(init);
+    const buttons = [...tab.element.querySelectorAll("button")];
+    expect(buttons.map((b) => b.getAttribute("aria-label"))).toEqual([t("menu.float"), t("menu.page")]);
+    // ⛔ THE KIT'S PIECES, NOT GLYPHS IN A BUTTON BUILT BY HAND (section (c); trap 5 of the design system).
+    expect(buttons.map((b) => b.querySelector("svg.base-icon")?.getAttribute("data-icon"))).toEqual(["float", "fullPage"]);
+    let reachedTheTab = 0;
+    tab.element.addEventListener("pointerdown", () => {
+      reachedTheTab += 1;
+    });
+    buttons[0]?.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true }));
+    // ⛔ THE SECOND DIRECTION: the same event on the label DOES reach the tab -- so the count below
+    // is one because of the stop on the button, not because nothing bubbles.
+    tab.element.querySelector(".base-label")?.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true }));
+    expect(reachedTheTab).toBe(1);
+    buttons[0]?.click();
+    buttons[1]?.click();
+    expect(calls).toEqual(["float", "maximize"]);
+  });
+
+  it("takes its face away when dockview disposes of the tab", () => {
+    const tab = new BigTab();
+    tab.init(parameters("status").init);
+    expect(tab.element.childElementCount).toBeGreaterThan(0);
+    tab.dispose();
+    // ⛔ ONE VUE APP PER TAB: a tab `dockview` throws away that kept its app would leak a reactive tree.
+    expect(tab.element.childElementCount).toBe(0);
+  });
+});
+```
+
+```bash
+(cd gui && npx vitest run --project jsdom src/frame/bigtab.test.ts)
+```
+
+Atteso: **rosso**, tre prove — `expected undefined to be 'Stato'`, `expected [ undefined, undefined ] to deeply equal [ 'float',
+'fullPage' ]`, `TypeError: tab.dispose is not a function`. Poi crea `gui/src/frame/BigTabFace.vue` (LF) — D11:
+
+```vue
+<script setup lang="ts">
+import BaseButton from "../components/BaseButton.vue";
+import BaseLabel from "../components/BaseLabel.vue";
+import type { IconName } from "../components/icons";
+
+/**
+ * The face of the big grab handle (design system, section (c)): the module's label with its icon, and the two commands as
+ * base pieces -- `BigTab.ts` mounts it in the element `dockview` drags.
+ *
+ * ⛔ A PRESS ON A COMMAND MUST NOT START A DRAG, and stopping `click` alone is not enough: `dockview` begins the drag on
+ * `pointerdown`/`mousedown`, so both stop on the button. Measured in SP-8; without it, every press of a command drags the
+ * tile a few pixels first.
+ */
+defineProps<{ title: string; icon?: IconName }>();
+const emit = defineEmits<{ float: []; page: [] }>();
+</script>
+
+<template>
+  <div class="face">
+    <BaseLabel :icon="icon" class="title">{{ title }}</BaseLabel>
+    <BaseButton variant="quiet" size="sm" icon="float" :label="$t('menu.float')" @pointerdown.stop @mousedown.stop @click.stop="emit('float')" />
+    <BaseButton variant="quiet" size="sm" icon="fullPage" :label="$t('menu.page')" @pointerdown.stop @mousedown.stop @click.stop="emit('page')" />
+  </div>
+</template>
+
+<style scoped>
+.face {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: 100%;
+  padding: 0 var(--space-2) 0 var(--space-3);
+  cursor: grab;
+  user-select: none;
+}
+.title {
+  flex: 1;
+  min-width: 0;
+}
+</style>
+```
+
+Riscrivi `gui/src/frame/BigTab.ts` per intero:
+
+```ts
+import type { ITabRenderer, TabPartInitParameters } from "dockview-core";
+import { createApp, type App } from "vue";
+
+import { isIconName } from "../components/icons";
+import { i18n } from "../i18n";
+import { isModule } from "../panels/registry";
+
+import BigTabFace from "./BigTabFace.vue";
+
+/**
+ * The big grab handle (move 5): the tab element is what `dockview` drags, so a big tab is a big
+ * grab -- which is what makes a pointer that is a HAND able to take it (move 8, ADR-0039).
+ *
+ * ⛔ THE FACE IS THE KIT'S (design system, section (c)): `BigTabFace.vue`, a `BaseLabel` with the
+ * module's icon and two `BaseButton`s, mounted here as `VueContent` mounts a panel -- ONE VUE APP
+ * PER TAB, AND `unmount` ON `dispose`. Before, the two commands were `<button>`s built with
+ * `document.createElement`, which the template linter cannot see (trap 5 of the design).
+ *
+ * ⛔ TWO COMMANDS AND NOT THREE (D58): "float" and "full page" are the library's; "in a separate
+ * window" needs `popoutUrl` and a page served from an http(s) origin, which is the shell's (Q3 of
+ * SP-8, P-91), and the shell is outside this plan. Each command has a name from the locale:
+ * reachable with the tab key, read by a screen reader (G20).
+ *
+ * ⚠️ DECLARED LIMIT (M-1 of the review, E187): on a FLOATING group `maximize()` is a no-op in
+ * `dockview-core` 8.3.1 -- measured on 2026-09-22, rectangle unchanged, no error -- so the second
+ * command does nothing on a tile the first one detached, and is not disabled there. A button that
+ * follows `api.location` is a second occurrence of the same kit question, and waits for it.
+ */
+export class BigTab implements ITabRenderer {
+  readonly element = document.createElement("div");
+  private app?: App;
+
+  init(parameters: TabPartInitParameters): void {
+    this.element.className = "bigtab";
+    const id = parameters.api.id;
+    this.app = createApp(BigTabFace, {
+      // ⛔ THE MODULE'S ITALIAN NAME AND NOT THE PANEL'S ID (G21, P-95): the views carry `title: id`,
+      // and an id is code. A panel that is not a module type keeps the title it was given, and no icon.
+      title: isModule(id) ? i18n.global.t(`modules.${parameters.api.id}`) : (parameters.title ?? id),
+      icon: isModule(id) && isIconName(id) ? id : undefined,
+      onFloat: () => {
+        const panel = parameters.containerApi.getPanel(id);
+        if (panel !== undefined) parameters.containerApi.addFloatingGroup(panel, { x: 60, y: 60, width: 460, height: 320 });
+      },
+      onPage: () => {
+        if (parameters.api.isMaximized()) parameters.api.exitMaximized();
+        else parameters.api.maximize();
+      },
+    });
+    this.app.use(i18n);
+    this.app.mount(this.element);
+  }
+
+  dispose(): void {
+    this.app?.unmount();
+    this.app = undefined;
+  }
+}
+```
+
+E in `gui/eslint.config.js` il commento del blocco `harness/panels-and-frame`, che il compito rende falso (gotcha #58).
+*Trova*:
+
+```js
+     * to it (trap 5) -- `frame/BigTab.ts` until task 6.
+```
+
+*Sostituisci con:*
+
+```js
+     * to it (trap 5). `frame/BigTab.ts` built its two commands so until task 6, and mounts the kit's pieces since.
+```
+
+⚠️ Il commento di `gui/src/locales/copy.test.ts` che nomina `` `modules.${parameters.api.id}` in `BigTab.ts` `` resta vero:
+la chiave si costruisce ancora lì, con la stessa espressione.
+
+```bash
+(cd gui && npx vitest run --project jsdom src/frame/bigtab.test.ts && npm run lint)
+```
+
+Atteso: **verde**, tre prove, e il linter verde — la faccia è un `.vue`, e le regole di `harness/panels-and-frame` la
+leggono: niente `<button>` scritto a mano, niente scritta fuori da `it.json`.
+
+- [ ] **Passo 6: tutte le prove, il *build*, il linter**
+
+```bash
+(cd gui && npm test && npm run build && npm run lint)
+```
+
+Atteso: **verde** su tutto; il conto dei file di prova più alto di quello del compito 5 di **due**, `dock.test.ts` e
+`dock.browser.test.ts`. La riga del pezzo JavaScript — `npm run build 2>&1 | grep -E 'assets/index-.*\.js '` — va nel commit
+accanto a quella del passo 1: il 2026-09-23, sulla cartella di prova, da 689,58 kB a **690,50 kB**, compressi da 209,99 a
+210,37 — `themeAbyss` esce, la faccia entra (**N-2**, la cifra per il proprietario).
+
+- [ ] **Passo 7: le due direzioni**
+
+Una violazione alla volta, poi indietro con la **copia salvata** e `cmp` (vincolo 11): `dock.css`, `BigTab.ts` e
+`jsdom-setup.ts` il compito li ha riscritti, e `readToken.ts`, `dock.test.ts` e `BigTabFace.vue` sono nati qui — `git
+checkout` non conosce i secondi e toglierebbe ai primi il lavoro del compito (A-1).
+
+| La prova | La violazione messa a mano | Atteso, misurato il 2026-09-23 |
+|---|---|---|
+| `dock.test.ts`, P-6 | in `dock.css` tolta, dal blocco `.dockview-theme-harness`, la riga `--dv-overlay-z-index: var(--z-floating);` — l'ultima del blocco, non quella del contenitore galleggiante | rosso: `expected [ '--dv-overlay-z-index' ] to deeply equal []` |
+| `dock.test.ts`, la guardia | nella prova, `".dockview-theme-abyss"` → `".dockview-theme-abyss-that-is-not"` | rosso: `expected 0 to be greater than 40` — ⛔ e la prova di P-6, senza niente da confrontare, **verde**: è la ragione della guardia |
+| `bigtab.test.ts`, l'icona | in `BigTab.ts` `icon: undefined,` al posto della riga che la sceglie | rosso: `expected null not to be null` |
+| `bigtab.test.ts`, il trascinamento | in `BigTabFace.vue` tolto `@pointerdown.stop` dal primo pulsante | rosso: `expected 2 to be 1` |
+| `bigtab.test.ts`, lo smontaggio | in `BigTab.ts` tolta la riga `this.app?.unmount();` | rosso: `expected 1 to be +0` |
+| `frame.test.ts`, il tema che segue | in `dock.ts` tolta la riga del `watch(shownTheme, …)` | rosso: `expected [] to deeply equal [ 'light', 'dark' ]` |
+| `frame.test.ts`, il `gap` in px | in `dock.ts` le due righe dopo `exec(value)` sostituite da `return Number.parseFloat(value);` | rosso: `expected [Function] to throw an error` |
+| i token sotto jsdom | in `src/jsdom-setup.ts` tolta la riga `document.head.append(sheet);` | rosso, **cinque** prove di `frame.test.ts` — le quattro che montano il dock e quella del `gap` —, tutte con `Error: the token --space-3 is not defined here: are the token sheets loaded?` |
+| `tokens.browser.test.ts`, `readToken` | in `readToken.ts` tolta la riga dell'`if` | rosso: `expected [Function] to throw an error` |
+| `dock.browser.test.ts`, le schede | in `dock.css`, nel blocco `.dockview-theme-harness .dv-groupview`, tolta `border-radius: var(--radius-card);` | rosso, nei due temi: `expected '0px' to be '20px'` |
+| `dock.browser.test.ts`, la distanza | in `dock.ts` `gap: 0 };` al posto di `` gap: pixels("--space-3") }; `` | rosso, nei due temi: `expected [ Array(10) ] to deeply equal []`, le distanze a 0 — ⚠️ e anche i raggi concentrici: con le altezze cambiate un radio di Impostazioni finisce a 13 px dall'angolo della sua scheda, `radio in dv-groupview, bottom-left: radius 12.0, outer 20.0, distance 13.0/13.0` |
+| `dock.browser.test.ts`, i raggi | in `dock.css`, prima del commento *«The mark of the visible tab»*, `.dockview-theme-harness .dv-tabs-and-actions-container { border-radius: var(--radius-control); }` | rosso, nei due temi: `dv-tabs-and-actions-container in dv-groupview, top-left: radius 8.0, outer 20.0, distance 1.0/1.0` |
+| `dock.browser.test.ts`, il livello | in `dock.css` tolta, dal blocco `.dockview-theme-harness .dv-resize-container`, la riga `--dv-overlay-z-index: var(--z-floating);` | rosso, nei due temi: `expected 999 to be 50` — R3-17 |
+
+Alla fine, dalla radice del repository, `git status --porcelain | diff <scratchpad>/prima.txt -` rende soltanto i file del
+compito: nessun file nato dai rossi del browser (R2-3).
+
+- [ ] **Passo 8: guardarlo, nei due temi**
+
+`(cd gui && npm run dev)`, la pagina nel browser a 1440 × 900, e nella console `harnessFake.deliverAll()`. Poi, per ciascun
+tema — `document.documentElement.dataset.theme = "light"` e `"dark"` —, il frammento del passo 17 del compito 1: il contrasto
+di ogni scritta del dock sul primo fondo pieno dei suoi antenati.
+
+```js
+(() => {
+  const rgb = (c) => c.match(/[\d.]+/g).map(Number);
+  const lum = ([r, g, b]) => [r, g, b].map((v) => ((v /= 255) <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)).reduce((s, v, i) => s + v * [0.2126, 0.7152, 0.0722][i], 0);
+  const ratio = (a, b) => (Math.max(lum(a), lum(b)) + 0.05) / (Math.min(lum(a), lum(b)) + 0.05);
+  const back = (el) => { for (let e = el; e; e = e.parentElement) { const c = rgb(getComputedStyle(e).backgroundColor); if (c.length === 3 || c[3] === 1) return c; } return [255, 255, 255]; };
+  const own = (el) => [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim() !== "");
+  const seen = [...document.querySelectorAll(".dock *")].filter((el) => own(el) && el.getBoundingClientRect().width > 0);
+  const worst = seen.map((el) => [Math.round(ratio(rgb(getComputedStyle(el).color), back(el)) * 100) / 100, el.textContent.trim().slice(0, 20)]).sort((a, b) => a[0] - b[0]);
+  return { theme: document.documentElement.dataset.theme, seen: seen.length, worst: worst.slice(0, 3) };
+})()
+```
+
+Atteso: `seen` sopra zero e il primo di `worst` **sopra 4,5** — il 2026-09-23, sulla cartella di prova, 6,22 nel chiaro e 6,41
+nello scuro, su 33 scritte, le etichette delle linguette comprese. ⚠️ Il **ponte** del compito 1 non c'è più: a tenere
+leggibili pannelli e linguette è ora il tema nostro, e i due comandi della presa grande sono icone `currentColor` di un
+`BaseButton` discreto — `--color-text-muted` sulla superficie, una coppia che `contrast.test.ts` già giudica (A-2).
+
+Poi il livello, sulla SPA vera: «Stacca la tessera» su Stato, poi «+ moduli»; nella console
+
+```js
+(() => { const f = document.querySelector(".dv-resize-container").getBoundingClientRect(); return document.elementFromPoint(f.left + f.width / 2, f.top + f.height / 2)?.className; })()
+```
+
+Atteso: `base-dialog-veil` — il velo del cassetto **sopra** il gruppo galleggiante. Poi si **guarda**, nei due temi: le
+schede, le linguette col segno, i divisori che compaiono al passaggio, la zona d'arrivo trascinando una linguetta. ⛔ Il
+bersaglio è la Home della tavola dello stile, e l'aspetto lo **giudica il proprietario** alla prima prova (controllo 15): ciò
+che non gli piace è una voce d'errata col suo *«perché»*, non un ritocco di chi esegue.
+
+- [ ] **Passo 9: il cancello, il commit, la posizione**
+
+La riga **6** della tabella della posizione — **Stato** `✅ <data>`, e nella riga **5** la colonna **Commit** con l'hash del
+compito 5 (R1-16) —; `bash scripts/gate.sh` da solo, `bash scripts/check-docs.sh`, il commit — `design-system(compito 6): il
+dock vestito …`, con le due righe del pezzo JavaScript — coi fine-riga rimisurati, e `git push`.
 
 ---
 ## Come si riprende — il registro applicato, 2026-09-23

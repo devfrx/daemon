@@ -15,6 +15,11 @@ saturo»* — ci ha scritto la ripresa. La riscrittura come disegno e lo spostam
 quando il **disegno** è scritto, com'è stato per la stella polare; il testo com'era alla nascita lo rende
 `git show 2a674cc:docs/superpowers/specs/2026-09-22-design-system-design.md`.
 
+✅ **RICHIAMO DEL 2026-09-23, seconda sessione — le domande sono FINITE.** La seconda sessione ha ripreso dalla domanda 5 e ha
+portato le risposte 6–13 — i caratteri, le icone e il loro componente unico, la pagina «kit», la Panoramica — aggiornando e
+committando questo file a ogni risposta; l'ha chiusa il proprietario, di nuovo *«troppo contesto saturo»*. Si riprende
+**ESATTAMENTE** dagli approcci, dopo la stella polare letta per intero: *«Prossimo passo, eseguibile»*.
+
 ⚠️ **Non è una spec e non è un disegno.** Il prossimo passo sta nella §6 del [compendio](../../COMPENDIO.md), in un posto solo.
 
 ## Stato in una riga
@@ -25,7 +30,7 @@ perimetro, l'idea di stile, la direzione, lo stile approvato coi raggi concentri
 programma, la stella polare letta a pezzi, la coppia **Geist + Barlow**, un set di icone aperto, **Lucide**, dietro un
 **componente unico** con la sua mappa, la **pagina «kit»** nell'app, la **Panoramica** per cambiare vista. ✅ **Le domande
 sono finite.** ⛔ **Il prossimo passo sono gli approcci e il disegno a sezioni**, dopo la lettura **intera** della stella
-polare — la risposta 7.
+polare — la risposta 7. Si riprende **ESATTAMENTE** da lì: *«Prossimo passo, eseguibile»*, punto 3.
 
 ## ⛔ Da sapere subito
 
@@ -55,10 +60,11 @@ un'etichetta di fine-riga scritta in un documento è la colonna `w/…` di **chi
 | | Comando | Atteso |
 |---|---|---|
 | ramo | `git fetch --all --prune`, poi `git status -sb` | `## main...origin/main`, niente sotto |
-| i commit della prima sessione del brainstorming | `git log --oneline 2a674cc..HEAD` | le risposte — `c88d831`, `7c83cf9`, `947dcec`, `8c0bbe6`, `35708f5` — e questa chiusura |
-| cancello | `bash scripts/gate.sh` | `GATE GREEN` all'apertura del 2026-09-23 e prima del commit di chiusura — si rilancia, non si cita |
+| i commit della prima sessione del brainstorming | `git log --oneline 2a674cc..fc3f2dc` | le risposte — `c88d831`, `7c83cf9`, `947dcec`, `8c0bbe6`, `35708f5` — e la sua chiusura, `fc3f2dc` |
+| i commit della seconda sessione | `git log --oneline fc3f2dc..HEAD` | le risposte — `38d848e`, `35b8c87`, `e1bd1b5`, `e00e5a7`, `e286164`, `8978edd` — e questa chiusura |
+| cancello | `bash scripts/gate.sh` | `GATE GREEN` all'apertura e prima del commit di chiusura di **tutte e due** le sessioni del 2026-09-23 — si rilancia, non si cita |
 | documenti | `bash scripts/check-docs.sh` | `OK` |
-| la CI | i due comandi del punto 3 della quarantunesima chiusura del piano della parte 2 | due job per corsa, entrambi `success`: così per `c88d831`, `7c83cf9` e `947dcec`; `8c0bbe6`, `35708f5` e questa chiusura erano **in corsa** alla chiusura, e si leggono **per prime** |
+| la CI | i due comandi del punto 3 della quarantunesima chiusura del piano della parte 2 | due job per corsa, entrambi `success`: così per ogni commit del 2026-09-23 fino a `e286164`, letti dall'API job per job; `8978edd` e questa chiusura erano **in corsa** alla chiusura, e si leggono **per prime** |
 | margine del compendio | `wc -c docs/COMPENDIO.md` contro `grep -n '^ceiling=' scripts/check-docs.sh` | positivo |
 
 ## Che cosa chiede il proprietario, e che cosa vuol dire «da Agentic OS»

@@ -4419,51 +4419,42 @@ l'hash del compito 4 (R1-16) —; `bash scripts/gate.sh` da solo,
 `git push`.
 
 ---
-## Come si riprende — l'applicazione del registro, a metà, 2026-09-23
+## Come si riprende — il registro applicato, 2026-09-23
 
-⚠️ **Il piano è A METÀ, e non si esegue.** Scritti: la testa e i **compiti 1–5**, rivisti; ⛔ **le correzioni della
-revisione non sono ancora scritte** — in questa sessione nessun file del repository è cambiato, salvo questa consegna,
-l'archivio e il registro. Da scrivere dopo: i compiti **6–9** e la Definizione di «fatto». La consegna precedente sta parola per parola in
+⚠️ **Il piano è A METÀ, e non si esegue.** Scritti: la testa e i **compiti 1–5**, rivisti e **corretti** — le 73 correzioni
+del [registro](2026-09-23-design-system-revisione/ledger.md) sono nel piano, nel disegno e nella tavola dal commit
+`7c42748`, e il registro ha ogni riga a ✅. Da scrivere: i compiti **6–9** e la Definizione di «fatto». La consegna
+precedente sta parola per parola in
 [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
-
-⛔ **DA SAPERE SUBITO: il lavoro di questa sessione vive su UNA macchina, fuori dal repository** — quella dell'account
-`Jays`, col clone in `E:\ALL\DEV\MY_REPOS\daemon`. Le cartelle di prova dei revisori stanno invece sull'altra, dell'account
-`zagor`, e qui non servono più.
-
-| | Dove, e che cosa |
-|---|---|
-| **la cartella di prova** | `C:\Users\Jays\AppData\Local\Temp\pds`, col suo `git`: la base a `82e64a2`, i compiti 1–5 applicati dal testo del piano, un commit per compito, poi un commit per ciascuna correzione provata. Sta in `%TEMP%` e non nello scratchpad perché qui i percorsi lunghi di Windows sono spenti (`LongPathsEnabled = 0`), e un revisore è già caduto su un nome oltre i 260 caratteri |
-| **lo script delle correzioni** | `C:\Users\Jays\AppData\Local\Temp\pds\tools\ledger\apply_ledger.py`, coi pezzi `ledger_part1.py`…`ledger_part4.py`: le correzioni del piano, del disegno e della tavola, ad ancore uniche **tutte** controllate prima di scrivere. `python apply_ledger.py <radice> --dry` le conta senza scrivere; senza `--dry` le scrive. Le sostituzioni a blocco intero prendono il testo dai file della cartella di prova, che sono quelli provati |
-| **Google Chrome** | installato su questa macchina dal proprietario il 2026-09-23, alla chiusura: prima non c'era |
-
-Se quei file non ci sono più — un'altra macchina, `%TEMP%` ripulito — il lavoro si rifà dai rapporti e dal registro: le
-decisioni prese applicando e i rilievi nuovi stanno nella sua sezione *«L'applicazione, a metà»*.
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
-| **cancello** | `GATE GREEN` all'apertura e alla chiusura: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
-| **la CI** | le corse di `5b90eae` e `82e64a2` sono verdi su tutti e due i sistemi, e il rosso `windows-latest` di `833e6b2` non è tornato: la sua causa resta **ignota** — il log rende 403 — e si guarda se torna; quella del commit di chiusura si legge coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **cancello** | `GATE GREEN` all'apertura e prima di `7c42748`: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
+| **la CI** | la corsa di `9ca93c8` è verde su tutti e due i sistemi; quelle di `7c42748` e del commit di chiusura erano **in corso** alla chiusura, e la sessione dopo le legge per prime, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»*. Il rosso `windows-latest` di `833e6b2`, di causa **ignota** — il log rende 403 —, non è tornato |
 | **codice di prodotto** | non toccato |
+| **Google Chrome** | 154, sulla macchina dell'account `Jays`; le prove nel browser non scaricano niente (decisione 22 del disegno) |
 
-**Il prossimo passo, in ordine** — la stessa fase, nella sessione dopo, su questa macchina:
+⚠️ **Una cartella di prova, su una macchina sola.** `C:\Users\Jays\AppData\Local\Temp\pds`, col suo `git`, `HEAD` a
+`4637ac5`: i compiti 1–5 applicati dal testo del piano, con le correzioni di codice e di prova — non quelle di sola prosa.
+È il banco dove provare il codice dei compiti 6–9 mentre si scrivono; **non è una fonte**, e si rifà dal piano. Sta in
+`%TEMP%` e non nello scratchpad perché su quella macchina i percorsi lunghi di Windows sono spenti. Le cartelle dei
+revisori, sull'altra macchina, si cancellano: *«L'applicazione»* del registro.
 
-1. **Le prove nel browser**, nella cartella di prova, ora che Chrome c'è: `(cd /c/Users/Jays/AppData/Local/Temp/pds/gui &&
-   npx vitest run --project browser)`, poi le direzioni rosse. Le aspettano R2-2, R2-3 — se `gui/.vitest-attachments/`
-   nasce ancora con `screenshotFailures: false` —, R2-4, R2-6 (la parte di tipi è provata), R2-7, le righe del passo 7 del
-   compito 4 (R3-1…R3-4 e R3-8), R3-7 e R3-24. ⛔ Dove una prova dice altro, si corregge il file della cartella di prova o
-   il pezzo dello script **prima** di scrivere, e la divergenza va nel registro.
-2. **Lo script**: `python apply_ledger.py E:/ALL/DEV/MY_REPOS/daemon --dry`, poi senza `--dry`; poi il `git diff`
-   riletto, e i fine-riga dei tre file rimisurati (sono LF: `tr -cd '\r' < <file> | wc -c` → 0).
-3. **Il registro**: ogni ⬜ a ✅, e la sezione *«L'applicazione, a metà»* chiusa col commit che scrive.
-4. `bash scripts/check-docs.sh`, il cancello da solo, commit e push.
+**Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`): **scrivere i compiti 6–9 e la Definizione di
+«fatto»**, con le forme qui sotto — ⚠️ già corrette dalla revisione (R3-17…R3-23 del registro), e da non ridecidere senza
+una misura nuova. Chi li scrive legge questo file per intero e il disegno, **prima** di ogni compito rilegge le
+*Interfaces* dei compiti 1–5 corretti, e porta nei compiti nuovi le forme che la correzione ha dato a quelli:
 
-Poi, ciascuno nella sua sessione (`CLAUDE.md`, una fase per sessione): i compiti **6–9** e la Definizione di «fatto», con
-le forme qui sotto — ⚠️ già corrette dalla revisione (R3-17…R3-23 del registro), e da non ridecidere senza una misura
-nuova; il **pre-controllo** delle quattro domande di `CLAUDE.md`, compito per compito; poi l'esecuzione. Chi scrive i
-compiti 6–9 legge questo file per intero e il disegno, **prima** di ogni compito rilegge le *Interfaces* dei compiti 1–5
-**corretti**, e porta nei compiti nuovi due forme che la correzione dà ai compiti 1–5: la colonna **Commit** di R1-16 —
-ogni compito scrive l'hash del precedente — e il ritorno delle violazioni del **vincolo 11**, con la copia salvata.
+1. la colonna **Commit** di R1-16 — ogni compito scrive l'hash del precedente;
+2. il ritorno delle violazioni del **vincolo 11** — la copia salvata, `cmp`, e `git status --porcelain` confrontato con
+   quello di prima;
+3. i comandi in una sottoshell, `(cd gui && …)` (R1-12);
+4. per **ogni** prova nuova, la violazione che la fa rossa e il messaggio **misurato** del rosso: applicando il registro, su
+   tredici violazioni lanciate nel browser una prova nuova non aveva la sua (A-4) e una ne faceva cadere due, non una (A-5).
+
+Poi, ciascuno nella sua sessione: il **pre-controllo** delle quattro domande di `CLAUDE.md`, compito per compito; poi
+l'esecuzione.
 
 | Compito | Le forme già decise, corrette dalla revisione |
 |---|---|

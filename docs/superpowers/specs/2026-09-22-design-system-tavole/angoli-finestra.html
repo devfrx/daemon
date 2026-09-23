@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<!--
+THE ICONS IN THIS FILE are drawings of Lucide 1.47.0 (lucide-static), copied inline. Their licence follows, verbatim.
+
+ISC License
+
+Copyright (c) 2026 Lucide Icons and Contributors
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+---
+
+The following Lucide icons are derived from the Feather project:
+
+airplay, alert-circle, alert-octagon, alert-triangle, aperture, arrow-down-circle, arrow-down-left, arrow-down-right, arrow-down, arrow-left-circle, arrow-left, arrow-right-circle, arrow-right, arrow-up-circle, arrow-up-left, arrow-up-right, arrow-up, at-sign, calendar, cast, check, chevron-down, chevron-left, chevron-right, chevron-up, chevrons-down, chevrons-left, chevrons-right, chevrons-up, circle, clipboard, clock, code, columns, command, compass, corner-down-left, corner-down-right, corner-left-down, corner-left-up, corner-right-down, corner-right-up, corner-up-left, corner-up-right, crosshair, database, divide-circle, divide-square, dollar-sign, download, external-link, feather, frown, hash, headphones, help-circle, info, italic, key, layout, life-buoy, link-2, link, loader, lock, log-in, log-out, maximize, meh, minimize, minimize-2, minus-circle, minus-square, minus, monitor, moon, more-horizontal, more-vertical, move, music, navigation-2, navigation, octagon, pause-circle, percent, plus-circle, plus-square, plus, power, radio, rss, search, server, share, shopping-bag, sidebar, smartphone, smile, square, table-2, tablet, target, terminal, trash-2, trash, triangle, tv, type, upload, x-circle, x-octagon, x-square, x, zoom-in, zoom-out
+
+The MIT License (MIT) (for the icons listed above)
+
+Copyright (c) 2013-present Cole Bemis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<html lang="it" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design system: la striscia e gli angoli della finestra</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/geist@5.3.0/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/barlow@5.3.0/300.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/barlow@5.3.0/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/barlow@5.3.0/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/barlow@5.3.0/600.css">
+<style>
+/* ===== proposta/base.css ===== */
+/* EVERYTHING THAT IS NOT A COLOUR -- design system, section (a), 2026-09-23. One set for both themes.
+   Sizes in rem (WCAG 1.4.4: text scales with the root), hairlines in px. Sources in the design document. */
+:root {
+  --font-family-text: "Geist Variable", system-ui, sans-serif;
+  --font-family-tool: "Barlow", "Bahnschrift", system-ui, sans-serif;
+  --font-family-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* the type roles, as `font` shorthands: weight size/line family. Lines on the 4 px grid. */
+  --font-label: var(--font-weight-semibold) 0.6875rem/1rem var(--font-family-tool);     /* 11/16, UPPERCASE */
+  --tracking-label: 0.14em;
+  --font-caption: var(--font-weight-regular) 0.75rem/1rem var(--font-family-text);      /* 12/16 */
+  --font-body: var(--font-weight-regular) 0.875rem/1.25rem var(--font-family-text);     /* 14/20 */
+  --font-body-strong: var(--font-weight-semibold) 0.875rem/1.25rem var(--font-family-text);
+  --font-title: var(--font-weight-semibold) 1rem/1.5rem var(--font-family-text);        /* 16/24 */
+  --font-heading: var(--font-weight-semibold) 1.25rem/1.75rem var(--font-family-text);  /* 20/28 */
+  --font-numeric: var(--font-weight-medium) 0.875rem/1.25rem var(--font-family-tool);   /* 14/20, tabular */
+  --font-display: var(--font-weight-light) 2rem/2.5rem var(--font-family-tool);         /* 32/40, tabular */
+  --font-mono: var(--font-weight-regular) 0.8125rem/1.25rem var(--font-family-mono);    /* 13/20 */
+
+  /* space: the 4 px grid */
+  --space-0-5: 2px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* radii: OUTER = INNER + DISTANCE, by construction (answer 4) */
+  --radius-inline: 6px;
+  --radius-control: 8px;
+  --radius-card: calc(var(--radius-control) + var(--space-3));   /* 20 */
+  --radius-frame: calc(var(--radius-card) + var(--space-3));     /* 32 */
+  --radius-full: 9999px;
+
+  /* sizes: nothing clickable under 24 x 24 (WCAG 2.5.8) */
+  --size-target-min: 24px;
+  --size-control-sm: 24px;
+  --size-control-md: 32px;
+  --size-control-lg: 40px;   /* the big grab of SP-8, move 5 */
+  --size-icon-sm: 14px;
+  --size-icon-md: 16px;
+  --size-icon-lg: 20px;
+  --icon-stroke: 2;
+  --border-width: 1px;
+  --focus-width: 2px;        /* WCAG 2.4.13: a 2 px perimeter */
+  --focus-offset: 2px;
+
+  /* motion: Carbon's productive durations and curves */
+  --duration-fast: 110ms;
+  --duration-moderate: 240ms;
+  --duration-slow: 400ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0.38, 0.9);
+  --ease-enter: cubic-bezier(0, 0, 0.38, 0.9);
+  --ease-exit: cubic-bezier(0.2, 0, 1, 0.9);
+
+  /* layers */
+  --z-popover: 100;
+  --z-overlay: 200;
+  --z-toast: 300;
+  --z-tooltip: 400;
+}
+
+/* WCAG 2.3.3: motion that an interaction triggers can be turned off -- Windows' own switch. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-moderate: 0ms;
+    --duration-slow: 0ms;
+  }
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: var(--font-body);
+}
+
+/* WCAG 2.4.7 and 2.4.13: an OUTLINE and not a box-shadow, because Windows' high contrast keeps outlines. */
+:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
+
+::selection {
+  background: var(--color-bg-selection);
+  color: var(--color-text);
+}
+
+/* ===== proposta/themes.css ===== */
+/* THE COLOURS OF THE SPA, in two layers -- design system, section (a), 2026-09-23.
+   Layer 1, `--ref-*`: five TONAL PALETTES, each stop named by its tone (CIE L*, Material's HCT tone).
+   ⛔ No component reads a `--ref-*`: components read ROLES, so a theme can never be bypassed.
+   Layer 2, `--color-*` and `--shadow-*`: the ROLES, the same names in both themes, property first
+   (bg / text / border), then role, then state. Every text role reads 4.5:1 on every background role
+   and every non-text role 3:1 -- the pairs are listed in the contrast test, not here. */
+:root {
+  --ref-neutral-5: #151112; --ref-neutral-8: #1B1718; --ref-neutral-12: #241F20; --ref-neutral-15: #2A2425; --ref-neutral-17: #2F2829; --ref-neutral-19: #342D2D; --ref-neutral-39: #655B57; --ref-neutral-44: #6F6660; --ref-neutral-48: #7A706A; --ref-neutral-52: #847A73; --ref-neutral-64: #A39A8F; --ref-neutral-85: #DCD2C4; --ref-neutral-87: #E2D9CC; --ref-neutral-89: #E6DFD2; --ref-neutral-91: #ECE6DA; --ref-neutral-94: #F3EEE6; --ref-neutral-96: #F7F2EA; --ref-neutral-98: #FBF8F3;
+  --ref-bordeaux-12: #2F1B1D; --ref-bordeaux-14: #371C1F; --ref-bordeaux-24: #711627; --ref-bordeaux-28: #7A1F2E; --ref-bordeaux-31: #862837; --ref-bordeaux-50: #BF5567; --ref-bordeaux-72: #E59EA1; --ref-bordeaux-81: #DFC2C0; --ref-bordeaux-86: #E8D4D0; --ref-bordeaux-91: #EFE1DD;
+  --ref-green-17: #292A26; --ref-green-28: #264B22; --ref-green-38: #3D6339; --ref-green-41: #43693F; --ref-green-69: #8DB38A; --ref-green-80: #AAD0A6; --ref-green-92: #E7E9E0;
+  --ref-amber-17: #312820; --ref-amber-28: #5D3B01; --ref-amber-38: #7C510A; --ref-amber-42: #8A5A0B; --ref-amber-71: #D9A441; --ref-amber-80: #F4BE5D; --ref-amber-92: #F0E7DD;
+  --ref-red-16: #332321; --ref-red-28: #811B07; --ref-red-38: #A82A13; --ref-red-42: #B4361F; --ref-red-60: #E26D5A; --ref-red-64: #EF7965; --ref-red-80: #FBB6A8; --ref-red-92: #F6E5DD;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: var(--ref-neutral-5);
+  --color-bg-surface: var(--ref-neutral-8);
+  --color-bg-raised: var(--ref-neutral-12);
+  --color-bg-fill: var(--ref-neutral-12);
+  --color-bg-fill-hover: var(--ref-neutral-15);
+  --color-bg-fill-active: var(--ref-neutral-19);
+  --color-bg-accent: var(--ref-bordeaux-28);
+  --color-bg-accent-hover: var(--ref-bordeaux-31);
+  --color-bg-accent-active: var(--ref-bordeaux-24);
+  --color-bg-accent-subtle: var(--ref-bordeaux-12);
+  --color-bg-accent-subtle-hover: var(--ref-bordeaux-14);
+  --color-bg-selection: var(--ref-bordeaux-28);
+  --color-text: var(--ref-neutral-91);
+  --color-text-muted: var(--ref-neutral-64);
+  --color-text-disabled: var(--ref-neutral-44);
+  --color-text-accent: var(--ref-bordeaux-72);
+  --color-text-on-accent: var(--ref-neutral-96);
+  --color-border: var(--ref-neutral-17);
+  --color-border-strong: var(--ref-neutral-48);
+  --color-border-accent: var(--ref-bordeaux-50);
+  --color-focus: var(--ref-bordeaux-50);
+  --color-mark: var(--ref-bordeaux-50);
+  --color-bg-ok: var(--ref-green-69);
+  --color-text-ok: var(--ref-green-69);
+  --color-text-on-ok: var(--ref-neutral-5);
+  --color-bg-ok-subtle: var(--ref-green-17);
+  --color-border-ok: var(--ref-green-28);
+  --color-bg-warn: var(--ref-amber-71);
+  --color-text-warn: var(--ref-amber-71);
+  --color-text-on-warn: var(--ref-neutral-5);
+  --color-bg-warn-subtle: var(--ref-amber-17);
+  --color-border-warn: var(--ref-amber-28);
+  --color-bg-stop: var(--ref-red-60);
+  --color-text-stop: var(--ref-red-64);
+  --color-text-on-stop: var(--ref-neutral-5);
+  --color-bg-stop-subtle: var(--ref-red-16);
+  --color-border-stop: var(--ref-red-28);
+  --color-veil: rgb(10 7 8 / 0.62);
+  --color-border-card: var(--color-border);
+  --shadow-card: none;
+  --shadow-overlay: 0 12px 32px rgb(0 0 0 / 0.5);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --color-bg: var(--ref-neutral-94);
+  --color-bg-surface: var(--ref-neutral-98);
+  --color-bg-raised: var(--ref-neutral-98);
+  --color-bg-fill: var(--ref-neutral-91);
+  --color-bg-fill-hover: var(--ref-neutral-89);
+  --color-bg-fill-active: var(--ref-neutral-87);
+  --color-bg-accent: var(--ref-bordeaux-28);
+  --color-bg-accent-hover: var(--ref-bordeaux-31);
+  --color-bg-accent-active: var(--ref-bordeaux-24);
+  --color-bg-accent-subtle: var(--ref-bordeaux-91);
+  --color-bg-accent-subtle-hover: var(--ref-bordeaux-86);
+  --color-bg-selection: var(--ref-bordeaux-81);
+  --color-text: var(--ref-neutral-8);
+  --color-text-muted: var(--ref-neutral-39);
+  --color-text-disabled: var(--ref-neutral-64);
+  --color-text-accent: var(--ref-bordeaux-28);
+  --color-text-on-accent: var(--ref-neutral-96);
+  --color-border: var(--ref-neutral-85);
+  --color-border-strong: var(--ref-neutral-52);
+  --color-border-accent: var(--ref-bordeaux-28);
+  --color-focus: var(--ref-bordeaux-28);
+  --color-mark: var(--ref-bordeaux-28);
+  --color-bg-ok: var(--ref-green-41);
+  --color-text-ok: var(--ref-green-38);
+  --color-text-on-ok: var(--ref-neutral-98);
+  --color-bg-ok-subtle: var(--ref-green-92);
+  --color-border-ok: var(--ref-green-80);
+  --color-bg-warn: var(--ref-amber-42);
+  --color-text-warn: var(--ref-amber-38);
+  --color-text-on-warn: var(--ref-neutral-98);
+  --color-bg-warn-subtle: var(--ref-amber-92);
+  --color-border-warn: var(--ref-amber-80);
+  --color-bg-stop: var(--ref-red-42);
+  --color-text-stop: var(--ref-red-38);
+  --color-text-on-stop: var(--ref-neutral-98);
+  --color-bg-stop-subtle: var(--ref-red-92);
+  --color-border-stop: var(--ref-red-80);
+  --color-veil: rgb(29 23 24 / 0.32);
+  --color-border-card: transparent;
+  --shadow-card: 0 1px 2px rgb(29 23 24 / 0.06), 0 6px 16px rgb(29 23 24 / 0.05);
+  --shadow-overlay: 0 12px 32px rgb(29 23 24 / 0.16);
+}
+
+/* ===== the board: only tokens, except the page background and the drawn Windows glyphs ===== */
+*{box-sizing:border-box}
+html{background:#0d0b0b}
+body{margin:0;padding:var(--space-8) var(--space-6);font:var(--font-body);color:#efe9df}
+.board{max-width:1392px;margin:0 auto;display:flex;flex-direction:column;gap:var(--space-6)}
+.intro h1{font:var(--font-heading);margin:0 0 var(--space-2)}
+.intro p{margin:0;max-width:880px;color:#cfc6bb}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(648px,1fr));gap:var(--space-6)}
+.sheet{background:var(--color-bg-fill);color:var(--color-text);border-radius:calc(var(--radius-card) + var(--space-6));padding:var(--space-6)}
+.sheet h2{font:var(--font-title);margin:0 0 var(--space-4)}
+.figs{display:flex;flex-direction:column;gap:var(--space-8)}
+.fig{margin:0;display:flex;flex-direction:column;gap:var(--space-3)}
+.fig figcaption{display:flex;flex-direction:column;gap:var(--space-1)}
+.note{font:var(--font-caption);color:var(--color-text-muted);max-width:600px}
+.note b{color:var(--color-text);font-weight:var(--font-weight-semibold)}
+.lab{display:inline-flex;align-items:center;gap:var(--space-2);font:var(--font-label);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--color-text-muted)}
+.lab svg.i{width:var(--size-icon-sm);height:var(--size-icon-sm);color:var(--color-mark);flex:none}
+
+/* the window: its corner is Windows', 8 px (Microsoft Learn, Geometry in Windows 11) */
+.win{position:relative;width:600px;max-width:100%;height:340px;border-radius:8px;overflow:hidden;background:var(--color-bg);
+  box-shadow:0 0 0 var(--border-width) var(--color-border-strong),var(--shadow-overlay)}
+.bar{display:flex;align-items:center;gap:var(--space-3);height:var(--space-12);padding-left:var(--space-4)}
+.brand{font:var(--font-label);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--color-text);white-space:nowrap}
+.viewbtn{display:inline-flex;align-items:center;gap:var(--space-2);height:var(--size-control-md);padding:0 var(--space-3);border-radius:var(--radius-control);
+  background:var(--color-bg-fill);color:var(--color-text);font:var(--font-body-strong);white-space:nowrap}
+.viewbtn svg.i{width:var(--size-icon-md);height:var(--size-icon-md);color:var(--color-mark);flex:none}
+.search{flex:1;min-width:0;display:flex;align-items:center;gap:var(--space-2);height:var(--size-control-md);padding:0 var(--space-3);
+  border-radius:var(--radius-control);border:var(--border-width) solid var(--color-border);color:var(--color-text-disabled)}
+.search svg.i{width:var(--size-icon-sm);height:var(--size-icon-sm);flex:none}
+.ph{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip{display:inline-flex;align-items:center;gap:var(--space-2);font:var(--font-label);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--color-text-muted);white-space:nowrap}
+.dot{width:var(--space-2);height:var(--space-2);border-radius:var(--radius-full);background:var(--color-text-ok);flex:none}
+.caps{display:flex;align-self:stretch}
+.cap{width:46px;display:grid;place-items:center;color:var(--color-text-muted)}
+.cap svg{width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:1}
+
+.dock{position:absolute;left:var(--space-3);right:var(--space-3);top:calc(var(--space-12) + var(--space-3));display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:var(--space-3)}
+.v-was .dock{bottom:calc(var(--space-3) + var(--size-control-lg) + var(--space-3))}
+.v-a .dock{bottom:calc(var(--space-6) + var(--size-control-lg) + var(--space-3))}
+.v-b .dock{bottom:calc(var(--size-control-lg) + var(--space-3))}
+.card{position:relative;border-radius:var(--radius-card);background:var(--color-bg-surface);border:var(--border-width) solid var(--color-border-card);
+  box-shadow:var(--shadow-card);padding:var(--space-3) var(--space-4)}
+.ring{position:absolute;left:50%;top:55%;width:72px;height:72px;margin:-36px 0 0 -36px;border-radius:var(--radius-full);
+  border:2px solid var(--color-border-strong);box-shadow:inset 0 0 0 10px var(--color-bg-accent-subtle)}
+
+.strip{position:absolute;display:flex;align-items:center;gap:var(--space-4);height:var(--size-control-lg)}
+.strip.pill{left:var(--space-3);right:var(--space-3);border-radius:var(--radius-full);background:var(--color-bg-surface);
+  border:var(--border-width) solid var(--color-border-card);box-shadow:var(--shadow-card);
+  padding:0 calc(var(--space-1) - var(--border-width)) 0 var(--space-4)}
+.v-was .strip{bottom:var(--space-3)}
+.v-a .strip{bottom:var(--space-6)}
+.strip.flat{left:0;right:0;bottom:0;background:var(--color-bg-surface);border-top:var(--border-width) solid var(--color-border);padding:0 var(--space-6)}
+.it{display:inline-flex;align-items:center;gap:var(--space-2);font:var(--font-label);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--color-text-muted);white-space:nowrap}
+.it b{color:var(--color-text);font-weight:var(--font-weight-semibold)}
+.it svg.i{width:var(--size-icon-sm);height:var(--size-icon-sm);color:var(--color-mark);flex:none}
+.sp{margin-left:auto;display:inline-flex;align-items:center;gap:var(--space-2);height:var(--size-control-md);padding:0 var(--space-4);
+  border-radius:var(--radius-full);background:var(--color-bg-fill);color:var(--color-text);font:var(--font-label);letter-spacing:var(--tracking-label);text-transform:uppercase;white-space:nowrap}
+.sp svg.i{width:var(--size-icon-sm);height:var(--size-icon-sm);flex:none}
+
+</style>
+</head>
+<body>
+<!-- The board of the second question of section (d) of the design-system brainstorming, 2026-09-23 (fourth
+     session): where the strip goes, now that the window's corners are Windows' (8 px, 0 when maximized) and not
+     ours. The owner chose A, answer 20. Tokens copied from token.html; icons from panoramica.html, with Lucide's
+     licence above. PROBED BEFORE IT WAS SHOWN, in both directions: sonda-raggi.js flags ONLY the "Com'era" strip,
+     its four bottom corners (r20/R8 at 12 and 12), and passes A and B, with its own roots and with `.sheet`;
+     sonda-icone.js 21 of 21 centred per theme; nothing clipped, nothing sticking out, at 1168, 1440 and 800 px.
+     The generator lived in the fourth session's scratchpad, gen_striscia.py; the diary is
+     docs/superpowers/specs/2026-09-22-design-system-design.md. -->
+<div class="board">
+  <div class="intro">
+    <h1>La striscia e gli angoli della finestra</h1>
+    <p>Nella finestra vera gli angoli li disegna Windows: 8 px, e dritti quando è ingrandita. Qui la stessa finestra, a grandezza vera, con la striscia in tre modi. Guarda gli angoli in basso. Scelta: <b>A</b>, alla risposta 20 del brainstorming.</p>
+  </div>
+  <div class="cols ds">
+  <section class="sheet fp" data-theme="dark" data-name="scuro" data-text="Geist Variable" data-tool="Barlow">
+    <h2>Tema scuro</h2>
+    <div class="figs">
+    <figure class="fig">
+      <div class="m win v-was">
+        <header class="bar">
+          <span class="brand">Harness</span>
+          <span class="viewbtn"><svg class="i" data-icon="layers" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" /> <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" /> <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg>Home</span>
+          <span class="search"><svg class="i" data-icon="search" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg><span class="ph">Cerca</span></span>
+          <span class="chip"><span class="dot"></span>Core collegato</span>
+          <div class="caps" aria-hidden="true"><span class="cap"><svg viewBox="0 0 10 10"><path d="M1 5h8"/></svg></span><span class="cap"><svg viewBox="0 0 10 10"><rect x="1.5" y="1.5" width="7" height="7"/></svg></span><span class="cap"><svg viewBox="0 0 10 10"><path d="M1.5 1.5l7 7M8.5 1.5l-7 7"/></svg></span></div>
+        </header>
+        <div class="dock">
+          <div class="card"><span class="lab"><svg class="i" data-icon="list" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 5h.01" /> <path d="M3 12h.01" /> <path d="M3 19h.01" /> <path d="M8 5h13" /> <path d="M8 12h13" /> <path d="M8 19h13" /> </svg>Attività</span></div>
+          <div class="card mid"><span class="lab"><svg class="i" data-icon="layers" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" /> <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" /> <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg>Home</span><span class="ring"></span></div>
+          <div class="card"><span class="lab"><svg class="i" data-icon="hand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2" /> <path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2" /> <path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8" /> <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" /> </svg>Permessi</span></div>
+        </div>
+        <div class="strip pill">
+          <span class="it"><svg class="i" data-icon="mic" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 19v3" /> <path d="M19 10v2a7 7 0 0 1-14 0v-2" /> <rect x="9" y="2" width="6" height="13" rx="3" /> </svg>In ascolto</span>
+          <span class="it">Costo <b>0,42 €</b></span>
+          <span class="sp"><svg class="i" data-icon="layout-grid" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="7" height="7" x="3" y="3" rx="1" /> <rect width="7" height="7" x="14" y="3" rx="1" /> <rect width="7" height="7" x="14" y="14" rx="1" /> <rect width="7" height="7" x="3" y="14" rx="1" /> </svg>Moduli</span>
+        </div>
+      </div>
+      <figcaption><span class="lab">Com'era nella tavola</span><span class="note">La pillola a 12 px dal fondo e dai lati. Con l'angolo di Windows, 8 px, i due archi non hanno lo stesso centro: <b>la regola salta</b>, in basso a sinistra e a destra.</span></figcaption>
+    </figure>
+    <figure class="fig">
+      <div class="m win v-a">
+        <header class="bar">
+          <span class="brand">Harness</span>
+          <span class="viewbtn"><svg class="i" data-icon="layers" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" /> <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" /> <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg>Home</span>
+          <span class="search"><svg class="i" data-icon="search" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg><span class="ph">Cerca</span></span>
+          <span class="chip"><span class="dot"></span>Core collegato</span>
+          <div class="caps" aria-hidden="true"><span class="cap"><svg viewBox="0 0 10 10"><path d="M1 5h8"/></svg></span><span class="cap"><svg viewBox="0 0 10 10"><rect x="1.5" y="1.5" width="7" height="7"/></svg></span><span class="cap"><svg viewBox="0 0 10 10"><path d="M1.5 1.5l7 7M8.5 1.5l-7 7"/></svg></span></div>
+        </header>
+        <div class="dock">
+          <div class="card"><span class="lab"><svg class="i" data-icon="list" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 5h.01" /> <path d="M3 12h.01" /> <path d="M3 19h.01" /> <path d="M8 5h13" /> <path d="M8 12h13" /> <path d="M8 19h13" /> </svg>Attività</span></div>
+          <div class="card mid"><span class="lab"><svg class="i" data-icon="layers" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" /> <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" /> <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg>Home</span><span class="ring"></span></div>
+          <div class="card"><span class="lab"><svg class="i" data-icon="hand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2" /> <path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2" /> <path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8" /> <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" /> </svg>Permessi</span></div>
+        </div>
+        <div class="strip pill">
+          <span class="it"><svg class="i" data-icon="mic" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 19v3" /> <path d="M19 10v2a7 7 0 0 1-14 0v-2" /> <rect x="9" y="2" width="6" height="13" rx="3" /> </svg>In ascolto</span>
+          <span class="it">Costo <b>0,42 €</b></span>
+          <span class="sp"><svg class="i" data-icon="layout-grid" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="7" height="7" x="3" y="3" rx="1" /> <rect width="7" height="7" x="14" y="3" rx="1" /> <rect width="7" height="7" x="14" y="14" rx="1" /> <rect width="7" height="7" x="3" y="14" rx="1" /> </svg>Moduli</span>
+        </div>
+      </div>
+      <figcaption><span class="lab">A — la pillola si alza · scelta alla risposta 20</span><span class="note">Resta allineata alle schede, a 12 px dai lati, e sale a <b>24 px</b> dal fondo: l'angolo di Windows non le è mai vicino. Costa 12 px d'altezza.</span></figcaption>
+    </figure>
+    <figure class="fig">
+      <div class="m win v-b">
+        <header class="bar">
+          <span class="brand">Harness</span>
+          <span class="viewbtn"><svg class="i" data-icon="layers" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" /> <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" /> <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg>Home</span>
+          <span class="search"><svg class="i" data-icon="search" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg><span class="ph">Cerca</span></span>
+          <span class="chip"><span class="dot"></span>Core collegato</span>
+          <div class="caps" aria-hidden="true"><span class="cap"><svg viewBox="0 0 10 10"><path d="M1 5h8"/></svg></span><span class="cap"><svg viewBox="0 0 10 10"><rect x="1.5" y="1.5" width="7" height="7"/></svg></span><span class="cap"><svg viewBox="0 0 10 10"><path d="M1.5 1.5l7 7M8.5 1.5l-7 7"/></svg></span></div>
+        </header>
+        <div class="dock">
+          <div class="card"><span class="lab"><svg class="i" data-icon="list" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 5h.01" /> <path d="M3 12h.01" /> <path d="M3 19h.01" /> <path d="M8 5h13" /> <path d="M8 12h13" /> <path d="M8 19h13" /> </svg>Attività</span></div>
+          <div class="card mid"><span class="lab"><svg class="i" data-icon="layers" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" /> <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" /> <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg>Home</span><span class="ring"></span></div>
+          <div class="card"><span class="lab"><svg class="i" data-icon="hand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2" /> <path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2" /> <path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8" /> <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" /> </svg>Permessi</span></div>
+        </div>
+        <div class="strip flat">
+          <span class="it"><svg class="i" data-icon="mic" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 19v3" /> <path d="M19 10v2a7 7 0 0 1-14 0v-2" /> <rect x="9" y="2" width="6" height="13" rx="3" /> </svg>In ascolto</span>
+          <span class="it">Costo <b>0,42 €</b></span>
+          <span class="sp"><svg class="i" data-icon="layout-grid" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="7" height="7" x="3" y="3" rx="1" /> <rect width="7" height="7" x="14" y="3" rx="1" /> <rect width="7" height="7" x="14" y="14" rx="1" /> <rect width="7" height="7" x="3" y="14" rx="1" /> </svg>Moduli</span>
+        </div>
+      </div>
+      <figcaption><span class="lab">B — la striscia piatta</span><span class="note">Attaccata al fondo e larga quanto la finestra, come la barra in alto: gli angoli li arrotonda Windows. Cambia l'aspetto approvato.</span></figcaption>
+    </figure>
+    </div>
+  </section>
+  <section class="sheet fp" data-theme="light" data-name="chiaro" data-text="Geist Variable" data-tool="Barlow">
+    <h2>Tema chiaro</h2>
+    <div class="figs">
+    <figure class="fig">
+      <div class="m win v-was">
+        <header class="bar">
+          <span class="brand">Harness</span>
+          <span class="viewbtn"><svg class="i" data-icon="layers" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" /> <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" /> <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg>Home</span>
+          <span class="search"><svg class="i" data-icon="search" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg><span class="ph">Cerca</span></span>
+          <span class="chip"><span class="dot"></span>Core collegato</span>
+          <div class="caps" aria-hidden="true"><span class="cap"><svg viewBox="0 0 10 10"><path d="M1 5h8"/></svg></span><span class="cap"><svg viewBox="0 0 10 10"><rect x="1.5" y="1.5" width="7" height="7"/></svg></span><span class="cap"><svg viewBox="0 0 10 10"><path d="M1.5 1.5l7 7M8.5 1.5l-7 7"/></svg></span></div>
+        </header>
+        <div class="dock">
+          <div class="card"><span class="lab"><svg class="i" data-icon="list" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 5h.01" /> <path d="M3 12h.01" /> <path d="M3 19h.01" /> <path d="M8 5h13" /> <path d="M8 12h13" /> <path d="M8 19h13" /> </svg>Attività</span></div>
+          <div class="card mid"><span class="lab"><svg class="i" data-icon="layers" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" /> <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" /> <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg>Home</span><span class="ring"></span></div>
+          <div class="card"><span class="lab"><svg class="i" data-icon="hand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2" /> <path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2" /> <path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8" /> <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" /> </svg>Permessi</span></div>
+        </div>
+        <div class="strip pill">
+          <span class="it"><svg class="i" data-icon="mic" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 19v3" /> <path d="M19 10v2a7 7 0 0 1-14 0v-2" /> <rect x="9" y="2" width="6" height="13" rx="3" /> </svg>In ascolto</span>
+          <span class="it">Costo <b>0,42 €</b></span>
+          <span class="sp"><svg class="i" data-icon="layout-grid" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="7" height="7" x="3" y="3" rx="1" /> <rect width="7" height="7" x="14" y="3" rx="1" /> <rect width="7" height="7" x="14" y="14" rx="1" /> <rect width="7" height="7" x="3" y="14" rx="1" /> </svg>Moduli</span>
+        </div>
+      </div>
+      <figcaption><span class="lab">Com'era nella tavola</span><span class="note">La pillola a 12 px dal fondo e dai lati. Con l'angolo di Windows, 8 px, i due archi non hanno lo stesso centro: <b>la regola salta</b>, in basso a sinistra e a destra.</span></figcaption>
+    </figure>
+    <figure class="fig">
+      <div class="m win v-a">
+        <header class="bar">
+          <span class="brand">Harness</span>
+          <span class="viewbtn"><svg class="i" data-icon="layers" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" /> <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" /> <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg>Home</span>
+          <span class="search"><svg class="i" data-icon="search" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg><span class="ph">Cerca</span></span>
+          <span class="chip"><span class="dot"></span>Core collegato</span>
+          <div class="caps" aria-hidden="true"><span class="cap"><svg viewBox="0 0 10 10"><path d="M1 5h8"/></svg></span><span class="cap"><svg viewBox="0 0 10 10"><rect x="1.5" y="1.5" width="7" height="7"/></svg></span><span class="cap"><svg viewBox="0 0 10 10"><path d="M1.5 1.5l7 7M8.5 1.5l-7 7"/></svg></span></div>
+        </header>
+        <div class="dock">
+          <div class="card"><span class="lab"><svg class="i" data-icon="list" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 5h.01" /> <path d="M3 12h.01" /> <path d="M3 19h.01" /> <path d="M8 5h13" /> <path d="M8 12h13" /> <path d="M8 19h13" /> </svg>Attività</span></div>
+          <div class="card mid"><span class="lab"><svg class="i" data-icon="layers" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" /> <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" /> <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg>Home</span><span class="ring"></span></div>
+          <div class="card"><span class="lab"><svg class="i" data-icon="hand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2" /> <path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2" /> <path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8" /> <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" /> </svg>Permessi</span></div>
+        </div>
+        <div class="strip pill">
+          <span class="it"><svg class="i" data-icon="mic" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 19v3" /> <path d="M19 10v2a7 7 0 0 1-14 0v-2" /> <rect x="9" y="2" width="6" height="13" rx="3" /> </svg>In ascolto</span>
+          <span class="it">Costo <b>0,42 €</b></span>
+          <span class="sp"><svg class="i" data-icon="layout-grid" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="7" height="7" x="3" y="3" rx="1" /> <rect width="7" height="7" x="14" y="3" rx="1" /> <rect width="7" height="7" x="14" y="14" rx="1" /> <rect width="7" height="7" x="3" y="14" rx="1" /> </svg>Moduli</span>
+        </div>
+      </div>
+      <figcaption><span class="lab">A — la pillola si alza · scelta alla risposta 20</span><span class="note">Resta allineata alle schede, a 12 px dai lati, e sale a <b>24 px</b> dal fondo: l'angolo di Windows non le è mai vicino. Costa 12 px d'altezza.</span></figcaption>
+    </figure>
+    <figure class="fig">
+      <div class="m win v-b">
+        <header class="bar">
+          <span class="brand">Harness</span>
+          <span class="viewbtn"><svg class="i" data-icon="layers" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" /> <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" /> <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg>Home</span>
+          <span class="search"><svg class="i" data-icon="search" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg><span class="ph">Cerca</span></span>
+          <span class="chip"><span class="dot"></span>Core collegato</span>
+          <div class="caps" aria-hidden="true"><span class="cap"><svg viewBox="0 0 10 10"><path d="M1 5h8"/></svg></span><span class="cap"><svg viewBox="0 0 10 10"><rect x="1.5" y="1.5" width="7" height="7"/></svg></span><span class="cap"><svg viewBox="0 0 10 10"><path d="M1.5 1.5l7 7M8.5 1.5l-7 7"/></svg></span></div>
+        </header>
+        <div class="dock">
+          <div class="card"><span class="lab"><svg class="i" data-icon="list" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 5h.01" /> <path d="M3 12h.01" /> <path d="M3 19h.01" /> <path d="M8 5h13" /> <path d="M8 12h13" /> <path d="M8 19h13" /> </svg>Attività</span></div>
+          <div class="card mid"><span class="lab"><svg class="i" data-icon="layers" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" /> <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" /> <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /> </svg>Home</span><span class="ring"></span></div>
+          <div class="card"><span class="lab"><svg class="i" data-icon="hand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2" /> <path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2" /> <path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8" /> <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" /> </svg>Permessi</span></div>
+        </div>
+        <div class="strip flat">
+          <span class="it"><svg class="i" data-icon="mic" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 19v3" /> <path d="M19 10v2a7 7 0 0 1-14 0v-2" /> <rect x="9" y="2" width="6" height="13" rx="3" /> </svg>In ascolto</span>
+          <span class="it">Costo <b>0,42 €</b></span>
+          <span class="sp"><svg class="i" data-icon="layout-grid" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="7" height="7" x="3" y="3" rx="1" /> <rect width="7" height="7" x="14" y="3" rx="1" /> <rect width="7" height="7" x="14" y="14" rx="1" /> <rect width="7" height="7" x="3" y="14" rx="1" /> </svg>Moduli</span>
+        </div>
+      </div>
+      <figcaption><span class="lab">B — la striscia piatta</span><span class="note">Attaccata al fondo e larga quanto la finestra, come la barra in alto: gli angoli li arrotonda Windows. Cambia l'aspetto approvato.</span></figcaption>
+    </figure>
+    </div>
+  </section>
+  </div>
+</div>
+</body>
+</html>

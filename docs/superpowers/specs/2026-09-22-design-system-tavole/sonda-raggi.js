@@ -17,6 +17,12 @@
 // it only looked inside the outer arc (distance < outer radius) and the dialog sat exactly on its edge: the
 // "within the larger of the two radii" clause is the cure, and it is why the clause is there.
 //
+// ⚠️ THE ROOTS WIDENED on 2026-09-23, second session: on a board with the companion's option boxes the root is
+// the BOX, not only the Home and kit inside it -- the box is rounded too, and a frame of 28 next to its corner of
+// 12 is the defect this probe exists for. The fonts board was shown with that defect, because the roots were
+// only `.m` and `.kit`; the widened probe caught it on the icons board -- the kit's corner, and the box's own
+// letter badge -- before it was shown. On a board without option boxes nothing changes.
+//
 // ⛔ IT IS A PROBE ON A MOCKUP, NOT A TEST OF THE PRODUCT: the plan turns it into a test of the real kit, the
 // way `gui/src/tokens/contrast.test.ts` holds the contrast. SVG content is skipped (a drawing, not a surface).
 (() => {
@@ -25,7 +31,10 @@
     const b = e.getBoundingClientRect();
     return Math.min(radius(e), b.height / 2, b.width / 2);
   };
-  const roots = [...document.querySelectorAll(".ds .m, .ds .kit")];
+  const roots = [
+    ...document.querySelectorAll(".ds .option"),
+    ...[...document.querySelectorAll(".ds .m, .ds .kit")].filter((e) => !e.closest(".option")),
+  ];
   const bad = [];
   let near = 0;
   for (const root of roots) {

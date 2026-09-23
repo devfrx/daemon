@@ -20,11 +20,11 @@ quando il **disegno** è scritto, com'è stato per la stella polare; il testo co
 ## Stato in una riga
 
 Il sotto-progetto 2 è chiuso, e il design system è il **primo tempo** del prossimo passo della §6. Il brainstorming è **a
-metà**: cominciato il 2026-09-23, nove risposte nella tabella *«Le risposte del proprietario, una per domanda»* — il
+metà**: cominciato il 2026-09-23, undici risposte nella tabella *«Le risposte del proprietario, una per domanda»* — il
 perimetro, l'idea di stile, la direzione, lo stile approvato coi raggi concentrici, i due temi, i caratteri aperti dentro il
-programma, la stella polare letta a pezzi, la coppia **Geist + Barlow**, un set di icone aperto — e ⛔ **la domanda in corso
-è quella VISIVA sul set, Lucide o Tabler**, nel browser: i candidati stanno in *«Le icone — i candidati, e il comando che li
-verifica»* qui sotto.
+programma, la stella polare letta a pezzi, la coppia **Geist + Barlow**, un set di icone aperto, **Lucide**, dietro un
+**componente unico** con la sua mappa — e ⛔ **la prossima è la domanda 7, dove si guardano i componenti**, da porre com'è
+nella tabella *«Le domande del brainstorming»*, coi fatti verificati quel giorno.
 
 ## ⛔ Da sapere subito
 
@@ -37,8 +37,9 @@ coi generatori `gen_style_v1.py`, `gen_style_v2.py` e `gen_style_v3.py` — e **
 sonda, in `docs/superpowers/specs/2026-09-22-design-system-tavole/`: dall'altra macchina si riparte da lì. La **seconda**
 sessione, lo stesso giorno, ha lo scratchpad
 `C:\Users\zagor\AppData\Local\Temp\claude\C--Users-zagor-Desktop-harness\68e60615-409a-456a-a16e-8ef420ce4dca\scratchpad\`, con
-`gen_style_v4.py` — la tavola approvata coi caratteri scelti, da cui partono le tavole nuove — e `gen_fonts_v1.py`, il
-confronto delle coppie; tutti e due eseguono `gen_style_v3.py`, copiato lì accanto, fino alla sua uscita.
+`gen_style_v5.py` — la tavola approvata coi caratteri e le icone scelti, da cui partono le tavole nuove — e i confronti
+`gen_fonts_v1.py` e `gen_icons_v1.py`, più `gen_style_v4.py`, la tavola coi soli caratteri; tutti eseguono `gen_style_v3.py`,
+copiato lì accanto, fino alla sua uscita, e `gen_style_v5.py` esegue così anche `gen_icons_v1.py`.
 
 ⚠️ **Sull'altra macchina** — il clone con `core.autocrlf` `true`, albero `w/crlf` — tre cose prima di credere a un verde o a
 un rosso: un Node che soddisfi `node -p "require('./gui/package.json').engines.node"`; `cargo audit --version` **0.22.2**,
@@ -132,6 +133,8 @@ quarantatreesima chiusura non le ha ripetute. Il testo intero sta nella voce, ne
 | 7 | **2026-09-23**, seconda sessione — la registrata della tredicesima ripresa della [stella polare](2026-09-07-direzione-gui-design.md), in *«Registrate, non prese»*: **A** rileggerla per intero a ogni ripresa di questo brainstorming; **B** i soli pezzi che la domanda del momento tocca, trovati col `grep`, e per intero una volta, prima di scrivere il disegno | **B.** Con un clic, sul consiglio — l'opzione *«B, solo i pezzi utili»*. La stella pesa quanto dicono `wc -c` e lo snippet `tiktoken` di `CLAUDE.md`: il 2026-09-23, 187 481 byte e almeno 60 224 token, limite inferiore. Vale per **questo brainstorming**: la voce nella stella polare e la riga della stella nella §12 del compendio portano il richiamo con la data |
 | 8 | **2026-09-23**, seconda sessione — le coppie di caratteri, nel browser: la Home e il kit della tavola approvata in tre coppie, più il riferimento coi caratteri di Windows; **A** Geist + Barlow, **B** Inter + Barlow, **C** Geist + Barlow Semi Condensed — B e C cambiano un carattere solo rispetto ad A | **A, Geist + Barlow.** Con un clic, sul consiglio. Il consiglio era **misurato**, nel pannello browser dell'app, con [`sonda-caratteri.js`](2026-09-22-design-system-tavole/sonda-caratteri.js): un'etichetta di prova in Barlow è 0,992 di Bahnschrift e una frase in Geist 1,019 di Segoe UI Variable Text — Inter 1,075, Barlow Semi Condensed 0,916 — quindi con A le lettere occupano quasi lo stesso spazio della tavola approvata; in tutte e tre le coppie le cifre sono tabulari. La [tavola approvata](2026-09-22-design-system-tavole/stile-approvato.html) ora porta la coppia scelta, e la sonda nuova le sta accanto; com'era alla risposta 4 lo rende `git show 8c0bbe6:docs/superpowers/specs/2026-09-22-design-system-tavole/stile-approvato.html` |
 | 9 | **2026-09-23**, seconda sessione — la domanda 6, le icone: **A** nessun set, poche icone disegnate da noi; **B** un set aperto, già pronto, usato da un solo componente del kit | **B.** Con un clic, sul consiglio — l'opzione *«B, un set aperto»*. I fatti verificati quel giorno: in `gui/src` **nessuna** icona, e nessun documento ha già scelto un set, stella polare compresa; le icone **arrivano** — l'immagine di riferimento della risposta 2 mette una piccola icona accanto a ogni etichetta di sezione, e poi pulsanti, cambio di vista, pilastri; i candidati nella sezione qui sotto. Il pacchetto dei **soli disegni** e non quello per Vue è la lettura del coordinatore, nello spirito di ADR-0030: si decide nel disegno. È una **dipendenza nuova**, ed è sua |
+| 10 | **2026-09-23**, seconda sessione — il set di icone, nel browser: le stesse venti icone da **A** Lucide e **B** Tabler, sulla Home e sul kit della tavola approvata coi caratteri scelti, e le venti di ciascun set, più grandi, in una striscia | **A, Lucide.** Con un clic, sul consiglio: a misura piccola, accanto alle etichette, è più essenziale — l'occhio del coordinatore, detto al proprietario come tale e **non** misurato; Tabler ne ha di più, ma 1848 bastano anche per i pilastri. La tavola era pulita sulle tre sonde, e [`sonda-icone.js`](2026-09-22-design-system-tavole/sonda-icone.js) è nata qui: icone disegnate, centrate, lo stesso numero per set. La [tavola approvata](2026-09-22-design-system-tavole/stile-approvato.html) ora porta anche le icone, e in testa la licenza di Lucide copiata parola per parola |
+| 11 | **2026-09-23**, seconda sessione — la **richiesta del proprietario**, scritta nel mezzo del turno: *«vorrei fosse un componente centralizzato con tutto il set delle icone mappate al suo interno riutilizzato in tutto il software»*; e la domanda che ne è nata, che cosa vuol dire «tutto il set»: **A** le icone che usiamo, coi nomi nostri; **B** tutte le 1848 di Lucide | **A.** Con un clic, sul consiglio. Quindi: **un solo componente** `Icon` e **una sola mappa** — nome nostro, come `stato` o `cerca`, → icona di Lucide, importate una per una — e nessun'altra parte del codice importa icone; cambiare set tocca la sola mappa. La B costava **442 433 byte** in più, `lucide` 1.47.0 intero e minimizzato, contro circa 500 byte a icona — 935 024 byte per 1848 moduli — col comando nella sezione qui sotto. Come la regola diventa **controllata** — il nome come tipo, che non compila se è sbagliato, e una regola del linter che vieta gli import fuori dalla mappa — è una proposta del coordinatore, detta al proprietario: si decide nel disegno |
 
 ## I caratteri — i candidati, e il comando che li verifica
 
@@ -158,20 +161,23 @@ python -c "import json,urllib.request as u; [print(n, (lambda d: (d['dist-tags']
 
 ## Le icone — i candidati, e il comando che li verifica
 
-La risposta 9 è **B**, e il set **non è scelto**: si sceglie guardandolo, nel browser, sulla stessa Home della tavola approvata.
-I candidati sono i due set **aggiornati nell'ultima settimana**, verificati il 2026-09-23 coi due comandi qui sotto — il primo
-stampa versione, data d'uscita e licenza, il secondo conta i file d'icona delle due versioni:
+La risposta 9 è **B**, la 10 sceglie ✅ **Lucide**, e la 11 lo mette dietro **un componente unico con una mappa sola**. I
+candidati confrontati erano i due set **aggiornati nell'ultima settimana**, verificati il 2026-09-23 coi comandi qui sotto — il
+primo stampa versione, data d'uscita e licenza, il secondo conta i file d'icona delle due versioni, il terzo pesa Lucide: i
+moduli d'icona uno per uno, e il pacchetto intero minimizzato. Nella tavola i disegni di Lucide vengono da `lucide-static`,
+stessa versione e stessa licenza.
 
 | Pacchetto | Licenza | Icone | |
 |---|---|---|---|
-| `lucide` 1.47.0, 2026-09-17 | ISC | 1848 moduli d'icona | candidato |
-| `@tabler/icons` 3.48.0, 2026-09-22 | MIT | 5166 a tratto e 1054 piene | candidato |
+| `lucide` 1.47.0, 2026-09-17 | ISC, e MIT per le icone che vengono da Feather | 1848 moduli d'icona | ✅ scelto |
+| `@tabler/icons` 3.48.0, 2026-09-22 | MIT | 5166 a tratto e 1054 piene | confrontato |
 | `@phosphor-icons/core` 2.1.1, 2024-03-29 | MIT | — | fuori: nessuna uscita dal 2024 |
 | `@heroicons/vue` 2.2.0, 2024-11-18 | MIT | — | fuori: nessuna uscita dal 2024 |
 
 ```bash
 python -c "import json,urllib.request as u; g=lambda x: json.load(u.urlopen(u.Request(x,headers={'User-Agent':'harness'}))); [print(n, (lambda d: (d['dist-tags']['latest'], d['time'][d['dist-tags']['latest']][:10], d['versions'][d['dist-tags']['latest']].get('license')))(g('https://registry.npmjs.org/'+n.replace('/','%2F')))) for n in ['lucide','@tabler/icons','@phosphor-icons/core','@heroicons/vue']]"
 python -c "import json,urllib.request as u; f=lambda p: json.load(u.urlopen(u.Request('https://data.jsdelivr.com/v1/packages/npm/'+p+'?structure=flat',headers={'User-Agent':'harness'})))['files']; print(sum(n['name'].startswith('/dist/esm/icons/') and n['name'].endswith('.mjs') for n in f('lucide@1.47.0')), sum(n['name'].startswith('/icons/outline/') for n in f('@tabler/icons@3.48.0')), sum(n['name'].startswith('/icons/filled/') for n in f('@tabler/icons@3.48.0')))"
+python -c "import json,urllib.request as u; f=json.load(u.urlopen(u.Request('https://data.jsdelivr.com/v1/packages/npm/lucide@1.47.0?structure=flat',headers={'User-Agent':'harness'})))['files']; i=[x for x in f if x['name'].startswith('/dist/esm/icons/') and x['name'].endswith('.mjs')]; print(len(i), sum(x['size'] for x in i), [x['size'] for x in f if x['name']=='/dist/umd/lucide.min.js'])"
 ```
 
 ## Le domande del brainstorming, una alla volta — proposte del coordinatore, non decisioni
@@ -212,6 +218,11 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 - La pagina del companion non serve i file delle sonde: si lanciano sull'**anteprima privata**, dove stanno accanto alla
   tavola, e il frammento spinto al companion è lo stesso byte per byte. Sulla pagina del companion basta contare i
   `FontFace` caricati.
+- La **scatola di scelta** del companion è arrotondata anche lei — 12, con una letterina da 6 — e la regola dei raggi vale
+  anche lì: `gen_icons_v1.py` le dà 20 di raggio, perché la letterina sta a 2 + 12 px dall'angolo, e 30 px sotto, perché gli
+  angoli da 28 della Home e del kit restino lontani dal suo. La prima forma di `sonda-raggi.js` guardava solo dentro la Home e
+  il kit, e non l'ha vista.
+- Un disegno **copiato** in un file del repository si porta dietro la sua licenza; uno caricato dalla rete no.
 
 ## Decisioni prese dal coordinatore, col perché — il proprietario può ribaltarle
 
@@ -227,11 +238,13 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 | 8 | la domanda 4, il dock, **non posta**: la risposta 5 la decide | con due temi `themeAbyss`, solo scuro, non può restare, e chiedere una cosa già determinata sarebbe una domanda di rito. Costo: se il proprietario voleva `themeAbyss` nel solo tema scuro, lo dice e si riapre |
 | 9 | nel confronto dei caratteri la coppia **A** è quella **misurata** più vicina alla tavola approvata, e B e C cambiano un carattere solo | la prima forma della tavola aveva come A Inter + Barlow Semi Condensed, scelta a occhio, e Geist + Barlow non c'era: la sonda l'ha smentita **prima** che la tavola si mostrasse. Costo: nessuno |
 | 10 | la tavola approvata **si aggiorna** coi caratteri scelti, e non nasce un secondo file | una tavola coi caratteri di Windows mentirebbe sullo stile di oggi, e le tavole nuove partono da lì; com'era sta nella storia di git, col comando nella risposta 8. Costo: chi cerca la tavola della risposta 4 la trova in `8c0bbe6` |
+| 11 | la tavola approvata porta anche le icone scelte, e con esse la **licenza di Lucide**, copiata parola per parola in testa al file | i disegni sono **copiati** nel file, e la licenza ISC chiede l'avviso *«in all copies»*; una parte delle icone viene da Feather, sotto MIT, e la licenza lo dice; il repository è pubblico. I caratteri invece non sono copiati: arrivano da jsDelivr. Costo: una cinquantina di righe in testa alla tavola |
+| 12 | `sonda-raggi.js` guarda anche le **scatole di scelta** del companion | la tavola dei caratteri si è mostrata con un angolo di 28 accanto a uno di 12, e con la letterina della scatola non concentrica: difetti della scatola del companion e non del nostro stile, ma la regola del proprietario vale per tutta la tavola, e il proprietario l'ha saputo alla tavola dopo. La sonda allargata li ha trovati sulla tavola dei caratteri — sei, due per scatola — e sulla tavola delle icone prima di mostrarla. Costo: nessuno; sulla tavola approvata, che non ha scatole, non cambia nulla |
 
 ## Decisioni aperte, del proprietario
 
-- ⛔ **il set di icone, Lucide o Tabler — la domanda visiva dopo la risposta 9, in corso**; poi la 7, dove si guardano i
-  componenti, e la 8, come si cambia vista — una per messaggio; la 4 è caduta con la risposta 5;
+- ⛔ **la domanda 7, dove si guardano i componenti — la prossima, da porre**; poi la 8, come si cambia vista — una per
+  messaggio; la 4 è caduta con la risposta 5;
 - se il design system prenda un **numero**: nella tabella delle decisioni della stella polare, o una riga della roadmap;
 - **AUD-004**, che sbarra il secondo tempo della §6, il sotto-progetto 13;
 - le voci registrate della tabella qui sopra.
@@ -247,9 +260,9 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
    la risposta 7. Le skill: `anthropic-skills:decision-principles`,
    `anthropic-skills:session-resume` su questo file, `anthropic-skills:dev-discipline`, `anthropic-skills:dev-communication`, e
    `superpowers:brainstorming` — il percorso è **architetturale**, già detto al proprietario.
-4. Al proprietario **il set di icone**, Lucide o Tabler, nel browser; poi la 7 e la 8, una per messaggio. Le domande
-   **visive** — il set di icone e il cambio di vista — vanno nel browser: il visual companion si riavvia con `--project-dir`
-   sullo scratchpad della sessione nuova, in sottofondo, e le tavole nuove partono dalla approvata, cioè da `gen_style_v4.py`. Il
+4. Al proprietario **la domanda 7**, dove si guardano i componenti; poi la 8, come si cambia vista. La 8 è **visiva** e va
+   nel browser: il visual companion si riavvia con `--project-dir`
+   sullo scratchpad della sessione nuova, in sottofondo, e le tavole nuove partono dalla approvata, cioè da `gen_style_v5.py`. Il
    proprietario ha accettato il companion il 2026-09-23 — *«sì, usa il browser»* — e se la skill vuole di nuovo l'offerta, è una
    riga.
 5. Dopo l'ultima domanda: gli approcci, poi il **disegno a sezioni**, una approvata per volta — i token a strati coi due temi,

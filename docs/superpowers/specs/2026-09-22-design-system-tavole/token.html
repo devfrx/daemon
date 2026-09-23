@@ -160,8 +160,10 @@ body {
    Layer 1, `--ref-*`: five TONAL PALETTES, each stop named by its tone (CIE L*, Material's HCT tone).
    ⛔ No component reads a `--ref-*`: components read ROLES, so a theme can never be bypassed.
    Layer 2, `--color-*` and `--shadow-*`: the ROLES, the same names in both themes, property first
-   (bg / text / border), then role, then state. Every text role reads 4.5:1 on every background role
-   and every non-text role 3:1 -- the pairs are listed in the contrast test, not here. */
+   (bg / text / border), then role, then state. Every text role reads 4.5:1 on the backgrounds of its
+   FAMILY and every non-text role 3:1 -- not every text on every background: in the dark theme
+   `--color-text-on-ok` and `--color-bg` are one stop. The families are written in the contrast test,
+   not here (P-1 of the plan; the owner's choice A, 2026-09-23). */
 :root {
   --ref-neutral-5: #151112; --ref-neutral-8: #1B1718; --ref-neutral-12: #241F20; --ref-neutral-15: #2A2425; --ref-neutral-17: #2F2829; --ref-neutral-19: #342D2D; --ref-neutral-39: #655B57; --ref-neutral-44: #6F6660; --ref-neutral-48: #7A706A; --ref-neutral-52: #847A73; --ref-neutral-64: #A39A8F; --ref-neutral-85: #DCD2C4; --ref-neutral-87: #E2D9CC; --ref-neutral-89: #E6DFD2; --ref-neutral-91: #ECE6DA; --ref-neutral-94: #F3EEE6; --ref-neutral-96: #F7F2EA; --ref-neutral-98: #FBF8F3;
   --ref-bordeaux-12: #2F1B1D; --ref-bordeaux-14: #371C1F; --ref-bordeaux-24: #711627; --ref-bordeaux-28: #7A1F2E; --ref-bordeaux-31: #862837; --ref-bordeaux-50: #BF5567; --ref-bordeaux-72: #E59EA1; --ref-bordeaux-81: #DFC2C0; --ref-bordeaux-86: #E8D4D0; --ref-bordeaux-91: #EFE1DD;

@@ -106,12 +106,12 @@ Valgono per ogni compito, senza che il compito li ripeta.
 | 6 | **nessun componente legge una scala**: `var(--ref-` vive solo in `gui/src/tokens/` | (a); controllo 4 |
 | 7 | ⛔ **una dipendenza si aggiunge in DUE passi**: `gui/package.json` e `gui/package-lock.json` **insieme**, il lockfile rinfrescato **fuori** dal cancello con `npm install --save-exact`; il cancello gira `npm ci`, che è `--locked` | `CLAUDE.md`, finding G-5 |
 | 8 | **le versioni sono appuntate** a quelle rilanciate il 2026-09-23: `reka-ui` **resta 2.10.4** — al registro c'è la 2.10.5, e salire è un'altra decisione (voce 18 delle trappole del disegno); `vitest` resta 4.1.11; una major nuova non si prende | §9 del 2; `riferimenti.md` |
-| 9 | **i fine-riga si conservano per file**: i file di `gui/` sono `i/lf` nell'indice e, su questa macchina, CRLF nell'albero (`git ls-files --eol`); i file nuovi nascono **LF**; un CRLF si tocca con Python, **mai** `sed -i` | `CLAUDE.md`; trappola 16 del disegno |
+| 9 | **i fine-riga si conservano per file**: i file di `gui/` sono `i/lf` nell'indice, e nell'albero la forma dipende dal `core.autocrlf` di ciascuna macchina: si **misura** per file con `git ls-files --eol`, non si crede a un'etichetta (voce **E72** del piano della parte 2; R1-7 della revisione); i file nuovi nascono **LF**; un CRLF si tocca con Python, **mai** `sed -i` | `CLAUDE.md`; trappola 16 del disegno |
 | 10 | **ogni conteggio si rifà col comando**: le cifre di questo piano sono istantanee del 2026-09-23 su `fd2812b` | `CLAUDE.md` |
-| 11 | **ogni prova si prova nelle due direzioni**: che scatti dove deve — una violazione messa a mano, poi tolta — e che non scatti dove non deve; e ogni prova del browser porta la **guardia di non-vacuità**, quante cose ha guardato, maggiore di zero | `CLAUDE.md`; (f) |
+| 11 | **ogni prova si prova nelle due direzioni**: che scatti dove deve — una violazione messa a mano, poi tolta — e che non scatti dove non deve; e ogni prova del browser porta la **guardia di non-vacuità**, quante cose ha guardato, maggiore di zero. ⛔ **Si torna indietro con la copia salvata, mai con `git checkout --`**: durante un compito i suoi file non sono ancora committati, e `git checkout` non conosce un file nuovo (R3-5), riporta indietro anche il lavoro del compito in un file che il compito ha già cambiato (A-1) e, dove `core.autocrlf` è acceso, riscrive CRLF un file nato LF (R3-9). Prima della prima violazione `git status --porcelain > <scratchpad>/prima.txt` e una copia di ogni file che le violazioni toccano; dopo ciascuna la copia torna, e `cmp` lo conferma; alla fine `git status --porcelain \| diff <scratchpad>/prima.txt -` non rende nulla: nessun file nato dalle prove (R2-3) | `CLAUDE.md`; (f); R2-3, R3-5, R3-9 e A-1 della revisione |
 | 12 | **il kernel non cambia**, e nemmeno il filo: `git diff --stat <base>..HEAD -- crates/ gui/schema/` vuoto a ogni compito. Tutto ciò che è nuovo nel pacchetto della disposizione è un campo **facoltativo** dei byte opachi | (a), (d); I1, I4 |
 | 13 | **il compendio resta sotto il tetto**: margine misurato prima e dopo ogni tocco, `wc -c docs/COMPENDIO.md` contro `grep -n '^ceiling=' scripts/check-docs.sh`; se va rosso si toglie prosa dalla §6, **non si alza il tetto** | §13 del compendio, gotcha #100 |
-| 14 | **nessun link `](…)` a un file che non esiste ancora**: si nomina in code span, e il link nasce nel commit che crea il file | trappola 5 di `check-docs.sh` |
+| 14 | **nessun link `](…)` a un file che non esiste ancora**: si nomina in code span, e il link nasce nel commit che crea il file | il controllo `== internal links ==` di `check-docs.sh`, sui documenti fuori da `plans/` e sui soli bersagli `.md`; e la trappola 5 della §10 del compendio: un file nuovo, non ancora aggiunto, è letto (R1-9) |
 | 15 | **si committa e si pusha a ogni compito**, senza chiedere e **senza co-autore**; il cancello e `check-docs.sh` girano **prima**, uno alla volta; il messaggio comincia con `design-system(compito N): …` | `CLAUDE.md` |
 
 ---
@@ -124,7 +124,7 @@ pre-controllo, in una sessione sua.
 
 | # | Compito | Commit | Stato |
 |---|---|---|---|
-| **1** | **i token**: `base.css` e `themes.css` copiati dalla tavola da uno script, e il test che li tiene uguali; `dock.css` con le regole che oggi stanno in `tokens.css`; `tokens/index.ts` coi due caratteri; il tema sulla radice (`tokens/theme.ts`) e il campo `theme` del pacchetto; i nomi nuovi nei dodici componenti; `tokens.css` esce. Le prove: il contrasto per famiglie, gli stessi ruoli nei due temi, nessuna scala fuori dai token, nessun colore a mano, il tema nelle due direzioni | — | ⬜ |
+| **1** | **i token**: `base.css` e `themes.css` copiati dalla tavola da uno script, e il test che li tiene uguali; `dock.css` con le regole che oggi stanno in `tokens.css`; `tokens/index.ts` coi due caratteri; il tema sulla radice (`tokens/theme.ts`) e il campo `theme` del pacchetto; i nomi nuovi negli undici componenti che li usano; `tokens.css` esce. Le prove: il contrasto per famiglie, gli stessi ruoli nei due temi, nessuna scala fuori dai token, nessun colore a mano, il tema nelle due direzioni | — | ⬜ |
 | **2** | **il browser dei test**: `@vitest/browser-playwright` e `playwright`, i due progetti di `vitest` — jsdom e browser, sul Chrome installato e senza finestra — e il comando `emulateMedia`. Le prime prove vere: il browser è vero, i caratteri caricati con le cifre tabulari, il movimento ridotto nelle due direzioni, il contorno del focus sotto l'alto contrasto, il tema che segue il sistema | — | ⬜ |
 | **3** | **il kit**: `lucide`; `BaseIcon` con `icons.ts`, `BaseButton`, `BaseLabel`, `BaseList`, `BaseStatus`, `BaseTextField`, `BaseRadioGroup`, `BaseDialog`; un test con `axe` ciascuno; il linter che legge anche i `.ts`, e le due regole sui pezzi di base | — | ⬜ |
 | **4** | **la pagina kit**: `gui/kit.html` e `gui/src/kit/`, **fuori** dal pacchetto e provata sull'uscita del *build*; le prove nel browser sulla pagina kit, nei due temi — raggi concentrici, testo tagliato e niente che sborda, icone disegnate e centrate, `axe` col contrasto | — | ⬜ |
@@ -169,9 +169,9 @@ altro, la riga lo dice e il compito segue la misura (`CLAUDE.md`: *«un'evidenza
 
 | # | Che cosa | Il comando o il file | Che cosa fa il piano |
 |---|---|---|---|
-| **P-1** | ⛔ **la regola del contrasto non è «ogni testo su ogni fondo».** La decisione 14 dice che il test accoppia *«ogni `--color-text-*` con ogni `--color-bg-*`»*; alla lettera **fallisce per costruzione** — nello scuro `--color-text-on-ok` e `--color-bg` sono lo stesso `--ref-neutral-5`. Le **176 coppie** approvate con la tavola, *«zero sotto la soglia»*, le ha prodotte la funzione `pairs()` di `palette.py`, per **famiglie**: sei testi su undici fondi a 4,5:1; `text-on-accent` sui tre fondi d'accento e `text-on-X` sul suo `bg-X` a 4,5:1; bordo forte, focus, segno e bordo d'accento sui quattro fondi di base a 3:1 — 88 per tema | `palette.py` nello scratchpad della terza sessione del 2026-09-23, `…\9ae312b8-b35c-470a-90ee-519a47a2f7df\scratchpad\`, righe 92–104 — ⚠️ uno scratchpad non è per sempre: la regola è copiata **qui**, parola per parola, nel compito 1 | il compito 1 scrive le famiglie **dai nomi**, non una lista di coppie, e una guardia che **ogni** ruolo sia in una famiglia o nell'elenco degli esenti: un ruolo nuovo non sfugge in silenzio |
+| **P-1** | ⛔ **la regola del contrasto non è «ogni testo su ogni fondo».** La decisione 14 dice che il test accoppia *«ogni `--color-text-*` con ogni `--color-bg-*`»*; alla lettera **fallisce per costruzione** — nello scuro `--color-text-on-ok` e `--color-bg` sono lo stesso `--ref-neutral-5`. Le **176 coppie** approvate con la tavola, *«zero sotto la soglia»*, le ha prodotte la funzione `pairs()` di `palette.py`, per **famiglie**: sei testi su undici fondi a 4,5:1; `text-on-accent` sui tre fondi d'accento e `text-on-X` sul suo `bg-X` a 4,5:1; bordo forte, focus, segno e bordo d'accento sui quattro fondi di base a 3:1 — 88 per tema | `palette.py` nello scratchpad della terza sessione del 2026-09-23, `…\9ae312b8-b35c-470a-90ee-519a47a2f7df\scratchpad\`, righe 92–104 — ⚠️ uno scratchpad non è per sempre: la regola è copiata **qui**, parola per parola, nel compito 1 | il compito 1 scrive le famiglie **dai nomi**, non una lista di coppie, e una guardia che **ogni** ruolo sia in una famiglia o nell'elenco degli esenti: un ruolo nuovo non sfugge in silenzio. ✅ **Scelto dal proprietario il 2026-09-23 — A, per famiglie** (R1-8 della [revisione](2026-09-23-design-system-revisione/ledger.md)): il controllo 2 della (f) cambia forma col richiamo datato nel disegno, e il commento di `themes.css` nella tavola — *«Every text role reads 4.5:1 on every background role»* — è riscritto per famiglie **prima** che il compito 1 lo copi |
 | **P-2** | ⛔ **il linter non legge i `.ts`.** `eslint src` passa i `.vue` e i `.json`; i `.ts` non sono di nessuno (P-101 della parte 2, nel commento di `gui/eslint.config.js`). Le regole di `no-restricted-imports` della (b) sarebbero **cieche** su `icons.ts`, `BigTab.ts`, `dock.ts` | `grep -n 'P-101' gui/eslint.config.js`; `vue/essential/rules` non ha `files`, e così i blocchi nostri — letto nei pacchetti installati | il compito 3 aggiunge un blocco che legge i `.ts` col parser di TypeScript, e prova che il `npm run lint` resti verde sul codice di oggi e diventi rosso su una violazione in un `.ts` |
-| **P-3** | ⚠️ **la regola «in `components/` nessun import di `pinia`, `stores/`…» morderebbe `Confirm.vue`**, che la (b) stessa tiene in `components/` come pezzo **composto** e che legge due negozi | `grep -n 'stores' gui/src/components/Confirm.vue` | il compito 3 la applica ai **pezzi di base** — `components/Base*.vue` e `components/icons.ts` — che è il principio della riga *«i pezzi di base … mai lo stato globale»* della (b) |
+| **P-3** | ⚠️ **la regola «in `components/` nessun import di `pinia`, `stores/`…» morderebbe `Confirm.vue`**, che la (b) stessa tiene in `components/` come pezzo **composto** e che legge due negozi | `grep -n 'stores' gui/src/components/Confirm.vue` | ✅ **scelto dal proprietario il 2026-09-23 — A, due regole** (R2-11 della revisione): i **pezzi di base** — `components/Base*.vue` e `components/icons.ts` — non importano `pinia`, `stores/` né gli strati sopra, com'è la riga *«i pezzi di base … mai lo stato globale»* della (b); **e** tutto `components/`, tranne i `*.test.ts`, non importa gli strati sopra — `panels/`, `frame/`, `transport/`. Il compito 3 scrive le due e le prova nelle due direzioni; nel disegno il richiamo datato sulla tabella *«Le regole»* della (b) |
 | **P-4** | **`base.css` uguale alla tavola non può portare la regola della pagina** `html, body, #app { height: 100%; margin: 0; }`, che oggi sta in `tokens.css` | `sed -n '52,57p' gui/src/tokens/tokens.css` | il compito 1 la sposta in uno `<style>` **non** scoped di `App.vue`, la radice che monta la cornice |
 | **P-5** | **i caratteri non possono entrare da `base.css`**, per la stessa ragione: la tavola li carica con `<link>` da jsDelivr | `grep -n 'fontsource' docs/superpowers/specs/2026-09-22-design-system-tavole/token.html` | li importa `gui/src/tokens/index.ts`, l'ingresso unico dei token, per la SPA e per la pagina kit |
 | **P-6** | **le variabili `--dv-*` del CSS di `dockview` sono 103**, ma quelle d'una tavolozza — `--dv-color-abyss*`, `-gh-`, `-mocha-`, `-monokai-`, `-nord-`, `-sol-` — le legge solo il tema che le porta. *«Ogni variabile che il CSS usa»* si legge come **ogni variabile che il tema di riferimento `.dockview-theme-abyss` imposta**, nei suoi due blocchi | `grep -o 'var(--dv-[a-z0-9-]*' gui/node_modules/dockview/dist/styles/dockview.css \| sort -u \| wc -l`; `awk '/^\.dockview-theme-abyss \{/,/^\}/' …` | il compito 6 lo prova con un test che legge `dockview.css` e `dock.css`: ogni variabile del tema di riferimento è impostata dal nostro, tranne i nove colori dei gruppi di linguette, una funzione che la SPA non accende |
@@ -197,7 +197,7 @@ che il disegno lasciava al piano; ciascuna si ribalta con una riga.
 | **D3** | le **viste col nome** sono due campi facoltativi del pacchetto, `named` e `openNamed`; `view` resta un `ViewName` | un pacchetto scritto prima si apre come prima, e uno scritto dopo si apre in una build vecchia sulla vista di sempre: cambiare il tipo di `view` avrebbe rotto la seconda direzione. Costo: due campi da leggere insieme |
 | **D4** | due nomi uguali per una vista col nome **non** si accettano: il campo lo dice sotto, in rosso | lo stato d'errore del campo è nella tavola dei token, `.field.is-error`; sovrascrivere in silenzio perderebbe una vista. Costo: rinominare e cancellare una vista col nome non ci sono — non li chiede la (d) |
 | **D5** | le **miniature** sono uno schema calcolato dall'albero della disposizione salvata — rettangoli in frazioni e l'icona del modulo visibile — e i gruppi galleggianti non ci sono | la risposta 19 vuole lo schema, non un `dockview` per miniatura; un gruppo galleggiante non ha un posto nella griglia. Costo: una miniatura non mostra ciò che galleggia |
-| **D6** | le **icone dei moduli** che le tavole non mostrano le sceglie il piano, una riga ciascuna nella mappa | le tavole danno Stato, Permessi, Passi, Attività, Chat, i moduli, la ricerca, le viste; la presa grande vuole l'icona di **ogni** tipo di modulo. Costo: una riga per cambiarne una |
+| **D6** | le **icone dei moduli** che le tavole non mostrano le sceglie il piano, una riga ciascuna nella mappa — la **Chat** compresa | le tavole danno Stato, Permessi, Passi, Attività, i moduli, la ricerca, le viste; la Chat no, e `message-square`, che il piano le dà, sulle tavole segna i «Messaggi di stato» (R2-15 della revisione); la presa grande vuole l'icona di **ogni** tipo di modulo. Costo: una riga per cambiarne una |
 | **D7** | la pagina kit mostra i due temi **uno alla volta**, con la scelta in cima, e non affiancati | un dialogo di `reka-ui` va in un portale sul `body` e prenderebbe il tema della radice, non quello della colonna. Costo: per confrontarli si cambia la scelta |
 | **D8** | le parole della pagina kit sono **esemplari** scritti nel file, con un blocco del linter che lo dice, limitato a `src/kit/` | è una pagina di sviluppo fuori dal pacchetto: le sue parole in `it.json` finirebbero nel pacchetto per niente. Costo: una eccezione in più, in un posto solo |
 
@@ -209,11 +209,11 @@ Rilette il 2026-09-23 coi due comandi della §6 del compendio e con la tabella d
 | Voce | Di chi | Che cosa ne fa questo piano |
 |---|---|---|
 | **X-2** e **X-4** dell'[audit](../../audit-2026-08-27.md) | del proprietario | niente: non toccano la GUI |
-| **N-2 di E187**, l'avviso di `vite` sui pezzi sopra i 500 kB | del proprietario | il compito 1 e il 3 **misurano** il pezzo JavaScript dopo il *build* e lo scrivono nel commit: la (e) dice che il design system non lo peggiora, ed è una deduzione |
+| **N-2 di E187**, l'avviso di `vite` sui pezzi sopra i 500 kB | del proprietario | il compito 1, il 5, il 6 e l'8 **misurano** il pezzo JavaScript dopo il *build* — `npm run build 2>&1 \| grep -E 'assets/index-.*\.js '` — e lo scrivono nel commit; il 3 no, perché la SPA non importa ancora il kit (R2-13). ⚠️ La (e) dice che il design system non lo peggiora, ed è una deduzione: la revisione l'ha misurato **crescere al compito 5**, quando i pezzi di base entrano nei pannelli (R3-25), e la cifra si porta al proprietario |
 | **E228**, progress e notifiche | del proprietario | niente: i token ci sono già, `--z-toast` e i colori di stato |
 | il **terzo carattere** per il codice | del proprietario | niente: il monospazio resta quello del sistema (decisione 16 del disegno) |
 | **AUD-004** | del proprietario | niente: sbarra il sotto-progetto 13, non questo |
-| la **finestra** del guscio — `titleBarOverlay`, `setTitleBarOverlay`, gli angoli di Windows | del sotto-progetto **10** | niente: le regole della (d) restano scritte nel disegno per chi farà il guscio |
+| la **finestra** del guscio — `titleBarOverlay`, `setTitleBarOverlay`, gli angoli di Windows; e la **prima pittura**: i ruoli vivono solo sotto `[data-theme]`, che lo script mette dopo l'analisi del documento, quindi prima dello script la finestra non ha fondo (R1-13 della revisione, dedotto e non misurato) | del sotto-progetto **10** | niente: le regole della (d) restano scritte nel disegno per chi farà il guscio; per la prima pittura il rimedio è del guscio — il `backgroundColor` della finestra, o mostrarla a `ready-to-show` |
 
 ---
 ## Compito 1: i token — la tavola copiata, il tema sulla radice, i nomi nuovi
@@ -265,13 +265,14 @@ i due `z-index` di `Drawer.vue`. Se il censimento dice altro, è una voce d'erra
 - [ ] **Passo 2: i due caratteri, in due passi**
 
 ```bash
-cd gui
-npm install --save-exact @fontsource-variable/geist@5.3.0 @fontsource/barlow@5.3.0
-git diff --stat package.json package-lock.json
-npm ls @fontsource-variable/geist @fontsource/barlow
+(cd gui &&
+  npm install --save-exact @fontsource-variable/geist@5.3.0 @fontsource/barlow@5.3.0 &&
+  git diff --stat package.json package-lock.json &&
+  npm ls @fontsource-variable/geist @fontsource/barlow)
 ```
 
-Atteso: le due righe nuove in `dependencies` di `package.json`, esatte, e il lockfile che le porta. La licenza di tutte e
+Atteso: le due righe nuove in `dependencies` di `package.json`, esatte, e `dockview-core` che `npm` rimette in ordine dopo
+`dockview` — il diff di `package.json` è `4 +++-` (R1-4) —; e il lockfile che le porta. La licenza di tutte e
 due è `OFL-1.1` (`npm view @fontsource/barlow@5.3.0 license`). Manifesto e lockfile vanno nello **stesso** commit
 (vincolo 7).
 
@@ -606,7 +607,8 @@ describe("the theme on the root (design system, section (a))", () => {
 
 - [ ] **Passo 7: le prove — il tema nel pacchetto, nelle due direzioni**
 
-In `gui/src/stores/stores.test.ts`, in coda al file, un `describe` nuovo:
+In `gui/src/stores/stores.test.ts`, in coda al file — con Python, `newline=""`, e il blocco con `\r\n` se il file è
+CRLF, come un file riscritto per intero (R1-14) —, un `describe` nuovo:
 
 ```ts
 describe("the theme in the package (design system, section (a))", () => {
@@ -650,12 +652,14 @@ describe("the theme in the package (design system, section (a))", () => {
 - [ ] **Passo 8: lancia le prove, e guardale fallire**
 
 ```bash
-cd gui && npx vitest run src/tokens src/stores
+(cd gui && npx vitest run src/tokens src/stores)
 ```
 
 Atteso: **rosso**, e per la ragione giusta — `board.test.ts` e `contrast.test.ts` senza `base.css` e `themes.css`
-(`ENOENT`), `usage.test.ts` senza `tokens/dock.css`, `theme.test.ts` senza `./theme`, e le tre prove del negozio senza
-`theme` e `chooseTheme`. Un rosso per un'altra ragione è una voce d'errata.
+(`ENOENT`), `usage.test.ts` senza `tokens/dock.css` e coi due veli di oggi, in `Confirm.vue` e `Drawer.vue`, che il passo
+13 rinomina (R1-2), `theme.test.ts` senza `./theme`, e **due** delle tre prove del negozio — la prima e la terza — senza
+`theme` e `chooseTheme`. La seconda, la scelta sconosciuta, è **verde** già oggi, perché l'`unpack` di oggi non legge
+`theme`: la sua direzione rossa è al passo 16 (R1-1). Un rosso per un'altra ragione è una voce d'errata.
 
 - [ ] **Passo 9: i due fogli, copiati dallo script**
 
@@ -701,7 +705,7 @@ for name, (start, end) in {"base.css": MARKS[0:2], "themes.css": MARKS[1:3]}.ite
 
 ```bash
 python <scratchpad>/extract_tokens.py "$(git rev-parse --show-toplevel)"
-cd gui && npx vitest run src/tokens/board.test.ts src/tokens/contrast.test.ts
+(cd gui && npx vitest run src/tokens/board.test.ts src/tokens/contrast.test.ts)
 ```
 
 Atteso: `board.test.ts` **verde**, due prove; `contrast.test.ts` **verde** — gli stessi ruoli, e per ciascun tema le
@@ -744,7 +748,8 @@ export const shownTheme: Ref<Theme> = ref<Theme>("dark");
  * `system` -- when the system changes. Returns the stop.
  *
  * ⛔ EVERY ROLE OF `themes.css` LIVES UNDER `[data-theme]`: a root without the attribute has no colour at all,
- * so the caller runs this BEFORE the first paint (`main.ts` does it before `mount`).
+ * so the caller runs this BEFORE THE MOUNT, and Vue's first render has its colours (`main.ts` does). The paint
+ * before any script runs is the shell's to cure (R1-13 of the design-system review).
  */
 export function watchTheme(
   choice: () => ThemeChoice,
@@ -913,6 +918,26 @@ lo riscrive come il tema nostro:
   --dv-tabs-and-actions-container-height: var(--size-control-lg);
 }
 
+/* ⛔ A BRIDGE UNTIL TASK 6 DRESSES THE DOCK: `themeAbyss` paints the groups and the tabs dark, and the light theme's
+   text would sit on them at 1.11:1, the big grab's buttons at 1.06:1 (measured). These bind the few variables that
+   paint behind text to our roles; task 6 replaces this block with a theme of our own. It wins over `dockview.css`
+   because it is loaded after it. */
+.dockview-theme-abyss {
+  --dv-group-view-background-color: var(--color-bg-surface);
+  --dv-tabs-and-actions-container-background-color: var(--color-bg);
+  --dv-activegroup-visiblepanel-tab-background-color: var(--color-bg-surface);
+  --dv-activegroup-hiddenpanel-tab-background-color: var(--color-bg);
+  --dv-inactivegroup-visiblepanel-tab-background-color: var(--color-bg-surface);
+  --dv-inactivegroup-hiddenpanel-tab-background-color: var(--color-bg);
+  --dv-activegroup-visiblepanel-tab-color: var(--color-text);
+  --dv-activegroup-hiddenpanel-tab-color: var(--color-text-muted);
+  --dv-inactivegroup-visiblepanel-tab-color: var(--color-text-muted);
+  --dv-inactivegroup-hiddenpanel-tab-color: var(--color-text-muted);
+  --dv-tab-divider-color: var(--color-border);
+  --dv-separator-border: var(--color-border);
+  --dv-paneview-header-border-color: var(--color-border);
+}
+
 /* ⛔ No vertical padding on the strip's tabs, so the grab is the whole height; and the CHILD combinator,
    because the overflow dropdown renders `.dv-tab` rows inside the dock too (E173). */
 .dock .dv-tabs-container > .dv-tab {
@@ -977,7 +1002,7 @@ body,
 </style>
 ```
 
-- [ ] **Passo 12: `main.ts` — i token, e il tema prima della prima pittura**
+- [ ] **Passo 12: `main.ts` — i token, e il tema prima del *mount***
 
 In `gui/src/main.ts`, *Trova* `import "./tokens/tokens.css";` — *Sostituisci con* `import "./tokens";`. Poi *Trova*:
 
@@ -1020,12 +1045,15 @@ const layout = useLayout();
 const invoke = useInvoke();
 const stream = useStream();
 
-// ⛔ BEFORE THE MOUNT, so the first paint already has its colours: every role of `themes.css` lives under
+// ⛔ BEFORE THE MOUNT, so Vue's first render already has its colours: every role of `themes.css` lives under
 // `[data-theme]` (design system, section (a)). Until the core's package arrives the choice is `system`.
 watchTheme(() => layout.theme);
 
 app.mount("#app");
+
 ```
+
+⚠️ Il testo nuovo finisce con una riga vuota, così il `mount` non si attacca al blocco degli `attach` che lo segue (R1-15).
 
 - [ ] **Passo 13: i nomi nuovi nei componenti, da uno script**
 
@@ -1098,8 +1126,9 @@ python <scratchpad>/rename_tokens.py "$(git rev-parse --show-toplevel)"
 bash /tmp/census-1.sh
 ```
 
-Atteso: undici righe `ok:`; poi il censimento non trova più **nessun** nome vecchio né **nessun** colore a mano, e i due
-`z-index` dicono `var(--z-overlay)`. ⚠️ Lo script scrive su file CRLF senza toccarne i terminatori, perché legge e scrive
+Atteso: undici righe `ok:`; poi il censimento non trova più **nessun** nome vecchio fuori da `tokens.css` — che esce al
+passo 14, e fino ad allora ne porta dieci righe (R1-3) — né **nessun** colore a mano, e i due `z-index` dicono
+`var(--z-overlay)`. ⚠️ Lo script scrive su file CRLF senza toccarne i terminatori, perché legge e scrive
 con `newline=""` e le sue sostituzioni non contengono fine-riga: si rimisura lo stesso, al passo 16.
 
 - [ ] **Passo 14: `tokens.css` esce, e ciò che lo nominava**
@@ -1123,16 +1152,19 @@ Lo stile dal compito 1 del piano del design system: `gui/src/tokens/base.css` e 
 - [ ] **Passo 15: tutte le prove, il *build*, il linter**
 
 ```bash
-cd gui && npm test && npm run build && npm run lint
+(cd gui && npm test && npm run build && npm run lint)
 ```
 
-Atteso: **verde** su tutto; nel log del *build*, la riga del pezzo JavaScript — `npm run build 2>&1 | grep 'kB'` — che si
-scrive nel commit accanto a quella della baseline (**N-2 di E187**: il design system non dovrebbe peggiorarlo, ed è una
-deduzione). Il CSS cresce delle dichiarazioni `@font-face`; i caratteri sono **file a parte**, `dist/assets/*.woff2`.
+Atteso: **verde** su tutto; nel log del *build*, la riga del pezzo JavaScript — `npm run build 2>&1 | grep -E
+'assets/index-.*\.js '`: `grep 'kB'` ne rende una per ogni file di carattere (R1-5) — che si scrive nel commit accanto a
+quella della baseline (**N-2 di E187**: il design system non dovrebbe peggiorarlo, ed è una deduzione). Il CSS cresce
+delle dichiarazioni `@font-face`; i caratteri sono **file a parte**, `dist/assets/*.woff2` e `*.woff`.
 
 - [ ] **Passo 16: le due direzioni, e i fine-riga**
 
-Ogni prova si prova **rossa**, poi si torna indietro — `git diff --stat` a zero sui file toccati per la prova:
+Ogni prova si prova **rossa**, poi si torna indietro con la **copia salvata**, e alla fine `git status --porcelain` è
+quello di prima (vincolo 11): `themes.css` e `theme.ts` sono nati in questo compito, e `Strip.vue` ne porta già i nomi
+nuovi — `git checkout` non conosce i primi e toglierebbe al secondo il lavoro del passo 13 (A-1):
 
 | La prova | La violazione messa a mano | Atteso |
 |---|---|---|
@@ -1142,8 +1174,10 @@ Ogni prova si prova **rossa**, poi si torna indietro — `git diff --stat` a zer
 | `usage.test.ts`, le scale | in `panels/Strip.vue` `color: var(--ref-neutral-5);` | rosso: `panels/Strip.vue` |
 | `usage.test.ts`, i colori | in `panels/Strip.vue` `color: #fff;` | rosso: `panels/Strip.vue:<riga>` |
 | `theme.test.ts` | in `theme.ts` `resolveTheme` che ignora `choice` | rosso |
+| `stores.test.ts`, la scelta sconosciuta | in `unpack` il ramo che rende `theme` senza `isThemeChoice` | rosso: `reads a choice it does not know as absent`, con `"theme": "purple"` (R1-1) |
+| `stores.test.ts`, la scelta che resta | in `settle` tolto `...(saved.value ?? {})` | rosso: `sends the choice at once, and a settle after it keeps it` (R1-1) |
 
-Poi i fine-riga dei file toccati — quelli **nuovi** LF, gli altri come erano:
+Poi, dalla radice del repository (R1-12), i fine-riga dei file toccati — quelli **nuovi** LF, gli altri come erano:
 
 ```bash
 git ls-files --eol gui/src gui/package.json gui/package-lock.json docs/COMPENDIO.md | grep -v 'w/lf\|w/crlf'
@@ -1152,14 +1186,34 @@ for f in $(git diff --name-only; git ls-files --others --exclude-standard gui/sr
 
 - [ ] **Passo 17: guardarlo, nei due temi**
 
-`cd gui && npm run dev`, la pagina nel browser; nella console `harnessFake.deliverAll()`, poi
-`document.documentElement.dataset.theme = "light"` e `"dark"`. Atteso: i colori della tavola, i caratteri Geist e Barlow
-(DevTools, *Computed*, `font-family`), nessuna scritta illeggibile. ⚠️ Il dock è ancora `themeAbyss` fino al compito 6: nel
-tema chiaro stona, ed è **atteso**.
+`(cd gui && npm run dev)`, la pagina nel browser; nella console `harnessFake.deliverAll()`, poi, per ciascun tema —
+`document.documentElement.dataset.theme = "light"` e `"dark"` —, il contrasto di ogni scritta del dock sul primo fondo
+pieno dei suoi antenati:
+
+```js
+(() => {
+  const rgb = (c) => c.match(/[\d.]+/g).map(Number);
+  const lum = ([r, g, b]) => [r, g, b].map((v) => ((v /= 255) <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)).reduce((s, v, i) => s + v * [0.2126, 0.7152, 0.0722][i], 0);
+  const ratio = (a, b) => (Math.max(lum(a), lum(b)) + 0.05) / (Math.min(lum(a), lum(b)) + 0.05);
+  const back = (el) => { for (let e = el; e; e = e.parentElement) { const c = rgb(getComputedStyle(e).backgroundColor); if (c.length === 3 || c[3] === 1) return c; } return [255, 255, 255]; };
+  const own = (el) => [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim() !== "");
+  const seen = [...document.querySelectorAll(".dock *")].filter((el) => own(el) && el.getBoundingClientRect().width > 0);
+  const worst = seen.map((el) => [Math.round(ratio(rgb(getComputedStyle(el).color), back(el)) * 100) / 100, el.textContent.trim().slice(0, 20)]).sort((a, b) => a[0] - b[0]);
+  return { theme: document.documentElement.dataset.theme, seen: seen.length, worst: worst.slice(0, 3) };
+})()
+```
+
+Atteso: in tutti e due i temi `seen` sopra zero e il primo di `worst` **sopra 4,5** — pannelli e linguette, i pulsanti
+della presa grande compresi. ⚠️ Il dock è ancora `themeAbyss` fino al compito 6, e a tenerlo leggibile è il **ponte** di
+`dock.css`: senza, nel tema chiaro il testo dei pannelli sta a 1,11:1 e i pulsanti della presa grande a 1,06:1 (misurato
+dalla revisione, R1-10). Poi i caratteri: **Geist** nel testo (DevTools, *Computed*, `font-family`); Barlow entra coi
+pezzi di base, dal compito 3, e i controlli nativi restano sul carattere del sistema finché il compito 5 non li
+sostituisce (R1-11). ⛔ Una scritta sotto la soglia è una voce d'errata, non un valore da ritoccare.
 
 - [ ] **Passo 18: il cancello, il commit, la posizione**
 
-La riga **1** della tabella della posizione diventa `✅ <data>` col commit; poi, uno alla volta:
+La riga **1** della tabella della posizione: **Stato** `✅ <data>`; la sua colonna **Commit** la scrive il compito 2, perché
+un commit non conosce il proprio hash prima di nascere (R1-16). Poi, uno alla volta:
 
 ```bash
 bash scripts/gate.sh
@@ -1199,10 +1253,10 @@ si aprirebbe una finestra), `docs/config/browser/viewport.md` (di base 414 × 89
 - [ ] **Passo 1: le due dipendenze, in due passi**
 
 ```bash
-cd gui
-npm install --save-dev --save-exact @vitest/browser-playwright@4.1.11 playwright@1.63.0
-npm ls @vitest/browser-playwright playwright vitest
-npm view playwright@1.63.0 scripts.install scripts.postinstall
+(cd gui &&
+  npm install --save-dev --save-exact @vitest/browser-playwright@4.1.11 playwright@1.63.0 &&
+  npm ls @vitest/browser-playwright playwright vitest &&
+  npm view playwright@1.63.0 scripts.install scripts.postinstall)
 ```
 
 Atteso: `@vitest/browser-playwright@4.1.11` che porta `@vitest/browser@4.1.11`, `vitest@4.1.11` **invariato**, e
@@ -1227,9 +1281,13 @@ import { watchTheme, type ThemeChoice } from "./theme";
 afterEach(async () => {
   await commands.emulateMedia({ colorScheme: null, reducedMotion: null, forcedColors: null });
   document.body.replaceChildren();
+  delete document.documentElement.dataset.theme;
 });
 
 const rootStyle = (): CSSStyleDeclaration => getComputedStyle(document.documentElement);
+
+/** `navigator.userAgentData` is not in TypeScript's `DOM` library: the shape the probe reads, written here. */
+type BrandedNavigator = Navigator & { userAgentData?: { brands: readonly { brand: string }[] } };
 
 describe("the browser the probes run in", () => {
   it("is a real one: it lays out, and it is Chrome", () => {
@@ -1239,7 +1297,10 @@ describe("the browser the probes run in", () => {
     box.style.cssText = "width:120px;height:40px";
     document.body.append(box);
     expect(box.getBoundingClientRect().width).toBe(120);
-    expect(navigator.userAgent).toMatch(/Chrome\//);
+    // ⛔ THE BRAND, NOT THE USER AGENT: `HeadlessChrome/` ends in `Chrome/`, and so would the Chromium Playwright
+    // downloads; the installed Chrome is the one whose brands say "Google Chrome" (R2-6 of the design-system review).
+    const brands = (navigator as BrandedNavigator).userAgentData?.brands.map((entry) => entry.brand) ?? [];
+    expect(brands).toContain("Google Chrome");
   });
 });
 
@@ -1254,18 +1315,27 @@ describe("the tokens, in a real browser (design system, sections (a) and (f))", 
     expect(loaded("Geist Variable")).toBeGreaterThan(0);
     expect(loaded("Barlow")).toBeGreaterThanOrEqual(4);
 
-    const width = (text: string, variant: string): number => {
+    const width = (text: string, variant: string, family?: string): number => {
       const span = document.createElement("span");
       span.textContent = text;
       span.style.cssText = `position:absolute;white-space:nowrap;font:var(--font-display);font-variant-numeric:${variant}`;
+      if (family !== undefined) span.style.fontFamily = family;
       document.body.append(span);
       return span.getBoundingClientRect().width;
     };
     expect(Math.abs(width("111111", "tabular-nums") - width("000000", "tabular-nums"))).toBeLessThan(0.5);
-    // ⛔ THE SECOND DIRECTION, and it is what makes the first one mean something: without `tabular-nums`
-    // Barlow's digits are proportional -- measured on the token board on 2026-09-23, 67.34 against 108.10 px --
-    // so a probe that measured the fallback, or the wrong variant, would see the difference.
+    // ⛔ THE SECOND DIRECTION: without `tabular-nums` the digits are proportional -- measured on the token board on
+    // 2026-09-23, 67.34 against 108.10 px. It proves that `tabular-nums` acts, NOT which font draws: Bahnschrift, the
+    // chain's first fallback on Windows, has proportional digits too (R2-4 of the design-system review).
     expect(Math.abs(width("111111", "normal") - width("000000", "normal"))).toBeGreaterThan(10);
+    // ⛔ WHICH FONT DRAWS: the same text in the token's chain WITHOUT Barlow measures otherwise -- 67.33 against 63.84 px
+    // on the plain ones, 100.42 against 102.19 on the tabular zeros, in the installed Chrome on 2026-09-23. A token
+    // that drew with the fallback would measure the same in both.
+    const chain = rootStyle().getPropertyValue("--font-family-tool").trim();
+    const fallback = chain.replace(/^"Barlow",\s*/, "");
+    expect(fallback, "the chain starts with Barlow").not.toBe(chain);
+    expect(Math.abs(width("111111", "normal") - width("111111", "normal", fallback))).toBeGreaterThan(0.5);
+    expect(Math.abs(width("000000", "tabular-nums") - width("000000", "tabular-nums", fallback))).toBeGreaterThan(0.5);
   });
 
   it("put the motion to zero when the system asks for less, and only then (WCAG 2.3.3)", async () => {
@@ -1279,7 +1349,10 @@ describe("the tokens, in a real browser (design system, sections (a) and (f))", 
   });
 
   it("keep the focus ring under Windows' high contrast: an outline, which forced colours keep (G20, trap 11)", async () => {
+    document.documentElement.dataset.theme = "dark";
     await commands.emulateMedia({ forcedColors: "active" });
+    // ⛔ THE EMULATION IS IN FORCE, or nothing below is about high contrast (R2-2 of the design-system review).
+    expect(matchMedia("(forced-colors: active)").matches).toBe(true);
     const button = document.createElement("button");
     button.textContent = "focus";
     document.body.append(button);
@@ -1291,9 +1364,11 @@ describe("the tokens, in a real browser (design system, sections (a) and (f))", 
       return style.outlineStyle !== "none" && Number.parseFloat(style.outlineWidth) >= 2;
     };
     expect(ring(button)).toBe(true);
-    // ⛔ THE SECOND DIRECTION: the same probe sees a ring taken away.
+    // ⛔ THE SECOND DIRECTION IS WHAT HIGH CONTRAST DOES: forced colours erase a ring drawn with `box-shadow` -- the
+    // reason the (a) draws it with an outline. The same button, ringed that way, has no ring left.
     button.style.outline = "none";
-    expect(ring(button)).toBe(false);
+    button.style.boxShadow = "0 0 0 2px currentColor";
+    expect(getComputedStyle(button).boxShadow).toBe("none");
   });
 
   it("follow the system's scheme through the real query while the choice is `system`", async () => {
@@ -1327,7 +1402,7 @@ declare module "vitest/browser" {
 ```
 
 ```bash
-cd gui && npx vitest run src/tokens/tokens.browser.test.ts
+(cd gui && npx vitest run src/tokens/tokens.browser.test.ts)
 ```
 
 Atteso: **rosso** — sotto jsdom, com'è la configurazione di oggi, `vitest/browser` non c'è e il file non si carica. È il
@@ -1427,6 +1502,10 @@ export default defineConfig({
             enabled: true,
             // ⛔ EXPLICIT: the default is `process.env.CI`, which would open a window on every local gate.
             headless: true,
+            // ⛔ NO PICTURES OF A RED (R2-3 of the design-system review): by default every failing probe leaves a PNG in
+            // `__screenshots__` next to its file -- inside `src/`, which git does not ignore, on a path Windows' git cannot
+            // add past 260 characters. Nobody looks at them: the gate reads the words of the failure.
+            screenshotFailures: false,
             // ⛔ THE INSTALLED CHROME (decision 22 of the design): nothing is downloaded, and a machine without
             // it goes red at this step with Playwright's own message -- the prerequisite, declared.
             provider: playwright({ launchOptions: { channel: "chrome" } }),
@@ -1444,23 +1523,37 @@ export default defineConfig({
 - [ ] **Passo 4: le prove, verdi**
 
 ```bash
-cd gui && npx vitest run --project browser && npm test && npm run build
+(cd gui && npx vitest run --project browser && npm test && npm run build)
 ```
 
-Atteso: il progetto `browser` **verde**, cinque prove; `npm test` coi **due** progetti nell'uscita, `jsdom` e `browser`, e
-il conto dei file e delle prove più alto di quello della baseline del compito 1 di **un** file e **cinque** prove;
-`npm run build` verde — `vue-tsc` legge anche `vite.config.ts` e `browser.d.ts`.
+Atteso: il progetto `browser` **verde**, cinque prove; il conto dei file e delle prove di `npm test` più alto di quello
+della baseline del compito 1 di **un** file e **cinque** prove; `npm run build` verde — `vue-tsc` legge anche
+`vite.config.ts` e `browser.d.ts`. E i **due** progetti, che il reporter di base non nomina quando tutto è verde (R2-7) —
+da un file, per i backslash (trappola 6 del disegno):
+
+```bash
+cat > /tmp/projects-2.sh <<'EOF'
+cd "$(git rev-parse --show-toplevel)/gui" || exit 1
+npx vitest run --reporter=verbose | grep -oE '\|(jsdom|browser \(chromium\))\|' | sort | uniq -c
+EOF
+bash /tmp/projects-2.sh
+```
+
+Atteso: due righe, `|browser (chromium)|` e `|jsdom|`, ciascuna col suo conto sopra zero.
 
 - [ ] **Passo 5: le due direzioni del cancello**
 
 | La prova | La violazione | Atteso |
 |---|---|---|
 | il browser **non parte** → il passo è **rosso**, non verde (controllo 20) | in `vite.config.ts` `channel: "chrome-that-does-not-exist"` | `npm test` esce **diverso da zero**, col messaggio di Playwright |
-| il browser è vero | in `vite.config.ts` il progetto `browser` con `enabled: false` | rosso: sotto Node non c'è `document`, o il rettangolo è zero — si **legge** quale |
+| il browser è vero | in `vite.config.ts` il progetto `browser` con `enabled: false` | rosso: `vitest/browser can be imported only inside the Browser Mode. Your test is running in forks pool.` — fuori dal browser il file non si carica, ed è l'import a fare da guardia per questa riga, non il rettangolo (R2-5) |
 | i caratteri | in `tokens/index.ts` tolta la riga di Barlow 300 | rosso: `loaded("Barlow")` sotto quattro, o le cifre |
-| il movimento | in `base.css` tolto il blocco `prefers-reduced-motion` | rosso — ⛔ poi `base.css` si **ripristina con `git checkout`**, e `board.test.ts` lo conferma verde |
+| il movimento | in `base.css` tolto il blocco `prefers-reduced-motion` | rosso — ⛔ poi `base.css` torna dalla **copia salvata**, e `board.test.ts` lo conferma verde |
+| l'alto contrasto | nella prova del contorno del focus, tolta la riga `await commands.emulateMedia({ forcedColors: "active" });` | rosso alla guardia, `expected false to be true`: senza l'emulazione la prova non parla dell'alto contrasto (R2-2) |
+| il carattere che disegna | in `base.css` `--font-display` col solo ripiego, `"Bahnschrift", system-ui, sans-serif` al posto di `var(--font-family-tool)` | rosso al confronto del token con la sua catena senza Barlow, `expected 0 to be greater than 0.5`, mentre le due direzioni delle larghezze restano verdi: anche Bahnschrift ha le cifre proporzionali, e uguali con `tabular-nums` (R2-4) — ⛔ e `board.test.ts`, che vuole il foglio della tavola: poi `base.css` torna dalla **copia salvata** |
 
-Poi `git diff --stat` a zero sui file toccati per le prove.
+Ogni violazione torna indietro con la copia salvata; poi, dalla radice del repository, `git status --porcelain` è quello
+di prima della prima violazione (vincolo 11): nessun file nato dai rossi del browser (R2-3).
 
 - [ ] **Passo 6: il cancello, e il suo commento**
 
@@ -1484,7 +1577,8 @@ npm test
 
 - [ ] **Passo 7: il cancello, il commit, la CI**
 
-La riga **2** della tabella della posizione diventa `✅ <data>`; poi `bash scripts/gate.sh`, da solo, e
+La riga **2** della tabella della posizione: **Stato** `✅ <data>`; e nella riga **1** la colonna **Commit** con l'hash del
+compito 1 (R1-16). Poi `bash scripts/gate.sh`, da solo, e
 `bash scripts/check-docs.sh`; il commit coi file del compito e il piano; `git push`. ⛔ **La CI si legge**, coi due comandi
 di `docs/porta-di-qualita.md`, *«Leggere la CI da terra»*: è la prima corsa col browser su `ubuntu-latest` e
 `windows-latest`, e un rosso là è una voce d'errata di questo compito, non del prossimo.
@@ -1529,9 +1623,9 @@ riscritte coi **soli** token.
 - [ ] **Passo 1: `lucide`, in due passi**
 
 ```bash
-cd gui
-npm install --save-exact lucide@1.47.0
-npm ls lucide && npm view lucide@1.47.0 license
+(cd gui &&
+  npm install --save-exact lucide@1.47.0 &&
+  npm ls lucide && npm view lucide@1.47.0 license)
 ```
 
 Atteso: `lucide@1.47.0` in `dependencies`, licenza `ISC` — e MIT per le icone che vengono da Feather, lo dice la sua
@@ -1589,11 +1683,12 @@ import { createFakeBridge } from "./transport/fakeBridge";
 *Trova* il blocco che comincia con il `/**` sopra `async function violations(node: Element): Promise<string[]> {`, finisce
 con la `}` che chiude la funzione, e prosegue con la riga vuota e con la riga
 `/** Fills the stores the way a welcome does, so every component has something to draw. */` — **intero, preso dal file**
-(`grep -n 'async function violations\|Fills the stores' gui/src/a11y.test.ts`, poi `sed -n` fra le due righe) —
+(`grep -n 'Every violation axe finds\|Fills the stores' gui/src/a11y.test.ts`, e il blocco va dalla riga **sopra** la prima
+— il `/**` — alla seconda: il `grep` di `async function violations` ne lascerebbe fuori il commento, R2-12) —
 *Sostituisci con* la sola riga `/** Fills the stores the way a welcome does, so every component has something to draw. */`.
 
 ```bash
-cd gui && npx vitest run src/a11y.test.ts
+(cd gui && npx vitest run src/a11y.test.ts)
 ```
 
 Atteso: **verde**, come prima: le prove sono le stesse, l'aiutante è lo stesso.
@@ -1622,8 +1717,9 @@ import { ICONS, isIconName, type IconName } from "./icons";
 
 // ⛔ THE WORDS BELOW ARE SPECIMENS: a base piece carries none of its own (section (b)), so a probe hands them in.
 
-/** `BaseList` is generic for its callers' templates; a probe hands it plain props, so it sees a plain component. */
-const List = BaseList as Component;
+/** `BaseList` is generic for its callers' templates; a probe hands it plain props, so it sees a plain component --
+ * through `unknown`, because to `vue-tsc` a generic component is a function, and the direct cast is TS2352. */
+const List = BaseList as unknown as Component;
 
 beforeEach(() => {
   document.body.replaceChildren();
@@ -1643,6 +1739,8 @@ describe("BaseIcon and the one map (design system, section (b); control 10)", ()
   });
 
   it("has an icon for every module type, by the same name (D6 of the plan)", () => {
+    // ⛔ NON-VACUITY: with no module types, the filter below would be empty and green.
+    expect(PANEL_TYPES.length).toBeGreaterThan(0);
     expect(PANEL_TYPES.filter((type) => !isIconName(type.module)).map((type) => type.module)).toEqual([]);
   });
 
@@ -1669,6 +1767,19 @@ describe("BaseButton", () => {
     const worded = mount(BaseButton, { props: { icon: "float", label: "Stacca" }, slots: { default: () => "Stacca la tessera" } }).get("button");
     // ⛔ THE SECOND DIRECTION: with visible words, the words are the name.
     expect(worded.attributes("aria-label")).toBeUndefined();
+  });
+
+  it("names an icon alone again when the words go away: the slot is read at every render", async () => {
+    const words = ref(true);
+    const wrapper = mount({
+      render: () => h(BaseButton, { icon: "float", label: "Stacca" }, words.value ? { default: () => "Stacca la tessera" } : {}),
+    });
+    expect(wrapper.get("button").attributes("aria-label")).toBeUndefined();
+    words.value = false;
+    await nextTick();
+    // ⛔ `useSlots()` is not reactive: a `computed` over it keeps its first answer, and this button stays without a name.
+    expect(wrapper.get("button").attributes("aria-label")).toBe("Stacca");
+    expect(wrapper.get("button").attributes("data-icon-only")).toBeDefined();
   });
 
   it("carries its shape to the element, and is off when disabled", () => {
@@ -1816,7 +1927,7 @@ describe("the eight pieces, under axe", () => {
 ```
 
 ```bash
-cd gui && npx vitest run src/components/kit.test.ts
+(cd gui && npx vitest run src/components/kit.test.ts)
 ```
 
 Atteso: **rosso** — i pezzi non esistono ancora.
@@ -1871,7 +1982,9 @@ export const ICONS = {
   float: AppWindow,
   fullPage: Maximize2,
   // one per module type of `panels/registry.ts`, BY THE SAME NAME: the big grab and the overview draw them. The
-  // boards gave Stato, Permessi, Passi, Attività and Chat; the rest are the plan's choice, one line each (D6).
+  // boards gave Stato, Permessi, Passi and Attività; the rest are the plan's choice, one line each (D6) -- Chat too:
+  // on the boards `message-square` marks the status messages, and they would need another drawing if they entered
+  // the kit (R2-15 of the review).
   chat: MessageSquare,
   status: Gauge,
   permissions: ShieldCheck,
@@ -1965,7 +2078,7 @@ Crea `gui/src/components/BaseButton.vue` (LF):
 
 ```vue
 <script setup lang="ts">
-import { computed, useSlots } from "vue";
+import { useSlots } from "vue";
 
 import BaseIcon from "./BaseIcon.vue";
 import type { IconName } from "./icons";
@@ -1990,7 +2103,13 @@ const props = withDefaults(
   { variant: "secondary", size: "md", pill: false, disabled: false, icon: undefined, label: undefined },
 );
 const slots = useSlots();
-const iconOnly = computed(() => props.icon !== undefined && slots.default === undefined);
+/**
+ * A function the template calls, NOT a `computed`: `useSlots()` is not reactive, so a `computed` would keep its first
+ * answer, and a button whose words go away would stay without a name. A render reads the slots afresh.
+ */
+function iconOnly(): boolean {
+  return props.icon !== undefined && slots.default === undefined;
+}
 </script>
 
 <template>
@@ -2000,10 +2119,10 @@ const iconOnly = computed(() => props.icon !== undefined && slots.default === un
     :data-variant="variant"
     :data-size="size"
     :data-pill="pill || undefined"
-    :data-icon-only="iconOnly || undefined"
+    :data-icon-only="iconOnly() || undefined"
     :disabled="disabled"
-    :aria-label="iconOnly ? label : undefined"
-    :title="iconOnly ? label : undefined"
+    :aria-label="iconOnly() ? label : undefined"
+    :title="iconOnly() ? label : undefined"
   >
     <BaseIcon v-if="icon !== undefined" :name="icon" :size="size === 'lg' ? 'lg' : 'md'" />
     <slot />
@@ -2448,7 +2567,13 @@ const open = defineModel<boolean | undefined>("open", { default: undefined });
     </DialogTrigger>
     <DialogPortal>
       <DialogOverlay class="base-dialog-veil" />
-      <DialogContent class="base-dialog" :data-variant="variant">
+      <!-- ⛔ WITHOUT A DESCRIPTION, NO `aria-describedby`: reka-ui 2.10.4 would point it at a description that is not
+           there, and warn. Its `$attrs` merge after its own, so this `undefined` wins (R2-18 of the review). -->
+      <DialogContent
+        class="base-dialog"
+        :data-variant="variant"
+        v-bind="description === undefined ? { 'aria-describedby': undefined } : {}"
+      >
         <DialogTitle class="title">{{ title }}</DialogTitle>
         <DialogDescription v-if="description !== undefined" class="description">{{ description }}</DialogDescription>
         <slot />
@@ -2479,7 +2604,9 @@ const open = defineModel<boolean | undefined>("open", { default: undefined });
   box-shadow: var(--shadow-overlay);
   color: var(--color-text);
 }
-/* The radii follow the rule of answer 4: a card of 20 with 12 of margin around controls of 8. */
+/* The radii follow the rule of answer 4: a card of 20 with 12 of margin around controls of 8.
+   ⚠️ The width here and the sheet's `max-height` below are the PLAN's choice, written by hand: the board has no token
+   for a window's size -- its `.dlg` is 74% of its frame -- and a token is the board's to add (R2-18 of the review). */
 .base-dialog[data-variant="center"] {
   top: 50%;
   left: 50%;
@@ -2527,16 +2654,16 @@ const open = defineModel<boolean | undefined>("open", { default: undefined });
 ```
 
 ```bash
-cd gui && npx vitest run src/components && npm run build
+(cd gui && npx vitest run src/components && npm run build)
 ```
 
 Atteso: **verde** — le prove di `kit.test.ts`, `markdown.test.ts` com'era; il *build* verde, con `vue-tsc` che ha letto la
-riga `@ts-expect-error`. Il pezzo JavaScript dopo il *build* — `npm run build 2>&1 | grep 'kB'` — si scrive nel commit:
-le icone sono ventiquattro, circa mezzo kB ciascuna (**N-2 di E187**).
+riga `@ts-expect-error`. Il pezzo JavaScript **non cambia** a questo compito: nessun file dell'app importa ancora il kit, e
+`vite` lascia fuori `icons.ts` e `lucide` — la misura, e le ventiquattro icone, sono del compito 5 (R2-13).
 
 - [ ] **Passo 7: il linter — i `.ts`, e le regole del kit**
 
-In `gui/eslint.config.js` (`replace_unique.py`), tre sostituzioni. *Trova*:
+In `gui/eslint.config.js` (`replace_unique.py`), quattro sostituzioni. *Trova*:
 
 ```js
 import vue from "eslint-plugin-vue";
@@ -2556,6 +2683,11 @@ const LUCIDE = {
 const UPWARD = {
   regex: "^pinia$|(^|/)(stores|panels|frame|transport)(/|$)",
   message: "a base piece reads no global state and knows no layer above it (design system, section (b))",
+};
+/** What no file of the kit may reach: the layers above it (section (b); R2-11 of the design-system review). */
+const ABOVE = {
+  regex: "(^|/)(panels|frame|transport)(/|$)",
+  message: "the kit knows no layer above it: panels, frame and transport use the kit, not the other way (design system, section (b))",
 };
 ```
 
@@ -2602,7 +2734,7 @@ const UPWARD = {
     rules: { "vue/no-v-html": "off" },
   },
   /**
-   * ⛔ THE IMPORT RULES OF THE KIT (design system, section (b)). One rule, three scopes, and the ORDER MATTERS: in a flat
+   * ⛔ THE IMPORT RULES OF THE KIT (design system, section (b)). One rule, a scope per block, and the ORDER MATTERS: in a flat
    * config a later block REPLACES an earlier one's options for the same rule, it does not merge them -- so every block
    * says the whole list for its files.
    */
@@ -2610,6 +2742,16 @@ const UPWARD = {
     name: "harness/imports",
     files: ["**/*.vue", "**/*.ts"],
     rules: { "no-restricted-imports": ["error", { paths: [LUCIDE] }] },
+  },
+  {
+    // ⛔ THE WHOLE KIT KNOWS NO LAYER ABOVE IT (section (b); R2-11 of the design-system review, the owner's choice A). A
+    // composed piece such as `Confirm.vue` may read the stores, which the base pieces may not -- their block below says so,
+    // and comes AFTER this one because it replaces it for their files. The tests are out: `kit.test.ts` reads
+    // `PANEL_TYPES`, to check that every module type has an icon.
+    name: "harness/imports/components",
+    files: ["src/components/**/*.{vue,ts}"],
+    ignores: ["src/components/**/*.test.ts"],
+    rules: { "no-restricted-imports": ["error", { paths: [LUCIDE], patterns: [ABOVE] }] },
   },
   {
     name: "harness/imports/base-pieces",
@@ -2625,8 +2767,22 @@ const UPWARD = {
 ];
 ```
 
+*Trova* — nel commento del blocco `harness/ts-in-vue`, la frase che il blocco `harness/ts` smentisce (R2-10; gotcha #58):
+
+```js
+     * proven either (R8-1). The `.ts` files are still nobody's business here (P-101): `vue-tsc` inside
+     * `npm run build` is the level 1 of the web world.
+```
+
+*Sostituisci con:*
+
+```js
+     * proven either (R8-1). The `.ts` files are read from the design system on (block `harness/ts`, P-2 of its plan);
+     * their TYPES stay with `vue-tsc` inside `npm run build`, the level 1 of the web world (R2-10 of its review).
+```
+
 ```bash
-cd gui && npm run lint
+(cd gui && npm run lint)
 ```
 
 Atteso: **verde** sul codice di oggi. ⛔ Se una regola già attiva scatta su un `.ts` ora letto — le regole di
@@ -2635,26 +2791,40 @@ linter spento per farla tacere.
 
 - [ ] **Passo 8: le due direzioni del linter**
 
-Una alla volta, `npm run lint` dopo ciascuna, poi indietro con `git checkout -- <file>`:
+Una alla volta, `npm run lint` dopo ciascuna, poi indietro con la **copia salvata** (vincolo 11): `BaseLabel.vue` e
+`BaseButton.vue` sono nati in questo compito, e `git checkout` non li conosce ancora (R3-5, A-1):
 
 | La violazione messa a mano | Atteso |
 |---|---|
 | in `src/components/BaseLabel.vue` la riga `import { useCore } from "../stores/core";` | **rosso**: *«a base piece reads no global state»* |
 | in `src/frame/moveActive.ts` la riga `import { Search } from "lucide";` | **rosso**: *«icons pass through BaseIcon»* — ⛔ è la prova che i `.ts` ora si leggono |
 | in `src/components/BaseButton.vue` la riga `import { Search } from "lucide";` | **rosso**: lo stesso messaggio, dal blocco dei pezzi di base |
-| niente: `src/components/icons.ts` importa `lucide`, `src/components/Confirm.vue` legge due negozi | **verde**: la prima è la porta unica, il secondo è un pezzo composto (**P-3**) |
+| in `src/components/Confirm.vue` la riga `import { PANEL_TYPES } from "../panels/registry";` | **rosso**: *«the kit knows no layer above it»* — un pezzo composto legge i negozi, non gli strati sopra (R2-11) |
+| in `src/components/markdown.ts` la riga `import type { Bridge } from "../transport/bridge";` | **rosso**: lo stesso messaggio — ⛔ la regola arriva anche ai `.ts` di `components/`, e a un `import type` |
+| niente: `src/components/icons.ts` importa `lucide`, `src/components/Confirm.vue` legge due negozi, `src/components/kit.test.ts` legge `PANEL_TYPES` | **verde**: la prima è la porta unica, il secondo è un pezzo composto (**P-3**), il terzo è una prova (R2-11) |
+
+E le prove del kit nella loro direzione rossa (R2-16) — una alla volta, `npx vitest run --project jsdom
+src/components/kit.test.ts` dopo ciascuna, poi indietro con la copia salvata:
+
+| La violazione messa a mano | Atteso |
+|---|---|
+| in `src/components/icons.ts` tolta la riga `models: Cpu,` | **rosso**: `expected [ 'models' ] to deeply equal []` |
+| in `src/components/BaseStatus.vue` la regione dentro un `v-if` che la fa nascere solo quando lo slot disegna qualcosa che non è un commento — `(slots.default?.() ?? []).some((node) => node.type !== Comment)` —: il difetto di M-3 | **rosso**: `Unable to get [role="status"] within: <!--v-if-->`. ⚠️ Un `v-if="$slots.default"` qualunque resta **verde**, e a ragione: chi usa `BaseStatus` passa sempre lo slot, anche quando disegna `null` |
 
 ⚠️ **Il linter non ha una guardia di non-vacuità**: se un `files` smettesse di trovare i suoi file, le regole tacerebbero
 col verde. La prova delle due direzioni si rifà a mano in ogni compito che tocca `eslint.config.js`; una guardia statica è
-un controllo nuovo, del proprietario (vincolo globale 7 della parte 2) — **registrata, non presa**.
+un controllo nuovo, del proprietario (vincolo globale 7 della parte 2) — **registrata, non presa**. ⚠️ E un `import()`
+**dinamico** passa le regole: `no-restricted-imports` guarda gli import statici (R2-17). `no-restricted-syntax` su
+`ImportExpression` lo coprirebbe; oggi nessun file del kit ne ha uno, e la regola non la prende nessun compito.
 
 - [ ] **Passo 9: tutte le prove, il cancello, il commit**
 
 ```bash
-cd gui && npm test && npm run build && npm run lint
+(cd gui && npm test && npm run build && npm run lint)
 ```
 
-Poi la riga **3** della tabella della posizione a `✅ <data>`, `bash scripts/gate.sh` da solo, `bash scripts/check-docs.sh`,
+Poi la riga **3** della tabella della posizione — **Stato** `✅ <data>`, e nella riga **2** la colonna **Commit** con l'hash
+del compito 2 (R1-16) —, `bash scripts/gate.sh` da solo, `bash scripts/check-docs.sh`,
 il commit — `design-system(compito 3): il kit …` — coi fine-riga rimisurati, e `git push`.
 
 ---
@@ -2684,7 +2854,9 @@ il commit — `design-system(compito 3): il kit …` — coi fine-riga rimisurat
 ⚠️ **La regola dei raggi decide anche come è fatta la pagina kit**: un elemento che non può stare in un angolo con lo stesso
 centro *«si allontana dall'angolo»* (la (a), il linguaggio visivo). Quindi le carte che sono pulsanti stanno in una cornice
 `kit-frame` da `--radius-frame` — 20 + 12 = 32 —, il pulsante a pillola sta nella pillola `kit-strip` e non in una scheda, e
-nessuna scheda finisce con un radio nel suo angolo: ciascuna chiude con una nota. Una prova rossa sulla pagina kit si legge
+nessuna scheda finisce con un radio nel suo angolo; e la griglia **non stira** le schede (`align-items: start`), così ciò che
+chiude una scheda — una nota, o l'ultima riga della lista — sta nel suo angolo, e la sonda dei raggi lo giudica (R3-1). Una
+prova rossa sulla pagina kit si legge
 **prima** di toccare un pezzo: può dire che è la pagina a violare la regola.
 
 - [ ] **Passo 1: le sonde, come funzioni**
@@ -2784,7 +2956,9 @@ export function fits(roots: Element[], boxes: string): { seen: number; boxed: nu
 
 /**
  * Every icon is drawn, strokes with `currentColor`, and -- in a flex row that centres -- sits within 0.75 px of the
- * centre of its parent's content box: `sonda-icone.js`, on the icons of `BaseIcon`.
+ * centre of its parent's content box: `sonda-icone.js`, on the icons of `BaseIcon`. ⚠️ An icon whose parent is NOT a
+ * centring flex row is counted and not judged: a violation that un-centres the PARENT falls through here, so the red
+ * direction moves the icon inside a centred row (R3-3 of the review).
  */
 export function iconsCentred(roots: Element[]): { icons: number; centred: number; problems: string[] } {
   const problems: string[] = [];
@@ -2824,6 +2998,7 @@ Crea `gui/src/kit/kit.browser.test.ts` (LF):
 
 ```ts
 import { mount } from "@vue/test-utils";
+import axe from "axe-core";
 import { afterEach, describe, expect, it } from "vitest";
 import { nextTick } from "vue";
 
@@ -2850,6 +3025,17 @@ async function kit(theme: "light" | "dark") {
 }
 
 const roots = (selector: string): Element[] => [...document.querySelectorAll(selector)];
+
+/**
+ * ⛔ THE NON-VACUITY OF `axe` (R3-7 of the review): an empty list of violations says something only if the contrast was
+ * JUDGED -- nodes among the passes, none left incomplete. Under jsdom axe files every contrast as incomplete; here, in
+ * the browser, it must not.
+ */
+async function contrastJudged(node: Element): Promise<{ passes: number; incomplete: number }> {
+  const results = await axe.run(node, { runOnly: ["color-contrast"] });
+  const count = (list: axe.Result[]): number => list.find((rule) => rule.id === "color-contrast")?.nodes.length ?? 0;
+  return { passes: count(results.passes), incomplete: count(results.incomplete) };
+}
 
 for (const theme of ["light", "dark"] as const) {
   describe(`the kit page, ${theme} theme`, () => {
@@ -2901,6 +3087,9 @@ for (const theme of ["light", "dark"] as const) {
     it("has no axe violation -- contrast included, on the drawn page", async () => {
       const wrapper = await kit(theme);
       expect(await violations(wrapper.element, { contrast: true })).toEqual([]);
+      const judged = await contrastJudged(wrapper.element);
+      expect(judged.passes).toBeGreaterThan(0);
+      expect(judged.incomplete).toBe(0);
       wrapper.unmount();
     });
 
@@ -2915,6 +3104,9 @@ for (const theme of ["light", "dark"] as const) {
       expect(report.near).toBeGreaterThan(0);
       expect(report.bad).toEqual([]);
       expect(await violations(dialog[0] as Element, { contrast: true })).toEqual([]);
+      const judged = await contrastJudged(dialog[0] as Element);
+      expect(judged.passes).toBeGreaterThan(0);
+      expect(judged.incomplete).toBe(0);
       wrapper.unmount();
     });
   });
@@ -2922,7 +3114,7 @@ for (const theme of ["light", "dark"] as const) {
 ```
 
 ```bash
-cd gui && npx vitest run --project browser src/kit
+(cd gui && npx vitest run --project browser src/kit)
 ```
 
 Atteso: **rosso** — `Kit.vue` non c'è.
@@ -2982,7 +3174,8 @@ import { isThemeChoice, watchTheme, type ThemeChoice } from "../tokens/theme";
  * would take the root's theme, not a column's. ⛔ The words and the values are SPECIMENS (D8).
  *
  * ⛔ THE RADIUS RULE SHAPES THIS PAGE TOO: the card buttons sit in a frame of `--radius-frame`, the pill button in a
- * pill, and no card ends with a small round control in its corner -- each one closes with a note.
+ * pill, and no card ends with a small round control in its corner. The grid does NOT stretch the cards, so what closes
+ * one -- a note, or the list's last row -- sits in its corner, where the radius probe judges it (R3-1 of the review).
  */
 const props = withDefaults(defineProps<{ initialTheme?: ThemeChoice }>(), { initialTheme: "system" });
 const theme = ref<ThemeChoice>(props.initialTheme);
@@ -3120,6 +3313,14 @@ const rows = [
   </main>
 </template>
 
+<!-- ⛔ NOT SCOPED, like `App.vue`'s (P-4 of the design-system plan): this page does not mount `App.vue`, so without this
+     rule the browser's 8 px stay around it, and `min-height: 100vh` scrolls 16 px for nothing (R3-11 of the review). -->
+<style>
+body {
+  margin: 0;
+}
+</style>
+
 <style scoped>
 .kit {
   min-height: 100vh;
@@ -3144,6 +3345,9 @@ h1 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
   gap: var(--space-6);
+  /* ⛔ NOT STRETCHED: a card stretched to the tallest of its row moves what closes it away from its corner, and the
+     radius probe would judge nothing there (R3-1). */
+  align-items: start;
 }
 .kit-card {
   display: flex;
@@ -3244,7 +3448,7 @@ In `gui/eslint.config.js`, *Trova*:
 - [ ] **Passo 5: le prove, verdi — e che cosa dice un rosso**
 
 ```bash
-cd gui && npx vitest run --project browser && npm run lint && npm run build
+(cd gui && npx vitest run --project browser && npm run lint && npm run build)
 ```
 
 Atteso: il progetto `browser` **verde**, le prove della pagina kit nei due temi. ⛔ Un rosso di `concentricRadii` o di `fits`
@@ -3274,25 +3478,31 @@ if [ -e dist/kit.html ] || grep -rlq 'kit-card' dist/assets; then echo "the kit 
 ```
 
 Le due direzioni: in `gui/vite.config.ts` si aggiunge per prova
-`build: { rollupOptions: { input: { index: "index.html", kit: "kit.html" } } },` accanto a `define`, e
+`build: { rolldownOptions: { input: { index: "index.html", kit: "kit.html" } } },` accanto a `define` — `rolldownOptions`, il
+nome di Vite 8.3.0: `rollupOptions` vi è deprecato (R3-10) —, e
 `bash scripts/gate-gui.sh` è **rosso** con *«the kit page is in the package»*; si toglie, ed è **verde**.
 
 - [ ] **Passo 7: le due direzioni delle sonde**
 
-Una alla volta, nel progetto `browser`, poi indietro con `git checkout -- <file>`:
+Una alla volta, nel progetto `browser`, poi indietro con la **copia salvata** (vincolo 11): `Kit.vue` è nato in questo
+compito e git non lo conosce ancora (R3-5); e alla fine `git status --porcelain` è quello di prima, cioè nessuna immagine
+né allegato nati dai rossi del browser (R3-6).
 
 | La violazione | Atteso |
 |---|---|
-| in `BaseButton.vue` `border-radius: var(--radius-card)` al posto di `var(--radius-control)` | rosso: `concentricRadii`, un `base-button` in `kit-card` |
-| in `Kit.vue` `.kit-card` con `width: 12rem` e `overflow: hidden` | rosso: `fits`, un testo tagliato |
-| in `BaseLabel.vue` `.base-label` con `align-items: flex-start` e `min-height: var(--size-control-lg)` | rosso: `iconsCentred`, un'icona fuori centro — o nessuna centrata: si **legge** quale |
-| in `tokens/index.ts` tolta la riga di Geist | rosso: la famiglia del testo non è `Geist Variable` |
-| in `themes.css` `--color-text-muted` dello scuro portato a `var(--ref-neutral-39)` | rosso: `axe`, `color-contrast` — ⛔ e anche `board.test.ts`, che lo vuole: poi `git checkout` |
+| in `BaseButton.vue` `border-radius: var(--radius-card)` al posto di `var(--radius-control)` | rosso: la prova della **finestra**, nei due temi — `base-button in base-dialog, bottom-right: …`; nessun pulsante della pagina sta nell'angolo di una scheda (R3-1) |
+| in `BaseList.vue` il raggio delle righe, `var(--radius-card)` al posto di `var(--radius-control)` | rosso: la prova della **pagina**, nei due temi — `base-list-row in kit-card, bottom-left: …`: è l'ultima riga della lista a chiudere la sua scheda (R3-1) |
+| in `Kit.vue` `.kit-note` con `white-space: nowrap; overflow: hidden;` | rosso: `fits`, nei due temi — `cut: kit-note …` (R3-2) |
+| in `Kit.vue` `.kit-strip > .base-button { margin-right: -40px; }` | rosso: `fits`, nei due temi — `sticks out: base-button of kit-strip` (R3-2); ⚠️ e anche la prova `axe` della pagina, nei due temi, alla guardia di R3-7 — `expected 1 to be +0`: il pulsante che sborda è in parte coperto, e `axe` ne lascia il contrasto fra gli `incomplete` (`elmPartiallyObscured`). È la direzione rossa di quella guardia |
+| in `BaseLabel.vue` l'icona spostata dentro la sua riga centrata, `.base-label :deep(.base-icon) { position: relative; top: 3px; }` | rosso: `iconsCentred`, nei due temi — `off centre by 3.00 px: … in base-label` (R3-3) |
+| in `Kit.vue` `.kit` con `font: 400 0.875rem/1.25rem serif` al posto di `font: var(--font-body)` | rosso: `expected 'serif' to be 'Geist Variable'`, nei due temi — la famiglia **dichiarata**; un carattere che non si carica lo vede la prova del compito 2 (R3-4) |
+| in `themes.css` `--color-text-muted` dello scuro portato a `var(--ref-neutral-39)` | rosso: `axe`, `color-contrast` — ⛔ e anche `board.test.ts` e `contrast.test.ts`, che la vogliono (R3-8) |
 
 - [ ] **Passo 8: guardarla, e il commit**
 
-`cd gui && npm run dev`, poi `/kit.html` nel browser: i tre temi dalla scelta in cima, a grandezza vera; la tastiera sui
-radio e sulla finestra. Poi la riga **4** della tabella della posizione a `✅ <data>`, `bash scripts/gate.sh` da solo,
+`(cd gui && npm run dev)`, poi `/kit.html` nel browser: i tre temi dalla scelta in cima, a grandezza vera; la tastiera sui
+radio e sulla finestra. Poi la riga **4** della tabella della posizione — **Stato** `✅ <data>`, e nella riga **3** la colonna
+**Commit** con l'hash del compito 3 (R1-16) —, `bash scripts/gate.sh` da solo,
 `bash scripts/check-docs.sh`, il commit — `design-system(compito 4): la pagina kit …` — e `git push`.
 
 ---
@@ -3304,19 +3514,23 @@ controlli **11–13**; la trappola **10**; **P-8** di questo piano; la decisione
 
 **Files:**
 - Rewrite: `gui/src/components/Confirm.vue`, `gui/src/frame/Drawer.vue`, `gui/src/frame/Band.vue`,
-  `gui/src/panels/Settings.vue`, `gui/src/panels/Permissions.vue`, `gui/src/panels/Steps.vue`,
-  `gui/src/panels/Placeholder.vue`, `gui/src/frame/ViewBar.vue` — ciascuno **per intero**, col terminatore che ha oggi
+  `gui/src/panels/Settings.vue`, `gui/src/panels/Permissions.vue`, `gui/src/panels/Steps.vue`, `gui/src/frame/ViewBar.vue`
+  — ciascuno **per intero**, col terminatore che ha oggi
+- Modify: `gui/src/panels/Placeholder.vue` — due *Trova/Sostituisci*, il pulsante e il suo import (R3-15)
 - Modify: `gui/src/panels/Status.vue` — la riga dell'evento dentro `BaseStatus`
-- Modify: `gui/src/locales/it.json` — la scelta del tema
-- Modify: `gui/src/panels/modules.test.ts`, `gui/src/a11y.test.ts` — le prove su `[role=radio]` e su `[role=dialog]`
+- Modify: `gui/src/locales/it.json` — la scelta del tema; `gui/src/locales/copy.test.ts` — la sua prova (R3-14)
+- Modify: `gui/src/panels/modules.test.ts`, `gui/src/a11y.test.ts` — le prove su `[role=radio]` e su `[role=dialog]`; e, con
+  `gui/src/frame/frame.test.ts`, le tre prove di M-3 (R3-12)
+- Create: `gui/src/panels/settings.browser.test.ts` — la via della tastiera sul radio, nel browser (R3-24)
 - Modify: `gui/eslint.config.js` — le due regole su `panels/` e `frame/`
 
 **Interfaces:**
 - Consumes: gli otto pezzi del compito 3; `useLayout().theme`, `chooseTheme`, `THEME_CHOICES`, `isThemeChoice` del
   compito 1.
 - Produces: nessun `<button>`, nessun `<ul>` e nessun `<ol>` scritti a mano nei template di `panels/` e `frame/`, e nessun
-  import di `reka-ui` o di `lucide` in quelle due cartelle — ⚠️ **tranne** i due `document.createElement("button")` di
-  `frame/BigTab.ts`, che il linter dei template non vede (trappola 5): li toglie il compito 6.
+  import di `reka-ui` o di `lucide` in quelle due cartelle — ⚠️ **tranne** i due pulsanti che
+  `frame/BigTab.ts` crea con `document.createElement` (R3-16), che il linter dei template non vede (trappola 5): li toglie il
+  compito 6.
 - Produces: in `it.json` le chiavi `settings.themeTitle` e `settings.theme.system`, `.light`, `.dark`.
 
 - [ ] **Passo 1: le prove che cambiano, prima del codice**
@@ -3389,6 +3603,19 @@ describe("Impostazioni", () => {
     expect(wrapper.text()).toContain(t("settings.inFlight"));
   });
 
+  it("keeps its status region before an Invoke, and the words enter that same region (M-3 of E187)", async () => {
+    const { bridge } = wire();
+    const wrapper = mount(Settings, { global: { plugins: [i18n] } });
+    bridge.deliver("Policy");
+    await nextTick();
+    const region = wrapper.get('[role="status"]');
+    expect(region.text()).toBe("");
+    await wrapper.findAll('[role="radiogroup"]')[0]?.findAll('[role="radio"]')[1]?.trigger("click");
+    await nextTick();
+    expect(wrapper.get('[role="status"]').element).toBe(region.element);
+    expect(region.text()).toContain(t("settings.inFlight"));
+  });
+
   it("leaves the control on the core's policy until the core answers, then moves with it", async () => {
     // ⛔ E184, AND THE TRAP 10 OF THE DESIGN SYSTEM: the radio is a `button` with `role="radio"` in `reka-ui` 2.10.4 now,
     // and the group is CONTROLLED (P-8) -- the probe still asks what the CONTROL shows, not only what went on the wire.
@@ -3442,16 +3669,183 @@ describe("Impostazioni", () => {
 E `useLayout` entra negli import di `modules.test.ts`: *Trova* `import { useInvoke } from "../stores/invoke";` — *Sostituisci
 con* le due righe `import { useInvoke } from "../stores/invoke";` e `import { useLayout } from "../stores/layout";`.
 
+⛔ **M-3 chiusa per costruzione, e una prova per ciascuna delle tre regioni** (R3-12): la prova di `BaseStatus` del compito
+3 prova il pezzo, non chi lo usa, e rimettere `BaseStatus` dentro il `v-if` lasciava tutto verde. Quella di Impostazioni
+sta nel blocco qui sopra; in `gui/src/panels/modules.test.ts`, *Trova* — la fine del `describe("Stato", …)`:
+
+```ts
+    expect(event.text()).toContain(t("status.refusedDetail", { asked: "4096", ceiling: "1024" }));
+  });
+});
+```
+
+*Sostituisci con:*
+
+```ts
+    expect(event.text()).toContain(t("status.refusedDetail", { asked: "4096", ceiling: "1024" }));
+  });
+
+  it("keeps the event's status region before a Verdict, and the row enters that same region (M-3 of E187)", async () => {
+    const { bridge } = wire();
+    const wrapper = mount(Status, { global: { plugins: [i18n] } });
+    const region = wrapper.get('[role="status"]');
+    expect(region.text()).toBe("");
+    bridge.deliver("Verdict");
+    await nextTick();
+    expect(wrapper.get('[role="status"]').element).toBe(region.element);
+    expect(region.text()).toContain(t("status.verdict.Refused"));
+  });
+});
+```
+
+In `gui/src/frame/frame.test.ts`, *Trova* — la fine del `describe("the band", …)`:
+
+```ts
+    expect(wrapper.text()).toBe("");
+  });
+});
+```
+
+*Sostituisci con:*
+
+```ts
+    expect(wrapper.text()).toBe("");
+  });
+
+  it("keeps its status region while connected, and the words enter that same region (M-3 of E187)", async () => {
+    const Band = (await import("./Band.vue")).default;
+    const connection = useConnection();
+    connection.receive({ kind: "Accepted", value: "AsSystemAccount" });
+    const wrapper = mount(Band, { global: { plugins: [i18n] } });
+    const region = wrapper.get('[role="status"]');
+    expect(region.text()).toBe("");
+    connection.receive({ kind: "StaleBuild", value: "81985529216486895" });
+    await nextTick();
+    // ⛔ THE SAME ELEMENT, NOW WITH WORDS: a region born with its text is the case many readers do not announce.
+    expect(wrapper.get('[role="status"]').element).toBe(region.element);
+    expect(region.text()).toContain(i18n.global.t("band.stale"));
+  });
+});
+```
+
+E la via della tastiera sul radio nuovo, che le prove qui sopra non fanno — usano il clic (R3-24). Crea
+`gui/src/panels/settings.browser.test.ts` (LF):
+
+```ts
+import { mount } from "@vue/test-utils";
+import { createPinia, setActivePinia } from "pinia";
+import { userEvent } from "vitest/browser";
+import { afterEach, beforeEach, expect, it } from "vitest";
+import { nextTick } from "vue";
+
+import "../tokens";
+import { i18n } from "../i18n";
+import { useConnection } from "../stores/connection";
+import { useCore } from "../stores/core";
+import { useInvoke } from "../stores/invoke";
+import { createFakeBridge } from "../transport/fakeBridge";
+
+import Settings from "./Settings.vue";
+
+// ⛔ THE ARROW KEY'S WAY, IN THE INSTALLED CHROME (R3-24 of the design-system review): in `reka-ui` 2.10.4 an arrow reaches
+// the radio through `RovingFocusGroup` and a `setTimeout` that clicks it -- another road than the click the jsdom probes
+// take, and one an update of `reka-ui` could change with nothing going red. Under jsdom that focus and that timer are
+// fragile, so the probe lives here.
+
+beforeEach(() => {
+  setActivePinia(createPinia());
+});
+
+afterEach(() => {
+  document.body.replaceChildren();
+});
+
+it("asks the core on an arrow key as on a click, and keeps the check on the core's value", async () => {
+  const bridge = createFakeBridge();
+  const connection = useConnection();
+  const core = useCore();
+  const invoke = useInvoke();
+  invoke.attach(bridge);
+  bridge.listen((message) => {
+    connection.receive(message);
+    core.receive(message);
+    invoke.receive(message);
+  });
+  const wrapper = mount(Settings, { attachTo: document.body, global: { plugins: [i18n] } });
+  bridge.deliver("Policy");
+  await nextTick();
+  const radios = (): HTMLElement[] => [...(document.querySelector('[role="radiogroup"]')?.querySelectorAll<HTMLElement>('[role="radio"]') ?? [])];
+  expect(radios()).toHaveLength(2);
+  await userEvent.click(radios()[0] as HTMLElement);
+  // ⛔ THE SECOND DIRECTION: a click on the current value asks nothing.
+  expect(bridge.sent).toEqual([]);
+  await userEvent.keyboard("{ArrowDown}");
+  await expect.poll(() => bridge.sent.length).toBe(1);
+  expect(bridge.sent).toEqual([{ kind: "Invoke", value: { function: "vram-policy", argument: "local" } }]);
+  // The focus sits on the radio the arrow reached; the check stays on the core's value until `Policy` comes back (P-8).
+  expect(radios().map((radio) => radio.getAttribute("aria-checked"))).toEqual(["true", "false"]);
+  expect(document.activeElement).toBe(radios()[1]);
+  wrapper.unmount();
+});
+```
+
 ```bash
-cd gui && npx vitest run src/panels/modules.test.ts src/a11y.test.ts
+(cd gui && npx vitest run --project jsdom src/panels/modules.test.ts src/a11y.test.ts src/frame/frame.test.ts)
+(cd gui && npx vitest run --project browser src/panels)
 ```
 
 Atteso: **rosso** sulle prove di Impostazioni — i radio nativi non hanno `role="radio"` né `aria-checked`, e non c'è il
-secondo gruppo — e **verde** sulla finestra di conferma: un `DialogContent` di `reka-ui` ha già `role="dialog"`.
+secondo gruppo —; **rosse** le tre prove di M-3, perché i `role="status"` di oggi nascono col `v-if` e la prova non trova
+la regione vuota (R3-12); **rossa** la prova della tastiera nel browser, che non trova i due radio; e **verde** sulla
+finestra di conferma: un `DialogContent` di `reka-ui` ha già `role="dialog"`.
 
 - [ ] **Passo 2: le parole del tema**
 
-In `gui/src/locales/it.json`, *Trova*:
+Prima la prova, perché la chiave `settings.theme.${choice}` la **costruisce** `Settings.vue`, e `no-missing-keys` è cieca
+alle chiavi costruite: `copy.test.ts` le sonda, e sondava solo `modules.*` (R3-14). In `gui/src/locales/copy.test.ts`,
+*Trova*:
+
+```ts
+ * the drawer and `modules.${parameters.api.id}` in `BigTab.ts`, and `no-missing-keys` is blind
+ * to a built key -- measured on 2026-09-15, both directions in one file (P-105).
+```
+
+*Sostituisci con:*
+
+```ts
+ * the drawer and `modules.${parameters.api.id}` in `BigTab.ts` -- and, from the design system on,
+ * `settings.theme.${choice}` in `Settings.vue` -- and `no-missing-keys` is blind to a built key
+ * -- measured on 2026-09-15, both directions in one file (P-105).
+```
+
+*Trova:*
+
+```ts
+    for (const type of PANEL_TYPES) expect(Object.keys(modules), type.module).toContain(type.module);
+  });
+```
+
+*Sostituisci con:*
+
+```ts
+    for (const type of PANEL_TYPES) expect(Object.keys(modules), type.module).toContain(type.module);
+  });
+
+  it("has a word for every theme choice", async () => {
+    const { THEME_CHOICES } = await import("../tokens/theme");
+    const words = (it_ as { settings?: { theme?: Record<string, string> } }).settings?.theme ?? {};
+    // ⛔ NON-VACUITY: no choices would leave nothing to check.
+    expect(THEME_CHOICES.length).toBeGreaterThan(0);
+    for (const choice of THEME_CHOICES) expect(Object.keys(words), choice).toContain(choice);
+  });
+```
+
+```bash
+(cd gui && npx vitest run --project jsdom src/locales)
+```
+
+Atteso: **rosso**, `system: expected [] to include 'system'` — le parole non ci sono ancora. Poi in
+`gui/src/locales/it.json`, *Trova*:
 
 ```json
     "who": "Le altre preferenze arrivano coi sotto-progetti 3 e 10."
@@ -3470,6 +3864,10 @@ In `gui/src/locales/it.json`, *Trova*:
     }
   },
 ```
+
+E la stessa corsa è **verde**; la sua direzione rossa, con la copia salvata dopo (vincolo 11): in `tokens/theme.ts` una
+scelta in più senza parola, `["system", "light", "dark", "sepia" as ThemeChoice]` → `sepia: expected [ 'system', 'light',
+'dark' ] to include 'sepia'`.
 
 - [ ] **Passo 3: la finestra di conferma e il cassetto, su `BaseDialog`**
 
@@ -3922,11 +4320,16 @@ const emit = defineEmits<{ (event: "switch", view: ViewName): void }>();
 ```
 
 ```bash
-cd gui && npm test && npm run build
+(cd gui && npm test && npm run build)
 ```
 
 Atteso: **verde** — le prove di Impostazioni coi radio di `reka-ui`, la finestra di conferma per ruolo, la fascia che se ne
-va (la prova di `frame.test.ts`: *«is there while waiting, and gone once connected»*), le prove di `axe`.
+va (la prova di `frame.test.ts`: *«is there while waiting, and gone once connected»*), le tre prove di M-3, la prova della
+tastiera nel browser, le prove di `axe`. E il pezzo JavaScript — `npm run build 2>&1 | grep -E 'assets/index-.*\.js '` — si
+scrive nel commit accanto a quello del compito 1: qui **cresce**, perché i pezzi di base, le ventiquattro icone e il radio
+di `reka-ui` entrano nei pannelli, e la cifra si porta al proprietario, che ha N-2 (R3-25, R2-13). ⛔ La direzione rossa
+delle tre prove di M-3: `BaseStatus` rimesso dentro il `v-if` nei tre pannelli → tre rossi, `Unable to get [role="status"]`;
+poi la copia salvata.
 
 - [ ] **Passo 7: le due regole del linter su `panels/` e `frame/`**
 
@@ -3976,10 +4379,11 @@ In `gui/eslint.config.js`, *Trova* la chiusura del file:
 ```
 
 ```bash
-cd gui && npm run lint
+(cd gui && npm run lint)
 ```
 
-Atteso: **verde**. Poi le due direzioni, una alla volta, `git checkout -- <file>` dopo ciascuna:
+Atteso: **verde**. Poi le due direzioni, una alla volta, indietro con la **copia salvata** dopo ciascuna (vincolo 11):
+`ViewBar.vue` l'ha riscritto questo compito, e `git checkout` gliene toglierebbe il lavoro (A-1):
 
 | La violazione | Atteso |
 |---|---|
@@ -3990,22 +4394,27 @@ Atteso: **verde**. Poi le due direzioni, una alla volta, `git checkout -- <file>
 
 - [ ] **Passo 8: M-3 col lettore di schermo vero — a mano (decisione 21)**
 
-Un passo per il proprietario o per chi rivede, non per un subagente: `cd gui && npm run dev`, la pagina nel browser,
+Un passo per il proprietario o per chi rivede, non per un subagente: `(cd gui && npm run dev)`, la pagina nel browser,
 l'**Assistente vocale** di Windows acceso (`Win + Ctrl + Invio`). Poi, nella console:
 
-1. al caricamento la fascia dice *«Il core non ha risposto.»*: la si sente?
+1. al caricamento la fascia dice *«Il core non ha risposto.»*: si **annota** che cosa si sente, e non decide M-3 —
+   `connection.phase` vale già `"waiting"`, quindi regione e parole nascono nello stesso montaggio, il caso che la
+   costruzione non cura perché non c'è un «prima» vuoto (R3-13);
 2. `harnessFake.deliver("Accepted")`: la fascia se ne va;
 3. `harnessFake.deliver("StaleBuild")`: la fascia **rientra** nella regione che c'era già — si sente *«Il core parla una
    versione diversa del protocollo…»*?
 4. nelle Impostazioni, `harnessFake.deliver("Policy")`, poi un clic su «Locale»: si sente *«Richiesta inviata: in attesa
    del core.»*?
+5. `harnessFake.deliver("Verdict")`: si sente *«Ultima richiesta di VRAM: rifiutata…»*? — la terza regione, quella di
+   Stato, nella vista Home accanto a Impostazioni (R3-13).
 
 Il verbale — che cosa si è sentito, a ogni punto, con la data — va nella cella *Stato* della riga **5** della tabella della
-posizione. ⛔ Se un annuncio **non** si sente, è una voce d'errata: M-3 non è chiusa, e lo si dice.
+posizione. ⛔ Se un annuncio dei punti 3, 4 o 5 **non** si sente, è una voce d'errata: M-3 non è chiusa, e lo si dice.
 
 - [ ] **Passo 9: il cancello e il commit**
 
-La riga **5** della tabella della posizione a `✅ <data>`, col verbale; `bash scripts/gate.sh` da solo,
+La riga **5** della tabella della posizione — **Stato** `✅ <data>` col verbale, e nella riga **4** la colonna **Commit** con
+l'hash del compito 4 (R1-16) —; `bash scripts/gate.sh` da solo,
 `bash scripts/check-docs.sh`, il commit — `design-system(compito 5): il kit al lavoro …` — coi fine-riga rimisurati, e
 `git push`.
 

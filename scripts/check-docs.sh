@@ -340,10 +340,15 @@ echo "== compendium size ceiling =="
 # archived its story word for word into docs/archivio/stato-storico.md, keeping the indexes in §6.
 #
 # ⛔ RECALL OF 2026-09-09 -- THE CEILING CAME DOWN A THIRD TIME, by the same rule: after that cut the
-# compendium measured 100546 bytes; measured + ~11%, aligned up to a whole KiB, gives the number below.
+# compendium measured 100546 bytes; measured + ~11%, aligned up to a whole KiB, gave 111616.
+#
+# ⛔ RECALL OF 2026-09-23 -- THE CEILING CAME DOWN A FOURTH TIME, by the same rule: the owner's
+# reading-resize mandate moved the correction chronicle out of the compendium word for word
+# (docs/archivio/lettura-di-apertura-storico.md), and it measured 97790 bytes in a CRLF working
+# tree; measured + ~11%, aligned up to a whole KiB, gives the number below.
 #
 # Non-vacuity: a missing file is a FAILURE, not a silent pass -- gotcha #26.
-ceiling=111616
+ceiling=109568
 if [ ! -f "$compendium" ]; then
   report "$compendium is missing: the size ceiling would be vacuous"
 else

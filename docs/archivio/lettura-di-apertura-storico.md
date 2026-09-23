@@ -5,7 +5,9 @@
 d'apertura, ogni taglio in A/B — ha fatto uscire dai documenti d'ingresso, `CLAUDE.md` e il messaggio di
 [`AVVIO-CHAT.md`](../AVVIO-CHAT.md), **parola per parola**, con la data e il taglio che li ha prodotti. Ciò che esce dalla
 §6 del compendio sta in [`stato-storico.md`](stato-storico.md), come dal 2026-08-28; la cronaca della stella polare in
-[`consegna-brainstorming-direzione-gui.md`](consegna-brainstorming-direzione-gui.md).
+[`consegna-brainstorming-direzione-gui.md`](consegna-brainstorming-direzione-gui.md). ✅ **Richiamo del 2026-09-23:**
+qui anche la cronaca delle correzioni uscita dalle **altre** sezioni del compendio, col mandato del ridimensionamento
+della lettura — la sezione in coda.
 
 ⚠️ **Ciò che è scritto qui era vero il giorno in cui fu scritto.** La lettura d'apertura viva la dice
 [`CLAUDE.md`](../../CLAUDE.md); il prossimo passo sta nella §6 di [`COMPENDIO.md`](../COMPENDIO.md), in un posto solo.
@@ -124,3 +126,154 @@ solo quando serve, ed è per questo che può vivere altrove.
 Stava in coda alla cella, dopo *«mai in silenzio»*.
 
 La prima applicazione, la sezione 1 della passata sui diagrammi, ha trovato due difetti in nove righe
+
+## Il taglio del ridimensionamento — la cronaca delle correzioni del compendio · approvato A il 2026-09-23
+
+⛔ **Il taglio 2 del mandato del proprietario del 2026-09-23** — ridimensionare la lettura, con la [consegna](../superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md): i richiami che raccontano una correzione escono dal [compendio](../COMPENDIO.md), fuori dalla §6 e dalla sua tabella delle voci aperte, che sono decisioni del proprietario e restano com'erano. Dove il testo portava anche un fatto vero oggi, il compendio lo tiene senza la cronaca. Misurato col comando della consegna: da 33695 a 31792 token `cl100k`. I pezzi com'erano, **parola per parola**, coi soli link riscritti per questa cartella, e per ciascuno dove stava:
+
+### §4, la riga di `bincode` — il primo richiamo
+
+Stava fra *«non una vulnerabilità.»* e *«L'avviso è ancora attivo»*.
+
+⛔ **RICHIAMO DEL 2026-08-31: qui stava *«registrato il 2026-08-18, si decide al Traguardo 6»*, e il Traguardo 6 ha MISURATO.** 
+
+### §4, la riga di `bincode` — il secondo richiamo
+
+Stava fra *«nella sua tabella dell'audit»* e *«. Le ragioni in»*.
+
+ (richiamo del 2026-09-22, E231 del [piano della parte 2](../superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md): qui stava *«che resta aperta»*, falso dal suo compito 16)
+
+### §4, sotto la convenzione di nomenclatura — perché sta qui
+
+Stava fra la tabella della convenzione e *«Eccezione, e non è un'incoerenza»*.
+
+⚠️ **Perché sta qui, e perché prima non c'era.** La §1.0 è una **sezione di spec**, non un
+ADR: `check-docs.sh` pretende una voce di §5 per ogni file in `docs/adr/`, quindi nessun
+controllo ne pretendeva la presenza. Un agente ha letto per intero **entrambi** i file
+obbligatori e ha scritto un traguardo intero con gli identificatori in italiano. Gotcha
+**#40**.
+
+### §5, ADR-0021 — il richiamo del finding A-2
+
+Stava fra *«sarebbe una falsa sicurezza.»* e *«Rimando: ADR-0034»*.
+
+ ⚠️ **Richiamo del 2026-08-18, finding A-2:** questa riga
+diceva *«e il seme diventa una regressione permanente»*, formulazione **già falsificata in
+ADR-0021 il 2026-08-08** e sopravvissuta intatta qui e in
+[`design/08`](../design/08-strategia-di-test.md) — che si dichiara *fonte di verità sulla porta
+di qualità*. È la radice **R1**: una correzione attraversa il documento in cui nasce, non gli
+altri.
+
+### §5, ADR-0029 — la voce com'era, quando la decisione era aperta
+
+Era la voce intera di ADR-0029; al suo posto, la decisione com'è oggi.
+
+**0029 — ⚠️ Guscio della GUI: DECISIONE APERTA.** `Proposed`. Raccomandazione
+**Electron**, ma sono **argomenti, non misure**, ed è per questo che resta aperta. Si
+chiude con **M1–M5** all'inizio del sotto-progetto 2: RAM a riposo e sotto streaming ·
+dimensione del pacchetto · fps del viewer 3D e API grafica reale **su Windows e
+Linux** · P3 con rendering vero · **M5**, VRAM a riposo e sotto carico 3D (aggiunta da
+ADR-0033). Se M3 mostra la stessa API grafica su entrambe le piattaforme con Tauri, la
+decisione si **ribalta**. ✅ **Non blocca il sotto-progetto 1**, che è interamente Rust
+e non tocca la GUI. ✅ **RICHIAMO DEL 2026-09-10: CHIUSA — Electron**, deciso dal proprietario con M1–M5 e Q1–Q4 misurate da SP-8 su Windows, coi criteri congelati prima; l'innesco Linux nell'ADR; `dockview` resta dopo le otto mosse. Il testo sopra resta com'era.
+
+### §5, ADR-0032 — la riga che diceva `simulator`
+
+Stava dopo *«**l'iniezione di livello 2**.»*; al suo posto, il fatto senza la cronaca.
+
+⛔ **Il cadente vive in `platform` e NON in `simulator`, e questa
+riga diceva `simulator` fino al 2026-08-11**, come la tabella dell'ADR da cui è compressa:
+`redb` non ha `no_std`, i sei metodi di `StorageBackend` restituiscono `std::io::Error`, e il
+grafo spedito di `simulator` lo rifiuterebbe come **«I3 violated»** — la cui unica cura scritta
+è *togliere la dipendenza*. Non è una decisione riaperta: era una **previsione** scritta quando
+`crates/simulator/` non esisteva. Rimando datato in ADR-0032, e la diagnosi è che i **due
+livelli di crash erano trattati come una cosa sola** mentre hanno soggetti diversi.
+
+### §5, ADR-0035 — le famiglie di porte
+
+Stava dopo *«che copre **avvio, dialogo e uccisione** —»*; al suo posto, il conto di oggi.
+
+non nasce una porta nuova, le famiglie restano sei. ⚠️ **RICHIAMO DEL 2026-09-17:** sono
+**sette** dal compito 4 del sotto-progetto 2 — `custody` — e il merito di questa decisione resta
+intatto: il dialogo col worker **non** ha aperto una porta nuova (rimando datato in testa
+all'ADR).
+
+### §8, la riga delle misure — il richiamo E236
+
+Stava in coda alla cella, dopo *«entrambe scritte in ADR-0029»*.
+
+ (richiamo del 2026-09-22, E236 del [piano della parte 2](../superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md))
+
+### §9 — la seconda copia dei gotcha
+
+Erano i due capoversi in coda alla §9; al loro posto, la regola in una riga.
+
+⚠️ **Questa sezione ne portava una SECONDA copia, tolta il 2026-08-28.** Non era una
+sintesi: erano gli stessi 82 numeri, per **31 578** token — mentre la sua stessa seconda
+riga dichiarava che il testo completo stava in `HANDOFF.md`. È il gotcha **#68** — *un
+puntatore che vive in più documenti si toglie, non si ricorregge* — commesso dentro il
+documento che quella regola la contiene, ed è la radice **R3** dell'audit del 2026-08-27.
+
+⛔ **E le due copie erano DIVERSE, il che è il costo vero di una seconda casa.** Confrontate
+riga per riga prima di togliere: gli 82 numeri coincidevano, ma **quattro** righe della §9
+erano più lunghe, e `HANDOFF.md` portava verbali di correzione che la §9 non aveva. La §9
+era una **biforcazione ferma**. Le **due** clausole che diceva in più — sulle righe **59** e
+**61** — sono state **spostate in `HANDOFF.md`** prima della cancellazione, col richiamo
+datato. 📌 **Un duplicato non resta identico: diverge, e nessuno dei due lati lo sa.**
+
+### §10 — il titolo che diceva «Le cinque trappole»
+
+Stava fra *«Da sapere **prima** di scrivere, non dopo il rosso.»* e la tabella.
+
+⚠️ **RICHIAMO DEL 2026-08-28: il titolo diceva *«Le cinque trappole»*.** Il numerale è **tolto e
+non riallineato a sei** — è una popolazione che cresce a ogni trappola misurata, e la tabella
+qui sotto è la sua casa unica. Gotcha **#68**.
+
+### §11 — il richiamo del finding AUD-007
+
+Stava fra *«gotcha **#38**.»* e *«📌 **La regola: resta davanti solo ciò che la tabella qui sotto nomina»*.
+
+⛔ **RICHIAMO DEL 2026-08-27, finding AUD-007 — questa riga diceva *«gli altri dieci restano
+davanti, e chi li copre è scritto in `porta-di-qualita.md`»*, e le affermazioni false erano
+DUE.** La prima era ferma alla chiusura del **Traguardo 1** e non è mai stata riletta:
+`git log -L 2534,2538:docs/COMPENDIO.md` dà **una sola scrittura**, `cf2983f`, in un file la
+cui intestazione si data al Traguardo 5 — e lo stesso file la smentisce in §5, dove i **byte
+congelati** (vincolo 14) esistono dal 2026-08-10. La seconda mandava al registro per una
+copertura che il registro **non tiene**: [`porta-di-qualita.md`](../porta-di-qualita.md) mappa le
+righe di catalogo della **§7.4**, non i vincoli di questa sezione — e quanto poco vi si affacci
+questa §11 lo dice `grep -c '§11' docs/porta-di-qualita.md` contro `grep -c '§7.4'` sullo stesso
+file, che è un rapporto e non una cifra da tenere aggiornata.
+⛔ **E il rimedio non è riallineare la cifra a un numero nuovo, che è la parte da ricordare:**
+un numeratore che cresce a ogni traguardo è esattamente ciò che è marcito qui. Al suo posto c'è
+una **regola di lettura**, che resta vera quando una riga se ne va — la stessa cura che la §6
+ha usato per `M9`: *un elenco invecchia, una regola no*.
+
+### §12, la riga dell'audit del 2026-08-27 — la riga aggiunta
+
+Stava in coda alla cella, dopo *«⚠️ **Si legge a FINDING, mai intero.**»*.
+
+ ⚠️ **Riga aggiunta il 2026-08-27:** mancava dalla tabella dal giorno in cui il file è nato, ed è la stessa specie di difetto che la 7ª e la 15ª misura registrarono — *per accorgersi di una riga ASSENTE bisogna partire dall'elenco dei file citati, non dalle righe presenti*
+
+### §12, la riga dell'audit del 2026-08-11 — la cella corretta
+
+Stava in coda alla cella, dopo *«o di specie diversa.»*.
+
+ ⚠️ **Questa cella diceva *«COSA DEVI FARE ADESSO … ne restano tre … è il prossimo passo»***, corretta il 2026-08-18
+
+### §12, la riga del piano del Traguardo 2 — il finding AUD-035
+
+Stava in coda alla cella, dopo *«⚠️ **a compiti, mai intero**.»*.
+
+ ⛔ **RICHIAMO DEL 2026-08-28, finding AUD-035:** la cella diceva *«è il secondo file più grande del repository, dopo la spec»*, ed è **tolta e non riallineata** — era **ottavo** quando il finding lo misurò il 2026-08-27 e **decimo** un giorno dopo, e un ordinamento marcisce come una cifra. Lo rifà il comando sotto questa tabella
+
+### §12, la riga di `AVVIO-CHAT.md` — il peso che invecchiò
+
+Stava dopo *«non questa cella:»*; al suo posto, il solo metodo.
+
+⛔ **RICHIAMO DEL 2026-08-28** — diceva *«**20606 byte LF** su **303** righe»*, ed è invecchiato lo stesso giorno, quando la riga 3 del messaggio ha smesso di dire che l'audit era il compito di oggi. Ciò che **resta** qui è il **metodo** — le righe **fra le due recinzioni, escluse** — senza il quale due lettori onesti ottengono due numeri (59ª misura).
+
+### §13, la riga «gotcha nuovo» — il duplicato ordinato
+
+Stava in coda alla cella, dopo *«invece di copiare.»*.
+
+ ⚠️ **RICHIAMO DEL 2026-08-28:** questa riga diceva *«una riga in §9, e il testo integrale in `HANDOFF.md`»*, cioè ordinava di **ricreare il duplicato** che lo sfoltimento aveva tolto lo stesso giorno — gotcha **#68**, dentro la tabella che governa la manutenzione

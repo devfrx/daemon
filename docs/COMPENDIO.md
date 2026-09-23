@@ -107,7 +107,7 @@ dell'unico archivio irriproducibile**.
 | worker ML | **Python** | ADR-0028 |
 | persistenza | **`redb` 4.1.0**, con `StorageBackend` scritto da noi | ADR-0032 |
 | dipendenze del kernel | **allow-list sul grafo transitivo**, due grafi con rimedi opposti | ADR-0031 · §7.3.1 |
-| schema IPC | **`bincode` 2.0.1** — appuntato a `2`. ⚠️ **Dichiarato NON MANTENUTO** — RUSTSEC-2025-0141, `INFO`, non una vulnerabilità. ⛔ **RICHIAMO DEL 2026-08-31: qui stava *«registrato il 2026-08-18, si decide al Traguardo 6»*, e il Traguardo 6 ha MISURATO.** L'avviso è ancora attivo e il monte è archiviato; esistono alternative **mantenute**, e per una di esse lo **stesso formato sul filo** non è più una dichiarazione ma una **misura** — **M-12**, del 2026-08-31. ✅ **DECISO il 2026-08-31 dal proprietario: `bincode` 2.0.1 RESTA e §6.1.1 non si riapre** — contro l'evidenza di **M-12** e non attorno, perché la radice di C-1 è il **buco fra due criteri** e non questa crate; la cura alla radice è la voce **X-3**, il cui stato vive nella sua tabella dell'audit (richiamo del 2026-09-22, E231 del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md): qui stava *«che resta aperta»*, falso dal suo compito 16). Le ragioni in [`porta-di-qualita.md`](porta-di-qualita.md), le fonti in [`riferimenti.md`](riferimenti.md) | M-1 · §6.1.1 · gotcha #22 · C-1 |
+| schema IPC | **`bincode` 2.0.1** — appuntato a `2`. ⚠️ **Dichiarato NON MANTENUTO** — RUSTSEC-2025-0141, `INFO`, non una vulnerabilità. L'avviso è ancora attivo e il monte è archiviato; esistono alternative **mantenute**, e per una di esse lo **stesso formato sul filo** non è più una dichiarazione ma una **misura** — **M-12**, del 2026-08-31. ✅ **DECISO il 2026-08-31 dal proprietario: `bincode` 2.0.1 RESTA e §6.1.1 non si riapre** — contro l'evidenza di **M-12** e non attorno, perché la radice di C-1 è il **buco fra due criteri** e non questa crate; la cura alla radice è la voce **X-3**, il cui stato vive nella sua tabella dell'audit. Le ragioni in [`porta-di-qualita.md`](porta-di-qualita.md), le fonti in [`riferimenti.md`](riferimenti.md) | M-1 · §6.1.1 · gotcha #22 · C-1 |
 | formato del **giornale** | **versione + indici espliciti** — `minicbor` 2.3.0, codifica in `kernel` | ADR-0036 · §4.9 |
 | formato del **canale worker** | **`minicbor` 2.3.0**, codifica in `kernel`, porta a **byte** | ADR-0037 · §6.10 |
 | **edition** | **2024**, su tutte e cinque le crate | scelta dal piano del Traguardo 1 |
@@ -126,12 +126,6 @@ Il costo accettato: fra la parola di un ADR («l'arbitro») e il nome nel codice
 c'è una traduzione da tenere a mente leggendo. Il beneficio: il codice non stona con un
 ecosistema interamente inglese, e non nasce un **dialetto misto**, che è la condizione
 peggiore delle due.
-
-⚠️ **Perché sta qui, e perché prima non c'era.** La §1.0 è una **sezione di spec**, non un
-ADR: `check-docs.sh` pretende una voce di §5 per ogni file in `docs/adr/`, quindi nessun
-controllo ne pretendeva la presenza. Un agente ha letto per intero **entrambi** i file
-obbligatori e ha scritto un traguardo intero con gli identificatori in italiano. Gotcha
-**#40**.
 
 ⛔ **Eccezione, e non è un'incoerenza:** le parole che `check-docs.sh` **cerca dentro i
 documenti** restano italiane — `verificato qui`, `parziale`, `rimandato`,
@@ -371,12 +365,7 @@ attraverso un confine sostituibile. **Ogni difetto trovato conserva il proprio s
 e ⛔ **a diventare regressione permanente è la PROPRIETÀ che quel difetto violava, non il
 seme** — un seme non riproduce la stessa esecuzione dopo un cambio di codice, quindi è un
 **punto di ripartenza per indagare** e non un oracolo, e un elenco di semi presentato come
-suite sarebbe una falsa sicurezza. ⚠️ **Richiamo del 2026-08-18, finding A-2:** questa riga
-diceva *«e il seme diventa una regressione permanente»*, formulazione **già falsificata in
-ADR-0021 il 2026-08-08** e sopravvissuta intatta qui e in
-[`design/08`](design/08-strategia-di-test.md) — che si dichiara *fonte di verità sulla porta
-di qualità*. È la radice **R1**: una correzione attraversa il documento in cui nasce, non gli
-altri. Rimando: ADR-0034 aggiunge il **secondo asse**, i parametri di configurazione.
+suite sarebbe una falsa sicurezza. Rimando: ADR-0034 aggiunge il **secondo asse**, i parametri di configurazione.
 
 **0022 — Layout dei dati per natura, e backup del solo irriproducibile.** Separazione
 **per natura, non per componente**; ogni archivio ha la propria politica.
@@ -453,14 +442,13 @@ raccomandazione: logica di ritentativo (I5), code e priorità (I5), stato che so
 al processo (I1), comunicazione con un altro worker (il core coordina), accesso alla
 GPU senza concessione (I2). Un worker può essere **ucciso senza preavviso**.
 
-**0029 — ⚠️ Guscio della GUI: DECISIONE APERTA.** `Proposed`. Raccomandazione
-**Electron**, ma sono **argomenti, non misure**, ed è per questo che resta aperta. Si
-chiude con **M1–M5** all'inizio del sotto-progetto 2: RAM a riposo e sotto streaming ·
-dimensione del pacchetto · fps del viewer 3D e API grafica reale **su Windows e
-Linux** · P3 con rendering vero · **M5**, VRAM a riposo e sotto carico 3D (aggiunta da
-ADR-0033). Se M3 mostra la stessa API grafica su entrambe le piattaforme con Tauri, la
-decisione si **ribalta**. ✅ **Non blocca il sotto-progetto 1**, che è interamente Rust
-e non tocca la GUI. ✅ **RICHIAMO DEL 2026-09-10: CHIUSA — Electron**, deciso dal proprietario con M1–M5 e Q1–Q4 misurate da SP-8 su Windows, coi criteri congelati prima; l'innesco Linux nell'ADR; `dockview` resta dopo le otto mosse. Il testo sopra resta com'era.
+**0029 — Il guscio della GUI è Electron.** `Accepted` il 2026-09-10: deciso dal proprietario
+con **M1–M5** e **Q1–Q4** misurate da SP-8 su Windows, coi criteri congelati prima — RAM a
+riposo e sotto streaming · dimensione del pacchetto · fps del viewer 3D e API grafica reale ·
+P3 con rendering vero · **M5**, VRAM a riposo e sotto carico 3D (aggiunta da ADR-0033).
+⚠️ **L'innesco Linux:** al primo Linux vero si rimisurano M3 e M5; se M3 mostra la stessa API
+grafica sulle due piattaforme con Tauri, la decisione si **riapre con un ADR nuovo**.
+`dockview` resta, dopo le otto mosse.
 
 **0030 — L'interfaccia si scrive in Vue 3, come SPA.** Ha deciso la **competenza del
 proprietario**, criterio **legittimo qui** perché nessuna invariante vincola la scelta
@@ -485,13 +473,10 @@ controllo.** Usato con uno `StorageBackend` **scritto da noi** invece di quello 
 predefinito. Il backend nostro **non è un dettaglio**: è il punto in cui il requisito 4
 (I/O iniettabile) diventa reale. Due implementazioni: backend su file in `platform`
 (l'I/O vero) e backend **cadente in memoria** — cade a un'operazione scelta dal seme, ed è
-**l'iniezione di livello 2**. ⛔ **Il cadente vive in `platform` e NON in `simulator`, e questa
-riga diceva `simulator` fino al 2026-08-11**, come la tabella dell'ADR da cui è compressa:
+**l'iniezione di livello 2**. ⛔ **Il cadente vive in `platform` e NON in `simulator`:**
 `redb` non ha `no_std`, i sei metodi di `StorageBackend` restituiscono `std::io::Error`, e il
-grafo spedito di `simulator` lo rifiuterebbe come **«I3 violated»** — la cui unica cura scritta
-è *togliere la dipendenza*. Non è una decisione riaperta: era una **previsione** scritta quando
-`crates/simulator/` non esisteva. Rimando datato in ADR-0032, e la diagnosi è che i **due
-livelli di crash erano trattati come una cosa sola** mentre hanno soggetti diversi.
+grafo spedito di `simulator` lo rifiuterebbe come **«I3 violated»**. I **due livelli di crash**
+hanno soggetti diversi — rimando datato in ADR-0032.
 `redb` vive in `platform`, quindi ADR-0031 non lo vincola: il kernel conosce solo la porta
 `journal`.
 
@@ -528,10 +513,8 @@ decide il formato dell'archivio. In sotto-progetto 1 i default sono **letterali 
 
 **0035 — La porta verso i worker, e cosa significa «singolo» in I4.** Il dialogo con un
 worker vive dentro la porta **`process`**, che copre **avvio, dialogo e uccisione** —
-non nasce una porta nuova, le famiglie restano sei. ⚠️ **RICHIAMO DEL 2026-09-17:** sono
-**sette** dal compito 4 del sotto-progetto 2 — `custody` — e il merito di questa decisione resta
-intatto: il dialogo col worker **non** ha aperto una porta nuova (rimando datato in testa
-all'ADR). Gli schemi dei due canali privati
+il dialogo col worker **non** apre una porta nuova. Le famiglie sono
+**sette** dal compito 4 del sotto-progetto 2, con `custody` (rimando datato in testa all'ADR). Gli schemi dei due canali privati
 sono **distinti**, ed entrambi vivono in `kernel`. **«Singolo» significa: un meccanismo
 di trasporto e uno schema _per canale privato_** — nessun broker, nessun service
 discovery, nessuna negoziazione, nessun versionamento. Ciò che I4 compra è che non
@@ -797,7 +780,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 | ❌ **riscrivere `tracciabilita.md` da zero** | le funzionalità sono già mappate, e **quante** lo dice il comando nel riquadro in testa a [`tracciabilita.md`](tracciabilita.md): si **aggiorna** — riletta alla chiusura del sotto-progetto 1 il 2026-09-03, e si riaggiorna a ogni sotto-progetto chiuso |
 | ❌ **ri-cercare lo stato dell'arte già tracciato** | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
 | ❌ **rifare gli spike SP-5, SP-6, SP-7 e SP-8** | esiti, versioni e comandi in `spikes/RISULTATI.md` — coi **seed** per SP-5 e SP-6, che SP-7 e SP-8 non hanno; per SP-7 e SP-8 i protocolli congelati in `spikes/gesti/PROTOCOLLO.md` e `spikes/gui-shell/PROTOCOLLO.md` |
-| ❌ **rifare le misure da M-1 a M-11** | tutte chiuse, con comandi, versioni e sonde. M-9 sta per intero in ADR-0036, **M-10 e M-11 in ADR-0037**. L'unica aperta era **M5** (senza trattino) ✅ **misurata da SP-8 il 2026-09-10** su Windows, ma come **proxy** — la memoria condivisa dell'integrata di un'altra macchina, da rimisurare su quella di ADR-0002 — e la metà Linux è l'innesco: entrambe scritte in ADR-0029 (richiamo del 2026-09-22, E236 del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md)) |
+| ❌ **rifare le misure da M-1 a M-11** | tutte chiuse, con comandi, versioni e sonde. M-9 sta per intero in ADR-0036, **M-10 e M-11 in ADR-0037**. L'unica aperta era **M5** (senza trattino) ✅ **misurata da SP-8 il 2026-09-10** su Windows, ma come **proxy** — la memoria condivisa dell'integrata di un'altra macchina, da rimisurare su quella di ADR-0002 — e la metà Linux è l'innesco: entrambe scritte in ADR-0029 |
 | ❌ **riaprire le due decisioni della §7.3** | prese dopo aver misurato. Riaprirle richiede una misura nuova, non un'opinione |
 | ❌ **riaprire la copertura della §8** | la §8 è **spec**, e il vincolo globale 1 del piano della chiusura vieta di toccarla: le righe si leggono, non si ri-giudicano. ⚠️ **RICHIAMO DEL 2026-09-03: il sotto-progetto 1 l'ha riaperta una volta**, e per decisione del **proprietario** — la via **A**, voce `E10` dell'errata del [piano della chiusura](superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md) — col vincolo **sospeso** per il solo compito 3bis e per le sole §8.3 e §8.4. Riaprirla di nuovo richiede la stessa decisione |
 | ❌ **riaprire F3, F6, F5, F1a, F2, F7** | chiuse, con i limiti dichiarati |
@@ -822,26 +805,12 @@ della correzione con la data.
 awk '/^## I gotcha/{s=1; next} s&&/^## /{s=0} s&&/^\| [0-9]+ \|/{c++} END{print c}' docs/HANDOFF.md
 ```
 
-⚠️ **Questa sezione ne portava una SECONDA copia, tolta il 2026-08-28.** Non era una
-sintesi: erano gli stessi 82 numeri, per **31 578** token — mentre la sua stessa seconda
-riga dichiarava che il testo completo stava in `HANDOFF.md`. È il gotcha **#68** — *un
-puntatore che vive in più documenti si toglie, non si ricorregge* — commesso dentro il
-documento che quella regola la contiene, ed è la radice **R3** dell'audit del 2026-08-27.
-
-⛔ **E le due copie erano DIVERSE, il che è il costo vero di una seconda casa.** Confrontate
-riga per riga prima di togliere: gli 82 numeri coincidevano, ma **quattro** righe della §9
-erano più lunghe, e `HANDOFF.md` portava verbali di correzione che la §9 non aveva. La §9
-era una **biforcazione ferma**. Le **due** clausole che diceva in più — sulle righe **59** e
-**61** — sono state **spostate in `HANDOFF.md`** prima della cancellazione, col richiamo
-datato. 📌 **Un duplicato non resta identico: diverge, e nessuno dei due lati lo sa.**
+⛔ **Una seconda casa dei gotcha non si ricrea** — gotcha **#68**: un duplicato non resta
+identico, diverge, e nessuno dei due lati lo sa.
 
 ## 10. Le trappole di `check-docs.sh`
 
 Da sapere **prima** di scrivere, non dopo il rosso.
-
-⚠️ **RICHIAMO DEL 2026-08-28: il titolo diceva *«Le cinque trappole»*.** Il numerale è **tolto e
-non riallineato a sei** — è una popolazione che cresce a ogni trappola misurata, e la tabella
-qui sotto è la sua casa unica. Gotcha **#68**.
 
 | # | Trappola |
 |---|---|
@@ -863,21 +832,6 @@ passi.
 `forbid` su `kernel` e `simulator` · `bincode` appuntato a `2` con la ragione accanto ·
 il bersaglio del cancello dichiarato in `rust-toolchain.toml` · `spikes/` fra gli
 `exclude`. ⚠️ Il quarto ha una sottigliezza misurata: gotcha **#38**.
-
-⛔ **RICHIAMO DEL 2026-08-27, finding AUD-007 — questa riga diceva *«gli altri dieci restano
-davanti, e chi li copre è scritto in `porta-di-qualita.md`»*, e le affermazioni false erano
-DUE.** La prima era ferma alla chiusura del **Traguardo 1** e non è mai stata riletta:
-`git log -L 2534,2538:docs/COMPENDIO.md` dà **una sola scrittura**, `cf2983f`, in un file la
-cui intestazione si data al Traguardo 5 — e lo stesso file la smentisce in §5, dove i **byte
-congelati** (vincolo 14) esistono dal 2026-08-10. La seconda mandava al registro per una
-copertura che il registro **non tiene**: [`porta-di-qualita.md`](porta-di-qualita.md) mappa le
-righe di catalogo della **§7.4**, non i vincoli di questa sezione — e quanto poco vi si affacci
-questa §11 lo dice `grep -c '§11' docs/porta-di-qualita.md` contro `grep -c '§7.4'` sullo stesso
-file, che è un rapporto e non una cifra da tenere aggiornata.
-⛔ **E il rimedio non è riallineare la cifra a un numero nuovo, che è la parte da ricordare:**
-un numeratore che cresce a ogni traguardo è esattamente ciò che è marcito qui. Al suo posto c'è
-una **regola di lettura**, che resta vera quando una riga se ne va — la stessa cura che la §6
-ha usato per `M9`: *un elenco invecchia, una regola no*.
 
 📌 **La regola: resta davanti solo ciò che la tabella qui sotto nomina, e ogni vincolo che non
 vi compare è onorato.** Misurati uno per uno contro il codice il 2026-08-27, **coi comandi**.
@@ -912,8 +866,8 @@ Apri **un** file, quello che serve. Non la cartella.
 
 | Se ti serve… | Apri |
 |---|---|
-| ⛔ **il verbale del SECONDO audit completo, e la sua DELEGA** — i 73 finding con causa radice, riproduzione e stato, le sette radici, e la sezione *«Come si concludono quelli aperti»*, che è la **ricetta**: lo stato alla consegna, ciò che NON è verificato, la disciplina in cinque passi e l'ordine consigliato. ⛔ **La colonna «Stato» di quel rapporto è la CASA UNICA di quali finding siano chiusi** — non si ricopia altrove. ⚠️ **Si legge a FINDING, mai intero.** ⚠️ **Riga aggiunta il 2026-08-27:** mancava dalla tabella dal giorno in cui il file è nato, ed è la stessa specie di difetto che la 7ª e la 15ª misura registrarono — *per accorgersi di una riga ASSENTE bisogna partire dall'elenco dei file citati, non dalle righe presenti* | [`audit-2026-08-27.md`](audit-2026-08-27.md) — ⚠️ **a finding, mai intero** |
-| il **verbale del primo audit completo** — le quattro radici, i finding con causa radice e dimostrazione, ciò che è stato verificato **pulito**, e la §8 con le otto decisioni, **tutte eseguite** fra il 2026-08-17 e il 2026-08-18. ⛔ **Si apre per il METODO, non per il compito:** è il posto in cui si legge come un rimedio si prezza leggendo il codice invece del rapporto — più piccolo, più grande, o di specie diversa. ⚠️ **Questa cella diceva *«COSA DEVI FARE ADESSO … ne restano tre … è il prossimo passo»***, corretta il 2026-08-18 | [`audit-2026-08-11.md`](audit-2026-08-11.md) — oggi una **consultazione** |
+| ⛔ **il verbale del SECONDO audit completo, e la sua DELEGA** — i 73 finding con causa radice, riproduzione e stato, le sette radici, e la sezione *«Come si concludono quelli aperti»*, che è la **ricetta**: lo stato alla consegna, ciò che NON è verificato, la disciplina in cinque passi e l'ordine consigliato. ⛔ **La colonna «Stato» di quel rapporto è la CASA UNICA di quali finding siano chiusi** — non si ricopia altrove. ⚠️ **Si legge a FINDING, mai intero.** | [`audit-2026-08-27.md`](audit-2026-08-27.md) — ⚠️ **a finding, mai intero** |
+| il **verbale del primo audit completo** — le quattro radici, i finding con causa radice e dimostrazione, ciò che è stato verificato **pulito**, e la §8 con le otto decisioni, **tutte eseguite** fra il 2026-08-17 e il 2026-08-18. ⛔ **Si apre per il METODO, non per il compito:** è il posto in cui si legge come un rimedio si prezza leggendo il codice invece del rapporto — più piccolo, più grande, o di specie diversa. | [`audit-2026-08-11.md`](audit-2026-08-11.md) — oggi una **consultazione** |
 | il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** |
 | il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** |
 | ⛔ **il perimetro del Traguardo 5** — l'arbitro: quanto ne costruisce, le forme che la §5 descrive a parole, e per ogni artefatto **il controllo che lo esercita**. ⛔ **Si legge PRIMA di scriverne il piano**, ed è il file da cui si riprende | [`specs/2026-08-18-…-traguardo-5-arbitro-gpu-design.md`](superpowers/specs/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu-design.md) — ⚠️ **non è una spec**: è lo scaglionamento e le forme che la §5 non fissa |
@@ -946,11 +900,11 @@ Apri **un** file, quello che serve. Non la cartella.
 | la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](riferimenti.md) |
 | il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) |
 | ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito |
-| ⛔ **come si esegue un piano qui, e le quattro specie di difetto** — è il piano del Traguardo 2, **eseguito per intero**, con quarantanove voci di errata in sei passate | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**. ⛔ **RICHIAMO DEL 2026-08-28, finding AUD-035:** la cella diceva *«è il secondo file più grande del repository, dopo la spec»*, ed è **tolta e non riallineata** — era **ottavo** quando il finding lo misurò il 2026-08-27 e **decimo** un giorno dopo, e un ordinamento marcisce come una cifra. Lo rifà il comando sotto questa tabella |
+| ⛔ **come si esegue un piano qui, e le quattro specie di difetto** — è il piano del Traguardo 2, **eseguito per intero**, con quarantanove voci di errata in sei passate | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**. |
 | ⛔ **come si esegue un piano, e come si CHIUDE un traguardo** — è il piano del Traguardo 3, **eseguito per intero**, dodici compiti su dodici. ⚠️ **L'errata in testa si legge prima del compito**, ed è a **settantasette voci in nove passate**, di cui **nove decisioni**; le ultime tre sono la **Definizione di «fatto» che invecchia** | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** |
 | ⛔ **come si esegue un piano quando il pre-controllo trova un difetto in DIECI compiti su dieci** — è il piano del Traguardo 4, **eseguito per intero**. ⚠️ **L'errata in testa è a settanta voci in nove passate, di cui dodici DECISIONI**, e si legge **prima** di riaprire qualunque cosa che quel traguardo abbia toccato | [`plans/2026-08-11-…-traguardo-4-simulatore-dst.md`](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md) — ⚠️ **a compiti, mai intero** |
 | l'indice di ADR e diagrammi | [`README.md`](README.md) |
-| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ **il peso del messaggio lo dà il comando sotto questa tabella**, non questa cella: ⛔ **RICHIAMO DEL 2026-08-28** — diceva *«**20606 byte LF** su **303** righe»*, ed è invecchiato lo stesso giorno, quando la riga 3 del messaggio ha smesso di dire che l'audit era il compito di oggi. Ciò che **resta** qui è il **metodo** — le righe **fra le due recinzioni, escluse** — senza il quale due lettori onesti ottengono due numeri (59ª misura). ⚠️ **Dal 2026-09-09 il proprietario non lo incolla più** (decisione 32 della stella polare della GUI): il file resta com'è, e non è lettura d'apertura |
+| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — ⚠️ **il peso del messaggio lo dà il comando sotto questa tabella**, non questa cella: il **metodo** sono le righe **fra le due recinzioni, escluse**, o due lettori onesti ottengono due numeri (59ª misura). ⚠️ **Dal 2026-09-09 il proprietario non lo incolla più** (decisione 32 della stella polare della GUI): il file resta com'è, e non è lettura d'apertura |
 
 ⚠️ **I pesi non stanno più in questa tabella, e non è una svista.** Un peso scritto
 invecchia al primo commit che tocca il file; il comando che lo produce no:
@@ -1005,7 +959,7 @@ stato sta nella §6, in un posto solo.
 | ADR nuovo | una voce in **§5** — obbligatoria, la pretende lo script |
 | ADR superato | la voce resta e si marca; gli ADR sono **append-only** |
 | voce della riapertura chiusa | la tabella e l'ordine in **§6** |
-| gotcha nuovo | ⛔ **niente qui:** la casa è **una sola**, la sezione *«I gotcha»* di [`HANDOFF.md`](HANDOFF.md), e la §9 vi **rimanda** invece di copiare. ⚠️ **RICHIAMO DEL 2026-08-28:** questa riga diceva *«una riga in §9, e il testo integrale in `HANDOFF.md`»*, cioè ordinava di **ricreare il duplicato** che lo sfoltimento aveva tolto lo stesso giorno — gotcha **#68**, dentro la tabella che governa la manutenzione |
+| gotcha nuovo | ⛔ **niente qui:** la casa è **una sola**, la sezione *«I gotcha»* di [`HANDOFF.md`](HANDOFF.md), e la §9 vi **rimanda** invece di copiare. |
 | **misura nuova** | le **fonti** e i **comandi** in `riferimenti.md`, la riga d'esito in `HANDOFF.md`, e le evidenze nell'ADR o nella sezione che la misura decide. ⛔ I prototipi restano nello scratchpad e si ripuliscono |
 | decisione dello stack | **§4** |
 | cambio del prossimo passo | **§6** |

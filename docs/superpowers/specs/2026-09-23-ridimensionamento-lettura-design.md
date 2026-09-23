@@ -113,3 +113,23 @@ server acceso, nessun subagente, nessun codice toccato.
 Le skill: `anthropic-skills:decision-principles`, `anthropic-skills:session-resume` su questo file,
 `anthropic-skills:dev-discipline` e `anthropic-skills:dev-communication`; `superpowers:brainstorming` se la prima domanda
 cambia il metodo.
+
+## Punto fermo — le risposte del proprietario, 2026-09-23
+
+⚠️ **Scritto a metà della sessione che esegue il mandato**, perché una sessione che muore non faccia ripresentare
+niente. Alla chiusura questo file si riscrive come verbale, e il testo della consegna va in archivio da
+`git show 61c8450:docs/superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md`, com'era.
+
+| | La domanda | La risposta | Dove sta |
+|---|---|---|---|
+| 1 | il metodo resta quello delle tre volte prima? | **A** — niente si cancella, la cronaca in archivio parola per parola, il documento vivo porta lo stato, ogni taglio in A/B | — |
+| 2 | taglio 1 — le tre note più grandi della memoria dell'agente diventano regole corte, e la storia va parola per parola in una cartella d'archivio **fuori** dalla memoria, che non si carica | **A** | fuori dal repository, su questa macchina |
+| 3 | taglio 2 — la cronaca delle correzioni esce dal compendio: sedici pezzi, fuori dalla §6 e dalla sua tabella delle voci aperte, che sono decisioni del proprietario | **A** | eseguito: il commit di questo punto fermo |
+| 4 | taglio 3 — i due comandi della CI da leggere da terra passano in `docs/porta-di-qualita.md`, accanto alla riga sulla CI, e il disegno del design system rimanda lì | **A** | da eseguire |
+
+**La mappa misurata prima di proporre** — `cl100k_base`, limite inferiore: la lettura obbligatoria vale circa 41 000 token
+(il compendio circa 33 700); la sessione che ha scritto il disegno del design system ne ha spesi circa 70 000 in letture su 488 346.
+Il peso che cresce senza freno sta nelle **note di memoria** (tre file, circa 41 000 token), nel **diario delle chiusure** del
+piano della parte 2 (circa 183 000 token su 740 000) e nel **lavoro** di ogni sessione. `HANDOFF.md` (circa 124 000) si legge un
+gotcha alla volta, e la mediana di un gotcha è sotto i 500 token: il consiglio è **lasciarlo**. I comandi e il verbale prima e
+dopo vanno in `riferimenti.md` alla chiusura, nella sezione *«Sfoltimento del compendio»*.

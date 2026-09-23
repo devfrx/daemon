@@ -4430,8 +4430,8 @@ precedente sta parola per parola in
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
-| **cancello** | `GATE GREEN` all'apertura e prima di `7c42748`: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
-| **la CI** | la corsa di `9ca93c8` è verde su tutti e due i sistemi; quelle di `7c42748` e del commit di chiusura erano **in corso** alla chiusura, e la sessione dopo le legge per prime, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»*. Il rosso `windows-latest` di `833e6b2`, di causa **ignota** — il log rende 403 —, non è tornato |
+| **cancello** | `GATE GREEN` all'apertura e prima di ogni commit della sessione: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
+| **la CI** | le corse di `9ca93c8`, `7c42748` e `a4dfd81` sono verdi su tutti e due i sistemi; quella del commit che scrive questa riga era **in corso** alla chiusura, e la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»*. Il rosso `windows-latest` di `833e6b2`, di causa **ignota** — il log rende 403 —, non è tornato |
 | **codice di prodotto** | non toccato |
 | **Google Chrome** | 154, sulla macchina dell'account `Jays`; le prove nel browser non scaricano niente (decisione 22 del disegno) |
 

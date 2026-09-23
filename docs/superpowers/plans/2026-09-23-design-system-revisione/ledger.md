@@ -156,3 +156,27 @@ correzione del rapporto; dove la correzione è un'altra, la dice la riga. **c** 
    1–5, con un suo `git`): si cancellano a correzioni finite.
 4. Il disegno e la tavola ricevono i **richiami datati** delle decisioni qui sopra; la tavola **prima** del compito 1.
 5. Dopo: `bash scripts/check-docs.sh`, il cancello **da solo**, ogni ⬜ di questo registro diventato ✅, commit e push.
+
+## L'applicazione, a metà — 2026-09-23
+
+⚠️ **Nessuna correzione è ancora scritta nel piano.** La sessione del 2026-09-23 sulla macchina dell'account `Jays` le ha
+**provate** in una cartella di prova sua e le ha raccolte in uno script, senza applicarlo: dove stanno, e il prossimo passo,
+lo dice il *«Come si riprende»* del piano. Le ⬜ qui sopra restano ⬜ finché lo script non scrive.
+
+- **Pronte nello script**, e provate dove sono una prova o un comando: R1-1…R1-16, R2-1, R2-5, R2-8…R2-18, R3-5, R3-6 (tranne la misura
+  di R2-3), R3-9…R3-16, R3-22, R3-25.
+- **Aspettano Chrome**: R2-2, R2-3 (se nasce ancora `gui/.vitest-attachments/`), R2-4, R2-6 (la parte di tipi è provata),
+  R2-7, R3-1…R3-4, R3-7, R3-8, R3-24.
+
+| | Deciso o trovato applicando | Perché |
+|---|---|---|
+| **R1-7** | non *«come proposto»*: il vincolo 9 non dice più come sono i file nell'albero, rimanda a `git ls-files --eol` | la proposta rimetteva un'etichetta di macchina, «misti», che sull'altra macchina è falsa: la cura decisa dal proprietario in **E72** è **togliere** l'etichetta |
+| **R1-9** | la correzione nomina il controllo `== internal links ==` **e** tiene la trappola 5 | la premessa del rapporto è inesatta: la trappola 5 esiste, nella §10 del compendio, ed è pertinente — un file nuovo non ancora aggiunto è letto |
+| **R1-10** | il ponte, provato allo stato di fine compito 1 col frammento del passo 17 nuovo: il peggiore a 6,22:1 nel chiaro e 5,86:1 nello scuro, su 39 elementi; senza, 1,11:1 | il frammento è quello che il piano detta, lanciato così com'è |
+| **A-1** | il ritorno di **ogni** passo «delle due direzioni» è la **copia salvata**, confermata da `cmp`, e `git status --porcelain` si confronta con quello di prima: una regola sola, nel vincolo globale 11, che cura R3-5, R3-9 e la specie di R2-3 | `git checkout --` non solo non conosce i file nuovi (R3-5): nel compito 1 (`Strip.vue`) e nel 5 (`ViewBar.vue`) toglierebbe anche il lavoro del compito; e il *«`git status --porcelain` vuoto»* della decisione su R2-3 qui sopra non può essere vero prima del commit del compito, perché i suoi file nuovi sono ancora non tracciati |
+| **A-2** | il ponte di R1-10 cura anche i due pulsanti della presa grande, che senza stanno a **1,06:1** nel chiaro: ereditano il colore delle linguette di `themeAbyss` | il rapporto misurava il testo dei pannelli; il commento del ponte e il passo 17 lo dicono, e la riga 6 del *«Come si riprende»* lo porta al compito 6 |
+| **A-3** | *«One rule, three scopes»*, nel commento delle regole d'importazione, diventa *«a scope per block»* | col blocco di R2-11 gli ambiti crescono, e già il compito 5 ne aggiungeva uno: un conteggio in un commento invecchia (gotcha #58) |
+| **R2-14** | con una prova in `kit.test.ts`, rossa col `computed` e verde dopo | senza, la correzione si disfa senza che niente diventi rosso |
+| **R2-11** | la seconda regola, provata anche su un `import type` e sull'esclusione dei test — tolta l'esclusione, `kit.test.ts` è rosso | — |
+| **R3-4** | la violazione dentro `Kit.vue`: `.kit` con `font: 400 0.875rem/1.25rem serif` al posto di `font: var(--font-body)` | la riga della lista che la prova legge eredita il carattere da `.kit`; il rosso si misura con Chrome |
+| **R2-7** | il comando dei due progetti va in un file, `/tmp/projects-2.sh`, come il censimento del compito 1 | i backslash (trappola 6 del disegno) |

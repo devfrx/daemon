@@ -20,10 +20,11 @@ quando il **disegno** è scritto, com'è stato per la stella polare; il testo co
 ## Stato in una riga
 
 Il sotto-progetto 2 è chiuso, e il design system è il **primo tempo** del prossimo passo della §6. Il brainstorming è **a
-metà**: cominciato il 2026-09-23, otto risposte nella tabella *«Le risposte del proprietario, una per domanda»* — il
+metà**: cominciato il 2026-09-23, nove risposte nella tabella *«Le risposte del proprietario, una per domanda»* — il
 perimetro, l'idea di stile, la direzione, lo stile approvato coi raggi concentrici, i due temi, i caratteri aperti dentro il
-programma, la stella polare letta a pezzi, la coppia **Geist + Barlow** — e ⛔ **la prossima è la domanda 6, le icone**, da
-porre com'è nella tabella *«Le domande del brainstorming»*, coi fatti verificati quel giorno.
+programma, la stella polare letta a pezzi, la coppia **Geist + Barlow**, un set di icone aperto — e ⛔ **la domanda in corso
+è quella VISIVA sul set, Lucide o Tabler**, nel browser: i candidati stanno in *«Le icone — i candidati, e il comando che li
+verifica»* qui sotto.
 
 ## ⛔ Da sapere subito
 
@@ -130,6 +131,7 @@ quarantatreesima chiusura non le ha ripetute. Il testo intero sta nella voce, ne
 | 6 | **2026-09-23**, seconda sessione — la domanda 5, i caratteri, riposta uguale coi fatti riverificati quel giorno: **A** quelli di sistema, e su Linux l'aspetto cambia da solo; **B** due caratteri aperti dentro il programma, uno per il testo e uno da strumento per etichette e numeri, stesso aspetto ovunque e niente rete a runtime | **B.** Con un clic, sul consiglio — l'opzione *«B, aperti nel programma»*. I fatti riverificati: la tavola approvata usa `Bahnschrift` per etichette e numeri e `system-ui` per il testo, e la GUI vera i caratteri di sistema — `grep -o "font-family:[^;]*"` sulla tavola, e la variabile `--font` di `gui/src/tokens/tokens.css`; **nessun documento** ha già scelto i caratteri, stella polare compresa — un `grep` su `docs/`, `gui/src` e `spikes/GUI-REQUISITI.md`, archivio escluso, trova «tipografico» solo nel senso di refuso; i quattro candidati e il loro peso col comando della sezione qui sotto, contro i 368,9 MB della cartella installata, riga M2 di `spikes/RISULTATI.md`. È una **dipendenza nuova**, ed è sua. Nessun candidato è scelto: la coppia si sceglie **guardandola** |
 | 7 | **2026-09-23**, seconda sessione — la registrata della tredicesima ripresa della [stella polare](2026-09-07-direzione-gui-design.md), in *«Registrate, non prese»*: **A** rileggerla per intero a ogni ripresa di questo brainstorming; **B** i soli pezzi che la domanda del momento tocca, trovati col `grep`, e per intero una volta, prima di scrivere il disegno | **B.** Con un clic, sul consiglio — l'opzione *«B, solo i pezzi utili»*. La stella pesa quanto dicono `wc -c` e lo snippet `tiktoken` di `CLAUDE.md`: il 2026-09-23, 187 481 byte e almeno 60 224 token, limite inferiore. Vale per **questo brainstorming**: la voce nella stella polare e la riga della stella nella §12 del compendio portano il richiamo con la data |
 | 8 | **2026-09-23**, seconda sessione — le coppie di caratteri, nel browser: la Home e il kit della tavola approvata in tre coppie, più il riferimento coi caratteri di Windows; **A** Geist + Barlow, **B** Inter + Barlow, **C** Geist + Barlow Semi Condensed — B e C cambiano un carattere solo rispetto ad A | **A, Geist + Barlow.** Con un clic, sul consiglio. Il consiglio era **misurato**, nel pannello browser dell'app, con [`sonda-caratteri.js`](2026-09-22-design-system-tavole/sonda-caratteri.js): un'etichetta di prova in Barlow è 0,992 di Bahnschrift e una frase in Geist 1,019 di Segoe UI Variable Text — Inter 1,075, Barlow Semi Condensed 0,916 — quindi con A le lettere occupano quasi lo stesso spazio della tavola approvata; in tutte e tre le coppie le cifre sono tabulari. La [tavola approvata](2026-09-22-design-system-tavole/stile-approvato.html) ora porta la coppia scelta, e la sonda nuova le sta accanto; com'era alla risposta 4 lo rende `git show 8c0bbe6:docs/superpowers/specs/2026-09-22-design-system-tavole/stile-approvato.html` |
+| 9 | **2026-09-23**, seconda sessione — la domanda 6, le icone: **A** nessun set, poche icone disegnate da noi; **B** un set aperto, già pronto, usato da un solo componente del kit | **B.** Con un clic, sul consiglio — l'opzione *«B, un set aperto»*. I fatti verificati quel giorno: in `gui/src` **nessuna** icona, e nessun documento ha già scelto un set, stella polare compresa; le icone **arrivano** — l'immagine di riferimento della risposta 2 mette una piccola icona accanto a ogni etichetta di sezione, e poi pulsanti, cambio di vista, pilastri; i candidati nella sezione qui sotto. Il pacchetto dei **soli disegni** e non quello per Vue è la lettura del coordinatore, nello spirito di ADR-0030: si decide nel disegno. È una **dipendenza nuova**, ed è sua |
 
 ## I caratteri — i candidati, e il comando che li verifica
 
@@ -152,6 +154,24 @@ tutti i formati — è un **limite superiore**: nel programma va solo ciò che i
 
 ```bash
 python -c "import json,urllib.request as u; [print(n, (lambda d: (d['dist-tags']['latest'], d['time'][d['dist-tags']['latest']][:10], d['versions'][d['dist-tags']['latest']].get('license'), d['versions'][d['dist-tags']['latest']]['dist'].get('unpackedSize')))(json.load(u.urlopen(u.Request('https://registry.npmjs.org/'+n.replace('/','%2F'),headers={'User-Agent':'harness'}))))) for n in ['@fontsource-variable/inter','@fontsource/barlow','@fontsource/barlow-semi-condensed','@fontsource-variable/geist']]"
+```
+
+## Le icone — i candidati, e il comando che li verifica
+
+La risposta 9 è **B**, e il set **non è scelto**: si sceglie guardandolo, nel browser, sulla stessa Home della tavola approvata.
+I candidati sono i due set **aggiornati nell'ultima settimana**, verificati il 2026-09-23 coi due comandi qui sotto — il primo
+stampa versione, data d'uscita e licenza, il secondo conta i file d'icona delle due versioni:
+
+| Pacchetto | Licenza | Icone | |
+|---|---|---|---|
+| `lucide` 1.47.0, 2026-09-17 | ISC | 1848 moduli d'icona | candidato |
+| `@tabler/icons` 3.48.0, 2026-09-22 | MIT | 5166 a tratto e 1054 piene | candidato |
+| `@phosphor-icons/core` 2.1.1, 2024-03-29 | MIT | — | fuori: nessuna uscita dal 2024 |
+| `@heroicons/vue` 2.2.0, 2024-11-18 | MIT | — | fuori: nessuna uscita dal 2024 |
+
+```bash
+python -c "import json,urllib.request as u; g=lambda x: json.load(u.urlopen(u.Request(x,headers={'User-Agent':'harness'}))); [print(n, (lambda d: (d['dist-tags']['latest'], d['time'][d['dist-tags']['latest']][:10], d['versions'][d['dist-tags']['latest']].get('license')))(g('https://registry.npmjs.org/'+n.replace('/','%2F')))) for n in ['lucide','@tabler/icons','@phosphor-icons/core','@heroicons/vue']]"
+python -c "import json,urllib.request as u; f=lambda p: json.load(u.urlopen(u.Request('https://data.jsdelivr.com/v1/packages/npm/'+p+'?structure=flat',headers={'User-Agent':'harness'})))['files']; print(sum(n['name'].startswith('/dist/esm/icons/') and n['name'].endswith('.mjs') for n in f('lucide@1.47.0')), sum(n['name'].startswith('/icons/outline/') for n in f('@tabler/icons@3.48.0')), sum(n['name'].startswith('/icons/filled/') for n in f('@tabler/icons@3.48.0')))"
 ```
 
 ## Le domande del brainstorming, una alla volta — proposte del coordinatore, non decisioni
@@ -210,8 +230,8 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 
 ## Decisioni aperte, del proprietario
 
-- ⛔ **la domanda 6, le icone — la prossima, da porre**; poi la 7, dove si guardano i componenti, e la 8, come si cambia
-  vista — una per messaggio; la 4 è caduta con la risposta 5;
+- ⛔ **il set di icone, Lucide o Tabler — la domanda visiva dopo la risposta 9, in corso**; poi la 7, dove si guardano i
+  componenti, e la 8, come si cambia vista — una per messaggio; la 4 è caduta con la risposta 5;
 - se il design system prenda un **numero**: nella tabella delle decisioni della stella polare, o una riga della roadmap;
 - **AUD-004**, che sbarra il secondo tempo della §6, il sotto-progetto 13;
 - le voci registrate della tabella qui sopra.
@@ -227,8 +247,8 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
    la risposta 7. Le skill: `anthropic-skills:decision-principles`,
    `anthropic-skills:session-resume` su questo file, `anthropic-skills:dev-discipline`, `anthropic-skills:dev-communication`, e
    `superpowers:brainstorming` — il percorso è **architetturale**, già detto al proprietario.
-4. Al proprietario **la domanda 6, le icone**; poi la 7 e la 8, una per messaggio. Le domande **visive** — le icone, se la 6
-   porta un set da guardare, e il cambio di vista — vanno nel browser: il visual companion si riavvia con `--project-dir`
+4. Al proprietario **il set di icone**, Lucide o Tabler, nel browser; poi la 7 e la 8, una per messaggio. Le domande
+   **visive** — il set di icone e il cambio di vista — vanno nel browser: il visual companion si riavvia con `--project-dir`
    sullo scratchpad della sessione nuova, in sottofondo, e le tavole nuove partono dalla approvata, cioè da `gen_style_v4.py`. Il
    proprietario ha accettato il companion il 2026-09-23 — *«sì, usa il browser»* — e se la skill vuole di nuovo l'offerta, è una
    riga.

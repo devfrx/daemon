@@ -25,12 +25,13 @@ committando questo file a ogni risposta; l'ha chiusa il proprietario, di nuovo *
 ## Stato in una riga
 
 Il sotto-progetto 2 è chiuso, e il design system è il **primo tempo** del prossimo passo della §6. Il brainstorming è **a
-metà**: cominciato il 2026-09-23, quattordici risposte nella tabella *«Le risposte del proprietario, una per domanda»* — il
+metà**: cominciato il 2026-09-23, sedici risposte nella tabella *«Le risposte del proprietario, una per domanda»* — il
 perimetro, l'idea di stile, la direzione, lo stile approvato coi raggi concentrici, i due temi, i caratteri aperti dentro il
 programma, la stella polare letta a pezzi, la coppia **Geist + Barlow**, un set di icone aperto, **Lucide**, dietro un
 **componente unico** con la sua mappa, la **pagina «kit»** nell'app, la **Panoramica** per cambiare vista, e la strada **A**: le variabili CSS sono la verità. ✅ **Le domande
-sono finite**, la stella polare è **letta per intero** (risposta 7) e gli approcci sono decisi. ⛔ **Il prossimo passo è il
-disegno a sezioni**, dalla (a). Si riprende **ESATTAMENTE** da lì: *«Prossimo passo, eseguibile»*, punto 4.
+sono finite**, la stella polare è **letta per intero** (risposta 7), gli approcci sono decisi e la **sezione (a)**, i token,
+è approvata con la [tavola dei token](2026-09-22-design-system-tavole/token.html) (risposta 16). ⛔ **Il prossimo passo è la
+sezione (b)**, il kit. Si riprende **ESATTAMENTE** da lì: *«Prossimo passo, eseguibile»*, punto 4.
 
 ## ⛔ Da sapere subito
 
@@ -46,8 +47,12 @@ sessione, lo stesso giorno, ha lo scratchpad
 `gen_style_v5.py` — la tavola approvata coi caratteri e le icone scelti, da cui partono le tavole nuove — e i confronti
 `gen_fonts_v1.py`, `gen_icons_v1.py` e `gen_views_v1.py`, più `gen_style_v4.py`, la tavola coi soli caratteri, e
 `gen_panoramica_v1.py`, la panoramica approvata; tutti eseguono `gen_style_v3.py`, copiato lì accanto, fino alla sua uscita,
-passando per `gen_icons_v1.py` quando servono le icone. Nel repository le tavole approvate sono **due** — lo stile e la
-panoramica — con **tre** sonde: raggi, caratteri, icone.
+passando per `gen_icons_v1.py` quando servono le icone. Nel repository le tavole approvate sono **tre** — lo stile, la
+panoramica e i token — con **tre** sonde: raggi, caratteri, icone. La **terza** sessione, lo stesso giorno, ha lo scratchpad
+`C:\Users\zagor\AppData\Local\Temp\claude\C--Users-zagor-Desktop-harness\9ae312b8-b35c-470a-90ee-519a47a2f7df\scratchpad\`,
+con `colore.py` — il calcolo del colore: tono, OKLCH, mescole OKLab, contrasto WCAG — `palette.py` — le scale, i ruoli, le
+coppie di contrasto e le loro soglie — e `gen_board.py`, che scrive `board/proposta/base.css`, `board/proposta/themes.css` e
+`board/tavola-token.html`, la tavola approvata e copiata nel repository come `token.html`; e `fonti.py`, che rilegge le fonti.
 
 ⚠️ **Sull'altra macchina** — il clone con `core.autocrlf` `true`, albero `w/crlf` — tre cose prima di credere a un verde o a
 un rosso: un Node che soddisfi `node -p "require('./gui/package.json').engines.node"`; `cargo audit --version` **0.22.2**,
@@ -148,6 +153,7 @@ quarantatreesima chiusura non le ha ripetute. Il testo intero sta nella voce, ne
 | 13 | **2026-09-23**, seconda sessione — la domanda 8, come si cambia vista, nel browser, sulla Home approvata coi caratteri e le icone scelti: **A** «Spazi», le viste una accanto all'altra come i desktop di Windows, nella barra solo la vista in cui sei con un segno per ciascuna, e Compatta come un pulsante nella striscia; **B** «Panoramica», un clic sul nome della vista nella barra, o un tasto, apre tutte le viste in miniatura | **B.** Con un clic, sul consiglio: vedi tutto prima di entrare, regge con le viste salvate, e il nome nella barra dice sempre dove sei. La forma, com'è nella [tavola](2026-09-22-design-system-tavole/panoramica.html): nella barra il **nome** della vista con un'icona, niente schede; la panoramica è una griglia di **miniature vive** — Home, Lavoro, **Compatta come finestrella**, le viste salvate col loro nome — con la corrente in bordeaux e l'ultima scheda **«Salva questa vista»**; Esc chiude. I fatti verificati quel giorno: oggi la barra ha **tre pulsanti in fila**, `gui/src/frame/ViewBar.vue`, cioè le schede che il 2026-09-07 il proprietario disse di non volere — detto nella memoria dell'agente e da oggi scritto qui; nessun documento aveva deciso o scartato né gli spazi né la panoramica; **Ctrl+Alt+frecce** sono già dei pannelli, `directionOf` in `gui/src/frame/moveActive.ts`, quindi i tasti delle tavole sono esempi. 🔶 **Dedotto:** gli spazi si possono aggiungere sopra la panoramica più avanti senza rifare niente |
 | 14 | **2026-09-23**, terza sessione — gli **approcci**, cioè dove vive la «verità» dello stile nel codice: **A** le variabili CSS — i token a strati in `gui/src/tokens/`, il kit in `gui/src/components/`, le regole su tre livelli: compilatore, linter, test; **B** il TypeScript — i token in un file TypeScript, da cui uno script genera il CSS, coi nomi dei token come tipi | **A.** Con un clic, sul consiglio. I tre controlli, detti a parole prima della domanda: **esiste** — `tokens.css`, un file e un tema; dodici componenti, tutti con `<style scoped>` su `var(--…)`; lo strato `components/` della §6a del [disegno del 2](2026-09-06-sottoprogetto-2-gui-minima-design.md), oggi con `Confirm.vue`; `contrast.test.ts`, che legge i colori dal CSS; la tavola approvata, già a variabili CSS coi raggi in `calc`; in ESLint `no-restricted-imports` e `vue/no-restricted-html-elements`, senza dipendenze nuove — la seconda letta nel `eslint-plugin-vue` 10.11.0 installato; i test in jsdom, senza layout; **arriva** — il grafo del 6, il viewer del 7 e la mano del 12 disegnano su canvas e vogliono i colori anche in JavaScript; **regge crescendo** — un componente entra nel kit alla seconda occorrenza, un'icona è una riga della mappa, e il canvas legge il colore calcolato con un aiutante (🔶 dedotto). Scartata **B**: un generatore, un passo di build e un file generato da tenere allineato, per un vantaggio che serve dal 6; e passare più avanti da A a B non tocca i componenti, che usano `var(--…)` in tutte e due (🔶 dedotto). Scartato a parole **Tailwind**: cambierebbe il modo in cui sono scritti tutti e dodici i componenti. Verificati quel giorno al registro npm: `style-dictionary` 5.5.5 del 2026-09-20, `tailwindcss` 4.3.3 del 2026-07-16, `playwright` 1.63.0, e `@vitest/browser-playwright` 4.1.11, che esiste accanto al nostro `vitest` 4.1.11 — l'ultima è la 5.0.1; il formato standard dei token è il *Design Tokens Format Module 2025.10* di designtokens.org. Quale browser fa girare le sonde nei test è una **dipendenza nuova**, del proprietario: sezione (f) |
 | 15 | **2026-09-23**, terza sessione — la **prima metà della sezione (a)**, colori e temi, presentata in chat: tre file in `gui/src/tokens/` (`base.css`, `themes.css`, `dock.css`); sedici ruoli di colore coi valori della tavola approvata e i nomi di oggi dove esistono; i contrasti calcolati quel giorno sui valori della tavola; il tema che segue Windows e la scelta a mano nelle Impostazioni, fuori dal registro come la disposizione (decisione 14 della stella polare); e la domanda su dove si conserva la scelta: **A** nel pacchetto della disposizione, con un campo `theme` facoltativo accanto a `view` e `layouts`, senza toccare il kernel; **B** una chiave sua nella settima porta | **Nessuna delle due lettere: un mandato.** Parole sue: *«usa tutte le regole di ui/ux e professionalità che conosci per i token ed i loro valori»*. Il coordinatore lo legge così: i token **non** si copiano dalla tavola, si costruiscono con le regole del mestiere — le WCAG 2.2, scale di colore a gradini, una griglia di spazi, una scala dei caratteri coi suoi minimi, gli stati d'interazione, l'elevazione, il movimento — **verificate alle fonti primarie** prima di scriverle; e ciò che cambia rispetto alla tavola approvata si **mostra** prima di chiedere. La domanda su dove si conserva la scelta del tema **non ha risposta** e si ripone con la sezione rifatta. I contrasti misurati quel giorno sui valori della tavola, col generatore nello scratchpad della sessione: ogni ruolo di testo su ogni fondo, nei due temi, da 4,73 in su; `--on-accent` su `--accent` 8,7 e 9,1; `--mark` nello scuro da 3,0 a 3,5, **al limite**; il bordeaux nello scuro come linea da 1,6 a 1,8, quindi solo fondo pieno; `--ink-faint` da 2,3 a 3,3, solo decoro; `--line` da 1,1 a 1,4 |
+| 16 | **2026-09-23**, terza sessione — la **sezione (a) rifatta col mandato della risposta 15**, mostrata nella [tavola dei token](2026-09-22-design-system-tavole/token.html) nel pannello del browser e come file, e la domanda rimasta aperta: **A** sì, e la scelta del tema nel pacchetto della disposizione; **B** sì, e una chiave sua nella settima porta | **A.** Con un clic, sul consiglio. Quindi: (1) **due livelli di token** — le **scale** `--ref-*`, cinque tavolozze tonali (un grigio caldo dal carbone all'avorio, bordeaux, verde, ambra, rosso) coi gradini chiamati col **tono**, la L* CIE che Material chiama *tone*; e i **ruoli** `--color-*` e `--shadow-*`, 37 per tema coi nomi uguali nei due temi, nell'ordine proprietà, ruolo, stato — `--color-bg-fill-hover`, `--color-text-muted`, `--color-border-strong` — e **nessun componente legge una scala**; (2) i colori approvati sono **àncore** esatte; gli altri gradini sono generati al loro tono con tinta e croma interpolate in OKLCH; le tinte tenui sono **mescolate** nel grigio caldo in OKLab, come `color-mix(in oklab, …)`; (3) i **contrasti**: ogni ruolo di testo 4,5:1 su ogni fondo, il testo sul bordeaux e sugli stati 4,5:1, bordo forte, focus e segni 3:1 sui fondi — 176 coppie, nessuna sotto; `--color-text-disabled` è esente (1.4.3) e `--color-border` è decoro; (4) **il resto sta in `base.css`**: i caratteri come scorciatoie `font` — etichetta 11/16 Barlow 600 in maiuscolo, didascalia 12/16, corpo 14/20, titolo 16/24, intestazione 20/28 in Geist, numeri 14/20 e numeri grandi 32/40 in Barlow con le cifre tabulari, codice 13/20 col monospazio del sistema; gli spazi sulla griglia da 4; i raggi `inline` 6 e `control` 8, e `card` e `frame` coi `calc` della risposta 4, quindi 20 e 32; nulla di cliccabile sotto 24 (2.5.8), controlli da 32, la presa grande da 40; icone 14, 16 e 20 col tratto 2; il focus come contorno di 2 px (2.4.13); il movimento a 110, 240 e 400 ms con le curve «productive» di Carbon, a zero con «meno movimento»; i livelli `z`; (5) **che cosa cambia rispetto alla tavola approvata**, detto al proprietario prima della domanda: la grandezza vera — la tavola era in miniatura, col testo a 11 e le etichette a 9; i raggi 20 e 32 invece di 18 e 28; il focus dello scuro `#BF5567` invece di `#B0475A`, da 3,0 a 3,4:1 sui controlli; il testo secondario e gli stati del chiaro un filo più scuri; quattro grigi quasi uguali unificati; il bordeaux dei testi nello scuro a rosa antico, `#E59EA1`, invece di un salmone acceso, per il «niente olografico» della risposta 2; (6) **la scelta del tema** è un campo `theme` facoltativo — sistema, chiaro, scuro — nel `LayoutPack` di `gui/src/stores/layout.ts`, accanto a `view` e `layouts`: il core lo custodisce senza aprirlo, e il kernel non cambia. I valori stanno **solo** nella tavola, che contiene per intero `base.css` e `themes.css`: qui non si ricopiano. Le misure assolute — le grandezze, la spaziatura delle etichette, il movimento — si giudicano sulla **pagina kit**, a grandezza vera |
 
 ```bash
 python -c "import json,urllib.request as u; g=lambda n: json.load(u.urlopen(u.Request('https://registry.npmjs.org/'+n.replace('/','%2F'),headers={'User-Agent':'harness'}))); [print(n, (lambda d,v: (v, d['time'][v][:10], d['versions'][v]['dist'].get('unpackedSize'), len(d['versions'][v].get('dependencies',{})), d['versions'][v].get('peerDependencies',{}).get('vite')))(d, d['dist-tags']['latest'])) for n,d in ((n,g(n)) for n in ['storybook','@storybook/vue3-vite','histoire'])]"
@@ -195,6 +201,28 @@ stessa versione e stessa licenza.
 python -c "import json,urllib.request as u; g=lambda x: json.load(u.urlopen(u.Request(x,headers={'User-Agent':'harness'}))); [print(n, (lambda d: (d['dist-tags']['latest'], d['time'][d['dist-tags']['latest']][:10], d['versions'][d['dist-tags']['latest']].get('license')))(g('https://registry.npmjs.org/'+n.replace('/','%2F')))) for n in ['lucide','@tabler/icons','@phosphor-icons/core','@heroicons/vue']]"
 python -c "import json,urllib.request as u; f=lambda p: json.load(u.urlopen(u.Request('https://data.jsdelivr.com/v1/packages/npm/'+p+'?structure=flat',headers={'User-Agent':'harness'})))['files']; print(sum(n['name'].startswith('/dist/esm/icons/') and n['name'].endswith('.mjs') for n in f('lucide@1.47.0')), sum(n['name'].startswith('/icons/outline/') for n in f('@tabler/icons@3.48.0')), sum(n['name'].startswith('/icons/filled/') for n in f('@tabler/icons@3.48.0')))"
 python -c "import json,urllib.request as u; f=json.load(u.urlopen(u.Request('https://data.jsdelivr.com/v1/packages/npm/lucide@1.47.0?structure=flat',headers={'User-Agent':'harness'})))['files']; i=[x for x in f if x['name'].startswith('/dist/esm/icons/') and x['name'].endswith('.mjs')]; print(len(i), sum(x['size'] for x in i), [x['size'] for x in f if x['name']=='/dist/umd/lucide.min.js'])"
+```
+
+## I token — le regole, e le fonti verificate il 2026-09-23
+
+La risposta 15 chiede le regole del mestiere; la 16 le approva. I valori vivono **solo** nella
+[tavola dei token](2026-09-22-design-system-tavole/token.html); qui stanno le regole e da dove vengono.
+
+| Regola | Fonte primaria, letta il 2026-09-23 |
+|---|---|
+| testo 4,5:1 (1.4.3); bordi e segni che servono a riconoscere un controllo o uno stato 3:1 (1.4.11); testo ingrandibile al 200% (1.4.4); spaziatura del testo (1.4.12); focus visibile (2.4.7), non nascosto (2.4.11), come un contorno di almeno 2 px a 3:1 (2.4.13, livello AAA); bersagli di almeno 24 × 24 (2.5.8); movimento disattivabile (2.3.3, AAA) | WCAG 2.2, Raccomandazione W3C del 12 dicembre 2024, `https://www.w3.org/TR/WCAG22/` — con uno `User-Agent` corto: quello lungo di Chrome riceve **403** |
+| i due livelli, scale e ruoli, e i gradini d'una scala sola letti al contrario nei due temi | Material 3: `@material/web` 2.5.0 del 2026-07-15, file `tokens/versions/latest/sass/` |
+| fondi 1–2, riempimenti 3–5 per normale, sopra e premuto, bordi 6–8 dal debole al forte e al focus, pieni 9–10, testi 11–12 | Radix Colors 3.0.0 del 2023-10-02, MIT — la pagina *Understanding the scale* di radix-ui.com e le scale di `@radix-ui/colors` |
+| la scala dei caratteri 12 · 14 · 16 · 18 · 20 · 24 · 28 · 32 …; e il minimo di Material, `label-small` 11/16 | `@carbon/type` 11.67.0, `scss/_scale.scss`; `@material/web`, `_md-sys-typescale.scss` |
+| gli spazi 2 · 4 · 8 · 12 · 16 · 24 · 32 · 40 · 48 · 64 | `@carbon/layout` 11.59.0, `scss/generated/_spacing.scss` |
+| le durate 70 · 110 · 150 · 240 · 400 · 700 ms e le curve «productive» | `@carbon/motion` 11.52.0, `src/dtcg/motion.json` — nel formato DTCG |
+| gli strati di stato di Material: sopra 8%, focus e premuto 10%, trascinato 16% — **non** presi: qui gli stati sono colori espliciti, che il test del contrasto sa giudicare | `@material/web`, `_md-sys-state.scss` |
+| `oklch()` nei CSS | Chrome 111, dati di compatibilità di MDN |
+
+Le versioni al registro npm, col comando delle sezioni sopra:
+
+```bash
+python -c "import json,urllib.request as u; [print(n, (lambda d: (d['dist-tags']['latest'], d['time'][d['dist-tags']['latest']][:10]))(json.load(u.urlopen(u.Request('https://registry.npmjs.org/'+n.replace('/','%2F'),headers={'User-Agent':'harness'}))))) for n in ['@material/web','@radix-ui/colors','@carbon/type','@carbon/layout','@carbon/motion','style-dictionary','tailwindcss','@vitest/browser-playwright','playwright']]"
 ```
 
 ## Le domande del brainstorming, una alla volta — proposte del coordinatore, non decisioni
@@ -246,6 +274,17 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 - I file delle sonde si prendono con `fetch(…, { cache: "no-store" })`: il browser tiene in cache ciò che `http.server` gli
   serve, e una sonda corretta sulla stessa porta gira nella forma **vecchia** — successo con la correzione qui sopra, che
   sembrava non funzionare.
+- **Terza sessione.** `sonda-raggi.js` guarda **solo** `.ds .m, .ds .kit` e `.ds .option`: su un'altra tavola rende
+  `near: 0`, che è il **verde vuoto**. Sulla tavola dei token si lancia sostituendo i due selettori con `.sheet` — e rende
+  `near: 24`; alla prima forma della tavola ha trovato **17** difetti veri, tutti della tavola e non dei token.
+- Un foglio con 24 di margine che contiene schede da 20 vuole il raggio **44**, non il 32 della cornice: la regola vale per
+  ogni annidamento, con la distanza vera. E una griglia di pulsanti in cinque colonne sborda: la sonda sul testo tagliato
+  l'ha colta a 681 px in 574.
+- Le prove sul testo tagliato, sugli elementi che sbordano e sulle icone centrate sono **in linea** nella sessione, e provate
+  nelle due direzioni con due difetti messi a mano — un'icona spostata di 3 px, un campo stretto a 60 px.
+- `location.reload()` dentro lo strumento JavaScript del pannello taglia lo script e ne perde il risultato: si ricarica con
+  `navigate` e un `?v=` nuovo, che salta anche la cache della pagina.
+- Il tool Edit **conserva** i fine-riga CRLF di questo file: contati prima e dopo con `tr -cd '\r' | wc -c`.
 
 ## Decisioni prese dal coordinatore, col perché — il proprietario può ribaltarle
 
@@ -264,11 +303,15 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
 | 11 | la tavola approvata porta anche le icone scelte, e con esse la **licenza di Lucide**, copiata parola per parola in testa al file | i disegni sono **copiati** nel file, e la licenza ISC chiede l'avviso *«in all copies»*; una parte delle icone viene da Feather, sotto MIT, e la licenza lo dice; il repository è pubblico. I caratteri invece non sono copiati: arrivano da jsDelivr. Costo: una cinquantina di righe in testa alla tavola |
 | 12 | `sonda-raggi.js` guarda anche le **scatole di scelta** del companion | la tavola dei caratteri si è mostrata con un angolo di 28 accanto a uno di 12, e con la letterina della scatola non concentrica: difetti della scatola del companion e non del nostro stile, ma la regola del proprietario vale per tutta la tavola, e il proprietario l'ha saputo alla tavola dopo. La sonda allargata li ha trovati sulla tavola dei caratteri — sei, due per scatola — e sulla tavola delle icone prima di mostrarla. Costo: nessuno; sulla tavola approvata, che non ha scatole, non cambia nulla |
 | 13 | la Panoramica approvata si salva **a sé**, [`panoramica.html`](2026-09-22-design-system-tavole/panoramica.html), accanto alla tavola dello stile e non dentro | la tavola dello stile mostra lo stile, la panoramica è un meccanismo della cornice; ma una tavola nel repository serve a chi riprende dall'altra macchina, dove lo scratchpad non c'è. Le sue sonde: raggi, testo che entra, cifre e icone, pulite nei due temi e a 1440 e 800 px; i campioni della sonda dei caratteri pensati per la Home **mancano** in questa tavola, e lì la prova vale solo per il testo tagliato, lo sbordare, il caricamento e le cifre. Costo: due file da tenere coerenti |
+| 14 | i nomi dei ruoli **proprietà prima** — `--color-bg-…`, `--color-text-…`, `--color-border-…` — invece dei nomi di oggi, `--ink` o `--surface` | un testo scritto con un fondo si vede dal nome, e il test del contrasto accoppia **ogni** `--color-text-*` con **ogni** `--color-bg-*` senza una lista a mano, che è la regola scritta in `contrast.test.ts`. Costo: il piano rinomina a macchina gli usi di oggi nei dodici componenti — quanti, lo dice il terzo comando delle sonde del censimento, più su; gli spazi `--space-1`…`--space-4` tengono nome e valore |
+| 15 | i valori della tavola approvata restano **àncore esatte**, e si generano solo i gradini che mancano | il proprietario ha approvato quei colori guardandoli; una scala rigenerata da zero li avrebbe spostati tutti di poco. Costo: le scale non hanno gradini a passo fisso |
+| 16 | il **monospazio** è quello del sistema — `ui-monospace`, Cascadia Mono, Consolas | un terzo carattere nel programma, come Geist Mono, sarebbe una dipendenza nuova, ed è del proprietario: registrata e non presa. Costo: il codice nella chat si vede diverso su Linux |
+| 17 | i **generatori** restano nello scratchpad; nel repository va la **tavola**, che contiene per intero `base.css` e `themes.css` | è la regola di `CLAUDE.md` sulle misure, e il precedente di `gen_style_v*.py`. Costo: dall'altra macchina un gradino si ritocca a mano nella tavola, non rigenerandolo |
 
 ## Decisioni aperte, del proprietario
 
 - ⛔ **il disegno a sezioni** — il prossimo passo, una sezione approvata per volta; gli approcci sono decisi, **A** alla
-  risposta 14; le domande sono finite, e la
+  risposta 14, e la **(a)** è approvata alla 16: si riprende dalla **(b)**; le domande sono finite, e la
   4 è caduta con la risposta 5;
 - se il design system prenda un **numero**: nella tabella delle decisioni della stella polare, o una riga della roadmap;
 - **AUD-004**, che sbarra il secondo tempo della §6, il sotto-progetto 13;
@@ -285,7 +328,8 @@ Ogni domanda a parole di tutti i giorni, due o tre opzioni, il consiglio in una 
    INTERO**: è il momento della risposta 7, prima del disegno. Le skill: `anthropic-skills:decision-principles`,
    `anthropic-skills:session-resume` su questo file, `anthropic-skills:dev-discipline`, `anthropic-skills:dev-communication`, e
    `superpowers:brainstorming` — il percorso è **architetturale**, già detto al proprietario.
-4. Gli **approcci**, due o tre, al proprietario — ✅ **fatti il 2026-09-23, terza sessione: A, risposta 14** — la forma del design system nel codice: dove vivono token, temi e kit, e come
+4. Gli **approcci**, due o tre, al proprietario — ✅ **fatti il 2026-09-23, terza sessione: A, risposta 14; e la sezione (a)
+   approvata, risposta 16** — la forma del design system nel codice: dove vivono token, temi e kit, e come
    le regole diventano controlli — poi il **disegno a sezioni**, una approvata per volta: (a) i token a strati coi due temi —
    i colori, Geist e Barlow coi loro pesi, la regola dei raggi come `calc`, il tratto delle icone; (b) il kit e dove vive — i
    componenti con la regola della seconda occorrenza, il componente `Icon` con la sua mappa (risposta 11), la pagina «kit»

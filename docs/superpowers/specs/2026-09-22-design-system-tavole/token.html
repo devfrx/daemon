@@ -1,0 +1,639 @@
+<!doctype html>
+<!--
+THE ICONS IN THIS FILE are drawings of Lucide 1.47.0 (lucide-static), copied inline. Their licence follows, verbatim.
+
+ISC License
+
+Copyright (c) 2026 Lucide Icons and Contributors
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+---
+
+The following Lucide icons are derived from the Feather project:
+
+airplay, alert-circle, alert-octagon, alert-triangle, aperture, arrow-down-circle, arrow-down-left, arrow-down-right, arrow-down, arrow-left-circle, arrow-left, arrow-right-circle, arrow-right, arrow-up-circle, arrow-up-left, arrow-up-right, arrow-up, at-sign, calendar, cast, check, chevron-down, chevron-left, chevron-right, chevron-up, chevrons-down, chevrons-left, chevrons-right, chevrons-up, circle, clipboard, clock, code, columns, command, compass, corner-down-left, corner-down-right, corner-left-down, corner-left-up, corner-right-down, corner-right-up, corner-up-left, corner-up-right, crosshair, database, divide-circle, divide-square, dollar-sign, download, external-link, feather, frown, hash, headphones, help-circle, info, italic, key, layout, life-buoy, link-2, link, loader, lock, log-in, log-out, maximize, meh, minimize, minimize-2, minus-circle, minus-square, minus, monitor, moon, more-horizontal, more-vertical, move, music, navigation-2, navigation, octagon, pause-circle, percent, plus-circle, plus-square, plus, power, radio, rss, search, server, share, shopping-bag, sidebar, smartphone, smile, square, table-2, tablet, target, terminal, trash-2, trash, triangle, tv, type, upload, x-circle, x-octagon, x-square, x, zoom-in, zoom-out
+
+The MIT License (MIT) (for the icons listed above)
+
+Copyright (c) 2013-present Cole Bemis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<html lang="it" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design system: i token, sezione (a)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/geist@5.3.0/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/barlow@5.3.0/300.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/barlow@5.3.0/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/barlow@5.3.0/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/barlow@5.3.0/600.css">
+<style>
+/* ===== proposta/base.css ===== */
+/* EVERYTHING THAT IS NOT A COLOUR -- design system, section (a), 2026-09-23. One set for both themes.
+   Sizes in rem (WCAG 1.4.4: text scales with the root), hairlines in px. Sources in the design document. */
+:root {
+  --font-family-text: "Geist Variable", system-ui, sans-serif;
+  --font-family-tool: "Barlow", "Bahnschrift", system-ui, sans-serif;
+  --font-family-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* the type roles, as `font` shorthands: weight size/line family. Lines on the 4 px grid. */
+  --font-label: var(--font-weight-semibold) 0.6875rem/1rem var(--font-family-tool);     /* 11/16, UPPERCASE */
+  --tracking-label: 0.14em;
+  --font-caption: var(--font-weight-regular) 0.75rem/1rem var(--font-family-text);      /* 12/16 */
+  --font-body: var(--font-weight-regular) 0.875rem/1.25rem var(--font-family-text);     /* 14/20 */
+  --font-body-strong: var(--font-weight-semibold) 0.875rem/1.25rem var(--font-family-text);
+  --font-title: var(--font-weight-semibold) 1rem/1.5rem var(--font-family-text);        /* 16/24 */
+  --font-heading: var(--font-weight-semibold) 1.25rem/1.75rem var(--font-family-text);  /* 20/28 */
+  --font-numeric: var(--font-weight-medium) 0.875rem/1.25rem var(--font-family-tool);   /* 14/20, tabular */
+  --font-display: var(--font-weight-light) 2rem/2.5rem var(--font-family-tool);         /* 32/40, tabular */
+  --font-mono: var(--font-weight-regular) 0.8125rem/1.25rem var(--font-family-mono);    /* 13/20 */
+
+  /* space: the 4 px grid */
+  --space-0-5: 2px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* radii: OUTER = INNER + DISTANCE, by construction (answer 4) */
+  --radius-inline: 6px;
+  --radius-control: 8px;
+  --radius-card: calc(var(--radius-control) + var(--space-3));   /* 20 */
+  --radius-frame: calc(var(--radius-card) + var(--space-3));     /* 32 */
+  --radius-full: 9999px;
+
+  /* sizes: nothing clickable under 24 x 24 (WCAG 2.5.8) */
+  --size-target-min: 24px;
+  --size-control-sm: 24px;
+  --size-control-md: 32px;
+  --size-control-lg: 40px;   /* the big grab of SP-8, move 5 */
+  --size-icon-sm: 14px;
+  --size-icon-md: 16px;
+  --size-icon-lg: 20px;
+  --icon-stroke: 2;
+  --border-width: 1px;
+  --focus-width: 2px;        /* WCAG 2.4.13: a 2 px perimeter */
+  --focus-offset: 2px;
+
+  /* motion: Carbon's productive durations and curves */
+  --duration-fast: 110ms;
+  --duration-moderate: 240ms;
+  --duration-slow: 400ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0.38, 0.9);
+  --ease-enter: cubic-bezier(0, 0, 0.38, 0.9);
+  --ease-exit: cubic-bezier(0.2, 0, 1, 0.9);
+
+  /* layers */
+  --z-popover: 100;
+  --z-overlay: 200;
+  --z-toast: 300;
+  --z-tooltip: 400;
+}
+
+/* WCAG 2.3.3: motion that an interaction triggers can be turned off -- Windows' own switch. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-moderate: 0ms;
+    --duration-slow: 0ms;
+  }
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: var(--font-body);
+}
+
+/* WCAG 2.4.7 and 2.4.13: an OUTLINE and not a box-shadow, because Windows' high contrast keeps outlines. */
+:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
+
+::selection {
+  background: var(--color-bg-selection);
+  color: var(--color-text);
+}
+
+/* ===== proposta/themes.css ===== */
+/* THE COLOURS OF THE SPA, in two layers -- design system, section (a), 2026-09-23.
+   Layer 1, `--ref-*`: five TONAL PALETTES, each stop named by its tone (CIE L*, Material's HCT tone).
+   ⛔ No component reads a `--ref-*`: components read ROLES, so a theme can never be bypassed.
+   Layer 2, `--color-*` and `--shadow-*`: the ROLES, the same names in both themes, property first
+   (bg / text / border), then role, then state. Every text role reads 4.5:1 on every background role
+   and every non-text role 3:1 -- the pairs are listed in the contrast test, not here. */
+:root {
+  --ref-neutral-5: #151112; --ref-neutral-8: #1B1718; --ref-neutral-12: #241F20; --ref-neutral-15: #2A2425; --ref-neutral-17: #2F2829; --ref-neutral-19: #342D2D; --ref-neutral-39: #655B57; --ref-neutral-44: #6F6660; --ref-neutral-48: #7A706A; --ref-neutral-52: #847A73; --ref-neutral-64: #A39A8F; --ref-neutral-85: #DCD2C4; --ref-neutral-87: #E2D9CC; --ref-neutral-89: #E6DFD2; --ref-neutral-91: #ECE6DA; --ref-neutral-94: #F3EEE6; --ref-neutral-96: #F7F2EA; --ref-neutral-98: #FBF8F3;
+  --ref-bordeaux-12: #2F1B1D; --ref-bordeaux-14: #371C1F; --ref-bordeaux-24: #711627; --ref-bordeaux-28: #7A1F2E; --ref-bordeaux-31: #862837; --ref-bordeaux-50: #BF5567; --ref-bordeaux-72: #E59EA1; --ref-bordeaux-81: #DFC2C0; --ref-bordeaux-86: #E8D4D0; --ref-bordeaux-91: #EFE1DD;
+  --ref-green-17: #292A26; --ref-green-28: #264B22; --ref-green-38: #3D6339; --ref-green-41: #43693F; --ref-green-69: #8DB38A; --ref-green-80: #AAD0A6; --ref-green-92: #E7E9E0;
+  --ref-amber-17: #312820; --ref-amber-28: #5D3B01; --ref-amber-38: #7C510A; --ref-amber-42: #8A5A0B; --ref-amber-71: #D9A441; --ref-amber-80: #F4BE5D; --ref-amber-92: #F0E7DD;
+  --ref-red-16: #332321; --ref-red-28: #811B07; --ref-red-38: #A82A13; --ref-red-42: #B4361F; --ref-red-60: #E26D5A; --ref-red-64: #EF7965; --ref-red-80: #FBB6A8; --ref-red-92: #F6E5DD;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: var(--ref-neutral-5);
+  --color-bg-surface: var(--ref-neutral-8);
+  --color-bg-raised: var(--ref-neutral-12);
+  --color-bg-fill: var(--ref-neutral-12);
+  --color-bg-fill-hover: var(--ref-neutral-15);
+  --color-bg-fill-active: var(--ref-neutral-19);
+  --color-bg-accent: var(--ref-bordeaux-28);
+  --color-bg-accent-hover: var(--ref-bordeaux-31);
+  --color-bg-accent-active: var(--ref-bordeaux-24);
+  --color-bg-accent-subtle: var(--ref-bordeaux-12);
+  --color-bg-accent-subtle-hover: var(--ref-bordeaux-14);
+  --color-bg-selection: var(--ref-bordeaux-28);
+  --color-text: var(--ref-neutral-91);
+  --color-text-muted: var(--ref-neutral-64);
+  --color-text-disabled: var(--ref-neutral-44);
+  --color-text-accent: var(--ref-bordeaux-72);
+  --color-text-on-accent: var(--ref-neutral-96);
+  --color-border: var(--ref-neutral-17);
+  --color-border-strong: var(--ref-neutral-48);
+  --color-border-accent: var(--ref-bordeaux-50);
+  --color-focus: var(--ref-bordeaux-50);
+  --color-mark: var(--ref-bordeaux-50);
+  --color-bg-ok: var(--ref-green-69);
+  --color-text-ok: var(--ref-green-69);
+  --color-text-on-ok: var(--ref-neutral-5);
+  --color-bg-ok-subtle: var(--ref-green-17);
+  --color-border-ok: var(--ref-green-28);
+  --color-bg-warn: var(--ref-amber-71);
+  --color-text-warn: var(--ref-amber-71);
+  --color-text-on-warn: var(--ref-neutral-5);
+  --color-bg-warn-subtle: var(--ref-amber-17);
+  --color-border-warn: var(--ref-amber-28);
+  --color-bg-stop: var(--ref-red-60);
+  --color-text-stop: var(--ref-red-64);
+  --color-text-on-stop: var(--ref-neutral-5);
+  --color-bg-stop-subtle: var(--ref-red-16);
+  --color-border-stop: var(--ref-red-28);
+  --color-veil: rgb(10 7 8 / 0.62);
+  --color-border-card: var(--color-border);
+  --shadow-card: none;
+  --shadow-overlay: 0 12px 32px rgb(0 0 0 / 0.5);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --color-bg: var(--ref-neutral-94);
+  --color-bg-surface: var(--ref-neutral-98);
+  --color-bg-raised: var(--ref-neutral-98);
+  --color-bg-fill: var(--ref-neutral-91);
+  --color-bg-fill-hover: var(--ref-neutral-89);
+  --color-bg-fill-active: var(--ref-neutral-87);
+  --color-bg-accent: var(--ref-bordeaux-28);
+  --color-bg-accent-hover: var(--ref-bordeaux-31);
+  --color-bg-accent-active: var(--ref-bordeaux-24);
+  --color-bg-accent-subtle: var(--ref-bordeaux-91);
+  --color-bg-accent-subtle-hover: var(--ref-bordeaux-86);
+  --color-bg-selection: var(--ref-bordeaux-81);
+  --color-text: var(--ref-neutral-8);
+  --color-text-muted: var(--ref-neutral-39);
+  --color-text-disabled: var(--ref-neutral-64);
+  --color-text-accent: var(--ref-bordeaux-28);
+  --color-text-on-accent: var(--ref-neutral-96);
+  --color-border: var(--ref-neutral-85);
+  --color-border-strong: var(--ref-neutral-52);
+  --color-border-accent: var(--ref-bordeaux-28);
+  --color-focus: var(--ref-bordeaux-28);
+  --color-mark: var(--ref-bordeaux-28);
+  --color-bg-ok: var(--ref-green-41);
+  --color-text-ok: var(--ref-green-38);
+  --color-text-on-ok: var(--ref-neutral-98);
+  --color-bg-ok-subtle: var(--ref-green-92);
+  --color-border-ok: var(--ref-green-80);
+  --color-bg-warn: var(--ref-amber-42);
+  --color-text-warn: var(--ref-amber-38);
+  --color-text-on-warn: var(--ref-neutral-98);
+  --color-bg-warn-subtle: var(--ref-amber-92);
+  --color-border-warn: var(--ref-amber-80);
+  --color-bg-stop: var(--ref-red-42);
+  --color-text-stop: var(--ref-red-38);
+  --color-text-on-stop: var(--ref-neutral-98);
+  --color-bg-stop-subtle: var(--ref-red-92);
+  --color-border-stop: var(--ref-red-80);
+  --color-veil: rgb(29 23 24 / 0.32);
+  --color-border-card: transparent;
+  --shadow-card: 0 1px 2px rgb(29 23 24 / 0.06), 0 6px 16px rgb(29 23 24 / 0.05);
+  --shadow-overlay: 0 12px 32px rgb(29 23 24 / 0.16);
+}
+
+/* ===== the board itself, only tokens ===== */
+
+*{box-sizing:border-box}
+html{background:#0d0b0b}
+body{margin:0;padding:var(--space-8) var(--space-6);font:var(--font-body)}
+.board{max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:var(--space-8)}
+.sheet{background:var(--color-bg);color:var(--color-text);border-radius:calc(var(--radius-card) + var(--space-6));padding:var(--space-6)}
+h1{font:var(--font-heading);margin:0 0 var(--space-2)}
+h2{font:var(--font-title);margin:0 0 var(--space-3)}
+.lab{font:var(--font-label);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--color-text-muted);display:flex;align-items:center;gap:var(--space-2);margin:0 0 var(--space-3)}
+.lab svg{width:var(--size-icon-sm);height:var(--size-icon-sm);color:var(--color-mark);flex:none}
+.muted{color:var(--color-text-muted)}
+.cap{font:var(--font-caption);color:var(--color-text-muted)}
+ul.changes{margin:0;padding-left:var(--space-6)}
+ul.changes li{margin:0 0 var(--space-2)}
+.duo{display:grid;grid-template-columns:repeat(auto-fit,minmax(560px,1fr));gap:var(--space-6)}
+.col{display:flex;flex-direction:column;gap:var(--space-6)}
+.card{background:var(--color-bg-surface);border:var(--border-width) solid var(--color-border-card);box-shadow:var(--shadow-card);border-radius:var(--radius-card);padding:var(--space-3)}
+.pal{display:flex;flex-wrap:wrap;gap:var(--space-1);margin:0 0 var(--space-3)}
+.sw{width:78px;height:62px;border-radius:var(--radius-control);padding:var(--space-1) var(--space-2);display:flex;flex-direction:column;justify-content:flex-end;font:var(--font-caption)}
+.sw b{font:var(--font-numeric);font-variant-numeric:tabular-nums}
+table.roles{width:100%;border-collapse:collapse;margin-bottom:var(--space-2)}
+table.roles td{padding:var(--space-1) var(--space-2);border-top:var(--border-width) solid var(--color-border);vertical-align:middle}
+table.roles td.c{font:var(--font-numeric);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+table.roles code{font:var(--font-mono)}
+table.roles tr.g td{border-top:none;padding-top:var(--space-3)}
+.chip{display:inline-block;width:28px;height:20px;border-radius:var(--radius-inline);border:var(--border-width) solid var(--color-border);vertical-align:middle}
+.spec{display:grid;grid-template-columns:120px 1fr;gap:var(--space-2) var(--space-3);align-items:baseline}
+.spec .n{font:var(--font-caption);color:var(--color-text-muted)}
+.t-label{font:var(--font-label);letter-spacing:var(--tracking-label);text-transform:uppercase}
+.t-caption{font:var(--font-caption)}
+.t-body{font:var(--font-body)}
+.t-strong{font:var(--font-body-strong)}
+.t-title{font:var(--font-title)}
+.t-heading{font:var(--font-heading)}
+.t-numeric{font:var(--font-numeric);font-variant-numeric:tabular-nums}
+.t-display{font:var(--font-display);font-variant-numeric:tabular-nums}
+.t-mono{font:var(--font-mono)}
+.grid-states{display:grid;grid-template-columns:72px repeat(3,max-content);gap:var(--space-2) var(--space-3);align-items:center}
+.grid-states .h{font:var(--font-caption);color:var(--color-text-muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);height:var(--size-control-md);padding:0 var(--space-3);border-radius:var(--radius-control);border:var(--border-width) solid var(--color-border);background:transparent;color:var(--color-text);font:var(--font-body-strong);cursor:pointer;transition:background-color var(--duration-fast) var(--ease-standard),color var(--duration-fast) var(--ease-standard);white-space:nowrap}
+.btn svg{width:var(--size-icon-md);height:var(--size-icon-md)}
+.btn:hover,.btn.is-hover{background:var(--color-bg-fill-hover)}
+.btn:active,.btn.is-active{background:var(--color-bg-fill-active)}
+.btn.is-focus{outline:var(--focus-width) solid var(--color-focus);outline-offset:var(--focus-offset)}
+.btn.is-disabled{color:var(--color-text-disabled);background:transparent;cursor:default}
+.btn.pri{background:var(--color-bg-accent);border-color:var(--color-bg-accent);color:var(--color-text-on-accent)}
+.btn.pri:hover,.btn.pri.is-hover{background:var(--color-bg-accent-hover);border-color:var(--color-bg-accent-hover)}
+.btn.pri:active,.btn.pri.is-active{background:var(--color-bg-accent-active);border-color:var(--color-bg-accent-active)}
+.btn.pri.is-disabled{background:var(--color-bg-fill);border-color:var(--color-bg-fill);color:var(--color-text-disabled)}
+.btn.quiet{border-color:transparent;color:var(--color-text-muted)}
+.btn.quiet:hover,.btn.quiet.is-hover{background:var(--color-bg-fill-hover);color:var(--color-text)}
+.btn.quiet:active,.btn.quiet.is-active{background:var(--color-bg-fill-active);color:var(--color-text)}
+.btn.quiet.is-disabled{color:var(--color-text-disabled);background:transparent}
+.field{display:flex;align-items:center;gap:var(--space-2);height:var(--size-control-md);padding:0 var(--space-3);border-radius:var(--radius-control);border:var(--border-width) solid var(--color-border-strong);background:var(--color-bg);color:var(--color-text-muted);font:var(--font-body)}
+.field svg{width:var(--size-icon-md);height:var(--size-icon-md);flex:none}
+.field.is-hover{border-color:var(--color-text-muted)}
+.field.is-focus{outline:var(--focus-width) solid var(--color-focus);outline-offset:var(--focus-offset);color:var(--color-text)}
+.field.is-disabled{background:var(--color-bg-fill);border-color:var(--color-border);color:var(--color-text-disabled)}
+.field.is-error{border-color:var(--color-border-stop);color:var(--color-text)}
+.err{font:var(--font-caption);color:var(--color-text-stop);display:flex;gap:var(--space-1);align-items:center;margin-top:var(--space-1)}
+.err svg{width:var(--size-icon-sm);height:var(--size-icon-sm)}
+.rows{display:flex;flex-direction:column;gap:var(--space-0-5)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:var(--space-2);min-height:var(--size-control-md);padding:0 var(--space-3);border-radius:var(--radius-control);color:var(--color-text);transition:background-color var(--duration-fast) var(--ease-standard)}
+.row em{font:var(--font-numeric);font-style:normal;font-variant-numeric:tabular-nums;color:var(--color-text-muted)}
+.row:hover,.row.is-hover{background:var(--color-bg-fill-hover)}
+.row.is-active{background:var(--color-bg-fill-active)}
+.row.is-selected{background:var(--color-bg-accent-subtle);box-shadow:inset 2px 0 0 var(--color-mark)}
+.row.is-selected:hover{background:var(--color-bg-accent-subtle-hover)}
+.row.is-disabled{color:var(--color-text-disabled)}
+.row.is-disabled em{color:var(--color-text-disabled)}
+.msgs{display:flex;flex-direction:column;gap:var(--space-2)}
+.msg{display:flex;gap:var(--space-2);align-items:flex-start;padding:var(--space-3);border-radius:var(--radius-control);border:var(--border-width) solid}
+.msg svg{width:var(--size-icon-lg);height:var(--size-icon-lg);flex:none}
+.msg b{display:block;font:var(--font-body-strong);color:var(--color-text)}
+.msg span{font:var(--font-caption);color:var(--color-text-muted)}
+.msg.ok{background:var(--color-bg-ok-subtle);border-color:var(--color-border-ok)}.msg.ok svg{color:var(--color-text-ok)}
+.msg.warn{background:var(--color-bg-warn-subtle);border-color:var(--color-border-warn)}.msg.warn svg{color:var(--color-text-warn)}
+.msg.stop{background:var(--color-bg-stop-subtle);border-color:var(--color-border-stop)}.msg.stop svg{color:var(--color-text-stop)}
+.pill{display:inline-flex;align-items:center;height:20px;padding:0 var(--space-2);border-radius:var(--radius-full);background:var(--color-bg-accent);color:var(--color-text-on-accent);font:var(--font-caption);font-weight:var(--font-weight-semibold)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:var(--radius-full);margin-right:var(--space-1)}
+.kpi{display:flex;gap:var(--space-8);align-items:flex-end}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3);margin-bottom:var(--space-3)}
+.levels div{height:72px;border-radius:var(--radius-control);padding:var(--space-2);font:var(--font-caption);color:var(--color-text-muted)}
+.stage{position:relative;height:200px;border-radius:var(--radius-control);background:var(--color-bg);border:var(--border-width) solid var(--color-border);overflow:hidden;padding:var(--space-3)}
+.veil{position:absolute;inset:0;background:var(--color-veil)}
+.dlg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:74%;background:var(--color-bg-raised);border:var(--border-width) solid var(--color-border-card);box-shadow:var(--shadow-overlay);border-radius:var(--radius-card);padding:var(--space-3)}
+.dlg p{margin:var(--space-1) 0 var(--space-3)}
+.dlg .acts{display:flex;justify-content:flex-end;gap:var(--space-2)}
+.spaces{display:flex;flex-direction:column;gap:var(--space-1)}
+.spaces div{display:flex;align-items:center;gap:var(--space-3);font:var(--font-caption);color:var(--color-text-muted)}
+.spaces i{display:block;height:10px;background:var(--color-mark);border-radius:2px}
+.nest-frame{display:inline-block;border-radius:var(--radius-frame);padding:var(--space-3);background:var(--color-bg-fill);border:var(--border-width) solid var(--color-border)}
+.nest-card{border-radius:var(--radius-card);padding:var(--space-3);background:var(--color-bg-surface)}
+.nest-ctl{border-radius:var(--radius-control);height:var(--size-control-md);width:220px;background:var(--color-bg-accent);color:var(--color-text-on-accent);display:flex;align-items:center;justify-content:center;font:var(--font-body-strong)}
+.sizes{display:flex;gap:var(--space-6);align-items:flex-end;flex-wrap:wrap}
+.sizes figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:var(--space-1)}
+.sizes .box{border:var(--border-width) dashed var(--color-border-strong);border-radius:var(--radius-inline);display:flex;align-items:center;justify-content:center}
+.sizes figcaption{font:var(--font-caption);color:var(--color-text-muted)}
+.motion{display:flex;gap:var(--space-4)}
+.motion div{flex:1;border-radius:calc(var(--radius-control) + var(--space-2));background:var(--color-bg-fill);padding:var(--space-2);font:var(--font-caption);color:var(--color-text-muted)}
+.motion i{display:block;width:16px;height:16px;border-radius:var(--radius-full);background:var(--color-mark);margin-top:var(--space-2);transition-property:transform;transition-timing-function:var(--ease-standard)}
+.motion div:hover i{transform:translateX(160px)}
+.rules{margin:0;padding-left:var(--space-6)}
+.rules li{margin:0 0 var(--space-2)}
+
+</style>
+</head>
+<body>
+<div class="board">
+<div class="sheet" data-theme="dark">
+  <h1>I token, sezione (a) — con le regole del mestiere</h1>
+  <p class="muted" style="margin:0 0 var(--space-4)">Tutto ciò che vedi usa solo i token proposti: questa pagina contiene per intero <code>base.css</code> e <code>themes.css</code>. 176 coppie di contrasto controllate, zero sotto la soglia.</p>
+  <div class="lab"><svg class="i" data-icon="list" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 5h.01" /> <path d="M3 12h.01" /> <path d="M3 19h.01" /> <path d="M8 5h13" /> <path d="M8 12h13" /> <path d="M8 19h13" /> </svg>Che cosa cambia rispetto alla tavola approvata</div>
+  <ul class="changes">
+    <li><b>Grandezza vera.</b> La tavola era in miniatura: testo a 11, etichette a 9. Qui testo 14, etichette 11, numeri grandi 32. Material e IBM Carbon non scendono sotto 11–12.</li>
+    <li><b>Spazi sulla griglia da 4.</b> Schede e cornice con 12 di margine: i raggi diventano 20 e 32 (erano 18 e 28). La regola «fuori = dentro + distanza» resta, scritta nei token.</li>
+    <li><b>Focus e segni nel tema scuro:</b> <code>#BF5567</code> invece di <code>#B0475A</code>. Ora almeno 3,4 : 1 anche sui controlli (prima 3,0).</li>
+    <li><b>Nel tema chiaro</b> il testo secondario e i testi di stato sono un filo più scuri: restano leggibili anche sulle righe «sopra» e «premuto».</li>
+    <li><b>Quattro grigi quasi uguali unificati</b>, differenza invisibile (≤ 1,8 su 100).</li>
+    <li><b>Nuovo:</b> stati (sopra, premuto, scelto, focus, spento), bordo forte per i campi (3 : 1), messaggi con tinta tenue, elevazione (ombra nel chiaro, bordo nello scuro), movimento.</li>
+  </ul>
+</div>
+<div class="sheet" data-theme="dark">
+  <div class="lab"><svg class="i" data-icon="tag" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z" /> <circle cx="7.5" cy="7.5" r=".5" fill="currentColor" /> </svg>Livello 1 — le cinque scale, numerate per tono (0 nero, 100 bianco)</div>
+  <div class="lab">neutral</div><div class="pal"><div class="sw" style="background:#151112;color:#FBF8F3"><b>5</b>#151112</div><div class="sw" style="background:#1B1718;color:#FBF8F3"><b>8</b>#1B1718</div><div class="sw" style="background:#241F20;color:#FBF8F3"><b>12</b>#241F20</div><div class="sw" style="background:#2A2425;color:#FBF8F3"><b>15</b>#2A2425</div><div class="sw" style="background:#2F2829;color:#FBF8F3"><b>17</b>#2F2829</div><div class="sw" style="background:#342D2D;color:#FBF8F3"><b>19</b>#342D2D</div><div class="sw" style="background:#655B57;color:#FBF8F3"><b>39</b>#655B57</div><div class="sw" style="background:#6F6660;color:#FBF8F3"><b>44</b>#6F6660</div><div class="sw" style="background:#7A706A;color:#FBF8F3"><b>48</b>#7A706A</div><div class="sw" style="background:#847A73;color:#1B1718"><b>52</b>#847A73</div><div class="sw" style="background:#A39A8F;color:#1B1718"><b>64</b>#A39A8F</div><div class="sw" style="background:#DCD2C4;color:#1B1718"><b>85</b>#DCD2C4</div><div class="sw" style="background:#E2D9CC;color:#1B1718"><b>87</b>#E2D9CC</div><div class="sw" style="background:#E6DFD2;color:#1B1718"><b>89</b>#E6DFD2</div><div class="sw" style="background:#ECE6DA;color:#1B1718"><b>91</b>#ECE6DA</div><div class="sw" style="background:#F3EEE6;color:#1B1718"><b>94</b>#F3EEE6</div><div class="sw" style="background:#F7F2EA;color:#1B1718"><b>96</b>#F7F2EA</div><div class="sw" style="background:#FBF8F3;color:#1B1718"><b>98</b>#FBF8F3</div></div>
+<div class="lab">bordeaux</div><div class="pal"><div class="sw" style="background:#2F1B1D;color:#FBF8F3"><b>12</b>#2F1B1D</div><div class="sw" style="background:#371C1F;color:#FBF8F3"><b>14</b>#371C1F</div><div class="sw" style="background:#711627;color:#FBF8F3"><b>24</b>#711627</div><div class="sw" style="background:#7A1F2E;color:#FBF8F3"><b>28</b>#7A1F2E</div><div class="sw" style="background:#862837;color:#FBF8F3"><b>31</b>#862837</div><div class="sw" style="background:#BF5567;color:#FBF8F3"><b>50</b>#BF5567</div><div class="sw" style="background:#E59EA1;color:#1B1718"><b>72</b>#E59EA1</div><div class="sw" style="background:#DFC2C0;color:#1B1718"><b>81</b>#DFC2C0</div><div class="sw" style="background:#E8D4D0;color:#1B1718"><b>86</b>#E8D4D0</div><div class="sw" style="background:#EFE1DD;color:#1B1718"><b>91</b>#EFE1DD</div></div>
+<div class="lab">green</div><div class="pal"><div class="sw" style="background:#292A26;color:#FBF8F3"><b>17</b>#292A26</div><div class="sw" style="background:#264B22;color:#FBF8F3"><b>28</b>#264B22</div><div class="sw" style="background:#3D6339;color:#FBF8F3"><b>38</b>#3D6339</div><div class="sw" style="background:#43693F;color:#FBF8F3"><b>41</b>#43693F</div><div class="sw" style="background:#8DB38A;color:#1B1718"><b>69</b>#8DB38A</div><div class="sw" style="background:#AAD0A6;color:#1B1718"><b>80</b>#AAD0A6</div><div class="sw" style="background:#E7E9E0;color:#1B1718"><b>92</b>#E7E9E0</div></div>
+<div class="lab">amber</div><div class="pal"><div class="sw" style="background:#312820;color:#FBF8F3"><b>17</b>#312820</div><div class="sw" style="background:#5D3B01;color:#FBF8F3"><b>28</b>#5D3B01</div><div class="sw" style="background:#7C510A;color:#FBF8F3"><b>38</b>#7C510A</div><div class="sw" style="background:#8A5A0B;color:#FBF8F3"><b>42</b>#8A5A0B</div><div class="sw" style="background:#D9A441;color:#1B1718"><b>71</b>#D9A441</div><div class="sw" style="background:#F4BE5D;color:#1B1718"><b>80</b>#F4BE5D</div><div class="sw" style="background:#F0E7DD;color:#1B1718"><b>92</b>#F0E7DD</div></div>
+<div class="lab">red</div><div class="pal"><div class="sw" style="background:#332321;color:#FBF8F3"><b>16</b>#332321</div><div class="sw" style="background:#811B07;color:#FBF8F3"><b>28</b>#811B07</div><div class="sw" style="background:#A82A13;color:#FBF8F3"><b>38</b>#A82A13</div><div class="sw" style="background:#B4361F;color:#FBF8F3"><b>42</b>#B4361F</div><div class="sw" style="background:#E26D5A;color:#1B1718"><b>60</b>#E26D5A</div><div class="sw" style="background:#EF7965;color:#1B1718"><b>64</b>#EF7965</div><div class="sw" style="background:#FBB6A8;color:#1B1718"><b>80</b>#FBB6A8</div><div class="sw" style="background:#F6E5DD;color:#1B1718"><b>92</b>#F6E5DD</div></div>
+  <p class="cap" style="margin:0">Una sola scala di grigi caldi per i due temi, dal carbone all'avorio: il tema scuro e il chiaro ne leggono gradini opposti, come in Material 3. Le tinte tenui sono il colore mescolato nel grigio caldo.</p>
+</div>
+<div class="duo">
+
+<div class="sheet col" data-theme="dark">
+  <div class="lab"><svg class="i" data-icon="layout-grid" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="7" height="7" x="3" y="3" rx="1" /> <rect width="7" height="7" x="14" y="3" rx="1" /> <rect width="7" height="7" x="14" y="14" rx="1" /> <rect width="7" height="7" x="3" y="14" rx="1" /> </svg>Livello 2 — tema scuro</div>
+  <div class="card"><h2>I ruoli</h2><table class="roles"><tr class="g"><td colspan="4"><span class="lab" style="margin:0">Fondi</span></td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg)"></span></td><td><code>--color-bg</code></td><td class="c">#151112</td><td class="c">tono 5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-surface)"></span></td><td><code>--color-bg-surface</code></td><td class="c">#1B1718</td><td class="c">tono 8</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-raised)"></span></td><td><code>--color-bg-raised</code></td><td class="c">#241F20</td><td class="c">tono 12</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-fill)"></span></td><td><code>--color-bg-fill</code></td><td class="c">#241F20</td><td class="c">tono 12</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-fill-hover)"></span></td><td><code>--color-bg-fill-hover</code></td><td class="c">#2A2425</td><td class="c">tono 15</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-fill-active)"></span></td><td><code>--color-bg-fill-active</code></td><td class="c">#342D2D</td><td class="c">tono 19</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-selection)"></span></td><td><code>--color-bg-selection</code></td><td class="c">#7A1F2E</td><td class="c">tono 28</td></tr>
+<tr class="g"><td colspan="4"><span class="lab" style="margin:0">Testo</span></td></tr>
+<tr><td><span class="chip" style="background:var(--color-text)"></span></td><td><code>--color-text</code></td><td class="c">#ECE6DA</td><td class="c">10.84 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-muted)"></span></td><td><code>--color-text-muted</code></td><td class="c">#A39A8F</td><td class="c">4.86 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-disabled)"></span></td><td><code>--color-text-disabled</code></td><td class="c">#6F6660</td><td class="c">esente (1.4.3)</td></tr>
+<tr class="g"><td colspan="4"><span class="lab" style="margin:0">Bordi, segni, focus</span></td></tr>
+<tr><td><span class="chip" style="background:var(--color-border)"></span></td><td><code>--color-border</code></td><td class="c">#2F2829</td><td class="c">decoro</td></tr>
+<tr><td><span class="chip" style="background:var(--color-border-strong)"></span></td><td><code>--color-border-strong</code></td><td class="c">#7A706A</td><td class="c">3.37 ≥ 3</td></tr>
+<tr><td><span class="chip" style="background:var(--color-border-accent)"></span></td><td><code>--color-border-accent</code></td><td class="c">#BF5567</td><td class="c">3.65 ≥ 3</td></tr>
+<tr><td><span class="chip" style="background:var(--color-focus)"></span></td><td><code>--color-focus</code></td><td class="c">#BF5567</td><td class="c">3.65 ≥ 3</td></tr>
+<tr><td><span class="chip" style="background:var(--color-mark)"></span></td><td><code>--color-mark</code></td><td class="c">#BF5567</td><td class="c">3.65 ≥ 3</td></tr>
+<tr class="g"><td colspan="4"><span class="lab" style="margin:0">Accento bordeaux</span></td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-accent)"></span></td><td><code>--color-bg-accent</code></td><td class="c">#7A1F2E</td><td class="c">tono 28</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-accent-hover)"></span></td><td><code>--color-bg-accent-hover</code></td><td class="c">#862837</td><td class="c">tono 31</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-accent-active)"></span></td><td><code>--color-bg-accent-active</code></td><td class="c">#711627</td><td class="c">tono 24</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-accent-subtle)"></span></td><td><code>--color-bg-accent-subtle</code></td><td class="c">#2F1B1D</td><td class="c">tono 12</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-accent-subtle-hover)"></span></td><td><code>--color-bg-accent-subtle-hover</code></td><td class="c">#371C1F</td><td class="c">tono 14</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-accent)"></span></td><td><code>--color-text-accent</code></td><td class="c">#E59EA1</td><td class="c">6.24 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-on-accent)"></span></td><td><code>--color-text-on-accent</code></td><td class="c">#F7F2EA</td><td class="c">7.94 ≥ 4.5</td></tr>
+<tr class="g"><td colspan="4"><span class="lab" style="margin:0">Stati</span></td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-ok)"></span></td><td><code>--color-bg-ok</code></td><td class="c">#8DB38A</td><td class="c">tono 69</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-ok)"></span></td><td><code>--color-text-ok</code></td><td class="c">#8DB38A</td><td class="c">5.74 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-on-ok)"></span></td><td><code>--color-text-on-ok</code></td><td class="c">#151112</td><td class="c">7.98 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-ok-subtle)"></span></td><td><code>--color-bg-ok-subtle</code></td><td class="c">#292A26</td><td class="c">tono 17</td></tr>
+<tr><td><span class="chip" style="background:var(--color-border-ok)"></span></td><td><code>--color-border-ok</code></td><td class="c">#264B22</td><td class="c">tono 28</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-warn)"></span></td><td><code>--color-bg-warn</code></td><td class="c">#D9A441</td><td class="c">tono 71</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-warn)"></span></td><td><code>--color-text-warn</code></td><td class="c">#D9A441</td><td class="c">5.99 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-on-warn)"></span></td><td><code>--color-text-on-warn</code></td><td class="c">#151112</td><td class="c">8.33 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-warn-subtle)"></span></td><td><code>--color-bg-warn-subtle</code></td><td class="c">#312820</td><td class="c">tono 17</td></tr>
+<tr><td><span class="chip" style="background:var(--color-border-warn)"></span></td><td><code>--color-border-warn</code></td><td class="c">#5D3B01</td><td class="c">tono 28</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-stop)"></span></td><td><code>--color-bg-stop</code></td><td class="c">#E26D5A</td><td class="c">tono 60</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-stop)"></span></td><td><code>--color-text-stop</code></td><td class="c">#EF7965</td><td class="c">4.87 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-on-stop)"></span></td><td><code>--color-text-on-stop</code></td><td class="c">#151112</td><td class="c">5.86 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-stop-subtle)"></span></td><td><code>--color-bg-stop-subtle</code></td><td class="c">#332321</td><td class="c">tono 16</td></tr>
+<tr><td><span class="chip" style="background:var(--color-border-stop)"></span></td><td><code>--color-border-stop</code></td><td class="c">#811B07</td><td class="c">tono 28</td></tr></table></div>
+  <div class="card"><h2>I caratteri, a grandezza vera</h2><div class="spec">
+    <span class="n">label 11/16</span><span class="t-label">Sessioni attive</span>
+    <span class="n">caption 12/16</span><span class="t-caption muted">Aggiornato alle 12:48, dal core</span>
+    <span class="n">body 14/20</span><span class="t-body">Il testo normale dei moduli: leggibile a lungo, denso quanto basta.</span>
+    <span class="n">body-strong</span><span class="t-strong">Conferma il cambio di policy</span>
+    <span class="n">title 16/24</span><span class="t-title">Stato del core</span>
+    <span class="n">heading 20/28</span><span class="t-heading">Knowledge base a pagina intera</span>
+    <span class="n">numeric 14/20</span><span class="t-numeric">12:48 · 3 / 7 · 0,42 €</span>
+    <span class="n">display 32/40</span><span class="t-display">2,1 GB</span>
+    <span class="n">mono 13/20</span><span class="t-mono">cargo test --locked</span>
+  </div></div>
+  <div class="card"><h2>Gli stati</h2>
+    <div class="grid-states">
+      <span></span><span class="h">principale</span><span class="h">normale</span><span class="h">discreto</span>
+      <span class="h">normale</span><span class="btn pri">Salva</span><span class="btn">Annulla</span><span class="btn quiet"><svg class="i" data-icon="plus" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="M12 5v14" /> </svg>Aggiungi</span>
+      <span class="h">sopra</span><span class="btn pri is-hover">Salva</span><span class="btn is-hover">Annulla</span><span class="btn quiet is-hover"><svg class="i" data-icon="plus" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="M12 5v14" /> </svg>Aggiungi</span>
+      <span class="h">premuto</span><span class="btn pri is-active">Salva</span><span class="btn is-active">Annulla</span><span class="btn quiet is-active"><svg class="i" data-icon="plus" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="M12 5v14" /> </svg>Aggiungi</span>
+      <span class="h">focus</span><span class="btn pri is-focus">Salva</span><span class="btn is-focus">Annulla</span><span class="btn quiet is-focus"><svg class="i" data-icon="plus" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="M12 5v14" /> </svg>Aggiungi</span>
+      <span class="h">spento</span><span class="btn pri is-disabled">Salva</span><span class="btn is-disabled">Annulla</span><span class="btn quiet is-disabled"><svg class="i" data-icon="plus" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="M12 5v14" /> </svg>Aggiungi</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);margin-top:var(--space-4)">
+      <div class="field"><svg class="i" data-icon="search" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg>Cerca negli artefatti</div>
+      <div class="field is-focus"><svg class="i" data-icon="search" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg>policy locale</div>
+      <div class="field is-disabled"><svg class="i" data-icon="search" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg>Non disponibile</div>
+      <div><div class="field is-error"><svg class="i" data-icon="search" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg>***</div><div class="err"><svg class="i" data-icon="circle-x" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m15 9-6 6" /> <path d="m9 9 6 6" /> </svg>Il filtro non è valido</div></div>
+    </div>
+    <div class="rows" style="margin-top:var(--space-4)">
+      <div class="row">Sintesi della riunione <em>09:12</em></div>
+      <div class="row is-hover">Report dei costi <em>10:40</em></div>
+      <div class="row is-selected">Prossimo: indice della KB <em>12:48</em></div>
+      <div class="row is-active">Esportazione mesh <em>14:05</em></div>
+      <div class="row is-disabled">Archiviato <em>—</em></div>
+    </div>
+    <div class="msgs" style="margin-top:var(--space-4)">
+      <div class="msg ok"><svg class="i" data-icon="circle-check" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m16 9-5.5 5.5L8 12" /> </svg><div><b>Tutto a posto</b><span>Il core risponde e il giornale è integro.</span></div></div>
+      <div class="msg warn"><svg class="i" data-icon="triangle-alert" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /> <path d="M12 9v4" /> <path d="M12 17h.01" /> </svg><div><b>VRAM quasi piena</b><span>Resta 1,2 GB: un modello locale aspetterà.</span></div></div>
+      <div class="msg stop"><svg class="i" data-icon="circle-x" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m15 9-6 6" /> <path d="m9 9 6 6" /> </svg><div><b>Il core non risponde</b><span>La GUI riprova da sola; puoi anche riprovare ora.</span></div></div>
+    </div>
+    <div class="kpi" style="margin-top:var(--space-4)">
+      <div><div class="lab"><svg class="i" data-icon="gauge" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m12 14 4-4" /> <path d="M3.34 19a10 10 0 1 1 17.32 0" /> </svg>VRAM</div><div class="t-display">2,1<span class="t-numeric muted"> / 16 GB</span></div></div>
+      <div><div class="lab"><svg class="i" data-icon="shield-check" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /> <path d="m9 12 2 2 4-4" /> </svg>Permessi</div><span class="pill">1 in attesa</span></div>
+      <div><div class="lab"><svg class="i" data-icon="activity" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /> </svg>Stato</div><span class="t-body"><span class="dot" style="background:var(--color-text-ok)"></span>collegato</span></div>
+    </div>
+  </div>
+  <div class="card"><h2>L'elevazione</h2>
+    <div class="levels">
+      <div style="background:var(--color-bg);border:var(--border-width) solid var(--color-border)">fondo</div>
+      <div style="background:var(--color-bg-surface);border:var(--border-width) solid var(--color-border-card);box-shadow:var(--shadow-card)">scheda</div>
+      <div style="background:var(--color-bg-raised);border:var(--border-width) solid var(--color-border-card);box-shadow:var(--shadow-overlay)">finestra</div>
+    </div>
+    <div class="stage">
+      <div class="t-body muted">Il resto dell'app, sotto il velo.</div>
+      <div class="veil"></div>
+      <div class="dlg" role="presentation"><div class="t-title">Cambiare la policy?</div>
+        <p class="t-body muted">Passa a locale: la VRAM verrà occupata dai modelli.</p>
+        <div class="acts"><span class="btn quiet">Annulla</span><span class="btn pri">Conferma</span></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="sheet col" data-theme="light">
+  <div class="lab"><svg class="i" data-icon="layout-grid" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="7" height="7" x="3" y="3" rx="1" /> <rect width="7" height="7" x="14" y="3" rx="1" /> <rect width="7" height="7" x="14" y="14" rx="1" /> <rect width="7" height="7" x="3" y="14" rx="1" /> </svg>Livello 2 — tema chiaro</div>
+  <div class="card"><h2>I ruoli</h2><table class="roles"><tr class="g"><td colspan="4"><span class="lab" style="margin:0">Fondi</span></td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg)"></span></td><td><code>--color-bg</code></td><td class="c">#F3EEE6</td><td class="c">tono 94</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-surface)"></span></td><td><code>--color-bg-surface</code></td><td class="c">#FBF8F3</td><td class="c">tono 98</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-raised)"></span></td><td><code>--color-bg-raised</code></td><td class="c">#FBF8F3</td><td class="c">tono 98</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-fill)"></span></td><td><code>--color-bg-fill</code></td><td class="c">#ECE6DA</td><td class="c">tono 91</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-fill-hover)"></span></td><td><code>--color-bg-fill-hover</code></td><td class="c">#E6DFD2</td><td class="c">tono 89</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-fill-active)"></span></td><td><code>--color-bg-fill-active</code></td><td class="c">#E2D9CC</td><td class="c">tono 87</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-selection)"></span></td><td><code>--color-bg-selection</code></td><td class="c">#DFC2C0</td><td class="c">tono 81</td></tr>
+<tr class="g"><td colspan="4"><span class="lab" style="margin:0">Testo</span></td></tr>
+<tr><td><span class="chip" style="background:var(--color-text)"></span></td><td><code>--color-text</code></td><td class="c">#1B1718</td><td class="c">12.48 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-muted)"></span></td><td><code>--color-text-muted</code></td><td class="c">#655B57</td><td class="c">4.63 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-disabled)"></span></td><td><code>--color-text-disabled</code></td><td class="c">#A39A8F</td><td class="c">esente (1.4.3)</td></tr>
+<tr class="g"><td colspan="4"><span class="lab" style="margin:0">Bordi, segni, focus</span></td></tr>
+<tr><td><span class="chip" style="background:var(--color-border)"></span></td><td><code>--color-border</code></td><td class="c">#DCD2C4</td><td class="c">decoro</td></tr>
+<tr><td><span class="chip" style="background:var(--color-border-strong)"></span></td><td><code>--color-border-strong</code></td><td class="c">#847A73</td><td class="c">3.37 ≥ 3</td></tr>
+<tr><td><span class="chip" style="background:var(--color-border-accent)"></span></td><td><code>--color-border-accent</code></td><td class="c">#7A1F2E</td><td class="c">8.19 ≥ 3</td></tr>
+<tr><td><span class="chip" style="background:var(--color-focus)"></span></td><td><code>--color-focus</code></td><td class="c">#7A1F2E</td><td class="c">8.19 ≥ 3</td></tr>
+<tr><td><span class="chip" style="background:var(--color-mark)"></span></td><td><code>--color-mark</code></td><td class="c">#7A1F2E</td><td class="c">8.19 ≥ 3</td></tr>
+<tr class="g"><td colspan="4"><span class="lab" style="margin:0">Accento bordeaux</span></td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-accent)"></span></td><td><code>--color-bg-accent</code></td><td class="c">#7A1F2E</td><td class="c">tono 28</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-accent-hover)"></span></td><td><code>--color-bg-accent-hover</code></td><td class="c">#862837</td><td class="c">tono 31</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-accent-active)"></span></td><td><code>--color-bg-accent-active</code></td><td class="c">#711627</td><td class="c">tono 24</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-accent-subtle)"></span></td><td><code>--color-bg-accent-subtle</code></td><td class="c">#EFE1DD</td><td class="c">tono 91</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-accent-subtle-hover)"></span></td><td><code>--color-bg-accent-subtle-hover</code></td><td class="c">#E8D4D0</td><td class="c">tono 86</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-accent)"></span></td><td><code>--color-text-accent</code></td><td class="c">#7A1F2E</td><td class="c">7.15 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-on-accent)"></span></td><td><code>--color-text-on-accent</code></td><td class="c">#F7F2EA</td><td class="c">7.94 ≥ 4.5</td></tr>
+<tr class="g"><td colspan="4"><span class="lab" style="margin:0">Stati</span></td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-ok)"></span></td><td><code>--color-bg-ok</code></td><td class="c">#43693F</td><td class="c">tono 41</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-ok)"></span></td><td><code>--color-text-ok</code></td><td class="c">#3D6339</td><td class="c">4.85 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-on-ok)"></span></td><td><code>--color-text-on-ok</code></td><td class="c">#FBF8F3</td><td class="c">5.95 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-ok-subtle)"></span></td><td><code>--color-bg-ok-subtle</code></td><td class="c">#E7E9E0</td><td class="c">tono 92</td></tr>
+<tr><td><span class="chip" style="background:var(--color-border-ok)"></span></td><td><code>--color-border-ok</code></td><td class="c">#AAD0A6</td><td class="c">tono 80</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-warn)"></span></td><td><code>--color-bg-warn</code></td><td class="c">#8A5A0B</td><td class="c">tono 42</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-warn)"></span></td><td><code>--color-text-warn</code></td><td class="c">#7C510A</td><td class="c">4.86 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-on-warn)"></span></td><td><code>--color-text-on-warn</code></td><td class="c">#FBF8F3</td><td class="c">5.59 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-warn-subtle)"></span></td><td><code>--color-bg-warn-subtle</code></td><td class="c">#F0E7DD</td><td class="c">tono 92</td></tr>
+<tr><td><span class="chip" style="background:var(--color-border-warn)"></span></td><td><code>--color-border-warn</code></td><td class="c">#F4BE5D</td><td class="c">tono 80</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-stop)"></span></td><td><code>--color-bg-stop</code></td><td class="c">#B4361F</td><td class="c">tono 42</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-stop)"></span></td><td><code>--color-text-stop</code></td><td class="c">#A82A13</td><td class="c">4.91 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-text-on-stop)"></span></td><td><code>--color-text-on-stop</code></td><td class="c">#FBF8F3</td><td class="c">5.68 ≥ 4.5</td></tr>
+<tr><td><span class="chip" style="background:var(--color-bg-stop-subtle)"></span></td><td><code>--color-bg-stop-subtle</code></td><td class="c">#F6E5DD</td><td class="c">tono 92</td></tr>
+<tr><td><span class="chip" style="background:var(--color-border-stop)"></span></td><td><code>--color-border-stop</code></td><td class="c">#FBB6A8</td><td class="c">tono 80</td></tr></table></div>
+  <div class="card"><h2>I caratteri, a grandezza vera</h2><div class="spec">
+    <span class="n">label 11/16</span><span class="t-label">Sessioni attive</span>
+    <span class="n">caption 12/16</span><span class="t-caption muted">Aggiornato alle 12:48, dal core</span>
+    <span class="n">body 14/20</span><span class="t-body">Il testo normale dei moduli: leggibile a lungo, denso quanto basta.</span>
+    <span class="n">body-strong</span><span class="t-strong">Conferma il cambio di policy</span>
+    <span class="n">title 16/24</span><span class="t-title">Stato del core</span>
+    <span class="n">heading 20/28</span><span class="t-heading">Knowledge base a pagina intera</span>
+    <span class="n">numeric 14/20</span><span class="t-numeric">12:48 · 3 / 7 · 0,42 €</span>
+    <span class="n">display 32/40</span><span class="t-display">2,1 GB</span>
+    <span class="n">mono 13/20</span><span class="t-mono">cargo test --locked</span>
+  </div></div>
+  <div class="card"><h2>Gli stati</h2>
+    <div class="grid-states">
+      <span></span><span class="h">principale</span><span class="h">normale</span><span class="h">discreto</span>
+      <span class="h">normale</span><span class="btn pri">Salva</span><span class="btn">Annulla</span><span class="btn quiet"><svg class="i" data-icon="plus" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="M12 5v14" /> </svg>Aggiungi</span>
+      <span class="h">sopra</span><span class="btn pri is-hover">Salva</span><span class="btn is-hover">Annulla</span><span class="btn quiet is-hover"><svg class="i" data-icon="plus" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="M12 5v14" /> </svg>Aggiungi</span>
+      <span class="h">premuto</span><span class="btn pri is-active">Salva</span><span class="btn is-active">Annulla</span><span class="btn quiet is-active"><svg class="i" data-icon="plus" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="M12 5v14" /> </svg>Aggiungi</span>
+      <span class="h">focus</span><span class="btn pri is-focus">Salva</span><span class="btn is-focus">Annulla</span><span class="btn quiet is-focus"><svg class="i" data-icon="plus" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="M12 5v14" /> </svg>Aggiungi</span>
+      <span class="h">spento</span><span class="btn pri is-disabled">Salva</span><span class="btn is-disabled">Annulla</span><span class="btn quiet is-disabled"><svg class="i" data-icon="plus" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 12h14" /> <path d="M12 5v14" /> </svg>Aggiungi</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);margin-top:var(--space-4)">
+      <div class="field"><svg class="i" data-icon="search" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg>Cerca negli artefatti</div>
+      <div class="field is-focus"><svg class="i" data-icon="search" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg>policy locale</div>
+      <div class="field is-disabled"><svg class="i" data-icon="search" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg>Non disponibile</div>
+      <div><div class="field is-error"><svg class="i" data-icon="search" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg>***</div><div class="err"><svg class="i" data-icon="circle-x" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m15 9-6 6" /> <path d="m9 9 6 6" /> </svg>Il filtro non è valido</div></div>
+    </div>
+    <div class="rows" style="margin-top:var(--space-4)">
+      <div class="row">Sintesi della riunione <em>09:12</em></div>
+      <div class="row is-hover">Report dei costi <em>10:40</em></div>
+      <div class="row is-selected">Prossimo: indice della KB <em>12:48</em></div>
+      <div class="row is-active">Esportazione mesh <em>14:05</em></div>
+      <div class="row is-disabled">Archiviato <em>—</em></div>
+    </div>
+    <div class="msgs" style="margin-top:var(--space-4)">
+      <div class="msg ok"><svg class="i" data-icon="circle-check" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m16 9-5.5 5.5L8 12" /> </svg><div><b>Tutto a posto</b><span>Il core risponde e il giornale è integro.</span></div></div>
+      <div class="msg warn"><svg class="i" data-icon="triangle-alert" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /> <path d="M12 9v4" /> <path d="M12 17h.01" /> </svg><div><b>VRAM quasi piena</b><span>Resta 1,2 GB: un modello locale aspetterà.</span></div></div>
+      <div class="msg stop"><svg class="i" data-icon="circle-x" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m15 9-6 6" /> <path d="m9 9 6 6" /> </svg><div><b>Il core non risponde</b><span>La GUI riprova da sola; puoi anche riprovare ora.</span></div></div>
+    </div>
+    <div class="kpi" style="margin-top:var(--space-4)">
+      <div><div class="lab"><svg class="i" data-icon="gauge" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m12 14 4-4" /> <path d="M3.34 19a10 10 0 1 1 17.32 0" /> </svg>VRAM</div><div class="t-display">2,1<span class="t-numeric muted"> / 16 GB</span></div></div>
+      <div><div class="lab"><svg class="i" data-icon="shield-check" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /> <path d="m9 12 2 2 4-4" /> </svg>Permessi</div><span class="pill">1 in attesa</span></div>
+      <div><div class="lab"><svg class="i" data-icon="activity" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /> </svg>Stato</div><span class="t-body"><span class="dot" style="background:var(--color-text-ok)"></span>collegato</span></div>
+    </div>
+  </div>
+  <div class="card"><h2>L'elevazione</h2>
+    <div class="levels">
+      <div style="background:var(--color-bg);border:var(--border-width) solid var(--color-border)">fondo</div>
+      <div style="background:var(--color-bg-surface);border:var(--border-width) solid var(--color-border-card);box-shadow:var(--shadow-card)">scheda</div>
+      <div style="background:var(--color-bg-raised);border:var(--border-width) solid var(--color-border-card);box-shadow:var(--shadow-overlay)">finestra</div>
+    </div>
+    <div class="stage">
+      <div class="t-body muted">Il resto dell'app, sotto il velo.</div>
+      <div class="veil"></div>
+      <div class="dlg" role="presentation"><div class="t-title">Cambiare la policy?</div>
+        <p class="t-body muted">Passa a locale: la VRAM verrà occupata dai modelli.</p>
+        <div class="acts"><span class="btn quiet">Annulla</span><span class="btn pri">Conferma</span></div></div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="sheet col" data-theme="dark">
+  <div class="lab"><svg class="i" data-icon="app-window" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect x="2" y="4" width="20" height="16" rx="2" /> <path d="M10 4v4" /> <path d="M2 8h20" /> <path d="M6 4v4" /> </svg>Forme e misure — uguali nei due temi</div>
+  <div class="duo">
+    <div class="card"><h2>Spazi, griglia da 4</h2><div class="spaces">
+      <div><i style="width:var(--space-0-5)"></i>--space-0-5 · 2</div><div><i style="width:var(--space-1)"></i>--space-1 · 4</div><div><i style="width:var(--space-2)"></i>--space-2 · 8</div><div><i style="width:var(--space-3)"></i>--space-3 · 12</div><div><i style="width:var(--space-4)"></i>--space-4 · 16</div><div><i style="width:var(--space-6)"></i>--space-6 · 24</div><div><i style="width:var(--space-8)"></i>--space-8 · 32</div><div><i style="width:var(--space-10)"></i>--space-10 · 40</div><div><i style="width:var(--space-12)"></i>--space-12 · 48</div><div><i style="width:var(--space-16)"></i>--space-16 · 64</div>
+    </div></div>
+    <div class="card"><h2>Raggi concentrici</h2>
+      <div class="nest-frame"><div class="nest-card"><div class="nest-ctl">controllo 8</div></div></div>
+      <p class="cap">cornice 32 = scheda 20 + 12 · scheda 20 = controllo 8 + 12 · in linea 6 · pillola tonda</p></div>
+    <div class="card"><h2>Misure</h2><div class="sizes">
+      <figure><div class="box" style="width:24px;height:24px"></div><figcaption>24 · minimo</figcaption></figure>
+      <figure><div class="box" style="width:32px;height:32px"></div><figcaption>32 · controllo</figcaption></figure>
+      <figure><div class="box" style="width:40px;height:40px"></div><figcaption>40 · presa grande</figcaption></figure>
+      <figure><div class="box" style="width:28px;height:28px"><svg class="s14" data-icon="search" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg></div><figcaption>icona 14</figcaption></figure>
+      <figure><div class="box" style="width:28px;height:28px"><svg class="s16" data-icon="search" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg></div><figcaption>icona 16</figcaption></figure>
+      <figure><div class="box" style="width:28px;height:28px"><svg class="s20" data-icon="search" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg></div><figcaption>icona 20</figcaption></figure>
+    </div></div>
+    <div class="card"><h2>Movimento — passa sopra</h2><div class="motion">
+      <div>veloce 110 ms<i style="transition-duration:var(--duration-fast)"></i></div>
+      <div>medio 240 ms<i style="transition-duration:var(--duration-moderate)"></i></div>
+      <div>lento 400 ms<i style="transition-duration:var(--duration-slow)"></i></div>
+    </div><p class="cap">Con «meno movimento» di Windows tutte le durate vanno a zero.</p></div>
+  </div>
+  <div class="card"><h2>Le regole, e da dove vengono — verificate il 2026-09-23</h2><ul class="rules cap">
+    <li>WCAG 2.2, Raccomandazione W3C del 12 dicembre 2024: testo 4,5 : 1 (1.4.3); bordi e segni che servono a riconoscere un controllo 3 : 1 (1.4.11); focus visibile (2.4.7) con un contorno di 2 px (2.4.13); niente da cliccare sotto 24 × 24 (2.5.8); testo ingrandibile (1.4.4); movimento disattivabile (2.3.3).</li>
+    <li>Due livelli di token, scale e ruoli: il modello di Material 3 (<code>@material/web</code> 2.5.0), con la scala dei grigi letta a gradini opposti nei due temi.</li>
+    <li>Fondi, riempimenti per normale / sopra / premuto, bordi deboli e forti, focus: i ruoli dei 12 gradini di Radix Colors 3.0.0.</li>
+    <li>Scala dei caratteri 11 · 12 · 14 · 16 · 20 · 32: Material 3 (label 11/16, body 14/20, title 16/24) e IBM Carbon (<code>@carbon/type</code> 11.67.0).</li>
+    <li>Spazi 2 · 4 · 8 · 12 · 16 · 24 · 32 · 40 · 48 · 64: IBM Carbon (<code>@carbon/layout</code> 11.59.0).</li>
+    <li>Durate 110 · 240 · 400 ms e curve «productive»: IBM Carbon (<code>@carbon/motion</code> 11.52.0).</li>
+  </ul></div>
+</div>
+</div>
+<style>.s14{width:14px;height:14px}.s16{width:16px;height:16px}.s20{width:20px;height:20px}</style>
+</body>
+</html>

@@ -208,7 +208,7 @@ che il disegno lasciava al piano; ciascuna si ribalta con una riga.
 | **D9** | **`readToken` lancia un errore per un token che la pagina non definisce, e sotto jsdom `base.css` si carica dal file**, in `src/jsdom-setup.ts` | P-16: un token assente in silenzio avvelena la disposizione salvata; leggere il file e non ricopiare i valori tiene la casa unica della tavola. Solo `base.css`: nessuna prova sotto jsdom legge un colore. Costo: ogni prova jsdom ha i token di `base.css` sulla radice — misurato, nessuna delle altre cambia esito |
 | **D10** | **il bordo della zona d'arrivo è `--dv-drag-over-border` in `dock.css`**, e il tema TypeScript non porta `dndOverlayBorder` | le due vie erano aperte (R3-22); `updateTheme` di 8.3.1 lascia la variabile al foglio quando il campo manca, e un colore scritto in TypeScript sarebbe una seconda casa. Costo: il bordo non lo vede nessuna prova automatica; si guarda al passo 8 del compito, trascinando una linguetta |
 | **D11** | **la faccia della presa grande è un `.vue`**, `frame/BigTabFace.vue`, che `BigTab.ts` monta come `VueContent` monta un pannello | una funzione `h()` dentro `BigTab.ts` avrebbe fatto lo stesso, ma fuori dalla vista del linter dei template — la trappola 5 in un'altra forma; col `.vue` le regole di `harness/panels-and-frame` e di `no-raw-text` la leggono. Costo: un'app Vue per linguetta, smontata in `dispose` e provata |
-| **D12** | **`saveNamed` riceve da chi la chiama i nomi che la cornice mostra per le tre viste, e due nomi sono lo stesso nome a meno degli spazi intorno e delle maiuscole** | nessun negozio legge le parole di `it.json`, e farlo ne farebbe il primo; «Home» e «home», affiancate nella Panoramica, si leggerebbero come una vista sola. ⚠️ È una **deduzione del piano**, non una parola del proprietario, che su questo non si è espresso: si ribalta in `sameName`, e con lei le due prove di `stores.test.ts` che la tengono. Costo: un parametro in più, che la Panoramica del compito 8 passa |
+| **D12** | **`saveNamed` riceve da chi la chiama i nomi che la cornice mostra per le tre viste, e due nomi sono lo stesso nome a meno degli spazi intorno e delle maiuscole** | nessun negozio legge le parole di `it.json`, e farlo ne farebbe il primo; «Home» e «home», affiancate nella Panoramica, si leggerebbero come una vista sola. ✅ **Scelto dal proprietario il 2026-09-23 — A**, il confronto senza le maiuscole e gli spazi intorno, contro B, il confronto esatto. Costo: un parametro in più, che la Panoramica del compito 8 passa; e «Revisione» e «revisione» non possono essere due viste |
 | **D13** | **`showView(view)` nel negozio: aprire una delle tre viste chiude quella col nome** | la regola vive dov'è lo stato, e una prova del negozio la raggiunge: nessuna prova monta `Frame.vue`. Costo: `Frame.switchTo` chiama `showView` invece di scrivere `view`; le prove che scrivono `view` restano valide, perché lì nessuna vista col nome è aperta |
 
 ## Le voci aperte che questo piano SA, e non chiude
@@ -5941,7 +5941,7 @@ function isViewName(value: unknown): value is ViewName {
 }
 
 /** Two names are the same name when they differ only in the spaces around them or in case: side by side in the overview
- * they would read as one (D12 of the design-system plan -- the plan's reading, not a word of the owner's). */
+ * they would read as one (D12 of the design-system plan, chosen by the owner on 2026-09-23). */
 function sameName(a: string, b: string): boolean {
   return a.trim().toLocaleLowerCase("it") === b.trim().toLocaleLowerCase("it");
 }
@@ -6256,7 +6256,7 @@ corretti il [registro](2026-09-23-design-system-revisione/ledger.md) (`7c42748`)
 | **Google Chrome** | 154, sulla macchina dell'account `Jays`; le prove nel browser non scaricano niente (decisione 22 del disegno) |
 
 ⚠️ **La cartella di prova, su una macchina sola.** `C:\Users\Jays\AppData\Local\Temp\pds`, col suo `git`: `master` a
-`4637ac5`, i compiti 1–5; `task6` a `9b825f4`; `task7` a `712a9d2`. Ogni blocco di codice dei compiti 6 e 7 è **identico** a
+`4637ac5`, i compiti 1–5; `task6` a `9b825f4`; `task7` a `df7768f`. Ogni blocco di codice dei compiti 6 e 7 è **identico** a
 un file di quei rami — confrontato alla ripresa, tranne i due frammenti della console —, e al compito 7 la cartella è verde:
 *build*, linter, e la suite intera sei volte di fila, 26 file e 171 prove. È il banco dei compiti 8 e 9 mentre si scrivono;
 **non è una fonte**, e si rifà dal piano. Sta in `%TEMP%` e non nello scratchpad perché su quella macchina i percorsi lunghi
@@ -6271,11 +6271,9 @@ sessione che li ha scritti — `insert6.py` e `insert7.py`, coi rossi in `reds6.
 su questa macchina, `…\E--ALL-DEV-MY-REPOS-daemon\4def4062-1a15-49d6-95bd-98976859816d\scratchpad\`: un esempio, non una
 fonte.
 
-⚖️ **Una decisione del piano che il proprietario può ribaltare, corretta alla ripresa.** **D12** confronta i nomi delle
-viste senza le maiuscole e senza gli spazi intorno. La riga lo motivava con *«il proprietario li legge come uno»*, e il
-proprietario non l'ha mai detto: la riga e il commento di `sameName` ora lo dicono una **deduzione del piano**. Si ribalta
-in `sameName`, e con lei le due prove di `stores.test.ts` che la tengono — `" revisione "` scartato, `"REVISIONE"`
-rifiutato — e la riga *«le maiuscole»* del passo 8.
+✅ **D12 è del proprietario, dal 2026-09-23 — A:** due nomi di vista che differiscono solo per le maiuscole o per gli
+spazi intorno sono lo stesso nome; la B era il confronto esatto. La sessione che l'ha scritta gli attribuiva la ragione
+senza fonte; la ripresa gliel'ha chiesta, e la riga D12 e il commento di `sameName` dicono la sua scelta. Non si riapre.
 
 **Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`): **scrivere i compiti 8 e 9 e la Definizione di
 «fatto»**, con le forme qui sotto — ⚠️ già corrette dalla revisione (R3-20, R3-23, R3-25 e R2-8 del registro), e da non

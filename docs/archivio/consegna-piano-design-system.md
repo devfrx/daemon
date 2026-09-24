@@ -250,3 +250,87 @@ il 7 compresi —; poi l'esecuzione.
 |---|---|
 | 8 | la barra: `BaseButton` col nome della vista e l'icona `views`, la ricerca `BaseTextField type="search"` spenta, il chip; il pulsante del cassetto **esce** dalla barra, perché «Moduli» scende nella striscia (la (d)). La Panoramica in `frame/Overview.vue` su `BaseDialog variant="full"`: carte `BaseButton variant="card"` con la miniatura, la vista corrente in bordeaux, l'ultima carta *«Salva questa vista»*; F3 in `Frame.vue`, ignorato mentre la finestra di conferma è aperta; le frecce con `nearest`. La striscia a pillola coi «moduli» `BaseButton pill` che apre il cassetto — ⛔ **lo stato aperto del cassetto vive in un negozio**, letto da `Drawer.vue` e scritto dalla striscia: la striscia è un pannello, cioè un'app Vue sua (`VueContent`), e non raggiunge un `ref` di `Drawer.vue` (R3-20). Nella miniatura il foglio `strip`, che sta in tutte le viste e non ha un'icona in `ICONS`: come si disegna lo dice la tavola della Panoramica, o lo decide il compito. Le prove: `axe` sulla Panoramica (controllo 17); nel browser la striscia a 12 e 24 px e **nessuna scheda vicina a un angolo della pagina** (controllo 19), le frecce e Invio nella Panoramica (R3-23). ⚠️ **Dalle *Interfaces* del compito 7:** la miniatura è `schematic(layout)`; una vista col nome si apre scrivendo `openNamed`, una delle tre con `showView`; *«Salva questa vista»* chiama `saveNamed(name, layout, shown)` — `shown`, i nomi che la cornice mostra per le tre viste, da `it.json` (D12) — e dice sotto il campo, in rosso, `"empty"` e `"taken"` (D4). ⚠️ **Dal compito 6:** il gruppo galleggiante è un `.dv-resize-container` con `role="dialog"`: col dock montato e un gruppo galleggiante, una prova che cerca `[role="dialog"]` ne trova due |
 | 9 | la riga «Accessibilità» da ✅ a 🔶 con le parole della legenda, **col richiamo datato**, e il comando del riquadro in testa al file rilanciato prima e dopo (controllo 21, R3-23); la riga **14** in coda alla roadmap e in *«Perché quest'ordine»* (prima del 13); `README.md`; la §12 e la §6 del compendio; `porta-di-qualita.md` — il browser nel cancello, e il prerequisito **Google Chrome, o `npx playwright install chrome`**: col canale `chrome` il Chromium scaricato non vale (R2-8); `riferimenti.md`, le fonti della scrittura del piano e della revisione; il pezzo JavaScript misurato, con la cifra per il proprietario, che ha N-2 (R3-25); la Definizione di «fatto» coi comandi |
+
+## La cartella di prova rifatta sulla macchina `zagor`, del 2026-09-24
+
+Tolto dal piano il 2026-09-24, quando la sessione dopo ha chiuso **P-20** — la cura nel passo 2 del compito 5 — e
+**P-21** — la causa non trovata, l'attesa di `expect.poll` a 5 s e la prova del tema da un tema noto, scelta A del
+proprietario — e ha scritto *«Come si riprende — P-20 e P-21 chiuse»*. Il testo com'era, dal commit `71f6a92`, parola
+per parola; i rimandi sono riscritti per questa cartella.
+
+## Come si riprende — la cartella di prova rifatta su un'altra macchina, e due cadute della suite, 2026-09-24
+
+⚠️ **Il piano è A METÀ, e non si esegue.** Scritti: la testa e i **compiti 1–7**; da scrivere: i compiti **8** e **9** e la
+**Definizione di «fatto»**. Il 6 e il 7 non li ha letti nessun revisore: li legge il pre-controllo. La consegna precedente
+sta parola per parola in [`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+⛔ **DA SAPERE SUBITO: la suite dei compiti 1–7 è caduta due volte, e il piano non lo porta ancora.** Due prove rosse nelle
+prime sei corse della suite coi compiti 1–7, sulla macchina dell'account `zagor`, ciascuna una volta sola; nessuna nelle
+sedici corse intere dopo. È ciò che il passo 7 del compito 7 prevede — *«una
+sua caduta qui è una voce d'errata, non una corsa da ripetere finché passa»* —, trovato dalla ricostruzione prima di quel
+passo. La prima ha la causa e la cura provata, **P-20**; la seconda **no**, **P-21**. ⛔ **Si chiudono tutte e due prima dei
+compiti 8 e 9**: si scrivono su un banco che non cade da solo.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **cancello** | `GATE GREEN` all'apertura della sessione e prima del suo commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
+| **la CI** | verdi su tutti e due i sistemi le corse fino a `70500c0`; quella del commit che scrive questa riga **in corso** alla chiusura: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **codice di prodotto** | non toccato: la cura di P-20 vive solo nella cartella di prova |
+| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL-DEV\MY-REPOS\daemon`, Chrome 154 e la cartella di prova della consegna in archivio; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness` — il portatile con l'i7-14700HX e la RTX 4060 —, Chrome **153**, dove questa sessione ha lavorato e le prove nel browser sono verdi. Su tutte e due `LongPathsEnabled` è 0: le cartelle di prova stanno in `%TEMP%`, non nello scratchpad |
+
+📌 **La cartella di prova sulla macchina `zagor`:** `C:\Users\zagor\AppData\Local\Temp\pds`, col suo `git` senza `origin` — la
+base a `70500c0`, `main` coi compiti 1–5 un commit l'uno, `task6`, `task7`, e `p20-copy-imports`, un commit sopra `task7` con
+la cura di P-20. **Non è una fonte**: si rifà dal piano, ed è ciò che questa sessione ha fatto — ogni blocco *Trova* dei sette
+compiti trovato **una volta** nel suo file, nessun rifiuto; al compito 7 la suite rende 26 file e 171 prove, come sull'altra
+macchina, e il pezzo JavaScript 663,93 kB ai compiti 1–4, 689,58 al 5, 690,50 al 6 — le cifre del compito 6 — e 691,70 al 7,
+`npm run build 2>&1 | grep -E 'assets/index-.*\.js '` (N-2, la cifra per il proprietario). Gli attrezzi stanno accanto, in
+`pds\tools\`, fuori dal suo `git` per `.git/info/exclude`: `rebuild\apply_plan.py` con le ricette `recipe-1.txt`…`recipe-7.txt`,
+che nominano i blocchi per **numero di riga del piano a `70500c0`** — si lanciano su un file preso con `git show
+70500c0:docs/superpowers/plans/2026-09-23-design-system.md`, non sul piano di dopo —; e `flakes\`, gli attrezzi delle misure
+qui sotto. Una sessione sulla macchina `Jays` ha la sua cartella, ma non la cura di P-20: la prende dal diff qui sotto.
+
+**P-20 — la prova delle parole dei moduli, rossa per il tempo: causa trovata, cura provata, non ancora nel piano.**
+
+| | |
+|---|---|
+| **che cosa** | `has a name for every module type` di `gui/src/locales/copy.test.ts` — della parte 2 — rossa **una** volta, `5177ms`, oltre il limite di 5 s di una prova: la prima delle cinque corse |
+| **la causa, verificata** | la prova fa `await import("../panels/registry")` **nel suo corpo**, quindi il grafo del registro — `vue`, `vue-i18n`, il segnaposto, la striscia e, dal compito 5, i pezzi di base — si carica **dentro** i suoi 5 s. Una sonda provvisoria per strato, sotto jsdom, tre corse: `BaseIcon.vue` 751–826 ms — il primo `.vue` del file porta `vue` e la prima trasformazione —, `Placeholder.vue` ~295, `i18n` ~100, `lucide` ~100, `Strip.vue` ~90, `BaseButton.vue` ~85 |
+| **le misure** | la sua durata nei rapporti JSON: sul codice di `70500c0` 1,3–1,4 s, 2,5 s a freddo; coi compiti 1–7 **2,5–2,8 s** in cinque corse su sei, e 5,2 s la volta che è caduta. Le due `await import("./Band.vue")` di `frame.test.ts` costano al massimo 95 ms: gli import in cima al file hanno già caricato il resto. A mano: `(cd gui && npx vitest run --reporter=verbose) \| grep 'has a name for every module type'` — la durata compare sopra i 300 ms |
+| **la cura, provata** | `PANEL_TYPES` e `THEME_CHOICES` importati **in cima** a `copy.test.ts`, e le due prove senza `await`: dopo, **6–24 ms** in sei corse e **7–8 ms** in quattro cicli come il cancello, `npm ci` e poi la suite. È la regola che lo stesso file scrive per il linter — *«A guard that can go red for being slow guards nothing»* — e la forma di tutti gli altri file di prova. Il testo: `git -C C:/Users/zagor/AppData/Local/Temp/pds diff task7 p20-copy-imports` |
+| **che cosa resta** | scriverla **nel piano**: la riga **P-20** in *«Ciò che la scrittura del piano ha trovato»*; nel passo 2 del compito 5, che tocca già quel file, un *Trova/Sostituisci* per gli import in cima, uno per la prima riga della prova del registro, e la prova del tema senza `await import`, col commento che dice perché. La direzione rossa si **misura**: con l'import rimesso nel corpo la durata torna sopra i 2 s |
+
+**P-21 — la prova del tema che segue il sistema, rossa una volta: causa NON trovata.**
+
+| | |
+|---|---|
+| **che cosa** | `follow the system's scheme through the real query while the choice is system` di `gui/src/tokens/tokens.browser.test.ts` — dal compito 2 — rossa **una** volta, in 1331 ms, nella seconda delle cinque corse. ⚠️ Il messaggio d'errore **non è stato preso**: quella corsa filtrava le righe col `grep`. 🔶 Dedotto: è scaduto un `expect.poll`, che in `vitest` 4.1.11 aspetta **1000 ms** di base — `defaults.timeout ?? 1e3`, letto nel pacchetto installato |
+| **escluso, misurato** | (1) **che l'avviso del sistema arrivi tardi**: una sonda provvisoria, in un file suo, misura quanto tarda il cambio sulla radice dopo `emulateMedia` — **7–21 ms** al peggio in tredici corse, da solo, sotto la suite e dopo `npm ci`. (2) **che un file del browser blocchi gli altri**: un file che tiene occupato il suo filo per 2 s non ritarda i timer di un altro file nello stesso momento — 3–7 ms, tre corse coi tempi assoluti; ogni file ha contesto e pagina suoi, `openBrowserPage` di `@vitest/browser-playwright` 4.1.11. La prova vera, nelle dieci corse dopo: 70–540 ms, mai rossa |
+| **la pista aperta** | durante la suite, dei processi di pagina del Chrome di prova **6 su 11** girano a priorità di base **4** — la classe *idle* di Windows — contro 8 dei 24 processi `node.exe`, benché Playwright 1.63.0 passi già `--disable-renderer-backgrounding`: un campione, `pds\tools\flakes\priority_sample.ps1`. 🔶 Sotto la CPU piena un processo *idle* può restare fermo a lungo. ⚠️ **Non si sa se sono le pagine delle prove**: `priority_detail.ps1`, che le distingue col tempo di CPU, è scritto e **non** è stato lanciato |
+| **come si chiude** | prima la causa, poi la cura (`superpowers:systematic-debugging`): il messaggio della caduta, con `pds\tools\flakes\flake_runs.py` — un rapporto JSON per corsa, e la prima riga di ogni caduta — sulla suite intera, più corse, anche a freddo con `cold_runs.sh`; e quali processi sono *idle*, con `priority_detail.ps1` mentre la suite gira. Le cure dipendono dalla causa e restano **aperte** — un'opzione di Chrome nel `launchOptions` del compito 2, un tempo per `expect.poll` detto una volta nella configurazione del progetto `browser`, o altro —: nessuna si prende prima della causa |
+
+**Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI della chiusura, per prima.
+2. Questa sezione, la testa del piano e le *Interfaces* dei compiti 1–7.
+3. **P-20** nel piano, con la cura di `p20-copy-imports`.
+4. **P-21**: la causa, poi la cura, nel piano. Poi la cartella di prova riportata al testo del piano — `task7` con le due cure —,
+   così che il codice del piano **sia** il codice provato; e la suite intera cinque volte di fila, verde.
+5. I compiti **8** e **9** e la **Definizione di «fatto»**, con le forme qui sotto — già corrette dalla revisione (R3-20, R3-23,
+   R3-25 e R2-8 del [registro](../superpowers/plans/2026-09-23-design-system-revisione/ledger.md)), da non ridecidere senza una misura nuova —, e con
+   le forme che hanno i compiti di prima:
+   1. la colonna **Commit** di R1-16 — ogni compito scrive l'hash del precedente;
+   2. il ritorno delle violazioni del **vincolo 11** — la copia salvata, `cmp`, e `git status --porcelain` confrontato con
+      quello di prima;
+   3. i comandi in una sottoshell, `(cd gui && …)` (R1-12);
+   4. per **ogni** prova nuova, la violazione che la fa rossa e il messaggio **misurato** del rosso (A-4 e A-5 del registro);
+   5. il metodo dei compiti 6 e 7: il codice si applica sul banco, in un ramo suo — `task8` da `task7` —, le prove e i rossi
+      girano lì, e uno script compone il testo del compito dai file del ramo con `git show`, e rifiuta se un blocco *Trova*
+      non è unico nei file del ramo di prima, o un blocco *Sostituisci con* in quelli del ramo nuovo.
+6. Poi, ciascuno nella sua sessione: il **pre-controllo** delle quattro domande di `CLAUDE.md`, compito per compito — il 6 e il 7
+   compresi —; poi l'esecuzione.
+
+| Compito | Le forme già decise |
+|---|---|
+| 8 | la barra: `BaseButton` col nome della vista e l'icona `views`, la ricerca `BaseTextField type="search"` spenta, il chip; il pulsante del cassetto **esce** dalla barra, perché «Moduli» scende nella striscia (la (d)). La Panoramica in `frame/Overview.vue` su `BaseDialog variant="full"`: carte `BaseButton variant="card"` con la miniatura, la vista corrente in bordeaux, l'ultima carta *«Salva questa vista»*; F3 in `Frame.vue`, ignorato mentre la finestra di conferma è aperta; le frecce con `nearest`. La striscia a pillola coi «moduli» `BaseButton pill` che apre il cassetto — ⛔ **lo stato aperto del cassetto vive in un negozio**, letto da `Drawer.vue` e scritto dalla striscia: la striscia è un pannello, cioè un'app Vue sua (`VueContent`), e non raggiunge un `ref` di `Drawer.vue` (R3-20). Nella miniatura il foglio `strip`, che sta in tutte le viste e non ha un'icona in `ICONS`: come si disegna lo dice la tavola della Panoramica, o lo decide il compito. Le prove: `axe` sulla Panoramica (controllo 17); nel browser la striscia a 12 e 24 px e **nessuna scheda vicina a un angolo della pagina** (controllo 19), le frecce e Invio nella Panoramica (R3-23). ⚠️ **Dalle *Interfaces* del compito 7:** la miniatura è `schematic(layout)`; una vista col nome si apre scrivendo `openNamed`, una delle tre con `showView`; *«Salva questa vista»* chiama `saveNamed(name, layout, shown)` — `shown`, i nomi che la cornice mostra per le tre viste, da `it.json` (D12) — e dice sotto il campo, in rosso, `"empty"` e `"taken"` (D4). ⚠️ **Dal compito 6:** il gruppo galleggiante è un `.dv-resize-container` con `role="dialog"`: col dock montato e un gruppo galleggiante, una prova che cerca `[role="dialog"]` ne trova due |
+| 9 | la riga «Accessibilità» da ✅ a 🔶 con le parole della legenda, **col richiamo datato**, e il comando del riquadro in testa al file rilanciato prima e dopo (controllo 21, R3-23); la riga **14** in coda alla roadmap e in *«Perché quest'ordine»* (prima del 13); `README.md`; la §12 e la §6 del compendio; `porta-di-qualita.md` — il browser nel cancello, e il prerequisito **Google Chrome, o `npx playwright install chrome`**: col canale `chrome` il Chromium scaricato non vale (R2-8); `riferimenti.md`, le fonti della scrittura del piano e della revisione; il pezzo JavaScript misurato, con la cifra per il proprietario, che ha N-2 (R3-25); la Definizione di «fatto» coi comandi |

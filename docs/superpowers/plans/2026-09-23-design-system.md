@@ -188,6 +188,8 @@ altro, la riga lo dice e il compito segue la misura (`CLAUDE.md`: *«un'evidenza
 | **P-17** | ⚠️ **i gruppi galleggianti si impilano per pagina**: `AriaLevelTracker`, un oggetto unico del modulo in `dockview-core` 8.3.1, dà a ogni contenitore galleggiante `calc(var(--dv-overlay-z-index, 999) + 2i)` nell'ordine in cui è stato alzato l'ultima volta, e lo toglie dalla lista solo quando il gruppo è **smontato** | `grep -n 'overlay-z-index' gui/node_modules/dockview-core/dist/package/main.esm.mjs`; nel browser, una prova che non smontava il dock del primo tema ha misurato **52** nel secondo | il compito 6 scrive il limite in `dock.css` — coi valori della tavola, sotto `--z-popover` fino a 25 gruppi aperti e sotto `--z-overlay` fino a 75 — e la sua prova smonta il dock con `api.dispose()` |
 | **P-18** | ⚠️ **`axe` sul dock**: il contrasto non lo giudica — nessuna coppia fra i `passes`, le scritte fra gli `incomplete` con *«overlapped by another element»* — e trova **tre difetti che vengono dalla parte 2**: `nested-interactive` su ogni linguetta, perché i due comandi della presa grande sono pulsanti dentro un `role="tab"`; il nome di ogni linguetta, `aria-label`, è il `title` del pannello o il suo id — `permissions`, non «Permessi» —, e le viste portano un `title` uguale all'id; sul contenitore galleggiante, `role="dialog"` con `aria-level`, che un dialogo non ammette, e un `aria-label` uguale all'id | `axe.run` sul dock nel Chrome installato, 2026-09-23; `role`, `aria-*` e `tabindex` di `.dv-tab` e di `.dv-resize-container`, letti sulla SPA; `grep -n '"aria-label"' gui/node_modules/dockview-core/dist/package/main.esm.mjs` | il compito 6 tiene il contrasto del dock col frammento a mano del passo 17 del compito 1; i tre difetti vanno al proprietario, in *«Le voci aperte che questo piano SA»*: toglierli cambia la presa grande di SP-8, mossa 5 |
 | **P-19** | ⛔ **la prova della tastiera del compito 5 era instabile**: `reka-ui` 2.10.4 clicca il radio in un `setTimeout(0)` dopo il fuoco, e solo se una freccia è ancora premuta — il `keydown` alza il segno, il `keyup` lo toglie —; `userEvent.keyboard("{ArrowDown}")` preme e rilascia subito, e un `keyup` arrivato prima del timer non lascia niente di cliccato | `handleFocus` in `gui/node_modules/reka-ui/dist/RadioGroup/RadioGroupItem.js`, letto; sulla cartella di prova, dieci corse della suite intera: la prova rossa **una** volta sul codice del compito 5 e **due** col compito 7, `expected +0 to be 1` con *«Matcher did not succeed in time»*; col tasto tenuto, **nessuna** su dodici | il passo 1 del compito 5 corretto: `{ArrowDown>}`, l'`Invoke` atteso, `{/ArrowDown}` — il tasto tenuto come lo tiene una mano; e il passo 7 del compito 7 fa girare la suite cinque volte |
+| **P-20** | ⛔ **la prova delle parole dei moduli può andare rossa per il tempo**: `has a name for every module type` di `gui/src/locales/copy.test.ts` — della parte 2 — fa `await import("../panels/registry")` **nel suo corpo**, quindi il grafo del registro — `vue`, `vue-i18n`, il segnaposto, la striscia e, dal compito 5, i pezzi di base — si carica **dentro** i 5 s della prova: rossa **due** volte il 2026-09-24, `5177ms` e `5027ms`, in 67 corse della suite intera coi compiti 1–7 | la durata della prova nel rapporto JSON di `vitest`, sulla cartella di prova: sul codice di `70500c0` 1,3–1,4 s, 2,5 s a freddo; coi compiti 1–7 da 0,5 a 5,2 s, secondo quando il file gira nella suite — e 2,4–3,5 s anche con `--maxWorkers=8`, quindi non è la memoria — 🔶 dedotto, la coda delle trasformazioni di `vite`, che serve tutti i processi; una sonda per strato, sotto jsdom, dà il primo `.vue` — `BaseIcon.vue`, che porta `vue` e la prima trasformazione — a 751–826 ms | il passo 2 del compito 5, che tocca già quel file: `PANEL_TYPES` e `THEME_CHOICES` importati **in cima**, e le due prove senza `await` — dopo, 6–24 ms. È la regola che lo stesso file scrive per il linter, *«A guard that can go red for being slow guards nothing»*, e la forma di tutti gli altri file di prova. Le due `await import("./Band.vue")` di `frame.test.ts` restano: costano al massimo 95 ms, perché gli import in cima al file hanno già caricato il resto |
+| **P-21** | ⛔ **la prova del tema che segue il sistema è caduta una volta, e la causa NON si è trovata**: `follow the system's scheme through the real query while the choice is system` di `gui/src/tokens/tokens.browser.test.ts`, rossa **una** volta in 1331 ms — nessun evento entro il secondo che `expect.poll` aspetta di base in `vitest` 4.1.11, mentre una prova nel browser ne ha **15**. ⚠️ E la misura ha trovato un secondo difetto, nella prova: su un Windows in tema scuro il primo cambio, verso lo scuro, **non cambia nulla**, e passa anche con `watchTheme` sordo al sistema | `defaults.timeout ?? 1e3` e `resolved.testTimeout ??= resolved.browser.enabled ? 15e3 : 5e3`, letti nel pacchetto installato. Escluso, misurato il 2026-09-24 sulla cartella di prova: **la priorità** — le pagine delle prove girano a 8, e a 4 stanno i quattro processi con `--top-chrome-webui`, l'interfaccia di Chrome, e uno da 0,16 s di CPU; **la CPU piena** — 28 processi occupati a priorità normale, la prova a 35–98 ms in cinque corse; **la memoria piena** — all'avvio di ogni corsa la memoria disponibile scende da 3–5 GB a 68–150 MB, e una sonda accanto non ha mai visto l'evento oltre 12 ms, un fotogramma oltre 8, un timer oltre 21, in 34 corse; **la sequenza del file** — caratteri, movimento, alto contrasto col Tab, tema — ripetuta 1320 volte nella suite, mai oltre il secondo. Il tema scuro: `AppsUseLightTheme` vale 0, e con `watchTheme` sordo il rosso cade al **secondo** cambio, `expected 'dark' to be 'light'` | ✅ **scelto dal proprietario il 2026-09-24 — A**: il compito 2 dà al progetto `browser` `expect: { poll: { timeout: 5000 } }`, una volta per le tre attese del piano — un valore in ritardo passa, uno che non arriva resta rosso, un'attesa verde finisce subito —, con la prova del suo effetto al passo 5; e la prova del tema parte da un tema **noto**, così i due cambi vogliono l'evento su ogni macchina. La causa resta **non trovata**: se la prova ricade si riparte dagli attrezzi di `pds\tools\flakes\` e dal rapporto JSON, mai da un `grep` |
 
 ## Le decisioni prese scrivendo il piano
 
@@ -220,6 +222,7 @@ Rilette il 2026-09-23 coi due comandi della §6 del compendio e con la tabella d
 |---|---|---|
 | **X-2** e **X-4** dell'[audit](../../audit-2026-08-27.md) | del proprietario | niente: non toccano la GUI |
 | **N-2 di E187**, l'avviso di `vite` sui pezzi sopra i 500 kB | del proprietario | il compito 1, il 5, il 6 e l'8 **misurano** il pezzo JavaScript dopo il *build* — `npm run build 2>&1 \| grep -E 'assets/index-.*\.js '` — e lo scrivono nel commit; il 3 no, perché la SPA non importa ancora il kit (R2-13). ⚠️ La (e) dice che il design system non lo peggiora, ed è una deduzione: la revisione l'ha misurato **crescere al compito 5**, quando i pezzi di base entrano nei pannelli (R3-25), e la cifra si porta al proprietario |
+| la **memoria della macchina `zagor`** all'avvio della suite coi compiti 1–7: 24 processi di prova, circa uno per core, e il Chrome delle prove — la memoria disponibile scende da 3–5 GB a 68–150 MB, e Windows scrive su disco; con `--maxWorkers=8` resta sopra 2,7 GB, a parità di tempo, misurato il 2026-09-24 (P-21) | del proprietario | niente: non è la causa né di P-20 né di P-21, e limitare i processi cambia il cancello su ogni macchina |
 | **E228**, progress e notifiche | del proprietario | niente: i token ci sono già, `--z-toast` e i colori di stato |
 | il **terzo carattere** per il codice | del proprietario | niente: il monospazio resta quello del sistema (decisione 16 del disegno) |
 | **AUD-004** | del proprietario | niente: sbarra il sotto-progetto 13, non questo |
@@ -1383,8 +1386,13 @@ describe("the tokens, in a real browser (design system, sections (a) and (f))", 
   });
 
   it("follow the system's scheme through the real query while the choice is `system`", async () => {
+    // ⛔ A KNOWN START (P-21 of the design-system plan): `null` gives back the machine's own scheme -- dark on a
+    // Windows set to dark, where a first flip to dark changed nothing and passed with `watchTheme` deaf to the
+    // system. Light first, and BOTH flips need the event.
+    await commands.emulateMedia({ colorScheme: "light" });
     const root = document.createElement("div");
     const stop = watchTheme((): ThemeChoice => "system", root);
+    expect(root.dataset.theme).toBe("light");
     await commands.emulateMedia({ colorScheme: "dark" });
     await expect.poll(() => root.dataset.theme).toBe("dark");
     await commands.emulateMedia({ colorScheme: "light" });
@@ -1509,6 +1517,11 @@ export default defineConfig({
         test: {
           name: "browser",
           include: ["src/**/*.browser.test.ts"],
+          // ⛔ FIVE SECONDS FOR `expect.poll`, NOT VITEST'S ONE (P-21 of the design-system plan): the scheme probe went
+          // red once, no event within 1 s, and no cause was found -- not the renderers' priority, not a full CPU,
+          // not a full memory, measured on 2026-09-24. A probe here guards THAT a value comes, not how fast: a late one
+          // passes, one that never comes stays red, and a green poll ends at once -- well inside a browser test's 15 s.
+          expect: { poll: { timeout: 5000 } },
           browser: {
             enabled: true,
             // ⛔ EXPLICIT: the default is `process.env.CI`, which would open a window on every local gate.
@@ -1562,6 +1575,24 @@ Atteso: due righe, `|browser (chromium)|` e `|jsdom|`, ciascuna col suo conto so
 | il movimento | in `base.css` tolto il blocco `prefers-reduced-motion` | rosso — ⛔ poi `base.css` torna dalla **copia salvata**, e `board.test.ts` lo conferma verde |
 | l'alto contrasto | nella prova del contorno del focus, tolta la riga `await commands.emulateMedia({ forcedColors: "active" });` | rosso alla guardia, `expected false to be true`: senza l'emulazione la prova non parla dell'alto contrasto (R2-2) |
 | il carattere che disegna | in `base.css` `--font-display` col solo ripiego, `"Bahnschrift", system-ui, sans-serif` al posto di `var(--font-family-tool)` | rosso al confronto del token con la sua catena senza Barlow, `expected 0 to be greater than 0.5`, mentre le due direzioni delle larghezze restano verdi: anche Bahnschrift ha le cifre proporzionali, e uguali con `tabular-nums` (R2-4) — ⛔ e `board.test.ts`, che vuole il foglio della tavola: poi `base.css` torna dalla **copia salvata** |
+| il tema che segue il sistema (P-21) | in `tokens/theme.ts` tolta la riga `system.addEventListener("change", apply);` | rosso dopo cinque secondi al **primo** cambio, `expected 'light' to be 'dark'`: l'evento non arriva, e l'attesa lo aspetta cinque secondi, non uno |
+| l'attesa di 5 s arriva al progetto `browser` (P-21) | il file usa-e-getta qui sotto, `gui/src/late.browser.test.ts`; poi, col file ancora lì, la riga `expect:` tolta da `vite.config.ts` | verde con la riga; senza, rosso dopo un secondo, `expected 'before' to be 'after'` — poi il file si **cancella** |
+
+Il file usa-e-getta della penultima riga, che il passo cancella:
+
+```ts
+// A THROWAWAY PROBE (task 2, step 5): a value that turns right two seconds late -- green only when the project's
+// `expect.poll` budget is longer than 2 s, the proof that the setting reaches the browser project.
+import { expect, it } from "vitest";
+
+it("waits for a value that arrives two seconds late", async () => {
+  let value = "before";
+  setTimeout(() => {
+    value = "after";
+  }, 2000);
+  await expect.poll(() => value).toBe("after");
+});
+```
 
 Ogni violazione torna indietro con la copia salvata; poi, dalla radice del repository, `git status --porcelain` è quello
 di prima della prima violazione (vincolo 11): nessun file nato dai rossi del browser (R2-3).
@@ -3521,7 +3552,7 @@ radio e sulla finestra. Poi la riga **4** della tabella della posizione — **St
 
 **Da:** la (b), la tabella *«I pezzi di base»* — la colonna *«La seconda occorrenza»* dice dove va ciascuno — e *«Le regole,
 come controlli del linter»*, le ultime due; la (e), la voce **M-3 di E187**; la (a), *«I due temi»*, la riga *«a mano»*; i
-controlli **11–13**; la trappola **10**; **P-8** di questo piano; la decisione **21** del disegno.
+controlli **11–13**; la trappola **10**; **P-8** e **P-20** di questo piano; la decisione **21** del disegno.
 
 **Files:**
 - Rewrite: `gui/src/components/Confirm.vue`, `gui/src/frame/Drawer.vue`, `gui/src/frame/Band.vue`,
@@ -3529,7 +3560,7 @@ controlli **11–13**; la trappola **10**; **P-8** di questo piano; la decisione
   — ciascuno **per intero**, col terminatore che ha oggi
 - Modify: `gui/src/panels/Placeholder.vue` — due *Trova/Sostituisci*, il pulsante e il suo import (R3-15)
 - Modify: `gui/src/panels/Status.vue` — la riga dell'evento dentro `BaseStatus`
-- Modify: `gui/src/locales/it.json` — la scelta del tema; `gui/src/locales/copy.test.ts` — la sua prova (R3-14)
+- Modify: `gui/src/locales/it.json` — la scelta del tema; `gui/src/locales/copy.test.ts` — la sua prova (R3-14), e i due import in cima (P-20)
 - Modify: `gui/src/panels/modules.test.ts`, `gui/src/a11y.test.ts` — le prove su `[role=radio]` e su `[role=dialog]`; e, con
   `gui/src/frame/frame.test.ts`, le tre prove di M-3 (R3-12)
 - Create: `gui/src/panels/settings.browser.test.ts` — la via della tastiera sul radio, nel browser (R3-24)
@@ -3837,6 +3868,42 @@ alle chiavi costruite: `copy.test.ts` le sonda, e sondava solo `modules.*` (R3-1
  * -- measured on 2026-09-15, both directions in one file (P-105).
 ```
 
+Poi i due import, **in cima** e non dentro le prove (**P-20**) — *Trova*:
+
+```ts
+import { describe, expect, it } from "vitest";
+
+import it_ from "./it.json";
+```
+
+*Sostituisci con:*
+
+```ts
+import { describe, expect, it } from "vitest";
+
+// ⛔ AT THE TOP, NOT INSIDE A PROBE (P-20 of the design-system plan): an `await import` in a probe's body loads the
+// module's whole graph inside the probe's 5 s -- the registry's is `vue`, `vue-i18n` and, from the design system on,
+// the base pieces: from 0.5 to 5.2 s on 2026-09-24, and red twice for it. Here the file pays the load and each probe
+// takes milliseconds: a guard that can go red for being slow guards nothing.
+import { PANEL_TYPES } from "../panels/registry";
+import { THEME_CHOICES } from "../tokens/theme";
+
+import it_ from "./it.json";
+```
+
+*Trova:*
+
+```ts
+  it("has a name for every module type", async () => {
+    const { PANEL_TYPES } = await import("../panels/registry");
+```
+
+*Sostituisci con:*
+
+```ts
+  it("has a name for every module type", () => {
+```
+
 *Trova:*
 
 ```ts
@@ -3850,8 +3917,7 @@ alle chiavi costruite: `copy.test.ts` le sonda, e sondava solo `modules.*` (R3-1
     for (const type of PANEL_TYPES) expect(Object.keys(modules), type.module).toContain(type.module);
   });
 
-  it("has a word for every theme choice", async () => {
-    const { THEME_CHOICES } = await import("../tokens/theme");
+  it("has a word for every theme choice", () => {
     const words = (it_ as { settings?: { theme?: Record<string, string> } }).settings?.theme ?? {};
     // ⛔ NON-VACUITY: no choices would leave nothing to check.
     expect(THEME_CHOICES.length).toBeGreaterThan(0);
@@ -6239,79 +6305,73 @@ compito 6 (R1-16) —; `bash scripts/gate.sh` da solo, `bash scripts/check-docs.
 viste col nome, sotto …` — coi fine-riga rimisurati, e `git push`.
 
 ---
-## Come si riprende — la cartella di prova rifatta su un'altra macchina, e due cadute della suite, 2026-09-24
+## Come si riprende — P-20 e P-21 chiuse, 2026-09-24
 
 ⚠️ **Il piano è A METÀ, e non si esegue.** Scritti: la testa e i **compiti 1–7**; da scrivere: i compiti **8** e **9** e la
 **Definizione di «fatto»**. Il 6 e il 7 non li ha letti nessun revisore: li legge il pre-controllo. La consegna precedente
 sta parola per parola in [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
 
-⛔ **DA SAPERE SUBITO: la suite dei compiti 1–7 è caduta due volte, e il piano non lo porta ancora.** Due prove rosse nelle
-prime sei corse della suite coi compiti 1–7, sulla macchina dell'account `zagor`, ciascuna una volta sola; nessuna nelle
-sedici corse intere dopo. È ciò che il passo 7 del compito 7 prevede — *«una
-sua caduta qui è una voce d'errata, non una corsa da ripetere finché passa»* —, trovato dalla ricostruzione prima di quel
-passo. La prima ha la causa e la cura provata, **P-20**; la seconda **no**, **P-21**. ⛔ **Si chiudono tutte e due prima dei
-compiti 8 e 9**: si scrivono su un banco che non cade da solo.
+✅ **Le due cadute della suite sono chiuse, e il banco non cade da solo.** **P-20**, la causa trovata, è una cura nel
+passo 2 del compito 5. **P-21**, la causa **non** trovata dopo una caccia che ha escluso priorità, CPU e memoria, ha
+l'attesa di `expect.poll` a 5 s nel progetto `browser` del compito 2 — scelta **A** del proprietario il 2026-09-24 — e la
+prova del tema che parte da un tema noto, con due righe nuove nelle direzioni rosse del suo passo 5. Le righe intere
+sono in testa, in *«Ciò che la scrittura del piano ha trovato»*; la memoria della macchina, che la caccia ha misurato,
+è una voce del proprietario in *«Le voci aperte che questo piano SA»*.
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
 | **cancello** | `GATE GREEN` all'apertura della sessione e prima del suo commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
-| **la CI** | verdi su tutti e due i sistemi le corse fino a `70500c0`; quella del commit che scrive questa riga **in corso** alla chiusura: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
-| **codice di prodotto** | non toccato: la cura di P-20 vive solo nella cartella di prova |
-| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL-DEV\MY-REPOS\daemon`, Chrome 154 e la cartella di prova della consegna in archivio; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness` — il portatile con l'i7-14700HX e la RTX 4060 —, Chrome **153**, dove questa sessione ha lavorato e le prove nel browser sono verdi. Su tutte e due `LongPathsEnabled` è 0: le cartelle di prova stanno in `%TEMP%`, non nello scratchpad |
+| **la CI** | verdi su tutti e due i sistemi le corse fino a `71f6a92`; quella del commit che scrive questa riga **in corso** alla chiusura: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **codice di prodotto** | non toccato: le cure vivono nel piano e nella cartella di prova |
+| **il banco** | la cartella di prova della macchina `zagor`, ramo **`cures`**: sette corse intere verdi, una dopo `npm ci` e l'ultima sul commit finale del ramo, coi rapporti JSON |
+| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL-DEV\MY-REPOS\daemon`, Chrome 154 e la sua cartella di prova, **senza** le cure; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness` — il portatile con l'i7-14700HX, la RTX 4060 e 15,7 GB di memoria —, Chrome 153, dove questa sessione ha lavorato. Su tutte e due `LongPathsEnabled` è 0: le cartelle di prova stanno in `%TEMP%`, non nello scratchpad |
 
-📌 **La cartella di prova sulla macchina `zagor`:** `C:\Users\zagor\AppData\Local\Temp\pds`, col suo `git` senza `origin` — la
-base a `70500c0`, `main` coi compiti 1–5 un commit l'uno, `task6`, `task7`, e `p20-copy-imports`, un commit sopra `task7` con
-la cura di P-20. **Non è una fonte**: si rifà dal piano, ed è ciò che questa sessione ha fatto — ogni blocco *Trova* dei sette
-compiti trovato **una volta** nel suo file, nessun rifiuto; al compito 7 la suite rende 26 file e 171 prove, come sull'altra
-macchina, e il pezzo JavaScript 663,93 kB ai compiti 1–4, 689,58 al 5, 690,50 al 6 — le cifre del compito 6 — e 691,70 al 7,
-`npm run build 2>&1 | grep -E 'assets/index-.*\.js '` (N-2, la cifra per il proprietario). Gli attrezzi stanno accanto, in
-`pds\tools\`, fuori dal suo `git` per `.git/info/exclude`: `rebuild\apply_plan.py` con le ricette `recipe-1.txt`…`recipe-7.txt`,
-che nominano i blocchi per **numero di riga del piano a `70500c0`** — si lanciano su un file preso con `git show
-70500c0:docs/superpowers/plans/2026-09-23-design-system.md`, non sul piano di dopo —; e `flakes\`, gli attrezzi delle misure
-qui sotto. Una sessione sulla macchina `Jays` ha la sua cartella, ma non la cura di P-20: la prende dal diff qui sotto.
+📌 **La cartella di prova sulla macchina `zagor`:** `C:\Users\zagor\AppData\Local\Temp\pds`, col suo `git` senza
+`origin` — la base a `70500c0`, `main` coi compiti 1–5, `task6`, `task7`, e **`cures`**, due commit sopra `task7`: i tre
+file che P-20 e P-21 toccano, rifatti dal testo del piano con `pds\tools\rebuild\apply_plan.py` e la ricetta qui
+sotto — `vite.config.ts` e `copy.test.ts` prima riportati alla base, `git show 70500c0:<file>` —; `git diff task7 cures`
+rende solo le righe delle due cure. La ricetta vale per il piano del commit che scrive questa riga, e sulla macchina
+`Jays` si lancia uguale. **Il compito 8 parte da `cures`.** Gli attrezzi della caccia stanno in
+`pds\tools\flakes\`, fuori dal suo `git`: `flake_runs.py` — un rapporto JSON per corsa —; `renderer_watch.ps1` e
+`chrome_dump.ps1` con `dump_diff.py`, le priorità dei processi di Chrome; `sys_sample.ps1`, memoria e disco; `hog.py`,
+la CPU; e tre sonde usa-e-getta da copiare in `gui/src/`: `zz-probe` — evento, fotogramma e timer a ogni cambio di
+tema —, `zz-amplified` — la sequenza del file quaranta volte — e `zz-late`, l'attesa del progetto.
 
-**P-20 — la prova delle parole dei moduli, rossa per il tempo: causa trovata, cura provata, non ancora nel piano.**
-
-| | |
-|---|---|
-| **che cosa** | `has a name for every module type` di `gui/src/locales/copy.test.ts` — della parte 2 — rossa **una** volta, `5177ms`, oltre il limite di 5 s di una prova: la prima delle cinque corse |
-| **la causa, verificata** | la prova fa `await import("../panels/registry")` **nel suo corpo**, quindi il grafo del registro — `vue`, `vue-i18n`, il segnaposto, la striscia e, dal compito 5, i pezzi di base — si carica **dentro** i suoi 5 s. Una sonda provvisoria per strato, sotto jsdom, tre corse: `BaseIcon.vue` 751–826 ms — il primo `.vue` del file porta `vue` e la prima trasformazione —, `Placeholder.vue` ~295, `i18n` ~100, `lucide` ~100, `Strip.vue` ~90, `BaseButton.vue` ~85 |
-| **le misure** | la sua durata nei rapporti JSON: sul codice di `70500c0` 1,3–1,4 s, 2,5 s a freddo; coi compiti 1–7 **2,5–2,8 s** in cinque corse su sei, e 5,2 s la volta che è caduta. Le due `await import("./Band.vue")` di `frame.test.ts` costano al massimo 95 ms: gli import in cima al file hanno già caricato il resto. A mano: `(cd gui && npx vitest run --reporter=verbose) \| grep 'has a name for every module type'` — la durata compare sopra i 300 ms |
-| **la cura, provata** | `PANEL_TYPES` e `THEME_CHOICES` importati **in cima** a `copy.test.ts`, e le due prove senza `await`: dopo, **6–24 ms** in sei corse e **7–8 ms** in quattro cicli come il cancello, `npm ci` e poi la suite. È la regola che lo stesso file scrive per il linter — *«A guard that can go red for being slow guards nothing»* — e la forma di tutti gli altri file di prova. Il testo: `git -C C:/Users/zagor/AppData/Local/Temp/pds diff task7 p20-copy-imports` |
-| **che cosa resta** | scriverla **nel piano**: la riga **P-20** in *«Ciò che la scrittura del piano ha trovato»*; nel passo 2 del compito 5, che tocca già quel file, un *Trova/Sostituisci* per gli import in cima, uno per la prima riga della prova del registro, e la prova del tema senza `await import`, col commento che dice perché. La direzione rossa si **misura**: con l'import rimesso nel corpo la durata torna sopra i 2 s |
-
-**P-21 — la prova del tema che segue il sistema, rossa una volta: causa NON trovata.**
-
-| | |
-|---|---|
-| **che cosa** | `follow the system's scheme through the real query while the choice is system` di `gui/src/tokens/tokens.browser.test.ts` — dal compito 2 — rossa **una** volta, in 1331 ms, nella seconda delle cinque corse. ⚠️ Il messaggio d'errore **non è stato preso**: quella corsa filtrava le righe col `grep`. 🔶 Dedotto: è scaduto un `expect.poll`, che in `vitest` 4.1.11 aspetta **1000 ms** di base — `defaults.timeout ?? 1e3`, letto nel pacchetto installato |
-| **escluso, misurato** | (1) **che l'avviso del sistema arrivi tardi**: una sonda provvisoria, in un file suo, misura quanto tarda il cambio sulla radice dopo `emulateMedia` — **7–21 ms** al peggio in tredici corse, da solo, sotto la suite e dopo `npm ci`. (2) **che un file del browser blocchi gli altri**: un file che tiene occupato il suo filo per 2 s non ritarda i timer di un altro file nello stesso momento — 3–7 ms, tre corse coi tempi assoluti; ogni file ha contesto e pagina suoi, `openBrowserPage` di `@vitest/browser-playwright` 4.1.11. La prova vera, nelle dieci corse dopo: 70–540 ms, mai rossa |
-| **la pista aperta** | durante la suite, dei processi di pagina del Chrome di prova **6 su 11** girano a priorità di base **4** — la classe *idle* di Windows — contro 8 dei 24 processi `node.exe`, benché Playwright 1.63.0 passi già `--disable-renderer-backgrounding`: un campione, `pds\tools\flakes\priority_sample.ps1`. 🔶 Sotto la CPU piena un processo *idle* può restare fermo a lungo. ⚠️ **Non si sa se sono le pagine delle prove**: `priority_detail.ps1`, che le distingue col tempo di CPU, è scritto e **non** è stato lanciato |
-| **come si chiude** | prima la causa, poi la cura (`superpowers:systematic-debugging`): il messaggio della caduta, con `pds\tools\flakes\flake_runs.py` — un rapporto JSON per corsa, e la prima riga di ogni caduta — sulla suite intera, più corse, anche a freddo con `cold_runs.sh`; e quali processi sono *idle*, con `priority_detail.ps1` mentre la suite gira. Le cure dipendono dalla causa e restano **aperte** — un'opzione di Chrome nel `launchOptions` del compito 2, un tempo per `expect.poll` detto una volta nella configurazione del progetto `browser`, o altro —: nessuna si prende prima della causa |
+```text
+R gui/vite.config.ts 1436 1443
+R gui/vite.config.ts 1452 1458
+R gui/vite.config.ts 1480 1494
+W gui/src/tokens/tokens.browser.test.ts 1284
+R gui/src/tokens/tokens.browser.test.ts 4566 4573
+R gui/src/tokens/tokens.browser.test.ts 4581 4590
+R gui/src/locales/copy.test.ts 3858 3865
+R gui/src/locales/copy.test.ts 3873 3881
+R gui/src/locales/copy.test.ts 3896 3903
+R gui/src/locales/copy.test.ts 3909 3916
+```
 
 **Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
 
 1. `git fetch --all --prune`, `git status -sb`; la CI della chiusura, per prima.
 2. Questa sezione, la testa del piano e le *Interfaces* dei compiti 1–7.
-3. **P-20** nel piano, con la cura di `p20-copy-imports`.
-4. **P-21**: la causa, poi la cura, nel piano. Poi la cartella di prova riportata al testo del piano — `task7` con le due cure —,
-   così che il codice del piano **sia** il codice provato; e la suite intera cinque volte di fila, verde.
-5. I compiti **8** e **9** e la **Definizione di «fatto»**, con le forme qui sotto — già corrette dalla revisione (R3-20, R3-23,
-   R3-25 e R2-8 del [registro](2026-09-23-design-system-revisione/ledger.md)), da non ridecidere senza una misura nuova —, e con
-   le forme che hanno i compiti di prima:
+3. I compiti **8** e **9** e la **Definizione di «fatto»**, con le forme qui sotto — già corrette dalla revisione (R3-20,
+   R3-23, R3-25 e R2-8 del [registro](2026-09-23-design-system-revisione/ledger.md)), da non ridecidere senza una misura
+   nuova —, e con le forme che hanno i compiti di prima:
    1. la colonna **Commit** di R1-16 — ogni compito scrive l'hash del precedente;
    2. il ritorno delle violazioni del **vincolo 11** — la copia salvata, `cmp`, e `git status --porcelain` confrontato con
       quello di prima;
    3. i comandi in una sottoshell, `(cd gui && …)` (R1-12);
    4. per **ogni** prova nuova, la violazione che la fa rossa e il messaggio **misurato** del rosso (A-4 e A-5 del registro);
-   5. il metodo dei compiti 6 e 7: il codice si applica sul banco, in un ramo suo — `task8` da `task7` —, le prove e i rossi
-      girano lì, e uno script compone il testo del compito dai file del ramo con `git show`, e rifiuta se un blocco *Trova*
-      non è unico nei file del ramo di prima, o un blocco *Sostituisci con* in quelli del ramo nuovo.
-6. Poi, ciascuno nella sua sessione: il **pre-controllo** delle quattro domande di `CLAUDE.md`, compito per compito — il 6 e il 7
-   compresi —; poi l'esecuzione.
+   5. il metodo dei compiti 6 e 7: il codice si applica sul banco, in un ramo suo — `task8` da `cures` —, le prove e i
+      rossi girano lì, e uno script compone il testo del compito dai file del ramo con `git show`, e rifiuta se un blocco
+      *Trova* non è unico nei file del ramo di prima, o un blocco *Sostituisci con* in quelli del ramo nuovo;
+   6. ⚠️ ogni corsa della suite col suo **rapporto JSON** — `flake_runs.py` —, e una caduta è una voce del piano, non una
+      corsa da ripetere: P-20 e P-21 si sono viste così, e il messaggio della seconda si era perso in un `grep`.
+4. Poi, ciascuno nella sua sessione: il **pre-controllo** delle quattro domande di `CLAUDE.md`, compito per compito — il 6
+   e il 7 compresi —; poi l'esecuzione.
 
 | Compito | Le forme già decise |
 |---|---|
 | 8 | la barra: `BaseButton` col nome della vista e l'icona `views`, la ricerca `BaseTextField type="search"` spenta, il chip; il pulsante del cassetto **esce** dalla barra, perché «Moduli» scende nella striscia (la (d)). La Panoramica in `frame/Overview.vue` su `BaseDialog variant="full"`: carte `BaseButton variant="card"` con la miniatura, la vista corrente in bordeaux, l'ultima carta *«Salva questa vista»*; F3 in `Frame.vue`, ignorato mentre la finestra di conferma è aperta; le frecce con `nearest`. La striscia a pillola coi «moduli» `BaseButton pill` che apre il cassetto — ⛔ **lo stato aperto del cassetto vive in un negozio**, letto da `Drawer.vue` e scritto dalla striscia: la striscia è un pannello, cioè un'app Vue sua (`VueContent`), e non raggiunge un `ref` di `Drawer.vue` (R3-20). Nella miniatura il foglio `strip`, che sta in tutte le viste e non ha un'icona in `ICONS`: come si disegna lo dice la tavola della Panoramica, o lo decide il compito. Le prove: `axe` sulla Panoramica (controllo 17); nel browser la striscia a 12 e 24 px e **nessuna scheda vicina a un angolo della pagina** (controllo 19), le frecce e Invio nella Panoramica (R3-23). ⚠️ **Dalle *Interfaces* del compito 7:** la miniatura è `schematic(layout)`; una vista col nome si apre scrivendo `openNamed`, una delle tre con `showView`; *«Salva questa vista»* chiama `saveNamed(name, layout, shown)` — `shown`, i nomi che la cornice mostra per le tre viste, da `it.json` (D12) — e dice sotto il campo, in rosso, `"empty"` e `"taken"` (D4). ⚠️ **Dal compito 6:** il gruppo galleggiante è un `.dv-resize-container` con `role="dialog"`: col dock montato e un gruppo galleggiante, una prova che cerca `[role="dialog"]` ne trova due |
-| 9 | la riga «Accessibilità» da ✅ a 🔶 con le parole della legenda, **col richiamo datato**, e il comando del riquadro in testa al file rilanciato prima e dopo (controllo 21, R3-23); la riga **14** in coda alla roadmap e in *«Perché quest'ordine»* (prima del 13); `README.md`; la §12 e la §6 del compendio; `porta-di-qualita.md` — il browser nel cancello, e il prerequisito **Google Chrome, o `npx playwright install chrome`**: col canale `chrome` il Chromium scaricato non vale (R2-8); `riferimenti.md`, le fonti della scrittura del piano e della revisione; il pezzo JavaScript misurato, con la cifra per il proprietario, che ha N-2 (R3-25); la Definizione di «fatto» coi comandi |
+| 9 | la riga «Accessibilità» da ✅ a 🔶 con le parole della legenda, **col richiamo datato**, e il comando del riquadro in testa al file rilanciato prima e dopo (controllo 21, R3-23); la riga **14** in coda alla roadmap e in *«Perché quest'ordine»* (prima del 13); `README.md`; la §12 e la §6 del compendio; `porta-di-qualita.md` — il browser nel cancello, e il prerequisito **Google Chrome, o `npx playwright install chrome`**: col canale `chrome` il Chromium scaricato non vale (R2-8); `riferimenti.md`, le fonti della scrittura del piano e della revisione — fra queste le due righe di `vitest` 4.1.11 lette per P-21, l'attesa di base di `expect.poll` e il tempo di una prova nel browser; il pezzo JavaScript misurato, con la cifra per il proprietario, che ha N-2 (R3-25); la Definizione di «fatto» coi comandi |

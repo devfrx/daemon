@@ -185,3 +185,39 @@ in [`archivio/consegna-avvio-ridimensionamento-lettura.md`](consegna-avvio-ridim
 
 **Il compito della sessione successiva** lo dice la §6 del compendio: il **design system** — scrivere il compito 9 e la
 Definizione di «fatto» del [piano](../superpowers/plans/2026-09-23-design-system.md), come dice la sua sezione *«Come si riprende»*.
+
+## La chiusura del verbale, del 2026-09-24, sera — archiviata il 2026-09-24, notte
+
+⚠️ **Vera il giorno in cui fu scritta.** Uscita dal [verbale](../superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md)
+quando la sessione della riscrittura di `porta-di-qualita.md` ha scritto la propria: un documento vivo tiene **una**
+chiusura (`CLAUDE.md`). Parola per parola, coi link riscritti per questa cartella, e col titolo sceso di un livello.
+
+### Come si riprende — scritto alla chiusura della sessione del 2026-09-24, sera
+
+⛔ **DA SAPERE SUBITO: la passata è A METÀ, e la sua materia prima NON è in git.** Albero pulito, tutto pushato, nessun
+subagente in corso, nessun codice di prodotto toccato. La chiusura precedente sta, parola per parola, in
+[`archivio/consegna-avvio-ridimensionamento-lettura.md`](consegna-avvio-ridimensionamento-lettura.md).
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin`: `git fetch --all --prune`, poi `git status -sb` |
+| **i commit della sessione** | `git log --oneline c4ec042..HEAD` |
+| **la CI** | coi due comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), il paragrafo *«Leggere la CI da terra»*: si legge **per prima** quella del commit di questa sessione |
+| **cancello** | `bash scripts/gate.sh`, **da solo**, → `GATE GREEN` prima del commit; `bash scripts/check-docs.sh` → `OK` |
+| **la materia prima** | sulla macchina `zagor`, in `.lean-docs/` alla radice del repository, esclusa da git con `.git/info/exclude`: `prima/docs/porta-di-qualita.md`, la fotografia del file com'era a `c4ec042`; `mandato-comune.md`, il mandato dei quattro lettori; `inventario-S0-S5.md`, la testa e la coda, e `inventario-S1.md`…`inventario-S4.md`, le righe 83–1033, 1034–2072, 2073–3091 e 3092–4763. ⚠️ **Su un'altra macchina non esiste**, e l'inventario si rifà col costo della decisione 9 |
+
+**Il compito della sessione successiva** — le fasi 3 e 4 di `lean-docs`, in una sessione nuova:
+
+1. `git fetch --all --prune`, `git status -sb`; la CI della chiusura, per prima.
+2. Gli inventari, a pezzi, e l'**unione fra le fette**, che non è ancora fatta: i duplicati fra una fetta e l'altra si
+   vedono solo lì.
+3. `archivio/porta-di-qualita-storico.md`: il file di oggi intero, con una testa d'archivio e i soli link riscritti per
+   la cartella; la prova è il `diff` contro `git show c4ec042:docs/porta-di-qualita.md`, che deve mostrare **solo** i link.
+4. `porta-di-qualita.md` riscritto con le unità vive, una sezione alla volta, con l'indice verso l'archivio; ogni unità
+   viva contraddetta porta il suo segno, e la lista delle contraddizioni sta in fondo.
+5. La prova che non manca niente: lo script `misura.py` della skill, `--prima .lean-docs/prima/ --dopo docs/porta-di-qualita.md`;
+   gli `awk` e il `grep -cE` qui sopra, che rendono **lo stesso** di prima; il ciclo degli orfani, che non ne rende di più;
+   `check-docs.sh` e `gate.sh`; e un sotto-agente che legge **solo** il file nuovo e risponde alle domande di controllo
+   degli inventari.
+6. Le misure prima e dopo, coi comandi, in [`riferimenti.md`](../riferimenti.md), *«Sfoltimento del compendio»*; il
+   verbale qui; `.lean-docs/` cancellata; commit e push.

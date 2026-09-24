@@ -2407,6 +2407,36 @@ passata **768** token, in gran parte il verbale di una cella che *«ha detto il 
 python -c "import io,tiktoken; e=tiktoken.get_encoding('cl100k_base'); L=io.open('docs/COMPENDIO.md',encoding='utf-8').read().split(chr(10)); print([len(e.encode(l)) for l in L if 'CHIUSA NELLA METÀ CHIUDIBILE' in l])"
 ```
 
+### La compressione di `porta-di-qualita.md` — 2026-09-24: il vivo riscritto, l'archivio intero
+
+⛔ **Il file com'era sta intero in [`archivio/porta-di-qualita-storico.md`](archivio/porta-di-qualita-storico.md)**, e il
+vivo porta solo le unità vive, con la lista delle contraddizioni e l'indice *«Dove è finita ogni sezione di prima»* in
+fondo. Il mandato e le decisioni stanno nel
+[verbale](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md), sezione della sera del 2026-09-24. Prima e
+dopo, `cl100k_base`, limite inferiore, i byte coi fine-riga normalizzati a LF:
+
+```bash
+python -c "import io,subprocess,tiktoken; e=tiktoken.get_encoding('cl100k_base'); a=subprocess.run(['git','show','c4ec042:docs/porta-di-qualita.md'],capture_output=True).stdout.decode('utf-8'); b=io.open('docs/porta-di-qualita.md',encoding='utf-8').read(); print(len(e.encode(a)), len(e.encode(b)), len(a.encode('utf-8')), len(b.encode('utf-8')))"
+```
+
+📌 **Il verbale del 2026-09-24:** da **208 465** a **102 653** token, da **632 738** a **317 783** byte, da **5236** a
+**2539** righe.
+
+✅ **La prova che non manca niente, in cinque metà.**
+
+| Controllo | Esito |
+|---|---|
+| i due `awk` della §6 del [compendio](COMPENDIO.md), i due dei chiusori dentro il file, il `grep -cE` del blocco C e il ciclo degli orfani, lanciati prima e dopo | uscite **identiche** |
+| lo script `misura.py` di `lean-docs`, il file vivo con l'archivio | **zero** àncore perse, **zero** riferimenti rotti |
+| lo stesso script sul solo file vivo | le àncore uscite sono cronaca; quelle che le righe delle unità vive dell'inventario nominavano sono state rilette una per una |
+| la contabilità: ogni unità viva dell'inventario ha un destino scritto | nessuna senza destino |
+| un sotto-agente che legge **solo** il file nuovo, sulle domande di controllo dell'inventario | **quindici** risposte su quindici, giuste |
+
+⚠️ **Una debolezza del ciclo degli orfani, trovata comprimendo:** il ciclo cerca il **nome di base** del file, quindi
+nominare un sorgente omonimo — `crates/kernel/src/serving.rs` — fa sparire dall'elenco il banco
+`crates/kernel/tests/serving.rs`, che resta orfano. Misurato nelle due direzioni sul file riscritto: la riga col percorso
+del sorgente toglieva `serving.rs` dagli orfani, riscritta senza il percorso lo rimetteva. **Registrata, non presa.**
+
 ---
 
 ## Riconoscimento gesti dalla telecamera — le fonti del disegno del 2026-09-03 (ADR-0038, ADR-0039)

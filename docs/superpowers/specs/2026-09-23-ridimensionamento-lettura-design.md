@@ -5,7 +5,7 @@ consegna dell'avvio, scritta alla chiusura della sessione del [disegno del desig
 quel testo sta, **parola per parola**, in
 [`archivio/consegna-avvio-ridimensionamento-lettura.md`](../../archivio/consegna-avvio-ridimensionamento-lettura.md), col
 punto fermo scritto a metà sessione. ✅ **Richiamo del 2026-09-24:** qui anche la seconda passata, la **compressione senza perdite del compendio** — la
-sezione in coda, prima di *«Come si riprende»*. ✅ **E, la sera dello stesso giorno, la terza, a metà:** la compressione di `porta-di-qualita.md` — la sezione che segue la seconda. ⚠️ **Non è una spec e non è un disegno.** Il prossimo passo sta nella §6 del
+sezione in coda, prima di *«Come si riprende»*. ✅ **E, la sera dello stesso giorno, la terza:** la compressione di `porta-di-qualita.md`, chiusa quella notte — la sezione che segue la seconda. ⚠️ **Non è una spec e non è un disegno.** Il prossimo passo sta nella §6 del
 [compendio](../../COMPENDIO.md), in un posto solo.
 
 ## Il mandato
@@ -73,7 +73,7 @@ sezioni toccate.
 | la nota di memoria `lettura-obbligatoria-a-blocchi-di-400-righe.md` e l'indice della memoria | la prima è ancora un diario di aggiunte datate, il secondo ha righe lunghe: erano la via **B**, non scelta |
 | l'ordine della §10 | la trappola 6 sta prima della 5, e lo ha notato il sotto-agente; era così anche prima, e riordinare non è comprimere |
 
-## La passata del 2026-09-24, sera — `porta-di-qualita.md`, a metà
+## La passata del 2026-09-24, sera — `porta-di-qualita.md`
 
 Il proprietario ha rilanciato `lean-docs` chiedendo quali fossero i file più grandi. La misura — `git ls-files '*.md' |
 xargs wc -c | sort -rn | head`, e i token col comando di `tiktoken` di `CLAUDE.md` puntato su quei file — ha detto che i
@@ -105,32 +105,63 @@ riconteggi — accanto alle unità vive. Per questo la decisione 10 archivia il 
 Le contraddizioni, contate negli inventari, sono **43**: fatti scritti al presente che il codice di oggi o un'altra parte
 dello stesso file smentisce. Sono **registrate, non risolte**, in ciascun inventario con la prova.
 
-## Come si riprende — scritto alla chiusura della sessione del 2026-09-24, sera
+### La riscrittura, la stessa sera
 
-⛔ **DA SAPERE SUBITO: la passata è A METÀ, e la sua materia prima NON è in git.** Albero pulito, tutto pushato, nessun
-subagente in corso, nessun codice di prodotto toccato. La chiusura precedente sta, parola per parola, in
+| | La domanda | La risposta | Dove sta |
+|---|---|---|---|
+| 13 | la riscrittura: quattro sotto-agenti Opus, uno per fetta e ciascuno nel proprio file, o il coordinatore da solo, in fila? | **A**, i quattro — costo detto prima, 1,4–1,9M token compreso il lettore delle domande di controllo; speso circa 1,26M per i quattro e 0,22M per il lettore | la riscrittura, fuori da git e poi cancellata |
+
+✅ **Fatta.** Il file com'era sta intero in archivio da `c6926c5`; il vivo porta le unità vive, riscritte, e due sezioni
+nuove in fondo: *«Le contraddizioni registrate, e non risolte»* e *«Dove è finita ogni sezione di prima»*. Delle
+intestazioni di prima ne restano tutte tranne **sette**, che stanno solo in archivio. Le misure, il comando che le rifà e
+la prova che non manca niente stanno in [`riferimenti.md`](../../riferimenti.md), *«Sfoltimento del compendio»*,
+sottosezione della compressione di `porta-di-qualita.md`.
+
+📌 **Le regole con cui la riscrittura ha deciso, dove l'inventario proponeva altro:**
+
+- **Una voce aperta tiene il suo testo pieno nella sua sezione**, anche dove l'inventario proponeva un rimando alle
+  tabelle in fondo: quelle tabelle la **indicizzano**, per titolo del riquadro.
+- **Una voce che il codice dice chiusa resta com'era, col segno** — decisione 11. Lo stesso per un nome di file che il
+  file vivo abbreviava: non si scrive per esteso, perché lo toglierebbe dagli orfani, e sarebbe una correzione.
+- **I nomi con cui il codice punta al registro** — *«section "P-2"»*, *«row 15 of the mutation campaign»*, *«OPEN ENTRY
+  3»* — si risolvono nell'indice in fondo al file vivo, e i commenti nel codice non sono toccati — decisione 10.
+
+📌 **Le contraddizioni, dopo la riscrittura.** Quelle che stavano in un'unità viva sono **segnate** nel file vivo ed
+elencate in fondo, più tre trovate riscrivendo — la voce V6 che il gotcha #63 dà per chiusa, l'oracolo di
+`grant_has_no_constructor.rs` che oggi nomina anche `issuer`, e *«questa sezione è l'ultima del file»* della tabella del
+Traguardo 6. **Una si è sciolta riscrivendo:** il terzo `grep` delle due tabelle perdeva due siti del Traguardo 6 perché
+la frase andava a capo in mezzo, e ora sta su una riga. **Le altre sono uscite con la cronaca**, e in archivio restano
+vere come verbale del loro giorno:
+
+| Fetta | Uscite con la cronaca |
+|---|---|
+| righe 83–1033 | il puntatore *«righe 113–122 qui sopra»*, stantio; *«gli altri quattro»* del blocco B; le due copie datate di *«il caso negativo ora nomina il percorso decisionale»*. ⚠️ **E una lacuna, non una frase:** sei casi `compile_fail` che la tabella del Livello 1 non nomina, due dei quali orfani |
+| righe 1034–2072 | *«il TERZO modulo di test in `src/`»*; i «dodici» test di `arbiter_policy.rs`; i numerali della tabella delle contro-sonde. ⚠️ Non segnata, perché è la definizione di una mutazione passata: l'*«array a mano di cinque voci»* di `frozen_bytes.rs` |
+| righe 2073–3091 | i tre `.cbor`; i sette passi e le tre campagne del cancello; il secondo tempo di 1,45 s; il panico citato a `framing.rs:83:32`; i conteggi di test di due banchi; la campagna DST «parziale»; il campo unitario `Grant(())` |
+| righe 3092–4763 | *«the counter moves only on an `Ok`»* tenuta da una sonda sola, superata da S-1 e S-2 |
+
+**Registrate, non prese:**
+
+| | Perché no, oggi |
+|---|---|
+| la correzione delle contraddizioni segnate | è la decisione 11: una sessione loro, che il proprietario non ha ancora collocato. La lista è in fondo a [`porta-di-qualita.md`](../../porta-di-qualita.md) |
+| comprimere anche `HANDOFF.md` e `riferimenti.md` | la decisione 8 diceva *«dopo, se regge»*: se e quando è del proprietario |
+| un'intestazione propria per le voci aperte **1**, **2** e **3** | stanno sotto il titolo di T-1 e T-2, che non le nomina; la riscrittura tiene le intestazioni di prima, e il codice le trova col loro numero |
+| la debolezza del ciclo degli orfani | cerca il nome di base, e un sorgente omonimo la acceca: la misura in [`riferimenti.md`](../../riferimenti.md) |
+
+## Come si riprende — scritto alla chiusura della sessione del 2026-09-24, notte
+
+✅ **La passata è chiusa, e questo file è il suo verbale: qui non c'è niente da riprendere.** Albero pulito, tutto
+pushato, nessun subagente in corso, nessun codice di prodotto toccato, e `.lean-docs/` cancellata. La chiusura
+precedente sta, parola per parola, in
 [`archivio/consegna-avvio-ridimensionamento-lettura.md`](../../archivio/consegna-avvio-ridimensionamento-lettura.md).
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin`: `git fetch --all --prune`, poi `git status -sb` |
-| **i commit della sessione** | `git log --oneline c4ec042..HEAD` |
+| **i commit della sessione** | `git log --oneline c6926c5..HEAD` |
 | **la CI** | coi due comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), il paragrafo *«Leggere la CI da terra»*: si legge **per prima** quella del commit di questa sessione |
-| **cancello** | `bash scripts/gate.sh`, **da solo**, → `GATE GREEN` prima del commit; `bash scripts/check-docs.sh` → `OK` |
-| **la materia prima** | sulla macchina `zagor`, in `.lean-docs/` alla radice del repository, esclusa da git con `.git/info/exclude`: `prima/docs/porta-di-qualita.md`, la fotografia del file com'era a `c4ec042`; `mandato-comune.md`, il mandato dei quattro lettori; `inventario-S0-S5.md`, la testa e la coda, e `inventario-S1.md`…`inventario-S4.md`, le righe 83–1033, 1034–2072, 2073–3091 e 3092–4763. ⚠️ **Su un'altra macchina non esiste**, e l'inventario si rifà col costo della decisione 9 |
+| **cancello** | `bash scripts/gate.sh`, **da solo**, → `GATE GREEN`; `bash scripts/check-docs.sh` → `OK` |
 
-**Il compito della sessione successiva** — le fasi 3 e 4 di `lean-docs`, in una sessione nuova:
-
-1. `git fetch --all --prune`, `git status -sb`; la CI della chiusura, per prima.
-2. Gli inventari, a pezzi, e l'**unione fra le fette**, che non è ancora fatta: i duplicati fra una fetta e l'altra si
-   vedono solo lì.
-3. `archivio/porta-di-qualita-storico.md`: il file di oggi intero, con una testa d'archivio e i soli link riscritti per
-   la cartella; la prova è il `diff` contro `git show c4ec042:docs/porta-di-qualita.md`, che deve mostrare **solo** i link.
-4. `porta-di-qualita.md` riscritto con le unità vive, una sezione alla volta, con l'indice verso l'archivio; ogni unità
-   viva contraddetta porta il suo segno, e la lista delle contraddizioni sta in fondo.
-5. La prova che non manca niente: lo script `misura.py` della skill, `--prima .lean-docs/prima/ --dopo docs/porta-di-qualita.md`;
-   gli `awk` e il `grep -cE` qui sopra, che rendono **lo stesso** di prima; il ciclo degli orfani, che non ne rende di più;
-   `check-docs.sh` e `gate.sh`; e un sotto-agente che legge **solo** il file nuovo e risponde alle domande di controllo
-   degli inventari.
-6. Le misure prima e dopo, coi comandi, in [`riferimenti.md`](../../riferimenti.md), *«Sfoltimento del compendio»*; il
-   verbale qui; `.lean-docs/` cancellata; commit e push.
+**Il prossimo passo** non vive qui: sta nella §6 del [compendio](../../COMPENDIO.md). Ciò che questa passata lascia, e
+che nessuno ha ancora collocato, sta nella tabella *«Registrate, non prese»* della riscrittura, qui sopra.

@@ -615,8 +615,7 @@ Qui resta lo stato di oggi: è l'unico posto dove vive il prossimo passo, e più
 mandato del 2026-09-09 che sfoltì la lettura, stanno in [`archivio/stato-storico.md`](archivio/stato-storico.md), parola
 per parola.
 
-⏭️ **PRIMA DEI DUE TEMPI, la compressione di [`porta-di-qualita.md`](porta-di-qualita.md)** con `lean-docs`, per decisione del proprietario del 2026-09-24: l'inventario è fatto, la **riscrittura** è la sessione successiva, e da dove si riprende lo dice la *«Come si riprende»* del
-[verbale degli sfoltimenti](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md). ⚠️ La sua materia prima vive fuori da git, sulla macchina `zagor`.
+📌 **La compressione di [`porta-di-qualita.md`](porta-di-qualita.md) è fatta, il 2026-09-24:** il file com'era sta intero in [`archivio/porta-di-qualita-storico.md`](archivio/porta-di-qualita-storico.md). ⏳ **Resta la correzione delle contraddizioni** che la compressione ha segnato e non corretto — decisione 11 del [verbale degli sfoltimenti](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md) —, una sessione loro che il proprietario **non ha ancora collocato**: la lista sta in fondo a quel file.
 
 ⏭️ **IL PROSSIMO PASSO, IN DUE TEMPI. Uno: il DESIGN SYSTEM da Agentic OS** — stile definito, kit UI, temi e token
 centralizzati, per decisione del proprietario (2026-09-21, trentasettesima chiusura del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md)).

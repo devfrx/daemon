@@ -162,3 +162,26 @@ quando la sessione della compressione del compendio ha scritto la propria: un do
 **Il compito della sessione successiva** lo dice la §6 del compendio: il **design system** — la rilettura del proprietario
 del disegno, poi il piano in una sessione nuova, come dice la sezione *«Come si riprende»* del
 [disegno](../superpowers/specs/2026-09-22-design-system-design.md).
+
+## La chiusura del verbale, del 2026-09-24 — archiviata il 2026-09-24, sera
+
+⚠️ **Vera il giorno in cui fu scritta.** Uscita dal [verbale](../superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md)
+quando la sessione della compressione di `porta-di-qualita.md` ha scritto la propria: un documento vivo tiene **una**
+chiusura (`CLAUDE.md`). Parola per parola, coi link riscritti per questa cartella, e col titolo sceso di un livello.
+
+### Come si riprende — scritto alla chiusura della sessione del 2026-09-24
+
+⛔ **DA SAPERE SUBITO: niente è a metà.** Albero pulito, nessuno stash, nessuna operazione git a metà, tutto pushato, nessun
+server acceso, nessun subagente in corso, nessun codice di prodotto toccato. La chiusura precedente sta, parola per parola,
+in [`archivio/consegna-avvio-ridimensionamento-lettura.md`](consegna-avvio-ridimensionamento-lettura.md).
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin`: `git fetch --all --prune`, poi `git status -sb` |
+| **i commit della sessione** | `git log --oneline 79d33b1..HEAD` |
+| **la CI** | coi due comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), il paragrafo *«Leggere la CI da terra»*: si legge **per prima** quella del commit di questa sessione |
+| **cancello** | `bash scripts/gate.sh`, **da solo**, → `GATE GREEN` prima del commit; `bash scripts/check-docs.sh` → `OK` |
+| **la memoria dell'agente** | fuori dal repository, sulla macchina `zagor`: la nota sul consumo della lettura porta la passata |
+
+**Il compito della sessione successiva** lo dice la §6 del compendio: il **design system** — scrivere il compito 9 e la
+Definizione di «fatto» del [piano](../superpowers/plans/2026-09-23-design-system.md), come dice la sua sezione *«Come si riprende»*.

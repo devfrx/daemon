@@ -190,6 +190,10 @@ altro, la riga lo dice e il compito segue la misura (`CLAUDE.md`: *«un'evidenza
 | **P-19** | ⛔ **la prova della tastiera del compito 5 era instabile**: `reka-ui` 2.10.4 clicca il radio in un `setTimeout(0)` dopo il fuoco, e solo se una freccia è ancora premuta — il `keydown` alza il segno, il `keyup` lo toglie —; `userEvent.keyboard("{ArrowDown}")` preme e rilascia subito, e un `keyup` arrivato prima del timer non lascia niente di cliccato | `handleFocus` in `gui/node_modules/reka-ui/dist/RadioGroup/RadioGroupItem.js`, letto; sulla cartella di prova, dieci corse della suite intera: la prova rossa **una** volta sul codice del compito 5 e **due** col compito 7, `expected +0 to be 1` con *«Matcher did not succeed in time»*; col tasto tenuto, **nessuna** su dodici | il passo 1 del compito 5 corretto: `{ArrowDown>}`, l'`Invoke` atteso, `{/ArrowDown}` — il tasto tenuto come lo tiene una mano; e il passo 7 del compito 7 fa girare la suite cinque volte |
 | **P-20** | ⛔ **la prova delle parole dei moduli può andare rossa per il tempo**: `has a name for every module type` di `gui/src/locales/copy.test.ts` — della parte 2 — fa `await import("../panels/registry")` **nel suo corpo**, quindi il grafo del registro — `vue`, `vue-i18n`, il segnaposto, la striscia e, dal compito 5, i pezzi di base — si carica **dentro** i 5 s della prova: rossa **due** volte il 2026-09-24, `5177ms` e `5027ms`, in 67 corse della suite intera coi compiti 1–7 | la durata della prova nel rapporto JSON di `vitest`, sulla cartella di prova: sul codice di `70500c0` 1,3–1,4 s, 2,5 s a freddo; coi compiti 1–7 da 0,5 a 5,2 s, secondo quando il file gira nella suite — e 2,4–3,5 s anche con `--maxWorkers=8`, quindi non è la memoria — 🔶 dedotto, la coda delle trasformazioni di `vite`, che serve tutti i processi; una sonda per strato, sotto jsdom, dà il primo `.vue` — `BaseIcon.vue`, che porta `vue` e la prima trasformazione — a 751–826 ms | il passo 2 del compito 5, che tocca già quel file: `PANEL_TYPES` e `THEME_CHOICES` importati **in cima**, e le due prove senza `await` — dopo, 6–24 ms. È la regola che lo stesso file scrive per il linter, *«A guard that can go red for being slow guards nothing»*, e la forma di tutti gli altri file di prova. Le due `await import("./Band.vue")` di `frame.test.ts` restano: costano al massimo 95 ms, perché gli import in cima al file hanno già caricato il resto |
 | **P-21** | ⛔ **la prova del tema che segue il sistema è caduta una volta, e la causa NON si è trovata**: `follow the system's scheme through the real query while the choice is system` di `gui/src/tokens/tokens.browser.test.ts`, rossa **una** volta in 1331 ms — nessun evento entro il secondo che `expect.poll` aspetta di base in `vitest` 4.1.11, mentre una prova nel browser ne ha **15**. ⚠️ E la misura ha trovato un secondo difetto, nella prova: su un Windows in tema scuro il primo cambio, verso lo scuro, **non cambia nulla**, e passa anche con `watchTheme` sordo al sistema | `defaults.timeout ?? 1e3` e `resolved.testTimeout ??= resolved.browser.enabled ? 15e3 : 5e3`, letti nel pacchetto installato. Escluso, misurato il 2026-09-24 sulla cartella di prova: **la priorità** — le pagine delle prove girano a 8, e a 4 stanno i quattro processi con `--top-chrome-webui`, l'interfaccia di Chrome, e uno da 0,16 s di CPU; **la CPU piena** — 28 processi occupati a priorità normale, la prova a 35–98 ms in cinque corse; **la memoria piena** — all'avvio di ogni corsa la memoria disponibile scende da 3–5 GB a 68–150 MB, e una sonda accanto non ha mai visto l'evento oltre 12 ms, un fotogramma oltre 8, un timer oltre 21, in 34 corse; **la sequenza del file** — caratteri, movimento, alto contrasto col Tab, tema — ripetuta 1320 volte nella suite, mai oltre il secondo. Il tema scuro: `AppsUseLightTheme` vale 0, e con `watchTheme` sordo il rosso cade al **secondo** cambio, `expected 'dark' to be 'light'` | ✅ **scelto dal proprietario il 2026-09-24 — A**: il compito 2 dà al progetto `browser` `expect: { poll: { timeout: 5000 } }`, una volta per le tre attese del piano — un valore in ritardo passa, uno che non arriva resta rosso, un'attesa verde finisce subito —, con la prova del suo effetto al passo 5; e la prova del tema parte da un tema **noto**, così i due cambi vogliono l'evento su ogni macchina. La causa resta **non trovata**: se la prova ricade si riparte dagli attrezzi di `pds\tools\flakes\` e dal rapporto JSON, mai da un `grep` |
+| **P-22** | **il cassetto rende il fuoco al pulsante della striscia anche senza un `DialogTrigger`**: aperto dal negozio (R3-20) e chiuso con Esc, il fuoco torna al pulsante *«moduli»*, che sta in un'altra app di Vue. Torna all'elemento che aveva il fuoco **prima** di aprire: col pulsante tolto dal fuoco prima del clic, torna al `body`. ⚠️ La lettura del codice lasciava attendere il contrario — la chiusura di `DialogContentModal` ferma il ritorno di base e dà il fuoco al `triggerElement`, qui assente — e la causa non è letta fino in fondo | una sonda nel Chrome installato, il 2026-09-24 sulla cartella di prova: dopo Esc `document.activeElement` è il pulsante; la riga *«il fuoco che torna»* del passo 9 del compito 8, il `blur()` prima di aprire; `onCloseAutoFocus` in `gui/node_modules/reka-ui/dist/Dialog/DialogContentModal.js` e lo smontaggio in `dist/FocusScope/FocusScope.js`, letti | nessuna cura; una prova del compito 8 nel browser tiene il fatto, perché un aggiornamento di `reka-ui` lo potrebbe cambiare senza che niente diventi rosso |
+| **P-23** | ⛔ **`mount` di `@vue/test-utils` 2.5.0 non monta sull'elemento che riceve**: crea un `div` suo dentro `attachTo` e monta lì, e quel `div` non ha altezza — la regola di `App.vue` su `html, body, #app` non lo raggiunge. La cornice esce alta **116** px, il dock **0**, e la striscia a metà pagina, dove la fascia della connessione le ruba il clic | una sonda nel browser il 2026-09-24: `.frame` alto 116 dentro un `#app` di 900; montata con `createApp(App).mount(host)`, 900, e il dock 784 | la prova del compito 8 nel browser monta `App.vue` come la monta `main.ts` |
+| **P-24** | **la pillola della striscia è alta 50 px, non 56**: le viste spedite danno alla sua riga 56 — `minimumHeight` e `maximumHeight` del pannello `strip` in `panels/views/*.json` — e il `gap` del dock, `--space-3`, se ne prende metà | la stessa sonda: il gruppo della striscia da 826 a 876, in una finestra alta 900 | il compito 8 mette il pulsante grande, 40, a `--space-1` più il bordo dal filo della pillola, sopra, sotto e a destra: la regola della risposta 4, *«dentro una pillola va una pillola»* |
+| **P-25** | **il commento di `testing/axe.ts` contava i suoi utenti** — *«Two users since the design system's task 3»* — e il compito 4 ne aggiunge un terzo, `kit/kit.browser.test.ts`: dal compito 4 il commento è falso (gotcha #58) | `grep -rln 'testing/axe' gui/src` sulla cartella di prova coi compiti 1–4: tre file | ✅ **corretto nel compito 3** il 2026-09-24: il commento dice chi è arrivato per secondo, e un conto non c'è più; `contrastJudged`, che il compito 8 porta lì, nasce nella stessa forma |
 
 ## Le decisioni prese scrivendo il piano
 
@@ -212,6 +216,11 @@ che il disegno lasciava al piano; ciascuna si ribalta con una riga.
 | **D11** | **la faccia della presa grande è un `.vue`**, `frame/BigTabFace.vue`, che `BigTab.ts` monta come `VueContent` monta un pannello | una funzione `h()` dentro `BigTab.ts` avrebbe fatto lo stesso, ma fuori dalla vista del linter dei template — la trappola 5 in un'altra forma; col `.vue` le regole di `harness/panels-and-frame` e di `no-raw-text` la leggono. Costo: un'app Vue per linguetta, smontata in `dispose` e provata |
 | **D12** | **`saveNamed` riceve da chi la chiama i nomi che la cornice mostra per le tre viste, e due nomi sono lo stesso nome a meno degli spazi intorno e delle maiuscole** | nessun negozio legge le parole di `it.json`, e farlo ne farebbe il primo; «Home» e «home», affiancate nella Panoramica, si leggerebbero come una vista sola. ✅ **Scelto dal proprietario il 2026-09-23 — A**, il confronto senza le maiuscole e gli spazi intorno, contro B, il confronto esatto. Costo: un parametro in più, che la Panoramica del compito 8 passa; e «Revisione» e «revisione» non possono essere due viste |
 | **D13** | **`showView(view)` nel negozio: aprire una delle tre viste chiude quella col nome** | la regola vive dov'è lo stato, e una prova del negozio la raggiunge: nessuna prova monta `Frame.vue`. Costo: `Frame.switchTo` chiama `showView` invece di scrivere `view`; le prove che scrivono `view` restano valide, perché lì nessuna vista col nome è aperta |
+| **D14** | **la miniatura non disegna la striscia** | sta in ogni vista, uguale, senza un'icona in `ICONS`, e le miniature della tavola della Panoramica non la disegnano: il *«come si disegna»* che il *«Come si riprende»* lasciava alla tavola o al compito. Costo: in fondo a ogni miniatura resta una fascia vuota, alta quanto la riga della striscia |
+| **D15** | **la domanda della conferma vive nel negozio, `useInvoke().asking`**, e `Confirm.vue` la legge da lì | la leggono in due — la finestra e F3 della cornice — e due copie della regola di D59 divergerebbero (gotcha #68). Costo: un getter in più nel negozio |
+| **D16** | **F3 tace anche mentre il cassetto è aperto**, non solo sotto la conferma | la ragione del *«Come si riprende»* — una finestra modale sopra un'altra ne copre la domanda — vale per il cassetto allo stesso modo. Costo: col cassetto aperto F3 non fa niente, ed Esc lo chiude |
+| **D17** | **una carta sola nel giro del Tab**, l'ultima che le frecce hanno raggiunto, e il fuoco apre sulla vista che si vede | la decisione 19 del disegno lasciava al piano *«come si tiene il fuoco su un elemento solo»*; col Tab su ogni carta la griglia costerebbe un tasto per carta. Costo: a *«Salva questa vista»* si arriva con le frecce |
+| **D18** | **la miniatura di Compatta è il suo schema, non una «finestrella»** | la (d) scrive *«Compatta come una finestrella»*, dalla tavola della risposta 13; la risposta 19 ha deciso poi gli schemi *«dalla disposizione salvata»*, che *«dicono sempre il vero»* — e la Compatta di oggi è una disposizione a finestra piena, un segnaposto che dice di esserlo: la sua forma vera è del sotto-progetto 10. Una finestrella disegnata direbbe ciò che non è. Costo: fino al 10 la miniatura di Compatta mostra la knowledge base a tutta pagina. ⚠️ **Del proprietario**, se la vuole come nella tavola |
 
 ## Le voci aperte che questo piano SA, e non chiude
 
@@ -228,6 +237,7 @@ Rilette il 2026-09-23 coi due comandi della §6 del compendio e con la tabella d
 | **AUD-004** | del proprietario | niente: sbarra il sotto-progetto 13, non questo |
 | la **finestra** del guscio — `titleBarOverlay`, `setTitleBarOverlay`, gli angoli di Windows; e la **prima pittura**: i ruoli vivono solo sotto `[data-theme]`, che lo script mette dopo l'analisi del documento, quindi prima dello script la finestra non ha fondo (R1-13 della revisione, dedotto e non misurato) | del sotto-progetto **10** | niente: le regole della (d) restano scritte nel disegno per chi farà il guscio; per la prima pittura il rimedio è del guscio — il `backgroundColor` della finestra, o mostrarla a `ready-to-show` |
 | i **tre difetti di accessibilità** che `axe` trova sul dock — `nested-interactive` sulle linguette, il nome della linguetta uguale all'id del pannello, `aria-level` e `aria-label` sul contenitore galleggiante (P-18) | del proprietario | niente: vengono dalla parte 2 e da `dockview-core`, e toglierli cambia la presa grande giudicata con SP-8 — i comandi fuori dalla linguetta, un `title` in italiano dentro le viste salvate. Il compito 6 li misura e non li nasconde: nessuna prova `axe` sul dock con quelle regole spente |
+| 🔶 **con una finestra modale aperta — la conferma, il cassetto e, dal compito 8, la Panoramica — Ctrl+Alt+frecce muovono ancora le tessere del dock sotto il velo**: `onKey` di `Frame.vue` non guarda le finestre aperte, da prima del design system. Dedotto leggendo il codice il 2026-09-24, **non misurato** | del proprietario | niente: non è nella (d); la cura sarebbe una riga in `onKey`, come il silenzio di F3 (D16), con una prova che conti i `SaveLayout` |
 
 ---
 ## Compito 1: i token — la tavola copiata, il tema sulla radice, i nomi nuovi
@@ -1681,8 +1691,8 @@ Crea `gui/src/testing/axe.ts` (LF):
 import axe from "axe-core";
 
 /**
- * Every violation axe finds under a node, as `rule: targets`, and nothing else. Two users since the design system's
- * task 3 -- `a11y.test.ts` and `components/kit.test.ts` -- so it lives here once.
+ * Every violation axe finds under a node, as `rule: targets`, and nothing else. Its second user came with the design
+ * system's task 3 -- `components/kit.test.ts`, after `a11y.test.ts` -- so it lives here once.
  *
  * ⛔ `color-contrast` IS OFF UNLESS ASKED, AND NOT IGNORED: under jsdom axe files it under `incomplete` every time --
  * there is no layout to read a background from (measured on 2026-09-15, P-86 of part 2) -- so a green from it would
@@ -6305,73 +6315,1616 @@ compito 6 (R1-16) —; `bash scripts/gate.sh` da solo, `bash scripts/check-docs.
 viste col nome, sotto …` — coi fine-riga rimisurati, e `git push`.
 
 ---
-## Come si riprende — P-20 e P-21 chiuse, 2026-09-24
+## Compito 8: la cornice — la barra col nome della vista, la Panoramica, la striscia a pillola
 
-⚠️ **Il piano è A METÀ, e non si esegue.** Scritti: la testa e i **compiti 1–7**; da scrivere: i compiti **8** e **9** e la
-**Definizione di «fatto»**. Il 6 e il 7 non li ha letti nessun revisore: li legge il pre-controllo. La consegna precedente
-sta parola per parola in [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
+**Da:** la (d) del disegno, *«La barra»*, *«La Panoramica»* e la riga *«la striscia»* di *«La finestra»*; i controlli **17**
+e **19**; le decisioni **18**–**20** del disegno; **P-11**, **P-22**…**P-25**, **D4**, **D12**, **D14**…**D18** di questo
+piano; R3-20, R3-23 e R3-25 della revisione. La tavola della [Panoramica](../specs/2026-09-22-design-system-tavole/panoramica.html)
+dà la griglia a tre colonne, la carta corrente e *«Salva questa vista»* in fondo.
 
-✅ **Le due cadute della suite sono chiuse, e il banco non cade da solo.** **P-20**, la causa trovata, è una cura nel
-passo 2 del compito 5. **P-21**, la causa **non** trovata dopo una caccia che ha escluso priorità, CPU e memoria, ha
-l'attesa di `expect.poll` a 5 s nel progetto `browser` del compito 2 — scelta **A** del proprietario il 2026-09-24 — e la
-prova del tema che parte da un tema noto, con due righe nuove nelle direzioni rosse del suo passo 5. Le righe intere
-sono in testa, in *«Ciò che la scrittura del piano ha trovato»*; la memoria della macchina, che la caccia ha misurato,
-è una voce del proprietario in *«Le voci aperte che questo piano SA»*.
+**Files:**
+- Create: `gui/src/stores/drawer.ts`, `gui/src/frame/Overview.vue`, `gui/src/frame/frame.browser.test.ts`
+- Rewrite: `gui/src/frame/ViewBar.vue`, `gui/src/frame/Frame.vue`, `gui/src/frame/Drawer.vue`, `gui/src/panels/Strip.vue` —
+  ciascuno **per intero**, col terminatore che ha oggi
+- Modify: `gui/src/stores/invoke.ts`, `gui/src/components/Confirm.vue`, `gui/src/locales/it.json`, `gui/src/tokens/dock.css`
+- Modify: `gui/src/frame/frame.test.ts`, `gui/src/a11y.test.ts`, `gui/src/locales/copy.test.ts`,
+  `gui/src/frame/dock.browser.test.ts`, `gui/src/kit/kit.browser.test.ts`, `gui/src/testing/axe.ts`
+
+**Interfaces:**
+- Consumes: `BaseButton` — `variant="card"`, `pill`, `size="lg"`, `icon` —, `BaseDialog` — `variant="full"` e `"sheet"`,
+  `v-model:open`, lo slot `trigger` —, `BaseLabel`, `BaseIcon`, `BaseTextField` con `error`, `isIconName` e `type IconName`
+  (compito 3); `violations` di `testing/axe.ts` (compito 3); `concentricRadii`, `fits`, `iconsCentred` di
+  `testing/probes.ts` (compito 4); il progetto `browser` e `userEvent` (compito 2); `readToken` (compito 6); in `useLayout()`
+  `showView`, `openNamed`, `saved.named` e `saveNamed(name, layout, shown)`, e `nearest` con `type Direction`, e
+  `schematic` (compito 7).
+- Produces: `useDrawer()` da `stores/drawer.ts`, con `open: boolean`; in `useInvoke()` il getter `asking: boolean`;
+  `Overview.vue` — la prop `snapshot: () => SerializedDockview` e `v-model:open` —; in `ViewBar.vue` la prop `snapshot` e
+  `v-model:overview`; `contrastJudged(node: Element): Promise<{ passes: number; incomplete: number }>` da
+  `testing/axe.ts`; in `it.json` le chiavi `overview.*`, e `drawer.open` che dice *«moduli»*; la classe `view-name` sul nome
+  della vista e l'attributo `data-card` — `view`, `save` — sulle carte, che le prove leggono.
+
+⚠️ **Che cosa la scrittura di questo compito ha misurato**, il 2026-09-24 sulla cartella di prova coi compiti 1–7 e le
+cure di P-20 e P-21, nel Chrome installato 153 e sotto jsdom; le righe intere sono **P-22**…**P-25**, in testa al piano:
+
+| | Il fatto | Che cosa ne fa il compito |
+|---|---|---|
+| 1 | chiuso con Esc, il cassetto aperto dal negozio rende il fuoco al pulsante *«moduli»* della striscia, benché nessun `DialogTrigger` lo registri: il pulsante sta in un'altra app di Vue (**P-22**) | nessuna cura; una prova nel browser tiene il fatto, se un aggiornamento di `reka-ui` lo cambiasse |
+| 2 | `mount` di `@vue/test-utils` monta l'app in un `div` suo dentro l'elemento che riceve, e quel `div` non ha altezza: la cornice alta 116 px, il dock 0, la striscia a metà pagina (**P-23**) | la prova nel browser monta `App.vue` come la monta `main.ts`, con `createApp` su `#app` |
+| 3 | la pillola della striscia è alta **50** px: le viste spedite danno alla sua riga 56, e lo spazio fra le schede se ne prende metà di `--space-3` (**P-24**) | il pulsante grande, 40, sta a `--space-1` più il bordo dal filo della pillola, tutto intorno |
+| 4 | senza un core la fascia *«Il core non ha risposto»* sta fra la barra e il dock, e il dock prende il resto: la striscia resta a 24 px dal fondo | niente: le prove misurano la cornice com'è |
+| 5 | aperta la finestra, `reka-ui` dà il fuoco al primo elemento raggiungibile col Tab: con una carta sola nel giro del Tab (**D17**) è la vista che si vede | la prova delle frecce parte da lì |
+| 6 | il commento di `testing/axe.ts` contava i suoi utenti, e il compito 4 ne aggiunge un terzo (**P-25**) | il commento è corretto nel compito 3; qui `contrastJudged` nasce senza conto |
+
+- [ ] **Passo 1: rimisura il punto di partenza**
+
+```bash
+git status --porcelain > <scratchpad>/prima.txt
+grep -rn 'F3' gui/src
+ls gui/src/stores/drawer.ts
+grep -rn 'bar\.views' gui/src
+grep -n '"reka-ui"' gui/package.json
+```
+
+Atteso: `F3` **in nessun file** (P-11); `drawer.ts` **non c'è**; `bar.views` solo in `frame/ViewBar.vue`, che il compito
+riscrive — e la chiave esce da `it.json`; `reka-ui` a **2.10.4**, la versione su cui P-22 è misurato. Poi, da solo,
+`bash scripts/gate.sh` → `GATE GREEN`.
+
+- [ ] **Passo 2: le prove, prima del codice**
+
+In `gui/src/testing/axe.ts` (`replace_unique.py`) l'aiutante di R3-7 arriva dalla pagina kit — la sua seconda occorrenza è
+la cornice:
+
+*Trova*:
+
+```ts
+}
+
+```
+
+*Sostituisci con:*
+
+```ts
+}
+
+/**
+ * ⛔ THE NON-VACUITY OF `axe` (R3-7 of the review): an empty list of violations says something only if the contrast was
+ * JUDGED -- nodes among the passes, none left incomplete. Under jsdom axe files every contrast as incomplete; in the
+ * browser it must not. Its second user came with the design system's task 8 -- the frame, after the kit page -- so it
+ * lives here once.
+ */
+export async function contrastJudged(node: Element): Promise<{ passes: number; incomplete: number }> {
+  const results = await axe.run(node, { runOnly: ["color-contrast"] });
+  const count = (list: axe.Result[]): number => list.find((rule) => rule.id === "color-contrast")?.nodes.length ?? 0;
+  return { passes: count(results.passes), incomplete: count(results.incomplete) };
+}
+
+```
+
+In `gui/src/kit/kit.browser.test.ts` (`replace_unique.py`), due sostituzioni — l'aiutante esce,
+e l'import lo prende da `testing/axe.ts`:
+
+*Trova*:
+
+```ts
+import { mount } from "@vue/test-utils";
+import axe from "axe-core";
+import { afterEach, describe, expect, it } from "vitest";
+import { nextTick } from "vue";
+
+import "../tokens";
+import { violations } from "../testing/axe";
+```
+
+*Sostituisci con:*
+
+```ts
+import { mount } from "@vue/test-utils";
+import { afterEach, describe, expect, it } from "vitest";
+import { nextTick } from "vue";
+
+import "../tokens";
+import { contrastJudged, violations } from "../testing/axe";
+```
+
+*Trova:*
+
+```ts
+const roots = (selector: string): Element[] => [...document.querySelectorAll(selector)];
+
+/**
+ * ⛔ THE NON-VACUITY OF `axe` (R3-7 of the review): an empty list of violations says something only if the contrast was
+ * JUDGED -- nodes among the passes, none left incomplete. Under jsdom axe files every contrast as incomplete; here, in
+ * the browser, it must not.
+ */
+async function contrastJudged(node: Element): Promise<{ passes: number; incomplete: number }> {
+  const results = await axe.run(node, { runOnly: ["color-contrast"] });
+  const count = (list: axe.Result[]): number => list.find((rule) => rule.id === "color-contrast")?.nodes.length ?? 0;
+  return { passes: count(results.passes), incomplete: count(results.incomplete) };
+}
+
+```
+
+*Sostituisci con:*
+
+```ts
+const roots = (selector: string): Element[] => [...document.querySelectorAll(selector)];
+
+```
+
+In `gui/src/frame/dock.browser.test.ts` (`replace_unique.py`) la prova delle schede sa della striscia — dal compito 8 è una
+pillola, e la prova del compito 6 diventerebbe rossa:
+
+*Trova*:
+
+```ts
+    it("draws every group as a card, `--space-3` from its neighbours", async () => {
+      const { host } = await dock(theme);
+      const groups = [...host.querySelectorAll(".dv-groupview")];
+      // ⛔ NON-VACUITY: the Home view has groups side by side and one above the other.
+      expect(groups.length).toBeGreaterThan(2);
+      for (const group of groups) {
+        const style = getComputedStyle(group);
+        expect(style.borderTopLeftRadius).toBe(computed("border-top-left-radius", "--radius-card"));
+```
+
+*Sostituisci con:*
+
+```ts
+    it("draws every group as a card, and the strip as a pill, `--space-3` from its neighbours", async () => {
+      const { host } = await dock(theme);
+      const groups = [...host.querySelectorAll(".dv-groupview")];
+      // ⛔ NON-VACUITY: the Home view has groups side by side and one above the other.
+      expect(groups.length).toBeGreaterThan(2);
+      // ⛔ THE STRIP IS THE ONE PILL (the (d), task 8 of the plan): its group holds `Strip.vue`, and every other is a card.
+      const strips = groups.filter((group) => group.querySelector(".strip") !== null);
+      expect(strips).toHaveLength(1);
+      for (const group of groups) {
+        const style = getComputedStyle(group);
+        const radius = strips.includes(group) ? "--radius-full" : "--radius-card";
+        expect(style.borderTopLeftRadius).toBe(computed("border-top-left-radius", radius));
+```
+
+In `gui/src/frame/frame.test.ts` (`replace_unique.py`), due sostituzioni — gli import, e in fondo la
+cornice intera sotto jsdom:
+
+*Trova*:
+
+```ts
+import { beforeEach, describe, expect, it } from "vitest";
+import { nextTick } from "vue";
+
+import { i18n } from "../i18n";
+import { PANEL_TYPES, componentFor, isModule, placeholderParams } from "../panels/registry";
+import { VIEWS } from "../panels/views";
+import Placeholder from "../panels/Placeholder.vue";
+import type { IpcMessage } from "../schema/messages";
+import { useConnection } from "../stores/connection";
+import { pack_, useLayout, type LayoutPack } from "../stores/layout";
+import { shownTheme } from "../tokens/theme";
+import { createFakeBridge, type FakeBridge } from "../transport/fakeBridge";
+
+import { createDock, harnessTheme } from "./dock";
+```
+
+*Sostituisci con:*
+
+```ts
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { nextTick } from "vue";
+
+import { i18n } from "../i18n";
+import { VRAM_POLICY } from "../panels/functions";
+import { PANEL_TYPES, componentFor, isModule, placeholderParams } from "../panels/registry";
+import { VIEWS } from "../panels/views";
+import Placeholder from "../panels/Placeholder.vue";
+import type { IpcMessage } from "../schema/messages";
+import { useConnection } from "../stores/connection";
+import { useCore } from "../stores/core";
+import { useDrawer } from "../stores/drawer";
+import { useInvoke } from "../stores/invoke";
+import { pack_, useLayout, type LayoutPack } from "../stores/layout";
+import { shownTheme } from "../tokens/theme";
+import { createFakeBridge, type FakeBridge } from "../transport/fakeBridge";
+
+import Frame from "./Frame.vue";
+import { createDock, harnessTheme } from "./dock";
+```
+
+*Trova:*
+
+```ts
+    expect(region.text()).toContain(i18n.global.t("band.stale"));
+  });
+});
+
+```
+
+*Sostituisci con:*
+
+```ts
+    expect(region.text()).toContain(i18n.global.t("band.stale"));
+  });
+});
+
+/** The overview is open: the whole-window variant of `BaseDialog`, rendered in its portal on `body`. */
+function overviewOpen(): boolean {
+  return document.querySelector('.base-dialog[data-variant="full"]') !== null;
+}
+
+/** The overview's cards, views first and «Salva questa vista» last. */
+function cards(): HTMLElement[] {
+  return [...document.querySelectorAll<HTMLElement>("[data-card]")];
+}
+
+function press(key: string): void {
+  window.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }));
+}
+
+/** Writes in the field of a new view's name, as a keyboard does: the value, and the `input` event `v-model` listens to. */
+function write(text: string): void {
+  const field = document.querySelector<HTMLInputElement>(".naming input");
+  if (field === null) throw new Error("no field for the name");
+  field.value = text;
+  field.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+/** ⛔ THE WHOLE FRAME, WITH ITS DOCK (the (d) of the design system): the bar, the windows, the strip inside the grid. The
+ * frames are UNMOUNTED after each probe -- a frame listens on `window`, and one left mounted would answer the next F3. */
+describe("the frame (the (d) of the design system)", () => {
+  const frames: { unmount: () => void }[] = [];
+
+  afterEach(() => {
+    for (const frame of frames.splice(0)) frame.unmount();
+    document.body.replaceChildren();
+  });
+
+  async function frame(): Promise<void> {
+    frames.push(mount(Frame, { attachTo: document.body, global: { plugins: [i18n] } }));
+    await flush();
+  }
+
+  it("names the view on screen in the bar, and opens the overview from the name", async () => {
+    await frame();
+    const name = document.querySelector<HTMLElement>(".view-name");
+    expect(name?.textContent).toContain(i18n.global.t("views.home"));
+    name?.click();
+    await flush();
+    expect(overviewOpen()).toBe(true);
+    // The three views and «Salva questa vista»; the view on screen is the current card, in bordeaux.
+    expect(cards().map((card) => card.getAttribute("data-card"))).toEqual(["view", "view", "view", "save"]);
+    expect(cards().map((card) => card.getAttribute("aria-current"))).toEqual(["page", null, null, null]);
+  });
+
+  it("opens and closes the overview with F3, and keeps quiet while the confirmation or the drawer is open", async () => {
+    await frame();
+    press("F3");
+    await flush();
+    expect(overviewOpen()).toBe(true);
+    press("F3");
+    await flush();
+    expect(overviewOpen()).toBe(false);
+    // ⛔ THE SECOND DIRECTION: a window that asks something is not covered by the views.
+    useDrawer().open = true;
+    await flush();
+    press("F3");
+    await flush();
+    expect(overviewOpen()).toBe(false);
+    useDrawer().open = false;
+    useInvoke().send({ function: VRAM_POLICY.name, argument: VRAM_POLICY.argument.local });
+    useCore().receive({ kind: "PermissionRequired", value: { tool: "registry", resource: "arbiter", operation: "Write" } });
+    await flush();
+    expect(useInvoke().asking).toBe(true);
+    press("F3");
+    await flush();
+    expect(overviewOpen()).toBe(false);
+  });
+
+  it("shows the view of the card chosen and closes, and opens a named view by its name", async () => {
+    const layout = useLayout();
+    await frame();
+    press("F3");
+    await flush();
+    cards()[1]?.click();
+    await flush();
+    expect(layout.view).toBe("work");
+    expect(layout.openNamed).toBeNull();
+    expect(overviewOpen()).toBe(false);
+    layout.receive(packageFromTheCore({ view: "work", layouts: {}, named: [{ name: "Revisione", layout: ownersHome() }] }));
+    await flush();
+    press("F3");
+    await flush();
+    // The named view sits after the three, before «Salva questa vista», with a word that says it was saved.
+    expect(cards()).toHaveLength(5);
+    expect(cards()[3]?.textContent).toContain(i18n.global.t("overview.saved"));
+    cards()[3]?.click();
+    await flush();
+    expect(layout.openNamed).toBe("Revisione");
+    expect(document.querySelector(".view-name")?.textContent).toContain("Revisione");
+  });
+
+  it("says under the field a name that is empty or taken, and saves a new one and opens it (D4, D12)", async () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    await frame();
+    press("F3");
+    await flush();
+    document.querySelector<HTMLElement>('[data-card="save"]')?.click();
+    await flush();
+    const confirm = (): void => document.querySelectorAll<HTMLElement>(".naming .base-button")[1]?.click();
+    confirm();
+    await flush();
+    expect(document.querySelector(".naming")?.textContent).toContain(i18n.global.t("overview.empty"));
+    expect(document.querySelector(".naming input")?.getAttribute("aria-invalid")).toBe("true");
+    // ⛔ THE THREE VIEWS' NAMES ARE THE FRAME'S WORDS (D12): «Home» is taken in any case, spaces around or not.
+    write("  home ");
+    confirm();
+    await flush();
+    expect(overviewOpen(), "a name that is taken keeps the overview open").toBe(true);
+    expect(document.querySelector(".naming")?.textContent).toContain(i18n.global.t("overview.taken"));
+    expect(saves(bridge)).toBe(0);
+    write("Revisione");
+    confirm();
+    await flush();
+    expect(overviewOpen()).toBe(false);
+    expect(layout.openNamed).toBe("Revisione");
+    expect(layout.saved?.named?.map((entry) => entry.name)).toEqual(["Revisione"]);
+    expect(saves(bridge)).toBe(1);
+  });
+
+  it("draws each view in miniature from its layout: a tile per group, with its module's icon, and not the strip (D14)", async () => {
+    await frame();
+    press("F3");
+    await flush();
+    const icons = [...(cards()[0]?.querySelectorAll(".tile") ?? [])].map((tile) => tile.querySelector("svg")?.getAttribute("data-icon"));
+    // ⛔ FROM THE LAYOUT, NOT A PICTURE (answer 19): Home ships one panel per group, and the strip is one of them.
+    expect(icons.sort()).toEqual(Object.keys(VIEWS.home.panels ?? {}).filter((id) => id !== "strip").sort());
+  });
+
+  it("opens the drawer from the strip's button", async () => {
+    await frame();
+    const button = document.querySelector<HTMLElement>(".strip .base-button");
+    expect(button?.textContent).toContain(i18n.global.t("drawer.open"));
+    button?.click();
+    await flush();
+    expect(useDrawer().open).toBe(true);
+    expect(document.querySelector('.base-dialog[data-variant="sheet"]')).not.toBeNull();
+  });
+});
+
+```
+
+In `gui/src/a11y.test.ts` (`replace_unique.py`), quattro sostituzioni — la barra ha una prop e un modello, e la
+Panoramica e il cassetto aperti hanno la loro prova:
+
+*Trova*:
+
+```ts
+import Band from "./frame/Band.vue";
+import ViewBar from "./frame/ViewBar.vue";
+```
+
+*Sostituisci con:*
+
+```ts
+import Band from "./frame/Band.vue";
+import Drawer from "./frame/Drawer.vue";
+import ViewBar from "./frame/ViewBar.vue";
+```
+
+*Trova:*
+
+```ts
+import Strip from "./panels/Strip.vue";
+import { useConnection } from "./stores/connection";
+import { useCore } from "./stores/core";
+import { useInvoke } from "./stores/invoke";
+```
+
+*Sostituisci con:*
+
+```ts
+import Strip from "./panels/Strip.vue";
+import { VIEWS } from "./panels/views";
+import { useConnection } from "./stores/connection";
+import { useCore } from "./stores/core";
+import { useDrawer } from "./stores/drawer";
+import { useInvoke } from "./stores/invoke";
+```
+
+*Trova:*
+
+```ts
+async function mounted(component: Component): Promise<{ element: Element; unmount: () => void }> {
+  const wrapper = mount(component, { global: { plugins: [i18n] }, attachTo: document.body });
+```
+
+*Sostituisci con:*
+
+```ts
+async function mounted(component: Component, props: Record<string, unknown> = {}): Promise<{ element: Element; unmount: () => void }> {
+  const wrapper = mount(component, { global: { plugins: [i18n] }, attachTo: document.body, props });
+```
+
+*Trova:*
+
+```ts
+  const modules: [string, Component][] = [
+    ["Stato", Status],
+    ["Permessi", Permissions],
+    ["Passi", Steps],
+    ["Impostazioni", Settings],
+    ["Chat", Chat],
+    ["la striscia", Strip],
+    ["la barra", ViewBar],
+  ];
+
+  for (const [name, component] of modules) {
+    it(`${name} has no violation`, async () => {
+      welcome();
+      const { element, unmount } = await mounted(component);
+      expect(await violations(element)).toEqual([]);
+      unmount();
+    });
+  }
+
+  it("the band, while waiting, has no violation", async () => {
+```
+
+*Sostituisci con:*
+
+```ts
+  // The bar holds the overview's trigger, which saves the layout on screen: a snapshot of Home stands for the dock.
+  const bar = { snapshot: () => VIEWS.home, overview: false };
+  const modules: [string, Component, Record<string, unknown>?][] = [
+    ["Stato", Status],
+    ["Permessi", Permissions],
+    ["Passi", Steps],
+    ["Impostazioni", Settings],
+    ["Chat", Chat],
+    ["la striscia", Strip],
+    ["la barra", ViewBar, bar],
+  ];
+
+  for (const [name, component, props] of modules) {
+    it(`${name} has no violation`, async () => {
+      welcome();
+      const { element, unmount } = await mounted(component, props);
+      expect(await violations(element)).toEqual([]);
+      unmount();
+    });
+  }
+
+  it("the overview, open, has no violation", async () => {
+    welcome();
+    const { unmount } = await mounted(ViewBar, { ...bar, overview: true });
+    expect(document.querySelector('.base-dialog[data-variant="full"]')).not.toBeNull();
+    // The portal renders into `body`, so the whole document is the node under probe.
+    expect(await violations(document.body)).toEqual([]);
+    unmount();
+  });
+
+  it("the drawer, open, has no violation", async () => {
+    useDrawer().open = true;
+    const { unmount } = await mounted(Drawer);
+    expect(document.querySelector('.base-dialog[data-variant="sheet"]')).not.toBeNull();
+    expect(await violations(document.body)).toEqual([]);
+    unmount();
+  });
+
+  it("the band, while waiting, has no violation", async () => {
+```
+
+In `gui/src/locales/copy.test.ts` (`replace_unique.py`), tre sostituzioni — la Panoramica costruisce
+`views.${view}`, e `no-missing-keys` non vede una chiave costruita:
+
+*Trova*:
+
+```ts
+import { PANEL_TYPES } from "../panels/registry";
+import { THEME_CHOICES } from "../tokens/theme";
+```
+
+*Sostituisci con:*
+
+```ts
+import { PANEL_TYPES } from "../panels/registry";
+import { VIEWS } from "../panels/views";
+import { THEME_CHOICES } from "../tokens/theme";
+```
+
+*Trova:*
+
+```ts
+ * `settings.theme.${choice}` in `Settings.vue` -- and `no-missing-keys` is blind to a built key
+ * -- measured on 2026-09-15, both directions in one file (P-105).
+```
+
+*Sostituisci con:*
+
+```ts
+ * `settings.theme.${choice}` in `Settings.vue` and `views.${view}` in the overview -- and
+ * `no-missing-keys` is blind to a built key -- measured on 2026-09-15, both directions in one file
+ * (P-105).
+```
+
+*Trova:*
+
+```ts
+
+  it("has a word for every theme choice", () => {
+```
+
+*Sostituisci con:*
+
+```ts
+
+  it("has a name for every view that ships (the overview and the bar build `views.${view}`)", () => {
+    const names = (it_ as { views?: Record<string, string> }).views ?? {};
+    // ⛔ NON-VACUITY: no views would leave nothing to check.
+    expect(Object.keys(VIEWS).length).toBeGreaterThan(0);
+    for (const view of Object.keys(VIEWS)) expect(Object.keys(names), view).toContain(view);
+  });
+
+  it("has a word for every theme choice", () => {
+```
+
+Crea `gui/src/frame/frame.browser.test.ts` (LF) — la cornice intera nel Chrome installato, montata come la monta `main.ts`
+(P-23): il controllo **19**, il cassetto dalla striscia, la Panoramica disegnata e le frecce (R3-23):
+
+```ts
+import "dockview/dist/styles/dockview.css";
+import "../tokens";
+
+import { createPinia, setActivePinia } from "pinia";
+import { userEvent } from "vitest/browser";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { createApp, type App as VueApp } from "vue";
+
+import App from "../App.vue";
+import { i18n } from "../i18n";
+import { registerModules } from "../panels/modules";
+import { useLayout } from "../stores/layout";
+import { contrastJudged, violations } from "../testing/axe";
+import { concentricRadii, fits, iconsCentred } from "../testing/probes";
+import { readToken } from "../tokens/readToken";
+
+// ⛔ THE WHOLE FRAME IN THE INSTALLED CHROME (the (d) of the design system): the page of the SPA -- `App.vue`, whose rule
+// gives `html`, `body` and `#app` the whole window -- at the probes' 1440 x 900, with the stylesheets in the order
+// `main.ts` loads them. What only a layout engine can judge: where the strip sits, the grid of the overview under the
+// arrows, and the overview drawn.
+
+const frames: VueApp[] = [];
+
+beforeEach(() => {
+  registerModules();
+});
+
+afterEach(() => {
+  for (const frame of frames.splice(0)) frame.unmount();
+  document.body.replaceChildren();
+  delete document.documentElement.dataset.theme;
+});
+
+/**
+ * The frame in one theme, once `dockview` has laid out the Home view. ⛔ MOUNTED AS `main.ts` MOUNTS IT, on `#app`
+ * itself: `mount` of `@vue/test-utils` puts the app in a `div` of its own inside the element it is given, and that `div`
+ * has no height -- the frame came out 116 px high, the dock 0, and the strip in the middle of the page, measured on
+ * 2026-09-24 (P-23 of the plan).
+ */
+async function frame(theme: "light" | "dark"): Promise<void> {
+  document.documentElement.dataset.theme = theme;
+  const pinia = createPinia();
+  setActivePinia(pinia);
+  const host = document.createElement("div");
+  host.id = "app";
+  document.body.append(host);
+  const app = createApp(App).use(pinia).use(i18n);
+  app.mount(host);
+  frames.push(app);
+  await new Promise((resolve) => setTimeout(resolve, 50));
+}
+
+/** A length token, in px, as the page computes it. */
+function px(token: string): number {
+  return Number.parseFloat(readToken(token));
+}
+
+const overview = (): HTMLElement | null => document.querySelector('.base-dialog[data-variant="full"]');
+const cards = (): HTMLElement[] => [...document.querySelectorAll<HTMLElement>("[data-card]")];
+
+for (const theme of ["light", "dark"] as const) {
+  describe(`the frame, ${theme} theme`, () => {
+    it("floats the strip as a pill 12 px from the sides and 24 from the bottom, and keeps every card off the page's corners (control 19)", async () => {
+      await frame(theme);
+      const strips = [...document.querySelectorAll(".dv-groupview")].filter((group) => group.querySelector(".strip") !== null);
+      expect(strips).toHaveLength(1);
+      const strip = strips[0] as Element;
+      const box = strip.getBoundingClientRect();
+      // Answer 20: aligned with the cards, `--space-3` from the sides, and `--space-6` from the bottom.
+      expect(box.left).toBeCloseTo(px("--space-3"), 1);
+      expect(window.innerWidth - box.right).toBeCloseTo(px("--space-3"), 1);
+      expect(window.innerHeight - box.bottom).toBeCloseTo(px("--space-6"), 1);
+      // A pill: the radius reaches half the height.
+      expect(Number.parseFloat(getComputedStyle(strip).borderTopLeftRadius)).toBeGreaterThanOrEqual(box.height / 2);
+      // ⛔ THE CORNERS ARE WINDOWS' (the (d)): no rounded box of ours comes within `--space-3` of a corner of the page on
+      // both axes -- the square where the window's arc is drawn, 8 px in Windows 11.
+      const reach = px("--space-3");
+      let rounded = 0;
+      const near: string[] = [];
+      for (const element of document.body.querySelectorAll("*")) {
+        if (element.closest("svg") !== null) continue;
+        if (!(Number.parseFloat(getComputedStyle(element).borderTopLeftRadius) > 0)) continue;
+        const b = element.getBoundingClientRect();
+        if (b.width === 0 || b.height === 0) continue;
+        rounded += 1;
+        const gaps = [
+          [b.left, b.top],
+          [window.innerWidth - b.right, b.top],
+          [b.left, window.innerHeight - b.bottom],
+          [window.innerWidth - b.right, window.innerHeight - b.bottom],
+        ];
+        if (gaps.some(([dx, dy]) => (dx ?? 0) < reach && (dy ?? 0) < reach)) near.push(element.getAttribute("class") ?? element.tagName);
+      }
+      // ⛔ NON-VACUITY (trap 1 of the design): the cards, the strip and the controls are rounded.
+      expect(rounded).toBeGreaterThan(0);
+      expect(near).toEqual([]);
+    });
+
+    it("opens the drawer from the strip's pill, and gives the focus back to it when the drawer closes", async () => {
+      await frame(theme);
+      const button = document.querySelector<HTMLElement>(".strip .base-button");
+      expect(button).not.toBeNull();
+      await userEvent.click(button as HTMLElement);
+      await expect.poll(() => document.querySelector('.base-dialog[data-variant="sheet"]')).not.toBeNull();
+      await userEvent.keyboard("{Escape}");
+      await expect.poll(() => document.querySelector('.base-dialog[data-variant="sheet"]')).toBeNull();
+      // ⛔ THE BUTTON IS IN ANOTHER VUE APP, AND NO `DialogTrigger`: the focus comes back all the same, measured on
+      // 2026-09-24 with `reka-ui` 2.10.4 (P-22 of the plan) -- this probe is what keeps it true across an update.
+      await expect.poll(() => document.activeElement).toBe(button);
+    });
+
+    it("draws the overview with its radii concentric, nothing cut or sticking out, the icons centred, and no axe violation", async () => {
+      await frame(theme);
+      await userEvent.keyboard("{F3}");
+      await expect.poll(overview).not.toBeNull();
+      // And with the name of a new view asked, the field and its two buttons in the place of «Salva questa vista».
+      for (const naming of [false, true]) {
+        if (naming) {
+          await userEvent.click(document.querySelector('[data-card="save"]') as HTMLElement);
+          await expect.poll(() => document.querySelector(".naming")).not.toBeNull();
+        }
+        const dialog = overview() as HTMLElement;
+        const radii = concentricRadii([dialog]);
+        // ⛔ NON-VACUITY (trap 1): the miniatures sit in the cards, the tiles in the miniatures.
+        expect(radii.near).toBeGreaterThan(0);
+        expect(radii.bad).toEqual([]);
+        const fit = fits([dialog], ".base-dialog, .base-button, .mini, .naming, .base-text-field > .frame");
+        expect(fit.seen).toBeGreaterThan(0);
+        expect(fit.boxed).toBeGreaterThan(0);
+        expect(fit.problems).toEqual([]);
+        const icons = iconsCentred([dialog]);
+        expect(icons.icons).toBeGreaterThan(0);
+        expect(icons.centred).toBeGreaterThan(0);
+        expect(icons.problems).toEqual([]);
+        expect(await violations(dialog, { contrast: true })).toEqual([]);
+        const judged = await contrastJudged(dialog);
+        expect(judged.passes).toBeGreaterThan(0);
+        expect(judged.incomplete).toBe(0);
+      }
+    });
+  });
+}
+
+describe("the overview's grid, under the keys (R3-23 of the review)", () => {
+  it("moves by geometry with the arrows, enters a view with Enter, and gives the focus back to the view's name", async () => {
+    await frame("light");
+    await userEvent.keyboard("{F3}");
+    await expect.poll(overview).not.toBeNull();
+    // Three columns: Home, Lavoro, Compatta above, «Salva questa vista» alone below, under Home. The focus opens on the
+    // view on screen.
+    await expect.poll(() => document.activeElement).toBe(cards()[0]);
+    await userEvent.keyboard("{ArrowRight}");
+    expect(document.activeElement).toBe(cards()[1]);
+    // ⛔ DOWN GOES TO THE ROW BELOW, NOT TO THE NEXT CARD: `RovingFocusGroup` would have gone right (decision 19).
+    await userEvent.keyboard("{ArrowDown}");
+    expect(document.activeElement).toBe(cards()[3]);
+    // Up again: three cards are as far, and the nearest centre wins -- Home, the column of the card below (R3-18).
+    await userEvent.keyboard("{ArrowUp}");
+    expect(document.activeElement).toBe(cards()[0]);
+    // Nothing beyond: the focus stays.
+    await userEvent.keyboard("{ArrowLeft}");
+    expect(document.activeElement).toBe(cards()[0]);
+    // One card in the tab order: the one the arrows reached.
+    expect(cards().map((card) => card.tabIndex)).toEqual([0, -1, -1, -1]);
+    await userEvent.keyboard("{ArrowRight}");
+    await userEvent.keyboard("{Enter}");
+    await expect.poll(() => useLayout().view).toBe("work");
+    await expect.poll(overview).toBeNull();
+    await expect.poll(() => document.activeElement?.classList.contains("view-name")).toBe(true);
+  });
+});
+```
+
+- [ ] **Passo 3: lancia le prove, e guardale fallire**
+
+```bash
+(cd gui && npx vitest run --project jsdom src/frame/frame.test.ts src/a11y.test.ts src/locales/copy.test.ts)
+(cd gui && npx vitest run --project browser src/frame/frame.browser.test.ts src/frame/dock.browser.test.ts src/kit/kit.browser.test.ts)
+```
+
+Atteso: **rosso**, e per le ragioni giuste — misurato il 2026-09-24. Sotto jsdom `Failed to resolve import
+"../stores/drawer"` in `frame.test.ts` e `Failed to resolve import "./stores/drawer"` in `a11y.test.ts`; `copy.test.ts`
+**verde**, perché le tre viste hanno già le loro parole: la sua prova nuova è una guardia, e il suo rosso è al passo 9. Nel
+browser **nove rosse su ventisette**: il dock, `expected '20px' to be '9999px'` nei due temi — la striscia è ancora una
+scheda —; la cornice, `expected 20 to be greater than or equal to 25` — il raggio di una scheda, non di una pillola — e
+`expected null not to be null` per il pulsante della striscia e per la Panoramica, che F3 non apre, nei due temi; e la
+prova delle frecce, `expected null not to be null`. Verdi le quattordici della pagina kit e le altre del dock.
+
+- [ ] **Passo 4: il cassetto da un negozio, e la domanda della conferma in un posto solo**
+
+Crea `gui/src/stores/drawer.ts` (LF) — R3-20:
+
+```ts
+import { defineStore } from "pinia";
+import { ref } from "vue";
+
+/**
+ * Whether the drawer of the modules is open (the (d) of the design system). ⛔ IN A STORE AND NOT IN A `ref` OF
+ * `Drawer.vue` (R3-20 of the design-system review): the button that opens it sits in the strip, and the strip is a
+ * panel -- a Vue app of its own (`frame/VueContent.ts`), which reaches the stores of the page and not the refs of
+ * another app.
+ */
+export const useDrawer = defineStore("drawer", () => {
+  const open = ref(false);
+  return { open };
+});
+```
+
+In `gui/src/stores/invoke.ts` (`replace_unique.py`), tre sostituzioni — la regola di D59 entra nel
+negozio, perché ora la leggono in due (**D15**):
+
+*Trova*:
+
+```ts
+import { ref } from "vue";
+```
+
+*Sostituisci con:*
+
+```ts
+import { computed, ref } from "vue";
+```
+
+*Trova:*
+
+```ts
+  let wire: Bridge | null = null;
+
+```
+
+*Sostituisci con:*
+
+```ts
+  let wire: Bridge | null = null;
+
+  /**
+   * ⛔ THE CORE ASKED, AND ABOUT A CALL OF OURS (D59): the one condition under which the confirmation window is open. A
+   * `PermissionRequired` following no `Invoke` is a shape the core never produces -- the registry only ever answers one --
+   * and a window that opened on it would offer a "yes" with nothing to send; the Permessi panel shows such a request.
+   * ⛔ HERE AND NOT IN `Confirm.vue` since the design system: the frame reads it too, to keep F3 quiet while the question
+   * is open -- two readers of one rule, one house (gotcha #68).
+   */
+  const asking = computed(() => core.pending !== null && inFlight.value !== null);
+
+```
+
+*Trova:*
+
+```ts
+  return { inFlight, approved, attach, send, approve, refuse, receive };
+```
+
+*Sostituisci con:*
+
+```ts
+  return { inFlight, approved, asking, attach, send, approve, refuse, receive };
+```
+
+In `gui/src/components/Confirm.vue` (`replace_unique.py`), due sostituzioni:
+
+*Trova*:
+
+```vue
+<script setup lang="ts">
+import { computed } from "vue";
+
+import { useCore } from "../stores/core";
+import { useInvoke } from "../stores/invoke";
+
+import BaseButton from "./BaseButton.vue";
+import BaseDialog from "./BaseDialog.vue";
+
+// A COMPOSED piece, and that is why it may read two stores (P-3 of the design-system plan): the base pieces below do not.
+const core = useCore();
+const invoke = useInvoke();
+
+// ⛔ OPEN ONLY WHEN THE CORE ASKED AND A CALL OF OURS IS IN FLIGHT (D59): a `PermissionRequired` following no `Invoke` is a
+// shape the core never produces -- the registry only ever answers one -- and a window that opened on it would offer a
+// "yes" with nothing to send. The Permessi panel shows such a request; this window does not ask about it.
+const open = computed(() => core.pending !== null && invoke.inFlight !== null);
+
+```
+
+*Sostituisci con:*
+
+```vue
+<script setup lang="ts">
+import { useCore } from "../stores/core";
+import { useInvoke } from "../stores/invoke";
+
+import BaseButton from "./BaseButton.vue";
+import BaseDialog from "./BaseDialog.vue";
+
+// A COMPOSED piece, and that is why it may read two stores (P-3 of the design-system plan): the base pieces below do not.
+// ⛔ OPEN ONLY WHILE `invoke.asking` (D59): the core asked, and about a call of ours -- the rule lives in the store.
+const core = useCore();
+const invoke = useInvoke();
+
+```
+
+*Trova:*
+
+```vue
+    :open="open"
+```
+
+*Sostituisci con:*
+
+```vue
+    :open="invoke.asking"
+```
+
+Riscrivi `gui/src/frame/Drawer.vue` per intero — il pulsante esce, e la finestra si apre dal negozio:
+
+```vue
+<script setup lang="ts">
+import BaseButton from "../components/BaseButton.vue";
+import BaseDialog from "../components/BaseDialog.vue";
+import BaseList from "../components/BaseList.vue";
+import { PANEL_TYPES } from "../panels/registry";
+import { useDrawer } from "../stores/drawer";
+
+// ⛔ THE DRAWER IS WHERE "WHO FILLS WHAT" LIVES (decision 16 of the north star): every type with its number, so the strip
+// can stay thin. On `BaseDialog` since the design system -- its second occurrence, with the confirmation window: the two
+// veils written by hand, already different, are one role now, `--color-veil`.
+// ⛔ OPENED FROM THE STRIP, THROUGH A STORE (the (d); R3-20 of the review): the button lives in another Vue app.
+const drawer = useDrawer();
+</script>
+
+<template>
+  <BaseDialog v-model:open="drawer.open" :title="$t('drawer.title')" variant="sheet">
+    <BaseList :items="PANEL_TYPES" :key-of="(type) => type.name">
+      <template #item="{ item }">
+        <span>{{ $t(`modules.${item.module}`) }}</span>
+        <span class="who">{{ $t("drawer.who", { number: item.who }) }}</span>
+      </template>
+    </BaseList>
+    <template #actions>
+      <BaseButton variant="quiet" @click="drawer.open = false">{{ $t("drawer.close") }}</BaseButton>
+    </template>
+  </BaseDialog>
+</template>
+
+<style scoped>
+.who {
+  color: var(--color-text-muted);
+}
+</style>
+```
+
+- [ ] **Passo 5: le parole, e la Panoramica**
+
+In `gui/src/locales/it.json` (`replace_unique.py`), due sostituzioni — `bar.views` esce, perché la sola
+`nav` che lo leggeva esce con la barra vecchia; il pulsante del cassetto dice *«moduli»*, com'è nella tavola; le parole
+della Panoramica:
+
+*Trova*:
+
+```json
+  "bar": {
+    "views": "Viste",
+    "search": "Cerca",
+```
+
+*Sostituisci con:*
+
+```json
+  "bar": {
+    "search": "Cerca",
+```
+
+*Trova:*
+
+```json
+    "open": "+ moduli",
+    "title": "I moduli",
+    "close": "Chiudi",
+    "who": "arriva col sotto-progetto {number}"
+  },
+```
+
+*Sostituisci con:*
+
+```json
+    "open": "moduli",
+    "title": "I moduli",
+    "close": "Chiudi",
+    "who": "arriva col sotto-progetto {number}"
+  },
+  "overview": {
+    "title": "Le viste",
+    "hint": "F3 apre e chiude. Le frecce scelgono una vista, Invio la apre, Esc chiude.",
+    "saved": "salvata",
+    "save": "Salva questa vista",
+    "name": "Nome della vista",
+    "confirm": "Salva",
+    "cancel": "Annulla",
+    "empty": "Scrivi un nome.",
+    "taken": "C'è già una vista con questo nome."
+  },
+```
+
+Crea `gui/src/frame/Overview.vue` (LF) — la (d), le decisioni 18 e 19, **D4**, **D12**, **D14**, **D17** e **D18**:
+
+```vue
+<script setup lang="ts">
+import type { SerializedDockview } from "dockview-core";
+import { computed, nextTick, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+
+import BaseButton from "../components/BaseButton.vue";
+import BaseDialog from "../components/BaseDialog.vue";
+import BaseIcon from "../components/BaseIcon.vue";
+import BaseLabel from "../components/BaseLabel.vue";
+import BaseTextField from "../components/BaseTextField.vue";
+import { isIconName, type IconName } from "../components/icons";
+import { VIEWS } from "../panels/views";
+import { useLayout, type ViewName } from "../stores/layout";
+
+import { nearest, type Direction } from "./nearest";
+import { schematic } from "./schematic";
+
+/**
+ * THE OVERVIEW OF THE VIEWS (the (d) of the design system, answer 13): every view in miniature, in a grid -- Home, Lavoro,
+ * Compatta and the views saved under a name -- the one on screen in bordeaux, and last «Salva questa vista». It opens from
+ * the view's name in the bar, which this file draws as its trigger, or with F3 (`Frame.vue`).
+ *
+ * ⛔ ON `BaseDialog`, THE WHOLE WINDOW (decision 18): `reka-ui` gives Esc, the focus kept inside and given back to the
+ * view's name. ⛔ THE ARROWS FOLLOW THE GEOMETRY (decision 19): `nearest`, the helper of the tiles moved with the keyboard,
+ * in the four directions -- `RovingFocusGroup` is linear, and "down" would go right. ⛔ ONE CARD IN THE TAB ORDER, the one
+ * the arrows reached (a roving tabindex): Tab leaves the grid instead of walking every card.
+ */
+const props = defineProps<{ snapshot: () => SerializedDockview }>();
+const open = defineModel<boolean>("open", { required: true });
+
+const { t } = useI18n();
+const layout = useLayout();
+const THREE: readonly ViewName[] = ["home", "work", "compact"];
+
+/** A tile of a miniature: where it sits, in percent of the miniature, and the icon of the module it shows. */
+interface Drawn {
+  style: Record<string, string>;
+  icon?: IconName;
+}
+
+interface Card {
+  key: string;
+  name: string;
+  tiles: Drawn[];
+  saved: boolean;
+  current: boolean;
+  show: () => void;
+}
+
+/** The miniature of a layout (answer 19): the schema of `schematic`, with a gap of `--space-0-5` around every tile.
+ * ⛔ THE STRIP IS NOT DRAWN (D14 of the plan): it is in every view, the same, with no icon -- and the board's miniatures
+ * leave it out. A module type that is gone is drawn without an icon: it is there, and the miniature says so. */
+function drawn(saved: SerializedDockview): Drawn[] {
+  return schematic(saved)
+    .filter((tile) => !tile.views.includes("strip"))
+    .map((tile) => {
+      const style = {
+        left: `calc(${tile.x * 100}% + var(--space-0-5))`,
+        top: `calc(${tile.y * 100}% + var(--space-0-5))`,
+        width: `calc(${tile.width * 100}% - 2 * var(--space-0-5))`,
+        height: `calc(${tile.height * 100}% - 2 * var(--space-0-5))`,
+      };
+      const shown = tile.active ?? tile.views[0] ?? "";
+      return isIconName(shown) ? { style, icon: shown } : { style };
+    });
+}
+
+// ⛔ A SAVED VIEW WINS OVER THE SHIPPED ONE BY NAME (row 6 of §2 of the north star), in the miniature as on screen.
+const cards = computed<Card[]>(() => [
+  ...THREE.map((view) => ({
+    key: view,
+    name: t(`views.${view}`),
+    tiles: drawn(layout.saved?.layouts[view] ?? VIEWS[view]),
+    saved: false,
+    current: layout.openNamed === null && layout.view === view,
+    // ⛔ ONE LINE, AND THE DOCK FOLLOWS (D89 of part 2): the store is where the open view lives, and `createDock` watches it.
+    // Showing is not saving (decision 11).
+    show: () => layout.showView(view),
+  })),
+  ...(layout.saved?.named ?? []).map((entry) => ({
+    key: `named:${entry.name}`,
+    name: entry.name,
+    tiles: drawn(entry.layout),
+    saved: true,
+    current: layout.openNamed === entry.name,
+    show: () => {
+      layout.openNamed = entry.name;
+    },
+  })),
+]);
+
+/** The name of the view on screen: the owner's words for a named view, the locale's for the three. */
+const current = computed(() => layout.openNamed ?? t(`views.${layout.view}`));
+
+const grid = ref<HTMLElement | null>(null);
+const roving = ref(0);
+const naming = ref(false);
+const name = ref("");
+const refusal = ref<"empty" | "taken" | null>(null);
+
+// Every opening starts from the view on screen, with no name half written.
+watch(open, (now) => {
+  if (!now) return;
+  naming.value = false;
+  name.value = "";
+  refusal.value = null;
+  roving.value = Math.max(0, cards.value.findIndex((card) => card.current));
+});
+
+function choose(card: Card): void {
+  card.show();
+  open.value = false;
+}
+
+const ARROWS: Readonly<Record<string, Direction>> = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down" };
+
+/** ⛔ ONLY FROM A CARD: in the name's field the arrows move the caret. Nothing beyond, nothing moves. */
+function onArrow(event: KeyboardEvent): void {
+  const direction = ARROWS[event.key];
+  const from = event.target;
+  if (direction === undefined || !(from instanceof HTMLElement) || !from.hasAttribute("data-card")) return;
+  event.preventDefault();
+  const others = [...(grid.value?.querySelectorAll<HTMLElement>("[data-card]") ?? [])].filter((card) => card !== from);
+  const target = nearest(from.getBoundingClientRect(), others.map((element) => ({ element, rect: element.getBoundingClientRect() })), direction);
+  target?.element.focus();
+}
+
+function startNaming(): void {
+  naming.value = true;
+  refusal.value = null;
+  void nextTick(() => grid.value?.querySelector<HTMLInputElement>(".naming input")?.focus());
+}
+
+function cancel(): void {
+  naming.value = false;
+  refusal.value = null;
+  roving.value = cards.value.length;
+  void nextTick(() => grid.value?.querySelector<HTMLElement>('[data-card="save"]')?.focus());
+}
+
+/** «Salva questa vista»: the layout on screen under a name, and opened. ⛔ THE NAMES OF THE THREE ARE THE FRAME'S WORDS
+ * (D12 of the plan): the store reads no locale, so it is handed them. */
+function save(): void {
+  const result = layout.saveNamed(name.value, props.snapshot(), THREE.map((view) => t(`views.${view}`)));
+  if (result === "saved") {
+    open.value = false;
+    return;
+  }
+  refusal.value = result;
+}
+</script>
+
+<template>
+  <BaseDialog v-model:open="open" :title="$t('overview.title')" :description="$t('overview.hint')" variant="full">
+    <template #trigger>
+      <BaseButton class="view-name" aria-keyshortcuts="F3">
+        <BaseLabel icon="views">{{ current }}</BaseLabel>
+      </BaseButton>
+    </template>
+    <div ref="grid" class="grid" @keydown="onArrow">
+      <BaseButton
+        v-for="(card, index) in cards"
+        :key="card.key"
+        variant="card"
+        data-card="view"
+        :tabindex="index === roving ? 0 : -1"
+        :aria-current="card.current ? 'page' : undefined"
+        @focus="roving = index"
+        @click="choose(card)"
+      >
+        <span class="mini">
+          <span v-for="(tile, at) in card.tiles" :key="at" class="tile" :style="tile.style">
+            <BaseIcon v-if="tile.icon !== undefined" :name="tile.icon" size="sm" />
+          </span>
+        </span>
+        <span class="caption">
+          <BaseLabel>{{ card.name }}</BaseLabel>
+          <span v-if="card.saved" class="saved">{{ $t("overview.saved") }}</span>
+        </span>
+      </BaseButton>
+      <form v-if="naming" class="naming" @submit.prevent="save">
+        <BaseTextField
+          v-model="name"
+          icon="saveView"
+          :label="$t('overview.name')"
+          :error="refusal === 'empty' ? $t('overview.empty') : refusal === 'taken' ? $t('overview.taken') : undefined"
+        />
+        <span class="actions">
+          <BaseButton variant="quiet" @click="cancel">{{ $t("overview.cancel") }}</BaseButton>
+          <BaseButton variant="primary" @click="save">{{ $t("overview.confirm") }}</BaseButton>
+        </span>
+      </form>
+      <BaseButton
+        v-else
+        variant="card"
+        data-card="save"
+        :tabindex="roving === cards.length ? 0 : -1"
+        @focus="roving = cards.length"
+        @click="startNaming"
+      >
+        <BaseLabel icon="saveView">{{ $t("overview.save") }}</BaseLabel>
+      </BaseButton>
+    </div>
+  </BaseDialog>
+</template>
+
+<style scoped>
+/* The view's name in the bar: the words in full, the icon in the mark's colour (the board's `.vt`). */
+.view-name :deep(.base-label) {
+  color: var(--color-text);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+/* ⛔ THE RADII ARE CONCENTRIC (answer 4): the miniature sits in a card of `--radius-card` at `--space-3` from its edge, so it
+   takes `--radius-control`; a tile sits `--space-0-5` inside the miniature's border, so it takes what is left. */
+.mini {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-bg);
+}
+.tile {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: calc(var(--radius-control) - var(--space-0-5) - var(--border-width));
+  background: var(--color-bg-surface);
+  color: var(--color-text-muted);
+}
+.caption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.saved {
+  font: var(--font-caption);
+  color: var(--color-text-muted);
+}
+/* The name of a new view, where «Salva questa vista» was: a card that is not a button. */
+.naming {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: var(--border-width) solid var(--color-border-card);
+  border-radius: var(--radius-card);
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-card);
+}
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+</style>
+```
+
+- [ ] **Passo 6: la barra, e la cornice**
+
+Riscrivi `gui/src/frame/ViewBar.vue` per intero — la forma **di passaggio** del compito 5 finisce qui:
+
+```vue
+<script setup lang="ts">
+import type { SerializedDockview } from "dockview-core";
+
+import BaseTextField from "../components/BaseTextField.vue";
+import { useConnection } from "../stores/connection";
+
+import Overview from "./Overview.vue";
+
+// THE BAR, FROM THE LEFT (the (d) of the design system): the name of the view on screen, which opens the overview; the
+// search; the core's chip. The three buttons in a row -- the tabs the owner did not want, on 2026-09-07 -- are gone, and so
+// is the drawer's button: "moduli" came down into the strip.
+defineProps<{ snapshot: () => SerializedDockview }>();
+const overview = defineModel<boolean>("overview", { required: true });
+const connection = useConnection();
+</script>
+
+<template>
+  <header class="bar">
+    <Overview v-model:open="overview" :snapshot="snapshot" />
+
+    <!-- ⚠️ DISABLED AND SAYING WHO FILLS IT, not hidden: decision 16 of the north star wants the search box to say who fills
+         it, and a control that is simply absent teaches nothing. -->
+    <div class="search">
+      <BaseTextField model-value="" type="search" icon="search" :label="$t('bar.search')" :placeholder="$t('bar.searchHint')" disabled />
+    </div>
+
+    <span class="chip" :data-phase="connection.phase">
+      {{ $t("bar.core") }}:
+      {{
+        connection.phase === "connected"
+          ? $t("bar.coreConnected")
+          : connection.phase === "stale"
+            ? $t("bar.coreStale")
+            : $t("bar.coreWaiting")
+      }}
+    </span>
+  </header>
+</template>
+
+<style scoped>
+.bar {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-raised);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+/* The search and the chip on the right, as on the board. */
+.search {
+  flex: 1;
+  max-width: 320px;
+  margin-left: auto;
+}
+.chip[data-phase="connected"] {
+  color: var(--color-text-accent);
+}
+.chip[data-phase="stale"] {
+  color: var(--color-text-stop);
+}
+</style>
+```
+
+Riscrivi `gui/src/frame/Frame.vue` per intero — F3, il cassetto montato qui, la fotografia del dock per *«Salva questa
+vista»* (**D16**):
+
+```vue
+<script setup lang="ts">
+import type { SerializedDockview } from "dockview-core";
+import { onMounted, onUnmounted, ref } from "vue";
+
+import Confirm from "../components/Confirm.vue";
+import { useDrawer } from "../stores/drawer";
+import { useInvoke } from "../stores/invoke";
+
+import Band from "./Band.vue";
+import Drawer from "./Drawer.vue";
+import ViewBar from "./ViewBar.vue";
+import { createDock } from "./dock";
+import { directionOf, moveActive } from "./moveActive";
+
+const host = ref<HTMLElement | null>(null);
+const drawer = useDrawer();
+const invoke = useInvoke();
+/** The overview of the views: opened from the view's name in the bar, or with F3 here. */
+const overview = ref(false);
+let api: ReturnType<typeof createDock> | null = null;
+
+function onKey(event: KeyboardEvent): void {
+  // ⛔ F3 OPENS AND CLOSES THE OVERVIEW (the (d) of the design system), AND IS QUIET WHILE ANOTHER WINDOW IS OPEN -- the
+  // confirmation or the drawer: a second modal window over the first would hide its question under the views. F3 is free
+  // in `gui/src` (P-11 of the plan); its default, the browser's "find next", is not ours to keep.
+  if (event.key === "F3") {
+    event.preventDefault();
+    if (!invoke.asking && !drawer.open) overview.value = !overview.value;
+    return;
+  }
+  // G20, move 6 of SP-8: the active tile moves in the four directions from the keyboard. The
+  // mapping and the geometry live in `moveActive.ts`; this is only the wire.
+  const direction = directionOf(event);
+  if (direction === null || api === null) return;
+  event.preventDefault();
+  moveActive(api, direction);
+}
+
+onMounted(() => {
+  if (host.value !== null) api = createDock(host.value);
+  window.addEventListener("keydown", onKey);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", onKey);
+});
+
+/** The layout on screen, for «Salva questa vista»: the dock's own serialisation -- what `settle` saves. */
+function snapshot(): SerializedDockview {
+  if (api === null) throw new Error("the dock is not mounted");
+  return api.toJSON();
+}
+</script>
+
+<template>
+  <div class="frame">
+    <ViewBar v-model:overview="overview" :snapshot="snapshot" />
+    <Band />
+    <Confirm />
+    <Drawer />
+    <div ref="host" class="dock"></div>
+  </div>
+</template>
+
+<style scoped>
+.frame {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+/* Answer 20 of the design system: the dock -- the strip is its last row -- 12 px from the sides and 24 from the bottom,
+   away from the window's corners; the bar above has none. A MARGIN and not a padding, so `clientWidth` is the room the
+   grid gets (P-7 of its plan). */
+.dock {
+  flex: 1;
+  min-height: 0;
+  margin: 0 var(--space-3) var(--space-6);
+}
+</style>
+```
+
+- [ ] **Passo 7: la striscia a pillola**
+
+Riscrivi `gui/src/panels/Strip.vue` per intero — **P-24**:
+
+```vue
+<script setup lang="ts">
+import BaseButton from "../components/BaseButton.vue";
+import { useCore } from "../stores/core";
+import { useDrawer } from "../stores/drawer";
+
+// ⚠️ ONLY WHAT IS ALIVE IN SUB-PROJECT 2 (decision 16 of the north star): degradation and
+// permissions. Seven "arrives with N" in a thin strip is noise, and the drawer is where "who
+// fills what" belongs.
+// ⛔ AND THE DRAWER'S BUTTON, "moduli", came down from the bar (the (d) of the design system): the strip is a panel, a Vue
+// app of its own, so it opens the drawer through the store and not through a ref (R3-20 of the review).
+const core = useCore();
+const drawer = useDrawer();
+</script>
+
+<template>
+  <div class="strip">
+    <span>
+      {{ $t("strip.degradation") }}:
+      <template v-if="core.degradation === null">—</template>
+      <template v-else-if="core.degradation.vram_exhausted || core.degradation.routing_degraded">
+        <span v-if="core.degradation.vram_exhausted" class="warn">{{ $t("strip.vram") }}</span>
+        <span v-if="core.degradation.routing_degraded" class="warn">{{ $t("strip.routing") }}</span>
+      </template>
+      <template v-else>{{ $t("strip.none") }}</template>
+    </span>
+    <span>
+      {{ $t("strip.permissions") }}:
+      {{ core.pending === null ? $t("strip.quiet") : $t("strip.pending") }}
+    </span>
+    <BaseButton class="modules" size="lg" pill icon="modules" @click="drawer.open = true">{{ $t("drawer.open") }}</BaseButton>
+  </div>
+</template>
+
+<style scoped>
+/* ⛔ THE PILL'S RULE (answer 4 of the design system): inside a pill goes a pill, the same distance from its edge all round.
+   The shipped views give the strip's row 56 px and the dock's gap takes half of `--space-3` above it, so the pill is 50
+   high, measured on 2026-09-24 (P-24 of the plan): the large button, 40, sits `--space-1` plus the group's border from the
+   pill's edge -- above and below by this padding, on the right by the same. */
+.strip {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  height: 100%;
+  box-sizing: border-box;
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-4);
+  color: var(--color-text-muted);
+}
+.warn {
+  color: var(--color-text-warn);
+  margin-left: var(--space-1);
+}
+.modules {
+  margin-left: auto;
+}
+</style>
+```
+
+In `gui/src/tokens/dock.css` (`replace_unique.py`), una sostituzione:
+
+*Trova*:
+
+```css
+
+/* The mark of the visible tab (the (c)): the icon of its label in `--color-mark`, the hidden tabs' in the tab's own colour.
+```
+
+*Sostituisci con:*
+
+```css
+
+/* ⛔ THE STRIP IS A PILL, NOT A CARD (the (d) of the design system, answer 20): its group -- the last row of every view,
+   12 px from the sides and 24 from the bottom -- takes the full radius, and the pill button inside it keeps the rule of
+   answer 4. Found by what it holds, because a group carries no name of its own: `.strip` is the root of `Strip.vue`. */
+.dockview-theme-harness .dv-groupview:has(.strip) {
+  border-radius: var(--radius-full);
+}
+
+/* The mark of the visible tab (the (c)): the icon of its label in `--color-mark`, the hidden tabs' in the tab's own colour.
+```
+
+```bash
+(cd gui && npx vitest run --project jsdom src/frame/frame.test.ts src/a11y.test.ts src/locales/copy.test.ts)
+(cd gui && npx vitest run --project browser src/frame/frame.browser.test.ts src/frame/dock.browser.test.ts src/kit/kit.browser.test.ts)
+```
+
+Atteso: **verde** — sotto jsdom le sei prove nuove della cornice, le due della Panoramica e del cassetto aperti e quella
+delle parole delle viste, con le altre dei tre file; nel browser **ventisette su ventisette**.
+
+- [ ] **Passo 8: tutte le prove, il *build*, il linter, e il pezzo JavaScript**
+
+```bash
+(cd gui && npm test && npm run build && npm run lint)
+(cd gui && npm run build 2>&1 | grep -E 'assets/index-.*\.js ')
+```
+
+Atteso: **verde** su tutto; i file di prova più alti di quelli del compito 7 di **uno**, `frame.browser.test.ts`, e le
+prove più alte di **sedici** — nove sotto jsdom e sette nel browser. ⛔ E la suite intera **cinque volte**, ciascuna col suo rapporto JSON — `npx vitest run
+--reporter=json --outputFile=<scratchpad>/corsa-N.json` —: una caduta è una voce d'errata, non una corsa da ripetere
+finché passa (P-19, P-20, P-21). Il pezzo JavaScript va nel messaggio del commit: sulla cartella di prova, il
+2026-09-24, `dist/assets/index-….js` a **696,60 kB**, 212,50 compressi, contro i 663,26 kB, 201,23 compressi, del `main` senza il design system — il log del cancello d'apertura, `grep -n 'kB'` — la cifra è per il proprietario, che ha N-2 (R3-25).
+
+- [ ] **Passo 9: le due direzioni**
+
+Una violazione alla volta, poi indietro con la **copia salvata** e `cmp` (vincolo 11): i file nuovi sono nati qui, e gli
+altri il compito li ha già cambiati (A-1).
+
+| La prova | La violazione messa a mano | Atteso, misurato il 2026-09-24 |
+|---|---|---|
+| `frame.test.ts`, la carta corrente | in `Overview.vue` `current: false,` per le tre viste | rosso: `expected [ null, null, null, null ] to deeply equal [ 'page', null, null, null ]` |
+| `frame.test.ts`, F3 sotto la conferma (D15) | in `Frame.vue` `if (!drawer.open) overview.value = …`, senza `!invoke.asking` | rosso: `expected true to be false` |
+| `frame.test.ts`, F3 sotto il cassetto (D16) | in `Frame.vue` `if (!invoke.asking) overview.value = …`, senza `!drawer.open` | rosso: `expected true to be false` |
+| `frame.test.ts`, la carta scelta | in `choose` tolta la riga `open.value = false;` | rosso: `expected true to be false` — la Panoramica resta aperta |
+| `frame.test.ts`, il rifiuto detto (D4) | in `save` tolta la riga `refusal.value = result;` | rosso: `expected 'AnnullaSalva' to contain 'Scrivi un nome.'` |
+| `frame.test.ts`, i nomi delle tre (D12) | in `save` `props.snapshot(), []);` al posto dei nomi | rosso: `a name that is taken keeps the overview open: expected false to be true` — *«home»* salvata |
+| `frame.test.ts`, la miniatura (D14) | in `drawn` tolta la riga del `.filter` sulla striscia | rosso: `expected [ 'activity', 'costs', …(5) ] to deeply equal [ 'activity', 'costs', …(4) ]` |
+| `frame.test.ts`, il pulsante della striscia | in `Strip.vue` tolto ` @click="drawer.open = true"` | rosso: `expected false to be true` |
+| `a11y.test.ts`, la Panoramica aperta | in `Overview.vue` tolta la riga `<BaseLabel>{{ card.name }}</BaseLabel>`: carte senza nome | rosso: `expected [ Array(1) ] to deeply equal []` |
+| `copy.test.ts`, le parole delle viste | in `it.json` tolta la riga di `"compact"` | rosso: `compact: expected [ 'home', 'work' ] to include 'compact'` |
+| `frame.browser.test.ts` e `dock.browser.test.ts`, la pillola | in `dock.css` tolta la regola `:has(.strip)` | rosso, sei prove nei due temi: `expected 20 to be greater than or equal to 25`, `expected '20px' to be '9999px'` e i raggi del dock, `expected [ …(2) ] to deeply equal []` — il pulsante a pillola in una scheda |
+| `frame.browser.test.ts`, i 24 px dal fondo | in `Frame.vue` il margine di `.dock` a `0 var(--space-3) var(--space-3)` | rosso, nei due temi: `expected 12 to be close to 24, received difference is 12` |
+| `frame.browser.test.ts`, gli angoli della pagina | in `ViewBar.vue` il padding di `.bar` a `var(--space-2) 0` | rosso, nei due temi: `expected [ 'base-button view-name' ] to deeply equal []` |
+| `frame.browser.test.ts`, il fuoco che torna (P-22) | in `Strip.vue` `@click="($event.currentTarget as HTMLElement).blur(); drawer.open = true"` | rosso, nei due temi: `expected <body style>…(1)</body> to be <button …>` — il fuoco torna a chi l'aveva prima di aprire |
+| `frame.browser.test.ts`, i raggi della Panoramica | in `Overview.vue` il raggio di `.mini` a `var(--radius-card)` | rosso, nei due temi: `expected [ …(12) ] to deeply equal []` |
+| `frame.browser.test.ts`, il testo tagliato | in `Overview.vue` `.caption` con `width: 40px;` e `overflow: hidden;` | rosso, nei due temi: `expected [ 'cut: caption "Lavoro" 49>40', …(1) ] to deeply equal []` |
+| `frame.browser.test.ts`, le icone centrate | in `Overview.vue`, prima di `.caption {`, la regola `.tile :deep(.base-icon) { margin-top: 4px; }` | rosso, nei due temi: `expected [ …(15) ] to deeply equal []` |
+| `frame.browser.test.ts`, il contrasto | in `Overview.vue`, prima di `.caption {`, la regola `.caption :deep(.base-label) { color: var(--color-border); }` | rosso, nei due temi: `expected [ Array(1) ] to deeply equal []` |
+| `frame.browser.test.ts`, le frecce (decisione 19) | in `Overview.vue` tolto ` @keydown="onArrow"` | rosso: `expected <button …(8)>…(2)</button> to be <button …(7)>…(2)</button>` — il fuoco resta su Home |
+| `frame.browser.test.ts`, il giro del Tab (D17) | in `Overview.vue` `:tabindex="0"` su ogni carta delle viste | rosso: `expected [ +0, +0, +0, -1 ] to deeply equal [ +0, -1, -1, -1 ]` |
+
+Alla fine `git status --porcelain | diff <scratchpad>/prima.txt -` rende soltanto i file del compito.
+
+- [ ] **Passo 10: guardarlo, nei due temi**
+
+`(cd gui && npm run dev)`, e nel browser, a finestra piena, nel tema chiaro e nello scuro — la scelta in Impostazioni: la
+barra col **nome della vista** e l'icona, la ricerca spenta e il chip a destra; **F3** e il clic sul nome aprono la
+Panoramica, con le **miniature** delle tre viste — i moduli dove stanno, con le loro icone —, la vista corrente in
+**bordeaux** e *«Salva questa vista»* sotto; le frecce che girano la griglia, Invio che entra, Esc che chiude e rende il
+fuoco al nome; il nome di una vista nuova, rifiutato vuoto e rifiutato *«home»*, poi salvato; e in fondo la **striscia a
+pillola**, a 12 px dai lati e a 24 dal fondo, col pulsante *«moduli»* che apre il cassetto. Un difetto che si vede e che
+nessuna prova ha colto è una voce d'errata (la regola 5 di *«Come si esegue un compito»*).
+
+- [ ] **Passo 11: il cancello, il commit, la posizione**
+
+La riga **8** della tabella della posizione — **Stato** `✅ <data>`, e nella riga **7** la colonna **Commit** con l'hash del
+compito 7 (R1-16) —; `bash scripts/gate.sh` da solo, `bash scripts/check-docs.sh`, il commit — `design-system(compito 8): la
+cornice …`, col pezzo JavaScript misurato — coi fine-riga rimisurati, e `git push`.
+
+---
+
+## Come si riprende — il compito 8 scritto, 2026-09-24
+
+⚠️ **Il piano è A METÀ, e non si esegue.** Scritti: la testa e i **compiti 1–8**; da scrivere: il compito **9** e la
+**Definizione di «fatto»**. Il 6, il 7 e l'8 non li ha letti nessun revisore: li legge il pre-controllo. La consegna
+precedente sta parola per parola in [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
+
+✅ **Il compito 8 è scritto, e provato sulla cartella di prova prima di esserlo.** Il codice è stato applicato nel ramo
+`task8`, le prove e i venti rossi del suo passo 9 sono girati lì, e il testo è composto dai file del ramo da uno script
+che rifiuta un *Trova* non unico e rifà ogni file nuovo byte per byte. Scrivendolo sono venuti **P-22**…**P-25** — due
+fatti della libreria di prova e della striscia, uno di `reka-ui`, e un commento del compito 3 corretto — e le decisioni
+**D14**…**D18**. ⚠️ **La D18 è da rileggere dal proprietario**: la miniatura di Compatta è il suo schema, non la
+*«finestrella»* della (d). E una voce 🔶 **dedotta** è in *«Le voci aperte che questo piano SA»*: Ctrl+Alt+frecce sotto
+una finestra modale.
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
 | **cancello** | `GATE GREEN` all'apertura della sessione e prima del suo commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
-| **la CI** | verdi su tutti e due i sistemi le corse fino a `71f6a92`; quella del commit che scrive questa riga **in corso** alla chiusura: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
-| **codice di prodotto** | non toccato: le cure vivono nel piano e nella cartella di prova |
-| **il banco** | la cartella di prova della macchina `zagor`, ramo **`cures`**: sette corse intere verdi, una dopo `npm ci` e l'ultima sul commit finale del ramo, coi rapporti JSON |
-| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL-DEV\MY-REPOS\daemon`, Chrome 154 e la sua cartella di prova, **senza** le cure; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness` — il portatile con l'i7-14700HX, la RTX 4060 e 15,7 GB di memoria —, Chrome 153, dove questa sessione ha lavorato. Su tutte e due `LongPathsEnabled` è 0: le cartelle di prova stanno in `%TEMP%`, non nello scratchpad |
+| **la CI** | verdi su tutti e due i sistemi le corse fino a `7b9e338`; quella del commit che scrive questa riga **in corso** alla chiusura: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **codice di prodotto** | non toccato: il compito 8 vive nel piano e nella cartella di prova |
+| **il banco** | la cartella di prova della macchina `zagor`, ramo **`task8`**, due commit sopra `cures`: cinque corse intere verdi di fila, coi rapporti JSON, e i venti rossi del passo 9 del compito 8 fatti e tolti uno alla volta |
+| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL-DEV\MY-REPOS\daemon`, Chrome 154 e la sua cartella di prova, **senza** le cure né il compito 8; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, Chrome 153, dove questa sessione ha lavorato. Su tutte e due `LongPathsEnabled` è 0: le cartelle di prova stanno in `%TEMP%`, non nello scratchpad |
 
 📌 **La cartella di prova sulla macchina `zagor`:** `C:\Users\zagor\AppData\Local\Temp\pds`, col suo `git` senza
-`origin` — la base a `70500c0`, `main` coi compiti 1–5, `task6`, `task7`, e **`cures`**, due commit sopra `task7`: i tre
-file che P-20 e P-21 toccano, rifatti dal testo del piano con `pds\tools\rebuild\apply_plan.py` e la ricetta qui
-sotto — `vite.config.ts` e `copy.test.ts` prima riportati alla base, `git show 70500c0:<file>` —; `git diff task7 cures`
-rende solo le righe delle due cure. La ricetta vale per il piano del commit che scrive questa riga, e sulla macchina
-`Jays` si lancia uguale. **Il compito 8 parte da `cures`.** Gli attrezzi della caccia stanno in
-`pds\tools\flakes\`, fuori dal suo `git`: `flake_runs.py` — un rapporto JSON per corsa —; `renderer_watch.ps1` e
-`chrome_dump.ps1` con `dump_diff.py`, le priorità dei processi di Chrome; `sys_sample.ps1`, memoria e disco; `hog.py`,
-la CPU; e tre sonde usa-e-getta da copiare in `gui/src/`: `zz-probe` — evento, fotogramma e timer a ogni cambio di
-tema —, `zz-amplified` — la sequenza del file quaranta volte — e `zz-late`, l'attesa del progetto.
+`origin` — `cures` com'era, `task8` sopra, e `t8-tests`, le sole prove del compito 8 sopra `cures`, da cui vengono i
+rossi del passo 3. Gli attrezzi della scrittura stanno in `pds\tools\t8\`, fuori dal suo `git`: `compose8.py` compone il
+testo del compito dai due rami, `c8-template.md` ne è la prosa, `reds.py` misura le venti violazioni una alla volta, e
+`one_red.py` ne rifà una. Il ramo si rifà dal testo del piano con `pds\tools\rebuild\apply_plan.py` e la ricetta qui sotto,
+**da `cures`** — la ricetta vale per il piano del commit che scrive questa riga, e sulla macchina `Jays` si lancia uguale,
+dopo la ricetta delle cure:
 
 ```text
-R gui/vite.config.ts 1436 1443
-R gui/vite.config.ts 1452 1458
-R gui/vite.config.ts 1480 1494
-W gui/src/tokens/tokens.browser.test.ts 1284
-R gui/src/tokens/tokens.browser.test.ts 4566 4573
-R gui/src/tokens/tokens.browser.test.ts 4581 4590
-R gui/src/locales/copy.test.ts 3858 3865
-R gui/src/locales/copy.test.ts 3873 3881
-R gui/src/locales/copy.test.ts 3896 3903
-R gui/src/locales/copy.test.ts 3909 3916
+R gui/src/testing/axe.ts 6379 6386
+R gui/src/kit/kit.browser.test.ts 6408 6420
+R gui/src/kit/kit.browser.test.ts 6431 6449
+R gui/src/frame/dock.browser.test.ts 6459 6472
+R gui/src/frame/frame.test.ts 6492 6511
+R gui/src/frame/frame.test.ts 6535 6544
+R gui/src/a11y.test.ts 6702 6709
+R gui/src/a11y.test.ts 6717 6726
+R gui/src/a11y.test.ts 6737 6744
+R gui/src/a11y.test.ts 6751 6776
+R gui/src/locales/copy.test.ts 6823 6830
+R gui/src/locales/copy.test.ts 6838 6845
+R gui/src/locales/copy.test.ts 6853 6860
+W gui/src/frame/frame.browser.test.ts 6875
+W gui/src/stores/drawer.ts 7068
+R gui/src/stores/invoke.ts 7089 7095
+R gui/src/stores/invoke.ts 7101 7108
+R gui/src/stores/invoke.ts 7124 7130
+R gui/src/components/Confirm.vue 7138 7161
+R gui/src/components/Confirm.vue 7178 7184
+W gui/src/frame/Drawer.vue 7190
+R gui/src/locales/it.json 7234 7242
+R gui/src/locales/it.json 7249 7259
+W gui/src/frame/Overview.vue 7280
+W gui/src/frame/ViewBar.vue 7550
+W gui/src/frame/Frame.vue 7617
+W gui/src/panels/Strip.vue 7703
+R gui/src/tokens/dock.css 7765 7772
 ```
 
 **Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
 
 1. `git fetch --all --prune`, `git status -sb`; la CI della chiusura, per prima.
-2. Questa sezione, la testa del piano e le *Interfaces* dei compiti 1–7.
-3. I compiti **8** e **9** e la **Definizione di «fatto»**, con le forme qui sotto — già corrette dalla revisione (R3-20,
-   R3-23, R3-25 e R2-8 del [registro](2026-09-23-design-system-revisione/ledger.md)), da non ridecidere senza una misura
-   nuova —, e con le forme che hanno i compiti di prima:
-   1. la colonna **Commit** di R1-16 — ogni compito scrive l'hash del precedente;
-   2. il ritorno delle violazioni del **vincolo 11** — la copia salvata, `cmp`, e `git status --porcelain` confrontato con
-      quello di prima;
-   3. i comandi in una sottoshell, `(cd gui && …)` (R1-12);
-   4. per **ogni** prova nuova, la violazione che la fa rossa e il messaggio **misurato** del rosso (A-4 e A-5 del registro);
-   5. il metodo dei compiti 6 e 7: il codice si applica sul banco, in un ramo suo — `task8` da `cures` —, le prove e i
-      rossi girano lì, e uno script compone il testo del compito dai file del ramo con `git show`, e rifiuta se un blocco
-      *Trova* non è unico nei file del ramo di prima, o un blocco *Sostituisci con* in quelli del ramo nuovo;
-   6. ⚠️ ogni corsa della suite col suo **rapporto JSON** — `flake_runs.py` —, e una caduta è una voce del piano, non una
-      corsa da ripetere: P-20 e P-21 si sono viste così, e il messaggio della seconda si era perso in un `grep`.
-4. Poi, ciascuno nella sua sessione: il **pre-controllo** delle quattro domande di `CLAUDE.md`, compito per compito — il 6
-   e il 7 compresi —; poi l'esecuzione.
+2. Questa sezione, la testa del piano e le *Interfaces* dei compiti 1–8.
+3. Il compito **9** e la **Definizione di «fatto»**, con la forma qui sotto — già corretta dalla revisione (R3-23, R3-25
+   e R2-8 del [registro](2026-09-23-design-system-revisione/ledger.md)), da non ridecidere senza una misura nuova —, e con
+   le forme che hanno i compiti di prima: la colonna **Commit** di R1-16; i comandi in una sottoshell, `(cd gui && …)`
+   (R1-12); per **ogni** controllo nuovo la violazione che lo fa rosso e il messaggio **misurato** del rosso (A-4 e A-5
+   del registro), e il ritorno con la copia salvata, `cmp` e `git status --porcelain` confrontato con quello di prima
+   (vincolo 11).
+4. Poi, ciascuno nella sua sessione: il **pre-controllo** delle quattro domande di `CLAUDE.md`, compito per compito — il
+   6, il 7 e l'8 compresi —; poi l'esecuzione.
 
-| Compito | Le forme già decise |
+| Compito | La forma già decisa |
 |---|---|
-| 8 | la barra: `BaseButton` col nome della vista e l'icona `views`, la ricerca `BaseTextField type="search"` spenta, il chip; il pulsante del cassetto **esce** dalla barra, perché «Moduli» scende nella striscia (la (d)). La Panoramica in `frame/Overview.vue` su `BaseDialog variant="full"`: carte `BaseButton variant="card"` con la miniatura, la vista corrente in bordeaux, l'ultima carta *«Salva questa vista»*; F3 in `Frame.vue`, ignorato mentre la finestra di conferma è aperta; le frecce con `nearest`. La striscia a pillola coi «moduli» `BaseButton pill` che apre il cassetto — ⛔ **lo stato aperto del cassetto vive in un negozio**, letto da `Drawer.vue` e scritto dalla striscia: la striscia è un pannello, cioè un'app Vue sua (`VueContent`), e non raggiunge un `ref` di `Drawer.vue` (R3-20). Nella miniatura il foglio `strip`, che sta in tutte le viste e non ha un'icona in `ICONS`: come si disegna lo dice la tavola della Panoramica, o lo decide il compito. Le prove: `axe` sulla Panoramica (controllo 17); nel browser la striscia a 12 e 24 px e **nessuna scheda vicina a un angolo della pagina** (controllo 19), le frecce e Invio nella Panoramica (R3-23). ⚠️ **Dalle *Interfaces* del compito 7:** la miniatura è `schematic(layout)`; una vista col nome si apre scrivendo `openNamed`, una delle tre con `showView`; *«Salva questa vista»* chiama `saveNamed(name, layout, shown)` — `shown`, i nomi che la cornice mostra per le tre viste, da `it.json` (D12) — e dice sotto il campo, in rosso, `"empty"` e `"taken"` (D4). ⚠️ **Dal compito 6:** il gruppo galleggiante è un `.dv-resize-container` con `role="dialog"`: col dock montato e un gruppo galleggiante, una prova che cerca `[role="dialog"]` ne trova due |
-| 9 | la riga «Accessibilità» da ✅ a 🔶 con le parole della legenda, **col richiamo datato**, e il comando del riquadro in testa al file rilanciato prima e dopo (controllo 21, R3-23); la riga **14** in coda alla roadmap e in *«Perché quest'ordine»* (prima del 13); `README.md`; la §12 e la §6 del compendio; `porta-di-qualita.md` — il browser nel cancello, e il prerequisito **Google Chrome, o `npx playwright install chrome`**: col canale `chrome` il Chromium scaricato non vale (R2-8); `riferimenti.md`, le fonti della scrittura del piano e della revisione — fra queste le due righe di `vitest` 4.1.11 lette per P-21, l'attesa di base di `expect.poll` e il tempo di una prova nel browser; il pezzo JavaScript misurato, con la cifra per il proprietario, che ha N-2 (R3-25); la Definizione di «fatto» coi comandi |
+| 9 | la riga «Accessibilità» da ✅ a 🔶 con le parole della legenda, **col richiamo datato**, e il comando del riquadro in testa al file rilanciato prima e dopo (controllo 21, R3-23); la riga **14** in coda alla roadmap e in *«Perché quest'ordine»* (prima del 13); `README.md`; la §12 e la §6 del compendio; `porta-di-qualita.md` — il browser nel cancello, e il prerequisito **Google Chrome, o `npx playwright install chrome`**: col canale `chrome` il Chromium scaricato non vale (R2-8); `riferimenti.md`, le fonti della scrittura del piano e della revisione — fra queste le due righe di `vitest` 4.1.11 lette per P-21, l'attesa di base di `expect.poll` e il tempo di una prova nel browser, e i due file di `reka-ui` 2.10.4 letti per P-22; il pezzo JavaScript misurato, con la cifra per il proprietario, che ha N-2 (R3-25) — sulla cartella di prova 696,60 kB coi compiti 1–8, contro i 663,26 del `main` senza il design system; la Definizione di «fatto» coi comandi |

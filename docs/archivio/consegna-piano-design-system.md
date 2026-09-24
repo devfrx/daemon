@@ -496,3 +496,83 @@ R gui/src/tokens/dock.css 7765 7772
 | Compito | La forma già decisa |
 |---|---|
 | 9 | la riga «Accessibilità» da ✅ a 🔶 con le parole della legenda, **col richiamo datato**, e il comando del riquadro in testa al file rilanciato prima e dopo (controllo 21, R3-23); la riga **14** in coda alla roadmap e in *«Perché quest'ordine»* (prima del 13); `README.md`; la §12 e la §6 del compendio; `porta-di-qualita.md` — il browser nel cancello, e il prerequisito **Google Chrome, o `npx playwright install chrome`**: col canale `chrome` il Chromium scaricato non vale (R2-8); `riferimenti.md`, le fonti della scrittura del piano e della revisione — fra queste le due righe di `vitest` 4.1.11 lette per P-21, l'attesa di base di `expect.poll` e il tempo di una prova nel browser, e i due file di `reka-ui` 2.10.4 letti per P-22; il pezzo JavaScript misurato, con la cifra per il proprietario, che ha N-2 (R3-25) — sulla cartella di prova 696,60 kB coi compiti 1–8, contro i 663,26 del `main` senza il design system; la Definizione di «fatto» coi comandi |
+
+## Il pre-controllo del compito 1, del 2026-09-24
+
+Tolto dal piano il 2026-09-24, quando la sessione dopo ha fatto il **pre-controllo del compito 1**, e scritto
+*«Come si riprende — il pre-controllo del compito 1»*. Il testo com'era, dal commit `923ee52`, parola per parola; i
+rimandi sono riscritti per questa cartella, e i numeri della ricetta sono quelli del piano di quel commit — e del
+commit dopo, che non ha mosso nessuna riga prima di *«Come si riprende»*.
+
+## Come si riprende — il piano scritto, 2026-09-24
+
+✅ **Il piano è SCRITTO**: la testa, i compiti **1–9** e la **Definizione di «fatto»**. ⛔ **Non si esegue ancora:** viene prima
+il **pre-controllo** delle quattro domande di `CLAUDE.md`, compito per compito, ciascuno in una sessione sua. I compiti 6, 7, 8 e 9
+non li ha letti nessun revisore: li legge il pre-controllo. La consegna precedente sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+✅ **Che cosa ha fatto questa sessione.** Il compito **9** e la **Definizione di «fatto»**, nella forma che il *«Come si riprende»*
+di prima dava — R2-8, R3-23 e R3-25 del [registro](../superpowers/plans/2026-09-23-design-system-revisione/ledger.md) — e sul modello del compito 17
+della parte 2; scrivendoli sono venuti **P-26**…**P-30** e **D19**…**D24**. Nello stesso commit, per **D19**: la riga del disegno
+in `docs/README.md`, falsa dal 2026-09-23, riscritta (P-26); la riga di questo piano nella tabella dei piani della roadmap, con
+l'intestazione (P-27); e il puntatore della §6 del compendio, che dice il piano scritto. ✅ **Il proprietario ha scelto,
+all'apertura:** prima il compito 9, e le contraddizioni di `porta-di-qualita.md` dopo, in una sessione loro che **non ha ancora
+collocato** — tranne **C-S0-1**, che il compito 9 corregge dove scrive il browser (P-29). ✅ **D18** l'ha scelta il
+proprietario alla chiusura, **A**, lo schema — col richiamo datato nella (d) del disegno —; la voce 🔶 **dedotta** di Ctrl+Alt+frecce sotto una finestra modale resta fra le voci che il piano sa.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **cancello** | `GATE GREEN` all'apertura della sessione e prima del suo commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
+| **la CI** | verdi su tutti e due i sistemi le corse fino a `03d1abd`, il commit che ha scritto il piano; quella del commit che scrive questa riga — la scelta di D18 — **in corso** alla chiusura: la sessione dopo le legge per prima, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **codice di prodotto** | non toccato: questa sessione ha scritto documenti, e `dod_suite.py` solo nello scratchpad |
+| **il banco** | la cartella di prova della macchina `zagor`, ramo **`task8`**, com'era: questa sessione non l'ha toccata |
+| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL-DEV\MY-REPOS\daemon`, Chrome 154 e la sua cartella di prova, **senza** le cure né il compito 8; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, Chrome 153, dove questa sessione ha lavorato. Su tutte e due `LongPathsEnabled` è 0: le cartelle di prova stanno in `%TEMP%`, non nello scratchpad |
+
+📌 **La cartella di prova sulla macchina `zagor`:** `C:\Users\zagor\AppData\Local\Temp\pds`, col suo `git` senza `origin` —
+`cures`, `task8` sopra, `t8-tests` —, e gli attrezzi in `pds\tools\`. Il ramo del compito 8 si rifà dal testo del piano con
+`pds\tools\rebuild\apply_plan.py` e la ricetta qui sotto, **da `cures`**. ⚠️ **La ricetta vale per il piano del commit che scrive
+questa riga:** le righe della testa aggiunte da questa sessione hanno spostato i numeri, e quelli qui sotto sono spostati e
+**provati** — ogni riga nomina un'apertura di blocco uguale a quella della ricetta di prima. Le ricette dei compiti 1–7 e delle
+cure, in `pds\tools\rebuild\`, valgono per il piano del loro commit: `git show <commit>:docs/superpowers/plans/2026-09-23-design-system.md`
+dà il file da passare ad `apply_plan.py`.
+
+```text
+R gui/src/testing/axe.ts 6390 6397
+R gui/src/kit/kit.browser.test.ts 6419 6431
+R gui/src/kit/kit.browser.test.ts 6442 6460
+R gui/src/frame/dock.browser.test.ts 6470 6483
+R gui/src/frame/frame.test.ts 6503 6522
+R gui/src/frame/frame.test.ts 6546 6555
+R gui/src/a11y.test.ts 6713 6720
+R gui/src/a11y.test.ts 6728 6737
+R gui/src/a11y.test.ts 6748 6755
+R gui/src/a11y.test.ts 6762 6787
+R gui/src/locales/copy.test.ts 6834 6841
+R gui/src/locales/copy.test.ts 6849 6856
+R gui/src/locales/copy.test.ts 6864 6871
+W gui/src/frame/frame.browser.test.ts 6886
+W gui/src/stores/drawer.ts 7079
+R gui/src/stores/invoke.ts 7100 7106
+R gui/src/stores/invoke.ts 7112 7119
+R gui/src/stores/invoke.ts 7135 7141
+R gui/src/components/Confirm.vue 7149 7172
+R gui/src/components/Confirm.vue 7189 7195
+W gui/src/frame/Drawer.vue 7201
+R gui/src/locales/it.json 7245 7253
+R gui/src/locales/it.json 7260 7270
+W gui/src/frame/Overview.vue 7291
+W gui/src/frame/ViewBar.vue 7561
+W gui/src/frame/Frame.vue 7628
+W gui/src/panels/Strip.vue 7714
+R gui/src/tokens/dock.css 7776 7783
+```
+
+**Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI della chiusura, per prima.
+2. Questa sezione; poi la testa del piano — i vincoli, *«Come si esegue un compito»*, l'errata, *«Ciò che la scrittura del piano
+   ha trovato»*, le decisioni e le voci che il piano sa.
+3. Il **pre-controllo del compito 1**, con le quattro domande di `CLAUDE.md` e le righe 5–8 di ciò che non colgono — ⛔ la 5
+   soprattutto: il compito si legge contro il codice di **adesso** —; le voci che trova vanno nell'errata, e il dispaccio resta
+   pronto su file. Poi l'**esecuzione** del compito 1, in un'altra sessione; e così compito per compito, fino al 9.

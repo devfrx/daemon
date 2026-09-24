@@ -188,3 +188,65 @@ l'esecuzione.
 | 7 | `LayoutPack.named?: { name: string; layout: SerializedDockview }[]` e `openNamed?: string` (D3); `unpack` scarta le voci invalide e i doppioni; nel negozio `openNamed` e `saveNamed(name, layout)`, che rifiuta un nome già usato (D4) — anche i nomi delle tre viste di sempre, com'è lo specimen della pagina kit. ⛔ **`settle` scrive nella vista col nome quando `openNamed` c'è, e in `layouts[view]` altrimenti**, e `receive` riporta anche `openNamed`: una prova del negozio tiene che una mossa in una vista col nome lasci `layouts.home` com'era (R3-19). Il dock guarda anche `openNamed`. L'aiutante `nearest(from, candidates, direction)` estratto dalla geometria di `moveActive.ts`, che lo usa anche lui, **con lo spareggio sull'altro asse** — a parità di distanza vince il centro più vicino sull'asse perpendicolare — provato coi rettangoli a mano anche su una griglia di tre colonne, «giù» dalla colonna di mezzo (R3-18). `schematic(layout)` → rettangoli in frazioni dall'albero della griglia, con l'orientamento che si alterna a ogni livello a partire da `grid.orientation`, e senza i gruppi galleggianti (D5) |
 | 8 | la barra: `BaseButton` col nome della vista e l'icona `views`, la ricerca `BaseTextField type="search"` spenta, il chip; il pulsante del cassetto **esce** dalla barra, perché «Moduli» scende nella striscia (la (d)). La Panoramica in `frame/Overview.vue` su `BaseDialog variant="full"`: carte `BaseButton variant="card"` con la miniatura, la vista corrente in bordeaux, l'ultima carta *«Salva questa vista»*; F3 in `Frame.vue`, ignorato mentre la finestra di conferma è aperta; le frecce con `nearest`. La striscia a pillola coi «moduli» `BaseButton pill` che apre il cassetto — ⛔ **lo stato aperto del cassetto vive in un negozio**, letto da `Drawer.vue` e scritto dalla striscia: la striscia è un pannello, cioè un'app Vue sua (`VueContent`), e non raggiunge un `ref` di `Drawer.vue` (R3-20). Nella miniatura il foglio `strip`, che sta in tutte le viste e non ha un'icona in `ICONS`: come si disegna lo dice la tavola della Panoramica, o lo decide il compito. Le prove: `axe` sulla Panoramica (controllo 17); nel browser la striscia a 12 e 24 px e **nessuna scheda vicina a un angolo della pagina** (controllo 19), le frecce e Invio nella Panoramica (R3-23) |
 | 9 | la riga «Accessibilità» da ✅ a 🔶 con le parole della legenda, **col richiamo datato**, e il comando del riquadro in testa al file rilanciato prima e dopo (controllo 21, R3-23); la riga **14** in coda alla roadmap e in *«Perché quest'ordine»* (prima del 13); `README.md`; la §12 e la §6 del compendio; `porta-di-qualita.md` — il browser nel cancello, e il prerequisito **Google Chrome, o `npx playwright install chrome`**: col canale `chrome` il Chromium scaricato non vale (R2-8); `riferimenti.md`, le fonti della scrittura del piano e della revisione; il pezzo JavaScript misurato, con la cifra per il proprietario, che ha N-2 (R3-25); la Definizione di «fatto» coi comandi |
+
+## Il compito 7 scritto e verificato alla ripresa, del 2026-09-23
+
+Tolto dal piano il 2026-09-24, quando la sessione che doveva scrivere i compiti 8 e 9 — su un'altra macchina, dove la
+cartella di prova non c'era — l'ha rifatta dal testo del piano, ha trovato due cadute della suite e ha scritto *«Come si
+riprende — la cartella di prova rifatta su un'altra macchina, e due cadute della suite»*. Il testo com'era, dal commit
+`70500c0`, parola per parola; i rimandi sono riscritti per questa cartella.
+
+## Come si riprende — il compito 7 scritto e verificato alla ripresa, 2026-09-23
+
+⚠️ **Il piano è A METÀ, e non si esegue.** Scritti: la testa e i **compiti 1–7**. I compiti 1–5 li ha letti la revisione e
+corretti il [registro](../superpowers/plans/2026-09-23-design-system-revisione/ledger.md) (`7c42748`); il **6** (`a3d5509`) e il **7**
+(`5ed1fa2`) sono nati dopo, e **nessun revisore li ha letti**: li legge il pre-controllo. Da scrivere: i compiti **8** e
+**9** e la **Definizione di «fatto»**. La consegna precedente sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **cancello** | `GATE GREEN` all'apertura della ripresa e prima di ogni suo commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
+| **la CI** | verdi su tutti e due i sistemi le corse fino ad `a3d5509`; alla chiusura, quella di `5ed1fa2` era verde su `ubuntu-latest` e **in corso** su `windows-latest`, e quella del commit che scrive questa riga **in corso**: la sessione dopo le legge per prime, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **codice di prodotto** | non toccato |
+| **Google Chrome** | 154, sulla macchina dell'account `Jays`; le prove nel browser non scaricano niente (decisione 22 del disegno) |
+
+⚠️ **La cartella di prova, su una macchina sola.** `C:\Users\Jays\AppData\Local\Temp\pds`, col suo `git`: `master` a
+`4637ac5`, i compiti 1–5; `task6` a `9b825f4`; `task7` a `df7768f`. Ogni blocco di codice dei compiti 6 e 7 è **identico** a
+un file di quei rami — confrontato alla ripresa, tranne i due frammenti della console —, e al compito 7 la cartella è verde:
+*build*, linter, e la suite intera sei volte di fila, 26 file e 171 prove. È il banco dei compiti 8 e 9 mentre si scrivono;
+**non è una fonte**, e si rifà dal piano. Sta in `%TEMP%` e non nello scratchpad perché su quella macchina i percorsi lunghi
+di Windows sono spenti (`LongPathsEnabled` a 0). Le cartelle dei revisori, sull'altra macchina, si cancellano come dice il
+[registro](../superpowers/plans/2026-09-23-design-system-revisione/ledger.md), *«L'applicazione»*: da questa macchina non si verifica.
+
+📌 **Il metodo dei compiti 6 e 7, che vale per l'8 e il 9.** Il codice si applica sul banco, in un ramo suo — `task8` da
+`task7` —; le prove e i rossi girano lì, ciascuno col suo messaggio misurato; poi uno script compone il testo del compito
+prendendo ogni file con `git show <ramo>:<file>`, e rifiuta se un blocco *Trova* non è unico nei file del ramo di prima, o
+un blocco *Sostituisci con* in quelli del ramo nuovo. Così il codice del piano **è** il codice provato. Gli script della
+sessione che li ha scritti — `insert6.py` e `insert7.py`, coi rossi in `reds6.py` e `reds7.py` — stanno nel suo scratchpad
+su questa macchina, `…\E--ALL-DEV-MY-REPOS-daemon\4def4062-1a15-49d6-95bd-98976859816d\scratchpad\`: un esempio, non una
+fonte.
+
+✅ **D12 è del proprietario, dal 2026-09-23 — A:** due nomi di vista che differiscono solo per le maiuscole o per gli
+spazi intorno sono lo stesso nome; la B era il confronto esatto. La sessione che l'ha scritta gli attribuiva la ragione
+senza fonte; la ripresa gliel'ha chiesta, e la riga D12 e il commento di `sameName` dicono la sua scelta. Non si riapre.
+
+**Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`): **scrivere i compiti 8 e 9 e la Definizione di
+«fatto»**, con le forme qui sotto — ⚠️ già corrette dalla revisione (R3-20, R3-23, R3-25 e R2-8 del registro), e da non
+ridecidere senza una misura nuova. Chi li scrive legge questo file per intero e il disegno, **prima** di ogni compito rilegge
+le *Interfaces* dei compiti 1–7, e porta nei compiti nuovi le forme che hanno i compiti di prima:
+
+1. la colonna **Commit** di R1-16 — ogni compito scrive l'hash del precedente;
+2. il ritorno delle violazioni del **vincolo 11** — la copia salvata, `cmp`, e `git status --porcelain` confrontato con
+   quello di prima;
+3. i comandi in una sottoshell, `(cd gui && …)` (R1-12);
+4. per **ogni** prova nuova, la violazione che la fa rossa e il messaggio **misurato** del rosso (A-4 e A-5 del registro).
+
+Poi, ciascuno nella sua sessione: il **pre-controllo** delle quattro domande di `CLAUDE.md`, compito per compito — il 6 e
+il 7 compresi —; poi l'esecuzione.
+
+| Compito | Le forme già decise |
+|---|---|
+| 8 | la barra: `BaseButton` col nome della vista e l'icona `views`, la ricerca `BaseTextField type="search"` spenta, il chip; il pulsante del cassetto **esce** dalla barra, perché «Moduli» scende nella striscia (la (d)). La Panoramica in `frame/Overview.vue` su `BaseDialog variant="full"`: carte `BaseButton variant="card"` con la miniatura, la vista corrente in bordeaux, l'ultima carta *«Salva questa vista»*; F3 in `Frame.vue`, ignorato mentre la finestra di conferma è aperta; le frecce con `nearest`. La striscia a pillola coi «moduli» `BaseButton pill` che apre il cassetto — ⛔ **lo stato aperto del cassetto vive in un negozio**, letto da `Drawer.vue` e scritto dalla striscia: la striscia è un pannello, cioè un'app Vue sua (`VueContent`), e non raggiunge un `ref` di `Drawer.vue` (R3-20). Nella miniatura il foglio `strip`, che sta in tutte le viste e non ha un'icona in `ICONS`: come si disegna lo dice la tavola della Panoramica, o lo decide il compito. Le prove: `axe` sulla Panoramica (controllo 17); nel browser la striscia a 12 e 24 px e **nessuna scheda vicina a un angolo della pagina** (controllo 19), le frecce e Invio nella Panoramica (R3-23). ⚠️ **Dalle *Interfaces* del compito 7:** la miniatura è `schematic(layout)`; una vista col nome si apre scrivendo `openNamed`, una delle tre con `showView`; *«Salva questa vista»* chiama `saveNamed(name, layout, shown)` — `shown`, i nomi che la cornice mostra per le tre viste, da `it.json` (D12) — e dice sotto il campo, in rosso, `"empty"` e `"taken"` (D4). ⚠️ **Dal compito 6:** il gruppo galleggiante è un `.dv-resize-container` con `role="dialog"`: col dock montato e un gruppo galleggiante, una prova che cerca `[role="dialog"]` ne trova due |
+| 9 | la riga «Accessibilità» da ✅ a 🔶 con le parole della legenda, **col richiamo datato**, e il comando del riquadro in testa al file rilanciato prima e dopo (controllo 21, R3-23); la riga **14** in coda alla roadmap e in *«Perché quest'ordine»* (prima del 13); `README.md`; la §12 e la §6 del compendio; `porta-di-qualita.md` — il browser nel cancello, e il prerequisito **Google Chrome, o `npx playwright install chrome`**: col canale `chrome` il Chromium scaricato non vale (R2-8); `riferimenti.md`, le fonti della scrittura del piano e della revisione; il pezzo JavaScript misurato, con la cifra per il proprietario, che ha N-2 (R3-25); la Definizione di «fatto» coi comandi |

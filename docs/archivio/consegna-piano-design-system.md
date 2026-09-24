@@ -576,3 +576,86 @@ R gui/src/tokens/dock.css 7776 7783
 3. Il **pre-controllo del compito 1**, con le quattro domande di `CLAUDE.md` e le righe 5–8 di ciò che non colgono — ⛔ la 5
    soprattutto: il compito si legge contro il codice di **adesso** —; le voci che trova vanno nell'errata, e il dispaccio resta
    pronto su file. Poi l'**esecuzione** del compito 1, in un'altra sessione; e così compito per compito, fino al 9.
+
+## L'esecuzione del compito 1, del 2026-09-24
+
+Tolto dal piano il 2026-09-24, quando la sessione dopo ha **eseguito il compito 1** e scritto *«Come si riprende —
+l'esecuzione del compito 1»*. Il testo com'era, dal commit `e2cd7df`, parola per parola; i rimandi sono riscritti per
+questa cartella. ⚠️ I numeri della sua ricetta sono quelli del piano di `d10d9a5`, come dice il suo richiamo di E1: le
+righe E2–E9 dell'errata, scritte da `69d10fa`, li hanno spostati di altre otto.
+
+## Come si riprende — il pre-controllo del compito 1, 2026-09-24
+
+✅ **Il pre-controllo del compito 1 è fatto, e non ha trovato nessun difetto**: l'errata resta vuota, e il compito si esegue
+com'è scritto. La consegna precedente sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+⚠️ **Perché «nessun difetto» è una misura e non un'impressione.** Il compito è stato **rifatto per intero dal testo del
+piano** su una copia pulita di `923ee52` — `git clone` in `C:\Users\zagor\AppData\Local\Temp\pc1`, `npm ci`, poi
+`pds\tools\rebuild\apply_plan.py` con la ricetta qui sotto e gli script dei Passi 9 e 13 — e ogni *Atteso* è tornato. Il testo
+del compito è lo stesso, riga per riga, che la cartella di prova aveva già provato dopo la revisione:
+`diff <(git show 5ed1fa2:<piano> | sed -n '230,1237p') <(sed -n '254,1261p' <piano>)` non rende nulla.
+
+| Domanda | Esito, e il comando o la misura |
+|---|---|
+| 1 — la sonda è sbagliata? | no: le **otto** violazioni del Passo 16, una per volta sulla copia, rosse tutte **per la ragione scritta** — il contrasto nomina `color-text-muted on color-bg: 3.34 < 4.5`, la guardia dice `color-bg-test` nei due temi, i colori `panels/Strip.vue:30` —; ogni file tornato dalla copia salvata, `cmp` uguale, e `git status --porcelain` alla fine uguale a quello di prima |
+| 2 — manca una sonda? | no: ogni artefatto ha la sua. Senza prova automatica restano quelli che il piano già dice — la regola della pagina in `App.vue` (P-23, compito 8); il tema posato prima del *mount* in `main.ts` e la presa grande, che il Passo 17 guarda (misurata **40** px); i caratteri caricati, che prova il compito 2 |
+| 3 — l'artefatto è sbagliato? | no, sulla copia: Passo 2, il diff di `package.json` `4 +++-` e la licenza `OFL-1.1`; Passo 8, **6** prove rosse su 28 e la scelta sconosciuta verde; Passo 9, **9** verdi; Passo 13, undici `ok:` e il censimento pulito; Passo 15, **100** prove passate e una saltata, *build* e linter verdi, il pezzo JavaScript `663.93 kB` contro i `663.26 kB` del `main`; `npm audit`, 0; `check-docs.sh`, `OK`; i fine-riga, i file nuovi LF e gli altri coi CR uguali alle righe; Passo 17, il testo peggiore del dock a **5,86** nello scuro e **6,22** nel chiaro, `seen` 39, Geist caricato |
+| 4 — è già eseguito? | no: `gui/src/tokens/tokens.css` c'è, `base.css` no |
+| 5 — il contratto è cresciuto sotto il piano? | no: `git log fd2812b..HEAD -- gui/` non rende nulla; sotto `scripts/` è cambiato solo il tetto di `check-docs.sh` |
+| 6 — un commento o un banco lo smentisce? | no: sulla copia, dopo il compito, `tokens.css` è nominato solo da `tokens/dock.css`, che dice che esce, e il commento di `a11y.test.ts` sul contrasto è quello che il Passo 14 lascia al compito 3, detto |
+| 7, 8 | non si applicano: il compito non tocca un ADR e non è un rapporto |
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **cancello** | `GATE GREEN` all'apertura — sotto `gui/` 84 prove passate e una saltata — e prima del commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
+| **la CI** | verdi su tutti e due i sistemi le corse fino a `923ee52`; quella del commit che scrive questa riga, **in corso** alla chiusura: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **codice di prodotto** | non toccato: questa sessione ha scritto documenti |
+| **la copia del pre-controllo** | `C:\Users\zagor\AppData\Local\Temp\pc1`, ramo **`t1`**, **senza** `origin`: il compito 1 rifatto dal testo del piano, in un commit locale. Serve all'esecuzione e alla revisione come **confronto** — i file del compito devono esserle uguali a meno dei fine-riga —, e si cancella dopo il compito 1. Solo sulla macchina `zagor` |
+| **il dispaccio** | pronto sulla macchina `zagor`, nella cartella git-ignorata `.superpowers/sdd/2026-09-23-design-system/`: `dispatch-task-1.md`, e `task-1-brief.md` fatto per **ancore** da `_extract_brief_1.py`. Su un'altra macchina non c'è, e si rifà: il brief è la testa del piano — obiettivo, pila, strumenti, vincoli, *«Come si esegue un compito»*, l'errata —, le voci **P-1, P-4, P-5, P-12, P-13**, le decisioni **D1** e **D2**, le voci che il piano sa, il compito 1, la **(a)** del disegno e i suoi controlli **1–7** |
+| **il banco** | la cartella di prova della macchina `zagor`, `C:\Users\zagor\AppData\Local\Temp\pds`, ramo **`task8`**, com'era: questa sessione ne ha usato solo gli attrezzi |
+| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL-DEV\MY-REPOS\daemon`, Chrome 154 e la sua cartella di prova, **senza** le cure né il compito 8; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, Chrome 153, dove questa sessione ha lavorato. Su tutte e due `LongPathsEnabled` è 0: le cartelle di prova stanno in `%TEMP%`, non nello scratchpad |
+
+📌 **La ricetta del compito 1**, per `apply_plan.py`, vale per il piano del commit che scrive questa riga — le righe prima di
+*«Come si riprende»* non si sono mosse, quindi vale anche la ricetta del compito 8 della consegna precedente, in archivio. I
+due caratteri si installano **a mano prima**, col Passo 2; le righe `S` salvano gli script dei Passi 9 e 13, da lanciare a mano.
+
+⚠️ **Richiamo del 2026-09-24, E1:** la riga di **E1** nell'errata sposta di **una** riga tutto ciò che la segue. I numeri qui sotto sono quelli di prima **più uno**, riletti uno per uno sul recinto che aprono; la ricetta del compito 8 in archivio vale col suo più uno, e il `diff` del pre-controllo, più su, si legge a `6ae9b8b`. E1 cambia la prosa del Passo 10, non un recinto.
+
+```text
+W gui/src/tokens/board.test.ts 319
+W gui/src/tokens/contrast.test.ts 371
+W gui/src/tokens/usage.test.ts 513
+W gui/src/tokens/theme.test.ts 569
+A gui/src/stores/stores.test.ts 649
+S 704 <cartella>/extract_tokens.py
+W gui/src/tokens/theme.ts 755
+R gui/src/stores/layout.ts 814 821
+R gui/src/stores/layout.ts 829 838
+R gui/src/stores/layout.ts 851 868
+R gui/src/stores/layout.ts 900 906
+RL gui/src/stores/layout.ts
+< import { ref } from "vue";
+> import { computed, ref } from "vue";
+W gui/src/tokens/index.ts 920
+W gui/src/tokens/dock.css 941
+W gui/src/App.vue 1020
+RL gui/src/main.ts
+< import "./tokens/tokens.css";
+> import "./tokens";
+R gui/src/main.ts 1045 1051
+R gui/src/main.ts 1058 1073
+S 1115 <cartella>/rename_tokens.py
+```
+
+**Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI della chiusura, per prima.
+2. Questa sezione; poi il dispaccio, con la testa e la data riallineate e il brief rigenerato.
+3. ⛔ **Il costo, prima di dispacciare, e il sì del proprietario**: un compito eseguito per intero sono da quattro a cinque
+   dispacci su Opus — implementatore, revisore, un giro di correzioni, una ri-revisione —, misurati sui compiti della
+   parte 2 fra circa 0,9 e 1,5 milioni di token e fra una e due ore.
+4. L'**esecuzione del compito 1**, con `superpowers:subagent-driven-development`; il revisore rilancia ogni comando e
+   confronta i file con la copia `t1`. Poi il **pre-controllo del compito 2**, in un'altra sessione; e così compito per
+   compito, fino al 9.

@@ -1,0 +1,96 @@
+/* EVERYTHING THAT IS NOT A COLOUR -- design system, section (a), 2026-09-23. One set for both themes.
+   Sizes in rem (WCAG 1.4.4: text scales with the root), hairlines in px. Sources in the design document. */
+:root {
+  --font-family-text: "Geist Variable", system-ui, sans-serif;
+  --font-family-tool: "Barlow", "Bahnschrift", system-ui, sans-serif;
+  --font-family-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* the type roles, as `font` shorthands: weight size/line family. Lines on the 4 px grid. */
+  --font-label: var(--font-weight-semibold) 0.6875rem/1rem var(--font-family-tool);     /* 11/16, UPPERCASE */
+  --tracking-label: 0.14em;
+  --font-caption: var(--font-weight-regular) 0.75rem/1rem var(--font-family-text);      /* 12/16 */
+  --font-body: var(--font-weight-regular) 0.875rem/1.25rem var(--font-family-text);     /* 14/20 */
+  --font-body-strong: var(--font-weight-semibold) 0.875rem/1.25rem var(--font-family-text);
+  --font-title: var(--font-weight-semibold) 1rem/1.5rem var(--font-family-text);        /* 16/24 */
+  --font-heading: var(--font-weight-semibold) 1.25rem/1.75rem var(--font-family-text);  /* 20/28 */
+  --font-numeric: var(--font-weight-medium) 0.875rem/1.25rem var(--font-family-tool);   /* 14/20, tabular */
+  --font-display: var(--font-weight-light) 2rem/2.5rem var(--font-family-tool);         /* 32/40, tabular */
+  --font-mono: var(--font-weight-regular) 0.8125rem/1.25rem var(--font-family-mono);    /* 13/20 */
+
+  /* space: the 4 px grid */
+  --space-0-5: 2px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* radii: OUTER = INNER + DISTANCE, by construction (answer 4) */
+  --radius-inline: 6px;
+  --radius-control: 8px;
+  --radius-card: calc(var(--radius-control) + var(--space-3));   /* 20 */
+  --radius-frame: calc(var(--radius-card) + var(--space-3));     /* 32 */
+  --radius-full: 9999px;
+
+  /* sizes: nothing clickable under 24 x 24 (WCAG 2.5.8) */
+  --size-target-min: 24px;
+  --size-control-sm: 24px;
+  --size-control-md: 32px;
+  --size-control-lg: 40px;   /* the big grab of SP-8, move 5 */
+  --size-icon-sm: 14px;
+  --size-icon-md: 16px;
+  --size-icon-lg: 20px;
+  --icon-stroke: 2;
+  --border-width: 1px;
+  --focus-width: 2px;        /* WCAG 2.4.13: a 2 px perimeter */
+  --focus-offset: 2px;
+
+  /* motion: Carbon's productive durations and curves */
+  --duration-fast: 110ms;
+  --duration-moderate: 240ms;
+  --duration-slow: 400ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0.38, 0.9);
+  --ease-enter: cubic-bezier(0, 0, 0.38, 0.9);
+  --ease-exit: cubic-bezier(0.2, 0, 1, 0.9);
+
+  /* layers */
+  --z-floating: 50;
+  --z-popover: 100;
+  --z-overlay: 200;
+  --z-toast: 300;
+  --z-tooltip: 400;
+}
+
+/* WCAG 2.3.3: motion that an interaction triggers can be turned off -- Windows' own switch. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-moderate: 0ms;
+    --duration-slow: 0ms;
+  }
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: var(--font-body);
+}
+
+/* WCAG 2.4.7 and 2.4.13: an OUTLINE and not a box-shadow, because Windows' high contrast keeps outlines. */
+:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
+
+::selection {
+  background: var(--color-bg-selection);
+  color: var(--color-text);
+}

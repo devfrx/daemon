@@ -35,22 +35,22 @@ import { PANEL_TYPES } from "../panels/registry";
 .drawer-overlay {
   position: fixed;
   inset: 0;
-  background: rgb(0 0 0 / 0.45);
-  z-index: 100;
+  background: var(--color-veil);
+  z-index: var(--z-overlay);
 }
 .drawer {
   position: fixed;
   inset: auto 0 0 0;
-  z-index: 101;
+  z-index: var(--z-overlay);
   max-height: 60vh;
   overflow: auto;
   padding: var(--space-4);
-  background: var(--surface-raised);
-  border-top: 1px solid var(--line);
-  border-radius: var(--radius) var(--radius) 0 0;
+  background: var(--color-bg-raised);
+  border-top: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-control) var(--radius-control) 0 0;
 }
 .who {
-  color: var(--ink-dim);
+  color: var(--color-text-muted);
   margin-left: var(--space-2);
 }
 </style>

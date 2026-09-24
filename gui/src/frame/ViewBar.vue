@@ -49,17 +49,17 @@ const emit = defineEmits<{ (event: "switch", view: ViewName): void }>();
   gap: var(--space-3);
   align-items: center;
   padding: var(--space-2) var(--space-3);
-  background: var(--surface-raised);
-  border-bottom: 1px solid var(--line);
+  background: var(--color-bg-raised);
+  border-bottom: var(--border-width) solid var(--color-border);
 }
 .search {
   flex: 1;
   max-width: 320px;
 }
 .chip[data-phase="connected"] {
-  color: var(--accent);
+  color: var(--color-text-accent);
 }
 .chip[data-phase="stale"] {
-  color: var(--stop);
+  color: var(--color-text-stop);
 }
 </style>

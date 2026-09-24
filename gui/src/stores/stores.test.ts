@@ -152,3 +152,40 @@ describe("the layout", () => {
     expect(layout.saved).toEqual({ view: "compact", layouts: { compact: theirs } });
   });
 });
+
+describe("the theme in the package (design system, section (a))", () => {
+  it("keeps the choice a package carries, and opens one without it as `system`", () => {
+    const layout = useLayout();
+    layout.receive({ kind: "Layout", value: { state: "Package", bytes: [...pack_({ view: "home", layouts: {}, theme: "light" })] } });
+    expect(layout.theme).toBe("light");
+    // ⛔ THE SECOND DIRECTION: a package written before the field existed still opens -- as `system`.
+    setActivePinia(createPinia());
+    const older = useLayout();
+    older.receive({ kind: "Layout", value: { state: "Package", bytes: [...pack_({ view: "work", layouts: {} })] } });
+    expect(older.view).toBe("work");
+    expect(older.theme).toBe("system");
+  });
+
+  it("reads a choice it does not know as absent, without refusing the package", () => {
+    const bytes = [...new TextEncoder().encode('{"view":"home","layouts":{},"theme":"purple"}')];
+    expect(unpack({ state: "Package", bytes })).toEqual({ view: "home", layouts: {} });
+  });
+
+  it("sends the choice at once, and a settle after it keeps it", () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    layout.chooseTheme("dark");
+    const first = bridge.sent[0];
+    const chosen = first?.kind === "SaveLayout" ? unpack({ state: "Package", bytes: first.value }) : null;
+    expect(chosen).toEqual({ view: "home", layouts: {}, theme: "dark" });
+    expect(layout.theme).toBe("dark");
+    const home = { marker: "home, as the owner left it" } as never;
+    layout.settle(home);
+    const second = bridge.sent[1];
+    const settled = second?.kind === "SaveLayout" ? unpack({ state: "Package", bytes: second.value }) : null;
+    // ⛔ NOT "something was sent": a settle that rebuilt the package from `view` and `layouts` alone would drop
+    // the choice at the first move of a panel.
+    expect(settled).toEqual({ view: "home", layouts: { home }, theme: "dark" });
+  });
+});

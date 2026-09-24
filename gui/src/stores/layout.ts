@@ -1,8 +1,9 @@
 import type { SerializedDockview } from "dockview-core";
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 import type { IpcMessage, LayoutState } from "../schema/messages";
+import { isThemeChoice, type ThemeChoice } from "../tokens/theme";
 import type { Bridge } from "../transport/bridge";
 
 export type ViewName = "home" | "work" | "compact";
@@ -20,6 +21,10 @@ export type ViewName = "home" | "work" | "compact";
 export interface LayoutPack {
   view: ViewName;
   layouts: Partial<Record<ViewName, SerializedDockview>>;
+  /** ⛔ OPTIONAL, AND THAT IS THE COMPATIBILITY (answer 16 of the design system): a package written before
+   * the field existed opens as `system`, and the core keeps the bytes without opening them -- the kernel
+   * does not change. */
+  theme?: ThemeChoice;
 }
 
 const VIEWS: readonly ViewName[] = ["home", "work", "compact"];
@@ -77,17 +82,32 @@ export const useLayout = defineStore("layout", () => {
    * ⛔ AND IT MERGES (D80): the open view's entry is replaced and the other views keep theirs. A
    * `settle` that replaced the whole package lost every view but the open one. */
   function settle(layout: SerializedDockview): void {
-    const pack: LayoutPack = {
+    // ⛔ THE REST OF THE PACKAGE IS KEPT: a settle that rebuilt it from `view` and `layouts` alone would drop
+    // the theme -- and, from task 7, the named views -- at the first move of a panel.
+    keep({
+      ...(saved.value ?? {}),
       view: view.value,
       layouts: { ...(saved.value?.layouts ?? {}), [view.value]: layout },
-    };
+    });
+  }
+
+  /** The theme of the package, and `system` when it has none (answer 16). */
+  const theme = computed<ThemeChoice>(() => saved.value?.theme ?? "system");
+
+  /** ⛔ SAVED AT ONCE, NOT AT THE NEXT SETTLE: a choice made in Impostazioni is a decision, not a movement of
+   * panels, and closing the window right after it must not lose it. */
+  function chooseTheme(choice: ThemeChoice): void {
+    keep({ layouts: {}, ...(saved.value ?? {}), view: view.value, theme: choice });
+  }
+
+  function keep(pack: LayoutPack): void {
     saved.value = pack;
     const bytes = [...pack_(pack)];
     sent = bytes;
     wire?.send({ kind: "SaveLayout", value: bytes });
   }
 
-  return { state, view, saved, arrivals, attach, receive, settle };
+  return { state, view, saved, arrivals, theme, attach, receive, settle, chooseTheme };
 });
 
 /** The package as bytes: UTF-8 of the JSON. ⚠️ Exported for the probes, which must be able to
@@ -112,7 +132,10 @@ export function unpack(state: LayoutState): LayoutPack | null {
       const layout = held[name];
       if (typeof layout === "object" && layout !== null) layouts[name] = layout as SerializedDockview;
     }
-    return { view: candidate.view, layouts };
+    // ⛔ A CHOICE THIS BUILD DOES NOT KNOW IS READ AS ABSENT, and the package still opens: the layouts in it are
+    // worth more than a word we cannot read.
+    const theme = (candidate as { theme?: unknown }).theme;
+    return isThemeChoice(theme) ? { view: candidate.view, layouts, theme } : { view: candidate.view, layouts };
   } catch {
     // ⛔ A PACKAGE THAT DOES NOT PARSE IS NOT AN ERROR TO SHOW: it is an old build's layout, and
     // the answer is the committed views. Row 8 of §2 asks the gui to cope, not to complain.

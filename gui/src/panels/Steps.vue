@@ -30,14 +30,14 @@ const core = useCore();
   box-sizing: border-box;
 }
 .outcome {
-  color: var(--ink-dim);
+  color: var(--color-text-muted);
   margin-left: var(--space-2);
 }
 [data-done="false"] .outcome {
-  color: var(--warn);
+  color: var(--color-text-warn);
 }
 .who {
-  color: var(--ink-dim);
+  color: var(--color-text-muted);
   margin-top: var(--space-3);
 }
 </style>

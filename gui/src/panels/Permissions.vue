@@ -32,14 +32,14 @@ const invoke = useInvoke();
 }
 h3 {
   font-size: inherit;
-  color: var(--ink-dim);
+  color: var(--color-text-muted);
   margin: var(--space-2) 0 var(--space-1);
 }
 .pending {
-  color: var(--warn);
+  color: var(--color-text-warn);
 }
 .rule {
-  color: var(--ink-dim);
+  color: var(--color-text-muted);
   margin-top: var(--space-3);
 }
 </style>

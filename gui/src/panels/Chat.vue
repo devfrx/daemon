@@ -83,13 +83,13 @@ function label(block: Block): string {
 }
 .empty,
 .provenance {
-  color: var(--ink-dim);
+  color: var(--color-text-muted);
 }
 .block {
   margin-bottom: var(--space-3);
 }
 .block[data-provenance="Untrusted"] {
-  border-left: 3px solid var(--warn);
+  border-left: 3px solid var(--color-text-warn);
   padding-left: var(--space-2);
 }
 /* The renderer's two spans (D54): a link shows where it would have gone, an image says what it was. */
@@ -98,9 +98,9 @@ function label(block: Block): string {
 }
 .body :deep(.link)::after {
   content: " (" attr(data-href) ")";
-  color: var(--ink-dim);
+  color: var(--color-text-muted);
 }
 .body :deep(.image) {
-  color: var(--ink-dim);
+  color: var(--color-text-muted);
 }
 </style>

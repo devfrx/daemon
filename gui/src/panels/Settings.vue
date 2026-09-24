@@ -69,15 +69,15 @@ function choose(argument: PolicyArgument): void {
   box-sizing: border-box;
 }
 fieldset {
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-control);
 }
 label {
   display: block;
   padding: var(--space-1) 0;
 }
 .who {
-  color: var(--ink-dim);
+  color: var(--color-text-muted);
   margin-top: var(--space-3);
 }
 </style>

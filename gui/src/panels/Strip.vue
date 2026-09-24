@@ -32,10 +32,10 @@ const core = useCore();
   align-items: center;
   height: 100%;
   padding: 0 var(--space-3);
-  color: var(--ink-dim);
+  color: var(--color-text-muted);
 }
 .warn {
-  color: var(--warn);
+  color: var(--color-text-warn);
   margin-left: var(--space-1);
 }
 </style>

@@ -46,7 +46,7 @@ function onOpenChange(value: boolean): void {
 .confirm-overlay {
   position: fixed;
   inset: 0;
-  background: rgb(0 0 0 / 50%);
+  background: var(--color-veil);
 }
 .confirm {
   position: fixed;
@@ -55,12 +55,12 @@ function onOpenChange(value: boolean): void {
   transform: translate(-50%, -50%);
   min-width: 320px;
   padding: var(--space-4);
-  background: var(--surface-raised);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  background: var(--color-bg-raised);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-control);
 }
 .scope {
-  color: var(--ink-dim);
+  color: var(--color-text-muted);
 }
 .actions {
   display: flex;
@@ -69,6 +69,6 @@ function onOpenChange(value: boolean): void {
   margin-top: var(--space-3);
 }
 .primary {
-  color: var(--accent);
+  color: var(--color-text-accent);
 }
 </style>

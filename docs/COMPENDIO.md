@@ -622,7 +622,7 @@ centralizzati, per decisione del proprietario (2026-09-21, trentasettesima chius
 ✅ **Il brainstorming è finito e il disegno è scritto, il 2026-09-23** —
 [`specs/2026-09-22-design-system-design.md`](superpowers/specs/2026-09-22-design-system-design.md), che si legge **per intero**;
 ✅ **Riletto il 2026-09-23 — A**, la voce 1 del disegno; ✅ **il piano è scritto, il 2026-09-24** — [`plans/2026-09-23-design-system.md`](superpowers/plans/2026-09-23-design-system.md): ⏳ **il pre-controllo**, compito per compito, poi l'esecuzione — la sua sezione *«Come si riprende»* dice da dove.
-Lo stile di oggi è un **segnaposto dichiarato**, in testa a `gui/src/tokens/tokens.css`.
+Lo stile dal compito 1 del piano del design system: `gui/src/tokens/base.css` e `themes.css`, copie della tavola dei token.
 **Due: IL SOTTO-PROGETTO 13** — i tre meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima**
 del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta proprietà** della §3, ma questo **vincolo d'ordine**. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill dichiarative: è una sua decisione e non del piano. Il perimetro
 sta nel [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md), che chi riprende quel fronte legge

@@ -2,7 +2,7 @@
 // one (E2 of the part-1 plan, measured in the browser on 2026-09-10). Without it the groups
 // stack in the document flow and a floating group leaves the viewport.
 import "dockview/dist/styles/dockview.css";
-import "./tokens/tokens.css";
+import "./tokens";
 
 import { createPinia } from "pinia";
 import { createApp } from "vue";
@@ -15,6 +15,7 @@ import { useCore } from "./stores/core";
 import { useInvoke } from "./stores/invoke";
 import { useLayout } from "./stores/layout";
 import { useStream } from "./stores/stream";
+import { watchTheme } from "./tokens/theme";
 import type { Bridge } from "./transport/bridge";
 import { createFakeBridge, type FakeBridge } from "./transport/fakeBridge";
 
@@ -51,13 +52,19 @@ registerModules();
 const app = createApp(App);
 app.use(createPinia());
 app.use(i18n);
-app.mount("#app");
 
 const connection = useConnection();
 const core = useCore();
 const layout = useLayout();
 const invoke = useInvoke();
 const stream = useStream();
+
+// ⛔ BEFORE THE MOUNT, so Vue's first render already has its colours: every role of `themes.css` lives under
+// `[data-theme]` (design system, section (a)). Until the core's package arrives the choice is `system`.
+watchTheme(() => layout.theme);
+
+app.mount("#app");
+
 connection.attach(bridge);
 layout.attach(bridge);
 invoke.attach(bridge);

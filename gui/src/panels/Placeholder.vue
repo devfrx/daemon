@@ -33,7 +33,7 @@ const NUCLEUS = "knowledge";
 
 <style scoped>
 .placeholder {
-  color: var(--ink-dim);
+  color: var(--color-text-muted);
   padding: var(--space-4);
 }
 </style>

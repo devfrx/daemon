@@ -42,7 +42,7 @@ const core = useCore();
   box-sizing: border-box;
 }
 dt {
-  color: var(--ink-dim);
+  color: var(--color-text-muted);
   margin-top: var(--space-2);
 }
 dd {
@@ -51,11 +51,11 @@ dd {
   gap: var(--space-3);
 }
 [data-flag="true"] {
-  color: var(--warn);
+  color: var(--color-text-warn);
 }
 .event {
   margin-top: var(--space-3);
-  border-top: 1px solid var(--line);
+  border-top: var(--border-width) solid var(--color-border);
   padding-top: var(--space-2);
 }
 </style>

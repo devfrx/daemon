@@ -29,8 +29,8 @@ const connection = useConnection();
   gap: var(--space-3);
   align-items: center;
   padding: var(--space-2) var(--space-3);
-  background: var(--surface-raised);
-  border-bottom: 1px solid var(--warn);
-  color: var(--warn);
+  background: var(--color-bg-raised);
+  border-bottom: var(--border-width) solid var(--color-border-warn);
+  color: var(--color-text-warn);
 }
 </style>

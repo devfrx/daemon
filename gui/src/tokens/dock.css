@@ -1,0 +1,74 @@
+/* The frame's rules that no SFC dresses -- design system, task 1: moved here from `tokens.css`, which
+   leaves, with the names of the (a). ⛔ Task 6 rewrites this file as OUR `dockview` theme; until then
+   `themeAbyss` stays, and these rules keep the grab of SP-8 on it.
+
+   ⛔ `frame/BigTab.ts` and `frame/VueContent.ts` build plain DOM, because `dockview` asks for a RENDERER and
+   not a component: the classes they name -- `bigtab`, `bigtab-title`, `panel` -- live here and not in a
+   scoped <style> (E165, E166 of the part-2 plan). */
+
+/* ⛔ THE GRAB IS THE CONTAINER'S, NOT THE TAB'S (E170): `dockview` sizes the whole tab strip from
+   `--dv-tabs-and-actions-container-height` and clips `.dv-tabs-container`, so the VARIABLE moves and the tab
+   fills it. 40 px is the grab move 5 of SP-8 was judged on, and the (a) now names it. */
+.dock .dockview-theme-abyss {
+  --dv-tabs-and-actions-container-height: var(--size-control-lg);
+}
+
+/* ⛔ A BRIDGE UNTIL TASK 6 DRESSES THE DOCK: `themeAbyss` paints the groups and the tabs dark, and the light theme's
+   text would sit on them at 1.11:1, the big grab's buttons at 1.06:1 (measured). These bind the few variables that
+   paint behind text to our roles; task 6 replaces this block with a theme of our own. It wins over `dockview.css`
+   because it is loaded after it. */
+.dockview-theme-abyss {
+  --dv-group-view-background-color: var(--color-bg-surface);
+  --dv-tabs-and-actions-container-background-color: var(--color-bg);
+  --dv-activegroup-visiblepanel-tab-background-color: var(--color-bg-surface);
+  --dv-activegroup-hiddenpanel-tab-background-color: var(--color-bg);
+  --dv-inactivegroup-visiblepanel-tab-background-color: var(--color-bg-surface);
+  --dv-inactivegroup-hiddenpanel-tab-background-color: var(--color-bg);
+  --dv-activegroup-visiblepanel-tab-color: var(--color-text);
+  --dv-activegroup-hiddenpanel-tab-color: var(--color-text-muted);
+  --dv-inactivegroup-visiblepanel-tab-color: var(--color-text-muted);
+  --dv-inactivegroup-hiddenpanel-tab-color: var(--color-text-muted);
+  --dv-tab-divider-color: var(--color-border);
+  --dv-separator-border: var(--color-border);
+  --dv-paneview-header-border-color: var(--color-border);
+}
+
+/* ⛔ No vertical padding on the strip's tabs, so the grab is the whole height; and the CHILD combinator,
+   because the overflow dropdown renders `.dv-tab` rows inside the dock too (E173). */
+.dock .dv-tabs-container > .dv-tab {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.bigtab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  padding: 0 10px;
+  font-weight: 600;
+  cursor: grab;
+  user-select: none;
+}
+
+.bigtab-title {
+  flex: 1;
+}
+
+/* The element `VueContent` hands to `dockview`: without a height of its own, every `height: 100%` inside a
+   panel resolves against nothing. */
+.panel {
+  height: 100%;
+}
+
+/* The two commands of the big grab handle. */
+.bigtab button {
+  font: inherit;
+  width: 26px;
+  height: 26px;
+  background: var(--color-bg-raised);
+  color: inherit;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-control);
+  cursor: pointer;
+}

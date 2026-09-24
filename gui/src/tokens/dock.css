@@ -16,8 +16,11 @@
 /* ⛔ A BRIDGE UNTIL TASK 6 DRESSES THE DOCK: `themeAbyss` paints the groups and the tabs dark, and the light theme's
    text would sit on them at 1.11:1, the big grab's buttons at 1.06:1 (measured). These bind the few variables that
    paint behind text to our roles; task 6 replaces this block with a theme of our own. It wins over `dockview.css`
-   because it is loaded after it. */
+   because it is loaded after it. And `themeAbyss` sets `color-scheme: dark` on this same selector: without the first
+   line below, the native controls inside the dock -- scrollbars, the radios of Impostazioni -- are drawn dark under
+   the light theme, and the radio NOT chosen looks chosen (E4 of the design-system plan). */
 .dockview-theme-abyss {
+  color-scheme: inherit;
   --dv-group-view-background-color: var(--color-bg-surface);
   --dv-tabs-and-actions-container-background-color: var(--color-bg);
   --dv-activegroup-visiblepanel-tab-background-color: var(--color-bg-surface);

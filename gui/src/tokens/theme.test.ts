@@ -61,6 +61,11 @@ describe("the theme on the root (design system, section (a))", () => {
     os.turn(false);
     expect(root.dataset.theme).toBe("dark");
     stop();
+    // ⛔ THE OTHER HALF OF THE STOP: the watch on the choice ends too, not only the system's listener (E3 of the
+    // design-system plan).
+    choice.value = "light";
+    await nextTick();
+    expect(root.dataset.theme).toBe("dark");
   });
 
   it("resolves the three choices", () => {

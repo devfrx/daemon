@@ -175,10 +175,14 @@ describe("the theme in the package (design system, section (a))", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
     layout.attach(bridge);
+    const work = { marker: "work, as the owner left it" } as never;
+    layout.receive({ kind: "Layout", value: { state: "Package", bytes: [...pack_({ view: "home", layouts: { work } })] } });
     layout.chooseTheme("dark");
     const first = bridge.sent[0];
     const chosen = first?.kind === "SaveLayout" ? unpack({ state: "Package", bytes: first.value }) : null;
-    expect(chosen).toEqual({ view: "home", layouts: {}, theme: "dark" });
+    // ⛔ NOT THE CHOICE ALONE: a choice that rebuilt the package around the theme would drop every layout the owner
+    // saved, and the core would keep the loss (E2 of the design-system plan).
+    expect(chosen).toEqual({ view: "home", layouts: { work }, theme: "dark" });
     expect(layout.theme).toBe("dark");
     const home = { marker: "home, as the owner left it" } as never;
     layout.settle(home);
@@ -186,6 +190,6 @@ describe("the theme in the package (design system, section (a))", () => {
     const settled = second?.kind === "SaveLayout" ? unpack({ state: "Package", bytes: second.value }) : null;
     // ⛔ NOT "something was sent": a settle that rebuilt the package from `view` and `layouts` alone would drop
     // the choice at the first move of a panel.
-    expect(settled).toEqual({ view: "home", layouts: { home }, theme: "dark" });
+    expect(settled).toEqual({ view: "home", layouts: { work, home }, theme: "dark" });
   });
 });

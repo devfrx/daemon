@@ -160,6 +160,14 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | # | Voce |
 |---|---|
 | **E1** | ⚠️ **Compito 1, Passo 10 — *«CRLF su questa macchina»*, detto di `gui/src/stores/layout.ts`, è la colonna `w/…` della macchina `zagor`, dove il piano è stato scritto e pre-controllato: sulla macchina dell'account `Jays` è falso.** Misurato il 2026-09-24 a `6ae9b8b`, preparando il dispaccio del compito 1: `git config --show-origin core.autocrlf` → `false` in `.git/config` (E51 del piano della parte 2); `git ls-files --eol gui/src/stores/layout.ts` → `i/lf w/lf`. Il pre-controllo non poteva vederlo, perché su `zagor` è vero. È la malattia di **E51** per la **settima** volta: E224 del piano della parte 2 si conta sesta. ✅ **Nessun Atteso cambia:** `replace_unique.py` conserva il fine-riga che trova, e il Passo 16 lo misura come invariante. ✅ **Corretto con la regola di E72** del piano della parte 2, decisione del proprietario del 2026-09-19: l'etichetta si **toglie**, non si rovescia. Trovato dal coordinatore dell'esecuzione del compito 1 |
+| **E2** | ⛔ **Compito 1, Passo 7 — la terza prova del negozio non vede un `chooseTheme` che butti il pacchetto:** chiama la scelta su un negozio **vuoto**, dove `saved` è `null`, e lo *spread* non si vede. Trovata dalla revisione del compito 1 (I-2) e rifatta dal coordinatore il 2026-09-24, con uno script suo, nel clone a `95068bb`: tolto `...(saved.value ?? {})` da `chooseTheme`, `npx vitest run src/tokens src/stores` → `Tests  38 passed (38)`. Dal compito 5 la scelta si fa in Impostazioni **dopo** l'arrivo del pacchetto, e un `chooseTheme` così manderebbe al core `layouts: {}`: ogni disposizione salvata persa in silenzio. ✅ **Curata** nel commit che scrive questa riga: prima della scelta il negozio riceve un pacchetto con `layouts: { work }`, e le due attese diventano `layouts: { work }` e `layouts: { work, home }`; verde sul codice, rossa con la mutazione su *«sends the choice at once, and a settle after it keeps it»*, e rossa ancora con la violazione 8 del Passo 16. ⚠️ **La seconda *Trova* del compito 7, la fine di `stores.test.ts`, è allineata nello stesso commit**: cercava `layouts: { home }` |
+| **E3** | ⚠️ **Compito 1, Passo 6 — lo *stop* di `watchTheme` è provato a metà:** la prima prova conta gli ascoltatori del sistema, e nessuna guarda il `watch` sulla scelta, mentre il commento della prova promette l'intero. Trovata dalla revisione (M-1) e rifatta dal coordinatore: tolto `stop();` dalla funzione resa, `Tests  38 passed (38)`. ✅ **Curata** nel commit che scrive questa riga: in coda alla seconda prova, dopo `stop();`, la scelta passa a `light` e la radice resta `dark`; rossa con la mutazione, `expected 'light' to be 'dark'` |
+| **E4** | ⚠️ **Compito 1, Passo 11 — nel tema chiaro il dock disegna scuri i controlli nativi:** `dockview.css` 8.3.1 dà `color-scheme: dark` a `.dockview-theme-abyss`, lo stesso selettore del ponte, che non lo rimette: le barre di scorrimento e i radio di Impostazioni si disegnano scuri, e il radio **non** scelto sembra quello scelto. La causa letta dal coordinatore in `gui/node_modules/dockview/dist/styles/dockview.css`; l'effetto visto dalla revisione (M-2) nel browser. Lo *snippet* del Passo 17 misura il testo, e non lo vede. ✅ **Curata** nel commit che scrive questa riga: `color-scheme: inherit;` in testa al ponte di `dock.css`, col perché nel commento; misurata dal coordinatore nel browser, `getComputedStyle(document.querySelector(".dock input[type=radio]")).colorScheme` uguale al tema nei due temi. Transitoria: il radio esce col compito 5, `themeAbyss` col 6 |
+| **E5** | ⏳ **Al proprietario — il commento di `themes.css`, copiato dalla tavola, dice il falso sui ruoli non-testo:** *«every non-text role 3:1»*, mentre i bordi di decoro stanno fra 1,13 e 1,88 e la prova li esenta per nome (`EXEMPT`). Trovata dalla revisione del compito 1 (M-3). La copia non si ritocca (vincolo 2, D1): la frase si corregge **nella tavola**, poi si ricopia con lo script del Passo 9, e `board.test.ts` le tiene uguali. La tavola è approvata, quindi decide il proprietario, come per la riscrittura di P-1. Il testo proposto dalla revisione: *«Every text role reads 4.5:1 on the backgrounds of its FAMILY, and the non-text roles that tell a control apart -- strong border, focus, mark, accent border -- 3:1 on the base backgrounds; the decoration borders and the veil are exempt, each with its reason in the contrast test.»* |
+| **E6** | ⏳ **Al proprietario — la prova dei colori a mano non vede un colore per nome:** `color: white;` in `panels/Strip.vue` lascia verde *«writes no colour by hand outside the token files»* (revisione del compito 1, M-4); per `oklch(`, `lab(` e `color-mix(` lo stesso, **dedotto** dall'espressione regolare. La prova fa alla lettera il controllo 5 del disegno — *«nessun `#…`, `rgb(`, `hsl(`»* —, e allargarla tocca il merito approvato (vincolo 1). Oggi in `gui/src` non c'è nessun colore per nome. Le due strade: tenere il controllo e dichiararne il limite nella prova, o allargarlo ai nomi di CSS e alle funzioni di CSS Color 4 |
+| **E7** | Nit — **Compito 1, Passo 4:** `contrast.test.ts` citava la luminanza di WCAG 2.2 con la soglia di prima del maggio 2021, `0.03928`; WCAG 2.2 usa `0.04045` — tecnica G18, letta dal coordinatore il 2026-09-24, che dice anche che la differenza non ha effetti pratici —, e nessun canale a 8 bit cade fra le due (10/255 = 0,039216; 11/255 = 0,043137). Trovata dalla revisione (N-1). ✅ **Curata** nel commit che scrive questa riga: `0.04045`, come lo *snippet* del Passo 17, e la fonte nella tabella del Passo 8 del compito 9 |
+| **E8** | Nit — **Compito 1, Passo 10:** il commento di `shownTheme` in `theme.ts` diceva *«the dock's `colorScheme` today (task 6)»*, e oggi nessuno lo legge. Trovata dalla revisione (N-2). ✅ **Curata**: *«from task 6»* |
+| **E9** | Nit — **Compito 1, Passo 13:** in `panels/Chat.vue` il bordo della provenienza usa un ruolo di **testo**, `--color-text-warn`, e il perché — P-13 — viveva solo nel piano: chi rilegge il file lo «correggerebbe» in `--color-border-warn`, che è decoro. Trovata dalla revisione (N-3). ✅ **Curata**: un commento accanto alla regola, che lo script dei nomi non poteva scrivere |
 
 ---
 
@@ -5636,12 +5644,12 @@ import { pack_, unpack, useLayout } from "./layout";
 import { pack_, unpack, useLayout, type LayoutPack } from "./layout";
 ```
 
-*Trova* — la fine del file:
+*Trova* — la fine del file (allineata con **E2** il 2026-09-24):
 
 ```ts
     // ⛔ NOT "something was sent": a settle that rebuilt the package from `view` and `layouts` alone would drop
     // the choice at the first move of a panel.
-    expect(settled).toEqual({ view: "home", layouts: { home }, theme: "dark" });
+    expect(settled).toEqual({ view: "home", layouts: { work, home }, theme: "dark" });
   });
 });
 ```
@@ -5651,7 +5659,7 @@ import { pack_, unpack, useLayout, type LayoutPack } from "./layout";
 ```ts
     // ⛔ NOT "something was sent": a settle that rebuilt the package from `view` and `layouts` alone would drop
     // the choice at the first move of a panel.
-    expect(settled).toEqual({ view: "home", layouts: { home }, theme: "dark" });
+    expect(settled).toEqual({ view: "home", layouts: { work, home }, theme: "dark" });
   });
 });
 
@@ -8195,6 +8203,8 @@ tabella nomina: qui la provenienza, lì il merito — una casa ciascuno.
 | Playwright 1.63.0: il messaggio per un Chrome che manca, `Run "npx playwright install chrome"` | 2026-09-23 | il prerequisito — R2-8 del [registro della revisione](superpowers/plans/2026-09-23-design-system-revisione/ledger.md) |
 | Vite 8.3.0: `build.rolldownOptions`, con `rollupOptions` deprecato | 2026-09-23 | la prova della pagina kit fuori dal pacchetto — R3-10 |
 | `dockview-core` 8.3.1: `DockviewTheme` con undici campi | 2026-09-23 | il tema del dock — R3-22 |
+| `dockview` 8.3.1 installato: `dist/styles/dockview.css`, `color-scheme: dark` su `.dockview-theme-abyss` | 2026-09-24 | i controlli nativi scuri nel tema chiaro — E4 |
+| WCAG 2.2, tecnica G18, `https://www.w3.org/WAI/WCAG22/Techniques/general/G18`, aggiornata il 2026-08-10: la soglia `0.04045`, e `0.03928` prima del maggio 2021, *«no practical effect»* | 2026-09-24 | la luminanza di `contrast.test.ts` — E7 |
 
 ### Le misure dell'esecuzione
 

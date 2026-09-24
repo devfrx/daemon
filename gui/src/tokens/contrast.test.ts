@@ -31,11 +31,12 @@ function colour(roles: Record<string, string>, value: string, depth = 0): string
   return next === undefined ? null : colour(roles, next, depth + 1);
 }
 
-/** WCAG 2.2 relative luminance, and the contrast ratio built on it. */
+/** WCAG 2.2 relative luminance, and the contrast ratio built on it. 0.04045 is the threshold since May 2021 --
+ * technique G18; before, 0.03928, with no practical effect (E7 of the design-system plan). */
 function luminance(hex: string): number {
   const channel = (index: number): number => {
     const value = Number.parseInt(hex.slice(index, index + 2), 16) / 255;
-    return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+    return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
   };
   return 0.2126 * channel(1) + 0.7152 * channel(3) + 0.0722 * channel(5);
 }

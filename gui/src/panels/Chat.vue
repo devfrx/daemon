@@ -89,6 +89,8 @@ function label(block: Block): string {
   margin-bottom: var(--space-3);
 }
 .block[data-provenance="Untrusted"] {
+  /* ⛔ A TEXT ROLE FOR A BORDER, ON PURPOSE (P-13 and E9 of the design-system plan): this border must read 3:1,
+     and `--color-border-warn` is decoration. The words carry the provenance. */
   border-left: 3px solid var(--color-text-warn);
   padding-left: var(--space-2);
 }

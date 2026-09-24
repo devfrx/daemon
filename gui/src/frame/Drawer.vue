@@ -31,7 +31,9 @@ import { PANEL_TYPES } from "../panels/registry";
 <style scoped>
 /* ⛔ THE OVERLAY IS A VEIL, AND `reka-ui` DRESSES NOTHING: without these rules it was a `div` in
    normal flow with no background (R6-16, seen in the browser on 2026-09-16). Both sit above
-   `dockview`, whose floating groups are at 99. */
+   the docked groups. Corrected on 2026-09-24 -- the comment said "floating groups are at 99": `dockview`'s
+   FLOATING groups sit at `calc(var(--dv-overlay-z-index, 999) + 2i)`, over these, until task 6 of the
+   design-system plan bases them on `--z-floating` (P-17, R3-17). */
 .drawer-overlay {
   position: fixed;
   inset: 0;

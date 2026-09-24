@@ -20,7 +20,7 @@ export function resolveTheme(choice: ThemeChoice, systemIsDark: boolean): Theme 
   return choice;
 }
 
-/** The theme on screen, for whoever draws outside CSS: the dock's `colorScheme` today (task 6), a canvas
+/** The theme on screen, for whoever draws outside CSS: the dock's `colorScheme` from task 6, a canvas
  * tomorrow (D2 of the design-system plan). ONE module state, written only by `watchTheme`. */
 export const shownTheme: Ref<Theme> = ref<Theme>("dark");
 

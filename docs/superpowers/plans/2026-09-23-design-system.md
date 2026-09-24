@@ -118,9 +118,9 @@ Valgono per ogni compito, senza che il compito li ripeta.
 
 ## ▶️ A che punto è QUESTO PIANO — casa unica, e si aggiorna scrivendo
 
-⏳ **IL PIANO È IN SCRITTURA dal 2026-09-23.** A dirlo non è questa riga ma i due comandi, che coincideranno a piano scritto:
-`grep -c '^## Compito' <questo file>` e le righe `| **N** |` della tabella qui sotto. ⛔ **Nessun compito si esegue** prima del
-pre-controllo, in una sessione sua.
+✅ **IL PIANO È SCRITTO il 2026-09-24**, e i due comandi coincidono: `grep -c '^## Compito' <questo file>` e le righe `| **N** |`
+della tabella qui sotto. ⏳ **Viene il pre-controllo**, compito per compito, ciascuno in una sessione sua. ⛔ **Nessun compito si
+esegue** prima del proprio pre-controllo.
 
 | # | Compito | Commit | Stato |
 |---|---|---|---|
@@ -132,7 +132,7 @@ pre-controllo, in una sessione sua.
 | **6** | **il dock vestito**: il tema `dockview-theme-harness`, `dock.css` con ogni variabile del tema di riferimento, i gruppi come schede, `readToken`, `--z-floating`, la presa grande coi pezzi di base; `themeAbyss` esce | — | ⬜ |
 | **7** | **le viste col nome, sotto**: `named` e `openNamed` nel pacchetto, il negozio e il dock che le mostrano e le salvano; l'aiutante della geometria estratto da `moveActive.ts`; lo schema di una disposizione, per le miniature | — | ⬜ |
 | **8** | **la cornice**: la barra col nome della vista, la **Panoramica** su `BaseDialog` con le miniature e *«Salva questa vista»* — F3, frecce, Invio, Esc —, la **striscia** a pillola coi «moduli»; le prove nel browser della Panoramica e della striscia | — | ⬜ |
-| **9** | **la chiusura**: la riga «Accessibilità» di tracciabilità, la riga 14 della roadmap con *«Perché quest'ordine»*, `README.md`, la §12 e la §6 del compendio, `porta-di-qualita.md`, `riferimenti.md`; la **Definizione di «fatto»**, coi comandi | — | ⬜ |
+| **9** | **la chiusura**: la riga «Accessibilità» di tracciabilità, la riga 14 della roadmap con *«Perché quest'ordine»*, `README.md`, la §12 e la §6 del compendio, `porta-di-qualita.md` con C-S0-1 (P-29), `riferimenti.md`; i richiami nel disegno e nella stella polare (P-28); la **Definizione di «fatto»**, eseguita, con le uscite del giorno | — | ⬜ |
 
 ⛔ **QUALE compito venga dopo NON è scritto qui:** vive nella §6 del [`COMPENDIO.md`](../../COMPENDIO.md). Qui resta la
 **posizione** — la tabella, che chi esegue aggiorna nel commit del compito — e **come** si esegue.
@@ -194,6 +194,11 @@ altro, la riga lo dice e il compito segue la misura (`CLAUDE.md`: *«un'evidenza
 | **P-23** | ⛔ **`mount` di `@vue/test-utils` 2.5.0 non monta sull'elemento che riceve**: crea un `div` suo dentro `attachTo` e monta lì, e quel `div` non ha altezza — la regola di `App.vue` su `html, body, #app` non lo raggiunge. La cornice esce alta **116** px, il dock **0**, e la striscia a metà pagina, dove la fascia della connessione le ruba il clic | una sonda nel browser il 2026-09-24: `.frame` alto 116 dentro un `#app` di 900; montata con `createApp(App).mount(host)`, 900, e il dock 784 | la prova del compito 8 nel browser monta `App.vue` come la monta `main.ts` |
 | **P-24** | **la pillola della striscia è alta 50 px, non 56**: le viste spedite danno alla sua riga 56 — `minimumHeight` e `maximumHeight` del pannello `strip` in `panels/views/*.json` — e il `gap` del dock, `--space-3`, se ne prende metà | la stessa sonda: il gruppo della striscia da 826 a 876, in una finestra alta 900 | il compito 8 mette il pulsante grande, 40, a `--space-1` più il bordo dal filo della pillola, sopra, sotto e a destra: la regola della risposta 4, *«dentro una pillola va una pillola»* |
 | **P-25** | **il commento di `testing/axe.ts` contava i suoi utenti** — *«Two users since the design system's task 3»* — e il compito 4 ne aggiunge un terzo, `kit/kit.browser.test.ts`: dal compito 4 il commento è falso (gotcha #58) | `grep -rln 'testing/axe' gui/src` sulla cartella di prova coi compiti 1–4: tre file | ✅ **corretto nel compito 3** il 2026-09-24: il commento dice chi è arrivato per secondo, e un conto non c'è più; `contrastJudged`, che il compito 8 porta lì, nasce nella stessa forma |
+| **P-26** | **la riga del disegno in `docs/README.md` dice il falso dal 2026-09-23**: *«Design system — la consegna dell'avvio … **Non è ancora un disegno** … il disegno la riscriverà sul posto»*, e il disegno l'ha riscritta sul posto quel giorno. Misurato il 2026-09-24 su `2a30916` | `grep -n 'design-system-design' docs/README.md` | la riga è **riscritta** nel commit che scrive il compito 9 (**D19**): è falsa oggi, e resterebbe falsa per tutte le sessioni del pre-controllo e dell'esecuzione; il compito 9 le aggiunge soltanto l'esecuzione |
+| **P-27** | **la tabella dei piani di `docs/roadmap.md` non ha la riga di questo piano**, mentre quello della parte 2 l'ebbe all'inizio della scrittura — `f0f8fab`, 2026-09-11, *«in scrittura»* — e il suo compito 17 la portò a *«eseguito»* (P-113 di quel piano). Misurato il 2026-09-24 su `2a30916` | `grep -c 'design-system' docs/roadmap.md` → **0**; `git log --format='%h %ad %s' --date=short -S'parte-2-gui-minima.md' -- docs/roadmap.md` | la riga nasce nel commit che scrive il compito 9, *«scritto il 2026-09-24»*, con l'intestazione *«Ultimo aggiornamento»* (**D19**); il compito 9 la porta a *«eseguito»* |
+| **P-28** | **tre case che la forma del compito 9 non nominava**, rese false da questo piano o dovute per precedente: la riga *«codice e spec non toccati»* della tabella dello stato della [stella polare](../specs/2026-09-07-direzione-gui-design.md), il cui *pathspec* comprende `scripts/`, che i compiti 2 e 4 toccano in `scripts/gate-gui.sh`; la riga *«codice di prodotto»* del *«Come si riprende»* del disegno, *«non toccato»*, falsa dal compito 1; e le righe della (e) del disegno, che danno per chiusore *«il piano»*. Il compito 17 della parte 2 curò le prime due specie nei suoi Passi 8-bis e 8-quater (R8-26 di quella revisione). Misurato il 2026-09-24 su `2a30916` | `sed -n '54p' docs/superpowers/specs/2026-09-07-direzione-gui-design.md`; `grep -n 'codice di prodotto' docs/superpowers/specs/2026-09-22-design-system-design.md`; la tabella della (e) | il Passo 10 del compito 9: un richiamo datato su ciascuna, e nella (e) l'esito di ogni voce — M-3 compresa, che dipende dal verbale della riga 5 |
+| **P-29** | **la tabella dei passi di `gate.sh` in `docs/porta-di-qualita.md` ne conta sette, e `gate.sh` ne lancia nove**: mancano `dependency advisories` e `gui: fake core and SPA` — la contraddizione **C-S0-1**, registrata il 2026-09-24 e non corretta (decisione 11 del [verbale degli sfoltimenti](../specs/2026-09-23-ridimensionamento-lettura-design.md)). Il browser del compito 2 vive proprio nel passo che manca | `grep -n '^run ' scripts/gate.sh`; la tabella dopo *«Un comando solo»* in `docs/porta-di-qualita.md` | ✅ **scelto dal proprietario il 2026-09-24**, all'apertura della sessione che scrive il compito 9: *«Compito 9»*, col compito che corregge C-S0-1 dove scrive il browser. Il Passo 7 porta la tabella a nove righe e la riga C-S0-1 a ✅ (**D21**); le altre contraddizioni restano alla loro sessione |
+| **P-30** | **il rapporto JSON di `vitest` 4.1.11** porta `testResults[].name` col percorso intero, `assertionResults[].status` per ogni prova e, in testa, `numTotalTests`, `numPassedTests`, `numFailedTests`, `success`; e un file saltato vi compare lo stesso. ⚠️ **E Python non legge un percorso `/c/…` scritto dentro `python -c "…"`**: Git Bash converte solo gli argomenti interi — `FileNotFoundError` da dentro la stringa, lettura riuscita dallo stesso percorso passato come argomento. Misurato il 2026-09-24 su `2a30916` | `(cd gui && npx vitest run --reporter=json --outputFile=<scratchpad>/probe.json)` sul `main` di quel giorno: 85 prove, 84 passate, una saltata, `generate-views.test.ts` | la Definizione di «fatto» legge i rapporti con `dod_suite.py`, che prende i percorsi come argomenti e ha la guardia di non-vacuità (**D23**) |
 
 ## Le decisioni prese scrivendo il piano
 
@@ -221,6 +226,12 @@ che il disegno lasciava al piano; ciascuna si ribalta con una riga.
 | **D16** | **F3 tace anche mentre il cassetto è aperto**, non solo sotto la conferma | la ragione del *«Come si riprende»* — una finestra modale sopra un'altra ne copre la domanda — vale per il cassetto allo stesso modo. Costo: col cassetto aperto F3 non fa niente, ed Esc lo chiude |
 | **D17** | **una carta sola nel giro del Tab**, l'ultima che le frecce hanno raggiunto, e il fuoco apre sulla vista che si vede | la decisione 19 del disegno lasciava al piano *«come si tiene il fuoco su un elemento solo»*; col Tab su ogni carta la griglia costerebbe un tasto per carta. Costo: a *«Salva questa vista»* si arriva con le frecce |
 | **D18** | **la miniatura di Compatta è il suo schema, non una «finestrella»** | la (d) scrive *«Compatta come una finestrella»*, dalla tavola della risposta 13; la risposta 19 ha deciso poi gli schemi *«dalla disposizione salvata»*, che *«dicono sempre il vero»* — e la Compatta di oggi è una disposizione a finestra piena, un segnaposto che dice di esserlo: la sua forma vera è del sotto-progetto 10. Una finestrella disegnata direbbe ciò che non è. Costo: fino al 10 la miniatura di Compatta mostra la knowledge base a tutta pagina. ⚠️ **Del proprietario**, se la vuole come nella tavola |
+| **D19** | **la riga del disegno in `README.md` e la riga di questo piano nella roadmap si scrivono nel commit che scrive il compito 9**, non dal compito 9 | P-26 e P-27: la prima è falsa oggi, e la seconda è il precedente della parte 2 — un piano scritto sta nella tabella dei piani prima di essere eseguito. Costo: il compito 9 tocca le due righe una seconda volta, per l'esecuzione |
+| **D20** | **la Definizione di «fatto» si scrive ORA, coi comandi e le uscite attese dai compiti; il compito 9 la esegue riga per riga e scrive accanto a ogni comando l'uscita vista, con la data** | unisce la forma dei Traguardi 1–4, la definizione scritta col piano, e quella di D74 della parte 2, comandi con le uscite vere. Un'uscita che diverge dall'attesa è una voce d'errata, non un'attesa nuova. Costo: un'attesa di oggi può essere sbagliata al compito 9 — ed è il punto: *«un'evidenza scritta prima della misura è un'ipotesi»* (`CLAUDE.md`) |
+| **D21** | **C-S0-1, corretta dal compito 9, resta nella tabella delle contraddizioni con un ✅ datato**, e il segno `⚠️ **[C-S0-1]**` sotto la tabella dei passi esce | è la forma di X-1 e X-3 nella tabella dell'audit, che resta la casa unica anche delle voci chiuse; togliere la riga lascerebbe la sessione delle contraddizioni senza sapere che una è già fatta. Costo: una tabella intitolata *«non risolte»* porta una riga risolta, finché quella sessione non ne decide la forma |
+| **D22** | **una riga sola nella §12 del compendio, per il disegno e il piano insieme** | è la forma delle righe dei gesti e della knowledge base; le quattro righe della parte 2 erano quattro file con quattro modi di leggerli. Costo: una riga più lunga |
+| **D23** | **la suite, nella Definizione di «fatto», sono cinque corse coi rapporti JSON**, lette da `dod_suite.py`, che stampa i conti file per file ed esce 1 su una caduta o su un rapporto vuoto | è la regola di P-19, P-20 e P-21 — una caduta è una voce d'errata, non una corsa da ripetere finché passa —, e un rapporto dà i conti di ogni file senza avviare `vitest` una volta per file. Costo: cinque corse della suite, e un aiutante che il piano porta nel proprio testo |
+| **D24** | **se il giudizio del proprietario sull'aspetto del dock (controllo 15) non è scritto da nessuna parte al compito 9, il coordinatore glielo chiede prima del commit** | il compito 6 lo vuole *«alla prima prova»*, e ciò che non gli piace è una voce d'errata: un controllo che è *«il proprietario giudica»* non si chiude per silenzio. Costo: una domanda in più alla chiusura |
 
 ## Le voci aperte che questo piano SA, e non chiude
 
@@ -7850,81 +7861,695 @@ cornice …`, col pezzo JavaScript misurato — coi fine-riga rimisurati, e `git
 
 ---
 
-## Come si riprende — il compito 8 scritto, 2026-09-24
+## Compito 9: la chiusura — i documenti in ogni casa, e la Definizione di «fatto» coi comandi
 
-⚠️ **Il piano è A METÀ, e non si esegue.** Scritti: la testa e i **compiti 1–8**; da scrivere: il compito **9** e la
-**Definizione di «fatto»**. Il 6, il 7 e l'8 non li ha letti nessun revisore: li legge il pre-controllo. La consegna
-precedente sta parola per parola in [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
+**Da:** la riga **9** della tabella della posizione e la forma del *«Come si riprende»* del 2026-09-24 — R2-8, R3-23 e R3-25
+della revisione —; il controllo **21** e la (e) del disegno; il punto 9 del *«Come si riprende»* del disegno; **P-26**…**P-30** e
+**D19**…**D24** di questo piano. Il modello è il compito 17 del [piano della parte 2](2026-09-11-sottoprogetto-2-parte-2-gui-minima.md):
+i suoi Passi 1–11, e le voci **E216**…**E224** della sua errata, che sono ciò che quel compito ha sbagliato — si leggono **prima**.
 
-✅ **Il compito 8 è scritto, e provato sulla cartella di prova prima di esserlo.** Il codice è stato applicato nel ramo
-`task8`, le prove e i venti rossi del suo passo 9 sono girati lì, e il testo è composto dai file del ramo da uno script
-che rifiuta un *Trova* non unico e rifà ogni file nuovo byte per byte. Scrivendolo sono venuti **P-22**…**P-25** — due
-fatti della libreria di prova e della striscia, uno di `reka-ui`, e un commento del compito 3 corretto — e le decisioni
-**D14**…**D18**. ⚠️ **La D18 è da rileggere dal proprietario**: la miniatura di Compatta è il suo schema, non la
-*«finestrella»* della (d). E una voce 🔶 **dedotta** è in *«Le voci aperte che questo piano SA»*: Ctrl+Alt+frecce sotto
-una finestra modale.
+**Files:**
+- Modify: `docs/tracciabilita.md` — la riga «Accessibilità», da ✅ a 🔶 col richiamo datato e le sedi di oggi; una riga
+  *«Aggiornata il»* nel riquadro in testa
+- Modify: `docs/roadmap.md` — la riga **14** in coda ai sotto-progetti, la sua riga in *«Perché quest'ordine»*, la riga di questo
+  piano nella tabella dei piani a *«eseguito»*, l'intestazione *«Ultimo aggiornamento»*
+- Modify: `docs/README.md` — la riga del disegno nella tabella «Specifiche»: il numero del sotto-progetto e l'esecuzione
+- Modify: `docs/COMPENDIO.md` — una riga in **§12** (D22), il puntatore ⏭️ della **§6** riscritto, l'intestazione
+- Modify: `docs/archivio/stato-storico.md` — il puntatore ⏭️ e l'intestazione del compendio com'erano, parola per parola
+- Modify: `docs/porta-di-qualita.md` — **una** sezione nuova, il browser dei test e la pagina kit nel passo web; la tabella dei passi
+  di `gate.sh` a nove righe, e la riga **C-S0-1** delle contraddizioni col suo ✅ (P-29, D21)
+- Modify: `docs/riferimenti.md` — una sezione: le fonti della scrittura e della revisione del piano, le misure dell'esecuzione
+- Modify: `docs/HANDOFF.md` — **solo** se l'esecuzione ha portato un gotcha nuovo: la sua riga nella sezione *«I gotcha»*, e
+  l'intestazione *«Aggiornato il»*
+- Modify: `docs/superpowers/specs/2026-09-22-design-system-design.md` — l'esito di ogni riga della (e), e la riga *«codice di
+  prodotto»* del *«Come si riprende»* col richiamo (P-28)
+- Modify: `docs/superpowers/specs/2026-09-07-direzione-gui-design.md` — la riga *«codice e spec non toccati»* della tabella dello
+  stato, col richiamo (P-28)
+- Modify: `docs/superpowers/plans/2026-09-23-design-system.md` — la Definizione di «fatto» con le uscite del giorno, la testa
+  *«A che punto è»*, le righe **8** e **9** della posizione, *«Come si riprende»*
+- Modify: `docs/archivio/consegna-piano-design-system.md` — la chiusura precedente di questo piano, parola per parola
+- ⛔ **NON si tocca il codice** — `crates/`, `gui/`, `scripts/`, `.github/` —, nessun ADR, la §5 del compendio, la spec del
+  sotto-progetto 1, e **nessun piano eseguito**: né `E187` né `E235` del piano della parte 2, che sono verbali — se un verbale
+  che afferma il falso vada corretto è la voce **X-4** dell'audit, del proprietario
+- ⚠️ **I fine-riga non si scrivono qui:** li misura `git ls-files --eol` al Passo 1 sulla macchina che esegue, e il Passo 13 li
+  vuole **invariati** (E224 della parte 2); ogni scrittura passa da `replace_unique.py` o da Python con `newline=""`
+- Read: la **§12** e la **§13** del compendio; il riquadro in testa a `tracciabilita.md`; la sezione *«IL PASSO WEB E LE SONDE
+  DELLA PARTE 2»* di `porta-di-qualita.md`, che è il modello della sezione nuova; la (e), la (f) e la tabella dei controlli del
+  disegno; l'**errata** di questo piano per intero; le celle **Stato** della tabella della posizione — la **5** porta il verbale
+  dell'Assistente vocale
+- ⛔ **NON si leggono** i compiti 1–8 per intero: di ciascuno servono il passo del cancello e le prove che nomina, che la
+  Definizione di «fatto» qui sotto già raccoglie
+
+**Interfaces:**
+- Consumes: ciò che i compiti 1–8 hanno prodotto — le righe *Produces* di ciascuno — e le **uscite attese** che la Definizione
+  di «fatto» raccoglie; `replace_unique.py` della testa; `dod_suite.py` della Definizione di «fatto»
+- Produces: nessun artefatto di codice. ⛔ **Produce ciò che una sessione nuova legge per sapere dov'è:** il puntatore della
+  §6 e la riga 14 della roadmap
+
+⛔ **Questo è il compito in cui si sbaglia per ZELO** — il compito 17 della parte 2 lo dice per esteso: riallineare una cifra
+invece di toglierla (gotcha #68); ricopiare in un secondo documento ciò che ha già una casa; allungare il puntatore della §6 con
+ciò che si è chiuso; correggere una riga che questo piano non ha reso falsa, **tranne** C-S0-1, scelta dal proprietario
+(P-29). ⛔ **La regola: si tocca ciò che questo piano ha reso falso o ha lasciato da scrivere, e nient'altro.** E `<data>`, in
+ogni testo dettato qui sotto, è la data del giorno dell'esecuzione: il Passo 13 vuole che nessun `<data>` sopravviva fuori da
+questo piano.
+
+- [ ] **Passo 1: le misure prima — la baseline di ogni casa**
+
+```bash
+git status --porcelain > <scratchpad>/prima.txt
+git ls-files --eol docs/tracciabilita.md docs/roadmap.md docs/README.md docs/COMPENDIO.md docs/archivio/stato-storico.md \
+    docs/porta-di-qualita.md docs/riferimenti.md docs/HANDOFF.md docs/superpowers/specs/2026-09-22-design-system-design.md \
+    docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/plans/2026-09-23-design-system.md \
+    docs/archivio/consegna-piano-design-system.md
+wc -c docs/COMPENDIO.md; grep -n '^ceiling=' scripts/check-docs.sh
+for s in ✅ 🔶 📋 ⚠️ ❌; do printf '%s ' "$s"; grep -cE "^\| .* \| $s \|" docs/tracciabilita.md; done
+grep -n '^| Accessibilità |' docs/tracciabilita.md | cut -c1-40
+grep -n '^| 1[0-9] |' docs/roadmap.md | cut -c1-40
+grep -n 'plans/2026-09-23-design-system.md' docs/roadmap.md docs/README.md docs/COMPENDIO.md | cut -c1-60
+awk '/^\*\*Un comando solo:\*\*/{s=1; next} s&&/^\|/{t=1} s&&t&&!/^\|/{exit} s&&/^\| [0-9]+ \|/{c++} END{print c}' docs/porta-di-qualita.md
+grep -n '^run ' scripts/gate.sh
+awk '/^## I gotcha/{s=1; next} s&&/^## /{s=0} s&&/^\| [0-9]+ \|/{c++} END{print "gotcha: "c}' docs/HANDOFF.md
+git log --format='%h %s' --grep='^design-system(compito' | cut -c1-72
+B=$(git log --format=%H --grep='^design-system(compito 1):' | tail -1)^; git rev-parse --short "$B"
+git diff --stat "$B"..HEAD -- crates/ gui/schema/
+awk -F'|' '/^\| \*\*[0-9]\*\* \|/{print $2 "|" $5}' docs/superpowers/plans/2026-09-23-design-system.md | cut -c1-120
+bash scripts/gate.sh 2>&1 | tail -1
+```
+
+Atteso: **dodici** file, tutti `i/lf`; la colonna `w/…` è **della sessione** — la decide `core.autocrlf`, che non è versionato
+— e si annota per il Passo 13. Il tetto e il peso del compendio, da cui il **margine**. Il conto per stato di tracciabilità,
+che il Passo 2 rifà (controllo 21), e la riga «Accessibilità» ancora ✅. Nella roadmap le righe fino alla **13**, e **nessuna**
+14. Il percorso del piano **una** volta nella roadmap — la riga della tabella dei piani, **D19** — e **una** nel compendio, nella
+§6; **nessuna** in `README.md`, dove sta il disegno. La tabella dei passi a **sette** righe, e `gate.sh` a **nove** `run`
+(P-29). Il numero dei gotcha, la baseline del Passo 9. I commit dei compiti 1–8, uno o più ciascuno; `B` è il genitore del
+**primo** commit del compito 1, e il `git diff --stat` su `crates/` e `gui/schema/` è **vuoto** (vincolo 12). Le righe 1–8
+della posizione ✅, la 9 ⬜. `GATE GREEN.`
+
+⛔ **Se la riga 14 c'è già, o la riga «Accessibilità» è già 🔶, il compito è già in parte eseguito:** ci si ferma e si riporta,
+invece di scrivere righe doppie. ⚠️ **Se la tabella dei passi ha già nove righe**, C-S0-1 l'ha corretta la sessione delle
+contraddizioni: la parte del Passo 7 che la riguarda **non** si fa, e lo si dice nel commit.
+
+⚠️ **Due cose del proprietario, che si guardano adesso e non alla fine:**
+
+| | Dove si guarda | Se manca |
+|---|---|---|
+| il **giudizio sull'aspetto del dock** (controllo 15, passo 8 del compito 6) | la cella Stato della riga 6, o una voce d'errata che nomina il controllo 15: `grep -n 'controllo 15' docs/superpowers/plans/2026-09-23-design-system.md` | il coordinatore lo chiede prima del commit (**D24**), in A/B — *«approvato»* o *«non approvato, e perché»* —, e la risposta va nella Definizione di «fatto», blocco 5 |
+| **D18**, la miniatura di Compatta | la sua riga, fra le decisioni prese scrivendo il piano | niente: vale il consiglio del coordinatore finché il proprietario non la ribalta; lo si dice nel blocco 5 |
+
+- [ ] **Passo 2: `tracciabilita.md` — la riga «Accessibilità», e il riquadro**
+
+In `docs/tracciabilita.md`, *Trova* la riga che comincia con `| Accessibilità | ✅ |`, **intera, presa dal file** —
+*Sostituisci con*:
+
+```markdown
+| Accessibilità | 🔶 | nel **2** e nel **14**, il design system — ⚠️ **RICHIAMO DEL <data>:** era ✅, e la legenda dà a ✅ le fondamenta *nel kernel*, mentre queste stanno nella GUI: cambia la riga, non la legenda (N-2 di E235 del piano della parte 2; la (e) del [disegno del design system](superpowers/specs/2026-09-22-design-system-design.md)) · `axe-core` sui pannelli montati (`gui/src/a11y.test.ts`, l'aiutante in `gui/src/testing/axe.ts`) e, nel browser vero col contrasto della pagina disegnata, sulla pagina kit e sulla cornice (`gui/src/kit/kit.browser.test.ts`, `gui/src/frame/frame.browser.test.ts`); il contrasto AA dei token per famiglie, nei due temi (`gui/src/tokens/contrast.test.ts`); il movimento ridotto e l'alto contrasto (`gui/src/tokens/tokens.browser.test.ts`); le regioni `role="status"` presenti prima del loro testo (`gui/src/components/BaseStatus.vue`); la tastiera (`gui/src/frame/moveActive.ts`, `gui/src/frame/keys.test.ts`, e le frecce della Panoramica in `gui/src/frame/Overview.vue`) — nel passo web del cancello |
+```
+
+Ogni percorso della riga si prova: `ls gui/src/a11y.test.ts gui/src/testing/axe.ts gui/src/kit/kit.browser.test.ts
+gui/src/frame/frame.browser.test.ts gui/src/tokens/contrast.test.ts gui/src/tokens/tokens.browser.test.ts
+gui/src/components/BaseStatus.vue gui/src/frame/moveActive.ts gui/src/frame/keys.test.ts gui/src/frame/Overview.vue` — un
+file che manca è una voce d'errata: la riga dice dove vive, e non può nominare ciò che non c'è.
+
+Poi, nel riquadro in testa, *Trova* il capoverso che comincia con `> ✅ **Aggiornata il 2026-09-22 con le sedi dei pezzi della
+GUI`, **intero, preso dal file**, e *Sostituisci con* lo stesso capoverso seguito da:
+
+```markdown
+>
+> ✅ **Aggiornata il <data> con la riga «Accessibilità»**, dal compito 9 del [piano del design system](superpowers/plans/2026-09-23-design-system.md) — alla chiusura del sotto-progetto 14, come dice la riga sotto il titolo.
+```
+
+Il comando del riquadro, **dopo**: ✅ **uno in meno** e 🔶 **uno in più** del Passo 1, gli altri uguali (controllo 21).
+
+- [ ] **Passo 3: `roadmap.md` — la riga 14, la sua ragione, la riga del piano, l'intestazione**
+
+Quattro tocchi, ciascuno con `replace_unique.py` e il testo vecchio **preso dal file**.
+
+**Uno.** Dopo la riga che comincia con `| 13 |`, **intera**, la riga:
+
+```markdown
+| 14 | **Design system** — i token a due livelli e i due temi, il kit dei pezzi di base con la pagina kit, il dock vestito, la cornice con la Panoramica e le viste col nome, le prove nel browser vero — [disegno](superpowers/specs/2026-09-22-design-system-design.md) | — | ✅ **chiuso il <data>** — la Definizione di «fatto» del [piano](superpowers/plans/2026-09-23-design-system.md), coi comandi | 2 |
+```
+
+**Due.** In *«Perché quest'ordine»*, dopo la riga che comincia con `| **Registro delle guide (13)`, **intera**, la riga:
+
+```markdown
+| **Design system (14) dopo la GUI minima, e prima del registro delle guide (13)** | la richiesta del proprietario del 2026-09-21, punto 5 della trentasettesima chiusura del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md): lo stile del 2 era un segnaposto dichiarato, e il design system si fa a 2 chiuso. Il numero è il primo libero in coda, senza rinumerare — la voce 2 del [disegno](superpowers/specs/2026-09-22-design-system-design.md), scelta **A** il 2026-09-23. Non tocca il kernel né il filo (vincolo 12 del piano), quindi non cambia niente per il 13, che resta sbarrato da AUD-004 |
+```
+
+**Tre.** Nella riga di questo piano nella tabella dei piani (**D19**), la cella *Stato* — dal `⏳` alla fine della riga —
+diventa:
+
+```markdown
+✅ **scritto il 2026-09-24, eseguito il <data>** — `GATE GREEN` a ogni compito; la Definizione di «fatto» coi comandi sta nel piano |
+```
+
+**Quattro.** La riga che comincia con `Ultimo aggiornamento:`, **intera**, diventa:
+
+```markdown
+Ultimo aggiornamento: **<data>**, con la **chiusura del sotto-progetto 14**, il design system — la riga 14 dei sotto-progetti con la sua riga in *«Perché quest'ordine»*, e la riga del [piano del design system](superpowers/plans/2026-09-23-design-system.md) nella tabella dei piani portata a «eseguito» dal compito 9 di quel piano.
+```
+
+Sonde: `grep -c '^| 14 | \*\*Design system\*\*' docs/roadmap.md` → **1**; `grep -c '^| \*\*Design system (14)' docs/roadmap.md`
+→ **1**; `grep -c 'eseguito il <data>' docs/roadmap.md` → **1**, con la data vera al posto di `<data>`;
+`grep -n '^| 1[0-9] |' docs/roadmap.md` → le righe 10–14, in fila.
+
+- [ ] **Passo 4: `README.md` — la riga del disegno**
+
+La riga del disegno nella tabella «Specifiche», riscritta nel commit che ha scritto questo compito (**D19**), riceve il numero
+e l'esecuzione. *Trova* la riga che comincia con `| [Design system — il disegno]`, **intera, presa dal file** — e nella
+seconda colonna `il design system della GUI` diventa `il design system della GUI, il sotto-progetto 14`; in coda alla terza,
+prima del `|` finale:
+
+```markdown
+ ✅ **RICHIAMO DEL <data>:** il piano è **eseguito** — la Definizione di «fatto» del [piano](superpowers/plans/2026-09-23-design-system.md), coi comandi
+```
+
+Sonda: `grep -c 'il sotto-progetto 14 |' docs/README.md` → **1**.
+
+- [ ] **Passo 5: la §12 del compendio — una riga, e il margine rimisurato**
+
+Dopo la riga che comincia con `| ⛔ **come si è ESEGUITO il sotto-progetto 2**`, **intera, presa dal file**, la riga (**D22**):
+
+```markdown
+| ⛔ **il DESIGN SYSTEM**, il sotto-progetto 14 — i token a due livelli e i due temi, il kit degli otto pezzi di base con la pagina kit, il dock vestito, la cornice con la Panoramica e le viste col nome, le sonde che diventano prove nel browser vero, e per ogni artefatto il controllo che lo esercita; e come si è **eseguito**, con la Definizione di «fatto» coi comandi | il [disegno](superpowers/specs/2026-09-22-design-system-design.md) — ⚠️ **non è una spec** · il [piano](superpowers/plans/2026-09-23-design-system.md), con l'errata in testa e la tabella della posizione — ⚠️ **a compiti, mai intero** |
+```
+
+```bash
+wc -c docs/COMPENDIO.md; grep -n '^ceiling=' scripts/check-docs.sh
+bash scripts/check-docs.sh 2>&1 | tail -1
+```
+
+Atteso: il margine **positivo**, `OK — no inconsistencies.` ⛔ Se il margine va sotto zero si toglie prosa dalla §6, **non si
+alza il tetto** (vincolo 13).
+
+- [ ] **Passo 6: la §6 del compendio — il puntatore RISCRITTO, non allungato; l'intestazione; l'archivio**
+
+⛔ **Ciò che è chiuso non si ripete nella §6**: lo dice la colonna «Stato» della roadmap, e la §6 lo scrive in testa al suo
+*«Il prossimo passo»*. Il ⏭️ perde il primo tempo — il design system — e il secondo diventa **il** prossimo passo.
+
+**Uno — il vecchio, preso dal file.** Il blocco del ⏭️ è il capoverso che comincia con `⏭️ **IL PROSSIMO PASSO` e finisce alla
+prima riga vuota:
+
+```bash
+awk '/^⏭️ \*\*IL PROSSIMO PASSO/{s=1} s&&/^\r?$/{exit} s' docs/COMPENDIO.md > <scratchpad>/old-6.txt
+head -c 80 <scratchpad>/old-6.txt; echo; tail -c 120 <scratchpad>/old-6.txt
+```
+
+Atteso: comincia con `⏭️ **IL PROSSIMO PASSO, IN DUE TEMPI. Uno: il DESIGN SYSTEM` e finisce con `in sessioni distinte.`; dentro
+ci sono la riga che il compito 1 ha scritto — `Lo stile dal compito 1 del piano del design system:` — e il secondo tempo,
+**Due: IL SOTTO-PROGETTO 13**. ⛔ **Se comincia o finisce altrimenti, la §6 è cambiata dopo la scrittura di questo passo:** ci si
+ferma e si riporta. ⚠️ **E si rilegge prima di cancellarlo:** una riga che parla d'altro che del design system o del 13 — una
+voce aperta che nessuno ha chiuso — **resta**, e va nel testo nuovo.
+
+**Due — il nuovo**, in `<scratchpad>/new-6.txt`, e `python <scratchpad>/replace_unique.py docs/COMPENDIO.md
+<scratchpad>/old-6.txt <scratchpad>/new-6.txt`:
+
+```markdown
+⏭️ **IL PROSSIMO PASSO: IL SOTTO-PROGETTO 13** — i tre meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima**
+del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta proprietà** della §3, ma questo **vincolo d'ordine**. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill dichiarative: è una sua decisione e non del piano. Il perimetro
+sta nel [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md), che chi riprende quel fronte legge
+**per intero**; brainstorming e disegno del 13 vengono prima del piano, in sessioni distinte.
+```
+
+⚠️ È il secondo tempo del vecchio, **parola per parola**: niente di nuovo si scrive nel puntatore.
+
+**Tre — l'intestazione.** Il capoverso che comincia con `**Aggiornato il` e finisce con `§13.`, **preso dal file**, va in
+`<scratchpad>/old-h.txt`, e diventa:
+
+```markdown
+**Aggiornato il <data>**, con la **chiusura del sotto-progetto 14**, il design system — una riga nella §12 e il puntatore della §6 al 13; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](archivio/stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+```
+
+**Quattro — l'archivio.** In coda a `docs/archivio/stato-storico.md`, con Python `newline=""` e il terminatore del file:
+
+```markdown
+
+## Il puntatore «Il prossimo passo» e l'intestazione del compendio, com'erano — archiviati il <data>
+
+⚠️ **Vero il giorno in cui fu scritto.** Usciti dal compendio alla chiusura del sotto-progetto 14, il design system (compito 9
+del [piano](../superpowers/plans/2026-09-23-design-system.md)), parola per parola: l'intestazione, e il ⏭️ della §6 dal suo
+inizio alla riga vuota; i link riscritti per questa cartella.
+
+<il testo di old-h.txt, una riga vuota, il testo di old-6.txt — coi link riscritti>
+```
+
+I link si riscrivono in Python, uno per uno e contati: `](superpowers/` → `](../superpowers/`, `](archivio/` → `](`, e ogni altro
+`](<file>.md` della cartella `docs/` → `](../<file>.md`. Sonde: `grep -c 'archiviati il <data>' docs/archivio/stato-storico.md`
+→ **1**, con la data vera; `grep -c 'IN DUE TEMPI' docs/COMPENDIO.md` → **0**; `grep -c '^⏭️ \*\*IL PROSSIMO PASSO: IL
+SOTTO-PROGETTO 13' docs/COMPENDIO.md` → **1**; e il margine, di nuovo, coi due comandi del Passo 5.
+
+- [ ] **Passo 7: `porta-di-qualita.md` — UNA sezione nuova, e la tabella dei passi a nove righe**
+
+**Uno — la sezione**, sul modello di *«IL PASSO WEB E LE SONDE DELLA PARTE 2»*: si inserisce **prima** della riga
+`## Le contraddizioni registrate, e non risolte`, così le sezioni datate restano in ordine di data e le due di servizio in
+fondo.
+
+```markdown
+## ⛔ IL BROWSER DEI TEST E LA PAGINA KIT NEL PASSO WEB — <data>
+
+Dal [piano del design system](superpowers/plans/2026-09-23-design-system.md), il sotto-progetto 14, per la (f) del suo
+[disegno](superpowers/specs/2026-09-22-design-system-design.md). Due cose entrano nel passo web, `gui: fake core and SPA`, e
+**nessun passo nuovo**: i sotto-passi di `scripts/gate-gui.sh` restano quelli che `grep -n 'gui:' scripts/gate-gui.sh` elenca.
+
+| Dove | Che cosa | Da |
+|---|---|---|
+| `gui: probes` | `npm test` gira **due progetti** di `vitest`: `jsdom`, e `browser` sul **Chrome installato**, canale `chrome`, senza finestra — ogni `src/**/*.browser.test.ts`, per ciò che solo un motore d'impaginazione giudica: i caratteri, il movimento ridotto, l'alto contrasto, i raggi, il testo tagliato, le icone centrate, `axe` col contrasto della pagina disegnata. Ogni prova porta la guardia di non-vacuità | compito 2, e il commento sopra `npm test` in `scripts/gate-gui.sh` |
+| `gui: build` | la **pagina kit fuori dal pacchetto**: dopo `npm run build`, rosso se `dist/index.html` manca — la guardia di non-vacuità — e rosso se `dist/kit.html` c'è o un file di `dist/assets` porta `kit-card`, *«the kit page is in the package»* | compito 4 |
+
+⛔ **Un prerequisito dell'ambiente, come il bersaglio di `rustup` e `cargo audit`:** **Google Chrome** stabile, o
+`npx playwright install chrome`. Col canale `chrome` il Chromium che Playwright scarica **non** vale (R2-8 della revisione del
+piano): una macchina senza Chrome va **rossa** a `gui: probes`, col messaggio di Playwright, e non verde. Le due immagini della
+CI, `ubuntu-latest` e `windows-latest`, portano Chrome — la fonte in [`riferimenti.md`](riferimenti.md), *«Il browser dei
+test — la risposta 22»*.
+
+⚠️ **Non hanno una riga di catalogo**, come il passo web della parte 2 e per la stessa ragione (gotcha #36): la §7.4 è spec, e
+una riga nuova è decisione del proprietario — le prove si **registrano** e non si prendono. Le due direzioni di ciascuna, coi
+rossi misurati, stanno nei compiti del piano; che cosa c'è alla chiusura lo dice la sua **Definizione di «fatto»**, coi comandi.
+
+| Che cosa la porta NON controlla, di questo lavoro | Perché |
+|---|---|
+| l'**aspetto** — la SPA e la pagina kit nei due temi, il dock | si **guarda**: i passi «guardarlo» dei compiti e la regola 5 di *«Come si esegue un compito»* del piano; il dock lo giudica il proprietario (controllo 15 del disegno) |
+| il **lettore di schermo vero** sulle regioni `role="status"` | a mano, con l'Assistente vocale di Windows (decisione 21 del disegno): il verbale nella riga 5 della tabella della posizione del piano |
+| `axe` sul **dock** | trova tre difetti che vengono dalla parte 2 e da `dockview-core`, del proprietario (P-18 del piano): nessuna prova li spegne per andare verde, e nessuna li guarda |
+| la **prima pittura** della finestra del guscio | del sotto-progetto 10: il piano la registra fra le voci che sa e non chiude |
+```
+
+**Due — la tabella dei passi** (P-29, **D21**; si salta se il Passo 1 l'ha trovata già a nove righe). Le righe `| 5 |`, `| 6 |`
+e `| 7 |` della tabella che segue `**Un comando solo:**`, **prese dal file**, diventano:
+
+```markdown
+| 5 | `dependency advisories` | `cargo audit` sul `Cargo.lock` — la voce **X-3** dell'[audit](audit-2026-08-27.md) |
+| 6 | `attributes of the constrained crates` | livello 2 — `scripts/gate-attributes.sh` |
+| 7 | `gui: fake core and SPA` | il **passo web** — `scripts/gate-gui.sh`: il core finto, la SPA, le prove sotto jsdom e nel browser vero, il linter, gli avvisi; le sezioni *«IL PASSO WEB E LE SONDE DELLA PARTE 2»* e *«IL BROWSER DEI TEST E LA PAGINA KIT NEL PASSO WEB»* |
+| 8 | `documentation consistency` | livello 2 — `scripts/check-docs.sh` |
+| 9 | `DST campaigns -- wall time` | il **tempo di parete** delle campagne, ristampato con `--nocapture` |
+```
+
+⚠️ La terza colonna delle righe che c'erano si **copia dal file**, non da qui, se è cambiata dopo la scrittura di questo passo.
+Poi la riga `⚠️ **[C-S0-1]**` sotto la tabella esce, con **una** delle due righe vuote che la circondano; e nella tabella
+*«Le contraddizioni registrate, e non risolte»*, in coda alla terza colonna della riga **C-S0-1**, prima del `|` finale:
+
+```markdown
+ ✅ **Corretta il <data>** dal compito 9 del [piano del design system](superpowers/plans/2026-09-23-design-system.md), dove scrive il browser: la tabella ha i nove passi (P-29, D21)
+```
+
+Sonde:
+
+```bash
+awk -F'|' '/^\*\*Un comando solo:\*\*/{s=1; next} s&&/^\|/{t=1} s&&t&&!/^\|/{exit} s&&/^\| [0-9]+ \|/{print $3}' docs/porta-di-qualita.md
+grep -n '^run ' scripts/gate.sh
+grep -c '⚠️ \*\*\[C-S0-1\]\*\*' docs/porta-di-qualita.md
+grep -c 'IL BROWSER DEI TEST E LA PAGINA KIT' docs/porta-di-qualita.md
+git diff -U0 -- docs/porta-di-qualita.md | grep '^-[^-]'
+```
+
+Atteso: le **nove** etichette nell'ordine dei nove `run` — la stessa sequenza, riga per riga; **0** segni; **2** — il titolo
+della sezione e la riga 7 della tabella che la nomina; e fra le righe tolte **soltanto** le tre righe vecchie della tabella, la
+riga del segno e la riga C-S0-1 com'era: nessun'altra riga del file è toccata.
+
+- [ ] **Passo 8: `riferimenti.md` — le fonti della scrittura e della revisione, e le misure**
+
+Una sezione, dopo *«Il design system della GUI — le fonti del disegno, 2026-09-23»* e le sue sottosezioni, **prima** della riga
+`## Cosa NON abbiamo adottato, e perché`:
+
+```markdown
+## Il design system della GUI — il piano e la sua esecuzione, <data>
+
+Le fonti che la **scrittura** del [piano](superpowers/plans/2026-09-23-design-system.md) e la sua **revisione** hanno letto, il
+2026-09-23 e il 2026-09-24, e le misure della sua **esecuzione**, coi comandi. Il fatto intero sta nella riga del piano che la
+tabella nomina: qui la provenienza, lì il merito — una casa ciascuno.
+
+### Le fonti
+
+| Fonte | Letta | Per |
+|---|---|---|
+| `vitest-dev/vitest` alla v4.1.11, su GitHub: `docs/guide/browser/index.md`, `docs/config/browser/playwright.md`, `docs/api/browser/commands.md`, `docs/api/browser/context.md`, `docs/guide/projects.md`, `docs/config/css.md`, `docs/config/browser/headless.md`, `docs/config/browser/viewport.md` | 2026-09-23 | i due progetti, il comando `emulateMedia`, la finestra delle prove — il compito 2 |
+| `@vitest/browser-playwright/dist/index.d.ts`, nel pacchetto installato | 2026-09-23 | il tipo di `ctx.page` — il compito 2 |
+| `vitest` 4.1.11 installato: `defaults.timeout ?? 1e3` e `resolved.testTimeout ??= resolved.browser.enabled ? 15e3 : 5e3` | 2026-09-24 | l'attesa di base di `expect.poll` e il tempo di una prova nel browser — P-21 |
+| `reka-ui` 2.10.4 installato: `dist/RadioGroup/RadioGroupItem.js` e `Radio.js` | 2026-09-23 | il radio che decide chi lo controlla, e `handleFocus` — P-8, P-19 |
+| `reka-ui` 2.10.4 installato: `dist/Dialog/DialogContentModal.js` e `dist/FocusScope/FocusScope.js` | 2026-09-24 | il fuoco che torna senza un `DialogTrigger` — P-22 |
+| `dockview` 8.3.1 installato: `dist/styles/dockview.css` | 2026-09-23 | le variabili del tema di riferimento, e le due famiglie che ne restano fuori — P-6, P-15 |
+| `dockview-core` 8.3.1 installato: `dist/package/main.esm.mjs` — `updateTheme`, `AriaLevelTracker`, `aria-label` | 2026-09-23 | P-7, P-17, P-18 |
+| `@vue/test-utils` 2.5.0 installato: `mount` | 2026-09-24 | P-23 |
+| `jsdom` 30.0.1 installato: nessun `matchMedia` | 2026-09-23 | P-12 |
+| Playwright 1.63.0: il messaggio per un Chrome che manca, `Run "npx playwright install chrome"` | 2026-09-23 | il prerequisito — R2-8 del [registro della revisione](superpowers/plans/2026-09-23-design-system-revisione/ledger.md) |
+| Vite 8.3.0: `build.rolldownOptions`, con `rollupOptions` deprecato | 2026-09-23 | la prova della pagina kit fuori dal pacchetto — R3-10 |
+| `dockview-core` 8.3.1: `DockviewTheme` con undici campi | 2026-09-23 | il tema del dock — R3-22 |
+
+### Le misure dell'esecuzione
+
+| Che cosa | Il comando | Il valore, con la data | Che cosa sostiene |
+|---|---|---|---|
+| il pezzo JavaScript della SPA, prima e dopo | `(cd gui && npm run build 2>&1 \| grep -E 'assets/index-.*\.js ')`, sul `main` di `B` — il blocco 1 della Definizione di «fatto» — e su `HEAD` | <i due valori del giorno> | N-2 di E187, del proprietario (R3-25) |
+| la suite, file per file, in cinque corse | la Definizione di «fatto» del piano, blocco 2 | lì, con la data | la stabilità, dopo P-19, P-20 e P-21 |
+```
+
+⚠️ **Prima di scriverla, ogni riga si rilegge contro la riga del piano che nomina** — la P, la R del registro —: la fonte e la data
+vengono da lì, non da qui, e dove divergono vince la riga del piano. Il pezzo JavaScript **prima**: se `gui/` su `B` è quello
+del 2026-09-24 — `git diff --quiet 2a30916 "$B" -- gui/; echo $?` → **0** — il valore è quello misurato quel giorno, **663,26 kB**,
+201,23 compressi, dal log del cancello; se no, si misura su una copia — `git worktree add` in una cartella **corta** di `%TEMP%`,
+come la cartella di prova (`LongPathsEnabled` è 0 sulle due macchine), `npm ci --no-audit --no-fund` e `npm run build` lì dentro,
+poi `git worktree remove` —, mai con un `checkout` sull'albero di lavoro.
+
+- [ ] **Passo 9: `HANDOFF.md` — soltanto un gotcha nuovo, se c'è**
+
+Si rilegge l'**errata** di questo piano: una voce che è una trappola **per chi viene dopo**, fuori da questo piano — non un
+difetto del suo testo —, diventa una riga nella sezione *«I gotcha»* di `docs/HANDOFF.md`, la sua **unica** casa, nella forma
+delle righe vicine, e la riga *«Aggiornato il»* in testa al file segue (finding AUD-039). ⛔ **Se non ce n'è nessuna, il file non si
+tocca**, e il commit lo dice. Il comando della §9 del compendio, prima e dopo: il numero sale di quante righe si sono scritte.
+
+- [ ] **Passo 10: il disegno e la stella polare — gli esiti e i richiami (P-28)**
+
+Nel [disegno](../specs/2026-09-22-design-system-design.md), la tabella della (e): in coda alla colonna *«Chi la chiude»* di tre
+righe, prima del `|` finale, l'esito — **letto**, non dedotto; la quarta, **E228**, resta del proprietario e non si tocca.
+
+La riga **N-2 di E235** — l'esito lo dà il Passo 2:
+
+```markdown
+ ✅ **Chiusa il <data>** dal compito 9 del [piano](../plans/2026-09-23-design-system.md): la riga di tracciabilità è 🔶, col richiamo datato
+```
+
+La riga **M-3 di E187** — l'esito lo dà la cella Stato della riga 5 della posizione: se il verbale dice che gli annunci dei punti
+3, 4 e 5 si sono sentiti,
+
+```markdown
+ ✅ **Chiusa il <data>**: `BaseStatus` dal compito 5 del [piano](../plans/2026-09-23-design-system.md), e il verbale dell'Assistente vocale nella riga 5 della sua tabella della posizione
+```
+
+e se uno non si è sentito, con la voce d'errata che il passo 8 del compito 5 ha aperto:
+
+```markdown
+ ⛔ **Ancora aperta il <data>**: la voce <Enn> dell'errata del [piano](../plans/2026-09-23-design-system.md)
+```
+
+La riga **N-2 di E187** — i due valori li dà il Passo 8:
+
+```markdown
+ 📌 **Misurato il <data>**: il pezzo JavaScript da <prima> a <dopo> kB — [`riferimenti.md`](../../riferimenti.md), la sezione del piano; resta del proprietario
+```
+
+E nel *«Come si riprende»* del disegno, in coda alla cella della riga **codice di prodotto**, prima del `|` finale:
+
+```markdown
+ ✅ **RICHIAMO DEL <data>:** toccato dal piano, i compiti 1–8 — che cosa, file per file, lo dice la Definizione di «fatto» del [piano](../plans/2026-09-23-design-system.md)
+```
+
+Nella [stella polare](../specs/2026-09-07-direzione-gui-design.md), in coda alla cella *Atteso* della riga **codice e spec non
+toccati**, prima del `|` finale — dopo avere provato che il solo file di `scripts/` toccato dal piano è quello:
+`git diff --name-only "$B"..HEAD -- scripts/` → `scripts/gate-gui.sh`:
+
+```markdown
+ ✅ **RICHIAMO DEL <data>, compito 9 del piano del design system:** e `scripts/gate-gui.sh`, dai compiti 2 e 4 di quel [piano](../plans/2026-09-23-design-system.md) — il commento del passo delle prove e la pagina kit fuori dal pacchetto
+```
+
+Sonde: `grep -c 'RICHIAMO DEL <data>, compito 9 del piano del design system' docs/superpowers/specs/2026-09-07-direzione-gui-design.md`
+→ **1**, e `grep -c 'dal compito 9 del \[piano\]' docs/superpowers/specs/2026-09-22-design-system-design.md` → **1**, con la data
+vera al posto di `<data>`.
+
+- [ ] **Passo 11: la Definizione di «fatto» — ogni riga eseguita, e l'uscita vista accanto**
+
+La sezione *«La Definizione di «fatto»»* qui sotto si **esegue** blocco per blocco, sull'albero di lavoro con i Passi 2–10
+applicati (**D20**). Accanto a ogni comando, al posto dell'attesa, si scrive **l'uscita vista**; il titolo diventa
+*«… — i comandi, con le uscite del <data>»*, e il capoverso in testa dice che le attese sono diventate uscite. ⛔ **Un'uscita che
+diverge dall'attesa è una voce d'errata**, col comando, le due uscite e il perché: non si scrive la nuova come se fosse l'attesa,
+e non si chiude il compito finché la voce non ha un esito. ⚠️ Dove l'uscita è un conto, resta **accanto al proprio comando**
+(vincolo 10): chi rilancia confronta due uscite, non una cifra con la memoria.
+
+- [ ] **Passo 12: il piano — la testa, la posizione, la chiusura**
+
+**Uno.** Il capoverso di *«A che punto è QUESTO PIANO»* che comincia con `✅ **IL PIANO È SCRITTO`, **preso dal file**, diventa:
+
+```markdown
+✅ **IL PIANO È ESEGUITO, il <data>.** A dirlo non è questa riga ma la tabella qui sotto — ogni riga ✅, e la colonna **Commit**
+piena — e la **Definizione di «fatto»**, coi comandi e le uscite del giorno. Il passo dopo lo dice la §6 del compendio.
+```
+
+**Due.** Nella tabella: la riga **9**, **Stato** `✅ <data>`; nella riga **8** la colonna **Commit** con l'hash del compito 8
+(R1-16); e nella riga **9** la colonna **Commit** con il comando, perché il commit che la scrive non può portare il proprio hash:
+`` `git log -1 --format=%h --grep='^design-system(compito 9):'` ``.
+
+**Tre.** *«Come si riprende»* si riscrive con la chiusura del piano — ciò che resta aperto e dove vive: le voci che il piano sa e
+non chiude, le voci d'errata senza esito, D18 e il giudizio del controllo 15 se sono del proprietario, la CI del commit da leggere
+per prima —; la chiusura di prima va **parola per parola** in coda a `docs/archivio/consegna-piano-design-system.md`, nella forma
+delle sezioni che vi stanno — un'intestazione con la data, il capoverso *«Tolto dal piano il …»*, i rimandi riscritti per quella
+cartella.
+
+- [ ] **Passo 13: il cancello, il margine, i fine-riga, il commit**
+
+```bash
+bash scripts/check-docs.sh 2>&1 | tail -1
+bash scripts/gate.sh 2>&1 | tail -1
+wc -c docs/COMPENDIO.md; grep -n '^ceiling=' scripts/check-docs.sh
+git ls-files --eol docs/tracciabilita.md docs/roadmap.md docs/README.md docs/COMPENDIO.md docs/archivio/stato-storico.md \
+    docs/porta-di-qualita.md docs/riferimenti.md docs/HANDOFF.md docs/superpowers/specs/2026-09-22-design-system-design.md \
+    docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/plans/2026-09-23-design-system.md \
+    docs/archivio/consegna-piano-design-system.md
+git diff --stat
+git diff --stat -- crates/ gui/ scripts/ .github/ docs/adr/
+git diff -- docs/ ':!docs/superpowers/plans/' | grep '^+' | grep -cE '<data>|<prima>|<dopo>|<Enn>|<i due valori'
+git status --porcelain | diff <scratchpad>/prima.txt -
+```
+
+Atteso: `OK — no inconsistencies.`, `GATE GREEN.`, il margine **positivo**, i fine-riga **identici** al Passo 1; il
+`git diff --stat` nomina **solo** i file della lista *Files* — ⛔ se ne nomina altri, lo zelo ha vinto: si revoca ciò che questo
+piano non ha reso falso —; il secondo `--stat` **vuoto**; **0** segnaposto — `<data>`, `<prima>`, `<dopo>`, `<Enn>` — scritti fuori da questo piano, dove i
+compiti li dettano;
+e il confronto con lo stato di prima rende solo i file della lista.
+
+```bash
+git add docs/
+git commit -m "design-system(compito 9): la chiusura -- il sotto-progetto 14 nei documenti, la riga Accessibilita' col richiamo, la Definizione di «fatto» con le uscite del giorno"
+git push
+```
+
+⛔ **Senza co-autore** (vincolo 15). ⛔ **La CI si legge**, coi due comandi di `docs/porta-di-qualita.md`, *«Leggere la CI da
+terra»*: i due job del commit — `gate (ubuntu-latest)` e `gate (windows-latest)` — vanno nel blocco 5 della Definizione di «fatto»
+alla sessione dopo, che li legge **per prima**.
+
+---
+
+## La Definizione di «fatto» — i comandi, e le uscite attese
+
+⛔ **Comandi, non affermazioni** (D74 della parte 2; **D20** qui). Scritta il **2026-09-24**, con le **attese** che i compiti 1–8
+dettano; il Passo 11 del compito 9 la esegue sull'albero del proprio commit e scrive accanto a ogni comando **l'uscita vista**, con
+la data. ⛔ **Un'uscita che diverge dall'attesa è una voce d'errata**, non un'attesa nuova. Dove un compito dopo ha cambiato ciò che
+uno prima misurava, vale lo stato **finale**, e la riga nomina chi l'ha cambiato. Un conto sta **accanto al proprio comando**
+(vincolo 10): chi rilancia confronta due uscite, non una cifra con la memoria.
+
+**La base.** `B` è il genitore del **primo** commit del compito 1 — i messaggi cominciano con `design-system(compito N):`
+(vincolo 15):
+
+```bash
+B=$(git log --format=%H --grep='^design-system(compito 1):' | tail -1)^
+git rev-parse --short "$B"; git log --oneline "$B"..HEAD | wc -l    # l'hash, e i commit del piano
+```
+
+**Blocco 1 — il cancello e i documenti.** Una corsa sola del cancello, e i `grep` sul suo log:
+
+```bash
+bash scripts/gate.sh > <scratchpad>/gate-dod.log 2>&1; tail -1 <scratchpad>/gate-dod.log   # GATE GREEN.
+grep -c 'gui: fake core and SPA' <scratchpad>/gate-dod.log                                   # 1: il passo web, e dentro il browser
+grep -E 'assets/index-.*\.js ' <scratchpad>/gate-dod.log                                     # il pezzo JavaScript: la cifra per il proprietario (N-2 di E187, R3-25)
+bash scripts/check-docs.sh 2>&1 | tail -1                                                    # OK — no inconsistencies.
+```
+
+**Blocco 2 — la suite, file per file, in cinque corse** (**D23**). L'aiutante vive nello scratchpad, **mai** nel repository,
+come `replace_unique.py`:
+
+```python
+"""dod_suite.py -- the suite's JSON reports, file by file (design system, task 9: the Definition of Done).
+
+Usage: python dod_suite.py <report.json> [<report.json> ...]
+
+Prints, for the FIRST report, one line per test file -- passed, failed, skipped -- named from `src/`; then, for
+every report, its totals. Exits 1 when any report has a failed test or `success` false: a fall is an errata
+entry, not a run to repeat until it passes (P-19, P-20, P-21 of the plan). The paths come in as ARGUMENTS, so
+Git Bash turns `/c/...` into `C:/...` for Python -- a path written inside `python -c "..."` is not converted.
+"""
+import json
+import os
+import sys
+
+if len(sys.argv) < 2:
+    sys.exit("usage: python dod_suite.py <report.json> [<report.json> ...]")
+bad = False
+for i, path in enumerate(sys.argv[1:]):
+    with open(path, encoding="utf-8") as f:
+        d = json.load(f)
+    if not d["testResults"]:
+        sys.exit(f"{path}: no test file at all -- a report that saw nothing proves nothing")
+    if i == 0:
+        for r in sorted(d["testResults"], key=lambda r: r["name"]):
+            name = r["name"].replace("\\", "/")
+            name = name[name.find("/src/") + 1:] if "/src/" in name else name
+            s = [a["status"] for a in r["assertionResults"]]
+            p, x = s.count("passed"), s.count("failed")
+            print(f"{name}: {p} passed, {x} failed, {len(s) - p - x} skipped")
+    print(f"{os.path.basename(path)}: {d['numTotalTests']} tests, {d['numPassedTests']} passed, "
+          f"{d['numFailedTests']} failed, success={d['success']}")
+    bad = bad or d["numFailedTests"] > 0 or not d["success"]
+sys.exit(1 if bad else 0)
+```
+
+Provato il 2026-09-24 nelle due direzioni e sul vuoto, sul rapporto del `main` di quel giorno (P-30): esce **0** sul rapporto
+vero, **1** con un rapporto a cui è stata messa a mano una caduta, **1** su un rapporto senza file.
+
+```bash
+for i in 1 2 3 4 5; do (cd gui && npx vitest run --reporter=json --outputFile=<scratchpad>/dod-$i.json > /dev/null 2>&1); done
+python <scratchpad>/dod_suite.py <scratchpad>/dod-1.json <scratchpad>/dod-2.json <scratchpad>/dod-3.json <scratchpad>/dod-4.json <scratchpad>/dod-5.json; echo $?
+python <scratchpad>/dod_suite.py <scratchpad>/dod-1.json | grep -c ' skipped$'; git ls-files 'gui/src/*.test.ts' | wc -l
+```
+
+Attese: una riga per file di prova, **nessuna** con un `failed` diverso da zero — fra loro i dodici file nuovi del piano:
+`tokens/board.test.ts`, `tokens/usage.test.ts`, `tokens/theme.test.ts` (compito 1), `tokens/tokens.browser.test.ts` (2),
+`components/kit.test.ts` (3), `kit/kit.browser.test.ts` (4), `panels/settings.browser.test.ts` (5), `tokens/dock.test.ts` e
+`frame/dock.browser.test.ts` (6), `frame/nearest.test.ts` e `frame/schematic.test.ts` (7), `frame/frame.browser.test.ts` (8);
+cinque totali **uguali** fra loro, `0 failed` e `success=True`; l'uscita **0**; e le ultime due cifre **uguali**: ogni file di
+prova del repository è girato, e nessuno fuori dal repository.
+
+**Blocco 3 — i controlli del disegno, uno per riga** — la tabella *«Il prodotto, e il controllo che esercita ciascun
+artefatto»*. Dove il controllo è un file di prova, la sua riga del blocco 2 è la prova; qui il comando dice che l'artefatto c'è:
+
+```bash
+# 1 -- i valori dei token, copie della tavola (D1): board.test.ts nel blocco 2
+ls gui/src/tokens/base.css gui/src/tokens/themes.css                                   # i due file
+# 2, 3 -- il contrasto per famiglie, gli stessi ruoli nei due temi (P-1): contrast.test.ts nel blocco 2
+# 4, 5 -- nessuna scala e nessun colore a mano fuori dai token: usage.test.ts nel blocco 2
+grep -rln 'var(--ref-' gui/src | grep -v '^gui/src/tokens/' | wc -l                    # 0
+# 6, 18 -- il tema e le viste col nome, campi facoltativi del pacchetto (D2, D3): stores.test.ts nel blocco 2
+grep -cE '(theme|named|openNamed)\?:' gui/src/stores/layout.ts                          # 3
+# 7 -- il tema sulla radice: theme.test.ts nel blocco 2
+grep -c 'data-theme' gui/src/tokens/theme.ts                                            # almeno 1
+# 8, 9, 16 -- il movimento ridotto, i caratteri, readToken: tokens.browser.test.ts nel blocco 2
+# 10 -- la mappa delle icone, e lucide da un posto solo
+grep -rlE "from ['\"]lucide" gui/src                                                    # gui/src/components/icons.ts, e nient'altro
+# 11 -- gli otto pezzi di base: kit.test.ts e kit.browser.test.ts nel blocco 2
+ls gui/src/components/Base*.vue | wc -l                                                 # 8
+# 12 -- le regole del kit nel linter, coi loro messaggi
+grep -c 'message: "' gui/eslint.config.js                                               # 6: i tre messaggi del compito 3 e i tre del 5 -- il 2026-09-24 erano 0
+# 13 -- BaseStatus: la regione vuota c'è (kit.test.ts); il lettore di schermo vero, a mano
+awk -F'|' '/^\| \*\*5\*\* \|/{print $5}' docs/superpowers/plans/2026-09-23-design-system.md   # ✅ <data>, col verbale dell'Assistente vocale
+# 14 -- la pagina kit fuori dal pacchetto
+grep -c 'the kit page is in the package' scripts/gate-gui.sh                           # 1
+(cd gui && ls dist/kit.html 2>&1; grep -rl 'kit-card' dist/assets | wc -l)             # «No such file or directory», e 0 -- dopo il build del blocco 1
+# 15 -- il tema del dock: dock.test.ts e dock.browser.test.ts nel blocco 2
+grep -rn 'themeAbyss' gui/src | wc -l                                                   # 0
+# 17 -- la Panoramica: a11y.test.ts, nearest.test.ts, frame.test.ts, frame.browser.test.ts nel blocco 2
+grep -rl 'F3' gui/src/frame | wc -l                                                      # almeno 1
+# 19 -- la striscia a pillola: frame.browser.test.ts nel blocco 2
+# 20 -- le prove del browser, ciascuna con la sua guardia
+for f in $(git ls-files 'gui/src/*.browser.test.ts'); do printf '%s ' "$f"; grep -cE 'NON-VACUITY|toBeGreaterThan\(0' "$f"; done   # cinque file, ciascuno almeno 1
+# 21 -- la riga «Accessibilità»
+grep -c '^| Accessibilità | 🔶 |' docs/tracciabilita.md                                 # 1
+```
+
+⚠️ **Il 20 non si prova con un `grep`:** un commento o una guardia trovati dicono che la guardia **è scritta**, non che morda. Che
+morda l'hanno provato le due direzioni di ciascun compito, al loro giorno — e il passo **rosso** se il browser non parte, il
+passo 5 del compito 2 (controllo 20). Il `grep` qui dice solo che nessun file del browser è nato **senza**: un file con **0** si
+legge, e o la guardia ha un'altra forma, o manca — e allora è una voce d'errata.
+
+**Blocco 4 — i vincoli globali e il perimetro:**
+
+```bash
+git diff --stat "$B"..HEAD -- crates/ gui/schema/                                       # niente (vincolo 12)
+git ls-files gui/src/tokens/tokens.css                                                  # niente: esce al compito 1
+grep -E '"(lucide|@fontsource-variable/geist|@fontsource/barlow|@vitest/browser-playwright|playwright|reka-ui|vitest)"' gui/package.json   # 1.47.0, 5.3.0, 5.3.0, 4.1.11, 1.63.0, 2.10.4, 4.1.11 -- versioni esatte (vincoli 7 e 8)
+wc -c docs/COMPENDIO.md; grep -n '^ceiling=' scripts/check-docs.sh                     # il margine positivo (vincolo 13)
+git diff --name-status "$B"..HEAD -- docs/adr/ | grep -c '^A'                            # 0: nessun ADR nuovo
+ls docs/adr/*.md | wc -l; grep -c '^\*\*00' docs/COMPENDIO.md                          # uguali fra loro
+git diff --name-only "$B"..HEAD                                                          # ogni nome in una lista Files dei compiti 1–9, o in una voce d'errata
+git status --porcelain                                                                   # niente
+```
+
+⚠️ **Il perimetro si legge nome per nome, non col numero** (R9a-16 ed E217 della parte 2): ogni nome che il penultimo comando
+elenca sta in una lista *Files* — per il percorso, o per la cartella che la lista nomina, come gli **undici** componenti del
+compito 1 — o in una voce d'errata. Un nome senza casa è una voce d'errata nuova.
+
+**Blocco 5 — ciò che un comando non dice**, e dove si guarda:
+
+- ⛔ **l'aspetto si GUARDA**, nei due temi: i passi «guardarlo» dei compiti e la regola 5 di *«Come si esegue un compito»*; e il
+  **giudizio del proprietario sul dock** (controllo 15), con la data e dove è scritto — o, se non era scritto, la sua risposta
+  alla domanda del compito 9 (**D24**);
+- ⛔ **M-3 col lettore di schermo vero**: il verbale nella cella Stato della riga 5 della posizione, e l'esito nella (e) del
+  disegno (Passo 10 del compito 9);
+- ⚠️ **D18**, la miniatura di Compatta: il consiglio del coordinatore, se il proprietario non l'ha ribaltata;
+- ⛔ **la CI del commit del compito 9**: i due job, `gate (ubuntu-latest)` e `gate (windows-latest)`, letti coi due comandi di
+  `docs/porta-di-qualita.md`, *«Leggere la CI da terra»* — la casa unica di quei comandi, che qui non si ricopiano;
+- ⚠️ **le voci che questo piano sa e non chiude** restano nella loro tabella, in testa al piano, col loro chiusore.
+
+---
+
+## Come si riprende — il piano scritto, 2026-09-24
+
+✅ **Il piano è SCRITTO**: la testa, i compiti **1–9** e la **Definizione di «fatto»**. ⛔ **Non si esegue ancora:** viene prima
+il **pre-controllo** delle quattro domande di `CLAUDE.md`, compito per compito, ciascuno in una sessione sua. I compiti 6, 7, 8 e 9
+non li ha letti nessun revisore: li legge il pre-controllo. La consegna precedente sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
+
+✅ **Che cosa ha fatto questa sessione.** Il compito **9** e la **Definizione di «fatto»**, nella forma che il *«Come si riprende»*
+di prima dava — R2-8, R3-23 e R3-25 del [registro](2026-09-23-design-system-revisione/ledger.md) — e sul modello del compito 17
+della parte 2; scrivendoli sono venuti **P-26**…**P-30** e **D19**…**D24**. Nello stesso commit, per **D19**: la riga del disegno
+in `docs/README.md`, falsa dal 2026-09-23, riscritta (P-26); la riga di questo piano nella tabella dei piani della roadmap, con
+l'intestazione (P-27); e il puntatore della §6 del compendio, che dice il piano scritto. ✅ **Il proprietario ha scelto,
+all'apertura:** prima il compito 9, e le contraddizioni di `porta-di-qualita.md` dopo, in una sessione loro che **non ha ancora
+collocato** — tranne **C-S0-1**, che il compito 9 corregge dove scrive il browser (P-29). ⚠️ **D18** resta da rileggere dal
+proprietario, e la voce 🔶 **dedotta** di Ctrl+Alt+frecce sotto una finestra modale resta fra le voci che il piano sa.
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
 | **cancello** | `GATE GREEN` all'apertura della sessione e prima del suo commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
-| **la CI** | verdi su tutti e due i sistemi le corse fino a `7b9e338`; quella del commit che scrive questa riga **in corso** alla chiusura: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
-| **codice di prodotto** | non toccato: il compito 8 vive nel piano e nella cartella di prova |
-| **il banco** | la cartella di prova della macchina `zagor`, ramo **`task8`**, due commit sopra `cures`: cinque corse intere verdi di fila, coi rapporti JSON, e i venti rossi del passo 9 del compito 8 fatti e tolti uno alla volta |
+| **la CI** | verdi su tutti e due i sistemi le corse fino a `2a30916`; quella del commit che scrive questa riga **in corso** alla chiusura: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **codice di prodotto** | non toccato: questa sessione ha scritto documenti, e `dod_suite.py` solo nello scratchpad |
+| **il banco** | la cartella di prova della macchina `zagor`, ramo **`task8`**, com'era: questa sessione non l'ha toccata |
 | **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL-DEV\MY-REPOS\daemon`, Chrome 154 e la sua cartella di prova, **senza** le cure né il compito 8; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, Chrome 153, dove questa sessione ha lavorato. Su tutte e due `LongPathsEnabled` è 0: le cartelle di prova stanno in `%TEMP%`, non nello scratchpad |
 
-📌 **La cartella di prova sulla macchina `zagor`:** `C:\Users\zagor\AppData\Local\Temp\pds`, col suo `git` senza
-`origin` — `cures` com'era, `task8` sopra, e `t8-tests`, le sole prove del compito 8 sopra `cures`, da cui vengono i
-rossi del passo 3. Gli attrezzi della scrittura stanno in `pds\tools\t8\`, fuori dal suo `git`: `compose8.py` compone il
-testo del compito dai due rami, `c8-template.md` ne è la prosa, `reds.py` misura le venti violazioni una alla volta, e
-`one_red.py` ne rifà una. Il ramo si rifà dal testo del piano con `pds\tools\rebuild\apply_plan.py` e la ricetta qui sotto,
-**da `cures`** — la ricetta vale per il piano del commit che scrive questa riga, e sulla macchina `Jays` si lancia uguale,
-dopo la ricetta delle cure:
+📌 **La cartella di prova sulla macchina `zagor`:** `C:\Users\zagor\AppData\Local\Temp\pds`, col suo `git` senza `origin` —
+`cures`, `task8` sopra, `t8-tests` —, e gli attrezzi in `pds\tools\`. Il ramo del compito 8 si rifà dal testo del piano con
+`pds\tools\rebuild\apply_plan.py` e la ricetta qui sotto, **da `cures`**. ⚠️ **La ricetta vale per il piano del commit che scrive
+questa riga:** le righe della testa aggiunte da questa sessione hanno spostato i numeri, e quelli qui sotto sono spostati e
+**provati** — ogni riga nomina un'apertura di blocco uguale a quella della ricetta di prima. Le ricette dei compiti 1–7 e delle
+cure, in `pds\tools\rebuild\`, valgono per il piano del loro commit: `git show <commit>:docs/superpowers/plans/2026-09-23-design-system.md`
+dà il file da passare ad `apply_plan.py`.
 
 ```text
-R gui/src/testing/axe.ts 6379 6386
-R gui/src/kit/kit.browser.test.ts 6408 6420
-R gui/src/kit/kit.browser.test.ts 6431 6449
-R gui/src/frame/dock.browser.test.ts 6459 6472
-R gui/src/frame/frame.test.ts 6492 6511
-R gui/src/frame/frame.test.ts 6535 6544
-R gui/src/a11y.test.ts 6702 6709
-R gui/src/a11y.test.ts 6717 6726
-R gui/src/a11y.test.ts 6737 6744
-R gui/src/a11y.test.ts 6751 6776
-R gui/src/locales/copy.test.ts 6823 6830
-R gui/src/locales/copy.test.ts 6838 6845
-R gui/src/locales/copy.test.ts 6853 6860
-W gui/src/frame/frame.browser.test.ts 6875
-W gui/src/stores/drawer.ts 7068
-R gui/src/stores/invoke.ts 7089 7095
-R gui/src/stores/invoke.ts 7101 7108
-R gui/src/stores/invoke.ts 7124 7130
-R gui/src/components/Confirm.vue 7138 7161
-R gui/src/components/Confirm.vue 7178 7184
-W gui/src/frame/Drawer.vue 7190
-R gui/src/locales/it.json 7234 7242
-R gui/src/locales/it.json 7249 7259
-W gui/src/frame/Overview.vue 7280
-W gui/src/frame/ViewBar.vue 7550
-W gui/src/frame/Frame.vue 7617
-W gui/src/panels/Strip.vue 7703
-R gui/src/tokens/dock.css 7765 7772
+R gui/src/testing/axe.ts 6390 6397
+R gui/src/kit/kit.browser.test.ts 6419 6431
+R gui/src/kit/kit.browser.test.ts 6442 6460
+R gui/src/frame/dock.browser.test.ts 6470 6483
+R gui/src/frame/frame.test.ts 6503 6522
+R gui/src/frame/frame.test.ts 6546 6555
+R gui/src/a11y.test.ts 6713 6720
+R gui/src/a11y.test.ts 6728 6737
+R gui/src/a11y.test.ts 6748 6755
+R gui/src/a11y.test.ts 6762 6787
+R gui/src/locales/copy.test.ts 6834 6841
+R gui/src/locales/copy.test.ts 6849 6856
+R gui/src/locales/copy.test.ts 6864 6871
+W gui/src/frame/frame.browser.test.ts 6886
+W gui/src/stores/drawer.ts 7079
+R gui/src/stores/invoke.ts 7100 7106
+R gui/src/stores/invoke.ts 7112 7119
+R gui/src/stores/invoke.ts 7135 7141
+R gui/src/components/Confirm.vue 7149 7172
+R gui/src/components/Confirm.vue 7189 7195
+W gui/src/frame/Drawer.vue 7201
+R gui/src/locales/it.json 7245 7253
+R gui/src/locales/it.json 7260 7270
+W gui/src/frame/Overview.vue 7291
+W gui/src/frame/ViewBar.vue 7561
+W gui/src/frame/Frame.vue 7628
+W gui/src/panels/Strip.vue 7714
+R gui/src/tokens/dock.css 7776 7783
 ```
 
 **Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
 
 1. `git fetch --all --prune`, `git status -sb`; la CI della chiusura, per prima.
-2. Questa sezione, la testa del piano e le *Interfaces* dei compiti 1–8.
-3. Il compito **9** e la **Definizione di «fatto»**, con la forma qui sotto — già corretta dalla revisione (R3-23, R3-25
-   e R2-8 del [registro](2026-09-23-design-system-revisione/ledger.md)), da non ridecidere senza una misura nuova —, e con
-   le forme che hanno i compiti di prima: la colonna **Commit** di R1-16; i comandi in una sottoshell, `(cd gui && …)`
-   (R1-12); per **ogni** controllo nuovo la violazione che lo fa rosso e il messaggio **misurato** del rosso (A-4 e A-5
-   del registro), e il ritorno con la copia salvata, `cmp` e `git status --porcelain` confrontato con quello di prima
-   (vincolo 11).
-4. Poi, ciascuno nella sua sessione: il **pre-controllo** delle quattro domande di `CLAUDE.md`, compito per compito — il
-   6, il 7 e l'8 compresi —; poi l'esecuzione.
-
-| Compito | La forma già decisa |
-|---|---|
-| 9 | la riga «Accessibilità» da ✅ a 🔶 con le parole della legenda, **col richiamo datato**, e il comando del riquadro in testa al file rilanciato prima e dopo (controllo 21, R3-23); la riga **14** in coda alla roadmap e in *«Perché quest'ordine»* (prima del 13); `README.md`; la §12 e la §6 del compendio; `porta-di-qualita.md` — il browser nel cancello, e il prerequisito **Google Chrome, o `npx playwright install chrome`**: col canale `chrome` il Chromium scaricato non vale (R2-8); `riferimenti.md`, le fonti della scrittura del piano e della revisione — fra queste le due righe di `vitest` 4.1.11 lette per P-21, l'attesa di base di `expect.poll` e il tempo di una prova nel browser, e i due file di `reka-ui` 2.10.4 letti per P-22; il pezzo JavaScript misurato, con la cifra per il proprietario, che ha N-2 (R3-25) — sulla cartella di prova 696,60 kB coi compiti 1–8, contro i 663,26 del `main` senza il design system; la Definizione di «fatto» coi comandi |
+2. Questa sezione; poi la testa del piano — i vincoli, *«Come si esegue un compito»*, l'errata, *«Ciò che la scrittura del piano
+   ha trovato»*, le decisioni e le voci che il piano sa.
+3. Il **pre-controllo del compito 1**, con le quattro domande di `CLAUDE.md` e le righe 5–8 di ciò che non colgono — ⛔ la 5
+   soprattutto: il compito si legge contro il codice di **adesso** —; le voci che trova vanno nell'errata, e il dispaccio resta
+   pronto su file. Poi l'**esecuzione** del compito 1, in un'altra sessione; e così compito per compito, fino al 9.
+4. ⚠️ **Una domanda al proprietario, quando vuole:** **D18**, la miniatura di Compatta — il consiglio è lo schema della
+   disposizione salvata, e il piano lo segue finché non lo ribalta.

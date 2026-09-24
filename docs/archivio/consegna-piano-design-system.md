@@ -411,3 +411,88 @@ R gui/src/locales/copy.test.ts 3909 3916
 |---|---|
 | 8 | la barra: `BaseButton` col nome della vista e l'icona `views`, la ricerca `BaseTextField type="search"` spenta, il chip; il pulsante del cassetto **esce** dalla barra, perché «Moduli» scende nella striscia (la (d)). La Panoramica in `frame/Overview.vue` su `BaseDialog variant="full"`: carte `BaseButton variant="card"` con la miniatura, la vista corrente in bordeaux, l'ultima carta *«Salva questa vista»*; F3 in `Frame.vue`, ignorato mentre la finestra di conferma è aperta; le frecce con `nearest`. La striscia a pillola coi «moduli» `BaseButton pill` che apre il cassetto — ⛔ **lo stato aperto del cassetto vive in un negozio**, letto da `Drawer.vue` e scritto dalla striscia: la striscia è un pannello, cioè un'app Vue sua (`VueContent`), e non raggiunge un `ref` di `Drawer.vue` (R3-20). Nella miniatura il foglio `strip`, che sta in tutte le viste e non ha un'icona in `ICONS`: come si disegna lo dice la tavola della Panoramica, o lo decide il compito. Le prove: `axe` sulla Panoramica (controllo 17); nel browser la striscia a 12 e 24 px e **nessuna scheda vicina a un angolo della pagina** (controllo 19), le frecce e Invio nella Panoramica (R3-23). ⚠️ **Dalle *Interfaces* del compito 7:** la miniatura è `schematic(layout)`; una vista col nome si apre scrivendo `openNamed`, una delle tre con `showView`; *«Salva questa vista»* chiama `saveNamed(name, layout, shown)` — `shown`, i nomi che la cornice mostra per le tre viste, da `it.json` (D12) — e dice sotto il campo, in rosso, `"empty"` e `"taken"` (D4). ⚠️ **Dal compito 6:** il gruppo galleggiante è un `.dv-resize-container` con `role="dialog"`: col dock montato e un gruppo galleggiante, una prova che cerca `[role="dialog"]` ne trova due |
 | 9 | la riga «Accessibilità» da ✅ a 🔶 con le parole della legenda, **col richiamo datato**, e il comando del riquadro in testa al file rilanciato prima e dopo (controllo 21, R3-23); la riga **14** in coda alla roadmap e in *«Perché quest'ordine»* (prima del 13); `README.md`; la §12 e la §6 del compendio; `porta-di-qualita.md` — il browser nel cancello, e il prerequisito **Google Chrome, o `npx playwright install chrome`**: col canale `chrome` il Chromium scaricato non vale (R2-8); `riferimenti.md`, le fonti della scrittura del piano e della revisione — fra queste le due righe di `vitest` 4.1.11 lette per P-21, l'attesa di base di `expect.poll` e il tempo di una prova nel browser; il pezzo JavaScript misurato, con la cifra per il proprietario, che ha N-2 (R3-25); la Definizione di «fatto» coi comandi |
+
+## Il compito 9 e la Definizione di «fatto» scritti, del 2026-09-24
+
+Tolto dal piano il 2026-09-24, quando la sessione dopo ha scritto il **compito 9** — la chiusura — e la **Definizione di
+«fatto»**, e *«Come si riprende — il piano scritto»*. Il testo com'era, dal commit `79d33b1`, parola per parola; i rimandi
+sono riscritti per questa cartella, e i numeri della ricetta sono quelli del piano di quel commit.
+
+## Come si riprende — il compito 8 scritto, 2026-09-24
+
+⚠️ **Il piano è A METÀ, e non si esegue.** Scritti: la testa e i **compiti 1–8**; da scrivere: il compito **9** e la
+**Definizione di «fatto»**. Il 6, il 7 e l'8 non li ha letti nessun revisore: li legge il pre-controllo. La consegna
+precedente sta parola per parola in [`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+✅ **Il compito 8 è scritto, e provato sulla cartella di prova prima di esserlo.** Il codice è stato applicato nel ramo
+`task8`, le prove e i venti rossi del suo passo 9 sono girati lì, e il testo è composto dai file del ramo da uno script
+che rifiuta un *Trova* non unico e rifà ogni file nuovo byte per byte. Scrivendolo sono venuti **P-22**…**P-25** — due
+fatti della libreria di prova e della striscia, uno di `reka-ui`, e un commento del compito 3 corretto — e le decisioni
+**D14**…**D18**. ⚠️ **La D18 è da rileggere dal proprietario**: la miniatura di Compatta è il suo schema, non la
+*«finestrella»* della (d). E una voce 🔶 **dedotta** è in *«Le voci aperte che questo piano SA»*: Ctrl+Alt+frecce sotto
+una finestra modale.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **cancello** | `GATE GREEN` all'apertura della sessione e prima del suo commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
+| **la CI** | verdi su tutti e due i sistemi le corse fino a `7b9e338`; quella del commit che scrive questa riga **in corso** alla chiusura: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **codice di prodotto** | non toccato: il compito 8 vive nel piano e nella cartella di prova |
+| **il banco** | la cartella di prova della macchina `zagor`, ramo **`task8`**, due commit sopra `cures`: cinque corse intere verdi di fila, coi rapporti JSON, e i venti rossi del passo 9 del compito 8 fatti e tolti uno alla volta |
+| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL-DEV\MY-REPOS\daemon`, Chrome 154 e la sua cartella di prova, **senza** le cure né il compito 8; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, Chrome 153, dove questa sessione ha lavorato. Su tutte e due `LongPathsEnabled` è 0: le cartelle di prova stanno in `%TEMP%`, non nello scratchpad |
+
+📌 **La cartella di prova sulla macchina `zagor`:** `C:\Users\zagor\AppData\Local\Temp\pds`, col suo `git` senza
+`origin` — `cures` com'era, `task8` sopra, e `t8-tests`, le sole prove del compito 8 sopra `cures`, da cui vengono i
+rossi del passo 3. Gli attrezzi della scrittura stanno in `pds\tools\t8\`, fuori dal suo `git`: `compose8.py` compone il
+testo del compito dai due rami, `c8-template.md` ne è la prosa, `reds.py` misura le venti violazioni una alla volta, e
+`one_red.py` ne rifà una. Il ramo si rifà dal testo del piano con `pds\tools\rebuild\apply_plan.py` e la ricetta qui sotto,
+**da `cures`** — la ricetta vale per il piano del commit che scrive questa riga, e sulla macchina `Jays` si lancia uguale,
+dopo la ricetta delle cure:
+
+```text
+R gui/src/testing/axe.ts 6379 6386
+R gui/src/kit/kit.browser.test.ts 6408 6420
+R gui/src/kit/kit.browser.test.ts 6431 6449
+R gui/src/frame/dock.browser.test.ts 6459 6472
+R gui/src/frame/frame.test.ts 6492 6511
+R gui/src/frame/frame.test.ts 6535 6544
+R gui/src/a11y.test.ts 6702 6709
+R gui/src/a11y.test.ts 6717 6726
+R gui/src/a11y.test.ts 6737 6744
+R gui/src/a11y.test.ts 6751 6776
+R gui/src/locales/copy.test.ts 6823 6830
+R gui/src/locales/copy.test.ts 6838 6845
+R gui/src/locales/copy.test.ts 6853 6860
+W gui/src/frame/frame.browser.test.ts 6875
+W gui/src/stores/drawer.ts 7068
+R gui/src/stores/invoke.ts 7089 7095
+R gui/src/stores/invoke.ts 7101 7108
+R gui/src/stores/invoke.ts 7124 7130
+R gui/src/components/Confirm.vue 7138 7161
+R gui/src/components/Confirm.vue 7178 7184
+W gui/src/frame/Drawer.vue 7190
+R gui/src/locales/it.json 7234 7242
+R gui/src/locales/it.json 7249 7259
+W gui/src/frame/Overview.vue 7280
+W gui/src/frame/ViewBar.vue 7550
+W gui/src/frame/Frame.vue 7617
+W gui/src/panels/Strip.vue 7703
+R gui/src/tokens/dock.css 7765 7772
+```
+
+**Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI della chiusura, per prima.
+2. Questa sezione, la testa del piano e le *Interfaces* dei compiti 1–8.
+3. Il compito **9** e la **Definizione di «fatto»**, con la forma qui sotto — già corretta dalla revisione (R3-23, R3-25
+   e R2-8 del [registro](../superpowers/plans/2026-09-23-design-system-revisione/ledger.md)), da non ridecidere senza una misura nuova —, e con
+   le forme che hanno i compiti di prima: la colonna **Commit** di R1-16; i comandi in una sottoshell, `(cd gui && …)`
+   (R1-12); per **ogni** controllo nuovo la violazione che lo fa rosso e il messaggio **misurato** del rosso (A-4 e A-5
+   del registro), e il ritorno con la copia salvata, `cmp` e `git status --porcelain` confrontato con quello di prima
+   (vincolo 11).
+4. Poi, ciascuno nella sua sessione: il **pre-controllo** delle quattro domande di `CLAUDE.md`, compito per compito — il
+   6, il 7 e l'8 compresi —; poi l'esecuzione.
+
+| Compito | La forma già decisa |
+|---|---|
+| 9 | la riga «Accessibilità» da ✅ a 🔶 con le parole della legenda, **col richiamo datato**, e il comando del riquadro in testa al file rilanciato prima e dopo (controllo 21, R3-23); la riga **14** in coda alla roadmap e in *«Perché quest'ordine»* (prima del 13); `README.md`; la §12 e la §6 del compendio; `porta-di-qualita.md` — il browser nel cancello, e il prerequisito **Google Chrome, o `npx playwright install chrome`**: col canale `chrome` il Chromium scaricato non vale (R2-8); `riferimenti.md`, le fonti della scrittura del piano e della revisione — fra queste le due righe di `vitest` 4.1.11 lette per P-21, l'attesa di base di `expect.poll` e il tempo di una prova nel browser, e i due file di `reka-ui` 2.10.4 letti per P-22; il pezzo JavaScript misurato, con la cifra per il proprietario, che ha N-2 (R3-25) — sulla cartella di prova 696,60 kB coi compiti 1–8, contro i 663,26 del `main` senza il design system; la Definizione di «fatto» coi comandi |

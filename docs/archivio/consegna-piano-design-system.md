@@ -659,3 +659,58 @@ S 1115 <cartella>/rename_tokens.py
 4. L'**esecuzione del compito 1**, con `superpowers:subagent-driven-development`; il revisore rilancia ogni comando e
    confronta i file con la copia `t1`. Poi il **pre-controllo del compito 2**, in un'altra sessione; e così compito per
    compito, fino al 9.
+
+## Il pre-controllo del compito 2, del 2026-09-24
+
+Tolto dal piano il 2026-09-24, quando la sessione dopo ha fatto il **pre-controllo del compito 2** e scritto
+*«Come si riprende — il pre-controllo del compito 2»*. Il testo com'era, dal commit `b66aee8`, parola per parola; i
+rimandi sono riscritti per questa cartella.
+
+## Come si riprende — l'esecuzione del compito 1, 2026-09-24
+
+✅ **Il compito 1 è eseguito, rivisto e curato.** La consegna precedente — il pre-controllo — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+| Commit | Che cosa |
+|---|---|
+| `d10d9a5` | **E1**, dal coordinatore prima del dispaccio: l'etichetta *«CRLF su questa macchina»* del Passo 10 tolta, perché sulla macchina dell'esecuzione era falsa |
+| `95068bb` | **il compito 1**, dall'implementatore — conforme al dettato byte per byte, dice la revisione |
+| `69d10fa` | le cure della revisione, dal coordinatore (scelta **A** del proprietario, senza ri-revisione): **E2**, **E3**, **E4**, **E7**, **E8**, **E9**, e il commento di `Drawer.vue` sui gruppi galleggianti, falso da prima del compito |
+| `e2cd7df` | **E5** ed **E6**, le due scelte **A** del proprietario: la frase della tavola sui ruoli non-testo, e la prova dei colori a mano allargata alle funzioni di CSS Color 4 |
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **cancello** | `GATE GREEN` a `e2cd7df`, sotto `gui/` **100** prove passate e **una** saltata — si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | verdi sui due sistemi `d10d9a5`, `95068bb` e `69d10fa`; `e2cd7df` e il commit che scrive questa riga **in corso** alla chiusura: la sessione dopo li legge per primi, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | la riga **1** a `✅ 2026-09-24`; la sua colonna **Commit** la scrive il compito 2 (R1-16): `95068bb`, con le cure `69d10fa` ed `e2cd7df` |
+| **il pezzo JavaScript** | da `663.26 kB` a `663.93 kB` col compito 1, e le cure non lo muovono: è la cifra che **N-2 di E187** porta al proprietario, in *«Le voci aperte che questo piano SA»* |
+| **il dispaccio** | sulla macchina dell'account `Jays`, nella cartella git-ignorata `.superpowers/sdd/2026-09-23-design-system/`: il prompt e il brief dell'implementatore (`dispatch-task-1.md`, e `task-1-brief.md` da `_extract_brief_1.py`, per ancore), il suo rapporto, il prompt e il rapporto del revisore, e `compare_task1.py`. ⚠️ **Non viaggiano**: su un'altra macchina si rifanno dal piano |
+| **le copie** | il clone della revisione è cancellato; la copia `t1` del pre-controllo, sulla macchina `zagor`, non serve più e si può cancellare |
+| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, dove questa sessione ha lavorato — la consegna di prima scriveva `E:\ALL-DEV\MY-REPOS\daemon`, ed era sbagliato —, con la sua cartella di prova `%TEMP%\pds` al ramo `task7`; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness` e la cartella di prova al ramo `task8` |
+
+**La revisione** — un revisore Opus fresco: **conforme**; **0** critici, **2** importanti, **4** minori, **3** nit, tutti chiusi
+dai due commit di cura. Il costo misurato: l'implementatore **~267k** token, 115 chiamate, **~16** minuti; il revisore
+**~430k**, 158 chiamate, **~35** minuti. L'implementatore è sotto la banda detta al proprietario (0,4–0,7 milioni): il compito
+era quasi tutto dettato.
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
+del sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **senza la copia `t1`**, il confronto col dettato lo fa `compare_task1.py`: ricostruisce ogni file dal testo del piano — la ricetta, i tagli della tavola, le rinomine, la riga del compendio — e lo confronta col commit. Il revisore l'ha provato nelle due direzioni, con quattordici commit mutanti | è il modello per i compiti dopo, su qualunque macchina: basta la ricetta del compito |
+| 2 | nel log di Vite `Local:` è spezzato dai codici colore | il server si aspetta su `netstat -ano \| grep ':5173' \| grep LISTENING`, e si spegne per PID |
+| 3 | col pannello del browser nascosto `requestAnimationFrame` non scatta, e una schermata può scadere | il cambio di tema e la misura in due chiamate; la schermata si ritenta |
+| 4 | il **rapporto** dell'implementatore ha dato per vero un commento senza misurarlo — *«floating groups are at 99»* —, e la revisione l'ha misurato falso (I-1) | un rapporto è una dichiarazione: le sue frasi di merito si rimisurano |
+| 5 | **E1** è la settima volta dei fine-riga fra le due macchine | un compito pre-controllato su una macchina ed eseguito sull'altra rifà gli Attesi di forma prima del dispaccio |
+
+**Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI di `e2cd7df` e del commit che scrive questa riga, per prima.
+2. Il **pre-controllo del compito 2**, con le quattro domande di `CLAUDE.md` e le righe 5–8. ⛔ La 5 soprattutto: il compito
+   si legge contro il codice di **adesso**, e le cure hanno toccato dieci file che il compito 1 aveva scritto o toccato —
+   `git diff --stat 95068bb..HEAD -- gui/ docs/superpowers/specs/` li elenca. Le voci che trova vanno nell'errata, e la
+   prossima libera è **E10**; il dispaccio resta pronto su file.
+3. L'**esecuzione del compito 2**, in un'altra sessione, col costo detto prima e il sì del proprietario; e così compito per
+   compito, fino al 9.

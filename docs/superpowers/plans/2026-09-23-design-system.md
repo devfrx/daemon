@@ -168,6 +168,10 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | **E7** | Nit — **Compito 1, Passo 4:** `contrast.test.ts` citava la luminanza di WCAG 2.2 con la soglia di prima del maggio 2021, `0.03928`; WCAG 2.2 usa `0.04045` — tecnica G18, letta dal coordinatore il 2026-09-24, che dice anche che la differenza non ha effetti pratici —, e nessun canale a 8 bit cade fra le due (10/255 = 0,039216; 11/255 = 0,043137). Trovata dalla revisione (N-1). ✅ **Curata** nel commit che scrive questa riga: `0.04045`, come lo *snippet* del Passo 17, e la fonte nella tabella del Passo 8 del compito 9 |
 | **E8** | Nit — **Compito 1, Passo 10:** il commento di `shownTheme` in `theme.ts` diceva *«the dock's `colorScheme` today (task 6)»*, e oggi nessuno lo legge. Trovata dalla revisione (N-2). ✅ **Curata**: *«from task 6»* |
 | **E9** | Nit — **Compito 1, Passo 13:** in `panels/Chat.vue` il bordo della provenienza usa un ruolo di **testo**, `--color-text-warn`, e il perché — P-13 — viveva solo nel piano: chi rilegge il file lo «correggerebbe» in `--color-border-warn`, che è decoro. Trovata dalla revisione (N-3). ✅ **Curata**: un commento accanto alla regola, che lo script dei nomi non poteva scrivere |
+| **E10** | ⛔ **Del proprietario — Compito 2, Passi 3, 5 e 6: due progetti in una corsa sola nascondono un progetto VUOTO.** Col `jsdom` e il `browser` nello stesso `npm test`, un progetto che non trova nessun file è **verde**: `vitest` 4.1.11 dice `No test files found` solo quando è vuota la corsa **intera** — `passWithNoTests` sta fra le `NonProjectOptions`, un'opzione solo globale, letto nel pacchetto installato. Misurato il 2026-09-24 dal pre-controllo sulla copia `%TEMP%\pc2`, col compito rifatto dal testo del piano: con l'`include` del progetto `browser` che non trova niente, `npm test` esce **0** con 17 file e 100 prove, e Chrome non parte — proprio il caso che il controllo 20 del disegno vuole rosso, *«il passo nel cancello rosso se il browser non parte, non verde»*; con quello del `jsdom` vuoto esce **0** con un file solo, e le cento prove sotto jsdom spariscono. ⚠️ **E oggi la guardia c'è:** con un progetto solo, un `include` vuoto dà `No test files found, exiting with code 1`, misurato sul `vite.config.ts` di `b66aee8` — il compito, com'era scritto, la **toglieva**. Lanciati uno alla volta, `npm test -- --project jsdom` e `npm test -- --project browser` escono **1** ciascuno sul proprio vuoto, e **0** sul codice del compito. ✅ **Decisa dal proprietario il 2026-09-24 — A**, contro B, tenere `npm test` e dichiarare il limite: il cancello lancia i due progetti **uno alla volta**, e il Passo 6 scrive il richiamo datato sulla riga di `scripts/gate-gui.sh` della §8 del disegno del sotto-progetto 2, la cui forma approvata è *«`npm ci`, `npm run build`, `npm test`»* — com'è stato per il lint (R8-10); il commento del Passo 3 lo dice, e il Passo 5 prende la violazione. Il costo, dentro `gui/`, `time npm test` contro `time (npm test -- --project jsdom && npm test -- --project browser)`, tre corse per parte sulla copia, macchina `Jays`, il 2026-09-24: da 3,9–4,4 s a 5,6–5,9 s. `npm test` in locale resta una corsa sola, col limite scritto accanto; la riga `gui: probes` che il compito 9 scrive in `porta-di-qualita.md` è corretta sul posto, e la fonte sta nella tabella del suo Passo 8. Scartato lo script `test` di `package.json` a due corse: terrebbe alla lettera la forma della §8, ma sdoppierebbe il riepilogo che gli Atteso dei compiti 6, 7 e 8 leggono. Trovata dal pre-controllo del compito 2 |
+| **E11** | ⚠️ **Compito 2, Passo 5 — manca la violazione che prova che la sonda del contorno del focus guarda la NOSTRA regola.** Le righe del Passo 5 provano che la sonda parla dell'alto contrasto — la guardia — e il corpo della prova che un `box-shadow` sparisce sotto i colori forzati; nessuna toglie `:focus-visible` da `base.css`, e nessuna diceva se il contorno di base di Chrome passasse la sonda. Misurato il 2026-09-24 dal pre-controllo, sulla copia: senza la regola `npm test` esce 1, rossa `expect(ring(button)).toBe(true)` con `expected false to be true` — e con lei `board.test.ts`, che vuole il foglio della tavola —: la sonda morde sulla regola del progetto, non sul browser. ✅ **Corretta** nel commit che la scrive: una riga nel Passo 5, e `base.css` torna dalla copia salvata |
+| **E12** | Nit — **Compito 2, Passo 5, la riga del tema che segue il sistema:** tolta `system.addEventListener("change", apply);`, va rossa **anche** la prova del compito 1 sotto jsdom, *«follows the system while the choice is `system`, and stops following when stopped»* di `theme.test.ts`, `expected 'dark' to be 'light'` — la stessa riga, tenuta dal `matchMedia` finto e da quello vero. L'Atteso nominava la sola prova del browser, e chi esegue si sarebbe fermato su una divergenza che non c'è. Misurato il 2026-09-24 dal pre-controllo, sulla copia. ✅ **Corretta** nel commit che la scrive: l'Atteso nomina le due |
+| **E13** | Nit — **Compito 2, Passo 5:** *«Il file usa-e-getta della penultima riga»* — il file sta nell'**ultima** riga della tabella, e le righe di **E10** e **E11** la spostano ancora. Trovata dal pre-controllo il 2026-09-24. ✅ **Corretta** nel commit che la scrive: la riga si **nomina**, *«l'attesa di 5 s»*, invece di contarla |
 
 ---
 
@@ -1278,11 +1282,13 @@ si misura dopo averlo caricato) e la **11** (l'alto contrasto); **P-12**.
 - Modify: `gui/vite.config.ts` — i due progetti e il comando `emulateMedia`
 - Create: `gui/src/browser.d.ts` — il tipo del comando, per le prove
 - Create: `gui/src/tokens/tokens.browser.test.ts`
-- Modify: `scripts/gate-gui.sh` — il commento del passo delle prove
+- Modify: `scripts/gate-gui.sh` — il passo delle prove, i due progetti **uno alla volta**, e il loro commento (**E10**)
+- Modify: `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` — il richiamo datato sulla riga di `scripts/gate-gui.sh` della §8 (**E10**)
 
 **Interfaces:**
 - Consumes: `gui/src/tokens/index.ts` e `watchTheme` del compito 1.
-- Produces: il progetto `browser` di `vitest`, che prende ogni `src/**/*.browser.test.ts`; il comando
+- Produces: il progetto `browser` di `vitest`, che prende ogni `src/**/*.browser.test.ts`, e nel cancello i due progetti
+  lanciati uno alla volta (**E10**); il comando
   `commands.emulateMedia({ colorScheme?, reducedMotion?, forcedColors? })` da `vitest/browser`, dove `null` restituisce la
   caratteristica al browser; la finestra delle prove a **1440 × 900**.
 
@@ -1524,9 +1530,11 @@ export default defineConfig({
 ```ts
   test: {
     /**
-     * ⛔ TWO PROJECTS, ONE COMMAND (design system, section (f)): `npm test` runs both, so the gate's "probes"
-     * step keeps its shape. `extends: true` hands each one the `plugins` and the `define` above; everything else
-     * is written per project, because an inline project inherits nothing it does not ask for.
+     * ⛔ TWO PROJECTS (design system, section (f)): `npm test` runs both in one run, for the local loop. The gate
+     * runs them ONE AT A TIME (E10 of the design-system plan): inside one run a project that finds no file is GREEN
+     * -- `vitest` answers "No test files found" only when the whole run is empty -- so a renamed file or a wrong
+     * glob would drop a whole project in silence. `extends: true` hands each one the `plugins` and the `define`
+     * above; everything else is written per project, because an inline project inherits nothing it does not ask for.
      */
     projects: [
       {
@@ -1601,14 +1609,16 @@ Atteso: due righe, `|browser (chromium)|` e `|jsdom|`, ciascuna col suo conto so
 |---|---|---|
 | il browser **non parte** → il passo è **rosso**, non verde (controllo 20) | in `vite.config.ts` `channel: "chrome-that-does-not-exist"` | `npm test` esce **diverso da zero**, col messaggio di Playwright |
 | il browser è vero | in `vite.config.ts` il progetto `browser` con `enabled: false` | rosso: `vitest/browser can be imported only inside the Browser Mode. Your test is running in forks pool.` — fuori dal browser il file non si carica, ed è l'import a fare da guardia per questa riga, non il rettangolo (R2-5) |
+| un progetto **vuoto** è rosso nel cancello (**E10**, controllo 20) | in `vite.config.ts` l'`include` del progetto `browser` a `["src/**/*.nothing.test.ts"]`; poi, tornato il file dalla copia, quello del progetto `jsdom` allo stesso modo | lanciati come li lancia il cancello, `npm test -- --project browser` e poi `npm test -- --project jsdom`: ciascuno esce **1** sul proprio vuoto, `No test files found, exiting with code 1`. ⚠️ Nelle stesse due violazioni `npm test`, una corsa sola, esce **0**: è la ragione di E10, e il limite che il commento del Passo 3 dichiara |
 | i caratteri | in `tokens/index.ts` tolta la riga di Barlow 300 | rosso: `loaded("Barlow")` sotto quattro, o le cifre |
 | il movimento | in `base.css` tolto il blocco `prefers-reduced-motion` | rosso — ⛔ poi `base.css` torna dalla **copia salvata**, e `board.test.ts` lo conferma verde |
 | l'alto contrasto | nella prova del contorno del focus, tolta la riga `await commands.emulateMedia({ forcedColors: "active" });` | rosso alla guardia, `expected false to be true`: senza l'emulazione la prova non parla dell'alto contrasto (R2-2) |
+| il contorno è la **nostra** regola (**E11**) | in `base.css` tolto il blocco `:focus-visible` | rosso a `expect(ring(button)).toBe(true)`, `expected false to be true`: il contorno di base di Chrome non passa la sonda — ⛔ e `board.test.ts`, che vuole il foglio della tavola: poi `base.css` torna dalla **copia salvata** |
 | il carattere che disegna | in `base.css` `--font-display` col solo ripiego, `"Bahnschrift", system-ui, sans-serif` al posto di `var(--font-family-tool)` | rosso al confronto del token con la sua catena senza Barlow, `expected 0 to be greater than 0.5`, mentre le due direzioni delle larghezze restano verdi: anche Bahnschrift ha le cifre proporzionali, e uguali con `tabular-nums` (R2-4) — ⛔ e `board.test.ts`, che vuole il foglio della tavola: poi `base.css` torna dalla **copia salvata** |
-| il tema che segue il sistema (P-21) | in `tokens/theme.ts` tolta la riga `system.addEventListener("change", apply);` | rosso dopo cinque secondi al **primo** cambio, `expected 'light' to be 'dark'`: l'evento non arriva, e l'attesa lo aspetta cinque secondi, non uno |
+| il tema che segue il sistema (P-21) | in `tokens/theme.ts` tolta la riga `system.addEventListener("change", apply);` | rosso dopo cinque secondi al **primo** cambio, `expected 'light' to be 'dark'`: l'evento non arriva, e l'attesa lo aspetta cinque secondi, non uno — e rossa **anche** la prova del compito 1 sotto jsdom, *«follows the system while the choice is `system`…»* di `theme.test.ts`, `expected 'dark' to be 'light'`: la stessa riga, tenuta dal `matchMedia` finto (**E12**) |
 | l'attesa di 5 s arriva al progetto `browser` (P-21) | il file usa-e-getta qui sotto, `gui/src/late.browser.test.ts`; poi, col file ancora lì, la riga `expect:` tolta da `vite.config.ts` | verde con la riga; senza, rosso dopo un secondo, `expected 'before' to be 'after'` — poi il file si **cancella** |
 
-Il file usa-e-getta della penultima riga, che il passo cancella:
+Il file usa-e-getta della riga *«l'attesa di 5 s»*, che il passo cancella (**E13**):
 
 ```ts
 // A THROWAWAY PROBE (task 2, step 5): a value that turns right two seconds late -- green only when the project's
@@ -1627,7 +1637,7 @@ it("waits for a value that arrives two seconds late", async () => {
 Ogni violazione torna indietro con la copia salvata; poi, dalla radice del repository, `git status --porcelain` è quello
 di prima della prima violazione (vincolo 11): nessun file nato dai rossi del browser (R2-3).
 
-- [ ] **Passo 6: il cancello, e il suo commento**
+- [ ] **Passo 6: il cancello coi due progetti uno alla volta, e il richiamo nella §8 del 2 (E10)**
 
 In `scripts/gate-gui.sh`, *Trova*:
 
@@ -1640,12 +1650,34 @@ npm test
 
 ```bash
 echo "-------- gui: probes"
-# ⛔ TWO PROJECTS IN ONE COMMAND (design system, task 2): jsdom, and the INSTALLED Chrome for what only a layout
-# engine can judge -- fonts, motion, radii, clipping, the contrast of the drawn page. Nothing is downloaded
-# (decision 22 of the design): a machine without Google Chrome goes red here with Playwright's message, and that
-# is a prerequisite of the environment, like the `rustup` target and `cargo audit`.
-npm test
+# ⛔ TWO PROJECTS, ONE AT A TIME (design system, task 2; E10 of its plan): jsdom, and the INSTALLED Chrome for
+# what only a layout engine can judge -- fonts, motion, radii, clipping, the contrast of the drawn page. One at a
+# time because inside ONE run a project that finds no file is GREEN -- `vitest` 4.1.11 says "No test files
+# found" only when the whole run is empty, measured on 2026-09-24 -- while alone each one goes red on its own
+# emptiness: a renamed file or a wrong glob must not drop a project in silence (control 20 of the design). Still
+# `npm test`, the command of §8, twice. Nothing is downloaded (decision 22 of the design): a machine without
+# Google Chrome goes red here with Playwright's message, and that is a prerequisite of the environment, like the
+# `rustup` target and `cargo audit`.
+npm test -- --project jsdom
+npm test -- --project browser
 ```
+
+⚠️ **E10 — il richiamo datato.** La forma della riga di `scripts/gate-gui.sh` nella §8 del
+[disegno del sotto-progetto 2](../specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) è approvata — *«`npm ci`,
+`npm run build`, `npm test`»* —, e ora `npm test` gira due volte. In quel file (`replace_unique.py`), *Trova*:
+
+```markdown
+l'ordine che quella cella fissa **non cambia**, la catena si allunga |
+```
+
+*Sostituisci con* — `<data>` è il giorno del commit:
+
+```markdown
+l'ordine che quella cella fissa **non cambia**, la catena si allunga ✅ **RICHIAMO DEL <data>, dal compito 2 del [piano del design system](../plans/2026-09-23-design-system.md) (E10), sulla stessa cella:** `npm test` gira **due volte**, `npm test -- --project jsdom` e poi `npm test -- --project browser` — in una corsa sola un progetto che non trova file è verde, da solo è rosso —: l'ordine non cambia |
+```
+
+Atteso: `grep -c 'dal compito 2 del \[piano del design system\]' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` → **1**; il link lo legge `check-docs.sh` al
+Passo 7, perché quel file sta fuori da `plans/`.
 
 - [ ] **Passo 7: il cancello, il commit, la CI**
 
@@ -8121,7 +8153,7 @@ Dal [piano del design system](superpowers/plans/2026-09-23-design-system.md), il
 
 | Dove | Che cosa | Da |
 |---|---|---|
-| `gui: probes` | `npm test` gira **due progetti** di `vitest`: `jsdom`, e `browser` sul **Chrome installato**, canale `chrome`, senza finestra — ogni `src/**/*.browser.test.ts`, per ciò che solo un motore d'impaginazione giudica: i caratteri, il movimento ridotto, l'alto contrasto, i raggi, il testo tagliato, le icone centrate, `axe` col contrasto della pagina disegnata. Ogni prova porta la guardia di non-vacuità | compito 2, e il commento sopra `npm test` in `scripts/gate-gui.sh` |
+| `gui: probes` | `npm test` gira i **due progetti** di `vitest` **uno alla volta** — `npm test -- --project jsdom`, poi `npm test -- --project browser`: in una corsa sola un progetto che non trova file è verde, da solo è rosso (**E10**) —: `jsdom`, e `browser` sul **Chrome installato**, canale `chrome`, senza finestra — ogni `src/**/*.browser.test.ts`, per ciò che solo un motore d'impaginazione giudica: i caratteri, il movimento ridotto, l'alto contrasto, i raggi, il testo tagliato, le icone centrate, `axe` col contrasto della pagina disegnata. Ogni prova porta la guardia di non-vacuità | compito 2, e il commento sopra i due `npm test` in `scripts/gate-gui.sh` |
 | `gui: build` | la **pagina kit fuori dal pacchetto**: dopo `npm run build`, rosso se `dist/index.html` manca — la guardia di non-vacuità — e rosso se `dist/kit.html` c'è o un file di `dist/assets` porta `kit-card`, *«the kit page is in the package»* | compito 4 |
 
 ⛔ **Un prerequisito dell'ambiente, come il bersaglio di `rustup` e `cargo audit`:** **Google Chrome** stabile, o
@@ -8205,6 +8237,7 @@ tabella nomina: qui la provenienza, lì il merito — una casa ciascuno.
 | `dockview-core` 8.3.1: `DockviewTheme` con undici campi | 2026-09-23 | il tema del dock — R3-22 |
 | `dockview` 8.3.1 installato: `dist/styles/dockview.css`, `color-scheme: dark` su `.dockview-theme-abyss` | 2026-09-24 | i controlli nativi scuri nel tema chiaro — E4 |
 | WCAG 2.2, tecnica G18, `https://www.w3.org/WAI/WCAG22/Techniques/general/G18`, aggiornata il 2026-08-10: la soglia `0.04045`, e `0.03928` prima del maggio 2021, *«no practical effect»* | 2026-09-24 | la luminanza di `contrast.test.ts` — E7 |
+| `vitest` 4.1.11 installato: `passWithNoTests` fra le `NonProjectOptions` dei suoi tipi, un'opzione solo globale — `grep -rn 'passWithNoTests' gui/node_modules/vitest/dist` | 2026-09-24 | un progetto vuoto dentro una corsa a due è verde, da solo è rosso — E10 |
 
 ### Le misure dell'esecuzione
 
@@ -8488,51 +8521,70 @@ compito 1 — o in una voce d'errata. Un nome senza casa è una voce d'errata nu
 
 ---
 
-## Come si riprende — l'esecuzione del compito 1, 2026-09-24
+## Come si riprende — il pre-controllo del compito 2, 2026-09-24
 
-✅ **Il compito 1 è eseguito, rivisto e curato.** La consegna precedente — il pre-controllo — sta parola per parola in
+✅ **Il pre-controllo del compito 2 è fatto, e ha trovato quattro difetti**: **E10**, del proprietario — scelta **A** —,
+**E11**, **E12** ed **E13**, scritti nell'errata e **già applicati** al testo del compito, che si esegue com'è scritto adesso.
+La consegna precedente sta parola per parola in
 [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
 
-| Commit | Che cosa |
+⚠️ **Perché è una misura e non un'impressione.** Il compito è stato **rifatto per intero dal testo del piano** su una copia
+pulita di `b66aee8` — `git clone -c core.autocrlf=false` in `%TEMP%\pc2`, sulla macchina `Jays`, `npm ci`, poi i Passi 1–7 coi
+recinti del piano, estratti con `pds\tools\blocks.py` e applicati con `replace_unique.py` —, e ogni *Atteso* è tornato. Scritte
+le voci, i Passi 3 e 6 sono stati **rifatti dal testo corretto**, con la ricetta qui sotto, e il passo web del cancello,
+`bash scripts/gate-gui.sh`, è girato sulla copia: verde com'è scritto, rosso con l'uno o l'altro progetto vuoto.
+
+| Domanda | Esito, e il comando o la misura |
 |---|---|
-| `d10d9a5` | **E1**, dal coordinatore prima del dispaccio: l'etichetta *«CRLF su questa macchina»* del Passo 10 tolta, perché sulla macchina dell'esecuzione era falsa |
-| `95068bb` | **il compito 1**, dall'implementatore — conforme al dettato byte per byte, dice la revisione |
-| `69d10fa` | le cure della revisione, dal coordinatore (scelta **A** del proprietario, senza ri-revisione): **E2**, **E3**, **E4**, **E7**, **E8**, **E9**, e il commento di `Drawer.vue` sui gruppi galleggianti, falso da prima del compito |
-| `e2cd7df` | **E5** ed **E6**, le due scelte **A** del proprietario: la frase della tavola sui ruoli non-testo, e la prova dei colori a mano allargata alle funzioni di CSS Color 4 |
+| 1 — la sonda è sbagliata? | no: le **otto** violazioni del Passo 5, una per volta sulla copia, rosse tutte **per la ragione scritta** — `Unsupported chromium channel`; `vitest/browser can be imported only inside the Browser Mode`; `expected 3 to be greater than or equal to 4`; `--duration-fast: expected '110ms' to be '0ms'`; la guardia dell'alto contrasto a `expected false to be true`; `expected 0 to be greater than 0.5` al primo confronto col ripiego; il tema rosso a **5057 ms** al primo cambio; l'attesa di 5 s verde con la riga e rossa senza, a **1057 ms** —; ogni file tornato dalla copia salvata, `cmp` uguale, e `git status --porcelain` alla fine uguale a quello di prima, dopo sei rossi del browser |
+| 2 — manca una sonda? | **sì, due**: **E10** e **E11**. Le altre ci sono, e misurate: `browser.d.ts` tolto rende rosso `vue-tsc`, sette `TS2339`; un canale valido ma non installato, `chrome-beta`, dà `Chromium distribution 'chrome-beta' is not found`, uscita 1. ⚠️ La finestra delle prove è **1440 × 900**, `devicePixelRatio` 1, misurata con una prova usa-e-getta che falliva dicendo i valori; nessuna prova la tiene, e nessun controllo del disegno lo chiede — **registrato, non preso** |
+| 3 — l'artefatto è sbagliato? | no, sulla copia: Passo 1, undici pacchetti, MIT e Apache-2.0, nessuno con script d'installazione, `npm audit` 0; Passo 2, il rosso giusto; Passo 4, il progetto `browser` con **5** prove verdi, la suite da 17 file e 100 prove a **18** e **105**, il *build* verde e il pezzo JavaScript `663.93 kB`, com'era; i due progetti, **5** e **101** righe; Passi 6–7, il passo web verde e `check-docs.sh` `OK`; i fine-riga, tutti LF; `git diff --stat HEAD -- crates/ gui/schema/` vuoto |
+| 4 — è già eseguito? | no: `gui/package.json` non ha `@vitest/browser-playwright`, e `tokens.browser.test.ts` non c'è |
+| 5 — il contratto è cresciuto sotto il piano? | no: `git log 95068bb..HEAD` non rende nulla sui file che il compito tocca o legge — `scripts/`, `gui/vite.config.ts`, `package.json`, il lockfile, `tokens/index.ts`, `base.css`, il disegno del 2 —, tranne `theme.ts`, dove la cura E8 cambia un commento e `watchTheme` resta com'era; i quattro *Trova* tornano unici a `b66aee8`, e la base del Passo 4, 100 prove e una saltata, è quella del cancello d'apertura |
+| 6 — un commento o un banco lo smentisce? | **sì**: il commento di `gate-gui.sh`, *«§8 fixed "npm ci, npm run build, npm test"»*, dice **approvata** la forma del passo, ed è la ragione del richiamo che **E10** scrive nella §8 del disegno del 2; il commento di `theme.test.ts`, *«the real query is proven in the browser, task 2»*, il compito lo rende vero |
+| 7, 8 | non si applicano: il compito non tocca un ADR e non è un rapporto |
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
-| **cancello** | `GATE GREEN` a `e2cd7df`, sotto `gui/` **100** prove passate e **una** saltata — si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
-| **la CI** | verdi sui due sistemi `d10d9a5`, `95068bb` e `69d10fa`; `e2cd7df` e il commit che scrive questa riga **in corso** alla chiusura: la sessione dopo li legge per primi, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
-| **la posizione** | la riga **1** a `✅ 2026-09-24`; la sua colonna **Commit** la scrive il compito 2 (R1-16): `95068bb`, con le cure `69d10fa` ed `e2cd7df` |
-| **il pezzo JavaScript** | da `663.26 kB` a `663.93 kB` col compito 1, e le cure non lo muovono: è la cifra che **N-2 di E187** porta al proprietario, in *«Le voci aperte che questo piano SA»* |
-| **il dispaccio** | sulla macchina dell'account `Jays`, nella cartella git-ignorata `.superpowers/sdd/2026-09-23-design-system/`: il prompt e il brief dell'implementatore (`dispatch-task-1.md`, e `task-1-brief.md` da `_extract_brief_1.py`, per ancore), il suo rapporto, il prompt e il rapporto del revisore, e `compare_task1.py`. ⚠️ **Non viaggiano**: su un'altra macchina si rifanno dal piano |
-| **le copie** | il clone della revisione è cancellato; la copia `t1` del pre-controllo, sulla macchina `zagor`, non serve più e si può cancellare |
-| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, dove questa sessione ha lavorato — la consegna di prima scriveva `E:\ALL-DEV\MY-REPOS\daemon`, ed era sbagliato —, con la sua cartella di prova `%TEMP%\pds` al ramo `task7`; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness` e la cartella di prova al ramo `task8` |
+| **cancello** | `GATE GREEN` all'apertura, a `b66aee8` — sotto `gui/` 100 prove passate e una saltata — e prima del commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
+| **la CI** | verdi sui due sistemi le corse fino a `b66aee8`; quella del commit che scrive questa riga **in corso** alla chiusura: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **codice di prodotto** | non toccato: questa sessione ha scritto il piano, e il codice del compito 2 vive solo nella copia |
+| **la copia del pre-controllo** | `%TEMP%\pc2` sulla macchina `Jays`, ramo **`t2`**, **senza** `origin`: il compito rifatto dal testo **corretto**, nel commit locale `bead315`. È il **confronto** dell'esecuzione e della revisione — i file del compito le devono essere uguali, tranne il lockfile, che dipende dal registro, e la data del richiamo —, e si cancella dopo il compito 2 |
+| **il dispaccio** | pronto sulla macchina `Jays`, nella cartella git-ignorata `.superpowers/sdd/2026-09-23-design-system/`: `dispatch-task-2.md`, `task-2-brief.md` da `_extract_brief_2.py`, per ancore, e `compare_task2.py`, che confronta un commit col testo del piano. ⚠️ **Non viaggiano**: su un'altra macchina si rifanno dal piano — il brief è la testa del piano, i vincoli, *«Come si esegue un compito»*, l'errata, **P-12** e **P-21**, le voci che il piano sa, il compito 2, e dal disegno la **(f)**, i controlli **8**, **9** e **20** e le trappole **1**, **2**, **6**, **11** e **15** |
+| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, Chrome **154**, Node 24.19.0, dove questa sessione ha lavorato; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness` e Chrome 153 |
 
-**La revisione** — un revisore Opus fresco: **conforme**; **0** critici, **2** importanti, **4** minori, **3** nit, tutti chiusi
-dai due commit di cura. Il costo misurato: l'implementatore **~267k** token, 115 chiamate, **~16** minuti; il revisore
-**~430k**, 158 chiamate, **~35** minuti. L'implementatore è sotto la banda detta al proprietario (0,4–0,7 milioni): il compito
-era quasi tutto dettato.
+📌 **La ricetta del compito 2**, per rifarlo o confrontarlo dal testo del piano, vale per il piano del commit che scrive questa
+riga: `W` è il file intero dal recinto aperto a quella riga; `R` sostituisce l'occorrenza unica del primo recinto col secondo;
+`S` è il file usa-e-getta del Passo 5, che nasce e si cancella. Le due dipendenze si installano **prima**, a mano, col Passo 1;
+il `<data>` dell'ultima riga è il giorno del commit.
+
+```text
+W gui/src/tokens/tokens.browser.test.ts 1320
+W gui/src/browser.d.ts 1443
+R gui/vite.config.ts 1472 1479
+R gui/vite.config.ts 1488 1494
+R gui/vite.config.ts 1516 1530
+S 1623 gui/src/late.browser.test.ts
+R scripts/gate-gui.sh 1644 1651
+R docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md 1669 1675
+```
 
 📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
 del sotto-progetto.
 
 | | Che cosa | Che cosa se ne fa |
 |---|---|---|
-| 1 | **senza la copia `t1`**, il confronto col dettato lo fa `compare_task1.py`: ricostruisce ogni file dal testo del piano — la ricetta, i tagli della tavola, le rinomine, la riga del compendio — e lo confronta col commit. Il revisore l'ha provato nelle due direzioni, con quattordici commit mutanti | è il modello per i compiti dopo, su qualunque macchina: basta la ricetta del compito |
-| 2 | nel log di Vite `Local:` è spezzato dai codici colore | il server si aspetta su `netstat -ano \| grep ':5173' \| grep LISTENING`, e si spegne per PID |
-| 3 | col pannello del browser nascosto `requestAnimationFrame` non scatta, e una schermata può scadere | il cambio di tema e la misura in due chiamate; la schermata si ritenta |
-| 4 | il **rapporto** dell'implementatore ha dato per vero un commento senza misurarlo — *«floating groups are at 99»* —, e la revisione l'ha misurato falso (I-1) | un rapporto è una dichiarazione: le sue frasi di merito si rimisurano |
-| 5 | **E1** è la settima volta dei fine-riga fra le due macchine | un compito pre-controllato su una macchina ed eseguito sull'altra rifà gli Attesi di forma prima del dispaccio |
+| 1 | **una guardia che nessuno ha scritto sparisce quando cambia la forma della corsa**: con un progetto solo `vitest` è rosso su un `include` vuoto, con due un progetto vuoto è verde, e nessun controllo lo diceva — E10 | quando un compito divide o raggruppa le prove, si rimisura il caso **vuoto** |
+| 2 | **una sonda prova il meccanismo del progetto solo se una violazione tocca il file del progetto**: la guardia dell'alto contrasto e il `box-shadow` provavano il browser, e la regola `:focus-visible` di `base.css` nessuna riga — E11 | per ogni prova, una violazione sul file che la prova difende |
+| 3 | il costo di E10 misurato con la forma del cancello, `npm test -- --project`, è 1,5–2 s in più; con `npx vitest run`, misurato per primo, erano 2,5 | un costo si misura sul comando che girerà |
 
 **Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
 
-1. `git fetch --all --prune`, `git status -sb`; la CI di `e2cd7df` e del commit che scrive questa riga, per prima.
-2. Il **pre-controllo del compito 2**, con le quattro domande di `CLAUDE.md` e le righe 5–8. ⛔ La 5 soprattutto: il compito
-   si legge contro il codice di **adesso**, e le cure hanno toccato dieci file che il compito 1 aveva scritto o toccato —
-   `git diff --stat 95068bb..HEAD -- gui/ docs/superpowers/specs/` li elenca. Le voci che trova vanno nell'errata, e la
-   prossima libera è **E10**; il dispaccio resta pronto su file.
-3. L'**esecuzione del compito 2**, in un'altra sessione, col costo detto prima e il sì del proprietario; e così compito per
-   compito, fino al 9.
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. Questa sezione; poi il dispaccio, con la testa e la data riallineate e il brief rigenerato.
+3. ⛔ **Il costo, prima di dispacciare, e il sì del proprietario**: la banda è quella dei dispacci recenti — il compito 1,
+   nella consegna precedente in archivio: l'implementatore ~267k token, il revisore ~430k.
+4. L'**esecuzione del compito 2**, con `superpowers:subagent-driven-development`; il revisore rilancia ogni comando e
+   confronta con `compare_task2.py`, o coi file della copia `t2`. Poi il pre-controllo del compito 3, in un'altra sessione;
+   e così compito per compito, fino al 9.

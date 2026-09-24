@@ -149,6 +149,13 @@ esegue** prima del proprio pre-controllo.
    la SPA — o la pagina kit — nel browser, nei due temi, e **guarda**: un verde non prova che una cosa si veda.
 6. Una seconda ondata di **sola prosa** la chiude il coordinatore a mano; dopo due ondate di prosa si chiude (gotcha #76).
 7. ⛔ **Le scritture in parallelo non si fanno**: un compito per volta.
+8. ⛔ **Il dispaccio viaggia con git**, perché un compito si riprende anche dall'altra macchina — richiesta del
+   proprietario, 2026-09-24. Prompt, script, rapporti e revisioni stanno in
+   `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`, tracciata, e il prompt di un compito vi nasce come
+   **modello**, coi campi della macchina da riempire. Nella cartella di lavoro `.superpowers/sdd/2026-09-23-design-system/`,
+   ignorata, nascono i brief — copie del piano, che non si committano — e scrivono implementatore e revisore; alla
+   chiusura del compito il coordinatore copia nella cartella tracciata il prompt spedito, il rapporto, il prompt del
+   revisore e la revisione, e li committa.
 
 ---
 
@@ -8530,7 +8537,7 @@ La consegna precedente sta parola per parola in
 
 ⚠️ **Perché è una misura e non un'impressione.** Il compito è stato **rifatto per intero dal testo del piano** su una copia
 pulita di `b66aee8` — `git clone -c core.autocrlf=false` in `%TEMP%\pc2`, sulla macchina `Jays`, `npm ci`, poi i Passi 1–7 coi
-recinti del piano, estratti con `pds\tools\blocks.py` e applicati con `replace_unique.py` —, e ogni *Atteso* è tornato. Scritte
+recinti del piano, estratti con `blocks.py` — oggi nella cartella tracciata del dispaccio — e applicati con `replace_unique.py` —, e ogni *Atteso* è tornato. Scritte
 le voci, i Passi 3 e 6 sono stati **rifatti dal testo corretto**, con la ricetta qui sotto, e il passo web del cancello,
 `bash scripts/gate-gui.sh`, è girato sulla copia: verde com'è scritto, rosso con l'uno o l'altro progetto vuoto.
 
@@ -8538,7 +8545,7 @@ le voci, i Passi 3 e 6 sono stati **rifatti dal testo corretto**, con la ricetta
 |---|---|
 | 1 — la sonda è sbagliata? | no: le **otto** violazioni del Passo 5, una per volta sulla copia, rosse tutte **per la ragione scritta** — `Unsupported chromium channel`; `vitest/browser can be imported only inside the Browser Mode`; `expected 3 to be greater than or equal to 4`; `--duration-fast: expected '110ms' to be '0ms'`; la guardia dell'alto contrasto a `expected false to be true`; `expected 0 to be greater than 0.5` al primo confronto col ripiego; il tema rosso a **5057 ms** al primo cambio; l'attesa di 5 s verde con la riga e rossa senza, a **1057 ms** —; ogni file tornato dalla copia salvata, `cmp` uguale, e `git status --porcelain` alla fine uguale a quello di prima, dopo sei rossi del browser |
 | 2 — manca una sonda? | **sì, due**: **E10** e **E11**. Le altre ci sono, e misurate: `browser.d.ts` tolto rende rosso `vue-tsc`, sette `TS2339`; un canale valido ma non installato, `chrome-beta`, dà `Chromium distribution 'chrome-beta' is not found`, uscita 1. ⚠️ La finestra delle prove è **1440 × 900**, `devicePixelRatio` 1, misurata con una prova usa-e-getta che falliva dicendo i valori; nessuna prova la tiene, e nessun controllo del disegno lo chiede — **registrato, non preso** |
-| 3 — l'artefatto è sbagliato? | no, sulla copia: Passo 1, undici pacchetti, MIT e Apache-2.0, nessuno con script d'installazione, `npm audit` 0; Passo 2, il rosso giusto; Passo 4, il progetto `browser` con **5** prove verdi, la suite da 17 file e 100 prove a **18** e **105**, il *build* verde e il pezzo JavaScript `663.93 kB`, com'era; i due progetti, **5** e **101** righe; Passi 6–7, il passo web verde e `check-docs.sh` `OK`; i fine-riga, tutti LF; `git diff --stat HEAD -- crates/ gui/schema/` vuoto |
+| 3 — l'artefatto è sbagliato? | no, sulla copia: Passo 1, undici pacchetti, MIT e Apache-2.0, nessuno con script d'installazione, `npm audit` 0; Passo 2, il rosso giusto; Passo 4, il progetto `browser` con **5** prove verdi, la suite da 17 file e 100 prove a **18** e **105**, il *build* verde e il pezzo JavaScript `663.93 kB`, com'era; i due progetti, **5** e **101** righe; Passi 6–7, il passo web verde e `check-docs.sh` `OK`; i fine-riga, tutti LF sulla copia — la macchina `Jays`, dove `core.autocrlf` è `false`; `git diff --stat HEAD -- crates/ gui/schema/` vuoto |
 | 4 — è già eseguito? | no: `gui/package.json` non ha `@vitest/browser-playwright`, e `tokens.browser.test.ts` non c'è |
 | 5 — il contratto è cresciuto sotto il piano? | no: `git log 95068bb..HEAD` non rende nulla sui file che il compito tocca o legge — `scripts/`, `gui/vite.config.ts`, `package.json`, il lockfile, `tokens/index.ts`, `base.css`, il disegno del 2 —, tranne `theme.ts`, dove la cura E8 cambia un commento e `watchTheme` resta com'era; i quattro *Trova* tornano unici a `b66aee8`, e la base del Passo 4, 100 prove e una saltata, è quella del cancello d'apertura |
 | 6 — un commento o un banco lo smentisce? | **sì**: il commento di `gate-gui.sh`, *«§8 fixed "npm ci, npm run build, npm test"»*, dice **approvata** la forma del passo, ed è la ragione del richiamo che **E10** scrive nella §8 del disegno del 2; il commento di `theme.test.ts`, *«the real query is proven in the browser, task 2»*, il compito lo rende vero |
@@ -8548,26 +8555,27 @@ le voci, i Passi 3 e 6 sono stati **rifatti dal testo corretto**, con la ricetta
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
 | **cancello** | `GATE GREEN` all'apertura, a `b66aee8` — sotto `gui/` 100 prove passate e una saltata — e prima del commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
-| **la CI** | verdi sui due sistemi le corse fino a `ebfc255`, il commit del pre-controllo, letta alla chiusura; quella del commit che completa questa consegna **in corso**: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
-| **codice di prodotto** | non toccato: questa sessione ha scritto il piano, e il codice del compito 2 vive solo nella copia |
-| **la copia del pre-controllo** | `%TEMP%\pc2` sulla macchina `Jays`, ramo **`t2`**, **senza** `origin`: il compito rifatto dal testo **corretto**, nel commit locale `bead315`. È il **confronto** dell'esecuzione e della revisione — i file del compito le devono essere uguali, tranne il lockfile, che dipende dal registro, e la data del richiamo —, e si cancella dopo il compito 2 |
-| **il dispaccio** | pronto sulla macchina `Jays`, nella cartella git-ignorata `.superpowers/sdd/2026-09-23-design-system/`: `dispatch-task-2.md`, `task-2-brief.md` da `_extract_brief_2.py`, per ancore, e `compare_task2.py`, che confronta un commit col testo del piano — **provato nelle due direzioni** sulla copia: un commit fedele al piano sopra `ebfc255` esce **0**, e quattro mutanti — un valore di `vite.config.ts`, il file usa-e-getta lasciato, un file in più, `playwright` non esatto — escono **1** ciascuno. ⚠️ Nel prompt tre campi si **riallineano** prima di dispacciare, e la sua testa lo dice: `HEAD`, che è l'ultimo commit di questa sessione; la data; lo scratchpad. ⚠️ **Non viaggiano**: su un'altra macchina si rifanno dal piano — il brief è la testa del piano, i vincoli, *«Come si esegue un compito»*, l'errata, **P-12** e **P-21**, le voci che il piano sa, il compito 2, e dal disegno la **(f)**, i controlli **8**, **9** e **20** e le trappole **1**, **2**, **6**, **11** e **15** |
-| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, Chrome **154**, Node 24.19.0 e la cartella di prova `%TEMP%\pds` al ramo `task7`, di cui questa sessione ha usato `tools\blocks.py`, dove ha lavorato; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness` e Chrome 153 |
+| **la CI** | verdi sui due sistemi le corse fino a `ae79a97`, lette alla chiusura; quella del commit che scrive questa riga **in corso**: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **codice di prodotto** | non toccato: questa sessione ha scritto il piano e la cartella del dispaccio, e il codice del compito 2 vive solo nella copia |
+| **la copia del pre-controllo** | ⚠️ **solo sulla macchina `Jays`**: `%TEMP%\pc2`, ramo **`t2`**, **senza** `origin`, col compito rifatto dal testo **corretto** nel commit locale `bead315`. Altrove non serve: il confronto col testo del piano lo fa `compare_task2.py` su qualunque clone. Si cancella dopo il compito 2 |
+| **il dispaccio** | ✅ **viaggia con git**, per il punto 8 di *«Come si esegue un compito»*: nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/` stanno il **modello** del prompt, `dispatch-task-2.md` — coi campi `<repo>`, `<HEAD>`, `<data>`, `<scratchpad>` e la tabella delle due macchine —; `_extract_brief_2.py`, che scrive il brief nella cartella di lavoro ignorata e la crea su un clone nuovo; `compare_task2.py`, che confronta un commit col testo del piano, **provato nelle due direzioni** sulla copia — un commit fedele al piano sopra `ebfc255` esce **0**, e quattro mutanti, un valore di `vite.config.ts`, il file usa-e-getta lasciato, un file in più e `playwright` non esatto, escono **1** ciascuno —; `blocks.py`, che estrae i recinti del piano; e il dispaccio del compito 1 intero — prompt, rapporto, prompt del revisore, revisione, script —, dove `review-1-prompt.md` è il modello del prompt del revisore del compito 2. Il brief **non** si committa: è una copia del piano |
+| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, `core.autocrlf` `false` in `.git/config` e l'albero `w/lf`, Chrome **154**, Node 24.19.0 e la cartella di prova `%TEMP%\pds` al ramo `task7`, dove questa sessione ha lavorato; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, `core.autocrlf` `true` dal file di sistema e l'albero `w/crlf`, e Chrome 153. ⛔ Sulla macchina che esegue gli Attesi di **forma** si misurano, non si copiano (E72): il §4 del prompt lo dice |
 
 📌 **La ricetta del compito 2**, per rifarlo o confrontarlo dal testo del piano, vale per il piano del commit che scrive questa
 riga: `W` è il file intero dal recinto aperto a quella riga; `R` sostituisce l'occorrenza unica del primo recinto col secondo;
 `S` è il file usa-e-getta del Passo 5, che nasce e si cancella. Le due dipendenze si installano **prima**, a mano, col Passo 1;
-il `<data>` dell'ultima riga è il giorno del commit.
+il `<data>` dell'ultima riga è il giorno del commit. ⚠️ I numeri sono quelli di `ebfc255` **più sette**: il punto 8
+di *«Come si esegue un compito»* è nato dopo, e ognuno è stato riletto sul recinto che apre.
 
 ```text
-W gui/src/tokens/tokens.browser.test.ts 1320
-W gui/src/browser.d.ts 1443
-R gui/vite.config.ts 1472 1479
-R gui/vite.config.ts 1488 1494
-R gui/vite.config.ts 1516 1530
-S 1623 gui/src/late.browser.test.ts
-R scripts/gate-gui.sh 1644 1651
-R docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md 1669 1675
+W gui/src/tokens/tokens.browser.test.ts 1327
+W gui/src/browser.d.ts 1450
+R gui/vite.config.ts 1479 1486
+R gui/vite.config.ts 1495 1501
+R gui/vite.config.ts 1523 1537
+S 1630 gui/src/late.browser.test.ts
+R scripts/gate-gui.sh 1651 1658
+R docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md 1676 1682
 ```
 
 📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
@@ -8578,13 +8586,18 @@ del sotto-progetto.
 | 1 | **una guardia che nessuno ha scritto sparisce quando cambia la forma della corsa**: con un progetto solo `vitest` è rosso su un `include` vuoto, con due un progetto vuoto è verde, e nessun controllo lo diceva — E10 | quando un compito divide o raggruppa le prove, si rimisura il caso **vuoto** |
 | 2 | **una sonda prova il meccanismo del progetto solo se una violazione tocca il file del progetto**: la guardia dell'alto contrasto e il `box-shadow` provavano il browser, e la regola `:focus-visible` di `base.css` nessuna riga — E11 | per ogni prova, una violazione sul file che la prova difende |
 | 3 | il costo di E10 misurato con la forma del cancello, `npm test -- --project`, è 1,5–2 s in più; con `npx vitest run`, misurato per primo, erano 2,5 | un costo si misura sul comando che girerà |
+| 4 | **ciò che il dispaccio usa non viaggiava**: `.superpowers/sdd/` è ignorata da un suo `.gitignore` con `*`, e il prompt portava i valori di una macchina — `core.autocrlf` `false`, *«CR 0»* —, falsi sull'altra | dal 2026-09-24 il dispaccio sta nella cartella tracciata, e il prompt è un modello coi campi della macchina: il punto 8 |
 
 **Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
 
 1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
-2. Questa sezione; poi il dispaccio, con la testa, la data e lo scratchpad riallineati e il brief rigenerato.
+2. Questa sezione; poi il dispaccio: dalla radice del repository il brief, con
+   `python docs/superpowers/plans/2026-09-23-design-system-esecuzione/_extract_brief_2.py`, e il prompt dal modello
+   `dispatch-task-2.md` della stessa cartella, coi campi e i valori della macchina che esegue — il riquadro in testa al
+   modello dice come.
 3. ⛔ **Il costo, prima di dispacciare, e il sì del proprietario**: la banda è quella dei dispacci recenti — il compito 1,
    nella consegna precedente in archivio: l'implementatore ~267k token, il revisore ~430k.
 4. L'**esecuzione del compito 2**, con `superpowers:subagent-driven-development`; il revisore rilancia ogni comando e
-   confronta con `compare_task2.py`, o coi file della copia `t2`. Poi il pre-controllo del compito 3, in un'altra sessione;
+   confronta con `compare_task2.py`, e il suo prompt si scrive sul modello di `review-1-prompt.md`; alla chiusura del
+   compito, i file del dispaccio nella cartella tracciata (punto 8). Poi il pre-controllo del compito 3, in un'altra sessione;
    e così compito per compito, fino al 9.

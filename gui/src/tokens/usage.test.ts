@@ -37,7 +37,10 @@ describe("the token discipline", () => {
   });
 
   it("writes no colour by hand outside the token files", () => {
-    const HAND = /#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(/;
+    // Control 5 of the design, widened to the colour functions of CSS Color 4 (E6 of the design-system plan, the
+    // owner's choice A, 2026-09-24). ⚠️ A colour BY NAME -- `white`, `red` -- is NOT seen: catching it would take
+    // a list or a guess, with false positives.
+    const HAND = /#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(|\bhwb\(|\b(?:ok)?lab\(|\b(?:ok)?lch\(|\bcolor-mix\(/;
     const judged = all.filter((file) => file.endsWith(".vue") || file === "tokens/dock.css");
     const offenders = judged.flatMap((file) =>
       read(file)

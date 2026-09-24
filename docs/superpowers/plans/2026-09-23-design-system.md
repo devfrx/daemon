@@ -159,6 +159,7 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 
 | # | Voce |
 |---|---|
+| **E1** | ⚠️ **Compito 1, Passo 10 — *«CRLF su questa macchina»*, detto di `gui/src/stores/layout.ts`, è la colonna `w/…` della macchina `zagor`, dove il piano è stato scritto e pre-controllato: sulla macchina dell'account `Jays` è falso.** Misurato il 2026-09-24 a `6ae9b8b`, preparando il dispaccio del compito 1: `git config --show-origin core.autocrlf` → `false` in `.git/config` (E51 del piano della parte 2); `git ls-files --eol gui/src/stores/layout.ts` → `i/lf w/lf`. Il pre-controllo non poteva vederlo, perché su `zagor` è vero. È la malattia di **E51** per la **settima** volta: E224 del piano della parte 2 si conta sesta. ✅ **Nessun Atteso cambia:** `replace_unique.py` conserva il fine-riga che trova, e il Passo 16 lo misura come invariante. ✅ **Corretto con la regola di E72** del piano della parte 2, decisione del proprietario del 2026-09-19: l'etichetta si **toglie**, non si rovescia. Trovato dal coordinatore dell'esecuzione del compito 1 |
 
 ---
 
@@ -806,7 +807,7 @@ export function watchTheme(
 }
 ```
 
-In `gui/src/stores/layout.ts` (CRLF su questa macchina: `replace_unique.py`), quattro sostituzioni.
+In `gui/src/stores/layout.ts` (`replace_unique.py`, che conserva il fine-riga del file: lo rimisura il Passo 16 — **E1**), quattro sostituzioni.
 
 *Trova:*
 
@@ -8514,30 +8515,32 @@ del compito è lo stesso, riga per riga, che la cartella di prova aveva già pro
 *«Come si riprende»* non si sono mosse, quindi vale anche la ricetta del compito 8 della consegna precedente, in archivio. I
 due caratteri si installano **a mano prima**, col Passo 2; le righe `S` salvano gli script dei Passi 9 e 13, da lanciare a mano.
 
+⚠️ **Richiamo del 2026-09-24, E1:** la riga di **E1** nell'errata sposta di **una** riga tutto ciò che la segue. I numeri qui sotto sono quelli di prima **più uno**, riletti uno per uno sul recinto che aprono; la ricetta del compito 8 in archivio vale col suo più uno, e il `diff` del pre-controllo, più su, si legge a `6ae9b8b`. E1 cambia la prosa del Passo 10, non un recinto.
+
 ```text
-W gui/src/tokens/board.test.ts 318
-W gui/src/tokens/contrast.test.ts 370
-W gui/src/tokens/usage.test.ts 512
-W gui/src/tokens/theme.test.ts 568
-A gui/src/stores/stores.test.ts 648
-S 703 <cartella>/extract_tokens.py
-W gui/src/tokens/theme.ts 754
-R gui/src/stores/layout.ts 813 820
-R gui/src/stores/layout.ts 828 837
-R gui/src/stores/layout.ts 850 867
-R gui/src/stores/layout.ts 899 905
+W gui/src/tokens/board.test.ts 319
+W gui/src/tokens/contrast.test.ts 371
+W gui/src/tokens/usage.test.ts 513
+W gui/src/tokens/theme.test.ts 569
+A gui/src/stores/stores.test.ts 649
+S 704 <cartella>/extract_tokens.py
+W gui/src/tokens/theme.ts 755
+R gui/src/stores/layout.ts 814 821
+R gui/src/stores/layout.ts 829 838
+R gui/src/stores/layout.ts 851 868
+R gui/src/stores/layout.ts 900 906
 RL gui/src/stores/layout.ts
 < import { ref } from "vue";
 > import { computed, ref } from "vue";
-W gui/src/tokens/index.ts 919
-W gui/src/tokens/dock.css 940
-W gui/src/App.vue 1019
+W gui/src/tokens/index.ts 920
+W gui/src/tokens/dock.css 941
+W gui/src/App.vue 1020
 RL gui/src/main.ts
 < import "./tokens/tokens.css";
 > import "./tokens";
-R gui/src/main.ts 1044 1050
-R gui/src/main.ts 1057 1072
-S 1114 <cartella>/rename_tokens.py
+R gui/src/main.ts 1045 1051
+R gui/src/main.ts 1058 1073
+S 1115 <cartella>/rename_tokens.py
 ```
 
 **Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):

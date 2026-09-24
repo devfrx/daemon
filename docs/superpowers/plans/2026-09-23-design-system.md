@@ -8548,11 +8548,11 @@ le voci, i Passi 3 e 6 sono stati **rifatti dal testo corretto**, con la ricetta
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
 | **cancello** | `GATE GREEN` all'apertura, a `b66aee8` — sotto `gui/` 100 prove passate e una saltata — e prima del commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
-| **la CI** | verdi sui due sistemi le corse fino a `b66aee8`; quella del commit che scrive questa riga **in corso** alla chiusura: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la CI** | verdi sui due sistemi le corse fino a `ebfc255`, il commit del pre-controllo, letta alla chiusura; quella del commit che completa questa consegna **in corso**: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
 | **codice di prodotto** | non toccato: questa sessione ha scritto il piano, e il codice del compito 2 vive solo nella copia |
 | **la copia del pre-controllo** | `%TEMP%\pc2` sulla macchina `Jays`, ramo **`t2`**, **senza** `origin`: il compito rifatto dal testo **corretto**, nel commit locale `bead315`. È il **confronto** dell'esecuzione e della revisione — i file del compito le devono essere uguali, tranne il lockfile, che dipende dal registro, e la data del richiamo —, e si cancella dopo il compito 2 |
-| **il dispaccio** | pronto sulla macchina `Jays`, nella cartella git-ignorata `.superpowers/sdd/2026-09-23-design-system/`: `dispatch-task-2.md`, `task-2-brief.md` da `_extract_brief_2.py`, per ancore, e `compare_task2.py`, che confronta un commit col testo del piano. ⚠️ **Non viaggiano**: su un'altra macchina si rifanno dal piano — il brief è la testa del piano, i vincoli, *«Come si esegue un compito»*, l'errata, **P-12** e **P-21**, le voci che il piano sa, il compito 2, e dal disegno la **(f)**, i controlli **8**, **9** e **20** e le trappole **1**, **2**, **6**, **11** e **15** |
-| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, Chrome **154**, Node 24.19.0, dove questa sessione ha lavorato; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness` e Chrome 153 |
+| **il dispaccio** | pronto sulla macchina `Jays`, nella cartella git-ignorata `.superpowers/sdd/2026-09-23-design-system/`: `dispatch-task-2.md`, `task-2-brief.md` da `_extract_brief_2.py`, per ancore, e `compare_task2.py`, che confronta un commit col testo del piano — **provato nelle due direzioni** sulla copia: un commit fedele al piano sopra `ebfc255` esce **0**, e quattro mutanti — un valore di `vite.config.ts`, il file usa-e-getta lasciato, un file in più, `playwright` non esatto — escono **1** ciascuno. ⚠️ Nel prompt tre campi si **riallineano** prima di dispacciare, e la sua testa lo dice: `HEAD`, che è l'ultimo commit di questa sessione; la data; lo scratchpad. ⚠️ **Non viaggiano**: su un'altra macchina si rifanno dal piano — il brief è la testa del piano, i vincoli, *«Come si esegue un compito»*, l'errata, **P-12** e **P-21**, le voci che il piano sa, il compito 2, e dal disegno la **(f)**, i controlli **8**, **9** e **20** e le trappole **1**, **2**, **6**, **11** e **15** |
+| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, Chrome **154**, Node 24.19.0 e la cartella di prova `%TEMP%\pds` al ramo `task7`, di cui questa sessione ha usato `tools\blocks.py`, dove ha lavorato; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness` e Chrome 153 |
 
 📌 **La ricetta del compito 2**, per rifarlo o confrontarlo dal testo del piano, vale per il piano del commit che scrive questa
 riga: `W` è il file intero dal recinto aperto a quella riga; `R` sostituisce l'occorrenza unica del primo recinto col secondo;
@@ -8582,7 +8582,7 @@ del sotto-progetto.
 **Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
 
 1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
-2. Questa sezione; poi il dispaccio, con la testa e la data riallineate e il brief rigenerato.
+2. Questa sezione; poi il dispaccio, con la testa, la data e lo scratchpad riallineati e il brief rigenerato.
 3. ⛔ **Il costo, prima di dispacciare, e il sì del proprietario**: la banda è quella dei dispacci recenti — il compito 1,
    nella consegna precedente in archivio: l'implementatore ~267k token, il revisore ~430k.
 4. L'**esecuzione del compito 2**, con `superpowers:subagent-driven-development`; il revisore rilancia ogni comando e

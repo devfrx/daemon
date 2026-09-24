@@ -4,7 +4,8 @@
 consegna dell'avvio, scritta alla chiusura della sessione del [disegno del design system](2026-09-22-design-system-design.md);
 quel testo sta, **parola per parola**, in
 [`archivio/consegna-avvio-ridimensionamento-lettura.md`](../../archivio/consegna-avvio-ridimensionamento-lettura.md), col
-punto fermo scritto a metà sessione. ⚠️ **Non è una spec e non è un disegno.** Il prossimo passo sta nella §6 del
+punto fermo scritto a metà sessione. ✅ **Richiamo del 2026-09-24:** qui anche la seconda passata, la **compressione senza perdite del compendio** — la
+sezione in coda, prima di *«Come si riprende»*. ⚠️ **Non è una spec e non è un disegno.** Il prossimo passo sta nella §6 del
 [compendio](../../COMPENDIO.md), in un posto solo.
 
 ## Il mandato
@@ -42,18 +43,49 @@ un cancello gira **da solo**.
 | la tabella delle **voci aperte** della §6 del compendio | sono decisioni del proprietario, e si consolidano voce per voce con lui (decisione 26 della stella polare) |
 | le **skill** e i **plugin** | stanno fuori dal repository e sono del proprietario. Una sessione ne carica parecchie migliaia di token — `session-resume` sola circa 5 600, `decision-principles` circa 3 900 — e i plugin accesi aggiungono le loro descrizioni a ogni sessione, in una misura che da qui **non si vede** |
 
-## Come si riprende — scritto alla chiusura della sessione del 2026-09-23
+## La passata del 2026-09-24 — la compressione del compendio
 
-⛔ **DA SAPERE SUBITO: niente è a metà.** Albero pulito, nessuno stash, nessuna operazione git a metà, tutto pushato, nessun server acceso, nessun subagente in corso, nessun codice di prodotto toccato.
+Il giorno dopo, il proprietario ha lanciato la skill `lean-docs`. Le misure della lettura fissa, prima e dopo, e i comandi
+che le rifanno stanno in [`riferimenti.md`](../../riferimenti.md), *«Sfoltimento del compendio»*, sottosezione del
+2026-09-24 — lì e non qui, perché un numero vive in una casa sola.
+
+| | La domanda | La risposta | Dove sta |
+|---|---|---|---|
+| 6 | che cosa si snellisce: il **compendio**, fuori dalla §5 e dalla tabella delle voci aperte, o solo le **cose piccole** — la nota di memoria diventata diario e l'indice della memoria? | **A**, il compendio | — |
+| 7 | sezione per sezione: la §6, la §12, la testa con la §13, la §1 | *«decidi secondo decision-principles»*, a ciascuna: **A** su tutte, coi cinque criteri controllati uno per uno; la trappola 6 della §10, lo stesso taglio, decisa allo stesso modo | il commit della passata; i testi com'erano in [`archivio/lettura-di-apertura-storico.md`](../../archivio/lettura-di-apertura-storico.md) e, quelli della §6, in [`archivio/stato-storico.md`](../../archivio/stato-storico.md); il tetto di `check-docs.sh` sceso con la sua regola |
+
+⚠️ **Una frase corretta e non compressa, e lo si dice:** la riga della §12 sul disegno del Traguardo 5 diceva *«ed è il
+file da cui si riprende»*, falsa dal 2026-08-25, quando il traguardo si è chiuso. È uscita, e il testo com'era sta in
+archivio.
+
+✅ **La prova che non manca niente**, in due metà. Meccanica: lo script della skill non trova àncore perse né link rotti, e
+ogni blocco archiviato è uguale all'originale a meno dei link riscritti per la cartella. Funzionale: un sotto-agente che
+leggeva **solo** il compendio nuovo ha risposto a sette domande su sette, scelte fra le eccezioni e i casi limite delle
+sezioni toccate.
+
+### Registrate, non prese — 2026-09-24
+
+| | Perché no, oggi |
+|---|---|
+| la §4 e la §11 | un centinaio di token ciascuna, e nella §4 la tabella della nomenclatura sarebbe diventata prosa, contro la forma a tabelle che il proprietario vuole |
+| la §5 | è già la compressione degli ADR |
+| la tabella delle **voci aperte** della §6 | resta del proprietario, voce per voce; è il grasso più grosso rimasto, e la misura sta in [`riferimenti.md`](../../riferimenti.md) |
+| la nota di memoria `lettura-obbligatoria-a-blocchi-di-400-righe.md` e l'indice della memoria | la prima è ancora un diario di aggiunte datate, il secondo ha righe lunghe: erano la via **B**, non scelta |
+| l'ordine della §10 | la trappola 6 sta prima della 5, e lo ha notato il sotto-agente; era così anche prima, e riordinare non è comprimere |
+
+## Come si riprende — scritto alla chiusura della sessione del 2026-09-24
+
+⛔ **DA SAPERE SUBITO: niente è a metà.** Albero pulito, nessuno stash, nessuna operazione git a metà, tutto pushato, nessun
+server acceso, nessun subagente in corso, nessun codice di prodotto toccato. La chiusura precedente sta, parola per parola,
+in [`archivio/consegna-avvio-ridimensionamento-lettura.md`](../../archivio/consegna-avvio-ridimensionamento-lettura.md).
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin`: `git fetch --all --prune`, poi `git status -sb` |
-| **i commit della sessione** | `git log --oneline 61c8450..HEAD` |
-| **la CI** | coi due comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), il paragrafo *«Leggere la CI da terra»*: si leggono **per primi** i commit di questa sessione |
-| **cancello** | `bash scripts/gate.sh`, **da solo**, → `GATE GREEN` prima di ogni commit della sessione; `bash scripts/check-docs.sh` → `OK` |
-| **la memoria dell'agente** | fuori dal repository, su questa macchina: le tre note riscritte come regole corte, e con loro la nota sul consumo della lettura; gli originali byte per byte in `~/.claude/projects/C--Users-zagor-Desktop-harness/memory-archivio/`, che non si carica. Un'altra macchina ha la sua memoria: le regole che contano per tutte ora stanno in `CLAUDE.md` |
+| **i commit della sessione** | `git log --oneline 79d33b1..HEAD` |
+| **la CI** | coi due comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), il paragrafo *«Leggere la CI da terra»*: si legge **per prima** quella del commit di questa sessione |
+| **cancello** | `bash scripts/gate.sh`, **da solo**, → `GATE GREEN` prima del commit; `bash scripts/check-docs.sh` → `OK` |
+| **la memoria dell'agente** | fuori dal repository, sulla macchina `zagor`: la nota sul consumo della lettura porta la passata |
 
-**Il compito della sessione successiva** lo dice la §6 del compendio: il **design system** — la rilettura del proprietario
-del disegno, poi il piano in una sessione nuova, come dice la sezione *«Come si riprende»* del
-[disegno](2026-09-22-design-system-design.md).
+**Il compito della sessione successiva** lo dice la §6 del compendio: il **design system** — scrivere il compito 9 e la
+Definizione di «fatto» del [piano](../plans/2026-09-23-design-system.md), come dice la sua sezione *«Come si riprende»*.

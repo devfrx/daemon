@@ -2409,3 +2409,71 @@ erano fatti, rivisti e spinti, e la riga mentiva in meno di una giornata. ⛔ **
 ricorregge* — e la casa unica di quali compiti siano eseguiti è la **tabella della posizione** del piano, che chi
 esegue aggiorna nel commit del compito. Un rimando non può marcire; un numeratore marcisce a ogni compito. Gotcha
 **#68**.
+
+## La §6 del compendio, i blocchi compressi — archiviati il 2026-09-24
+
+⚠️ **Vero il giorno in cui fu scritto.** Usciti dalla §6 del [compendio](../COMPENDIO.md) con la compressione senza perdite del 2026-09-24, mandato del proprietario, ogni sezione portata in A/B e decisa su sua delega; parola per parola, coi link riscritti per questa cartella. La tabella delle voci aperte **non** è stata toccata. Il resto della passata sta in [`lettura-di-apertura-storico.md`](lettura-di-apertura-storico.md).
+
+### il capoverso del secondo audit — righe 602–609
+
+In testa alla §6.
+
+✅ **IL SECONDO AUDIT COMPLETO — 2026-08-27 — HA I SUOI FINDING TUTTI CHIUSI DAL 2026-08-28**,
+[`audit-2026-08-27.md`](../audit-2026-08-27.md): quanti, lo dice la colonna «Stato» di quel rapporto,
+che ne è la **casa unica**, col comando in fondo a questa sezione (gotcha #68). ⛔ **Restano le voci
+senza numero AUD**, la cui tabella in quel file è la casa unica, in gran parte **decisioni del
+proprietario**. ✅ **RICHIAMO DEL 2026-09-09, decisione 26 della stella polare:** all'apertura si
+leggono **solo** quella tabella e *«La disciplina, in cinque passi»*; i 73 e il «Dettaglio» si aprono
+**una** scheda per volta. Il paragrafo com'era, col richiamo del 2026-08-28, è in
+[`archivio/stato-storico.md`](stato-storico.md).
+
+### il prossimo passo — il richiamo del taglio 4 — righe 633–636
+
+In testa alla sottosezione.
+
+⛔ **RICHIAMO DEL 2026-09-09 — il taglio 4 del mandato del proprietario (decisione 26 della stella polare della GUI),
+approvato A alla tredicesima ripresa (decisione 30).** Questo puntatore era una catena di ✅ su cose chiuse, col racconto di
+ciascuna; il testo com'era sta in [`archivio/stato-storico.md`](stato-storico.md), parola per parola. Qui resta lo
+stato di oggi: è l'unico posto dove vive il prossimo passo, e più è corto meno invecchia.
+
+### il prossimo passo — la tabella «Chiuso» e il mandato del 2026-09-09 — righe 638–656
+
+Fra il richiamo del taglio 4 e il ⏭️.
+
+**Chiuso, con la data e il posto del verbale:**
+
+| Che cosa | Quando | Dove |
+|---|---|---|
+| il **sotto-progetto 1**, contro la §0.7 della spec | 2026-09-03 | la §7 del [disegno della chiusura](../superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md) |
+| il **riconoscimento gesti** — ADR-0038 e ADR-0039, SP-7 misurato, la sonda S3 nel cancello | 2026-09-04 | [disegno](../superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) e [piano](../superpowers/plans/2026-09-03-riconoscimento-gesti.md); l'esito di SP-7 in `spikes/RISULTATI.md` |
+| la **knowledge base** — brainstorming, disegno riletto dal proprietario, piano dei documenti eseguito: i rimandi in testa a ADR-0008, 0009, 0010 e 0038 e la riga 13 della roadmap. Il verdetto: nessuna sesta proprietà, ma un **vincolo d'ordine** — il **13** prima del 3 | 2026-09-05 | [disegno](../superpowers/specs/2026-09-04-knowledge-base-design.md), che chi riprende quel fronte legge **per intero**, e [piano](../superpowers/plans/2026-09-04-knowledge-base-documenti.md); la consegna in [`archivio/consegna-brainstorming-knowledge-base.md`](consegna-brainstorming-knowledge-base.md) |
+| le **sezioni 1–4 della stella polare della GUI** — catalogo dei moduli, viste e disposizione con la **settima porta** del kernel, la fetta del 2, lo spike di accettazione di `dockview` — e la **passata sui diagrammi** (decisione 16), con la decisione 18 scritta in `CLAUDE.md` | 2026-09-09 | [stella polare](../superpowers/specs/2026-09-07-direzione-gui-design.md), «Le sezioni approvate del disegno» e la tabella delle decisioni; la consegna dell'avvio del 2 in [`archivio/consegna-avvio-brainstorming-sottoprogetto-2.md`](consegna-avvio-brainstorming-sottoprogetto-2.md) |
+| i **due disegni della GUI, scritti sul posto** — la [stella polare](../superpowers/specs/2026-09-07-direzione-gui-design.md), sezioni 1–4 e 6, e il [disegno del 2](../superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), §1–§10, con le §1, §2 e §6a riscritte; le due consegne in archivio parola per parola, le fonti in `riferimenti.md` | 2026-09-09 | la **§10 del disegno del 2**, «Come si riprende»; gli archivi [`consegna-brainstorming-direzione-gui.md`](consegna-brainstorming-direzione-gui.md) e [`consegna-brainstorming-sottoprogetto-2.md`](consegna-brainstorming-sottoprogetto-2.md) |
+| la **rilettura del proprietario** dei due disegni — B alla domanda minima, poi le sei voci sue una per volta, tutte A: decisioni 41–47 | 2026-09-09 | la tabella delle decisioni della [stella polare](../superpowers/specs/2026-09-07-direzione-gui-design.md); la §10 del [disegno del 2](../superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md); X-1 e X-3 nell'[audit](../audit-2026-08-27.md) |
+| la **parte 1 del piano del 2** — SP-8: il guscio **Electron** deciso dal proprietario, ADR-0029 `Accepted`, `dockview` resta dopo le otto mosse | 2026-09-10 | il [piano](../superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md), «A che punto è» e l'errata; la sezione SP-8 di `spikes/RISULTATI.md`; ADR-0029 |
+| il **sotto-progetto 2**, la GUI minima — il filo in `platform`, lo schema, il registro delle funzioni, la settima porta `custody`, il daemon che ascolta, la SPA con `dockview` e il core finto, il passo web del cancello, **X-1** e **X-3** | 2026-09-22 | la **Definizione di «fatto»** del [piano della parte 2](../superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md), coi comandi |
+| il **ridimensionamento della lettura** — mandato del proprietario: le note di memoria dell'agente a regole corte, la cronaca delle correzioni fuori dal compendio, i comandi della CI in una casa sola in `porta-di-qualita.md`, `CLAUDE.md` rivisto per intero | 2026-09-23 | il [verbale](../superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md) |
+
+✅ **Il mandato del proprietario del 2026-09-09 — sfoltire la lettura d'apertura (decisione 26 della stella polare) — è
+ESEGUITO alla tredicesima ripresa:** cinque tagli, tutti A — la stella polare, la testa dell'audit, il riquadro delle voci
+aperte di questa §6, questo puntatore, `CLAUDE.md` — e `AVVIO-CHAT.md` resta com'è, perché il proprietario non lo incolla
+più (decisione 32). La misura la rifanno i comandi nel prossimo passo della stella polare; il metodo — misurare prima, ogni
+taglio in A/B, niente si cancella, i puntatori in una casa sola — vale per ogni sfoltimento futuro.
+
+### la riga del sotto-progetto 13 — righe 665
+
+Il punto «Due» del prossimo passo: la riga aveva la sola frase *«del 3.»* prima di *«Lo sbarra AUD-004»*; il verdetto della knowledge base è salito dalla tabella «Chiuso».
+
+del 3. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill dichiarative: è una sua decisione e non del piano. Il perimetro
+
+### le voci ancora aperte — il richiamo del taglio 3 — righe 682–688
+
+In testa alla sottosezione, sopra *«Dove vivono le voci aperte»*.
+
+⛔ **RICHIAMO DEL 2026-09-09 — il taglio 3 del mandato del proprietario (decisione 26 della stella polare
+della GUI), approvato A.** Questa sottosezione si intitolava *«Le voci ancora aperte, e il racconto che le
+circonda»* e portava, **parola per parola**, il racconto di ogni voce aperta dei Traguardi 3–5 — il debito
+dichiarato dello sfoltimento del 2026-08-28. Ogni voce è stata censita **una per una** contro gli indici che
+esistono già, e il racconto sta in [`archivio/stato-storico.md`](stato-storico.md), parola per parola;
+qui restano gli **indici**. ⚠️ **Due voci vivevano SOLO nel racconto**, e sono le ultime due righe della tabella
+qui sotto.

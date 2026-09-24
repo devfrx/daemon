@@ -140,3 +140,25 @@ Il peso che cresce senza freno sta nelle **note di memoria** (tre file, circa 41
 piano della parte 2 (circa 183 000 token su 740 000) e nel **lavoro** di ogni sessione. `HANDOFF.md` (circa 124 000) si legge un
 gotcha alla volta, e la mediana di un gotcha è sotto i 500 token: il consiglio è **lasciarlo**. I comandi e il verbale prima e
 dopo vanno in `riferimenti.md` alla chiusura, nella sezione *«Sfoltimento del compendio»*.
+
+## La chiusura del verbale, del 2026-09-23 — archiviata il 2026-09-24
+
+⚠️ **Vera il giorno in cui fu scritta.** Uscita dal [verbale](../superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md)
+quando la sessione della compressione del compendio ha scritto la propria: un documento vivo tiene **una** chiusura
+(`CLAUDE.md`). Parola per parola, coi link riscritti per questa cartella, e col titolo sceso di un livello.
+
+### Come si riprende — scritto alla chiusura della sessione del 2026-09-23
+
+⛔ **DA SAPERE SUBITO: niente è a metà.** Albero pulito, nessuno stash, nessuna operazione git a metà, tutto pushato, nessun server acceso, nessun subagente in corso, nessun codice di prodotto toccato.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin`: `git fetch --all --prune`, poi `git status -sb` |
+| **i commit della sessione** | `git log --oneline 61c8450..HEAD` |
+| **la CI** | coi due comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), il paragrafo *«Leggere la CI da terra»*: si leggono **per primi** i commit di questa sessione |
+| **cancello** | `bash scripts/gate.sh`, **da solo**, → `GATE GREEN` prima di ogni commit della sessione; `bash scripts/check-docs.sh` → `OK` |
+| **la memoria dell'agente** | fuori dal repository, su questa macchina: le tre note riscritte come regole corte, e con loro la nota sul consumo della lettura; gli originali byte per byte in `~/.claude/projects/C--Users-zagor-Desktop-harness/memory-archivio/`, che non si carica. Un'altra macchina ha la sua memoria: le regole che contano per tutte ora stanno in `CLAUDE.md` |
+
+**Il compito della sessione successiva** lo dice la §6 del compendio: il **design system** — la rilettura del proprietario
+del disegno, poi il piano in una sessione nuova, come dice la sezione *«Come si riprende»* del
+[disegno](../superpowers/specs/2026-09-22-design-system-design.md).

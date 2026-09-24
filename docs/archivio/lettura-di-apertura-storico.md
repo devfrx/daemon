@@ -436,3 +436,152 @@ Stava in coda alla cella, dopo *«invece di copiare.»*.
 >
 > Un documento di stato disallineato è peggio di nessun documento: **mente con
 > autorevolezza**.
+
+## La compressione del compendio · 2026-09-24
+
+⛔ **Il mandato del proprietario del 2026-09-24** — comprimere senza perdite il [compendio](../COMPENDIO.md) con la skill `lean-docs`, fuori dalla §5 e dalla tabella delle voci aperte della §6, ogni sezione portata in A/B e decisa, su delega del proprietario, coi cinque criteri di `decision-principles` — ha riscritto i blocchi qui sotto. Stanno qui **parola per parola**, coi soli link riscritti per questa cartella; i numeri di riga sono quelli del compendio **prima** della passata, e quelli della §6 stanno in [`stato-storico.md`](stato-storico.md).
+
+### la testa — righe 1–32
+
+Righe 1–32: le quattro note in testa e la riga della data, coi suoi due capoversi.
+
+# Compendio — l'architettura intera, in un colpo solo
+
+> 🎯 **A cosa serve questo file.** È l'unica lettura obbligatoria all'inizio di una
+> sessione. Contiene **tutte** le decisioni del progetto — non quelle che sembrano
+> pertinenti al compito di oggi: **tutte** — ciascuna compressa a poche righe.
+>
+> ⚠️ **La differenza che conta.** Questo file non è una *selezione*, è una
+> *compressione*. Leggere solo gli ADR «pertinenti» fa perdere le decisioni che danno
+> forma al lavoro in modo indiretto, e il modo di fallire è che non sai nemmeno che
+> esistono. Qui ci sono tutte: sparisce il **perché** lungo, non la **decisione**.
+>
+> 📖 **Come si usa.** Leggi questo file per intero. Poi, se e solo se ti serve il
+> ragionamento dietro una decisione — le alternative scartate, le misure, i costi
+> accettati — apri **quel** file. Uno, non tutti. La §12 dice quale.
+>
+> ⛔ **Cosa NON fare.** Non aprire `HANDOFF.md`, la spec del sotto-progetto 1, o la
+> cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte**
+> (812 KB in byte LF il 2026-08-27, e possono solo crescere — la spec da sola ne fa 298), e
+> l'idea è già qui.
+
+**Aggiornato il 2026-09-23**, col **ridimensionamento della lettura** eseguito — la cronaca delle correzioni fuori dalle sezioni che non sono la §6, in [`archivio/lettura-di-apertura-storico.md`](lettura-di-apertura-storico.md) — e il puntatore della §6 al design system — disegno riletto, piano in scrittura — e al 13; l'ultimo contenuto di merito è la voce di ADR-0029, riscritta allo stato di oggi. Il testo com'era, con le sedici riprese, è in [`archivio/stato-storico.md`](stato-storico.md). Manutenzione: §13.
+⚠️ **Questa riga ha sbagliato due volte su due, e la seconda è il finding AUD-034.** Diceva
+**2026-08-11** dopo decine di passate; poi **2026-08-25**, mentre `f2bc784` — un'ondata di
+correzione — l'aveva riscritto nel merito il **2026-08-26**. È il gotcha **#31** sull'intestazione,
+che nessuno rilegge perché è la cornice e non il contenuto: la stessa forma trovata **quattro**
+volte su [`HANDOFF.md`](../HANDOFF.md).
+⛔ **E la causa è strutturale, REGISTRATA E NON PRESA perché tocca il modo di lavorare:** la §13
+aggancia la manutenzione a *«ADR nuovo, ADR superato, voce chiusa, gotcha nuovo, misura nuova,
+decisione dello stack, cambio del prossimo passo»*, e **nessuno** di quei ganci copre una
+**riscrittura di merito dentro una riga che c'è già** — quindi nulla richiama la data, e infatti
+l'ha riportata qui il rimedio di un audit e non la manutenzione. Aggiungere un gancio cambia la
+§13, ed è del **proprietario**.
+
+### §1, il ritratto — righe 38–54
+
+Il corpo della §1, sotto il titolo.
+
+Assistente desktop locale, utente singolo, Windows primario poi Linux, **GPU singola
+RTX 5080 da 16 GB**, OpenRouter primario con inferenza locale opzionale.
+
+**Piattaforma a quattro pilastri paritari** — conversazione e conoscenza, agenti e
+coding, voce e gesti, generazione asset 3D — su un **kernel comune**. Nessun pilastro prevale,
+nessuno ha accesso privilegiato al kernel.
+
+Il vincolo dominante **non è funzionale ma di risorsa**: quattro aree che si contendono
+una sola GPU da 16 GB.
+
+**Il kernel non implementa nessuna funzionalità utente: fornisce i meccanismi.**
+
+⚠️ **Questo non è un repository di sola documentazione.** Il codice del prodotto si
+scrive qui, e vive in [`../crates/`](../../crates/): cinque crate, con `kernel` e `simulator`
+in `no_std` — e, dal sotto-progetto 2, in [`../gui/`](../../gui/): la SPA e il core finto `gui/fake-core/`, fuori dal
+workspace e provati da `scripts/gate-gui.sh` (richiamo del 2026-09-22, E232 del [piano della parte 2](../superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md)). Gli spike in `spikes/` restano
+**prove**, fuori dal workspace.
+
+### §10, la trappola 6 — righe 819
+
+La riga intera.
+
+| **6** | ⛔ **Il controllo dei link NON verifica i FRAMMENTI, e un'ancora pura è INVISIBILE — misurato il 2026-08-28.** Il passo estrae con `grep -o '](../\([^)#]*\.md\)[^)]*)'` e poi taglia con `cut -d'#' -f1`, quindi un rimando *«parentesi-quadra-chiusa, tonda, `file.md`, cancelletto, ancora»* è controllato **solo** per la parte `file.md`, e la forma **senza file** — solo `#ancora`, un rimando dentro lo stesso documento — **non viene nemmeno estratta**. ✅ **Provato sulla pipeline vera**, tre casi in un file temporaneo: quello con un file esistente e quello con file **più** ancora inventata escono **entrambi senza il frammento**; quello con la sola ancora **non esce affatto**. ⚠️ **E gli esempi qui sopra sono scritti a parole per FORZA:** scritti nella loro sintassi vera facevano **rosso il cancello** — `broken link: docs/COMPENDIO.md -> vero.md` — perché il controllo **non distingue un esempio da un rimando**, che è il cugino della trappola **5**. 📌 **Quindi un'ancora è un rimando che nessun controllo difende**, e marcisce in silenzio quando un titolo cambia: una sezione si **nomina** invece di collegarla, oppure si accetta il rischio **sapendolo**. Trovata scrivendone una chiudendo AUD-013, e tolta prima del commit |
+
+### §12, la tabella e la sua coda — righe 863–929
+
+Dal primo capoverso della §12 al suo ultimo, prima del filetto.
+
+Apri **un** file, quello che serve. Non la cartella.
+
+| Se ti serve… | Apri |
+|---|---|
+| ⛔ **il verbale del SECONDO audit completo, e la sua DELEGA** — i 73 finding con causa radice, riproduzione e stato, le sette radici, e la sezione *«Come si concludono quelli aperti»*, che è la **ricetta**: lo stato alla consegna, ciò che NON è verificato, la disciplina in cinque passi e l'ordine consigliato. ⛔ **La colonna «Stato» di quel rapporto è la CASA UNICA di quali finding siano chiusi** — non si ricopia altrove. ⚠️ **Si legge a FINDING, mai intero.** | [`audit-2026-08-27.md`](../audit-2026-08-27.md) — ⚠️ **a finding, mai intero** |
+| il **verbale del primo audit completo** — le quattro radici, i finding con causa radice e dimostrazione, ciò che è stato verificato **pulito**, e la §8 con le otto decisioni, **tutte eseguite** fra il 2026-08-17 e il 2026-08-18. ⛔ **Si apre per il METODO, non per il compito:** è il posto in cui si legge come un rimedio si prezza leggendo il codice invece del rapporto — più piccolo, più grande, o di specie diversa. | [`audit-2026-08-11.md`](../audit-2026-08-11.md) — oggi una **consultazione** |
+| il **perché** di una decisione, le alternative scartate, i costi accettati | `docs/adr/<numero>-*.md` — **uno solo** |
+| il **come** del sotto-progetto 1: §0–§8 con le evidenze delle misure | [`specs/2026-08-06-sottoprogetto-1-kernel.md`](../superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — ⚠️ **a sezioni, mai intera** |
+| ⛔ **il perimetro del Traguardo 5** — l'arbitro: quanto ne costruisce, le forme che la §5 descrive a parole, e per ogni artefatto **il controllo che lo esercita**. ⛔ **Si legge PRIMA di scriverne il piano**, ed è il file da cui si riprende | [`specs/2026-08-18-…-traguardo-5-arbitro-gpu-design.md`](../superpowers/specs/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu-design.md) — ⚠️ **non è una spec**: è lo scaglionamento e le forme che la §5 non fissa |
+| ⛔ **come si ESEGUE il Traguardo 5** — tredici compiti in cinque parti, col codice per ogni passo, le mutazioni da provare e i comandi. ⚠️ **L'errata in testa si legge PRIMA del compito**, e il pre-controllo del piano — le sette voci — sta subito sotto | [`plans/2026-08-18-…-traguardo-5-arbitro-gpu.md`](../superpowers/plans/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu.md) — ⚠️ **a compiti, mai intero** |
+| ⛔ **il perimetro del Traguardo 6** — gli altri meccanismi, le forme, il controllo per artefatto, e la **§8** col verbale della sua chiusura | [`specs/2026-08-28-…-traguardo-6-altri-meccanismi-design.md`](../superpowers/specs/2026-08-28-sottoprogetto-1-traguardo-6-altri-meccanismi-design.md) |
+| ⛔ **come si è ESEGUITO il Traguardo 6** — dieci compiti in cinque parti, con l'errata in testa | [`plans/2026-08-30-…-traguardo-6-altri-meccanismi.md`](../superpowers/plans/2026-08-30-sottoprogetto-1-traguardo-6-altri-meccanismi.md) — ⚠️ **a compiti, mai intero** |
+| ⛔ **come si è CHIUSO il sotto-progetto 1** — le condizioni della §0.7 rilette contro il codice, e la **§7** col verbale | [`specs/2026-09-02-…-chiusura-design.md`](../superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md) |
+| il piano della chiusura, con l'errata in testa e la tabella della posizione | [`plans/2026-09-02-…-chiusura.md`](../superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md) |
+| ⛔ **il perimetro del RICONOSCIMENTO GESTI** — la forma della telecamera nel kernel, il registro delle funzioni, le decisioni col loro chiusore, e per ogni artefatto il controllo che lo esercita | [`specs/2026-09-03-riconoscimento-gesti-design.md`](../superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) — ⚠️ **non è una spec** |
+| come si è **eseguito** il riconoscimento gesti — i due ADR, i rimandi, la roadmap, SP-7 e la sonda S3, con l'errata in testa e la tabella della posizione | [`plans/2026-09-03-riconoscimento-gesti.md`](../superpowers/plans/2026-09-03-riconoscimento-gesti.md) — ⚠️ **a compiti, mai intero** |
+| ⛔ **il perimetro della KNOWLEDGE BASE** — che cosa la mappa chiede al kernel e dove va: la strada B, i tre meccanismi del sotto-progetto 13 con le due pretese, le CRUD nel registro delle funzioni, il pannello col 6, le decisioni col loro chiusore, e per ogni artefatto il controllo che lo esercita | [`specs/2026-09-04-knowledge-base-design.md`](../superpowers/specs/2026-09-04-knowledge-base-design.md) — ⚠️ **non è una spec**, e **non disegna la capacità** |
+| come si è **eseguito** il piano dei documenti della knowledge base — i rimandi in testa a quattro ADR e nella riga di ADR-0039, la riga 13 in roadmap, le righe di tracciabilità, la decisione 7 dei gesti chiusa, con l'errata in testa e la tabella della posizione | [`plans/2026-09-04-knowledge-base-documenti.md`](../superpowers/plans/2026-09-04-knowledge-base-documenti.md) — ⚠️ **a compiti, mai intero** |
+| ⛔ **la direzione della GUI** — le viste, i moduli, la disposizione, il protocollo core ↔ GUI, e la tabella delle decisioni col loro chiusore | [`specs/2026-09-07-direzione-gui-design.md`](../superpowers/specs/2026-09-07-direzione-gui-design.md) — ⚠️ **non è una spec**: è la stella polare, e si legge **per intero** da chi riprende il fronte GUI. ⚠️ **Richiamo del 2026-09-23:** nel brainstorming del design system si legge **a pezzi**, e per intero prima di scriverne il disegno — decisione del proprietario, risposta 7 della [consegna](../superpowers/specs/2026-09-22-design-system-design.md) |
+| ⛔ **il perimetro della GUI minima** — che cosa il 2 costruisce e che cosa no, il filo, lo schema, il registro, il core finto, le prove e il cancello, le decisioni aperte col chiusore | [`specs/2026-09-06-sottoprogetto-2-gui-minima-design.md`](../superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) — ⚠️ **non è una spec**; la **§10** dice come si riprende |
+| come si è **eseguita la parte 1** — SP-8, i due gusci misurati, ADR-0029 chiuso | [`plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md`](../superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md) — ⚠️ **a compiti, mai intero** |
+| ⛔ **come si è ESEGUITA la parte 2** — il filo, la settima porta, il registro, il daemon, la SPA, il cancello web, X-1 e X-3; con l'errata in testa, la tabella della posizione e la **Definizione di «fatto»** | [`plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md`](../superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md) — ⚠️ **a compiti, mai intero** |
+| ⛔ **il perimetro del Traguardo 4** — quanto ne costruisce, dove vive ciascun pezzo, e per ogni artefatto **il controllo che lo esercita**. Si legge **prima** di scriverne il piano | [`specs/2026-08-11-…-traguardo-4-simulatore-dst-design.md`](../superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) — ⚠️ **non è una spec**: è lo scaglionamento che la §3 non fissa |
+| il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](../superpowers/specs/2026-08-06-kernel-design.md) |
+| il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](../HANDOFF.md) — ⚠️ **a sezioni** |
+| ⛔ **cosa una sezione deve incassare, prima di proporle una modifica** | [`HANDOFF.md`](../HANDOFF.md) — il **consuntivo voce per voce**: cosa era stato deciso, dove è finito, e cosa resta da scrivere. È **autorevole**, e si legge **prima** di proporre, non dopo. ⚠️ **La sezione, non il file** |
+| l'ordine dei sotto-progetti e le dipendenze — quanti siano lo dice la tabella di quel file | [`roadmap.md`](../roadmap.md) |
+| dove vive una funzionalità della mappa originale | [`tracciabilita.md`](../tracciabilita.md) — ⚠️ **leggi il riquadro in testa**: risponde a «dove vive», **non** a «di quale meccanismo ha bisogno». È la crepa da cui sono uscite le sette voci |
+| **dove vive ogni controllo** della porta, riga per riga sul catalogo §7.4, e cosa **non** è coperto | [`porta-di-qualita.md`](../porta-di-qualita.md) |
+| ⛔ **perché un seme NON è un oracolo**, e cosa identifica un caso in ciascuna delle due campagne DST — al livello 2 *«un seme»* **non esiste** | [`semi-dst.md`](../semi-dst.md) — ⚠️ **nasce vuoto**, e la riga vuota è deliberata; ⛔ **è CRLF integrale**, misurato il 2026-08-25 |
+| la **strategia di test** — è la fonte di verità sulla porta di qualità, e mappa Q1–Q24 → metodo | [`design/08-strategia-di-test.md`](../design/08-strategia-di-test.md) |
+| la **topologia dei processi** — contiene la tensione che F1b deve conciliare | [`design/01-topologia-dei-processi.md`](../design/01-topologia-dei-processi.md) |
+| gli altri diagrammi della struttura | [`design/`](../design/) — quanti lo dice `ls docs/design/` |
+| gli **esiti degli spike**, con seed, versioni e comandi | [`../spikes/RISULTATI.md`](../../spikes/RISULTATI.md) |
+| i requisiti della GUI, G1–G21 e P1–P4 | [`../spikes/GUI-REQUISITI.md`](../../spikes/GUI-REQUISITI.md) |
+| la **provenienza** di ciò che non abbiamo dedotto noi, con le date | [`riferimenti.md`](../riferimenti.md) |
+| il **modello** di come si scrive un piano qui, con l'errata in testa | [`plans/2026-08-06-spike-linguaggio-del-core.md`](../superpowers/plans/2026-08-06-spike-linguaggio-del-core.md) |
+| ⛔ **cosa il piano del Traguardo 1 detta e il repository smentisce** — quattro voci, prima fra tutte gli identificatori italiani | [`plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md`](../superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) — ⚠️ **solo l'errata in testa**, il resto è eseguito |
+| ⛔ **come si esegue un piano qui, e le quattro specie di difetto** — è il piano del Traguardo 2, **eseguito per intero**, con quarantanove voci di errata in sei passate | [`plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md`](../superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) — ⚠️ **a compiti, mai intero**. |
+| ⛔ **come si esegue un piano, e come si CHIUDE un traguardo** — è il piano del Traguardo 3, **eseguito per intero**, dodici compiti su dodici. ⚠️ **L'errata in testa si legge prima del compito**, ed è a **settantasette voci in nove passate**, di cui **nove decisioni**; le ultime tre sono la **Definizione di «fatto» che invecchia** | [`plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md`](../superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) — ⚠️ **a compiti, mai intero** |
+| ⛔ **come si esegue un piano quando il pre-controllo trova un difetto in DIECI compiti su dieci** — è il piano del Traguardo 4, **eseguito per intero**. ⚠️ **L'errata in testa è a settanta voci in nove passate, di cui dodici DECISIONI**, e si legge **prima** di riaprire qualunque cosa che quel traguardo abbia toccato | [`plans/2026-08-11-…-traguardo-4-simulatore-dst.md`](../superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md) — ⚠️ **a compiti, mai intero** |
+| l'indice di ADR e diagrammi | [`README.md`](../README.md) |
+| ⛔ **il messaggio da incollare all'inizio di una chat**, e il perché di ogni sua riga | [`AVVIO-CHAT.md`](../AVVIO-CHAT.md) — ⚠️ **il peso del messaggio lo dà il comando sotto questa tabella**, non questa cella: il **metodo** sono le righe **fra le due recinzioni, escluse**, o due lettori onesti ottengono due numeri (59ª misura). ⚠️ **Dal 2026-09-09 il proprietario non lo incolla più** (decisione 32 della stella polare della GUI): il file resta com'è, e non è lettura d'apertura |
+
+⚠️ **I pesi non stanno più in questa tabella, e non è una svista.** Un peso scritto
+invecchia al primo commit che tocca il file; il comando che lo produce no:
+
+```
+find docs -name '*.md' | xargs wc -c | sort -n
+```
+
+📌 **E il messaggio di [`AVVIO-CHAT.md`](../AVVIO-CHAT.md), che ha un perimetro proprio** — le
+righe fra le due recinzioni, escluse:
+
+```
+awk '/^```$/{n++} n==1 && !/^```$/{c++; b+=length($0)+1} END{print c" righe, "b" byte"}' docs/AVVIO-CHAT.md
+```
+
+📚 **Le misure storiche** — il verbale di come i pesi sono cambiati dal
+2026-08-08 al 2026-08-28 — stanno in
+[`archivio/misure-dimensioni.md`](misure-dimensioni.md). ⛔ **Non è una lettura
+obbligatoria:** si apre con una domanda storica in mano, non per farsi un'idea.
+
+⚠️ Ed è la ragione per cui la frase in testa dice «oltre mezzo megabyte» invece di una cifra:
+**un limite inferiore misurato resta vero mentre i documenti crescono, una cifra esatta no.**
+
+⚠️ **Prima di ogni commit di documentazione:** `bash scripts/check-docs.sh`
+
+### §13, il messaggio d'avvio — righe 949–951
+
+Stava fra la tabella dei controlli e *«Cosa aggiornare, e quando»*.
+
+📋 **Il messaggio da incollare all'inizio di una chat** vive in
+[`AVVIO-CHAT.md`](../AVVIO-CHAT.md). Non nomina il prossimo passo, deliberatamente: lo
+stato sta nella §6, in un posto solo.

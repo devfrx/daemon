@@ -2382,6 +2382,31 @@ la lettura d'apertura. La sessione che ha scritto il disegno del design system n
 diari, il **diario delle chiusure** dei piani — circa 183 000 token su 740 000 in quello della parte 2 — e i **puntatori**
 che mandano una sessione dentro un file enorme per due righe, come i comandi della CI.
 
+### La compressione del compendio — 2026-09-24: la passata senza perdite, e il verbale
+
+⛔ **Non più cronaca da spostare, ma doppioni da togliere**, con la skill `lean-docs`: ogni blocco riscritto sta in archivio
+**parola per parola**, e la prova è meccanica — nessuna àncora persa, nessun link rotto, e dieci blocchi su dieci uguali
+all'originale a meno dei link riscritti per la cartella. Il mandato e le decisioni stanno nel
+[verbale](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md), sezione del 2026-09-24. Il conto per sezione
+del compendio, sottosezioni comprese:
+
+```bash
+python -c "import io,re,tiktoken; e=tiktoken.get_encoding('cl100k_base'); t=io.open('docs/COMPENDIO.md',encoding='utf-8').read(); [print(len(e.encode(s)), s.split(chr(10))[0][:60]) for s in re.split(r'(?m)^(?=##+ )',t)]"
+```
+
+📌 **Il verbale del 2026-09-24**, `cl100k_base`, limite inferiore: `docs/COMPENDIO.md` da **31 931** a **29 214** token, da
+**97 980** a **90 095** byte in un albero CRLF. Preso ciascun taglio da solo: la §6 fuori dalla tabella delle voci aperte
+**1 748**, la §12 **606**, la testa con la §13 **215**, la §1 **106**, la trappola 6 della §10 **104**.
+
+⚠️ **La stima detta prima della misura era 3 000–6 000, il misurato è 2 717** — di nuovo una stima a occhio sbagliata per
+eccesso sul guadagno. E il grasso che resta sta dove questa passata non entrava: la §5 è la compressione degli ADR, e la
+tabella delle voci aperte della §6 è del proprietario — la sua riga sulla durabilità, da sola, pesava il giorno della
+passata **768** token, in gran parte il verbale di una cella che *«ha detto il falso»*:
+
+```bash
+python -c "import io,tiktoken; e=tiktoken.get_encoding('cl100k_base'); L=io.open('docs/COMPENDIO.md',encoding='utf-8').read().split(chr(10)); print([len(e.encode(l)) for l in L if 'CHIUSA NELLA METÀ CHIUDIBILE' in l])"
+```
+
 ---
 
 ## Riconoscimento gesti dalla telecamera — le fonti del disegno del 2026-09-03 (ADR-0038, ADR-0039)

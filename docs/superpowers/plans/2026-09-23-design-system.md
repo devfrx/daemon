@@ -225,7 +225,7 @@ che il disegno lasciava al piano; ciascuna si ribalta con una riga.
 | **D15** | **la domanda della conferma vive nel negozio, `useInvoke().asking`**, e `Confirm.vue` la legge da lì | la leggono in due — la finestra e F3 della cornice — e due copie della regola di D59 divergerebbero (gotcha #68). Costo: un getter in più nel negozio |
 | **D16** | **F3 tace anche mentre il cassetto è aperto**, non solo sotto la conferma | la ragione del *«Come si riprende»* — una finestra modale sopra un'altra ne copre la domanda — vale per il cassetto allo stesso modo. Costo: col cassetto aperto F3 non fa niente, ed Esc lo chiude |
 | **D17** | **una carta sola nel giro del Tab**, l'ultima che le frecce hanno raggiunto, e il fuoco apre sulla vista che si vede | la decisione 19 del disegno lasciava al piano *«come si tiene il fuoco su un elemento solo»*; col Tab su ogni carta la griglia costerebbe un tasto per carta. Costo: a *«Salva questa vista»* si arriva con le frecce |
-| **D18** | **la miniatura di Compatta è il suo schema, non una «finestrella»** | la (d) scrive *«Compatta come una finestrella»*, dalla tavola della risposta 13; la risposta 19 ha deciso poi gli schemi *«dalla disposizione salvata»*, che *«dicono sempre il vero»* — e la Compatta di oggi è una disposizione a finestra piena, un segnaposto che dice di esserlo: la sua forma vera è del sotto-progetto 10. Una finestrella disegnata direbbe ciò che non è. Costo: fino al 10 la miniatura di Compatta mostra la knowledge base a tutta pagina. ⚠️ **Del proprietario**, se la vuole come nella tavola |
+| **D18** | **la miniatura di Compatta è il suo schema, non una «finestrella»** | la (d) scrive *«Compatta come una finestrella»*, dalla tavola della risposta 13; la risposta 19 ha deciso poi gli schemi *«dalla disposizione salvata»*, che *«dicono sempre il vero»* — e la Compatta di oggi è una disposizione a finestra piena, un segnaposto che dice di esserlo: la sua forma vera è del sotto-progetto 10. Una finestrella disegnata direbbe ciò che non è. Costo: fino al 10 la miniatura di Compatta mostra la knowledge base a tutta pagina. ✅ **Scelto dal proprietario il 2026-09-24 — A**, lo schema, alla chiusura della sessione che ha scritto il compito 9 |
 | **D19** | **la riga del disegno in `README.md` e la riga di questo piano nella roadmap si scrivono nel commit che scrive il compito 9**, non dal compito 9 | P-26 e P-27: la prima è falsa oggi, e la seconda è il precedente della parte 2 — un piano scritto sta nella tabella dei piani prima di essere eseguito. Costo: il compito 9 tocca le due righe una seconda volta, per l'esecuzione |
 | **D20** | **la Definizione di «fatto» si scrive ORA, coi comandi e le uscite attese dai compiti; il compito 9 la esegue riga per riga e scrive accanto a ogni comando l'uscita vista, con la data** | unisce la forma dei Traguardi 1–4, la definizione scritta col piano, e quella di D74 della parte 2, comandi con le uscite vere. Un'uscita che diverge dall'attesa è una voce d'errata, non un'attesa nuova. Costo: un'attesa di oggi può essere sbagliata al compito 9 — ed è il punto: *«un'evidenza scritta prima della misura è un'ipotesi»* (`CLAUDE.md`) |
 | **D21** | **C-S0-1, corretta dal compito 9, resta nella tabella delle contraddizioni con un ✅ datato**, e il segno `⚠️ **[C-S0-1]**` sotto la tabella dei passi esce | è la forma di X-1 e X-3 nella tabella dell'audit, che resta la casa unica anche delle voci chiuse; togliere la riga lascerebbe la sessione delle contraddizioni senza sapere che una è già fatta. Costo: una tabella intitolata *«non risolte»* porta una riga risolta, finché quella sessione non ne decide la forma |
@@ -7949,12 +7949,11 @@ della posizione ✅, la 9 ⬜. `GATE GREEN.`
 invece di scrivere righe doppie. ⚠️ **Se la tabella dei passi ha già nove righe**, C-S0-1 l'ha corretta la sessione delle
 contraddizioni: la parte del Passo 7 che la riguarda **non** si fa, e lo si dice nel commit.
 
-⚠️ **Due cose del proprietario, che si guardano adesso e non alla fine:**
+⚠️ **Una cosa del proprietario, che si guarda adesso e non alla fine** — ✅ la seconda, **D18**, l'ha scelta il 2026-09-24, **A**:
 
 | | Dove si guarda | Se manca |
 |---|---|---|
 | il **giudizio sull'aspetto del dock** (controllo 15, passo 8 del compito 6) | la cella Stato della riga 6, o una voce d'errata che nomina il controllo 15: `grep -n 'controllo 15' docs/superpowers/plans/2026-09-23-design-system.md` | il coordinatore lo chiede prima del commit (**D24**), in A/B — *«approvato»* o *«non approvato, e perché»* —, e la risposta va nella Definizione di «fatto», blocco 5 |
-| **D18**, la miniatura di Compatta | la sua riga, fra le decisioni prese scrivendo il piano | niente: vale il consiglio del coordinatore finché il proprietario non la ribalta; lo si dice nel blocco 5 |
 
 - [ ] **Passo 2: `tracciabilita.md` — la riga «Accessibilità», e il riquadro**
 
@@ -8289,7 +8288,7 @@ piena — e la **Definizione di «fatto»**, coi comandi e le uscite del giorno.
 `` `git log -1 --format=%h --grep='^design-system(compito 9):'` ``.
 
 **Tre.** *«Come si riprende»* si riscrive con la chiusura del piano — ciò che resta aperto e dove vive: le voci che il piano sa e
-non chiude, le voci d'errata senza esito, D18 e il giudizio del controllo 15 se sono del proprietario, la CI del commit da leggere
+non chiude, le voci d'errata senza esito, il giudizio del controllo 15 se è del proprietario, la CI del commit da leggere
 per prima —; la chiusura di prima va **parola per parola** in coda a `docs/archivio/consegna-piano-design-system.md`, nella forma
 delle sezioni che vi stanno — un'intestazione con la data, il capoverso *«Tolto dal piano il …»*, i rimandi riscritti per quella
 cartella.
@@ -8472,7 +8471,6 @@ compito 1 — o in una voce d'errata. Un nome senza casa è una voce d'errata nu
   alla domanda del compito 9 (**D24**);
 - ⛔ **M-3 col lettore di schermo vero**: il verbale nella cella Stato della riga 5 della posizione, e l'esito nella (e) del
   disegno (Passo 10 del compito 9);
-- ⚠️ **D18**, la miniatura di Compatta: il consiglio del coordinatore, se il proprietario non l'ha ribaltata;
 - ⛔ **la CI del commit del compito 9**: i due job, `gate (ubuntu-latest)` e `gate (windows-latest)`, letti coi due comandi di
   `docs/porta-di-qualita.md`, *«Leggere la CI da terra»* — la casa unica di quei comandi, che qui non si ricopiano;
 - ⚠️ **le voci che questo piano sa e non chiude** restano nella loro tabella, in testa al piano, col loro chiusore.
@@ -8492,14 +8490,14 @@ della parte 2; scrivendoli sono venuti **P-26**…**P-30** e **D19**…**D24**. 
 in `docs/README.md`, falsa dal 2026-09-23, riscritta (P-26); la riga di questo piano nella tabella dei piani della roadmap, con
 l'intestazione (P-27); e il puntatore della §6 del compendio, che dice il piano scritto. ✅ **Il proprietario ha scelto,
 all'apertura:** prima il compito 9, e le contraddizioni di `porta-di-qualita.md` dopo, in una sessione loro che **non ha ancora
-collocato** — tranne **C-S0-1**, che il compito 9 corregge dove scrive il browser (P-29). ⚠️ **D18** resta da rileggere dal
-proprietario, e la voce 🔶 **dedotta** di Ctrl+Alt+frecce sotto una finestra modale resta fra le voci che il piano sa.
+collocato** — tranne **C-S0-1**, che il compito 9 corregge dove scrive il browser (P-29). ✅ **D18** l'ha scelta il
+proprietario alla chiusura, **A**, lo schema — col richiamo datato nella (d) del disegno —; la voce 🔶 **dedotta** di Ctrl+Alt+frecce sotto una finestra modale resta fra le voci che il piano sa.
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
 | **cancello** | `GATE GREEN` all'apertura della sessione e prima del suo commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
-| **la CI** | verdi su tutti e due i sistemi le corse fino a `2a30916`; quella del commit che scrive questa riga **in corso** alla chiusura: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la CI** | verdi su tutti e due i sistemi le corse fino a `03d1abd`, il commit che ha scritto il piano; quella del commit che scrive questa riga — la scelta di D18 — **in corso** alla chiusura: la sessione dopo le legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
 | **codice di prodotto** | non toccato: questa sessione ha scritto documenti, e `dod_suite.py` solo nello scratchpad |
 | **il banco** | la cartella di prova della macchina `zagor`, ramo **`task8`**, com'era: questa sessione non l'ha toccata |
 | **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL-DEV\MY-REPOS\daemon`, Chrome 154 e la sua cartella di prova, **senza** le cure né il compito 8; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, Chrome 153, dove questa sessione ha lavorato. Su tutte e due `LongPathsEnabled` è 0: le cartelle di prova stanno in `%TEMP%`, non nello scratchpad |
@@ -8551,5 +8549,3 @@ R gui/src/tokens/dock.css 7776 7783
 3. Il **pre-controllo del compito 1**, con le quattro domande di `CLAUDE.md` e le righe 5–8 di ciò che non colgono — ⛔ la 5
    soprattutto: il compito si legge contro il codice di **adesso** —; le voci che trova vanno nell'errata, e il dispaccio resta
    pronto su file. Poi l'**esecuzione** del compito 1, in un'altra sessione; e così compito per compito, fino al 9.
-4. ⚠️ **Una domanda al proprietario, quando vuole:** **D18**, la miniatura di Compatta — il consiglio è lo schema della
-   disposizione salvata, e il piano lo segue finché non lo ribalta.

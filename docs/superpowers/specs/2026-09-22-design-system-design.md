@@ -363,7 +363,7 @@ Il pulsante **«Moduli»** scende nella **striscia**, dov'è nella tavola dello 
 
 | | |
 |---|---|
-| **che cos'è** | tutte le viste **in miniatura**, in una griglia: Home, Lavoro, **Compatta come una finestrella**, e le viste salvate col loro nome; la vista corrente in **bordeaux**; l'ultima scheda è **«Salva questa vista»**. Com'è nella [tavola](2026-09-22-design-system-tavole/panoramica.html) (risposta 13) |
+| **che cos'è** | tutte le viste **in miniatura**, in una griglia: Home, Lavoro, **Compatta come una finestrella**, e le viste salvate col loro nome; la vista corrente in **bordeaux**; l'ultima scheda è **«Salva questa vista»**. Com'è nella [tavola](2026-09-22-design-system-tavole/panoramica.html) (risposta 13). ⚠️ **RICHIAMO DEL 2026-09-24 — D18 del [piano](../plans/2026-09-23-design-system.md), scelta A del proprietario:** la miniatura di Compatta è il suo **schema**, come quella delle altre viste (risposta 19), e non una finestrella: la Compatta di oggi è un segnaposto a finestra piena, e la sua forma vera è del sotto-progetto 10 |
 | **le miniature** | **schemi** disegnati dalla disposizione salvata, coi moduli e le loro icone dove stanno: dicono sempre il vero, costano quasi zero e reggono con dieci viste (risposta 19) |
 | **come si apre** | con **F3** o col clic sul nome della vista; le **frecce** muovono, **Invio** entra, **Esc** chiude. ⚠️ I tasti sono quelli della tavola: il piano li **controlla** contro quelli che esistono — `Ctrl+Alt+frecce` sono già dei pannelli, `directionOf` in `gui/src/frame/moveActive.ts` |
 | **su che cosa è costruita** | su **`BaseDialog`**, a tutta finestra (decisione 18): `reka-ui` dà già Esc, il fuoco chiuso dentro e il fuoco che torna al nome della vista |

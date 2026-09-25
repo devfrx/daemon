@@ -180,6 +180,10 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | **E12** | Nit — **Compito 2, Passo 5, la riga del tema che segue il sistema:** tolta `system.addEventListener("change", apply);`, va rossa **anche** la prova del compito 1 sotto jsdom, *«follows the system while the choice is `system`, and stops following when stopped»* di `theme.test.ts`, `expected 'dark' to be 'light'` — la stessa riga, tenuta dal `matchMedia` finto e da quello vero. L'Atteso nominava la sola prova del browser, e chi esegue si sarebbe fermato su una divergenza che non c'è. Misurato il 2026-09-24 dal pre-controllo, sulla copia. ✅ **Corretta** nel commit che la scrive: l'Atteso nomina le due |
 | **E13** | Nit — **Compito 2, Passo 5:** *«Il file usa-e-getta della penultima riga»* — il file sta nell'**ultima** riga della tabella, e le righe di **E10** e **E11** la spostano ancora. Trovata dal pre-controllo il 2026-09-24. ✅ **Corretta** nel commit che la scrive: la riga si **nomina**, *«l'attesa di 5 s»*, invece di contarla |
 | **E14** | ⚠️ **Compito 2, Passo 2 — la seconda direzione della sonda del movimento è verde su un valore vuoto:** guardava **un** nome solo, `--duration-fast`, e chiedeva che non fosse la stringa `0ms`, mentre il commento prometteva *«the durations are the board's»*: una stringa vuota passa — la trappola 1 del disegno, una negazione verde quando non trova niente. Una durata tolta **solo** dal blocco di base di `base.css`, e rimasta in quello del movimento ridotto, la sonda del browser non la vedeva: la prendeva `board.test.ts`, che vuole il foglio della tavola. Trovata dalla revisione del compito 2 (M-2), che l'ha misurata nel clone a `23b3134`: tolta la riga `--duration-fast: 110ms;` dal blocco di base, la prova del movimento resta verde e cade la sola *«base.css is the board's block, byte for byte»*. ✅ **Curata** nel commit che scrive questa riga, col testo proposto dalla revisione: la seconda direzione chiede a **ciascuna** delle tre durate un valore, `toMatch(/^[1-9]\d*ms$/)`, senza ricopiare un valore della tavola (vincolo 2), e il commento lo dice. Misurata dal coordinatore il 2026-09-25 sull'albero, macchina `zagor`: `npm test -- --project browser` → `Tests  5 passed (5)`; con la stessa mutazione → `AssertionError: --duration-fast: expected '' to match /^[1-9]\d*ms$/`, `Tests  1 failed \| 4 passed (5)`; `base.css` tornato dalla copia salvata, `cmp` uguale. Il recinto del Passo 2 è allineato nello stesso commit |
+| **E15** | ⚠️ **Compito 3, Passo 3 — la seconda direzione di *«gli attributi di chi lo usa vanno sull'`input`»* non ha una prova:** la prova di `BaseTextField` guarda che il `placeholder` arrivi all'`input`, e nessuna che **non** arrivi anche alla radice intorno. Tolta `defineOptions({ inheritAttrs: false });` da `BaseTextField.vue`, gli attributi vanno sull'`input` **e** sulla radice — un `@keydown` di chi lo usa girerebbe due volte, sull'`input` e sulla sua risalita —, e `npx vitest run --project jsdom src/components/kit.test.ts` → `Tests  23 passed (23)`. Misurato il 2026-09-25 dal pre-controllo sulla copia `%TEMP%\pc3`, macchina `zagor`, col compito rifatto dal testo del piano. ✅ **Corretta** nel commit che la scrive: nella prova di `BaseTextField`, dopo il `placeholder` dell'`input`, `expect(wrapper.element.hasAttribute("placeholder")).toBe(false);` col perché nel commento — verde sul codice del compito, rossa con la riga tolta, `expected true to be false`, la sola prova del campo —; e una riga nella seconda tabella del Passo 8 |
+| **E16** | ⚠️ **Compito 3, Passo 3 — la cura di R2-18 in `BaseDialog.vue`, nessun `aria-describedby` senza una descrizione, non ha una prova:** tolta la riga del `v-bind` che lo spegne, `reka-ui` 2.10.4 scrive `aria-describedby="reka-dialog-description-v-1"`, che non punta a nessun elemento, e avvisa *«Missing `Description` or `aria-describedby="undefined"` for DialogContent.»* — e le 23 prove restano verdi. Misurato il 2026-09-25 dal pre-controllo sulla copia, con una prova usa-e-getta che falliva dicendo i valori: con la riga, nessun attributo e nessun avviso. ✅ **Corretta** nel commit che la scrive: nella prova di `BaseDialog`, che la apre senza descrizione, `expect(dialog?.hasAttribute("aria-describedby")).toBe(false);` — verde sul codice, rossa con la riga tolta, `expected true to be false`, la sola prova della finestra —; e una riga nella seconda tabella del Passo 8 |
+| **E17** | Nit — **Compito 3, Passo 7 — un commento di `gui/eslint.config.js` che il compito rende falso** (gotcha **#58**): accanto a `vue/multi-word-component-names`, *«Every `.vue` file here but `ViewBar` is single-word (P-99; recounted at the review, R7-11).»* — gli otto `Base*.vue` del compito hanno due parole ciascuno, e nessun compito del piano toccava la frase: `grep -c 'single-word'` sul piano rendeva **0** prima di questa voce. È la specie della quarta sostituzione dello stesso Passo, R2-10. Trovata dal pre-controllo il 2026-09-25. ✅ **Corretta** nel commit che la scrive: una **quinta** sostituzione nel Passo 7, che data il censimento e nomina i pezzi di base; `npm run lint` resta verde, misurato sulla copia |
+| **E18** | Nit — **Compito 3, Passo 8 — il blocco `harness/imports/the-icon-map` non aveva la sua riga rossa:** toglie `lucide` dal divieto per `icons.ts` e ci tiene la regola dei pezzi di base, e la prima tabella provava la prima metà — `icons.ts` importa `lucide`, verde — e non la seconda. Misurato il 2026-09-25 dal pre-controllo sulla copia: con `import { useCore } from "../stores/core";` in `icons.ts`, `npm run lint` → rosso, *«a base piece reads no global state»*. ✅ **Corretta** nel commit che la scrive: una riga nella prima tabella del Passo 8 |
 
 ---
 
@@ -1952,6 +1956,9 @@ describe("BaseTextField", () => {
     const input = wrapper.get("input");
     expect(input.attributes("aria-label")).toBe("Nome della vista");
     expect(input.attributes("placeholder")).toBe("Revisione");
+    // ⛔ THE SECOND DIRECTION: and not on the root around it as well -- a caller's `@keydown` there would run twice, on
+    // the input and on its bubble (E15 of the plan).
+    expect(wrapper.element.hasAttribute("placeholder")).toBe(false);
     await input.setValue("Home");
     expect(text.value).toBe("Home");
     await nextTick();
@@ -2003,6 +2010,9 @@ describe("BaseDialog", () => {
     const dialog = document.querySelector('[role="dialog"]');
     expect(dialog).not.toBeNull();
     expect(document.getElementById(dialog?.getAttribute("aria-labelledby") ?? "")?.textContent).toBe("Serve un permesso");
+    // ⛔ NO DESCRIPTION, NO `aria-describedby` (R2-18 of the review; E16 of the plan): without the component's own
+    // `undefined`, reka-ui 2.10.4 points it at a description that is not there, and warns.
+    expect(dialog?.hasAttribute("aria-describedby")).toBe(false);
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
     await nextTick();
     expect(asked).toEqual([false]);
@@ -2778,7 +2788,7 @@ riga `@ts-expect-error`. Il pezzo JavaScript **non cambia** a questo compito: ne
 
 - [ ] **Passo 7: il linter — i `.ts`, e le regole del kit**
 
-In `gui/eslint.config.js` (`replace_unique.py`), quattro sostituzioni. *Trova*:
+In `gui/eslint.config.js` (`replace_unique.py`), cinque sostituzioni. *Trova*:
 
 ```js
 import vue from "eslint-plugin-vue";
@@ -2896,6 +2906,20 @@ const ABOVE = {
      * their TYPES stay with `vue-tsc` inside `npm run build`, the level 1 of the web world (R2-10 of its review).
 ```
 
+*Trova* — nel commento di `vue/multi-word-component-names`, la frase che gli otto pezzi di base smentiscono (**E17**; gotcha #58):
+
+```js
+       * Every `.vue` file here but `ViewBar` is single-word (P-99; recounted at the review, R7-11).
+```
+
+*Sostituisci con:*
+
+```js
+       * When it was turned off, every `.vue` file here but `ViewBar` was single-word (P-99;
+       * recounted at the review, R7-11); from the design system's task 3 on, the kit's base
+       * pieces are `Base*`, two words by name.
+```
+
 ```bash
 (cd gui && npm run lint)
 ```
@@ -2912,6 +2936,7 @@ Una alla volta, `npm run lint` dopo ciascuna, poi indietro con la **copia salvat
 | La violazione messa a mano | Atteso |
 |---|---|
 | in `src/components/BaseLabel.vue` la riga `import { useCore } from "../stores/core";` | **rosso**: *«a base piece reads no global state»* |
+| in `src/components/icons.ts` la riga `import { useCore } from "../stores/core";` | **rosso**: lo stesso messaggio, dal blocco della mappa, che toglie `lucide` dal divieto e tiene la regola dei pezzi di base (**E18**) |
 | in `src/frame/moveActive.ts` la riga `import { Search } from "lucide";` | **rosso**: *«icons pass through BaseIcon»* — ⛔ è la prova che i `.ts` ora si leggono |
 | in `src/components/BaseButton.vue` la riga `import { Search } from "lucide";` | **rosso**: lo stesso messaggio, dal blocco dei pezzi di base |
 | in `src/components/Confirm.vue` la riga `import { PANEL_TYPES } from "../panels/registry";` | **rosso**: *«the kit knows no layer above it»* — un pezzo composto legge i negozi, non gli strati sopra (R2-11) |
@@ -2925,6 +2950,8 @@ src/components/kit.test.ts` dopo ciascuna, poi indietro con la copia salvata:
 |---|---|
 | in `src/components/icons.ts` tolta la riga `models: Cpu,` | **rosso**: `expected [ 'models' ] to deeply equal []` |
 | in `src/components/BaseStatus.vue` la regione dentro un `v-if` che la fa nascere solo quando lo slot disegna qualcosa che non è un commento — `(slots.default?.() ?? []).some((node) => node.type !== Comment)` —: il difetto di M-3 | **rosso**: `Unable to get [role="status"] within: <!--v-if-->`. ⚠️ Un `v-if="$slots.default"` qualunque resta **verde**, e a ragione: chi usa `BaseStatus` passa sempre lo slot, anche quando disegna `null` |
+| in `src/components/BaseTextField.vue` tolta la riga `defineOptions({ inheritAttrs: false });` | **rosso**: `expected true to be false`, alla prova di `BaseTextField` (**E15**) |
+| in `src/components/BaseDialog.vue` tolta la riga `v-bind="description === undefined ? { 'aria-describedby': undefined } : {}"` | **rosso**: `expected true to be false`, alla prova di `BaseDialog` che la apre senza descrizione (**E16**) |
 
 ⚠️ **Il linter non ha una guardia di non-vacuità**: se un `files` smettesse di trovare i suoi file, le regole tacerebbero
 col verde. La prova delle due direzioni si rifà a mano in ogni compito che tocca `eslint.config.js`; una guardia statica è
@@ -8532,51 +8559,100 @@ compito 1 — o in una voce d'errata. Un nome senza casa è una voce d'errata nu
 
 ---
 
-## Come si riprende — l'esecuzione del compito 2, 2026-09-25
+## Come si riprende — il pre-controllo del compito 3, 2026-09-25
 
-✅ **Il compito 2 è eseguito, rivisto e curato.** La consegna precedente — il pre-controllo — sta parola per parola in
+✅ **Il pre-controllo del compito 3 è fatto, e ha trovato quattro difetti**: **E15**, **E16**, **E17** ed **E18**, scritti
+nell'errata e **già applicati** al testo del compito, che si esegue com'è scritto adesso. Nessuno tocca il merito approvato,
+quindi nessuno è del proprietario. La consegna precedente — l'esecuzione del compito 2 — sta parola per parola in
 [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
 
-| Commit | Che cosa |
+⚠️ **Perché è una misura e non un'impressione.** Il compito è stato **rifatto per intero dal testo del piano** su una copia
+pulita di `fa4b3f4` — `git clone` in `%TEMP%\pc3`, sulla macchina `zagor`, senza `origin`, `npm ci`, poi i Passi 1–7 coi
+recinti del piano, applicati con `apply_plan.py` della cartella di prova `%TEMP%\pds`, e la terza sostituzione del Passo 2
+da uno script che prende il blocco dal file —, e ogni *Atteso* è tornato: Passo 1, `lucide@1.47.0` in `dependencies`, un
+pacchetto nuovo, `ISC`, e il suo `LICENSE` dice MIT per le icone di Feather; Passo 2, `a11y.test.ts` verde con le sue 11
+prove; Passo 3, rosso, `Failed to resolve import "./BaseIcon.vue"`; Passi 4–6, 2 file e 28 prove verdi, il *build* verde e il
+pezzo JavaScript `663.93 kB` col nome di prima, `index-DLsd9Y_U.js`; Passo 7, il lint verde; Passo 8, ogni riga rossa per la
+ragione scritta e il codice giusto verde; Passo 9, il passo web del cancello verde — `--project jsdom` 18 file passati e uno
+saltato, 123 prove passate e una saltata; `--project browser` 1 file e 5 prove; `found 0 vulnerabilities`. Scritte le voci,
+il compito è stato **rifatto dal testo corretto**, con la ricetta qui sotto, e `compare_task3.py` è stato provato su quel
+commit: il commit fedele esce **0**, sedici percorsi `OK`; cinque mutanti escono **1** ciascuno — un token cambiato
+in `BaseButton.vue`, un file in più, `lucide` non esatto, la riga 2 senza la cura, l'aiutante di `axe` lasciato in
+`a11y.test.ts` —; e due cambi non dettati escono **0** con `CHECK BY HAND` — una voce d'errata in più, una data che non
+è il giorno del commit. Su quel commit il passo web del cancello è verde con gli stessi numeri del Passo 9.
+
+| Domanda | Esito, e il comando o la misura |
 |---|---|
-| `23b3134` | **il compito 2**, dall'implementatore — conforme al dettato: `compare_task2.py f00d5b7 23b3134` esce 0, e la revisione l'ha provato nelle due direzioni |
-| `5f32158` | le cure della revisione, dal coordinatore (scelta **A** del proprietario, senza ri-revisione): **E14**, e **M-1** in `compare_task2.py` |
-| il commit che scrive questa riga | il dispaccio del compito 2 nella cartella tracciata, e questa consegna |
+| 1 — la sonda è sbagliata? | no: le righe del Passo 8, una per volta sulla copia, rosse **per la ragione scritta** — i cinque messaggi del linter, un problema per corsa; `expected [ 'models' ] to deeply equal []`; `Unable to get [role="status"] within: <!--v-if-->` —, verde il codice giusto e verde il `v-if="$slots.default"` che il Passo 8 dice verde. E mordono anche le prove che il Passo 8 non muta: `iconOnly` fatto `computed` → `expected undefined to be 'Stacca'`; la riga `@ts-expect-error` tolta → `TS2322` nel *build*, e con un nome della mappa → `TS2578`; il gruppo di radio lasciato a sé → `expected [ 'false', 'true' ] to deeply equal [ 'true', 'false' ]`. Ogni file tornato dalla copia salvata, confrontato byte per byte, e `git status --porcelain` alla fine uguale a quello di prima |
+| 2 — manca una sonda? | **sì, tre**: **E15**, **E16** ed **E18**. Le prime due hanno la stessa forma: una riga di un pezzo che porta il suo perché nel commento, tolta, lascia verdi tutte le prove |
+| 3 — l'artefatto è sbagliato? | no, sulla copia dal testo; e **da fuori**: nella cartella di prova `%TEMP%\pds`, ramo `task8`, i compiti 4–8 sono costruiti sopra questi pezzi, e gli otto `Base*.vue`, `icons.ts` e `kit.test.ts` sono **uguali** a quelli rifatti oggi, a meno dei CR — nessun compito dopo li cambia; `testing/axe.ts` differisce per il commento di P-25 e per `contrastJudged` del compito 8, `eslint.config.js` per i blocchi dei compiti 4 e 5. `git diff --stat` fra la base e il compito, su `crates/` e `gui/schema/`, vuoto |
+| 4 — è già eseguito? | no: `gui/package.json` non ha `lucide`, `gui/src/testing/` non esiste, e in `gui/src/components/` ci sono i soli `Confirm.vue`, `markdown.ts` e `markdown.test.ts` |
+| 5 — il contratto è cresciuto sotto il piano? | sì, e regge. Il compito 2 ha portato due `.ts` nuovi, `browser.d.ts` e `tokens.browser.test.ts`, che il blocco `harness/ts` fa leggere al linter: verde; `eslint src` legge **48** `.ts`, prima nessuno, contati col rapporto JSON; il lint, a cache calda, da 10,5 a 11,5 s. I due progetti di `vitest`: i comandi dei Passi 2, 3 e 6 filtrano per file e girano, il Passo 8 dice `--project jsdom`. La colonna **Commit** della riga 2 è `` `23b3134`, con la cura `5f32158` ``: il Passo 9 dice *«l'hash del compito 2»*, e il prompt detta la cella intera, come fece per la riga 1 nel compito 2 |
+| 6 — un commento o un banco lo smentisce? | **sì**: **E17**, la frase di `eslint.config.js` sulle parole singole. Le altre frasi dei file che il compito tocca reggono: la quarta sostituzione del Passo 7 corregge già quella sui `.ts`, e il commento che la terza sostituzione del Passo 2 toglie — *«on every text colour over every surface»*, falso dal compito 1, che prova il contrasto per le famiglie di P-1 — se ne va col suo aiutante |
+| 7, 8 | non si applicano: il compito non tocca un ADR e non è un rapporto |
+
+Lo stato alla chiusura, riga per riga col comando che la rifà:
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
-| **cancello** | `GATE GREEN` a `5f32158`, sulla macchina `zagor`: sotto `gui/` il progetto `jsdom` con 17 file passati e uno saltato, 100 prove passate e una saltata, e il progetto `browser` con un file e **5** prove; `found 0 vulnerabilities` — si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
-| **la CI** | verdi sui due sistemi `f00d5b7`, `23b3134` — la **prima corsa col browser**: il flusso di lavoro non installa nessun browser, e il Chrome delle immagini di `ubuntu-latest` e `windows-latest` basta — e `5f32158`, lette alla chiusura; quella del commit che scrive questa riga **in corso**: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»*. ⚠️ Il log di un job vuole credenziali — l'API risponde 403 —: che il progetto `browser` abbia girato lo prova la guardia di **E10**, perché un progetto vuoto o un Chrome che non parte fanno rosso il passo |
-| **la posizione** | la riga **2** a `✅ 2026-09-25`; la sua colonna **Commit** la scrive il compito 3 (R1-16): `23b3134`, con la cura `5f32158` |
-| **il pezzo JavaScript** | `663.93 kB`, invariato: il compito 2 non tocca il pacchetto della SPA |
-| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il prompt **spedito**, `dispatch-task-2.md`, che prende il posto del modello — gli stessi testi coi valori della macchina `zagor` —, il rapporto dell'implementatore, il prompt del revisore, `review-2-prompt.md`, e la revisione; e `compare_task2.py` curato (M-1), il modello di `compare_task3.py` |
-| **le copie** | il clone della revisione, `%TEMP%\rv2` sulla macchina `zagor`, è cancellato; la copia `%TEMP%\pc2` del pre-controllo, sulla macchina `Jays`, non serve più e si può cancellare |
-| **le voci registrate, non prese** | ⚠️ **la finestra delle prove, 1440 × 900**: nessuna prova la tiene e nessun controllo del disegno lo chiede — misurato dal pre-controllo, e dalla revisione con la riga che la terrebbe, verde sul commit e rossa senza `viewport`, `expected [ 414, 896 ] to deeply equal [ 1440, 900 ]`. Il fatto nuovo della revisione: le prove della cornice del compito 8 sono scritte alla finestra delle prove, e senza sarebbero rosse, non verdi |
-| **le due macchine** | quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, dove questa sessione ha lavorato: `core.autocrlf` `true` dal file di sistema e l'albero `w/crlf`, Node v24.19.0, Chrome `153.0.8010.53` con la `154.0.8037.58` già scaricata come `new_chrome.exe`; e quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, `core.autocrlf` `false` e l'albero `w/lf`, Chrome 154. ⛔ Sulla macchina che esegue, gli Attesi di **forma** si misurano, non si copiano (E72) |
+| **cancello** | `GATE GREEN` all'apertura, a `fa4b3f4`, sulla macchina `zagor` — sotto `gui/` il progetto `jsdom` con 17 file passati e uno saltato, 100 prove passate e una saltata, il progetto `browser` con un file e 5 prove, il pezzo JavaScript `663.93 kB`, `found 0 vulnerabilities` — e prima del commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
+| **la CI** | verdi sui due sistemi le corse fino a `fa4b3f4`, lette all'apertura; quella del commit che scrive questa riga **in corso**: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **codice di prodotto** | non toccato: questa sessione ha scritto il piano e la cartella del dispaccio, e il codice del compito 3 vive solo nella copia |
+| **la copia del pre-controllo** | ⚠️ **solo sulla macchina `zagor`**: `%TEMP%\pc3`, senza `origin`, coi rami `task3` — il compito rifatto dal testo di `fa4b3f4` —, `task3-cured` — con le correzioni di E15–E17 —, `base3`
+e `t3` — il piano di questa sessione e il compito rifatto dal suo testo, il confronto di `compare_task3.py` — e i sette
+mutanti `m1`…`m7`, e gli attrezzi in `%TEMP%\pc3-tools\`: le ricette, lo script della terza sostituzione, quello delle violazioni, quello delle correzioni. Altrove non serve: il confronto col testo del piano lo fa `compare_task3.py` su qualunque clone. Si cancella dopo il compito 3 |
+| **il dispaccio** | ✅ **viaggia con git**, per il punto 8 di *«Come si esegue un compito»*: nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/` il **modello** del prompt, `dispatch-task-3.md` — coi campi `<repo>`, `<HEAD>`, `<data>`, `<scratchpad>` e la tabella delle due macchine, e i fine-riga detti per **forma** (la lezione 1 della consegna precedente) —; `_extract_brief_3.py`, che scrive il brief nella cartella di lavoro ignorata; `compare_task3.py`, nato da `compare_task2.py` curato: ciò che è dettato conta, ciò che non lo è si mostra (la lezione 2). Il prompt del revisore si scrive sul modello di `review-2-prompt.md`. Il brief **non** si committa: è una copia del piano |
+| **le voci registrate, non prese** | ⚠️ **la finestra delle prove, 1440 × 900**, com'era registrata dalla consegna precedente, in archivio: nessuna prova la tiene e nessun controllo del disegno lo chiede; le prove della cornice del compito 8 sono scritte a quella finestra |
+| **le copie delle sessioni prima** | la copia `%TEMP%\pc2` del pre-controllo del compito 2, sulla macchina `Jays`, non serve più e si può cancellare |
+| **le due macchine** | quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, dove questa sessione ha lavorato: `core.autocrlf` `true` dal file di sistema, l'albero `w/crlf` per i file che git ha scritto e `w/lf` per `gui/eslint.config.js` e `gui/src/a11y.test.ts`, Node v24.19.0, Chrome `153.0.8010.53` con la `154.0.8037.58` già scaricata come `new_chrome.exe`; e quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, `core.autocrlf` `false` e l'albero `w/lf`, Chrome 154. ⛔ Sulla macchina che esegue gli Attesi di **forma** si misurano, non si copiano (E72): il §4 del prompt lo dice |
 
-**La revisione** — un revisore Opus fresco: **conforme**; **0** critici, **0** importanti, **2** minori, **0** nit, chiusi dal
-commit di cura. Il costo misurato: l'implementatore **~223k** token, 104 chiamate, **~29** minuti; il revisore **~375k**, 164
-chiamate, **~56** minuti — ~0,6 milioni in tutto, dentro la banda detta al proprietario (~0,7).
+📌 **La ricetta del compito 3**, per rifarlo o confrontarlo dal testo del piano, vale per il piano del commit che scrive questa
+riga: `W` è il file intero dal recinto aperto a quella riga; `R` sostituisce l'occorrenza unica del primo recinto col secondo;
+`B` è la terza sostituzione del Passo 2, il blocco preso **dal file** — `apply_plan.py` della cartella di prova non la
+conosce, e sulla copia l'ha fatta uno script a parte. `lucide` si installa **prima**, a mano, col Passo 1.
+
+```text
+W gui/src/testing/axe.ts 1757
+R gui/src/a11y.test.ts 1778 1785
+R gui/src/a11y.test.ts 1791 1797
+B gui/src/a11y.test.ts
+W gui/src/components/kit.test.ts 1819
+W gui/src/components/icons.ts 2064
+W gui/src/components/BaseIcon.vue 2142
+W gui/src/components/BaseButton.vue 2204
+W gui/src/components/BaseLabel.vue 2356
+W gui/src/components/BaseList.vue 2394
+W gui/src/components/BaseStatus.vue 2438
+W gui/src/components/BaseTextField.vue 2457
+W gui/src/components/BaseRadioGroup.vue 2559
+W gui/src/components/BaseDialog.vue 2669
+R gui/eslint.config.js 2793 2799
+R gui/eslint.config.js 2821 2828
+R gui/eslint.config.js 2846 2856
+R gui/eslint.config.js 2897 2904
+R gui/eslint.config.js 2911 2917
+```
 
 📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
 del sotto-progetto.
 
 | | Che cosa | Che cosa se ne fa |
 |---|---|---|
-| 1 | **la regola dei fine-riga del modello del dispaccio era falsa per un file che cresce**: *«CR uguale a prima»*, mentre `gui/vite.config.ts` passa da 53 a 114 CR, uguali alle righe — la nota N1 del rapporto, confermata dalla revisione | il modello del prompt del compito 3 dice la **forma**: CR uguali alle righe su un file CRLF, zero su un file LF, e la colonna `w/…` uguale |
-| 2 | **uno script di confronto che mostra una differenza senza contarla esce verde**: `compare_task2.py` lasciava al lettore anche le due celle dettate, e prendeva la data dal commit stesso che rivedeva — M-1 | `compare_task3.py` nasce dal `compare_task2.py` curato: ciò che è dettato conta, ciò che non lo è si mostra |
-| 3 | **una negazione è verde su un valore vuoto anche dentro un testo pre-controllato**: `not.toBe("0ms")`, la forma della trappola 1 del disegno; le violazioni del Passo 5 provavano la prima direzione della prova del movimento, e nessuna la seconda — E14 | nel pre-controllo, per ogni asserzione negativa: che cosa dice su un valore vuoto? |
-| 4 | **Playwright lascia in `%TEMP%` un profilo vuoto, `playwright_chromiumdev_profile-*`, quando il LANCIO fallisce**: non quando le prove passano, né quando una è rossa | innocuo: si sa, e si toglie a mano se serve |
-| 5 | **il log di un job della CI non si legge senza credenziali** (403) | il verdetto si legge job per job; che una parte del passo abbia girato lo deve provare una guardia del cancello, come E10 per il progetto `browser` |
+| 1 | **una riga che porta il suo perché nel commento può non avere una prova che cada senza di lei**: `inheritAttrs: false` di `BaseTextField` e il `v-bind` di R2-18 in `BaseDialog` — tolte, le 23 prove restavano verdi — E15, E16 | nel pre-controllo, per ogni riga di un artefatto che dichiara il suo perché: tolta, quale prova cade? |
+| 2 | **un commento che quantifica su una cartella diventa falso quando il compito ci aggiunge file**: *«every `.vue` file here but `ViewBar` is single-word»* e gli otto `Base*.vue` — E17 | si rilegge ogni commento che dice *«ogni»* o *«tutti»* sui file che il compito fa crescere |
+| 3 | **un blocco del linter si prova sul suo confine**, non solo sul caso che lo motiva: la mappa delle icone toglie `lucide` dal divieto e ci tiene l'altra regola, e la seconda metà non aveva la sua riga — E18 | il pre-controllo del **compito 4** guarda lo stesso sul blocco `harness/kit-page-specimens`, che spegne `no-raw-text` su `src/kit/**` |
 
 **Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
 
 1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
-2. Il **pre-controllo del compito 3**, con le quattro domande di `CLAUDE.md` e le righe 5–8, contro il codice di **adesso**:
-   il compito 2 ha cambiato `gui/package.json` e il lockfile, che il compito 3 tocca per `lucide` — `git diff --stat
-   95068bb..HEAD -- gui/` e la lista *Files* del compito 3. Le voci che trova vanno nell'errata, e la prossima libera è
-   **E15**; il dispaccio nasce nella cartella tracciata come **modello**, con la regola dei fine-riga della lezione 1, e
-   `compare_task3.py` dal `compare_task2.py` curato, con la lezione 2.
-3. L'**esecuzione del compito 3**, in un'altra sessione, col costo detto prima e il sì del proprietario; e così compito per
-   compito, fino al 9.
+2. Questa sezione; poi il dispaccio: dalla radice del repository il brief, con
+   `python docs/superpowers/plans/2026-09-23-design-system-esecuzione/_extract_brief_3.py`, e il prompt dal modello
+   `dispatch-task-3.md` della stessa cartella, coi campi e i valori della macchina che esegue — il riquadro in testa al
+   modello dice come.
+3. ⛔ **Il costo, prima di dispacciare, e il sì del proprietario**: la banda è quella del compito 2, nella consegna
+   precedente in archivio — l'implementatore ~223k token e ~29 minuti, il revisore ~375k e ~56 minuti.
+4. L'**esecuzione del compito 3**, con `superpowers:subagent-driven-development`; il revisore rilancia ogni comando e
+   confronta con `compare_task3.py`; alla chiusura del compito, i file del dispaccio nella cartella tracciata (punto 8).
+   Poi il pre-controllo del compito 4, in un'altra sessione, con la prossima voce d'errata libera, **E19**; e così compito
+   per compito, fino al 9.

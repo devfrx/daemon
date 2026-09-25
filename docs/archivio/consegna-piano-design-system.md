@@ -795,3 +795,58 @@ del sotto-progetto.
    confronta con `compare_task2.py`, e il suo prompt si scrive sul modello di `review-1-prompt.md`; alla chiusura del
    compito, i file del dispaccio nella cartella tracciata (punto 8). Poi il pre-controllo del compito 3, in un'altra sessione;
    e così compito per compito, fino al 9.
+
+## Il pre-controllo del compito 3, del 2026-09-25
+
+Tolto dal piano il 2026-09-25, quando la sessione dopo ha fatto il **pre-controllo del compito 3** e scritto *«Come si
+riprende — il pre-controllo del compito 3»*. Il testo com'era, dal commit `fa4b3f4`, parola per parola; i rimandi sono
+riscritti per questa cartella.
+
+## Come si riprende — l'esecuzione del compito 2, 2026-09-25
+
+✅ **Il compito 2 è eseguito, rivisto e curato.** La consegna precedente — il pre-controllo — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+| Commit | Che cosa |
+|---|---|
+| `23b3134` | **il compito 2**, dall'implementatore — conforme al dettato: `compare_task2.py f00d5b7 23b3134` esce 0, e la revisione l'ha provato nelle due direzioni |
+| `5f32158` | le cure della revisione, dal coordinatore (scelta **A** del proprietario, senza ri-revisione): **E14**, e **M-1** in `compare_task2.py` |
+| il commit che scrive questa riga | il dispaccio del compito 2 nella cartella tracciata, e questa consegna |
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **cancello** | `GATE GREEN` a `5f32158`, sulla macchina `zagor`: sotto `gui/` il progetto `jsdom` con 17 file passati e uno saltato, 100 prove passate e una saltata, e il progetto `browser` con un file e **5** prove; `found 0 vulnerabilities` — si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | verdi sui due sistemi `f00d5b7`, `23b3134` — la **prima corsa col browser**: il flusso di lavoro non installa nessun browser, e il Chrome delle immagini di `ubuntu-latest` e `windows-latest` basta — e `5f32158`, lette alla chiusura; quella del commit che scrive questa riga **in corso**: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»*. ⚠️ Il log di un job vuole credenziali — l'API risponde 403 —: che il progetto `browser` abbia girato lo prova la guardia di **E10**, perché un progetto vuoto o un Chrome che non parte fanno rosso il passo |
+| **la posizione** | la riga **2** a `✅ 2026-09-25`; la sua colonna **Commit** la scrive il compito 3 (R1-16): `23b3134`, con la cura `5f32158` |
+| **il pezzo JavaScript** | `663.93 kB`, invariato: il compito 2 non tocca il pacchetto della SPA |
+| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il prompt **spedito**, `dispatch-task-2.md`, che prende il posto del modello — gli stessi testi coi valori della macchina `zagor` —, il rapporto dell'implementatore, il prompt del revisore, `review-2-prompt.md`, e la revisione; e `compare_task2.py` curato (M-1), il modello di `compare_task3.py` |
+| **le copie** | il clone della revisione, `%TEMP%\rv2` sulla macchina `zagor`, è cancellato; la copia `%TEMP%\pc2` del pre-controllo, sulla macchina `Jays`, non serve più e si può cancellare |
+| **le voci registrate, non prese** | ⚠️ **la finestra delle prove, 1440 × 900**: nessuna prova la tiene e nessun controllo del disegno lo chiede — misurato dal pre-controllo, e dalla revisione con la riga che la terrebbe, verde sul commit e rossa senza `viewport`, `expected [ 414, 896 ] to deeply equal [ 1440, 900 ]`. Il fatto nuovo della revisione: le prove della cornice del compito 8 sono scritte alla finestra delle prove, e senza sarebbero rosse, non verdi |
+| **le due macchine** | quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, dove questa sessione ha lavorato: `core.autocrlf` `true` dal file di sistema e l'albero `w/crlf`, Node v24.19.0, Chrome `153.0.8010.53` con la `154.0.8037.58` già scaricata come `new_chrome.exe`; e quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, `core.autocrlf` `false` e l'albero `w/lf`, Chrome 154. ⛔ Sulla macchina che esegue, gli Attesi di **forma** si misurano, non si copiano (E72) |
+
+**La revisione** — un revisore Opus fresco: **conforme**; **0** critici, **0** importanti, **2** minori, **0** nit, chiusi dal
+commit di cura. Il costo misurato: l'implementatore **~223k** token, 104 chiamate, **~29** minuti; il revisore **~375k**, 164
+chiamate, **~56** minuti — ~0,6 milioni in tutto, dentro la banda detta al proprietario (~0,7).
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
+del sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **la regola dei fine-riga del modello del dispaccio era falsa per un file che cresce**: *«CR uguale a prima»*, mentre `gui/vite.config.ts` passa da 53 a 114 CR, uguali alle righe — la nota N1 del rapporto, confermata dalla revisione | il modello del prompt del compito 3 dice la **forma**: CR uguali alle righe su un file CRLF, zero su un file LF, e la colonna `w/…` uguale |
+| 2 | **uno script di confronto che mostra una differenza senza contarla esce verde**: `compare_task2.py` lasciava al lettore anche le due celle dettate, e prendeva la data dal commit stesso che rivedeva — M-1 | `compare_task3.py` nasce dal `compare_task2.py` curato: ciò che è dettato conta, ciò che non lo è si mostra |
+| 3 | **una negazione è verde su un valore vuoto anche dentro un testo pre-controllato**: `not.toBe("0ms")`, la forma della trappola 1 del disegno; le violazioni del Passo 5 provavano la prima direzione della prova del movimento, e nessuna la seconda — E14 | nel pre-controllo, per ogni asserzione negativa: che cosa dice su un valore vuoto? |
+| 4 | **Playwright lascia in `%TEMP%` un profilo vuoto, `playwright_chromiumdev_profile-*`, quando il LANCIO fallisce**: non quando le prove passano, né quando una è rossa | innocuo: si sa, e si toglie a mano se serve |
+| 5 | **il log di un job della CI non si legge senza credenziali** (403) | il verdetto si legge job per job; che una parte del passo abbia girato lo deve provare una guardia del cancello, come E10 per il progetto `browser` |
+
+**Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. Il **pre-controllo del compito 3**, con le quattro domande di `CLAUDE.md` e le righe 5–8, contro il codice di **adesso**:
+   il compito 2 ha cambiato `gui/package.json` e il lockfile, che il compito 3 tocca per `lucide` — `git diff --stat
+   95068bb..HEAD -- gui/` e la lista *Files* del compito 3. Le voci che trova vanno nell'errata, e la prossima libera è
+   **E15**; il dispaccio nasce nella cartella tracciata come **modello**, con la regola dei fine-riga della lezione 1, e
+   `compare_task3.py` dal `compare_task2.py` curato, con la lezione 2.
+3. L'**esecuzione del compito 3**, in un'altra sessione, col costo detto prima e il sì del proprietario; e così compito per
+   compito, fino al 9.

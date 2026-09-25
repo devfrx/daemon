@@ -13,45 +13,51 @@ function describe(element: Element): string {
 }
 
 /**
- * The owner's rule of answer 4 -- OUTER radius = INNER radius + distance. For every element with a radius, the nearest
- * rounded ancestor inside a root, and its four corners: where the inner corner sits close to the outer one (within the
- * larger radius, plus 2 px), an element IN the corner must share the centre, and one OFF the corner must not be rounder
- * than the outer radius minus the smaller distance. A straight corner is never compared (answer 20): an element or an
- * ancestor with no radius is skipped. SVG content is a drawing, not a surface.
+ * The owner's rule of answer 4 -- OUTER radius = INNER radius + distance. For every element with a rounded corner, the
+ * nearest rounded ancestor inside a root, and their four corners, EACH WITH ITS OWN RADIUS (E30 of the design-system
+ * plan): where the inner corner sits close to the outer one (within the larger radius, plus 2 px), an element IN the
+ * corner must share the centre, and one OFF the corner must not be rounder than the outer radius minus the smaller
+ * distance. A straight corner, inside or outside, is never compared (answer 20) -- a sheet's `r r 0 0` included. SVG
+ * content is a drawing, not a surface.
  */
 export function concentricRadii(roots: Element[]): { near: number; bad: string[] } {
-  const radius = (element: Element): number => Number.parseFloat(getComputedStyle(element).borderTopLeftRadius) || 0;
-  const effective = (element: Element): number => {
+  const CORNERS = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"] as const;
+  type Corner = (typeof CORNERS)[number];
+  const radius = (element: Element, corner: Corner): number =>
+    Number.parseFloat(getComputedStyle(element)[`border${corner}Radius` as const]) || 0;
+  const rounded = (element: Element): boolean => CORNERS.some((corner) => radius(element, corner) > 0);
+  const effective = (element: Element, corner: Corner): number => {
     const box = element.getBoundingClientRect();
-    return Math.min(radius(element), box.height / 2, box.width / 2);
+    return Math.min(radius(element, corner), box.height / 2, box.width / 2);
   };
   const bad: string[] = [];
   let near = 0;
   for (const root of roots) {
     for (const element of [root, ...root.querySelectorAll("*")]) {
       if (element.closest("svg") !== null) continue;
-      const inner = effective(element);
-      if (inner === 0) continue;
+      if (!rounded(element)) continue;
       let ancestor = element.parentElement;
-      while (ancestor !== null && !(radius(ancestor) > 0)) ancestor = ancestor.parentElement;
-      if (ancestor === null || (!root.contains(ancestor) && ancestor !== root)) continue;
-      const outer = effective(ancestor);
+      while (ancestor !== null && !rounded(ancestor)) ancestor = ancestor.parentElement;
+      if (ancestor === null || !root.contains(ancestor)) continue;
       const b = element.getBoundingClientRect();
       const B = ancestor.getBoundingClientRect();
-      const corners: [string, number, number][] = [
-        ["top-left", b.left - B.left, b.top - B.top],
-        ["top-right", B.right - b.right, b.top - B.top],
-        ["bottom-left", b.left - B.left, B.bottom - b.bottom],
-        ["bottom-right", B.right - b.right, B.bottom - b.bottom],
+      const corners: [string, Corner, number, number][] = [
+        ["top-left", "TopLeft", b.left - B.left, b.top - B.top],
+        ["top-right", "TopRight", B.right - b.right, b.top - B.top],
+        ["bottom-left", "BottomLeft", b.left - B.left, B.bottom - b.bottom],
+        ["bottom-right", "BottomRight", B.right - b.right, B.bottom - b.bottom],
       ];
-      for (const [corner, dx, dy] of corners) {
+      for (const [name, corner, dx, dy] of corners) {
+        const inner = effective(element, corner);
+        const outer = effective(ancestor, corner);
+        if (inner === 0 || outer === 0) continue;
         const reach = Math.max(outer, inner) + 2;
         if (!(dx < reach && dy < reach)) continue;
         near += 1;
         const inTheCorner = Math.abs(dx - dy) <= 1.5;
         const ok = inTheCorner ? Math.abs(inner - (outer - dx)) <= 1.5 : inner <= outer - Math.min(dx, dy) + 1.5;
         if (!ok) {
-          bad.push(`${describe(element)} in ${describe(ancestor)}, ${corner}: radius ${inner.toFixed(1)}, outer ${outer.toFixed(1)}, distance ${dx.toFixed(1)}/${dy.toFixed(1)}`);
+          bad.push(`${describe(element)} in ${describe(ancestor)}, ${name}: radius ${inner.toFixed(1)}, outer ${outer.toFixed(1)}, distance ${dx.toFixed(1)}/${dy.toFixed(1)}`);
         }
       }
     }
@@ -89,7 +95,8 @@ export function fits(roots: Element[], boxes: string): { seen: number; boxed: nu
 }
 
 /**
- * Every icon is drawn, strokes with `currentColor`, and -- in a flex row that centres -- sits within 0.75 px of the
+ * Every icon is drawn, strokes with `currentColor` -- read on the COMPUTED stroke, since a CSS rule beats the
+ * presentation attribute (E32 of the design-system plan) -- and, in a flex row that centres, sits within 0.75 px of the
  * centre of its parent's content box: `sonda-icone.js`, on the icons of `BaseIcon`. ⚠️ An icon whose parent is NOT a
  * centring flex row is counted and not judged: a violation that un-centres the PARENT falls through here, so the red
  * direction moves the icon inside a centred row (R3-3 of the review).
@@ -104,7 +111,8 @@ export function iconsCentred(roots: Element[]): { icons: number; centred: number
       const name = svg.getAttribute("data-icon") ?? "?";
       const b = svg.getBoundingClientRect();
       if (!(b.width > 0 && b.height > 0)) problems.push(`not drawn: ${name}`);
-      if (svg.getAttribute("stroke") !== "currentColor") problems.push(`stroke is not currentColor: ${name}`);
+      const drawn = getComputedStyle(svg);
+      if (drawn.stroke !== drawn.color) problems.push(`stroke is not currentColor: ${name}`);
       const parent = svg.parentElement;
       if (parent === null) continue;
       const style = getComputedStyle(parent);

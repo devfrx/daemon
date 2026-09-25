@@ -109,11 +109,6 @@ export default [
     files: ["src/panels/Chat.vue"],
     rules: { "vue/no-v-html": "off" },
   },
-  /**
-   * ⛔ THE IMPORT RULES OF THE KIT (design system, section (b)). One rule, a scope per block, and the ORDER MATTERS: in a flat
-   * config a later block REPLACES an earlier one's options for the same rule, it does not merge them -- so every block
-   * says the whole list for its files.
-   */
   {
     // ⛔ THE KIT PAGE'S WORDS ARE SPECIMENS (D8 of the design-system plan): a development page outside the package, whose
     // words in `it.json` would ship for nothing. The one exception to the raw-text rule, in one place, like Chat's above.
@@ -121,6 +116,11 @@ export default [
     files: ["src/kit/**"],
     rules: { "@intlify/vue-i18n/no-raw-text": "off" },
   },
+  /**
+   * ⛔ THE IMPORT RULES OF THE KIT (design system, section (b)). One rule, a scope per block, and the ORDER MATTERS: in a flat
+   * config a later block REPLACES an earlier one's options for the same rule, it does not merge them -- so every block
+   * says the whole list for its files.
+   */
   {
     name: "harness/imports",
     files: ["**/*.vue", "**/*.ts"],

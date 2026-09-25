@@ -32,6 +32,9 @@ echo "-------- gui: install"
 npm ci --no-audit --no-fund
 # `vue-tsc` inside `build` is the level 1 of the web world, the way `rustc` is for the kernel.
 echo "-------- gui: build"
+# ⛔ NO OUTPUT OF A PREVIOUS BUILD: `npm ci` keeps `dist/`, and a build that wrote elsewhere -- or nothing -- would leave
+# the checks below reading the old one (E31 of the design-system plan).
+rm -rf dist
 npm run build
 # ⛔ THE KIT PAGE STAYS OUT OF THE PACKAGE (design system, section (b)): `vite build` takes the inputs it is given, and with
 # none it takes `index.html` alone. Proven on the output, not believed (trap 12 of the design); the first line is the

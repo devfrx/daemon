@@ -70,6 +70,11 @@ for (const theme of ["light", "dark"] as const) {
       // ⛔ NON-VACUITY (trap 1): a probe that met no corner near another is green for nothing.
       expect(report.near).toBeGreaterThan(0);
       expect(report.bad).toEqual([]);
+      // ⛔ AND THE ONE CASE THAT JUDGES `BaseList` (E29 of the plan): its last row closes its card, in the corner. `near`
+      // counts the whole page, so a stretched grid, or a note after the list, would take this case away and stay above 0.
+      const list = document.querySelector(".kit-card:has(> .base-list)");
+      expect(list).not.toBeNull();
+      expect(concentricRadii([list as Element]).near).toBeGreaterThan(0);
     });
 
     it("cuts no text, and lets nothing stick out of its box", async () => {

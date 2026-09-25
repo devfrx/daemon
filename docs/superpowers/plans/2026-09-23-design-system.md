@@ -193,6 +193,12 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | **E25** | ⚠️ **Compito 4, Passo 2 — le prove nel browser di E19 ed E20, che la revisione del compito 3 lasciava a questo pre-controllo: jsdom non applica il foglio, e i due difetti si vedono solo nel Chrome.** Nella prova della pagina kit, per ciascun tema, *«draws every button that is off in the disabled colour, whatever its variant (E19)»* — i tre pulsanti spenti della pagina, uno per variante, contro `--color-text-disabled` calcolato dalla pagina e non ricopiato — e *«keeps the error's border under the pointer (E20)»* — il bordo `--color-border-stop` del campo con l'errore, prima e sotto il puntatore di `userEvent.hover`, con la guardia che il puntatore sia arrivato. Misurate il 2026-09-25 dal pre-controllo sulla copia, macchina `Jays`, Chrome 154: verdi sul codice, 23 prove nel progetto `browser`; rossa la prima senza la regola del `quiet` spento — nello scuro `quiet: rgb(163, 154, 143)` dove la pagina vuole `rgb(111, 102, 96)`, i valori della revisione —; rossa la seconda con `.frame:hover:not([data-disabled])` — nello scuro `expected 'rgb(163, 154, 143)' to be 'rgb(129, 27, 7)'` —; e rossa la sua guardia senza la riga del `hover`, `expected false to be true`; ogni file tornato dalla copia salvata, `git status --porcelain` com'era. ⚠️ **E la prova del puntatore ha chiesto una cura al file.** Rifatto il compito dal testo corretto sulla copia `%TEMP%\pc4b`, la violazione della riga 1 del Passo 7 faceva cadere **anche** la prova di E20, `TimeoutError`, e la violazione del contrasto la faceva cadere nello scuro: la prova della finestra, rossa, si ferma prima del suo `wrapper.unmount()`, e la finestra rimasta montata lascia `pointer-events: none` sul `body` — misurato con una diagnostica scritta per fallire, `body pointer-events: "none"` —, dove il puntatore vero non si posa più. Curata alla radice, nella forma delle prove del dock e della cornice (compiti 6 e 8): le pagine montate in una lista, smontate in `afterEach`, e nessuna prova si smonta da sé; rimisurato, la riga 1 fa cadere le sole due prove della finestra, e la riga del contrasto le sole due di `axe` nello scuro. ✅ **Corretta** nel commit che la scrive: le due prove, l'aiutante `colourOf` e lo smontaggio in `afterEach` nel recinto del Passo 2, `userEvent` fra ciò che il compito consuma, tre righe nella tabella del Passo 7. ⚠️ **E il compito 8 allineato nello stesso commit**: il suo primo *Trova* su `kit.browser.test.ts` porta l'import di `userEvent`, e i suoi Atteso contano le quattro prove in più — *«nove rosse su trentuno»*, *«le diciotto della pagina kit»*, *«trentuno su trentuno»*; dedotto, perché nessun compito dopo il 4 tocca i pezzi che le due prove guardano |
 | **E26** | Nit — **Compito 4, Passo 4 — il blocco `harness/kit-page-specimens` non aveva righe rosse, né sul bisogno né sul confine** (lezione 3 della consegna del pre-controllo del compito 3, in archivio: un blocco del linter si prova sul suo confine); il Passo 5 prova il solo verde. Misurato il 2026-09-25 dal pre-controllo sulla copia, una riga per volta e indietro con la copia salvata: tolto il blocco, `npm run lint` è rosso con trentatré `raw text … is used` in `src/kit/Kit.vue` — è il blocco a lasciar passare le parole della pagina —; col blocco, una parola in `BaseStatus.vue` resta rossa, `raw text 'ciao' is used` — il blocco si ferma alla sua cartella —; e `import { Search } from "lucide";` in `Kit.vue` resta rosso, *«'lucide' import is restricted…»* — il blocco spegne la sua regola e nessun'altra. ✅ **Corretta** nel commit che la scrive: una seconda tabella nel Passo 7, con le tre righe |
 | **E27** | Nit — **Compito 4, Passo 7 — il ramo *fuori dall'angolo* di `concentricRadii` non è mai valutato sulla pagina kit.** La regola che il commento della sonda promette — un elemento lontano dall'angolo non è più tondo del raggio di fuori meno la distanza minore — non ha una riga che la faccia cadere, e nemmeno un caso verde da giudicare: la pagina mette ogni pezzo *nell'*angolo. Misurato il 2026-09-25 dal pre-controllo sulla copia: con un `throw` su ogni coppia fuori dall'angolo, le 23 prove restano verdi. ✅ **Corretta** nel commit che la scrive: una riga nel Passo 7, le righe della lista più tonde **e** spostate dall'angolo — rossa nei due temi con `base-list-row in kit-card, bottom-left: radius 16.0, outer 20.0, distance 17.0/13.0`; col ramo reso cieco, `: true`, la stessa riga è verde, cioè la prende quel ramo; e con lo stesso spostamento e il raggio giusto è verde, dove il ramo giudica e assolve — col `throw`, rossa `off the corner: base-list-row bottom-left 17.0/13.0`. ⚠️ E la riga *Files* della sonda nomina anche il compito 6, che usa `concentricRadii` |
+| **E28** | Nit — **Compito 4, Passo 4 — il blocco `harness/kit-page-specimens` stava sotto la testa delle regole d'import** (gotcha **#58**): il *Trova* del Passo 4, `  {` e `    name: "harness/imports",`, lo metteva dopo il commento *«⛔ THE IMPORT RULES OF THE KIT … One rule, a scope per block»*, che così introduceva un blocco che non è una regola d'import, e il suo *«like Chat's above»* rimandava sopra quella testa. La specie di **E17** ed **E22** nello stesso file; il comportamento non cambiava. Trovata dall'implementatore del compito 4 e confermata dalla revisione (N-4). ✅ **Curata** nel commit che scrive questa riga: il *Trova* è la fine del blocco di `Chat.vue`, `    rules: { "vue/no-v-html": "off" },` e `  },`, unica nel file, e il blocco sta fra le due eccezioni, sopra la testa. Misurata dal coordinatore il 2026-09-26, macchina `Jays`: `npm run lint` verde; le tre righe della seconda tabella del Passo 7 rosse come prima — trentatré errori, il primo `raw text 'Il kit' is used`, poi `raw text 'ciao' is used`, poi *«'lucide' import is restricted from being used»* |
+| **E29** | ⚠️ **Compito 4, Passo 2 — la prova dei raggi non teneva l'unico caso che giudica `BaseList`:** la riga `align-items: start;` di `.kit-grid`, col suo perché nel commento, non la teneva nessuna prova, e senza di lei la riga 2 del Passo 7 diventava **verde** — la griglia stira la scheda della lista, la sua ultima riga esce dall'angolo, e la guardia `near > 0`, che conta i casi di tutta la pagina, non vede sparire i due che giudicano il raggio di `BaseList` (`near` da 12 a 10). La lezione 3 del pre-controllo del compito 4, su un **caso** invece che su un ramo. Trovata dalla revisione del compito 4 (M-1), misurata nel suo clone. ✅ **Curata** nel commit che scrive questa riga, col testo della revisione: nella prova *«keeps every radius concentric (answer 4)»* un'attesa sulla sola scheda della lista, `concentricRadii([list]).near` maggiore di zero; e una riga nel Passo 7. Misurata dal coordinatore il 2026-09-26: verde sul codice curato; tolta `align-items: start;`, rosse le sole due prove dei raggi, `expected 0 to be greater than 0` |
+| **E30** | ⚠️ **Compito 4, Passo 1 — `concentricRadii` leggeva il solo angolo in alto a sinistra**, fedele a `sonda-raggi.js`, mentre la (f), la trappola 4 e il suo stesso commento promettono che *«un angolo dritto non lo confronta»* (risposta 20): un pezzo con l'angolo in alto a sinistra dritto e un altro tondo non era **mai** giudicato, e gli angoli dritti di una forma `r r 0 0` finivano in `bad`. Sulla pagina kit non succedeva, perché ogni pezzo ha i quattro angoli uguali; ma le forme ci sono già — `BaseDialog.vue` nella forma `sheet`, `frame/Drawer.vue`, e nel compito 6 `.dv-floating-titlebar` e `.dv-groupview` —, e la sonda la importano i compiti 6 e 8. Trovata dalla revisione del compito 4 (M-2), con due strade: **A**, un raggio per angolo; **B**, dichiarare il limite nel commento. ✅ **Presa la A**, decisa dal coordinatore coi cinque criteri: la B scriveva nel codice il contrario della (f), che è merito approvato, e lasciava ai compiti 6 e 8 un verde e un rosso falsi già noti, mentre la A la realizza; la sonda delle tavole resta com'è, e la prova se ne scosta dove la (f) lo chiede. Il costo: una decina di righe, e un file di prove nuovo, `gui/src/testing/probes.browser.test.ts`, perché senza pezzi ad angoli diversi sulla pagina il ramo nuovo sarebbe una sonda vuota a metà (lezione 3). ✅ **Curata** nel commit che scrive questa riga, con la funzione della revisione e il rimando a questa voce. Misurata dal coordinatore il 2026-09-26: le prove a mano scritte **prima**, rosse sulla sonda di prima — `expected { near: +0, bad: [] } to deeply equal { near: 1, …(1) }` e `expected { near: 3, bad: [ …(2) ] } to deeply equal { near: 1, bad: [] }` —, verdi dopo; il progetto `browser` verde, 27 prove in tre file; le righe 1, 2 e 8 del Passo 7 rosse coi messaggi di prima, la 8b verde; e una riga nel Passo 7 |
+| **E31** | ⚠️ **Compito 4, Passo 6 — la guardia di non-vacuità si accorgeva di un `dist/` che manca, non di un `dist/` rimasto da un *build* precedente:** `npm ci` non tocca `dist/`, e in locale un *build* che scrivesse altrove lasciava le due righe a leggere quello vecchio. In CI no, perché parte da un clone pulito. Registrata e non presa dalla consegna del pre-controllo del compito 4; la revisione (M-3) l'ha misurata — con `outDir: "out"` e la pagina fra gli ingressi le due righe passavano, e `out/kit.html` nasceva — e ne ha provato la cura. ✅ **Curata** nel commit che scrive questa riga: `rm -rf dist` prima del *build*, col perché nel commento; nessun costo, perché Vite vuota già la cartella quando l'uscita è al suo posto. Misurata dal coordinatore il 2026-09-26, con le righe del *build* prese dallo script al momento della corsa: con la cura, l'uscita spostata e il `dist/` vecchio, rosso *«dist/index.html is missing: the build produced nothing to check»*, e così `bash scripts/gate-gui.sh` intero; con lo script di prima della cura, nella stessa situazione, le due righe passano; con la configurazione del commit, verdi; e la pagina fra gli ingressi, rosso *«the kit page is in the package»* come prima |
+| **E32** | Nit — **Compito 4, Passo 1 — `iconsCentred` guardava l'attributo `stroke`, non il colore disegnato:** una regola CSS vince sull'attributo di presentazione, e con `stroke: var(--color-text-stop);` sulle icone delle etichette la prova *«draws every icon in currentColor»* restava verde (revisione del compito 4, N-1). Fedele a `sonda-icone.js`, come la sonda di **E30** a `sonda-raggi.js`, e la prova se ne scosta per la stessa ragione: il suo nome dice ciò che si disegna. ✅ **Curata** nel commit che scrive questa riga, col testo della revisione: lo `stroke` calcolato contro il `color` calcolato. Misurata dal coordinatore il 2026-09-26: verde sul codice curato; con quella regola, rosse le sole due prove delle icone, `stroke is not currentColor: modules` e le altre icone delle etichette; e una riga nel Passo 7 |
+| **E33** | Nit — **Compito 4, Passo 7 — il limite di E27 non stava scritto da nessuna parte:** il ramo *fuori dall'angolo* lo esercitava la sola riga del Passo 7, mai il cancello, e né il commento della sonda né quello della prova lo dicevano (revisione del compito 4, N-2). ✅ **Curata** nel commit che scrive questa riga, dalle prove a mano di **E30**: una coppia a 17/13 dall'angolo, una più tonda della regola e una no, tiene il ramo nel cancello. Misurata dal coordinatore il 2026-09-26: col ramo reso cieco, `: true`, rossa la sola prova che rifiuta, `expected { near: 1, bad: [] } to deeply equal { near: 1, …(1) }`; e una riga nel Passo 7 |
 
 ---
 
@@ -3052,6 +3058,8 @@ il commit — `design-system(compito 3): il kit …` — coi fine-riga rimisurat
 **Files:**
 - Create: `gui/kit.html`, `gui/src/kit/main.ts`, `gui/src/kit/Kit.vue`, `gui/src/kit/kit.browser.test.ts`
 - Create: `gui/src/testing/probes.ts` — le tre sonde come funzioni, per questo compito e per i compiti 6 e 8
+- Create: `gui/src/testing/probes.browser.test.ts` — la sonda dei raggi su scatole fatte a mano, dove la pagina kit non
+  arriva: gli angoli diversi (**E30**) e il ramo fuori dall'angolo (**E33**)
 - Modify: `gui/eslint.config.js` — il blocco delle parole esemplari (D8)
 - Modify: `gui/vite.config.ts` — il progetto `browser` rifà il pacchetto delle dipendenze a ogni corsa (**E24**)
 - Modify: `scripts/gate-gui.sh` — la pagina kit **fuori** dal pacchetto, provato sull'uscita del *build*
@@ -3095,45 +3103,51 @@ function describe(element: Element): string {
 }
 
 /**
- * The owner's rule of answer 4 -- OUTER radius = INNER radius + distance. For every element with a radius, the nearest
- * rounded ancestor inside a root, and its four corners: where the inner corner sits close to the outer one (within the
- * larger radius, plus 2 px), an element IN the corner must share the centre, and one OFF the corner must not be rounder
- * than the outer radius minus the smaller distance. A straight corner is never compared (answer 20): an element or an
- * ancestor with no radius is skipped. SVG content is a drawing, not a surface.
+ * The owner's rule of answer 4 -- OUTER radius = INNER radius + distance. For every element with a rounded corner, the
+ * nearest rounded ancestor inside a root, and their four corners, EACH WITH ITS OWN RADIUS (E30 of the design-system
+ * plan): where the inner corner sits close to the outer one (within the larger radius, plus 2 px), an element IN the
+ * corner must share the centre, and one OFF the corner must not be rounder than the outer radius minus the smaller
+ * distance. A straight corner, inside or outside, is never compared (answer 20) -- a sheet's `r r 0 0` included. SVG
+ * content is a drawing, not a surface.
  */
 export function concentricRadii(roots: Element[]): { near: number; bad: string[] } {
-  const radius = (element: Element): number => Number.parseFloat(getComputedStyle(element).borderTopLeftRadius) || 0;
-  const effective = (element: Element): number => {
+  const CORNERS = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"] as const;
+  type Corner = (typeof CORNERS)[number];
+  const radius = (element: Element, corner: Corner): number =>
+    Number.parseFloat(getComputedStyle(element)[`border${corner}Radius` as const]) || 0;
+  const rounded = (element: Element): boolean => CORNERS.some((corner) => radius(element, corner) > 0);
+  const effective = (element: Element, corner: Corner): number => {
     const box = element.getBoundingClientRect();
-    return Math.min(radius(element), box.height / 2, box.width / 2);
+    return Math.min(radius(element, corner), box.height / 2, box.width / 2);
   };
   const bad: string[] = [];
   let near = 0;
   for (const root of roots) {
     for (const element of [root, ...root.querySelectorAll("*")]) {
       if (element.closest("svg") !== null) continue;
-      const inner = effective(element);
-      if (inner === 0) continue;
+      if (!rounded(element)) continue;
       let ancestor = element.parentElement;
-      while (ancestor !== null && !(radius(ancestor) > 0)) ancestor = ancestor.parentElement;
-      if (ancestor === null || (!root.contains(ancestor) && ancestor !== root)) continue;
-      const outer = effective(ancestor);
+      while (ancestor !== null && !rounded(ancestor)) ancestor = ancestor.parentElement;
+      if (ancestor === null || !root.contains(ancestor)) continue;
       const b = element.getBoundingClientRect();
       const B = ancestor.getBoundingClientRect();
-      const corners: [string, number, number][] = [
-        ["top-left", b.left - B.left, b.top - B.top],
-        ["top-right", B.right - b.right, b.top - B.top],
-        ["bottom-left", b.left - B.left, B.bottom - b.bottom],
-        ["bottom-right", B.right - b.right, B.bottom - b.bottom],
+      const corners: [string, Corner, number, number][] = [
+        ["top-left", "TopLeft", b.left - B.left, b.top - B.top],
+        ["top-right", "TopRight", B.right - b.right, b.top - B.top],
+        ["bottom-left", "BottomLeft", b.left - B.left, B.bottom - b.bottom],
+        ["bottom-right", "BottomRight", B.right - b.right, B.bottom - b.bottom],
       ];
-      for (const [corner, dx, dy] of corners) {
+      for (const [name, corner, dx, dy] of corners) {
+        const inner = effective(element, corner);
+        const outer = effective(ancestor, corner);
+        if (inner === 0 || outer === 0) continue;
         const reach = Math.max(outer, inner) + 2;
         if (!(dx < reach && dy < reach)) continue;
         near += 1;
         const inTheCorner = Math.abs(dx - dy) <= 1.5;
         const ok = inTheCorner ? Math.abs(inner - (outer - dx)) <= 1.5 : inner <= outer - Math.min(dx, dy) + 1.5;
         if (!ok) {
-          bad.push(`${describe(element)} in ${describe(ancestor)}, ${corner}: radius ${inner.toFixed(1)}, outer ${outer.toFixed(1)}, distance ${dx.toFixed(1)}/${dy.toFixed(1)}`);
+          bad.push(`${describe(element)} in ${describe(ancestor)}, ${name}: radius ${inner.toFixed(1)}, outer ${outer.toFixed(1)}, distance ${dx.toFixed(1)}/${dy.toFixed(1)}`);
         }
       }
     }
@@ -3171,7 +3185,8 @@ export function fits(roots: Element[], boxes: string): { seen: number; boxed: nu
 }
 
 /**
- * Every icon is drawn, strokes with `currentColor`, and -- in a flex row that centres -- sits within 0.75 px of the
+ * Every icon is drawn, strokes with `currentColor` -- read on the COMPUTED stroke, since a CSS rule beats the
+ * presentation attribute (E32 of the design-system plan) -- and, in a flex row that centres, sits within 0.75 px of the
  * centre of its parent's content box: `sonda-icone.js`, on the icons of `BaseIcon`. ⚠️ An icon whose parent is NOT a
  * centring flex row is counted and not judged: a violation that un-centres the PARENT falls through here, so the red
  * direction moves the icon inside a centred row (R3-3 of the review).
@@ -3186,7 +3201,8 @@ export function iconsCentred(roots: Element[]): { icons: number; centred: number
       const name = svg.getAttribute("data-icon") ?? "?";
       const b = svg.getBoundingClientRect();
       if (!(b.width > 0 && b.height > 0)) problems.push(`not drawn: ${name}`);
-      if (svg.getAttribute("stroke") !== "currentColor") problems.push(`stroke is not currentColor: ${name}`);
+      const drawn = getComputedStyle(svg);
+      if (drawn.stroke !== drawn.color) problems.push(`stroke is not currentColor: ${name}`);
       const parent = svg.parentElement;
       if (parent === null) continue;
       const style = getComputedStyle(parent);
@@ -3206,6 +3222,69 @@ export function iconsCentred(roots: Element[]): { icons: number; centred: number
 export function firstFamily(element: Element): string {
   return (getComputedStyle(element).fontFamily.split(",")[0] ?? "").trim().replace(/^["']|["']$/g, "");
 }
+```
+
+E le prove a mano della sonda dei raggi (**E30**, **E33**): la pagina kit dà a ogni pezzo quattro angoli uguali e lo
+mette *nel* suo angolo, quindi qui si prova ciò che lei non mostra — un raggio per angolo, e la regola fuori dall'angolo.
+Crea `gui/src/testing/probes.browser.test.ts` (LF):
+
+```ts
+import { afterEach, expect, it } from "vitest";
+
+import { concentricRadii } from "./probes";
+
+// ⛔ THE RADIUS PROBE ON BOXES DRAWN BY HAND (E30 and E33 of the design-system plan): the kit page gives every piece four
+// equal corners and puts it IN its corner, so two things would stay unproven there -- that each corner is read with its
+// own radius, and the rule OFF the corner. ⛔ NON-VACUITY (trap 1): every case says the WHOLE report, `near` included,
+// so a probe that met no corner cannot pass.
+
+afterEach(() => document.body.replaceChildren());
+
+function box(className: string, css: string, parent: Element): HTMLElement {
+  const element = document.createElement("div");
+  element.className = className;
+  element.style.cssText = css;
+  parent.append(element);
+  return element;
+}
+
+/** The outer box: 300 × 120, every corner rounded 20. */
+const outer = (): HTMLElement =>
+  box("outer", "position:absolute;left:0;top:0;width:300px;height:120px;border-radius:20px", document.body);
+
+it("judges the rounded corner of a piece whose top-left is straight (E30)", () => {
+  const root = outer();
+  // Only the bottom-left is rounded, 30, in the outer corner of 20 at 0/0, where it should be 20.
+  box("piece", "position:absolute;left:0;bottom:0;width:120px;height:60px;border-radius:0 0 0 30px", root);
+  expect(concentricRadii([root])).toEqual({
+    near: 1,
+    bad: ["piece in outer, bottom-left: radius 30.0, outer 20.0, distance 0.0/0.0"],
+  });
+});
+
+it("never compares a straight corner -- a sheet's r r 0 0 (answer 20, E30)", () => {
+  const root = outer();
+  // The sheet's straight bottom corners sit 12/12 from the outer ones; the piece in the top-left corner is the one judged.
+  box("sheet", "position:absolute;left:12px;right:12px;bottom:12px;height:40px;border-radius:16px 16px 0 0", root);
+  box("piece", "position:absolute;left:12px;top:12px;width:60px;height:30px;border-radius:8px", root);
+  expect(concentricRadii([root])).toEqual({ near: 1, bad: [] });
+});
+
+it("off the corner, refuses a piece rounder than the outer radius minus the smaller distance (E33)", () => {
+  const root = outer();
+  // 17/13 from the bottom-left corner: at most 20 - 13, with the probe's 1.5 px of slack.
+  box("piece", "position:absolute;left:17px;bottom:13px;width:120px;height:40px;border-radius:16px", root);
+  expect(concentricRadii([root])).toEqual({
+    near: 1,
+    bad: ["piece in outer, bottom-left: radius 16.0, outer 20.0, distance 17.0/13.0"],
+  });
+});
+
+it("off the corner, lets a smaller radius be (E33)", () => {
+  const root = outer();
+  box("piece", "position:absolute;left:17px;bottom:13px;width:120px;height:40px;border-radius:8px", root);
+  expect(concentricRadii([root])).toEqual({ near: 1, bad: [] });
+});
 ```
 
 - [ ] **Passo 2: la prova, prima della pagina**
@@ -3313,6 +3392,11 @@ for (const theme of ["light", "dark"] as const) {
       // ⛔ NON-VACUITY (trap 1): a probe that met no corner near another is green for nothing.
       expect(report.near).toBeGreaterThan(0);
       expect(report.bad).toEqual([]);
+      // ⛔ AND THE ONE CASE THAT JUDGES `BaseList` (E29 of the plan): its last row closes its card, in the corner. `near`
+      // counts the whole page, so a stretched grid, or a note after the list, would take this case away and stay above 0.
+      const list = document.querySelector(".kit-card:has(> .base-list)");
+      expect(list).not.toBeNull();
+      expect(concentricRadii([list as Element]).near).toBeGreaterThan(0);
     });
 
     it("cuts no text, and lets nothing stick out of its box", async () => {
@@ -3705,16 +3789,19 @@ em {
 
 - [ ] **Passo 4: il linter — le parole esemplari**
 
-In `gui/eslint.config.js`, *Trova*:
+In `gui/eslint.config.js`, *Trova* — la fine del blocco di `Chat.vue`, così il blocco nuovo sta accanto all'altra
+eccezione e sopra la testa delle regole d'import (**E28**):
 
 ```js
-  {
-    name: "harness/imports",
+    rules: { "vue/no-v-html": "off" },
+  },
 ```
 
 *Sostituisci con:*
 
 ```js
+    rules: { "vue/no-v-html": "off" },
+  },
   {
     // ⛔ THE KIT PAGE'S WORDS ARE SPECIMENS (D8 of the design-system plan): a development page outside the package, whose
     // words in `it.json` would ship for nothing. The one exception to the raw-text rule, in one place, like Chat's above.
@@ -3722,8 +3809,6 @@ In `gui/eslint.config.js`, *Trova*:
     files: ["src/kit/**"],
     rules: { "@intlify/vue-i18n/no-raw-text": "off" },
   },
-  {
-    name: "harness/imports",
 ```
 
 - [ ] **Passo 5: le prove, verdi — e che cosa dice un rosso**
@@ -3732,7 +3817,8 @@ In `gui/eslint.config.js`, *Trova*:
 (cd gui && npx vitest run --project browser && npm run lint && npm run build)
 ```
 
-Atteso: il progetto `browser` **verde** — 23 prove, le cinque del compito 2 e le diciotto della pagina kit, nove per tema —,
+Atteso: il progetto `browser` **verde** — 27 prove in tre file: le cinque del compito 2, le diciotto della pagina kit, nove
+per tema, e le quattro della sonda dei raggi a mano (**E30**, **E33**) —,
 anche se la corsa rossa del Passo 2 ha lasciato la cache delle dipendenze senza `reka-ui` (**E24**). ⛔ Un rosso di
 `concentricRadii` o di `fits`
 si **legge** prima di correggere: nomina l'elemento, l'antenato, l'angolo e le distanze; dice se è la pagina a mettere un
@@ -3752,6 +3838,9 @@ npm run build
 
 ```bash
 echo "-------- gui: build"
+# ⛔ NO OUTPUT OF A PREVIOUS BUILD: `npm ci` keeps `dist/`, and a build that wrote elsewhere -- or nothing -- would leave
+# the checks below reading the old one (E31 of the design-system plan).
+rm -rf dist
 npm run build
 # ⛔ THE KIT PAGE STAYS OUT OF THE PACKAGE (design system, section (b)): `vite build` takes the inputs it is given, and with
 # none it takes `index.html` alone. Proven on the output, not believed (trap 12 of the design); the first line is the
@@ -3763,7 +3852,11 @@ if [ -e dist/kit.html ] || grep -rlq 'kit-card' dist/assets; then echo "the kit 
 Le due direzioni: in `gui/vite.config.ts` si aggiunge per prova
 `build: { rolldownOptions: { input: { index: "index.html", kit: "kit.html" } } },` accanto a `define` — `rolldownOptions`, il
 nome di Vite 8.3.0: `rollupOptions` vi è deprecato (R3-10) —, e
-`bash scripts/gate-gui.sh` è **rosso** con *«the kit page is in the package»*; si toglie, ed è **verde**.
+`bash scripts/gate-gui.sh` è **rosso** con *«the kit page is in the package»*; si toglie, ed è **verde**. E la guardia della
+prima riga (**E31**): con `build: { outDir: "out", rolldownOptions: { input: { index: "index.html", kit: "kit.html" } } },`
+e il `dist/` di un *build* precedente lasciato lì, `bash scripts/gate-gui.sh` è **rosso** con *«dist/index.html is missing:
+the build produced nothing to check»* — senza il `rm -rf dist` le due righe leggerebbero il `dist/` vecchio e passerebbero
+—; si toglie, e `gui/out/`, nato dalla prova, si cancella.
 
 - [ ] **Passo 7: le due direzioni delle sonde**
 
@@ -3784,6 +3877,10 @@ né allegato nati dai rossi del browser (R3-6).
 | in `BaseButton.vue` tolta la regola del `quiet` spento, quella di **E19** | rosso: la prova dei pulsanti spenti, nei due temi — nello scuro `quiet: rgb(163, 154, 143)` dove la pagina vuole `rgb(111, 102, 96)` (**E25**) |
 | in `BaseTextField.vue` `.frame:hover:not([data-disabled])`, senza la cura di **E20** | rosso: la prova del bordo dell'errore, nei due temi — nello scuro `expected 'rgb(163, 154, 143)' to be 'rgb(129, 27, 7)'` (**E25**) |
 | in `kit.browser.test.ts` tolta la riga `await userEvent.hover(frame as HTMLElement);` | rosso: la guardia della stessa prova, nei due temi — `expected false to be true`: un puntatore che non arriva non lascia la prova verde per niente (**E25**) |
+| in `Kit.vue` tolta `align-items: start;` di `.kit-grid` | rosso: la prova dei **raggi**, nei due temi — `expected 0 to be greater than 0`: la griglia stira le schede, l'ultima riga della lista esce dal suo angolo, e l'attesa sulla scheda della lista se ne accorge (**E29**) |
+| in `probes.ts`, dentro `effective`, `radius(element, "TopLeft")` al posto di `radius(element, corner)` | rosso: le due prove a mano degli angoli diversi, e solo quelle — `expected { near: +0, bad: [] } to deeply equal { near: 1, …(1) }` e `expected { near: 3, bad: [ …(2) ] } to deeply equal { near: 1, bad: [] }` (**E30**) |
+| in `BaseLabel.vue`, nella regola `.base-label :deep(.base-icon)`, `stroke: var(--color-text-stop);` accanto al `color` | rosso: la prova delle **icone**, nei due temi — `stroke is not currentColor: modules` e le altre icone delle etichette: l'attributo dice `currentColor`, il disegno no (**E32**) |
+| in `probes.ts` il ramo fuori dall'angolo reso cieco, `: true;` al posto di `: inner <= outer - Math.min(dx, dy) + 1.5;` | rosso: la sola prova a mano che rifiuta fuori dall'angolo — `expected { near: 1, bad: [] } to deeply equal { near: 1, …(1) }` (**E33**) |
 
 E il blocco del Passo 4, con `(cd gui && npm run lint)`, nelle due direzioni e sul suo confine (**E26**) — una riga per volta,
 indietro con la copia salvata:
@@ -8677,7 +8774,7 @@ grep -rn 'themeAbyss' gui/src | wc -l                                           
 grep -rl 'F3' gui/src/frame | wc -l                                                      # almeno 1
 # 19 -- la striscia a pillola: frame.browser.test.ts nel blocco 2
 # 20 -- le prove del browser, ciascuna con la sua guardia
-for f in $(git ls-files 'gui/src/*.browser.test.ts'); do printf '%s ' "$f"; grep -cE 'NON-VACUITY|toBeGreaterThan\(0' "$f"; done   # cinque file, ciascuno almeno 1
+for f in $(git ls-files 'gui/src/*.browser.test.ts'); do printf '%s ' "$f"; grep -cE 'NON-VACUITY|toBeGreaterThan\(0' "$f"; done   # sei file, ciascuno almeno 1
 # 21 -- la riga «Accessibilità»
 grep -c '^| Accessibilità | 🔶 |' docs/tracciabilita.md                                 # 1
 ```

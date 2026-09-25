@@ -179,6 +179,7 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | **E11** | ⚠️ **Compito 2, Passo 5 — manca la violazione che prova che la sonda del contorno del focus guarda la NOSTRA regola.** Le righe del Passo 5 provano che la sonda parla dell'alto contrasto — la guardia — e il corpo della prova che un `box-shadow` sparisce sotto i colori forzati; nessuna toglie `:focus-visible` da `base.css`, e nessuna diceva se il contorno di base di Chrome passasse la sonda. Misurato il 2026-09-24 dal pre-controllo, sulla copia: senza la regola `npm test` esce 1, rossa `expect(ring(button)).toBe(true)` con `expected false to be true` — e con lei `board.test.ts`, che vuole il foglio della tavola —: la sonda morde sulla regola del progetto, non sul browser. ✅ **Corretta** nel commit che la scrive: una riga nel Passo 5, e `base.css` torna dalla copia salvata |
 | **E12** | Nit — **Compito 2, Passo 5, la riga del tema che segue il sistema:** tolta `system.addEventListener("change", apply);`, va rossa **anche** la prova del compito 1 sotto jsdom, *«follows the system while the choice is `system`, and stops following when stopped»* di `theme.test.ts`, `expected 'dark' to be 'light'` — la stessa riga, tenuta dal `matchMedia` finto e da quello vero. L'Atteso nominava la sola prova del browser, e chi esegue si sarebbe fermato su una divergenza che non c'è. Misurato il 2026-09-24 dal pre-controllo, sulla copia. ✅ **Corretta** nel commit che la scrive: l'Atteso nomina le due |
 | **E13** | Nit — **Compito 2, Passo 5:** *«Il file usa-e-getta della penultima riga»* — il file sta nell'**ultima** riga della tabella, e le righe di **E10** e **E11** la spostano ancora. Trovata dal pre-controllo il 2026-09-24. ✅ **Corretta** nel commit che la scrive: la riga si **nomina**, *«l'attesa di 5 s»*, invece di contarla |
+| **E14** | ⚠️ **Compito 2, Passo 2 — la seconda direzione della sonda del movimento è verde su un valore vuoto:** guardava **un** nome solo, `--duration-fast`, e chiedeva che non fosse la stringa `0ms`, mentre il commento prometteva *«the durations are the board's»*: una stringa vuota passa — la trappola 1 del disegno, una negazione verde quando non trova niente. Una durata tolta **solo** dal blocco di base di `base.css`, e rimasta in quello del movimento ridotto, la sonda del browser non la vedeva: la prendeva `board.test.ts`, che vuole il foglio della tavola. Trovata dalla revisione del compito 2 (M-2), che l'ha misurata nel clone a `23b3134`: tolta la riga `--duration-fast: 110ms;` dal blocco di base, la prova del movimento resta verde e cade la sola *«base.css is the board's block, byte for byte»*. ✅ **Curata** nel commit che scrive questa riga, col testo proposto dalla revisione: la seconda direzione chiede a **ciascuna** delle tre durate un valore, `toMatch(/^[1-9]\d*ms$/)`, senza ricopiare un valore della tavola (vincolo 2), e il commento lo dice. Misurata dal coordinatore il 2026-09-25 sull'albero, macchina `zagor`: `npm test -- --project browser` → `Tests  5 passed (5)`; con la stessa mutazione → `AssertionError: --duration-fast: expected '' to match /^[1-9]\d*ms$/`, `Tests  1 failed \| 4 passed (5)`; `base.css` tornato dalla copia salvata, `cmp` uguale. Il recinto del Passo 2 è allineato nello stesso commit |
 
 ---
 
@@ -1400,9 +1401,12 @@ describe("the tokens, in a real browser (design system, sections (a) and (f))", 
     for (const name of ["--duration-fast", "--duration-moderate", "--duration-slow"]) {
       expect(rootStyle().getPropertyValue(name).trim(), name).toBe("0ms");
     }
-    // ⛔ THE SECOND DIRECTION: without the request, the durations are the board's and not zero.
+    // ⛔ THE SECOND DIRECTION: without the request, every duration is a duration and not zero -- a VALUE, so a
+    // name the base block lost is red here too, and not only in `board.test.ts` (E14 of the design-system plan).
     await commands.emulateMedia({ reducedMotion: "no-preference" });
-    expect(rootStyle().getPropertyValue("--duration-fast").trim()).not.toBe("0ms");
+    for (const name of ["--duration-fast", "--duration-moderate", "--duration-slow"]) {
+      expect(rootStyle().getPropertyValue(name).trim(), name).toMatch(/^[1-9]\d*ms$/);
+    }
   });
 
   it("keep the focus ring under Windows' high contrast: an outline, which forced colours keep (G20, trap 11)", async () => {

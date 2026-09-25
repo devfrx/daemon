@@ -12,8 +12,11 @@ occurrence of the first fence becomes the second), S <n> <file> (the throwaway p
 the target). The `<data>` of the dated recall is the date of row 2 in the target's position table.
 Beyond the recipe: package.json is the base one plus the two devDependencies, exact, in npm's alphabetical order;
 package-lock.json pins them, with @vitest/browser and vitest at 4.1.11; the plan differs from the base by the two
-cells of the position table (step 7) -- anything else in the plan, an errata entry for instance, is shown and left
-to the reader. Exit 0 when everything matches, 1 otherwise.
+cells of the position table (step 7): a cell that is not the dictated one is DIFFERS, and anything else in the
+plan, an errata entry for instance, is shown as CHECK BY HAND and left to the reader. The date is read in row 2 of
+the target, so a date that is not the commit's day is shown as CHECK BY HAND too: the dispatch fixes the day even
+if the execution passes midnight. Exit 1 when something DIFFERS, is LEFT BEHIND or UNEXPECTED, 0 otherwise --
+the plan's cells and the date counted since M-1 of the review of task 2, 2026-09-25.
 """
 import difflib
 import json
@@ -64,6 +67,7 @@ row2 = re.search(r"^\| \*\*2\*\* \|.*\| (✅ (\d{4}-\d{2}-\d{2})) \|$", target_p
 if not row2:
     raise SystemExit("row 2 of the position table in the target is not `✅ <date>`")
 DATE = row2.group(2)
+COMMIT_DAY = git("log", "-1", "--format=%cs", target).strip()
 
 expected, originals, throwaway = {}, {}, []
 
@@ -148,14 +152,21 @@ for path in sorted(set(expected) | set(changed) | set(throwaway)):
         print(f"{'OK' if ok else 'DIFFERS':14} {path}  (the pins; the rest comes from the registry -- CHECK BY HAND)")
         bad += not ok
     elif path == PLAN:
+        cells = got.count(ROW1_NEW) == 1 and got.count(ROW2_NEW) == 1
         if got == want_plan:
             print(f"OK             {path}  (the two cells of step 7)")
+        elif not cells:
+            print(f"DIFFERS        {path}  -- the two cells of step 7 are not the dictated ones:")
+            bad += 1
+            diff(want_plan, got)
         else:
-            print(f"CHECK BY HAND  {path}  -- more than the two cells of step 7:")
+            print(f"CHECK BY HAND  {path}  -- the two cells of step 7, and more:")
             diff(want_plan, got)
     else:
         print(f"UNEXPECTED     {path} -- changed by the commit, dictated by no step")
         bad += 1
 
+if DATE != COMMIT_DAY:
+    print(f"CHECK BY HAND  the date {DATE} of row 2 and of the dated recall is not the commit's day {COMMIT_DAY}")
 print(f"--- {len(set(expected) | set(changed) | set(throwaway))} paths, {bad} not matching the plan's text; date {DATE}")
 sys.exit(1 if bad else 0)

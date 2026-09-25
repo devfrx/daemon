@@ -73,9 +73,12 @@ describe("the tokens, in a real browser (design system, sections (a) and (f))", 
     for (const name of ["--duration-fast", "--duration-moderate", "--duration-slow"]) {
       expect(rootStyle().getPropertyValue(name).trim(), name).toBe("0ms");
     }
-    // ⛔ THE SECOND DIRECTION: without the request, the durations are the board's and not zero.
+    // ⛔ THE SECOND DIRECTION: without the request, every duration is a duration and not zero -- a VALUE, so a
+    // name the base block lost is red here too, and not only in `board.test.ts` (E14 of the design-system plan).
     await commands.emulateMedia({ reducedMotion: "no-preference" });
-    expect(rootStyle().getPropertyValue("--duration-fast").trim()).not.toBe("0ms");
+    for (const name of ["--duration-fast", "--duration-moderate", "--duration-slow"]) {
+      expect(rootStyle().getPropertyValue(name).trim(), name).toMatch(/^[1-9]\d*ms$/);
+    }
   });
 
   it("keep the focus ring under Windows' high contrast: an outline, which forced colours keep (G20, trap 11)", async () => {

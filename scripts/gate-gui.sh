@@ -34,7 +34,16 @@ npm ci --no-audit --no-fund
 echo "-------- gui: build"
 npm run build
 echo "-------- gui: probes"
-npm test
+# ⛔ TWO PROJECTS, ONE AT A TIME (design system, task 2; E10 of its plan): jsdom, and the INSTALLED Chrome for
+# what only a layout engine can judge -- fonts, motion, radii, clipping, the contrast of the drawn page. One at a
+# time because inside ONE run a project that finds no file is GREEN -- `vitest` 4.1.11 says "No test files
+# found" only when the whole run is empty, measured on 2026-09-24 -- while alone each one goes red on its own
+# emptiness: a renamed file or a wrong glob must not drop a project in silence (control 20 of the design). Still
+# `npm test`, the command of §8, twice. Nothing is downloaded (decision 22 of the design): a machine without
+# Google Chrome goes red here with Playwright's message, and that is a prerequisite of the environment, like the
+# `rustup` target and `cargo audit`.
+npm test -- --project jsdom
+npm test -- --project browser
 # ⛔ LINT LAST, AND THE ORDER IS §8's, NOT OURS. §8 fixed "npm ci, npm run build, npm test"; this
 # step appends rather than reordering an approved section. And the probes carry more meaning than
 # the lint, so they must not sit behind it.

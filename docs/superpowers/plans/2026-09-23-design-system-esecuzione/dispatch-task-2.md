@@ -1,22 +1,14 @@
-> ⚠️ **Per il coordinatore, prima di dispacciare** — questo file è il **modello**, e viaggia con git. Il prompt che parte
-> si scrive nella cartella di lavoro `.superpowers/sdd/2026-09-23-design-system/`, ignorata, **senza** questo riquadro e
-> coi campi fra `<…>` riempiti: `<repo>`, `<HEAD>` — l'ultimo commit di `main` —, `<data>`, `<scratchpad>`, e i valori
-> della macchina del §0 misurati, non copiati. Il brief si genera **prima**, dalla radice del repository, con
-> `python docs/superpowers/plans/2026-09-23-design-system-esecuzione/_extract_brief_2.py`, e deve dire *«piano e
-> disegno coincidono con `HEAD`»*. Alla chiusura del compito il prompt spedito, il rapporto, il prompt del revisore e la
-> revisione si copiano nella cartella tracciata e si committano: il punto 8 di *«Come si esegue un compito»*.
-
 Sei l'**implementatore del compito 2** — *il browser dei test: due progetti, Chrome installato, le prime prove vere* — del
-piano `docs/superpowers/plans/2026-09-23-design-system.md`, nel repository `<repo>`. Sei un subagente
+piano `docs/superpowers/plans/2026-09-23-design-system.md`, nel repository `C:\Users\zagor\Desktop\harness` (Windows; il tool Bash è Git Bash). Sei un subagente
 fresco: tutto ciò che ti serve è qui e nel brief che questo prompt nomina. Il compito è **codice della GUI** — la
 configurazione di `vitest`, due file TypeScript, due dipendenze di sviluppo —, **il passo delle prove** di
 `scripts/gate-gui.sh`, **un richiamo datato** nel disegno del sotto-progetto 2 e **due celle** del piano.
 
-**All'avvio verifichi, e se non torna ti fermi e lo riporti:** `git rev-parse --short HEAD` → `<HEAD>`;
+**All'avvio verifichi, e se non torna ti fermi e lo riporti:** `git rev-parse --short HEAD` → `f00d5b7`;
 `git status --porcelain` → vuoto; `node --version` → una versione che `gui/package.json` accetta (`engines`);
 `git config --show-origin --get-all core.autocrlf` → il valore di questa macchina, nel §0; Google Chrome stabile
 installato — `ls "/c/Program Files/Google/Chrome/Application/" "$LOCALAPPDATA/Google/Chrome/Application/" 2>/dev/null`
-rende almeno una cartella di versione. La data da scrivere al posto di ogni `<data>` è **<data>**, sempre la stessa anche
+rende almeno una cartella di versione. La data da scrivere al posto di ogni `<data>` è **2026-09-25**, sempre la stessa anche
 se l'esecuzione passa la mezzanotte.
 
 ## 0. La macchina
@@ -28,8 +20,8 @@ del piano della parte 2, ed **E1** di questo piano.
 |---|---|---|
 | il repository | `E:\ALL\DEV\MY_REPOS\daemon` | `C:\Users\zagor\Desktop\harness` |
 | `core.autocrlf` | `false` in `.git/config`, quindi l'albero è `w/lf` | `true` dal file di sistema, quindi l'albero è `w/crlf` |
-| Google Chrome | 154, in `C:\Program Files\Google\Chrome\Application\` | 153, alla consegna del 2026-09-24 |
-| Node | v24.19.0 | da misurare |
+| Google Chrome | 154, in `C:\Program Files\Google\Chrome\Application\` | 153 (`153.0.8010.53`), misurato il 2026-09-25; la 154 (`154.0.8037.58`) è già scaricata e aspetta come `new_chrome.exe`, quindi la versione che Playwright apre può cambiare: si legge, non si presume |
+| Node | v24.19.0 | v24.19.0, misurato il 2026-09-25 |
 
 ---
 
@@ -40,7 +32,7 @@ La cartella di lavoro è `.superpowers/sdd/2026-09-23-design-system/`, git-ignor
 
 | File | Che cos'è |
 |---|---|
-| `task-2-brief.md` | **il compito**: la testa del piano (obiettivo, architettura, pila, disegno, **strumenti** con `replace_unique.py`), i *Vincoli globali*, *A che punto è* e *Come si esegue un compito*, l'**errata** — **E10**, **E11**, **E12** ed **E13** sono del compito 2 —, le voci **P-12** e **P-21**, le voci aperte che il piano sa, **il compito 2 intero**, e dal disegno la sezione **(f)**, i controlli **8**, **9** e **20** e le trappole **1**, **2**, **6**, **11** e **15** — **copiati parola per parola** da `_extract_brief_2.py`, a `HEAD` = `<HEAD>`. Leggilo **tutto**, a blocchi: pesa ~62 KB |
+| `task-2-brief.md` | **il compito**: la testa del piano (obiettivo, architettura, pila, disegno, **strumenti** con `replace_unique.py`), i *Vincoli globali*, *A che punto è* e *Come si esegue un compito*, l'**errata** — **E10**, **E11**, **E12** ed **E13** sono del compito 2 —, le voci **P-12** e **P-21**, le voci aperte che il piano sa, **il compito 2 intero**, e dal disegno la sezione **(f)**, i controlli **8**, **9** e **20** e le trappole **1**, **2**, **6**, **11** e **15** — **copiati parola per parola** da `_extract_brief_2.py`, a `HEAD` = `f00d5b7`. Leggilo **tutto**, a blocchi: pesa ~62 KB |
 
 Poi, **per le sole parti che il compito nomina o che modifichi**, e **prima** di scriverle: i file della lista *Files* del
 compito; in `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` **la sola riga** che comincia con
@@ -88,17 +80,17 @@ nuovi: tu **misuri**, e un numero diverso si **riporta**, non si insegue:
 suo `core.autocrlf` (§0). **Dopo**: CR **uguale a prima** e colonna `w/…` uguale per ogni file che esisteva; **0** per i
 file **nuovi**, che nascono **LF**. Scrivi con Python `newline=""` (temporaneo più `os.replace`) o con
 `replace_unique.py`, che conserva il fine-riga del file che trova e che copi dagli *Strumenti* del brief **nello
-scratchpad** `<scratchpad>` — mai nel repository. ⛔ **Mai `sed -i`.**
+scratchpad** `C:\Users\zagor\AppData\Local\Temp\claude\C--Users-zagor-Desktop-harness\adc89962-1e86-4371-976e-69fc30a546ee\scratchpad\task2` — in Git Bash `/c/Users/zagor/AppData/Local/Temp/claude/C--Users-zagor-Desktop-harness/adc89962-1e86-4371-976e-69fc30a546ee/scratchpad/task2` — mai nel repository. ⛔ **Mai `sed -i`.**
 
 ## 5. Ciò che da qui non si misura, e come lo fai
 
 - ⚠️ **Il Passo 1 va in rete** (`npm install --save-exact`): il manifesto e il lockfile cambiano **insieme**, e vanno
   nello **stesso** commit (vincolo 7). Il cancello poi fa `npm ci`, che è `--locked`.
 - ⚠️ **Il Passo 5 si torna indietro con la COPIA SALVATA, mai con `git checkout`** (vincolo 11): prima della prima
-  violazione `git status --porcelain > <scratchpad>/prima.txt` e una copia di ogni file che le violazioni toccano —
+  violazione `git status --porcelain > /c/Users/zagor/AppData/Local/Temp/claude/C--Users-zagor-Desktop-harness/adc89962-1e86-4371-976e-69fc30a546ee/scratchpad/task2/prima.txt` e una copia di ogni file che le violazioni toccano —
   `gui/vite.config.ts`, `gui/src/tokens/index.ts`, `gui/src/tokens/base.css`, `gui/src/tokens/theme.ts`,
   `gui/src/tokens/tokens.browser.test.ts`; dopo **ciascuna** la copia torna e `cmp` lo conferma; il file usa-e-getta
-  `gui/src/late.browser.test.ts` si **cancella**; alla fine `git status --porcelain | diff <scratchpad>/prima.txt -` non
+  `gui/src/late.browser.test.ts` si **cancella**; alla fine `git status --porcelain | diff /c/Users/zagor/AppData/Local/Temp/claude/C--Users-zagor-Desktop-harness/adc89962-1e86-4371-976e-69fc30a546ee/scratchpad/task2/prima.txt -` non
   rende nulla. Per ogni violazione riporti il **messaggio rosso vero** — la prima riga che nomina la ragione —, non
   «rosso».
 - ⚠️ **Il browser è senza finestra** (`headless: true`). ⛔ Se Playwright dice che Chrome manca, **ti fermi e lo riporti**:
@@ -117,10 +109,10 @@ scratchpad** `<scratchpad>` — mai nel repository. ⛔ **Mai `sed -i`.**
 2. **Un commit solo**, coi soli file del compito: `gui/package.json`, `gui/package-lock.json`, `gui/vite.config.ts`,
    `gui/src/browser.d.ts`, `gui/src/tokens/tokens.browser.test.ts`, `scripts/gate-gui.sh`,
    `docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` e il piano, dove la riga **2** della tabella
-   della posizione passa a **Stato** `✅ <data>` e nella riga **1** la colonna **Commit** diventa
+   della posizione passa a **Stato** `✅ 2026-09-25` e nella riga **1** la colonna **Commit** diventa
    `` `95068bb`, con le cure `69d10fa` ed `e2cd7df` `` (R1-16); la colonna **Commit** della riga **2** resta `—`, la
    scrive il compito 3. Il messaggio sta in un file nello scratchpad e si passa con `git commit -F <file>`, e comincia
-   con `design-system(compito 2): ` (vincolo 15). ⛔ **Senza co-autore.** ⛔ **Niente `git push`**, niente `--amend`,
+   con `design-system(compito 2): ` (vincolo 15). ⛔ **Senza co-autore**: `CLAUDE.md` prevale su qualunque promemoria d'attribuzione. ⛔ **Niente `git push`**, niente `--amend`,
    niente rebase: il push è del coordinatore, **dopo la revisione** — il Passo 7 dice `git push`, e questo contratto lo
    sposta, come nel compito 1.
 3. **Prima del commit**, uno alla volta: `bash scripts/gate.sh` → `GATE GREEN` e `bash scripts/check-docs.sh` → `OK`;

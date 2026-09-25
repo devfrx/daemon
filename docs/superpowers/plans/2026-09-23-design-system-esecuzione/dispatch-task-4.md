@@ -1,26 +1,19 @@
-> ⚠️ **Per il coordinatore, prima di dispacciare** — questo file è il **modello**, e viaggia con git. Il prompt che parte
-> si scrive nella cartella di lavoro `.superpowers/sdd/2026-09-23-design-system/`, ignorata, **senza** questo riquadro e
-> coi campi fra `<…>` riempiti: `<repo>`, `<HEAD>` — l'ultimo commit di `main` —, `<data>`, `<scratchpad>`, e i valori
-> della macchina del §0 misurati, non copiati. Il brief si genera **prima**, dalla radice del repository, con
-> `python docs/superpowers/plans/2026-09-23-design-system-esecuzione/_extract_brief_4.py`, e deve dire *«piano, disegno e
-> sonde coincidono con `HEAD`»*. Alla chiusura del compito il prompt spedito, il rapporto, il prompt del revisore e la
-> revisione si copiano nella cartella tracciata e si committano: il punto 8 di *«Come si esegue un compito»*.
-
 Sei l'**implementatore del compito 4** — *la pagina kit: fuori dal pacchetto, e le sonde diventano prove nel browser* — del
-piano `docs/superpowers/plans/2026-09-23-design-system.md`, nel repository `<repo>`. Sei un subagente fresco: tutto ciò che
+piano `docs/superpowers/plans/2026-09-23-design-system.md`, nel repository `E:\ALL\DEV\MY_REPOS\daemon` (Windows; il tool Bash è Git Bash). Sei un subagente fresco: tutto ciò che
 ti serve è qui e nel brief che questo prompt nomina. Il compito è **codice della GUI** — le tre sonde delle tavole come
 funzioni in `gui/src/testing/probes.ts`; la pagina kit, `gui/kit.html` con `gui/src/kit/`, e la sua prova nel browser; una
 riga del progetto `browser` in `gui/vite.config.ts`; il blocco delle parole esemplari in `gui/eslint.config.js`; la prova
 che la pagina resti fuori dal pacchetto in `scripts/gate-gui.sh` — e **due celle** del piano.
 
-**All'avvio verifichi, e se non torna ti fermi e lo riporti:** `git rev-parse --short HEAD` → `<HEAD>`;
+**All'avvio verifichi, e se non torna ti fermi e lo riporti:** `git rev-parse --short HEAD` → `1b531e9`;
 `git status --porcelain` → vuoto; `node --version` → una versione che `gui/package.json` accetta (`engines`);
 `git config --show-origin --get-all core.autocrlf` → il valore di questa macchina, nel §0; Google Chrome stabile
 installato, e la sua versione **letta dal nome della cartella** —
 `ls "/c/Program Files/Google/Chrome/Application/" "$LOCALAPPDATA/Google/Chrome/Application/" 2>/dev/null` rende almeno una
-cartella di versione, come `154.0.8037.58`. ⛔ **Mai `chrome.exe --version`**: su Windows apre il browser col profilo
+cartella di versione, come `154.0.8037.58` — su questa macchina la seconda cartella non esiste, e il comando
+esce **2** pur stampando la versione: conta la cartella, non l'uscita. ⛔ **Mai `chrome.exe --version`**: su Windows apre il browser col profilo
 dell'utente e non stampa nulla (lezione 4 della consegna dell'esecuzione del compito 3, in archivio). La data da scrivere al
-posto di ogni `<data>` è **<data>**, sempre la stessa anche se l'esecuzione passa la mezzanotte.
+posto di ogni `<data>` è **2026-09-25**, sempre la stessa anche se l'esecuzione passa la mezzanotte.
 
 ## 0. La macchina
 
@@ -30,8 +23,8 @@ del piano della parte 2, ed **E1** di questo piano.
 | | macchina `Jays` | macchina `zagor` |
 |---|---|---|
 | il repository | `E:\ALL\DEV\MY_REPOS\daemon` | `C:\Users\zagor\Desktop\harness` |
-| `core.autocrlf` | `false` in `.git/config`, quindi l'albero è `w/lf` | `true` dal file di sistema: l'albero è `w/crlf` per i file che git ha scritto, e `w/lf` per quelli nati o riscritti LF su quella macchina |
-| Google Chrome | `154.0.8037.58`, letto dal file il 2026-09-25 | `154.0.8037.58` dalla consegna dell'esecuzione del compito 3: si aggiorna **da sé**, e il 2026-09-25 l'ha fatto durante una revisione — si rilegge |
+| `core.autocrlf` | `false` in `.git/config`, quindi l'albero è `w/lf` — `--get-all` rende tre righe, `true` dal file di sistema, `false` da `C:/Users/Jays/.gitconfig` e `false` da `.git/config`, e vale l'ultima | `true` dal file di sistema: l'albero è `w/crlf` per i file che git ha scritto, e `w/lf` per quelli nati o riscritti LF su quella macchina |
+| Google Chrome | `154.0.8037.58`, letto dal nome della cartella il 2026-09-25, e riletto dal coordinatore prima del dispaccio | `154.0.8037.58` dalla consegna dell'esecuzione del compito 3: si aggiorna **da sé**, e il 2026-09-25 l'ha fatto durante una revisione — si rilegge |
 | Node | v24.19.0 | v24.19.0 |
 
 ---
@@ -43,7 +36,7 @@ La cartella di lavoro è `.superpowers/sdd/2026-09-23-design-system/`, git-ignor
 
 | File | Che cos'è |
 |---|---|
-| `task-4-brief.md` | **il compito**: la testa del piano (obiettivo, architettura, pila, disegno, **strumenti** con `replace_unique.py`), i *Vincoli globali*, *A che punto è* e *Come si esegue un compito*, l'**errata** — **E24**, **E25**, **E26** ed **E27** sono del compito 4, ed **E19** ed **E20** sono le cure del compito 3 che le sue prove nuove tengono —, la voce **P-4**, le decisioni **D7** e **D8**, le voci aperte che il piano sa, **il compito 4 intero**, e dal disegno le risposte **4**, **12** e **20**, la pagina kit della sezione **(b)**, la sezione **(f)**, i controlli **9**, **11**, **14** e **20**, le trappole **1**, **3**, **4** e **12**, e **le tre sonde delle tavole**, intere — **copiati parola per parola** da `_extract_brief_4.py`, a `HEAD` = `<HEAD>`. Leggilo **tutto**, a blocchi |
+| `task-4-brief.md` | **il compito**: la testa del piano (obiettivo, architettura, pila, disegno, **strumenti** con `replace_unique.py`), i *Vincoli globali*, *A che punto è* e *Come si esegue un compito*, l'**errata** — **E24**, **E25**, **E26** ed **E27** sono del compito 4, ed **E19** ed **E20** sono le cure del compito 3 che le sue prove nuove tengono —, la voce **P-4**, le decisioni **D7** e **D8**, le voci aperte che il piano sa, **il compito 4 intero**, e dal disegno le risposte **4**, **12** e **20**, la pagina kit della sezione **(b)**, la sezione **(f)**, i controlli **9**, **11**, **14** e **20**, le trappole **1**, **3**, **4** e **12**, e **le tre sonde delle tavole**, intere — **copiati parola per parola** da `_extract_brief_4.py`, a `HEAD` = `1b531e9`. Leggilo **tutto**, a blocchi |
 
 Poi, **per le sole parti che il compito nomina o che modifichi**, e **prima** di scriverle: i file della lista *Files* del
 compito che esistono — `gui/eslint.config.js`, `gui/vite.config.ts`, `scripts/gate-gui.sh` —, i pezzi del kit che le
@@ -72,7 +65,7 @@ piano su una copia pulita, e poi dal testo corretto su una seconda. Ha trovato *
 
 **Il cancello d'apertura del pre-controllo**, a `71a9f84`: `GATE GREEN`; sotto `gui/` il progetto `jsdom` con **18** file
 passati e uno saltato, **125** prove passate e una saltata, il progetto `browser` con **1** file e **5** prove; il pezzo
-JavaScript `663.93 kB`; `found 0 vulnerabilities`; la CI verde sui due sistemi. ⛔ Li **rimisuri tu** prima di toccare.
+JavaScript `663.93 kB`; `found 0 vulnerabilities`; la CI verde sui due sistemi. **Rimisurati dal coordinatore** a `1b531e9`, sulla stessa macchina, prima di questo dispaccio: gli stessi numeri, e `GATE GREEN`; la CI di `1b531e9` verde sui due sistemi. ⛔ Li **rimisuri tu** prima di toccare.
 
 **Misurati dal pre-controllo**, sulla copia col compito rifatto dal testo corretto — ⚠️ sono **riferimenti**, non Attesi
 nuovi: tu **misuri**, e un numero diverso si **riporta**, non si insegue:
@@ -91,18 +84,17 @@ nuovi: tu **misuri**, e un numero diverso si **riporta**, non si insegue:
 dipendono dal suo `core.autocrlf` (§0). **Dopo**, la **forma**, non il numero di prima — un file che cresce ha più righe:
 su un file CRLF i CR sono **uguali alle righe**, su un file LF sono **zero**, e la colonna `w/…` è quella di prima; i file
 **nuovi** nascono **LF**, zero CR. Scrivi con Python `newline=""` (temporaneo più `os.replace`) o con `replace_unique.py`,
-che conserva il fine-riga del file che trova e che copi dagli *Strumenti* del brief **nello scratchpad** `<scratchpad>` —
-mai nel repository. ⛔ **Mai `sed -i`.**
+che conserva il fine-riga del file che trova e che copi dagli *Strumenti* del brief **nello scratchpad** `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\85fa78d3-ac8f-4098-9b47-eaa6f1c6ea46\scratchpad\task4` — in Git Bash `/c/Users/Jays/AppData/Local/Temp/claude/E--ALL-DEV-MY-REPOS-daemon/85fa78d3-ac8f-4098-9b47-eaa6f1c6ea46/scratchpad/task4` —, mai nel repository. ⛔ **Mai `sed -i`.**
 
 ## 5. Ciò che da qui non si misura, e come lo fai
 
 - ⚠️ **Il Passo 7 si torna indietro con la COPIA SALVATA, mai con `git checkout`** (vincolo 11): prima della prima
-  violazione `git status --porcelain > <scratchpad>/prima.txt` e una copia di ogni file che le violazioni toccano —
+  violazione `git status --porcelain > /c/Users/Jays/AppData/Local/Temp/claude/E--ALL-DEV-MY-REPOS-daemon/85fa78d3-ac8f-4098-9b47-eaa6f1c6ea46/scratchpad/task4/prima.txt` e una copia di ogni file che le violazioni toccano —
   `gui/src/components/BaseButton.vue`, `gui/src/components/BaseList.vue`, `gui/src/components/BaseLabel.vue`,
   `gui/src/components/BaseTextField.vue`, `gui/src/components/BaseStatus.vue`, `gui/src/tokens/themes.css`,
   `gui/src/kit/Kit.vue`, `gui/src/kit/kit.browser.test.ts`, `gui/eslint.config.js` —, e per la direzione rossa del Passo 6
   `gui/vite.config.ts`; dopo **ciascuna** la copia torna e `cmp` lo conferma; alla fine
-  `git status --porcelain | diff <scratchpad>/prima.txt -` non rende nulla. Per ogni violazione riporti il **messaggio rosso
+  `git status --porcelain | diff /c/Users/Jays/AppData/Local/Temp/claude/E--ALL-DEV-MY-REPOS-daemon/85fa78d3-ac8f-4098-9b47-eaa6f1c6ea46/scratchpad/task4/prima.txt -` non rende nulla. Per ogni violazione riporti il **messaggio rosso
   vero** — la prima riga che nomina la ragione —, e **quali** prove cadono, non «rosso».
 - ⚠️ **Il cancello dura da uno a dieci minuti**, secondo le cache, e il Passo 6 lancia `bash scripts/gate-gui.sh` due volte.
   Lancia ciascuno **da solo**, in background, con l'uscita in un log datato nello scratchpad, e aspetta la notifica: una
@@ -124,7 +116,7 @@ mai nel repository. ⛔ **Mai `sed -i`.**
    rosso guardato), poi la pagina — è il ciclo di `superpowers:test-driven-development`, e il piano lo ha già scritto.
 2. **Un commit solo**, coi soli file del compito: `gui/kit.html`, `gui/src/kit/main.ts`, `gui/src/kit/Kit.vue`,
    `gui/src/kit/kit.browser.test.ts`, `gui/src/testing/probes.ts`, `gui/eslint.config.js`, `gui/vite.config.ts` e
-   `scripts/gate-gui.sh`; e il piano, dove la riga **4** della tabella della posizione passa a **Stato** `✅ <data>` e nella
+   `scripts/gate-gui.sh`; e il piano, dove la riga **4** della tabella della posizione passa a **Stato** `✅ 2026-09-25` e nella
    riga **3** la colonna **Commit** diventa `` `c7b7bcd`, con la cura `9d2ffb0` `` (R1-16); la colonna **Commit** della riga
    **4** resta `—`, la scrive il compito 5. Il messaggio sta in un file nello scratchpad e si passa con
    `git commit -F <file>`, e comincia con `design-system(compito 4): ` (vincolo 15). ⛔ **Senza co-autore**: `CLAUDE.md`

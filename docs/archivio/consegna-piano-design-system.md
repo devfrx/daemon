@@ -954,3 +954,65 @@ del sotto-progetto.
    confronta con `compare_task3.py`; alla chiusura del compito, i file del dispaccio nella cartella tracciata (punto 8).
    Poi il pre-controllo del compito 4, in un'altra sessione, con la prossima voce d'errata libera, **E19**; e così compito
    per compito, fino al 9.
+
+## Il pre-controllo del compito 4, del 2026-09-25
+
+Tolto dal piano il 2026-09-25, quando la sessione dopo ha fatto il **pre-controllo del compito 4** e scritto
+*«Come si riprende — il pre-controllo del compito 4»*. Il testo com'era, dal commit `71a9f84`, parola per parola; i
+rimandi sono riscritti per questa cartella.
+
+## Come si riprende — l'esecuzione del compito 3, 2026-09-25
+
+✅ **Il compito 3 è eseguito, rivisto e curato.** La consegna precedente — il pre-controllo — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+| Commit | Che cosa |
+|---|---|
+| `c7b7bcd` | **il compito 3**, dall'implementatore — conforme al dettato: `compare_task3.py ef3e865 c7b7bcd` esce 0, sedici percorsi `OK`, e la revisione l'ha provato nelle due direzioni |
+| `9d2ffb0` | le cure della revisione, dal coordinatore (scelta **A** del proprietario, senza ri-revisione): **E19**–**E23** nell'errata e nel codice, i recinti dei Passi 3, 5, 6 e 7 allineati — il piano rifà i quattro file curati, confrontati a macchina —, e **M-6** in `compare_task3.py` |
+| `c79eaeb` | il dispaccio del compito 3 nella cartella tracciata, e questa consegna |
+| il commit che scrive questa riga | la consegna completata nella stessa chiusura: la CI letta, e la riga su come si riprende dall'altra macchina |
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **cancello** | `GATE GREEN` a `9d2ffb0`, sulla macchina `zagor`: sotto `gui/` il progetto `jsdom` con 18 file passati e uno saltato, **125** prove passate e una saltata — le cento di prima e le 25 di `kit.test.ts` —, il progetto `browser` con un file e 5 prove; il pezzo JavaScript `663.93 kB`, invariato: il kit non entra ancora nel pacchetto della SPA; `found 0 vulnerabilities` — si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | verde sui due sistemi `c7b7bcd`, `9d2ffb0` e `c79eaeb`, lette alla chiusura; quella del commit che scrive questa riga **in corso**: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | la riga **3** a `✅ 2026-09-25`; la sua colonna **Commit** la scrive il compito 4 (R1-16): `` `c7b7bcd`, con la cura `9d2ffb0` `` |
+| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il prompt **spedito**, `dispatch-task-3.md`, al posto del modello — gli stessi testi coi valori della macchina `zagor` —; il rapporto dell'implementatore; il prompt del revisore, `review-3-prompt.md`, col messaggio della ripresa in coda; la revisione; e `compare_task3.py` curato (M-6), il modello di `compare_task4.py` |
+| **le copie** | sulla macchina `zagor` restano il clone della revisione, `%TEMP%\rv3` — coi commit sonda della revisione e del coordinatore, staccati —, la copia del pre-controllo, `%TEMP%\pc3`, e i suoi attrezzi, `%TEMP%\pc3-tools`: non servono più e si possono cancellare, e questa sessione non l'ha fatto. Il banco `%TEMP%\pds` porta i pezzi del compito 3 di **prima** delle cure |
+| **le voci registrate, non prese** | ⚠️ **la finestra delle prove, 1440 × 900**, com'era registrata dalle consegne precedenti; ⚠️ **N-4 della revisione**: un `BaseButton` `card` con una misura prende l'altezza di un controllo, e il testo esce — nessun compito del piano la usa, e se uno la userà la cura è sua; ⚠️ la strada **B** di **E23**, `lucide/…` preso nella regola; ⚠️ **il controllo dei pacchetti ritirati di `cargo audit` non fa rosso senza il registro**: nel cancello della revisione, alle 13:26–13:32, 39 righe `error: couldn't check if the package is yanked: registry: request could not be completed in the allotted timeframe`, e il cancello verde; in quello delle cure, zero. Tocca **X-3** dell'audit, ed è del proprietario |
+| **le due macchine** | quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, dove questa sessione ha lavorato: `core.autocrlf` `true` dal file di sistema, Node v24.19.0, e Chrome **`154.0.8037.58`** — aggiornato **da sé** il 2026-09-25 alle 14:25, durante la revisione: la riga del §0 del modello del dispaccio che dice 153 non vale più —; e quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, `core.autocrlf` `false` e l'albero `w/lf`, Chrome 154. ⛔ Sulla macchina che esegue, gli Attesi di **forma** si misurano, non si copiano (E72) |
+| **dall'altra macchina** | si riprende da `origin`, perché tutto ciò che serve è tracciato: questa sezione, la cartella del dispaccio e il piano. Restano **solo** su `zagor`, e non servono per riprendere: il registro git-ignorato `.superpowers/sdd/2026-09-23-design-system/progress.md` con gli script delle cure, le copie in `%TEMP%` della riga **le copie**, e le note di memoria dell'agente, che stanno fuori dal repository — le lezioni che contano sono nella tabella qui sotto. Sull'altra macchina l'albero è `w/lf`: le forme dei fine-riga si rimisurano lì (E72) |
+
+**La revisione** — un revisore Opus fresco, **interrotto** a metà dalla chiusura del processo di Claude Code verso le 14:05
+e **ripreso** alle 14:12 con `SendMessage`: **conforme**; **0** critici, **0** importanti, **6** minori, **6** nit. M-1…M-5 e
+N-1…N-3 sono curati o dichiarati da **E19**–**E23**, M-6 da `compare_task3.py`; N-4 è registrato; N-5 e N-6 non chiedono
+cure — una frase del rapporto dell'implementatore, e l'ordine *misure, cancello, commit*. Il costo misurato:
+l'implementatore **~238k** token, 97 chiamate, **~33** minuti; il revisore **~385k** al rapporto finale — 29 chiamate e ~19
+minuti dopo la ripresa, ~43 minuti prima —; ~0,6 milioni in tutto, dentro la banda detta al proprietario (0,6–0,9).
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
+del sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **l'aspetto di un pezzo non ha prove in jsdom**, che non applica il foglio: M-1 e M-2 si vedono solo nel browser vero | il pre-controllo del compito 4 chiede, fra le prove nel browser della pagina kit, il colore di ogni variante spenta contro `--color-text-disabled` e il bordo dell'errore sotto il puntatore (**E19**, **E20**) |
+| 2 | **la cura di una direzione lascia scoperta l'altra**: E16 provava la finestra **senza** descrizione, e con la descrizione nessuna prova cadeva (M-3) | per ogni voce d'errata che aggiunge una prova: e l'altra direzione? |
+| 3 | **una frase che si ripete si cura in tutte le sue case**: i segni `data-*` con `\|\| undefined` erano quattro, non tre — `data-error` l'ha trovato la cura | prima di curare, il `grep` della frase nel file e nei suoi fratelli |
+| 4 | **`chrome.exe --version`, su Windows, apre il browser** col profilo dell'utente, e non stampa niente: il revisore l'ha fatto alle 14:26 e l'ha richiuso | la versione si legge dal file — `(Get-Item '<cartella>\chrome.exe').VersionInfo.ProductVersion` — o dal nome della cartella della versione; il modello del prompt del revisore del compito 4 lo dice |
+| 5 | **Chrome si aggiorna da sé fra una corsa e l'altra**: alle 14:25 la 154 ha preso il posto della 153, e una corsa di Playwright in quel minuto è caduta con `browserType.launch: Target page, context or browser has been closed`; una alle 14:02, `Failed to connect to the browser session … within the timeout`, ha la causa non separata fra la memoria di P-21 e l'aggiornamento in attesa | un rosso del progetto `browser` si rilancia dopo aver letto la versione, prima di cercarne la causa nel codice |
+| 6 | **un subagente interrotto dalla chiusura del processo non è perso**: il suo trascritto resta, e `SendMessage` lo riprende. ⚠️ E lo stato si legge **intero**: il messaggio della ripresa diceva *«nessun log del cancello intero»*, perché un `ls \| tail -20` aveva tagliato `gate-review-c7b7bcd.log` | prima della ripresa si misurano albero, clone, processi e log, senza `tail` sugli elenchi, e il messaggio dice lo stato |
+
+**Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. Il **pre-controllo del compito 4**, con le quattro domande di `CLAUDE.md` e le righe 5–8, contro il codice di **adesso**:
+   il compito 3 e le sue cure hanno cambiato `kit.test.ts` — **25** prove, non 23 —, `BaseButton.vue`, `BaseTextField.vue`
+   ed `eslint.config.js`, a cui il compito 4 aggiunge un blocco: i suoi *Trova* si rilanciano sul file di oggi. Le voci che
+   trova vanno nell'errata, e la prossima libera è **E24**. Porta con sé tre cose: la sonda del browser per **E19** ed
+   **E20** (lezione 1); il blocco `harness/kit-page-specimens`, che spegne `no-raw-text` su `src/kit/**`, provato sul suo
+   **confine** (lezione 3 della consegna del pre-controllo del compito 3, in archivio); e il modello del dispaccio con la
+   riga di Chrome del §0 rimisurata e la lezione 4. Il banco `%TEMP%\pds`, se serve, si rifà dal piano di oggi.
+3. L'**esecuzione del compito 4**, in un'altra sessione, col costo detto prima e il sì del proprietario; e così compito
+   per compito, fino al 9.

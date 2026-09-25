@@ -189,6 +189,10 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | **E21** | ⚠️ **Compito 3, Passo 3 — quattro comportamenti del contratto dei pezzi senza una prova**, ciascuno misurato dalla revisione del compito 3 (M-3, M-4, M-5) con `Tests  23 passed (23)` sotto la sua mutazione: **(a)** la seconda direzione di **E16** — con una descrizione, la finestra è descritta da lei —; **(b)** il `null` di `BaseRadioGroup` anche dopo un clic, il caso di P-8 prima che il core risponda; **(c)** lo slot `trigger` che apre la finestra non legata; **(d)** i segni `data-*` scritti con `\|\| undefined`, senza i quali Vue scrive la stringa `"false"` e i selettori `[data-icon-only]`, `[data-pill]`, `[data-disabled]` la prendono — e un **quarto**, `[data-error]` di `BaseTextField`, trovato dal coordinatore applicando la cura: la stessa frase nello stesso file. ✅ **Curate** nel commit che scrive questa riga, nel file e nel recinto del Passo 3: due prove nuove nel blocco di `BaseDialog` — *«is described by its description, when it has one»* e *«opens from its `trigger` slot when unbound»* —, la prova del `null` con un clic, e quattro righe sui segni; `kit.test.ts` passa da 23 a **25** prove. Misurate dal coordinatore il 2026-09-25 sull'albero, una mutazione per volta con la copia salvata e `cmp` uguale dopo: verdi sul codice, `Tests  25 passed (25)`; rosse ciascuna da sola, `Tests  1 failed \| 24 passed (25)`, coi messaggi delle quattro righe nuove della seconda tabella del Passo 8 |
 | **E22** | Nit — **Compito 3, Passo 7 — due frasi di `gui/eslint.config.js` che il compito smentisce o anticipa** (gotcha **#58**): **(a)** la riga di testa del blocco `harness/ts-in-vue`, *«WITHOUT IT SIX OF THE THIRTEEN DO NOT PARSE»*, conta i `.vue` di una cartella che il compito fa crescere — misurato dalla revisione del compito 3 (N-1): senza il `parser`, tredici `.vue` su ventuno non si analizzano —, la specie di **E17** nello stesso file; **(b)** il blocco `harness/ts` nomina `reka-ui` fra ciò che le regole devono vedere, e nessuna regola ne parla prima del blocco `harness/panels-and-frame` del compito 5 (N-2). ✅ **Corrette** nel commit che scrive questa riga: per **(a)** una **sesta** sostituzione nel Passo 7, col testo della revisione — la misura datata delle righe sotto resta vera com'è —; per **(b)** *«… or `lucide` -- and, from task 5, `reka-ui` -- could come in …»* nel recinto della seconda sostituzione. `npm run lint` verde, misurato dal coordinatore |
 | **E23** | Nit — **Compito 3, Passo 8 — il confine della regola di `lucide`:** `paths: [LUCIDE]` prende il nome esatto, e un import da un sotto-percorso passa il linter. Trovata dalla revisione del compito 3 (N-3) e rimisurata dal coordinatore il 2026-09-25: con `import search from "lucide/dist/esm/icons/search.mjs";` in `frame/moveActive.ts`, `npm run lint` esce 0, e `npx vue-tsc --noEmit` esce 2, `TS7016: Could not find a declaration file for module 'lucide/dist/esm/icons/search.mjs'` — il pacchetto porta un `.d.ts` solo —; il file tornato dalla copia, `cmp` uguale. ✅ **Dichiarata**, com'è dichiarato l'`import()` dinamico (R2-17): una frase nel ⚠️ del Passo 8. Prenderla nella regola — un `patterns` accanto a `paths` nei tre blocchi — è la strada B della revisione, **registrata, non presa** |
+| **E24** | ⛔ **Compito 4, Passo 5 — la prima corsa del progetto `browser` dopo il Passo 2 cade quattordici su quattordici, e non per la pagina: la cache delle dipendenze è stantia.** La corsa rossa del Passo 2 — `Kit.vue` non c'è ancora — lascia in `gui/node_modules/.vite/` un pacchetto senza `reka-ui` né `lucide`; al Passo 5 Vite li trova a corsa avviata, rifà il pacchetto e ricarica — *«dependencies optimized: axe-core, lucide, reka-ui, vue»*, *«optimized dependencies changed. reloading»* —, e la pagina si monta con **due copie di Vue**: ogni sua prova cade con `TypeError: 'set' on proxy: trap returned falsish for property 'style'`, dentro `reka-ui`. Vitest lo prevede e lo stampa, *«Vite unexpectedly reloaded a test. This may cause tests to fail…»*, in `@vitest/browser` 4.1.11 installato. Misurato il 2026-09-25 dal pre-controllo sulla copia `%TEMP%\pc4`, macchina `Jays`, col compito rifatto dal testo del piano: la cache rifatta da una corsa senza `Kit.vue`, poi la corsa intera, **2 su 2** `Tests  14 failed \| 5 passed (19)`; la corsa dopo, verde. ⚠️ **Il cancello non lo vede mai**: `npm ci` svuota `node_modules/`, e a cache vuota la corsa è verde, 3 su 3 — il rosso è di chi esegue e di chi rivede, e torna a ogni prova del browser che raggiunge per prima una dipendenza, nei compiti 6 e 8. ✅ **Decisa dal coordinatore il 2026-09-25 con `anthropic-skills:decision-principles`, su delega del proprietario — A**: `optimizeDeps: { force: true }` sul solo progetto `browser`, che rifà il pacchetto a ogni corsa dalla scansione dei file di prova. Misurata: lo scenario rosso diventa verde, 2 su 2, e la corsa costa uguale — 3,8–3,9 s a freddo, 3,6–3,9 s con la cache. Scartata **B**, la lista `optimizeDeps.include` che l'avviso di Vitest consiglia, verde anch'essa 2 su 2: va allungata a ogni dipendenza che una prova del browser raggiunge per la prima volta, e un nome dimenticato riporta il rosso solo in locale, dove il cancello non guarda. Il costo di A, detto nel commento accanto: si scosta da quel consiglio, e i tipi di Vite 8.3.0 marcano l'opzione `@experimental`, mentre la pagina *Dep Optimization Options* la documenta senza riserve; se sparisse, la via è B. ✅ **Corretta** nel commit che la scrive: il Passo 2 scrive la riga in `gui/vite.config.ts` prima della prova, *Files* la nomina, l'Atteso del Passo 5 lo dice; le due fonti nella tabella del Passo 8 del compito 9 |
+| **E25** | ⚠️ **Compito 4, Passo 2 — le prove nel browser di E19 ed E20, che la revisione del compito 3 lasciava a questo pre-controllo: jsdom non applica il foglio, e i due difetti si vedono solo nel Chrome.** Nella prova della pagina kit, per ciascun tema, *«draws every button that is off in the disabled colour, whatever its variant (E19)»* — i tre pulsanti spenti della pagina, uno per variante, contro `--color-text-disabled` calcolato dalla pagina e non ricopiato — e *«keeps the error's border under the pointer (E20)»* — il bordo `--color-border-stop` del campo con l'errore, prima e sotto il puntatore di `userEvent.hover`, con la guardia che il puntatore sia arrivato. Misurate il 2026-09-25 dal pre-controllo sulla copia, macchina `Jays`, Chrome 154: verdi sul codice, 23 prove nel progetto `browser`; rossa la prima senza la regola del `quiet` spento — nello scuro `quiet: rgb(163, 154, 143)` dove la pagina vuole `rgb(111, 102, 96)`, i valori della revisione —; rossa la seconda con `.frame:hover:not([data-disabled])` — nello scuro `expected 'rgb(163, 154, 143)' to be 'rgb(129, 27, 7)'` —; e rossa la sua guardia senza la riga del `hover`, `expected false to be true`; ogni file tornato dalla copia salvata, `git status --porcelain` com'era. ⚠️ **E la prova del puntatore ha chiesto una cura al file.** Rifatto il compito dal testo corretto sulla copia `%TEMP%\pc4b`, la violazione della riga 1 del Passo 7 faceva cadere **anche** la prova di E20, `TimeoutError`, e la violazione del contrasto la faceva cadere nello scuro: la prova della finestra, rossa, si ferma prima del suo `wrapper.unmount()`, e la finestra rimasta montata lascia `pointer-events: none` sul `body` — misurato con una diagnostica scritta per fallire, `body pointer-events: "none"` —, dove il puntatore vero non si posa più. Curata alla radice, nella forma delle prove del dock e della cornice (compiti 6 e 8): le pagine montate in una lista, smontate in `afterEach`, e nessuna prova si smonta da sé; rimisurato, la riga 1 fa cadere le sole due prove della finestra, e la riga del contrasto le sole due di `axe` nello scuro. ✅ **Corretta** nel commit che la scrive: le due prove, l'aiutante `colourOf` e lo smontaggio in `afterEach` nel recinto del Passo 2, `userEvent` fra ciò che il compito consuma, tre righe nella tabella del Passo 7. ⚠️ **E il compito 8 allineato nello stesso commit**: il suo primo *Trova* su `kit.browser.test.ts` porta l'import di `userEvent`, e i suoi Atteso contano le quattro prove in più — *«nove rosse su trentuno»*, *«le diciotto della pagina kit»*, *«trentuno su trentuno»*; dedotto, perché nessun compito dopo il 4 tocca i pezzi che le due prove guardano |
+| **E26** | Nit — **Compito 4, Passo 4 — il blocco `harness/kit-page-specimens` non aveva righe rosse, né sul bisogno né sul confine** (lezione 3 della consegna del pre-controllo del compito 3, in archivio: un blocco del linter si prova sul suo confine); il Passo 5 prova il solo verde. Misurato il 2026-09-25 dal pre-controllo sulla copia, una riga per volta e indietro con la copia salvata: tolto il blocco, `npm run lint` è rosso con trentatré `raw text … is used` in `src/kit/Kit.vue` — è il blocco a lasciar passare le parole della pagina —; col blocco, una parola in `BaseStatus.vue` resta rossa, `raw text 'ciao' is used` — il blocco si ferma alla sua cartella —; e `import { Search } from "lucide";` in `Kit.vue` resta rosso, *«'lucide' import is restricted…»* — il blocco spegne la sua regola e nessun'altra. ✅ **Corretta** nel commit che la scrive: una seconda tabella nel Passo 7, con le tre righe |
+| **E27** | Nit — **Compito 4, Passo 7 — il ramo *fuori dall'angolo* di `concentricRadii` non è mai valutato sulla pagina kit.** La regola che il commento della sonda promette — un elemento lontano dall'angolo non è più tondo del raggio di fuori meno la distanza minore — non ha una riga che la faccia cadere, e nemmeno un caso verde da giudicare: la pagina mette ogni pezzo *nell'*angolo. Misurato il 2026-09-25 dal pre-controllo sulla copia: con un `throw` su ogni coppia fuori dall'angolo, le 23 prove restano verdi. ✅ **Corretta** nel commit che la scrive: una riga nel Passo 7, le righe della lista più tonde **e** spostate dall'angolo — rossa nei due temi con `base-list-row in kit-card, bottom-left: radius 16.0, outer 20.0, distance 17.0/13.0`; col ramo reso cieco, `: true`, la stessa riga è verde, cioè la prende quel ramo; e con lo stesso spostamento e il raggio giusto è verde, dove il ramo giudica e assolve — col `throw`, rossa `off the corner: base-list-row bottom-left 17.0/13.0`. ⚠️ E la riga *Files* della sonda nomina anche il compito 6, che usa `concentricRadii` |
 
 ---
 
@@ -3047,13 +3051,14 @@ il commit — `design-system(compito 3): il kit …` — coi fine-riga rimisurat
 
 **Files:**
 - Create: `gui/kit.html`, `gui/src/kit/main.ts`, `gui/src/kit/Kit.vue`, `gui/src/kit/kit.browser.test.ts`
-- Create: `gui/src/testing/probes.ts` — le tre sonde come funzioni, per questo compito e per il compito 8
+- Create: `gui/src/testing/probes.ts` — le tre sonde come funzioni, per questo compito e per i compiti 6 e 8
 - Modify: `gui/eslint.config.js` — il blocco delle parole esemplari (D8)
+- Modify: `gui/vite.config.ts` — il progetto `browser` rifà il pacchetto delle dipendenze a ogni corsa (**E24**)
 - Modify: `scripts/gate-gui.sh` — la pagina kit **fuori** dal pacchetto, provato sull'uscita del *build*
 
 **Interfaces:**
 - Consumes: gli otto pezzi e `ICONS` del compito 3; `watchTheme` e `isThemeChoice` del compito 1; `violations` di
-  `testing/axe.ts`; il progetto `browser` del compito 2.
+  `testing/axe.ts`; il progetto `browser` e `userEvent` del compito 2.
 - Produces, da `gui/src/testing/probes.ts`:
   `concentricRadii(roots: Element[]): { near: number; bad: string[] }`,
   `fits(roots: Element[], boxes: string): { seen: number; boxed: number; problems: string[] }`,
@@ -3205,11 +3210,40 @@ export function firstFamily(element: Element): string {
 
 - [ ] **Passo 2: la prova, prima della pagina**
 
+In `gui/vite.config.ts` il progetto `browser` rifà il pacchetto delle dipendenze a ogni corsa (**E24**) — **prima** della
+prova, perché la sua corsa rossa lascerebbe la cache senza `reka-ui`, e la prima corsa del Passo 5 cadrebbe per quello.
+*Trova*:
+
+```ts
+      {
+        extends: true,
+        test: {
+          name: "browser",
+```
+
+*Sostituisci con:*
+
+```ts
+      {
+        extends: true,
+        // ⛔ THE DEPENDENCIES ARE PRE-BUNDLED AFRESH ON EVERY RUN (E24 of the design-system plan). A cache left by a run
+        // that never reached a library makes Vite re-bundle MID-RUN and reload, and the probes end up with two copies of
+        // Vue: every one red with `'set' on proxy: trap returned falsish`, measured on 2026-09-25. `npm ci` empties the
+        // cache, so the gate never sees it -- it bites whoever runs the probes by hand. Not `optimizeDeps.include`, the
+        // list Vitest's warning suggests: it must grow with every library a probe reaches, and a forgotten name is red
+        // only where the gate does not look. The cost, measured: none -- a run takes under 4 s, cold or warm; and Vite
+        // 8.3.0's types mark the option `@experimental`, while its page documents it without reserve.
+        optimizeDeps: { force: true },
+        test: {
+          name: "browser",
+```
+
 Crea `gui/src/kit/kit.browser.test.ts` (LF):
 
 ```ts
 import { mount } from "@vue/test-utils";
 import axe from "axe-core";
+import { userEvent } from "vitest/browser";
 import { afterEach, describe, expect, it } from "vitest";
 import { nextTick } from "vue";
 
@@ -3224,12 +3258,20 @@ import Kit from "./Kit.vue";
 const ROOTS = ".kit-card, .kit-frame, .kit-strip";
 const BOXES = ".kit-card, .kit-frame, .kit-strip, .base-button, .base-list-row, .base-text-field > .frame, .option, .base-dialog";
 
+/** The kits the probes mounted: every one unmounted after its probe, red or green. */
+const kits: { unmount(): void }[] = [];
+
 afterEach(() => {
+  // ⛔ UNMOUNTED HERE, NOT ON A PROBE'S LAST LINE (E25 of the plan): a probe that goes red stops before it, and the app
+  // it leaves alive keeps an open window's `pointer-events: none` on the body -- the next probe that moves the real
+  // pointer then times out, measured on 2026-09-25. The shape of the dock's and the frame's probes (tasks 6 and 8).
+  for (const wrapper of kits.splice(0)) wrapper.unmount();
   document.body.replaceChildren();
 });
 
 async function kit(theme: "light" | "dark") {
   const wrapper = mount(Kit, { attachTo: document.body, props: { initialTheme: theme } });
+  kits.push(wrapper);
   await nextTick();
   await document.fonts.ready;
   return wrapper;
@@ -3248,43 +3290,49 @@ async function contrastJudged(node: Element): Promise<{ passes: number; incomple
   return { passes: count(results.passes), incomplete: count(results.incomplete) };
 }
 
+/** A colour token as the page computes it -- `rgb(…)`, in the theme on the root -- never copied from the board. */
+function colourOf(token: string): string {
+  const probe = document.createElement("span");
+  probe.style.color = `var(${token})`;
+  document.body.append(probe);
+  const colour = getComputedStyle(probe).color;
+  probe.remove();
+  return colour;
+}
+
 for (const theme of ["light", "dark"] as const) {
   describe(`the kit page, ${theme} theme`, () => {
     it("puts its theme on the root", async () => {
-      const wrapper = await kit(theme);
+      await kit(theme);
       expect(document.documentElement.dataset.theme).toBe(theme);
-      wrapper.unmount();
     });
 
     it("keeps every radius concentric (answer 4)", async () => {
-      const wrapper = await kit(theme);
+      await kit(theme);
       const report = concentricRadii(roots(ROOTS));
       // ⛔ NON-VACUITY (trap 1): a probe that met no corner near another is green for nothing.
       expect(report.near).toBeGreaterThan(0);
       expect(report.bad).toEqual([]);
-      wrapper.unmount();
     });
 
     it("cuts no text, and lets nothing stick out of its box", async () => {
-      const wrapper = await kit(theme);
+      await kit(theme);
       const report = fits(roots(ROOTS), BOXES);
       expect(report.seen).toBeGreaterThan(0);
       expect(report.boxed).toBeGreaterThan(0);
       expect(report.problems).toEqual([]);
-      wrapper.unmount();
     });
 
     it("draws every icon in currentColor, and centres it", async () => {
-      const wrapper = await kit(theme);
+      await kit(theme);
       const report = iconsCentred(roots(".kit"));
       expect(report.icons).toBeGreaterThan(0);
       expect(report.centred).toBeGreaterThan(0);
       expect(report.problems).toEqual([]);
-      wrapper.unmount();
     });
 
     it("dresses labels and numbers in Barlow, and the text in Geist", async () => {
-      const wrapper = await kit(theme);
+      await kit(theme);
       const label = document.querySelector(".base-label");
       const text = document.querySelector(".base-list-row span");
       const number = document.querySelector(".kit em");
@@ -3292,7 +3340,6 @@ for (const theme of ["light", "dark"] as const) {
       expect(firstFamily(label as Element)).toBe("Barlow");
       expect(firstFamily(text as Element)).toBe("Geist Variable");
       expect(firstFamily(number as Element)).toBe("Barlow");
-      wrapper.unmount();
     });
 
     it("has no axe violation -- contrast included, on the drawn page", async () => {
@@ -3301,11 +3348,10 @@ for (const theme of ["light", "dark"] as const) {
       const judged = await contrastJudged(wrapper.element);
       expect(judged.passes).toBeGreaterThan(0);
       expect(judged.incomplete).toBe(0);
-      wrapper.unmount();
     });
 
     it("opens its window with the radii concentric, and no axe violation", async () => {
-      const wrapper = await kit(theme);
+      await kit(theme);
       document.querySelector<HTMLButtonElement>('[data-kit="open-dialog"]')?.click();
       await nextTick();
       await nextTick();
@@ -3318,7 +3364,31 @@ for (const theme of ["light", "dark"] as const) {
       const judged = await contrastJudged(dialog[0] as Element);
       expect(judged.passes).toBeGreaterThan(0);
       expect(judged.incomplete).toBe(0);
-      wrapper.unmount();
+    });
+
+    it("draws every button that is off in the disabled colour, whatever its variant (E19)", async () => {
+      await kit(theme);
+      const off = [...document.querySelectorAll<HTMLElement>(".kit .base-button:disabled")];
+      // ⛔ NON-VACUITY (trap 1): one button off per variant, and the probe meets all three. jsdom applies no sheet, so
+      // only here can a rule that weighs more than `:disabled` show -- the quiet one did (E19 of the plan).
+      expect(off.map((button) => button.dataset.variant).sort()).toEqual(["primary", "quiet", "secondary"]);
+      const disabled = colourOf("--color-text-disabled");
+      expect(off.map((button) => `${button.dataset.variant}: ${getComputedStyle(button).color}`)).toEqual(
+        off.map((button) => `${button.dataset.variant}: ${disabled}`),
+      );
+    });
+
+    it("keeps the error's border under the pointer (E20)", async () => {
+      await kit(theme);
+      const frame = document.querySelector<HTMLElement>(".kit .base-text-field > .frame[data-error]");
+      expect(frame).not.toBeNull();
+      const stop = colourOf("--color-border-stop");
+      expect(getComputedStyle(frame as HTMLElement).borderTopColor).toBe(stop);
+      await userEvent.hover(frame as HTMLElement);
+      // ⛔ NON-VACUITY: a pointer that never arrived would leave the border as it was, and the probe green for nothing.
+      expect((frame as HTMLElement).matches(":hover")).toBe(true);
+      expect(getComputedStyle(frame as HTMLElement).borderTopColor).toBe(stop);
+      await userEvent.unhover(frame as HTMLElement);
     });
   });
 }
@@ -3662,7 +3732,9 @@ In `gui/eslint.config.js`, *Trova*:
 (cd gui && npx vitest run --project browser && npm run lint && npm run build)
 ```
 
-Atteso: il progetto `browser` **verde**, le prove della pagina kit nei due temi. ⛔ Un rosso di `concentricRadii` o di `fits`
+Atteso: il progetto `browser` **verde** — 23 prove, le cinque del compito 2 e le diciotto della pagina kit, nove per tema —,
+anche se la corsa rossa del Passo 2 ha lasciato la cache delle dipendenze senza `reka-ui` (**E24**). ⛔ Un rosso di
+`concentricRadii` o di `fits`
 si **legge** prima di correggere: nomina l'elemento, l'antenato, l'angolo e le distanze; dice se è la pagina a mettere un
 pezzo nell'angolo sbagliato — si corregge la pagina, con la regola scritta nel commento di `Kit.vue` — o se è il pezzo a
 sbagliare il raggio — si corregge il pezzo, **mai** il token.
@@ -3708,6 +3780,19 @@ né allegato nati dai rossi del browser (R3-6).
 | in `BaseLabel.vue` l'icona spostata dentro la sua riga centrata, `.base-label :deep(.base-icon) { position: relative; top: 3px; }` | rosso: `iconsCentred`, nei due temi — `off centre by 3.00 px: … in base-label` (R3-3) |
 | in `Kit.vue` `.kit` con `font: 400 0.875rem/1.25rem serif` al posto di `font: var(--font-body)` | rosso: `expected 'serif' to be 'Geist Variable'`, nei due temi — la famiglia **dichiarata**; un carattere che non si carica lo vede la prova del compito 2 (R3-4) |
 | in `themes.css` `--color-text-muted` dello scuro portato a `var(--ref-neutral-39)` | rosso: `axe`, `color-contrast` — ⛔ e anche `board.test.ts` e `contrast.test.ts`, che la vogliono (R3-8) |
+| in `BaseList.vue` il raggio delle righe `var(--radius-card)` al posto di `var(--radius-control)`, **e** `margin-inline: var(--space-1);` accanto | rosso: la prova della **pagina**, nei due temi — `base-list-row in kit-card, bottom-left: radius 16.0, outer 20.0, distance 17.0/13.0`: la riga è **fuori** dall'angolo, e la giudica l'altro ramo della sonda (**E27**). Con la sola `margin-inline` e il raggio giusto, **verde**: fuori dall'angolo un raggio più piccolo è ammesso |
+| in `BaseButton.vue` tolta la regola del `quiet` spento, quella di **E19** | rosso: la prova dei pulsanti spenti, nei due temi — nello scuro `quiet: rgb(163, 154, 143)` dove la pagina vuole `rgb(111, 102, 96)` (**E25**) |
+| in `BaseTextField.vue` `.frame:hover:not([data-disabled])`, senza la cura di **E20** | rosso: la prova del bordo dell'errore, nei due temi — nello scuro `expected 'rgb(163, 154, 143)' to be 'rgb(129, 27, 7)'` (**E25**) |
+| in `kit.browser.test.ts` tolta la riga `await userEvent.hover(frame as HTMLElement);` | rosso: la guardia della stessa prova, nei due temi — `expected false to be true`: un puntatore che non arriva non lascia la prova verde per niente (**E25**) |
+
+E il blocco del Passo 4, con `(cd gui && npm run lint)`, nelle due direzioni e sul suo confine (**E26**) — una riga per volta,
+indietro con la copia salvata:
+
+| La violazione | Atteso |
+|---|---|
+| in `eslint.config.js` tolto il blocco `harness/kit-page-specimens` | rosso: trentatré `@intlify/vue-i18n/no-raw-text` in `src/kit/Kit.vue`, da `raw text 'Il kit' is used` in giù — è il blocco a lasciar passare le parole della pagina |
+| col blocco, in `BaseStatus.vue` una parola dentro la regione, `role="status">ciao<slot />` | rosso: `raw text 'ciao' is used` — il blocco si ferma alla sua cartella |
+| col blocco, in cima allo `<script>` di `Kit.vue` `import { Search } from "lucide";` | rosso: *«'lucide' import is restricted from being used»* — il blocco spegne la sua regola, e nessun'altra |
 
 - [ ] **Passo 8: guardarla, e il commit**
 
@@ -6567,6 +6652,7 @@ e l'import lo prende da `testing/axe.ts`:
 ```ts
 import { mount } from "@vue/test-utils";
 import axe from "axe-core";
+import { userEvent } from "vitest/browser";
 import { afterEach, describe, expect, it } from "vitest";
 import { nextTick } from "vue";
 
@@ -6578,6 +6664,7 @@ import { violations } from "../testing/axe";
 
 ```ts
 import { mount } from "@vue/test-utils";
+import { userEvent } from "vitest/browser";
 import { afterEach, describe, expect, it } from "vitest";
 import { nextTick } from "vue";
 
@@ -7215,10 +7302,10 @@ describe("the overview's grid, under the keys (R3-23 of the review)", () => {
 Atteso: **rosso**, e per le ragioni giuste — misurato il 2026-09-24. Sotto jsdom `Failed to resolve import
 "../stores/drawer"` in `frame.test.ts` e `Failed to resolve import "./stores/drawer"` in `a11y.test.ts`; `copy.test.ts`
 **verde**, perché le tre viste hanno già le loro parole: la sua prova nuova è una guardia, e il suo rosso è al passo 9. Nel
-browser **nove rosse su ventisette**: il dock, `expected '20px' to be '9999px'` nei due temi — la striscia è ancora una
+browser **nove rosse su trentuno**, le ventisette della misura e le quattro di **E25**: il dock, `expected '20px' to be '9999px'` nei due temi — la striscia è ancora una
 scheda —; la cornice, `expected 20 to be greater than or equal to 25` — il raggio di una scheda, non di una pillola — e
 `expected null not to be null` per il pulsante della striscia e per la Panoramica, che F3 non apre, nei due temi; e la
-prova delle frecce, `expected null not to be null`. Verdi le quattordici della pagina kit e le altre del dock.
+prova delle frecce, `expected null not to be null`. Verdi le diciotto della pagina kit e le altre del dock.
 
 - [ ] **Passo 4: il cassetto da un negozio, e la domanda della conferma in un posto solo**
 
@@ -7946,7 +8033,7 @@ In `gui/src/tokens/dock.css` (`replace_unique.py`), una sostituzione:
 ```
 
 Atteso: **verde** — sotto jsdom le sei prove nuove della cornice, le due della Panoramica e del cassetto aperti e quella
-delle parole delle viste, con le altre dei tre file; nel browser **ventisette su ventisette**.
+delle parole delle viste, con le altre dei tre file; nel browser **trentuno su trentuno**, con le quattro di **E25**.
 
 - [ ] **Passo 8: tutte le prove, il *build*, il linter, e il pezzo JavaScript**
 
@@ -8345,6 +8432,8 @@ tabella nomina: qui la provenienza, lì il merito — una casa ciascuno.
 | `dockview` 8.3.1 installato: `dist/styles/dockview.css`, `color-scheme: dark` su `.dockview-theme-abyss` | 2026-09-24 | i controlli nativi scuri nel tema chiaro — E4 |
 | WCAG 2.2, tecnica G18, `https://www.w3.org/WAI/WCAG22/Techniques/general/G18`, aggiornata il 2026-08-10: la soglia `0.04045`, e `0.03928` prima del maggio 2021, *«no practical effect»* | 2026-09-24 | la luminanza di `contrast.test.ts` — E7 |
 | `vitest` 4.1.11 installato: `passWithNoTests` fra le `NonProjectOptions` dei suoi tipi, un'opzione solo globale — `grep -rn 'passWithNoTests' gui/node_modules/vitest/dist` | 2026-09-24 | un progetto vuoto dentro una corsa a due è verde, da solo è rosso — E10 |
+| `@vitest/browser` 4.1.11 installato: su *«optimized dependencies changed. reloading»* stampa *«Vite unexpectedly reloaded a test. This may cause tests to fail…»* e consiglia `optimizeDeps.include` — `grep -n 'unexpectedly reloaded' gui/node_modules/@vitest/browser/dist/index.js` | 2026-09-25 | la cache stantia del progetto `browser`, e la via scartata — E24 |
+| Vite, *Dep Optimization Options*, `https://vite.dev/config/dep-optimization-options`: `optimizeDeps.force`, *«Set to `true` to force dependency pre-bundling, ignoring previously cached optimized dependencies»*, senza marca di sperimentale; nei tipi di Vite 8.3.0 installato è `@experimental` — `grep -n -B3 'force?: boolean' gui/node_modules/vite/dist/node/index.d.ts` | 2026-09-25 | la cura di E24 |
 
 ### Le misure dell'esecuzione
 
@@ -8628,58 +8717,91 @@ compito 1 — o in una voce d'errata. Un nome senza casa è una voce d'errata nu
 
 ---
 
-## Come si riprende — l'esecuzione del compito 3, 2026-09-25
+## Come si riprende — il pre-controllo del compito 4, 2026-09-25
 
-✅ **Il compito 3 è eseguito, rivisto e curato.** La consegna precedente — il pre-controllo — sta parola per parola in
-[`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
+✅ **Il pre-controllo del compito 4 è fatto, e ha trovato quattro difetti**: **E24**, **E25**, **E26** ed **E27**, scritti
+nell'errata e **già applicati** al testo del compito, che si esegue com'è scritto adesso. **E24** chiedeva una scelta fra due
+cure: portata al proprietario, l'ha delegata — *«decidi secondo la skill decision-principles»* —, e la voce dice la scelta,
+la via scartata e il costo. Nessuna tocca il merito approvato. La consegna precedente — l'esecuzione del compito 3 — sta
+parola per parola in [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
 
-| Commit | Che cosa |
+⚠️ **Perché è una misura e non un'impressione.** Il compito è stato **rifatto per intero dal testo del piano** su una copia
+pulita di `71a9f84` — `git clone` in `%TEMP%\pc4`, sulla macchina `Jays`, senza `origin`, `npm ci`, poi i Passi 1–7 coi
+recinti del piano, applicati da uno script —, e ogni *Atteso* è tornato **tranne uno**: la prima corsa del Passo 5, rossa
+quattordici su quattordici per la cache delle dipendenze (**E24**). Passo 2, rosso, `Failed to resolve import "./Kit.vue"`;
+Passo 5, alla corsa dopo, il progetto `browser` verde, il lint e il *build* verdi, il pezzo JavaScript `663.93 kB` col nome
+del `main` di questa macchina, `index-CiZv4zPX.js`; Passo 6, rosso *«the kit page is in the package»* con la pagina fra gli
+ingressi, e verde senza; Passo 7, ogni riga rossa per la ragione scritta, nei temi detti, e `git status --porcelain` alla fine
+uguale a quello di prima. La pagina, aperta dal server di sviluppo della copia: nessun errore in console, e la scelta in cima
+porta la radice da `dark` a `light`. Scritte le voci, il compito è stato **rifatto dal testo corretto** su una seconda copia,
+`%TEMP%\pc4b`, con la ricetta qui sotto: la prima corsa del Passo 5 dopo il rosso del Passo 2 è **verde**, 23 prove; il passo
+web intero verde — `--project jsdom` 18 file passati e uno saltato, 125 prove passate e una saltata; `--project browser` 2
+file, 23 prove; `found 0 vulnerabilities` —; e ogni riga del Passo 7, le quattro nuove comprese, rossa sulle **sole** prove
+che nomina. È lì che **E25** ha preso la sua seconda metà, lo smontaggio in `afterEach`: prima, la finestra rossa trascinava
+a cascata la prova del puntatore. E `compare_task4.py` è stato provato su una terza copia, `%TEMP%\pc4c`, con questo piano
+committato in locale come base: il commit fedele alla ricetta esce **0**, nove percorsi `OK`, e i suoi otto file sono
+**uguali**, byte per byte, a quelli della copia `pc4b`; sei mutanti escono **1** ciascuno — un token cambiato in `Kit.vue`, un
+file in più, la cella della riga 3 non dettata, la riga di **E24** tolta, lo smontaggio di **E25** tolto, `package.json`
+toccato —; e due cambi non dettati escono **0** con `CHECK BY HAND` — una voce d'errata in più, una data che non è il giorno
+del commit.
+
+| Domanda | Esito, e il comando o la misura |
 |---|---|
-| `c7b7bcd` | **il compito 3**, dall'implementatore — conforme al dettato: `compare_task3.py ef3e865 c7b7bcd` esce 0, sedici percorsi `OK`, e la revisione l'ha provato nelle due direzioni |
-| `9d2ffb0` | le cure della revisione, dal coordinatore (scelta **A** del proprietario, senza ri-revisione): **E19**–**E23** nell'errata e nel codice, i recinti dei Passi 3, 5, 6 e 7 allineati — il piano rifà i quattro file curati, confrontati a macchina —, e **M-6** in `compare_task3.py` |
-| `c79eaeb` | il dispaccio del compito 3 nella cartella tracciata, e questa consegna |
-| il commit che scrive questa riga | la consegna completata nella stessa chiusura: la CI letta, e la riga su come si riprende dall'altra macchina |
+| 1 — la sonda è sbagliata? | **sì, a metà**: **E27**, il ramo *fuori dall'angolo* di `concentricRadii` che la pagina non esercitava mai — con un `throw` su quel ramo, le 23 prove verdi. Le altre righe del Passo 7 mordono per la ragione scritta |
+| 2 — manca una sonda? | **sì, due**: **E25**, le prove nel browser di **E19** ed **E20**, che il compito 3 lasciava a questo pre-controllo; ed **E26**, il blocco `harness/kit-page-specimens` senza righe rosse, né sul bisogno né sul confine |
+| 3 — l'artefatto è sbagliato? | **sì**: **E24**, la prima corsa del Passo 5 che cade per la cache delle dipendenze e non per la pagina; e la cascata che la seconda metà di **E25** cura. **Da fuori**: le due sostituzioni del compito 8 su `kit.browser.test.ts` si applicano una volta ciascuna al file corretto, e quello che ne esce tiene `colourOf` e `userEvent`; `concentricRadii`, `fits` e `iconsCentred` hanno le firme che i compiti 6 e 8 importano. `git diff --stat` fra la base e il compito, su `crates/` e `gui/schema/`, vuoto |
+| 4 — è già eseguito? | no: `gui/kit.html`, `gui/src/kit/` e `gui/src/testing/probes.ts` non esistono |
+| 5 — il contratto è cresciuto sotto il piano? | sì, e regge: il compito 3 e le sue cure hanno cambiato `BaseButton.vue`, `BaseTextField.vue`, `kit.test.ts` ed `eslint.config.js`, e i *Trova* dei Passi 4 e 6 e ogni violazione del Passo 7 si applicano una volta sul file di oggi. La colonna **Commit** della riga 3 è `` `c7b7bcd`, con la cura `9d2ffb0` ``: il Passo 8 dice *«l'hash del compito 3»*, e il prompt detta la cella intera. Il compito 8 contava le prove della pagina: allineato da **E25** |
+| 6 — un commento o un banco lo smentisce? | no: il commento di `testing/axe.ts` promette già il contrasto acceso dalla pagina kit; quello di `harness/chat-renders-our-own-html` parla dell'unica eccezione a `vue/no-v-html`, il blocco nuovo dell'unica a `no-raw-text`; e quello di `vite.config.ts` sui progetti — *«everything else is written per project»* — regge con la riga di **E24** |
+| 7, 8 | non si applicano: il compito non tocca un ADR e non è un rapporto |
+
+Lo stato alla chiusura, riga per riga col comando che la rifà:
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
-| **cancello** | `GATE GREEN` a `9d2ffb0`, sulla macchina `zagor`: sotto `gui/` il progetto `jsdom` con 18 file passati e uno saltato, **125** prove passate e una saltata — le cento di prima e le 25 di `kit.test.ts` —, il progetto `browser` con un file e 5 prove; il pezzo JavaScript `663.93 kB`, invariato: il kit non entra ancora nel pacchetto della SPA; `found 0 vulnerabilities` — si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
-| **la CI** | verde sui due sistemi `c7b7bcd`, `9d2ffb0` e `c79eaeb`, lette alla chiusura; quella del commit che scrive questa riga **in corso**: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
-| **la posizione** | la riga **3** a `✅ 2026-09-25`; la sua colonna **Commit** la scrive il compito 4 (R1-16): `` `c7b7bcd`, con la cura `9d2ffb0` `` |
-| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il prompt **spedito**, `dispatch-task-3.md`, al posto del modello — gli stessi testi coi valori della macchina `zagor` —; il rapporto dell'implementatore; il prompt del revisore, `review-3-prompt.md`, col messaggio della ripresa in coda; la revisione; e `compare_task3.py` curato (M-6), il modello di `compare_task4.py` |
-| **le copie** | sulla macchina `zagor` restano il clone della revisione, `%TEMP%\rv3` — coi commit sonda della revisione e del coordinatore, staccati —, la copia del pre-controllo, `%TEMP%\pc3`, e i suoi attrezzi, `%TEMP%\pc3-tools`: non servono più e si possono cancellare, e questa sessione non l'ha fatto. Il banco `%TEMP%\pds` porta i pezzi del compito 3 di **prima** delle cure |
-| **le voci registrate, non prese** | ⚠️ **la finestra delle prove, 1440 × 900**, com'era registrata dalle consegne precedenti; ⚠️ **N-4 della revisione**: un `BaseButton` `card` con una misura prende l'altezza di un controllo, e il testo esce — nessun compito del piano la usa, e se uno la userà la cura è sua; ⚠️ la strada **B** di **E23**, `lucide/…` preso nella regola; ⚠️ **il controllo dei pacchetti ritirati di `cargo audit` non fa rosso senza il registro**: nel cancello della revisione, alle 13:26–13:32, 39 righe `error: couldn't check if the package is yanked: registry: request could not be completed in the allotted timeframe`, e il cancello verde; in quello delle cure, zero. Tocca **X-3** dell'audit, ed è del proprietario |
-| **le due macchine** | quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, dove questa sessione ha lavorato: `core.autocrlf` `true` dal file di sistema, Node v24.19.0, e Chrome **`154.0.8037.58`** — aggiornato **da sé** il 2026-09-25 alle 14:25, durante la revisione: la riga del §0 del modello del dispaccio che dice 153 non vale più —; e quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, `core.autocrlf` `false` e l'albero `w/lf`, Chrome 154. ⛔ Sulla macchina che esegue, gli Attesi di **forma** si misurano, non si copiano (E72) |
-| **dall'altra macchina** | si riprende da `origin`, perché tutto ciò che serve è tracciato: questa sezione, la cartella del dispaccio e il piano. Restano **solo** su `zagor`, e non servono per riprendere: il registro git-ignorato `.superpowers/sdd/2026-09-23-design-system/progress.md` con gli script delle cure, le copie in `%TEMP%` della riga **le copie**, e le note di memoria dell'agente, che stanno fuori dal repository — le lezioni che contano sono nella tabella qui sotto. Sull'altra macchina l'albero è `w/lf`: le forme dei fine-riga si rimisurano lì (E72) |
+| **cancello** | `GATE GREEN` all'apertura, a `71a9f84`, sulla macchina `Jays` — sotto `gui/` il progetto `jsdom` con 18 file passati e uno saltato, 125 prove passate e una saltata, il progetto `browser` con un file e 5 prove, il pezzo JavaScript `663.93 kB`, `found 0 vulnerabilities` — e prima del commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
+| **la CI** | verde sui due sistemi fino a `71a9f84`, letta in questa sessione; quella del commit che scrive questa riga **in corso**: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **codice di prodotto** | non toccato: il codice del compito 4 vive solo nelle copie |
+| **le copie del pre-controllo** | solo sulla macchina `Jays`, e non servono altrove — il confronto col testo del piano lo fa `compare_task4.py` su qualunque clone: `%TEMP%\pc4`, il compito dal testo di `71a9f84`; `%TEMP%\pc4b`, dal testo corretto; `%TEMP%\pc4c`, la prova di `compare_task4.py`. Si cancellano dopo il compito 4, con `%TEMP%\pc2` e il banco `%TEMP%\pds` di questa macchina, del 2026-09-23, vecchi |
+| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il **modello** del prompt, `dispatch-task-4.md`, coi campi della macchina da riempire; `_extract_brief_4.py`, che scrive il brief nella cartella di lavoro ignorata — le sonde delle tavole comprese, che il compito vuole lette per intero —; `compare_task4.py`, nato da `compare_task3.py`: ciò che è dettato conta, ciò che non lo è si mostra. Il prompt del revisore si scrive sul modello di `review-3-prompt.md`, con la lezione 4 della consegna precedente, in archivio: la versione di Chrome si legge dal file, mai con `chrome.exe --version` |
+| **le voci registrate, non prese** | quelle della consegna precedente, in archivio: la finestra delle prove, 1440 × 900; **N-4** della revisione del compito 3; la strada B di **E23**; il controllo dei pacchetti ritirati di `cargo audit` senza il registro, che tocca **X-3** ed è del proprietario. ⚠️ **E due nuove**: la pagina kit mostra la finestra nella sola forma `center` — `sheet` e `full` le mostrano il cassetto del compito 5 e la Panoramica del compito 8 —, mentre la (b) dice *«ogni componente in ogni stato»*; e la guardia di non-vacuità del Passo 6, `test -f dist/index.html`, che in locale una `dist/` lasciata da un *build* precedente soddisfa anche se il *build* scrivesse altrove — non nella CI, che parte da un clone pulito |
+| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, dove questa sessione ha lavorato: `core.autocrlf` `false` in `.git/config` e l'albero `w/lf`, Node v24.19.0, Chrome `154.0.8037.58` letto dal file; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, `core.autocrlf` `true` dal file di sistema, Node v24.19.0, Chrome `154.0.8037.58` dalla consegna precedente. ⛔ Sulla macchina che esegue, gli Attesi di **forma** si misurano, non si copiano (E72) |
 
-**La revisione** — un revisore Opus fresco, **interrotto** a metà dalla chiusura del processo di Claude Code verso le 14:05
-e **ripreso** alle 14:12 con `SendMessage`: **conforme**; **0** critici, **0** importanti, **6** minori, **6** nit. M-1…M-5 e
-N-1…N-3 sono curati o dichiarati da **E19**–**E23**, M-6 da `compare_task3.py`; N-4 è registrato; N-5 e N-6 non chiedono
-cure — una frase del rapporto dell'implementatore, e l'ordine *misure, cancello, commit*. Il costo misurato:
-l'implementatore **~238k** token, 97 chiamate, **~33** minuti; il revisore **~385k** al rapporto finale — 29 chiamate e ~19
-minuti dopo la ripresa, ~43 minuti prima —; ~0,6 milioni in tutto, dentro la banda detta al proprietario (0,6–0,9).
+📌 **La ricetta del compito 4**, per rifarlo o confrontarlo dal testo del piano, vale per il piano del commit che scrive questa
+riga: `W` è il file intero dal recinto aperto a quella riga; `R` sostituisce l'occorrenza unica del primo recinto col secondo.
+
+```text
+W gui/src/testing/probes.ts 3082
+R gui/vite.config.ts 3217 3226
+W gui/src/kit/kit.browser.test.ts 3243
+W gui/kit.html 3407
+W gui/src/kit/main.ts 3424
+W gui/src/kit/Kit.vue 3437
+R gui/eslint.config.js 3710 3717
+R scripts/gate-gui.sh 3746 3753
+```
 
 📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
 del sotto-progetto.
 
 | | Che cosa | Che cosa se ne fa |
 |---|---|---|
-| 1 | **l'aspetto di un pezzo non ha prove in jsdom**, che non applica il foglio: M-1 e M-2 si vedono solo nel browser vero | il pre-controllo del compito 4 chiede, fra le prove nel browser della pagina kit, il colore di ogni variante spenta contro `--color-text-disabled` e il bordo dell'errore sotto il puntatore (**E19**, **E20**) |
-| 2 | **la cura di una direzione lascia scoperta l'altra**: E16 provava la finestra **senza** descrizione, e con la descrizione nessuna prova cadeva (M-3) | per ogni voce d'errata che aggiunge una prova: e l'altra direzione? |
-| 3 | **una frase che si ripete si cura in tutte le sue case**: i segni `data-*` con `\|\| undefined` erano quattro, non tre — `data-error` l'ha trovato la cura | prima di curare, il `grep` della frase nel file e nei suoi fratelli |
-| 4 | **`chrome.exe --version`, su Windows, apre il browser** col profilo dell'utente, e non stampa niente: il revisore l'ha fatto alle 14:26 e l'ha richiuso | la versione si legge dal file — `(Get-Item '<cartella>\chrome.exe').VersionInfo.ProductVersion` — o dal nome della cartella della versione; il modello del prompt del revisore del compito 4 lo dice |
-| 5 | **Chrome si aggiorna da sé fra una corsa e l'altra**: alle 14:25 la 154 ha preso il posto della 153, e una corsa di Playwright in quel minuto è caduta con `browserType.launch: Target page, context or browser has been closed`; una alle 14:02, `Failed to connect to the browser session … within the timeout`, ha la causa non separata fra la memoria di P-21 e l'aggiornamento in attesa | un rosso del progetto `browser` si rilancia dopo aver letto la versione, prima di cercarne la causa nel codice |
-| 6 | **un subagente interrotto dalla chiusura del processo non è perso**: il suo trascritto resta, e `SendMessage` lo riprende. ⚠️ E lo stato si legge **intero**: il messaggio della ripresa diceva *«nessun log del cancello intero»*, perché un `ls \| tail -20` aveva tagliato `gate-review-c7b7bcd.log` | prima della ripresa si misurano albero, clone, processi e log, senza `tail` sugli elenchi, e il messaggio dice lo stato |
+| 1 | **un Atteso si misura sulla sequenza dei passi, non su una corsa pulita**: la corsa rossa del Passo 2 lascia una cache che il Passo 5 eredita, e il cancello — che svuota `node_modules/` — non la vede mai (**E24**) | nel pre-controllo, i passi si rifanno **in fila** sulla stessa copia, come li farà chi esegue, e un rosso che il cancello non vede si cerca nello stato che un passo lascia al successivo |
+| 2 | **una prova che muove il puntatore vero vuole che ogni prova prima si pulisca anche quando cade**: una finestra di `reka-ui` rimasta montata lascia `pointer-events: none` sul `body` (**E25**) | le app montate da una prova si smontano in `afterEach`, mai sull'ultima riga della prova — la forma dei compiti 6 e 8 |
+| 3 | **un ramo di una sonda che la pagina non percorre è una sonda vuota a metà**, e la guardia di non-vacuità non lo vede, perché conta i casi di **tutti** i rami insieme (**E27**) | per ogni ramo di una sonda: un `throw` sul ramo dice se è percorso; poi un caso verde e uno rosso |
+| 4 | **una scelta tecnica reversibile e di poche righe, fuori dal merito approvato, si decide coi cinque criteri**: il proprietario ha rifiutato l'A/B di **E24** e l'ha delegata | l'A/B resta per il merito approvato — com'è stato per **E5**, **E6** ed **E10** —; il resto si decide, e la voce d'errata dice il perché e la via scartata col suo costo |
 
 **Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
 
 1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
-2. Il **pre-controllo del compito 4**, con le quattro domande di `CLAUDE.md` e le righe 5–8, contro il codice di **adesso**:
-   il compito 3 e le sue cure hanno cambiato `kit.test.ts` — **25** prove, non 23 —, `BaseButton.vue`, `BaseTextField.vue`
-   ed `eslint.config.js`, a cui il compito 4 aggiunge un blocco: i suoi *Trova* si rilanciano sul file di oggi. Le voci che
-   trova vanno nell'errata, e la prossima libera è **E24**. Porta con sé tre cose: la sonda del browser per **E19** ed
-   **E20** (lezione 1); il blocco `harness/kit-page-specimens`, che spegne `no-raw-text` su `src/kit/**`, provato sul suo
-   **confine** (lezione 3 della consegna del pre-controllo del compito 3, in archivio); e il modello del dispaccio con la
-   riga di Chrome del §0 rimisurata e la lezione 4. Il banco `%TEMP%\pds`, se serve, si rifà dal piano di oggi.
-3. L'**esecuzione del compito 4**, in un'altra sessione, col costo detto prima e il sì del proprietario; e così compito
-   per compito, fino al 9.
+2. Questa sezione; poi il dispaccio: dalla radice del repository il brief, con
+   `python docs/superpowers/plans/2026-09-23-design-system-esecuzione/_extract_brief_4.py`, e il prompt dal modello
+   `dispatch-task-4.md` della stessa cartella, coi campi e i valori della macchina che esegue — il riquadro in testa al
+   modello dice come.
+3. ⛔ **Il costo, prima di dispacciare, e il sì del proprietario**: la banda è quella del compito 3, nella consegna
+   precedente in archivio — l'implementatore ~238k token e ~33 minuti, il revisore ~385k.
+4. L'**esecuzione del compito 4**, con `superpowers:subagent-driven-development`; il revisore rilancia ogni comando,
+   confronta con `compare_task4.py` e **guarda** la pagina kit nel browser, nei due temi (punto 5 di *«Come si esegue un
+   compito»*); alla chiusura del compito, i file del dispaccio nella cartella tracciata (punto 8). Poi il pre-controllo del
+   compito 5, in un'altra sessione, con la prossima voce d'errata libera, **E28**; e così compito per compito, fino al 9.

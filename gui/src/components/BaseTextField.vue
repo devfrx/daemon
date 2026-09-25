@@ -52,7 +52,8 @@ const errorId = useId();
   color: var(--color-text-muted);
   font: var(--font-body);
 }
-.frame:hover:not([data-disabled]) {
+/* The hover gives way to the error, as on the board, where `.is-error` comes after `.is-hover` (E20 of the plan). */
+.frame:hover:not([data-disabled], [data-error]) {
   border-color: var(--color-text-muted);
 }
 /* ⛔ THE RING IS THE FRAME'S, as on the board: the input inside gives its own away. */

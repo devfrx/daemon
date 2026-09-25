@@ -33,7 +33,7 @@ export default [
   ...i18n.configs["flat/base"],
   {
     /**
-     * ⛔ THE TypeScript PARSER FOR THE `.vue` FILES, AND WITHOUT IT SIX OF THE THIRTEEN DO NOT PARSE.
+     * ⛔ THE TypeScript PARSER FOR THE `.vue` FILES: WITHOUT IT A `<script setup lang="ts">` DOES NOT PARSE.
      * `vue-eslint-parser` reads a `<script setup lang="ts">` block with espree unless it is given one,
      * and TypeScript syntax stops espree -- measured on 2026-09-16 on the thirteen `.vue` of this plan:
      * `Parsing error` on `Confirm`, `Frame`, `ViewBar`, `Chat`, `Placeholder`, `Settings`. A file that
@@ -48,9 +48,9 @@ export default [
   {
     /**
      * ⛔ THE `.ts` FILES ARE READ FROM THE DESIGN SYSTEM ON (P-2 of its plan). P-101 of part 2 left them to `vue-tsc`,
-     * and their TYPES stay there; but the import rules below must see `icons.ts`, `BigTab.ts`, `dock.ts`, or `lucide` and
-     * `reka-ui` could come in through a `.ts` unseen. The unscoped blocks now reach the `.ts` too, and the gate says
-     * whether any of them objects.
+     * and their TYPES stay there; but the import rules below must see `icons.ts`, `BigTab.ts`, `dock.ts`, or `lucide` --
+     * and, from task 5, `reka-ui` -- could come in through a `.ts` unseen. The unscoped blocks now reach the `.ts` too,
+     * and the gate says whether any of them objects.
      */
     name: "harness/ts",
     files: ["**/*.ts"],

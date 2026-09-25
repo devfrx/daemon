@@ -12,7 +12,9 @@ fence is: W <file> <n> (the whole file is the fence opened at line n), R <file> 
 occurrence of the first fence becomes the second), B <file> (the third replacement of step 2: the block taken FROM
 THE FILE, from the `/**` above "Every violation axe finds" down to the line before "/** Fills the stores ...",
 goes away). Beyond the recipe: package.json is the base one plus `lucide` 1.47.0 in `dependencies`, exact, in npm's
-alphabetical order; package-lock.json pins it; the plan differs from the base by the two cells of the position table
+alphabetical order; package-lock.json pins it -- lucide 1.47.0, ISC, no install script, or DIFFERS -- and any other
+change from the base's lockfile is CHECK BY HAND, shown by its key (M-6 of the review of task 3: before, the pin
+alone was read, and a drift of another entry said OK); the plan differs from the base by the two cells of the position table
 (step 9) -- row 3 to `✅ <date>`, and in row 2 the column Commit with task 2's commit and its cure (R1-16): a cell
 that is not the dictated one is DIFFERS, and anything else in the plan, an errata entry for instance, is shown as
 CHECK BY HAND and left to the reader. The date is read in row 3 of the target, and a date that is not the commit's
@@ -150,11 +152,31 @@ for path in sorted(set(expected) | set(changed)):
         print(f"{'OK' if ok else 'DIFFERS':14} {path}  (lucide 1.47.0 in dependencies, exact, in alphabetical order)")
         bad += not ok
     elif path == "gui/package-lock.json":
-        lock = json.loads(got)["packages"]
-        ok = lock.get("node_modules/lucide", {}).get("version") == "1.47.0" and \
-            lock[""]["dependencies"].get("lucide") == "1.47.0"
-        print(f"{'OK' if ok else 'DIFFERS':14} {path}  (the pin; the rest comes from the registry -- CHECK BY HAND)")
-        bad += not ok
+        # M-6 of the review of task 3: the pin COUNTS, and every other change from the base is SHOWN, by its key.
+        lock, want = json.loads(got), json.loads(original(path))
+        entry = lock["packages"].get("node_modules/lucide", {})
+        pin = entry.get("version") == "1.47.0" and entry.get("license") == "ISC" and \
+            not entry.get("hasInstallScript") and lock["packages"][""].get("dependencies", {}).get("lucide") == "1.47.0"
+        # the lockfile the plan dictates: the base's, plus lucide in the root's dependencies and its own entry
+        want["packages"][""].setdefault("dependencies", {})["lucide"] = "1.47.0"
+        want["packages"]["node_modules/lucide"] = entry
+        moved = [(f"(top) {k}", want.get(k), lock.get(k)) for k in sorted(set(want) | set(lock))
+                 if k != "packages" and want.get(k) != lock.get(k)]
+        moved += [(k or "(root)", want["packages"].get(k), lock["packages"].get(k))
+                  for k in sorted(set(want["packages"]) | set(lock["packages"]))
+                  if want["packages"].get(k) != lock["packages"].get(k)]
+        if not pin:
+            print(f"DIFFERS        {path}  -- the pin is not lucide 1.47.0, ISC, without an install script: {entry}")
+            bad += 1
+        elif moved:
+            print(f"CHECK BY HAND  {path}  -- the pin, and {len(moved)} more change(s) from the base:")
+            for key, old, new in moved:
+                if isinstance(old, dict) and isinstance(new, dict):
+                    fields = sorted(f for f in set(old) | set(new) if old.get(f) != new.get(f))
+                    old, new = {f: old.get(f) for f in fields}, {f: new.get(f) for f in fields}
+                print(f"    {key}: {old!r} -> {new!r}")
+        else:
+            print(f"OK             {path}  (the pin -- lucide 1.47.0, ISC, no install script -- and nothing else)")
     elif path == PLAN:
         cells = got.count(ROW2_NEW) == 1 and got.count(ROW3_NEW) == 1
         if got == want_plan:

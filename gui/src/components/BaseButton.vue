@@ -107,6 +107,10 @@ function iconOnly(): boolean {
 .base-button[data-variant="quiet"]:active:not(:disabled) {
   color: var(--color-text);
 }
+/* Off, the quiet one too: its muted colour weighs as much as `:disabled` and comes later (E19 of the plan). */
+.base-button[data-variant="quiet"]:disabled {
+  color: var(--color-text-disabled);
+}
 
 /* A whole card that is one button: the card of the (a), a column, the words where they fall. */
 .base-button[data-variant="card"] {

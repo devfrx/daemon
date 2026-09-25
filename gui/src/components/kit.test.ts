@@ -67,6 +67,10 @@ describe("BaseButton", () => {
     const worded = mount(BaseButton, { props: { icon: "float", label: "Stacca" }, slots: { default: () => "Stacca la tessera" } }).get("button");
     // ⛔ THE SECOND DIRECTION: with visible words, the words are the name.
     expect(worded.attributes("aria-label")).toBeUndefined();
+    // ⛔ AND NO MARK WRITTEN "false": Vue writes a `false` attribute as that string, and `[data-icon-only]` and
+    // `[data-pill]` would take it -- every button square, every button a pill (`|| undefined`, E21 of the plan).
+    expect(worded.attributes("data-icon-only")).toBeUndefined();
+    expect(worded.attributes("data-pill")).toBeUndefined();
   });
 
   it("names an icon alone again when the words go away: the slot is read at every render", async () => {
@@ -140,6 +144,10 @@ describe("BaseTextField", () => {
     // ⛔ THE SECOND DIRECTION: and not on the root around it as well -- a caller's `@keydown` there would run twice, on
     // the input and on its bubble (E15 of the plan).
     expect(wrapper.element.hasAttribute("placeholder")).toBe(false);
+    // ⛔ NOR ON THE FRAME: `[data-disabled]` and `[data-error]` would take a mark written "false" -- every field off,
+    // every field wrong (`|| undefined`, E21 of the plan).
+    expect(wrapper.get(".frame").attributes("data-disabled")).toBeUndefined();
+    expect(wrapper.get(".frame").attributes("data-error")).toBeUndefined();
     await input.setValue("Home");
     expect(text.value).toBe("Home");
     await nextTick();
@@ -171,11 +179,22 @@ describe("BaseRadioGroup -- controlled (P-8 of the plan)", () => {
     wrapper.unmount();
   });
 
-  it("checks nothing on null, and names the group with its legend", () => {
-    const wrapper = mount(BaseRadioGroup, { props: { modelValue: null, options, legend: "Policy VRAM" } });
-    expect(wrapper.findAll('[role="radio"]').map((radio) => radio.attributes("aria-checked"))).toEqual(["false", "false"]);
+  it("checks nothing on null, not even on a click, and names the group with its legend", async () => {
+    const asked: string[] = [];
+    const wrapper = mount(BaseRadioGroup, {
+      attachTo: document.body,
+      props: { modelValue: null, options, legend: "Policy VRAM", "onUpdate:modelValue": (value: string) => asked.push(value) },
+    });
+    const checked = (): (string | undefined)[] => wrapper.findAll('[role="radio"]').map((radio) => radio.attributes("aria-checked"));
+    expect(checked()).toEqual(["false", "false"]);
     const group = wrapper.get('[role="radiogroup"]');
     expect(wrapper.get(`[id="${group.attributes("aria-labelledby")}"]`).text()).toBe("Policy VRAM");
+    await wrapper.findAll('[role="radio"]')[1]?.trigger("click");
+    expect(asked).toEqual(["local"]);
+    // ⛔ `null` INCLUDED (E21 of the plan): given to reka-ui as no value at all, the group would hold a state of its
+    // own, and the click would check the radio before whoever holds the value answers (P-8).
+    expect(checked()).toEqual(["false", "false"]);
+    wrapper.unmount();
   });
 });
 
@@ -197,6 +216,27 @@ describe("BaseDialog", () => {
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
     await nextTick();
     expect(asked).toEqual([false]);
+    wrapper.unmount();
+  });
+
+  it("is described by its description, when it has one: the other direction of E16", async () => {
+    const wrapper = mount(BaseDialog, { attachTo: document.body, props: { open: true, title: "Serve un permesso", description: "Vale per questa sessione." } });
+    await nextTick();
+    const dialog = document.querySelector('[role="dialog"]');
+    expect(dialog).not.toBeNull();
+    // ⛔ BOTH HALVES (E21 of the plan): the `v-bind` that turns `aria-describedby` off must not do it here, and the
+    // description must be there for it to point at.
+    expect(document.getElementById(dialog?.getAttribute("aria-describedby") ?? "")?.textContent).toBe("Vale per questa sessione.");
+    wrapper.unmount();
+  });
+
+  it("opens from its `trigger` slot when unbound", async () => {
+    const wrapper = mount(BaseDialog, { attachTo: document.body, props: { title: "Serve un permesso" }, slots: { trigger: () => h(BaseButton, null, () => "Apri") } });
+    // ⛔ CLOSED FIRST: a dialog open from the start would pass the probe below (E21 of the plan).
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    await wrapper.get("button").trigger("click");
+    await nextTick();
+    expect(document.querySelector('[role="dialog"]')).not.toBeNull();
     wrapper.unmount();
   });
 });

@@ -184,6 +184,11 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | **E16** | ⚠️ **Compito 3, Passo 3 — la cura di R2-18 in `BaseDialog.vue`, nessun `aria-describedby` senza una descrizione, non ha una prova:** tolta la riga del `v-bind` che lo spegne, `reka-ui` 2.10.4 scrive `aria-describedby="reka-dialog-description-v-1"`, che non punta a nessun elemento, e avvisa *«Missing `Description` or `aria-describedby="undefined"` for DialogContent.»* — e le 23 prove restano verdi. Misurato il 2026-09-25 dal pre-controllo sulla copia, con una prova usa-e-getta che falliva dicendo i valori: con la riga, nessun attributo e nessun avviso. ✅ **Corretta** nel commit che la scrive: nella prova di `BaseDialog`, che la apre senza descrizione, `expect(dialog?.hasAttribute("aria-describedby")).toBe(false);` — verde sul codice, rossa con la riga tolta, `expected true to be false`, la sola prova della finestra —; e una riga nella seconda tabella del Passo 8 |
 | **E17** | Nit — **Compito 3, Passo 7 — un commento di `gui/eslint.config.js` che il compito rende falso** (gotcha **#58**): accanto a `vue/multi-word-component-names`, *«Every `.vue` file here but `ViewBar` is single-word (P-99; recounted at the review, R7-11).»* — gli otto `Base*.vue` del compito hanno due parole ciascuno, e nessun compito del piano toccava la frase: `grep -c 'single-word'` sul piano rendeva **0** prima di questa voce. È la specie della quarta sostituzione dello stesso Passo, R2-10. Trovata dal pre-controllo il 2026-09-25. ✅ **Corretta** nel commit che la scrive: una **quinta** sostituzione nel Passo 7, che data il censimento e nomina i pezzi di base; `npm run lint` resta verde, misurato sulla copia |
 | **E18** | Nit — **Compito 3, Passo 8 — il blocco `harness/imports/the-icon-map` non aveva la sua riga rossa:** toglie `lucide` dal divieto per `icons.ts` e ci tiene la regola dei pezzi di base, e la prima tabella provava la prima metà — `icons.ts` importa `lucide`, verde — e non la seconda. Misurato il 2026-09-25 dal pre-controllo sulla copia: con `import { useCore } from "../stores/core";` in `icons.ts`, `npm run lint` → rosso, *«a base piece reads no global state»*. ✅ **Corretta** nel commit che la scrive: una riga nella prima tabella del Passo 8 |
+| **E19** | ⚠️ **Compito 3, Passo 5 — un `BaseButton` `quiet` spento ha il colore di uno acceso:** `.base-button[data-variant="quiet"]` pesa quanto `.base-button:disabled` e viene dopo, quindi il suo `--color-text-muted` vince sullo spento; la tavola scrive la regola a parte, `.btn.quiet.is-disabled`. Trovata dalla revisione del compito 3 (M-1), misurata nel Chrome installato; jsdom non applica il foglio, e nessuna prova la vedeva. ✅ **Curata** nel commit che scrive questa riga, col testo della revisione: `.base-button[data-variant="quiet"]:disabled { color: var(--color-text-disabled); }` dopo la regola `:hover`/`:active` del `quiet`, col perché nel commento; il recinto del Passo 5 è allineato. Misurata dal coordinatore il 2026-09-25, macchina `zagor`, Chrome 154, con una prova usa-e-getta del progetto `browser` nei due temi: col codice curato il `quiet` spento prende `--color-text-disabled`, verde; senza la cura, rossa, `dark: expected 'rgb(163, 154, 143)' to be 'rgb(111, 102, 96)'`; la prova tolta dopo, `git status --porcelain` com'era. ⚠️ **La sonda che la tiene nel cancello non c'è ancora**: è del browser, e la chiede il pre-controllo del **compito 4**, che porta le prove nel browser sulla pagina kit nei due temi |
+| **E20** | ⚠️ **Compito 3, Passo 6 — sotto il puntatore, un `BaseTextField` con l'errore perde il bordo rosso:** `.frame:hover:not([data-disabled])` pesa più di `.frame[data-error]`, e vince sempre; nella tavola `.field.is-error` viene dopo `.field.is-hover` con lo stesso peso, e vince l'errore. La Panoramica del compito 8 dà l'errore al campo del nome: il bordo sparirebbe proprio mentre ci si punta. Trovata dalla revisione del compito 3 (M-2), misurata nel Chrome installato. ✅ **Curata** nel commit che scrive questa riga: `.frame:hover:not([data-disabled], [data-error])`, col perché nel commento; il recinto del Passo 6 è allineato. Misurata dal coordinatore con la stessa prova usa-e-getta, tema scuro: col codice curato il bordo resta `--color-border-stop` prima e sotto il puntatore, verde; senza la cura, rossa, `expected 'rgb(163, 154, 143)' to be 'rgb(129, 27, 7)'`. ⚠️ La sonda nel cancello, come per **E19**, la chiede il pre-controllo del compito 4 |
+| **E21** | ⚠️ **Compito 3, Passo 3 — quattro comportamenti del contratto dei pezzi senza una prova**, ciascuno misurato dalla revisione del compito 3 (M-3, M-4, M-5) con `Tests  23 passed (23)` sotto la sua mutazione: **(a)** la seconda direzione di **E16** — con una descrizione, la finestra è descritta da lei —; **(b)** il `null` di `BaseRadioGroup` anche dopo un clic, il caso di P-8 prima che il core risponda; **(c)** lo slot `trigger` che apre la finestra non legata; **(d)** i segni `data-*` scritti con `\|\| undefined`, senza i quali Vue scrive la stringa `"false"` e i selettori `[data-icon-only]`, `[data-pill]`, `[data-disabled]` la prendono — e un **quarto**, `[data-error]` di `BaseTextField`, trovato dal coordinatore applicando la cura: la stessa frase nello stesso file. ✅ **Curate** nel commit che scrive questa riga, nel file e nel recinto del Passo 3: due prove nuove nel blocco di `BaseDialog` — *«is described by its description, when it has one»* e *«opens from its `trigger` slot when unbound»* —, la prova del `null` con un clic, e quattro righe sui segni; `kit.test.ts` passa da 23 a **25** prove. Misurate dal coordinatore il 2026-09-25 sull'albero, una mutazione per volta con la copia salvata e `cmp` uguale dopo: verdi sul codice, `Tests  25 passed (25)`; rosse ciascuna da sola, `Tests  1 failed \| 24 passed (25)`, coi messaggi delle quattro righe nuove della seconda tabella del Passo 8 |
+| **E22** | Nit — **Compito 3, Passo 7 — due frasi di `gui/eslint.config.js` che il compito smentisce o anticipa** (gotcha **#58**): **(a)** la riga di testa del blocco `harness/ts-in-vue`, *«WITHOUT IT SIX OF THE THIRTEEN DO NOT PARSE»*, conta i `.vue` di una cartella che il compito fa crescere — misurato dalla revisione del compito 3 (N-1): senza il `parser`, tredici `.vue` su ventuno non si analizzano —, la specie di **E17** nello stesso file; **(b)** il blocco `harness/ts` nomina `reka-ui` fra ciò che le regole devono vedere, e nessuna regola ne parla prima del blocco `harness/panels-and-frame` del compito 5 (N-2). ✅ **Corrette** nel commit che scrive questa riga: per **(a)** una **sesta** sostituzione nel Passo 7, col testo della revisione — la misura datata delle righe sotto resta vera com'è —; per **(b)** *«… or `lucide` -- and, from task 5, `reka-ui` -- could come in …»* nel recinto della seconda sostituzione. `npm run lint` verde, misurato dal coordinatore |
+| **E23** | Nit — **Compito 3, Passo 8 — il confine della regola di `lucide`:** `paths: [LUCIDE]` prende il nome esatto, e un import da un sotto-percorso passa il linter. Trovata dalla revisione del compito 3 (N-3) e rimisurata dal coordinatore il 2026-09-25: con `import search from "lucide/dist/esm/icons/search.mjs";` in `frame/moveActive.ts`, `npm run lint` esce 0, e `npx vue-tsc --noEmit` esce 2, `TS7016: Could not find a declaration file for module 'lucide/dist/esm/icons/search.mjs'` — il pacchetto porta un `.d.ts` solo —; il file tornato dalla copia, `cmp` uguale. ✅ **Dichiarata**, com'è dichiarato l'`import()` dinamico (R2-17): una frase nel ⚠️ del Passo 8. Prenderla nella regola — un `patterns` accanto a `paths` nei tre blocchi — è la strada B della revisione, **registrata, non presa** |
 
 ---
 
@@ -1886,6 +1891,10 @@ describe("BaseButton", () => {
     const worded = mount(BaseButton, { props: { icon: "float", label: "Stacca" }, slots: { default: () => "Stacca la tessera" } }).get("button");
     // ⛔ THE SECOND DIRECTION: with visible words, the words are the name.
     expect(worded.attributes("aria-label")).toBeUndefined();
+    // ⛔ AND NO MARK WRITTEN "false": Vue writes a `false` attribute as that string, and `[data-icon-only]` and
+    // `[data-pill]` would take it -- every button square, every button a pill (`|| undefined`, E21 of the plan).
+    expect(worded.attributes("data-icon-only")).toBeUndefined();
+    expect(worded.attributes("data-pill")).toBeUndefined();
   });
 
   it("names an icon alone again when the words go away: the slot is read at every render", async () => {
@@ -1959,6 +1968,10 @@ describe("BaseTextField", () => {
     // ⛔ THE SECOND DIRECTION: and not on the root around it as well -- a caller's `@keydown` there would run twice, on
     // the input and on its bubble (E15 of the plan).
     expect(wrapper.element.hasAttribute("placeholder")).toBe(false);
+    // ⛔ NOR ON THE FRAME: `[data-disabled]` and `[data-error]` would take a mark written "false" -- every field off,
+    // every field wrong (`|| undefined`, E21 of the plan).
+    expect(wrapper.get(".frame").attributes("data-disabled")).toBeUndefined();
+    expect(wrapper.get(".frame").attributes("data-error")).toBeUndefined();
     await input.setValue("Home");
     expect(text.value).toBe("Home");
     await nextTick();
@@ -1990,11 +2003,22 @@ describe("BaseRadioGroup -- controlled (P-8 of the plan)", () => {
     wrapper.unmount();
   });
 
-  it("checks nothing on null, and names the group with its legend", () => {
-    const wrapper = mount(BaseRadioGroup, { props: { modelValue: null, options, legend: "Policy VRAM" } });
-    expect(wrapper.findAll('[role="radio"]').map((radio) => radio.attributes("aria-checked"))).toEqual(["false", "false"]);
+  it("checks nothing on null, not even on a click, and names the group with its legend", async () => {
+    const asked: string[] = [];
+    const wrapper = mount(BaseRadioGroup, {
+      attachTo: document.body,
+      props: { modelValue: null, options, legend: "Policy VRAM", "onUpdate:modelValue": (value: string) => asked.push(value) },
+    });
+    const checked = (): (string | undefined)[] => wrapper.findAll('[role="radio"]').map((radio) => radio.attributes("aria-checked"));
+    expect(checked()).toEqual(["false", "false"]);
     const group = wrapper.get('[role="radiogroup"]');
     expect(wrapper.get(`[id="${group.attributes("aria-labelledby")}"]`).text()).toBe("Policy VRAM");
+    await wrapper.findAll('[role="radio"]')[1]?.trigger("click");
+    expect(asked).toEqual(["local"]);
+    // ⛔ `null` INCLUDED (E21 of the plan): given to reka-ui as no value at all, the group would hold a state of its
+    // own, and the click would check the radio before whoever holds the value answers (P-8).
+    expect(checked()).toEqual(["false", "false"]);
+    wrapper.unmount();
   });
 });
 
@@ -2016,6 +2040,27 @@ describe("BaseDialog", () => {
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
     await nextTick();
     expect(asked).toEqual([false]);
+    wrapper.unmount();
+  });
+
+  it("is described by its description, when it has one: the other direction of E16", async () => {
+    const wrapper = mount(BaseDialog, { attachTo: document.body, props: { open: true, title: "Serve un permesso", description: "Vale per questa sessione." } });
+    await nextTick();
+    const dialog = document.querySelector('[role="dialog"]');
+    expect(dialog).not.toBeNull();
+    // ⛔ BOTH HALVES (E21 of the plan): the `v-bind` that turns `aria-describedby` off must not do it here, and the
+    // description must be there for it to point at.
+    expect(document.getElementById(dialog?.getAttribute("aria-describedby") ?? "")?.textContent).toBe("Vale per questa sessione.");
+    wrapper.unmount();
+  });
+
+  it("opens from its `trigger` slot when unbound", async () => {
+    const wrapper = mount(BaseDialog, { attachTo: document.body, props: { title: "Serve un permesso" }, slots: { trigger: () => h(BaseButton, null, () => "Apri") } });
+    // ⛔ CLOSED FIRST: a dialog open from the start would pass the probe below (E21 of the plan).
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    await wrapper.get("button").trigger("click");
+    await nextTick();
+    expect(document.querySelector('[role="dialog"]')).not.toBeNull();
     wrapper.unmount();
   });
 });
@@ -2311,6 +2356,10 @@ function iconOnly(): boolean {
 .base-button[data-variant="quiet"]:active:not(:disabled) {
   color: var(--color-text);
 }
+/* Off, the quiet one too: its muted colour weighs as much as `:disabled` and comes later (E19 of the plan). */
+.base-button[data-variant="quiet"]:disabled {
+  color: var(--color-text-disabled);
+}
 
 /* A whole card that is one button: the card of the (a), a column, the words where they fall. */
 .base-button[data-variant="card"] {
@@ -2509,7 +2558,8 @@ const errorId = useId();
   color: var(--color-text-muted);
   font: var(--font-body);
 }
-.frame:hover:not([data-disabled]) {
+/* The hover gives way to the error, as on the board, where `.is-error` comes after `.is-hover` (E20 of the plan). */
+.frame:hover:not([data-disabled], [data-error]) {
   border-color: var(--color-text-muted);
 }
 /* ⛔ THE RING IS THE FRAME'S, as on the board: the input inside gives its own away. */
@@ -2788,7 +2838,7 @@ riga `@ts-expect-error`. Il pezzo JavaScript **non cambia** a questo compito: ne
 
 - [ ] **Passo 7: il linter — i `.ts`, e le regole del kit**
 
-In `gui/eslint.config.js` (`replace_unique.py`), cinque sostituzioni. *Trova*:
+In `gui/eslint.config.js` (`replace_unique.py`), sei sostituzioni. *Trova*:
 
 ```js
 import vue from "eslint-plugin-vue";
@@ -2829,9 +2879,9 @@ const ABOVE = {
   {
     /**
      * ⛔ THE `.ts` FILES ARE READ FROM THE DESIGN SYSTEM ON (P-2 of its plan). P-101 of part 2 left them to `vue-tsc`,
-     * and their TYPES stay there; but the import rules below must see `icons.ts`, `BigTab.ts`, `dock.ts`, or `lucide` and
-     * `reka-ui` could come in through a `.ts` unseen. The unscoped blocks now reach the `.ts` too, and the gate says
-     * whether any of them objects.
+     * and their TYPES stay there; but the import rules below must see `icons.ts`, `BigTab.ts`, `dock.ts`, or `lucide` --
+     * and, from task 5, `reka-ui` -- could come in through a `.ts` unseen. The unscoped blocks now reach the `.ts` too,
+     * and the gate says whether any of them objects.
      */
     name: "harness/ts",
     files: ["**/*.ts"],
@@ -2920,6 +2970,18 @@ const ABOVE = {
        * pieces are `Base*`, two words by name.
 ```
 
+*Trova* — nella riga di testa del blocco `harness/ts-in-vue`, il conto dei `.vue` che gli otto pezzi di base smentiscono (**E22**; gotcha #58):
+
+```js
+     * ⛔ THE TypeScript PARSER FOR THE `.vue` FILES, AND WITHOUT IT SIX OF THE THIRTEEN DO NOT PARSE.
+```
+
+*Sostituisci con:*
+
+```js
+     * ⛔ THE TypeScript PARSER FOR THE `.vue` FILES: WITHOUT IT A `<script setup lang="ts">` DOES NOT PARSE.
+```
+
 ```bash
 (cd gui && npm run lint)
 ```
@@ -2952,12 +3014,19 @@ src/components/kit.test.ts` dopo ciascuna, poi indietro con la copia salvata:
 | in `src/components/BaseStatus.vue` la regione dentro un `v-if` che la fa nascere solo quando lo slot disegna qualcosa che non è un commento — `(slots.default?.() ?? []).some((node) => node.type !== Comment)` —: il difetto di M-3 | **rosso**: `Unable to get [role="status"] within: <!--v-if-->`. ⚠️ Un `v-if="$slots.default"` qualunque resta **verde**, e a ragione: chi usa `BaseStatus` passa sempre lo slot, anche quando disegna `null` |
 | in `src/components/BaseTextField.vue` tolta la riga `defineOptions({ inheritAttrs: false });` | **rosso**: `expected true to be false`, alla prova di `BaseTextField` (**E15**) |
 | in `src/components/BaseDialog.vue` tolta la riga `v-bind="description === undefined ? { 'aria-describedby': undefined } : {}"` | **rosso**: `expected true to be false`, alla prova di `BaseDialog` che la apre senza descrizione (**E16**) |
+| in `src/components/BaseDialog.vue` il `v-bind` che spegne sempre, `v-bind="{ 'aria-describedby': undefined }"`; e, a parte, la riga della `DialogDescription` tolta | **rosso**, ciascuna: `expected undefined to be 'Vale per questa sessione.'`, alla prova della finestra con la descrizione (**E21**) |
+| in `src/components/BaseRadioGroup.vue` `:model-value="modelValue ?? undefined"` — il `null` dato a `reka-ui` come nessun valore | **rosso**: `expected [ 'false', 'true' ] to deeply equal [ 'false', 'false' ]`, alla prova del `null` (**E21**) |
+| in `src/components/BaseDialog.vue` `v-if="false"` sul `DialogTrigger` | **rosso**: `Unable to get button within: <!--v-if-->`, alla prova dello slot `trigger` (**E21**) |
+| in `src/components/BaseButton.vue` `:data-icon-only="iconOnly()"`, e a parte `:data-pill="pill"`; in `src/components/BaseTextField.vue` `:data-disabled="disabled"`, e a parte `:data-error="error !== undefined"` | **rosso**, ciascuna: `expected 'false' to be undefined` (**E21**) |
 
 ⚠️ **Il linter non ha una guardia di non-vacuità**: se un `files` smettesse di trovare i suoi file, le regole tacerebbero
 col verde. La prova delle due direzioni si rifà a mano in ogni compito che tocca `eslint.config.js`; una guardia statica è
 un controllo nuovo, del proprietario (vincolo globale 7 della parte 2) — **registrata, non presa**. ⚠️ E un `import()`
 **dinamico** passa le regole: `no-restricted-imports` guarda gli import statici (R2-17). `no-restricted-syntax` su
 `ImportExpression` lo coprirebbe; oggi nessun file del kit ne ha uno, e la regola non la prende nessun compito.
+⚠️ E un import da un **sotto-percorso**, `lucide/…`, passa le regole, che prendono il nome esatto `lucide` (**E23**):
+oggi lo ferma `vue-tsc` nel *build* — `TS7016`: il pacchetto porta un `.d.ts` solo —, e una dichiarazione scritta a mano
+lo aprirebbe.
 
 - [ ] **Passo 9: tutte le prove, il cancello, il commit**
 

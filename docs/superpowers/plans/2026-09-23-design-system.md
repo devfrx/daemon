@@ -8637,18 +8637,20 @@ compito 1 — o in una voce d'errata. Un nome senza casa è una voce d'errata nu
 |---|---|
 | `c7b7bcd` | **il compito 3**, dall'implementatore — conforme al dettato: `compare_task3.py ef3e865 c7b7bcd` esce 0, sedici percorsi `OK`, e la revisione l'ha provato nelle due direzioni |
 | `9d2ffb0` | le cure della revisione, dal coordinatore (scelta **A** del proprietario, senza ri-revisione): **E19**–**E23** nell'errata e nel codice, i recinti dei Passi 3, 5, 6 e 7 allineati — il piano rifà i quattro file curati, confrontati a macchina —, e **M-6** in `compare_task3.py` |
-| il commit che scrive questa riga | il dispaccio del compito 3 nella cartella tracciata, e questa consegna |
+| `c79eaeb` | il dispaccio del compito 3 nella cartella tracciata, e questa consegna |
+| il commit che scrive questa riga | la consegna completata nella stessa chiusura: la CI letta, e la riga su come si riprende dall'altra macchina |
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
 | **cancello** | `GATE GREEN` a `9d2ffb0`, sulla macchina `zagor`: sotto `gui/` il progetto `jsdom` con 18 file passati e uno saltato, **125** prove passate e una saltata — le cento di prima e le 25 di `kit.test.ts` —, il progetto `browser` con un file e 5 prove; il pezzo JavaScript `663.93 kB`, invariato: il kit non entra ancora nel pacchetto della SPA; `found 0 vulnerabilities` — si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
-| **la CI** | verde sui due sistemi `c7b7bcd`, letta alla chiusura; `9d2ffb0` e il commit che scrive questa riga **in corso**: la sessione dopo li legge per primi, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la CI** | verde sui due sistemi `c7b7bcd`, `9d2ffb0` e `c79eaeb`, lette alla chiusura; quella del commit che scrive questa riga **in corso**: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
 | **la posizione** | la riga **3** a `✅ 2026-09-25`; la sua colonna **Commit** la scrive il compito 4 (R1-16): `` `c7b7bcd`, con la cura `9d2ffb0` `` |
 | **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il prompt **spedito**, `dispatch-task-3.md`, al posto del modello — gli stessi testi coi valori della macchina `zagor` —; il rapporto dell'implementatore; il prompt del revisore, `review-3-prompt.md`, col messaggio della ripresa in coda; la revisione; e `compare_task3.py` curato (M-6), il modello di `compare_task4.py` |
 | **le copie** | sulla macchina `zagor` restano il clone della revisione, `%TEMP%\rv3` — coi commit sonda della revisione e del coordinatore, staccati —, la copia del pre-controllo, `%TEMP%\pc3`, e i suoi attrezzi, `%TEMP%\pc3-tools`: non servono più e si possono cancellare, e questa sessione non l'ha fatto. Il banco `%TEMP%\pds` porta i pezzi del compito 3 di **prima** delle cure |
 | **le voci registrate, non prese** | ⚠️ **la finestra delle prove, 1440 × 900**, com'era registrata dalle consegne precedenti; ⚠️ **N-4 della revisione**: un `BaseButton` `card` con una misura prende l'altezza di un controllo, e il testo esce — nessun compito del piano la usa, e se uno la userà la cura è sua; ⚠️ la strada **B** di **E23**, `lucide/…` preso nella regola; ⚠️ **il controllo dei pacchetti ritirati di `cargo audit` non fa rosso senza il registro**: nel cancello della revisione, alle 13:26–13:32, 39 righe `error: couldn't check if the package is yanked: registry: request could not be completed in the allotted timeframe`, e il cancello verde; in quello delle cure, zero. Tocca **X-3** dell'audit, ed è del proprietario |
 | **le due macchine** | quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, dove questa sessione ha lavorato: `core.autocrlf` `true` dal file di sistema, Node v24.19.0, e Chrome **`154.0.8037.58`** — aggiornato **da sé** il 2026-09-25 alle 14:25, durante la revisione: la riga del §0 del modello del dispaccio che dice 153 non vale più —; e quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, `core.autocrlf` `false` e l'albero `w/lf`, Chrome 154. ⛔ Sulla macchina che esegue, gli Attesi di **forma** si misurano, non si copiano (E72) |
+| **dall'altra macchina** | si riprende da `origin`, perché tutto ciò che serve è tracciato: questa sezione, la cartella del dispaccio e il piano. Restano **solo** su `zagor`, e non servono per riprendere: il registro git-ignorato `.superpowers/sdd/2026-09-23-design-system/progress.md` con gli script delle cure, le copie in `%TEMP%` della riga **le copie**, e le note di memoria dell'agente, che stanno fuori dal repository — le lezioni che contano sono nella tabella qui sotto. Sull'altra macchina l'albero è `w/lf`: le forme dei fine-riga si rimisurano lì (E72) |
 
 **La revisione** — un revisore Opus fresco, **interrotto** a metà dalla chiusura del processo di Claude Code verso le 14:05
 e **ripreso** alle 14:12 con `SendMessage`: **conforme**; **0** critici, **0** importanti, **6** minori, **6** nit. M-1…M-5 e
@@ -8671,7 +8673,7 @@ del sotto-progetto.
 
 **Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
 
-1. `git fetch --all --prune`, `git status -sb`; la CI di `9d2ffb0` e del commit che scrive questa riga, per prima.
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
 2. Il **pre-controllo del compito 4**, con le quattro domande di `CLAUDE.md` e le righe 5–8, contro il codice di **adesso**:
    il compito 3 e le sue cure hanno cambiato `kit.test.ts` — **25** prove, non 23 —, `BaseButton.vue`, `BaseTextField.vue`
    ed `eslint.config.js`, a cui il compito 4 aggiunge un blocco: i suoi *Trova* si rilanciano sul file di oggi. Le voci che

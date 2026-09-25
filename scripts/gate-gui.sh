@@ -33,6 +33,11 @@ npm ci --no-audit --no-fund
 # `vue-tsc` inside `build` is the level 1 of the web world, the way `rustc` is for the kernel.
 echo "-------- gui: build"
 npm run build
+# ⛔ THE KIT PAGE STAYS OUT OF THE PACKAGE (design system, section (b)): `vite build` takes the inputs it is given, and with
+# none it takes `index.html` alone. Proven on the output, not believed (trap 12 of the design); the first line is the
+# non-vacuity guard -- a build that produced nothing would pass the second.
+test -f dist/index.html || { echo "dist/index.html is missing: the build produced nothing to check"; exit 1; }
+if [ -e dist/kit.html ] || grep -rlq 'kit-card' dist/assets; then echo "the kit page is in the package"; exit 1; fi
 echo "-------- gui: probes"
 # ⛔ TWO PROJECTS, ONE AT A TIME (design system, task 2; E10 of its plan): jsdom, and the INSTALLED Chrome for
 # what only a layout engine can judge -- fonts, motion, radii, clipping, the contrast of the drawn page. One at a

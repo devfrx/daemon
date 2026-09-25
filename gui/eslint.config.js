@@ -115,6 +115,13 @@ export default [
    * says the whole list for its files.
    */
   {
+    // ⛔ THE KIT PAGE'S WORDS ARE SPECIMENS (D8 of the design-system plan): a development page outside the package, whose
+    // words in `it.json` would ship for nothing. The one exception to the raw-text rule, in one place, like Chat's above.
+    name: "harness/kit-page-specimens",
+    files: ["src/kit/**"],
+    rules: { "@intlify/vue-i18n/no-raw-text": "off" },
+  },
+  {
     name: "harness/imports",
     files: ["**/*.vue", "**/*.ts"],
     rules: { "no-restricted-imports": ["error", { paths: [LUCIDE] }] },

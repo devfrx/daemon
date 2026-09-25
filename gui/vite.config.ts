@@ -83,6 +83,14 @@ export default defineConfig({
       },
       {
         extends: true,
+        // ⛔ THE DEPENDENCIES ARE PRE-BUNDLED AFRESH ON EVERY RUN (E24 of the design-system plan). A cache left by a run
+        // that never reached a library makes Vite re-bundle MID-RUN and reload, and the probes end up with two copies of
+        // Vue: every one red with `'set' on proxy: trap returned falsish`, measured on 2026-09-25. `npm ci` empties the
+        // cache, so the gate never sees it -- it bites whoever runs the probes by hand. Not `optimizeDeps.include`, the
+        // list Vitest's warning suggests: it must grow with every library a probe reaches, and a forgotten name is red
+        // only where the gate does not look. The cost, measured: none -- a run takes under 4 s, cold or warm; and Vite
+        // 8.3.0's types mark the option `@experimental`, while its page documents it without reserve.
+        optimizeDeps: { force: true },
         test: {
           name: "browser",
           include: ["src/**/*.browser.test.ts"],

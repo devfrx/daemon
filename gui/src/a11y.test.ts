@@ -1,5 +1,4 @@
 import { mount } from "@vue/test-utils";
-import axe from "axe-core";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it } from "vitest";
 import { nextTick, type Component } from "vue";
@@ -20,20 +19,8 @@ import { useConnection } from "./stores/connection";
 import { useCore } from "./stores/core";
 import { useInvoke } from "./stores/invoke";
 import { useStream } from "./stores/stream";
+import { violations } from "./testing/axe";
 import { createFakeBridge } from "./transport/fakeBridge";
-
-/**
- * Every violation axe finds under a node, as `rule: targets`, and nothing else.
- *
- * ⛔ `color-contrast` IS DISABLED HERE AND NOT IGNORED: under jsdom axe files it under
- * `incomplete` every time -- there is no layout to read a background from (measured on
- * 2026-09-15, P-86) -- so a green from this rule would prove nothing about contrast.
- * `tokens/contrast.test.ts` is what proves AA, on every text colour over every surface.
- */
-async function violations(node: Element): Promise<string[]> {
-  const results = await axe.run(node, { rules: { "color-contrast": { enabled: false } } });
-  return results.violations.map((violation) => `${violation.id}: ${violation.nodes.map((n) => n.target.join(" ")).join(", ")}`);
-}
 
 /** Fills the stores the way a welcome does, so every component has something to draw. */
 function welcome(): void {

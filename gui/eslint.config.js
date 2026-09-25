@@ -2,6 +2,22 @@ import i18n from "@intlify/eslint-plugin-vue-i18n";
 import tsParser from "@typescript-eslint/parser";
 import vue from "eslint-plugin-vue";
 
+/** The one door of the icons (answer 11 of the design system). */
+const LUCIDE = {
+  name: "lucide",
+  message: "icons pass through BaseIcon and the one map, src/components/icons.ts (answer 11 of the design system)",
+};
+/** What a base piece may not reach: the global state, and every layer above the kit (section (b); P-3 of its plan). */
+const UPWARD = {
+  regex: "^pinia$|(^|/)(stores|panels|frame|transport)(/|$)",
+  message: "a base piece reads no global state and knows no layer above it (design system, section (b))",
+};
+/** What no file of the kit may reach: the layers above it (section (b); R2-11 of the design-system review). */
+const ABOVE = {
+  regex: "(^|/)(panels|frame|transport)(/|$)",
+  message: "the kit knows no layer above it: panels, frame and transport use the kit, not the other way (design system, section (b))",
+};
+
 /**
  * ⛔ `flat/essential` AND NOT `flat/recommended`, AND `--max-warnings 0` IS NOT USED.
  *
@@ -22,12 +38,23 @@ export default [
      * and TypeScript syntax stops espree -- measured on 2026-09-16 on the thirteen `.vue` of this plan:
      * `Parsing error` on `Confirm`, `Frame`, `ViewBar`, `Chat`, `Placeholder`, `Settings`. A file that
      * does not parse gets NO rule at all, so without this block the scoped exception below could not be
-     * proven either (R8-1). The `.ts` files are still nobody's business here (P-101): `vue-tsc` inside
-     * `npm run build` is the level 1 of the web world.
+     * proven either (R8-1). The `.ts` files are read from the design system on (block `harness/ts`, P-2 of its plan);
+     * their TYPES stay with `vue-tsc` inside `npm run build`, the level 1 of the web world (R2-10 of its review).
      */
     name: "harness/ts-in-vue",
     files: ["**/*.vue"],
     languageOptions: { parserOptions: { parser: tsParser } },
+  },
+  {
+    /**
+     * ⛔ THE `.ts` FILES ARE READ FROM THE DESIGN SYSTEM ON (P-2 of its plan). P-101 of part 2 left them to `vue-tsc`,
+     * and their TYPES stay there; but the import rules below must see `icons.ts`, `BigTab.ts`, `dock.ts`, or `lucide` and
+     * `reka-ui` could come in through a `.ts` unseen. The unscoped blocks now reach the `.ts` too, and the gate says
+     * whether any of them objects.
+     */
+    name: "harness/ts",
+    files: ["**/*.ts"],
+    languageOptions: { parser: tsParser },
   },
   {
     name: "harness/settings",
@@ -40,7 +67,9 @@ export default [
        * ⛔ OFF, AND RENAMING IS NOT THE CURE. The file name of a panel IS the `module` of the
        * `PANEL_TYPES` registry (task 13) and IS the `modules.*` key of the locale (task 13 too, step 5).
        * Renaming to please a lint would move two houses that have nothing to do with the lint.
-       * Every `.vue` file here but `ViewBar` is single-word (P-99; recounted at the review, R7-11).
+       * When it was turned off, every `.vue` file here but `ViewBar` was single-word (P-99;
+       * recounted at the review, R7-11); from the design system's task 3 on, the kit's base
+       * pieces are `Base*`, two words by name.
        */
       "vue/multi-word-component-names": "off",
       /**
@@ -79,5 +108,36 @@ export default [
     name: "harness/chat-renders-our-own-html",
     files: ["src/panels/Chat.vue"],
     rules: { "vue/no-v-html": "off" },
+  },
+  /**
+   * ⛔ THE IMPORT RULES OF THE KIT (design system, section (b)). One rule, a scope per block, and the ORDER MATTERS: in a flat
+   * config a later block REPLACES an earlier one's options for the same rule, it does not merge them -- so every block
+   * says the whole list for its files.
+   */
+  {
+    name: "harness/imports",
+    files: ["**/*.vue", "**/*.ts"],
+    rules: { "no-restricted-imports": ["error", { paths: [LUCIDE] }] },
+  },
+  {
+    // ⛔ THE WHOLE KIT KNOWS NO LAYER ABOVE IT (section (b); R2-11 of the design-system review, the owner's choice A). A
+    // composed piece such as `Confirm.vue` may read the stores, which the base pieces may not -- their block below says so,
+    // and comes AFTER this one because it replaces it for their files. The tests are out: `kit.test.ts` reads
+    // `PANEL_TYPES`, to check that every module type has an icon.
+    name: "harness/imports/components",
+    files: ["src/components/**/*.{vue,ts}"],
+    ignores: ["src/components/**/*.test.ts"],
+    rules: { "no-restricted-imports": ["error", { paths: [LUCIDE], patterns: [ABOVE] }] },
+  },
+  {
+    name: "harness/imports/base-pieces",
+    files: ["src/components/Base*.vue"],
+    rules: { "no-restricted-imports": ["error", { paths: [LUCIDE], patterns: [UPWARD] }] },
+  },
+  {
+    // The one file that may import `lucide`, and the only rule it keeps is the base pieces' one.
+    name: "harness/imports/the-icon-map",
+    files: ["src/components/icons.ts"],
+    rules: { "no-restricted-imports": ["error", { patterns: [UPWARD] }] },
   },
 ];

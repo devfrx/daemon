@@ -1,24 +1,16 @@
-> ⚠️ **Per il coordinatore, prima di dispacciare** — questo file è il **modello**, e viaggia con git. Il prompt che parte
-> si scrive nella cartella di lavoro `.superpowers/sdd/2026-09-23-design-system/`, ignorata, **senza** questo riquadro e
-> coi campi fra `<…>` riempiti: `<repo>`, `<HEAD>` — l'ultimo commit di `main` —, `<data>`, `<scratchpad>`, e i valori
-> della macchina del §0 misurati, non copiati. Il brief si genera **prima**, dalla radice del repository, con
-> `python docs/superpowers/plans/2026-09-23-design-system-esecuzione/_extract_brief_3.py`, e deve dire *«piano e
-> disegno coincidono con `HEAD`»*. Alla chiusura del compito il prompt spedito, il rapporto, il prompt del revisore e la
-> revisione si copiano nella cartella tracciata e si committano: il punto 8 di *«Come si esegue un compito»*.
-
 Sei l'**implementatore del compito 3** — *il kit: gli otto pezzi di base, la mappa delle icone, le regole del linter* — del
-piano `docs/superpowers/plans/2026-09-23-design-system.md`, nel repository `<repo>`. Sei un subagente
+piano `docs/superpowers/plans/2026-09-23-design-system.md`, nel repository `C:\Users\zagor\Desktop\harness` (Windows; il tool Bash è Git Bash). Sei un subagente
 fresco: tutto ciò che ti serve è qui e nel brief che questo prompt nomina. Il compito è **codice della GUI** — una
 dipendenza, `lucide`; la mappa delle icone, gli otto pezzi di base e la loro prova in `gui/src/components/`; l'aiutante di
 `axe` in `gui/src/testing/`; la sua seconda occorrenza in `a11y.test.ts`; le regole del kit in `gui/eslint.config.js` — e
 **due celle** del piano.
 
-**All'avvio verifichi, e se non torna ti fermi e lo riporti:** `git rev-parse --short HEAD` → `<HEAD>`;
+**All'avvio verifichi, e se non torna ti fermi e lo riporti:** `git rev-parse --short HEAD` → `ef3e865`;
 `git status --porcelain` → vuoto; `node --version` → una versione che `gui/package.json` accetta (`engines`);
 `git config --show-origin --get-all core.autocrlf` → il valore di questa macchina, nel §0; Google Chrome stabile
 installato — `ls "/c/Program Files/Google/Chrome/Application/" "$LOCALAPPDATA/Google/Chrome/Application/" 2>/dev/null`
 rende almeno una cartella di versione: il progetto `browser` del cancello lo apre. La data da scrivere al posto di ogni
-`<data>` è **<data>**, sempre la stessa anche se l'esecuzione passa la mezzanotte.
+`<data>` è **2026-09-25**, sempre la stessa anche se l'esecuzione passa la mezzanotte.
 
 ## 0. La macchina
 
@@ -41,7 +33,7 @@ La cartella di lavoro è `.superpowers/sdd/2026-09-23-design-system/`, git-ignor
 
 | File | Che cos'è |
 |---|---|
-| `task-3-brief.md` | **il compito**: la testa del piano (obiettivo, architettura, pila, disegno, **strumenti** con `replace_unique.py`), i *Vincoli globali*, *A che punto è* e *Come si esegue un compito*, l'**errata** — **E15**, **E16**, **E17** ed **E18** sono del compito 3 —, le voci **P-2**, **P-3**, **P-8**, **P-9** e **P-25**, la decisione **D6**, le voci aperte che il piano sa, **il compito 3 intero**, e dal disegno la sezione **(b)**, i controlli **10**–**13**, le decisioni **18**–**20** e le trappole **1**, **5**, **10**, **14**, **16** e **18** — **copiati parola per parola** da `_extract_brief_3.py`, a `HEAD` = `<HEAD>`. Leggilo **tutto**, a blocchi |
+| `task-3-brief.md` | **il compito**: la testa del piano (obiettivo, architettura, pila, disegno, **strumenti** con `replace_unique.py`), i *Vincoli globali*, *A che punto è* e *Come si esegue un compito*, l'**errata** — **E15**, **E16**, **E17** ed **E18** sono del compito 3 —, le voci **P-2**, **P-3**, **P-8**, **P-9** e **P-25**, la decisione **D6**, le voci aperte che il piano sa, **il compito 3 intero**, e dal disegno la sezione **(b)**, i controlli **10**–**13**, le decisioni **18**–**20** e le trappole **1**, **5**, **10**, **14**, **16** e **18** — **copiati parola per parola** da `_extract_brief_3.py`, a `HEAD` = `ef3e865`. Leggilo **tutto**, a blocchi |
 
 Poi, **per le sole parti che il compito nomina o che modifichi**, e **prima** di scriverle: i file della lista *Files* del
 compito — quelli che esistono —, e le righe `| **2** |` e `| **3** |` della tabella della posizione del piano.
@@ -92,7 +84,7 @@ nuovi: tu **misuri**, e un numero diverso si **riporta**, non si insegue:
 dipendono dal suo `core.autocrlf` (§0). **Dopo**, la **forma**, non il numero di prima — un file che cresce ha più righe:
 su un file CRLF i CR sono **uguali alle righe**, su un file LF sono **zero**, e la colonna `w/…` è quella di prima; i file
 **nuovi** nascono **LF**, zero CR. Scrivi con Python `newline=""` (temporaneo più `os.replace`) o con `replace_unique.py`,
-che conserva il fine-riga del file che trova e che copi dagli *Strumenti* del brief **nello scratchpad** `<scratchpad>` —
+che conserva il fine-riga del file che trova e che copi dagli *Strumenti* del brief **nello scratchpad** `C:\Users\zagor\AppData\Local\Temp\claude\C--Users-zagor-Desktop-harness\cba88c07-c154-4a08-acdf-71c69edc56c4\scratchpad\task3` — in Git Bash `/c/Users/zagor/AppData/Local/Temp/claude/C--Users-zagor-Desktop-harness/cba88c07-c154-4a08-acdf-71c69edc56c4/scratchpad/task3` —
 mai nel repository. `npm install` conserva i fine-riga del manifesto e del lockfile: si rimisurano lo stesso. ⛔ **Mai
 `sed -i`.**
 
@@ -104,11 +96,11 @@ mai nel repository. `npm install` conserva i fine-riga del manifesto e del lockf
   `gui/src/a11y.test.ts` che il `grep` del Passo nomina — dalla riga **sopra** *«Every violation axe finds»*, il `/**`, alla
   riga *«/\*\* Fills the stores …»* —, col fine-riga del file, e passa a `replace_unique.py` come gli altri.
 - ⚠️ **Il Passo 8 si torna indietro con la COPIA SALVATA, mai con `git checkout`** (vincolo 11): prima della prima
-  violazione `git status --porcelain > <scratchpad>/prima.txt` e una copia di ogni file che le violazioni toccano —
+  violazione `git status --porcelain > /c/Users/zagor/AppData/Local/Temp/claude/C--Users-zagor-Desktop-harness/cba88c07-c154-4a08-acdf-71c69edc56c4/scratchpad/task3/prima.txt` e una copia di ogni file che le violazioni toccano —
   `gui/src/components/BaseLabel.vue`, `gui/src/components/icons.ts`, `gui/src/frame/moveActive.ts`,
   `gui/src/components/BaseButton.vue`, `gui/src/components/Confirm.vue`, `gui/src/components/markdown.ts`,
   `gui/src/components/BaseStatus.vue`, `gui/src/components/BaseTextField.vue`, `gui/src/components/BaseDialog.vue`;
-  dopo **ciascuna** la copia torna e `cmp` lo conferma; alla fine `git status --porcelain | diff <scratchpad>/prima.txt -`
+  dopo **ciascuna** la copia torna e `cmp` lo conferma; alla fine `git status --porcelain | diff /c/Users/zagor/AppData/Local/Temp/claude/C--Users-zagor-Desktop-harness/cba88c07-c154-4a08-acdf-71c69edc56c4/scratchpad/task3/prima.txt -`
   non rende nulla. Per ogni violazione riporti il **messaggio rosso vero** — la prima riga che nomina la ragione —, non
   «rosso».
 - ⚠️ **Il cancello dura da uno a dieci minuti**, secondo le cache. Lancialo **da solo**, in background, con l'uscita in un
@@ -122,7 +114,7 @@ mai nel repository. `npm install` conserva i fine-riga del manifesto e del lockf
    rosso guardato), poi i pezzi — è il ciclo di `superpowers:test-driven-development`, e il piano lo ha già scritto.
 2. **Un commit solo**, coi soli file del compito: `gui/package.json`, `gui/package-lock.json`, `gui/eslint.config.js`,
    `gui/src/a11y.test.ts`, `gui/src/testing/axe.ts`, e in `gui/src/components/` `icons.ts`, `kit.test.ts` e gli otto
-   `Base*.vue`; e il piano, dove la riga **3** della tabella della posizione passa a **Stato** `✅ <data>` e nella riga
+   `Base*.vue`; e il piano, dove la riga **3** della tabella della posizione passa a **Stato** `✅ 2026-09-25` e nella riga
    **2** la colonna **Commit** diventa `` `23b3134`, con la cura `5f32158` `` (R1-16); la colonna **Commit** della riga
    **3** resta `—`, la scrive il compito 4. Il messaggio sta in un file nello scratchpad e si passa con
    `git commit -F <file>`, e comincia con `design-system(compito 3): ` (vincolo 15). ⛔ **Senza co-autore**: `CLAUDE.md`

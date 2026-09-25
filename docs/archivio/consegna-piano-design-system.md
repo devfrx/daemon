@@ -850,3 +850,107 @@ del sotto-progetto.
    `compare_task3.py` dal `compare_task2.py` curato, con la lezione 2.
 3. L'**esecuzione del compito 3**, in un'altra sessione, col costo detto prima e il sì del proprietario; e così compito per
    compito, fino al 9.
+
+## L'esecuzione del compito 3, del 2026-09-25
+
+Tolto dal piano il 2026-09-25, quando la sessione dopo ha **eseguito il compito 3** e scritto *«Come si riprende —
+l'esecuzione del compito 3»*. Il testo com'era, dal commit `9d2ffb0`, parola per parola; i rimandi sono riscritti per
+questa cartella. ⚠️ I numeri della sua ricetta sono quelli del piano di `ef3e865`: le voci **E19**–**E23** dell'errata e
+le cure dei recinti dei Passi 3, 5, 6 e 7, scritte da `9d2ffb0`, spostano i recinti che la ricetta nomina, e il Passo 7
+ha una sesta sostituzione.
+
+## Come si riprende — il pre-controllo del compito 3, 2026-09-25
+
+✅ **Il pre-controllo del compito 3 è fatto, e ha trovato quattro difetti**: **E15**, **E16**, **E17** ed **E18**, scritti
+nell'errata e **già applicati** al testo del compito, che si esegue com'è scritto adesso. Nessuno tocca il merito approvato,
+quindi nessuno è del proprietario. La consegna precedente — l'esecuzione del compito 2 — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+⚠️ **Perché è una misura e non un'impressione.** Il compito è stato **rifatto per intero dal testo del piano** su una copia
+pulita di `fa4b3f4` — `git clone` in `%TEMP%\pc3`, sulla macchina `zagor`, senza `origin`, `npm ci`, poi i Passi 1–7 coi
+recinti del piano, applicati con `apply_plan.py` della cartella di prova `%TEMP%\pds`, e la terza sostituzione del Passo 2
+da uno script che prende il blocco dal file —, e ogni *Atteso* è tornato: Passo 1, `lucide@1.47.0` in `dependencies`, un
+pacchetto nuovo, `ISC`, e il suo `LICENSE` dice MIT per le icone di Feather; Passo 2, `a11y.test.ts` verde con le sue 11
+prove; Passo 3, rosso, `Failed to resolve import "./BaseIcon.vue"`; Passi 4–6, 2 file e 28 prove verdi, il *build* verde e il
+pezzo JavaScript `663.93 kB` col nome di prima, `index-DLsd9Y_U.js`; Passo 7, il lint verde; Passo 8, ogni riga rossa per la
+ragione scritta e il codice giusto verde; Passo 9, il passo web del cancello verde — `--project jsdom` 18 file passati e uno
+saltato, 123 prove passate e una saltata; `--project browser` 1 file e 5 prove; `found 0 vulnerabilities`. Scritte le voci,
+il compito è stato **rifatto dal testo corretto**, con la ricetta qui sotto, e `compare_task3.py` è stato provato su quel
+commit: il commit fedele esce **0**, sedici percorsi `OK`; cinque mutanti escono **1** ciascuno — un token cambiato
+in `BaseButton.vue`, un file in più, `lucide` non esatto, la riga 2 senza la cura, l'aiutante di `axe` lasciato in
+`a11y.test.ts` —; e due cambi non dettati escono **0** con `CHECK BY HAND` — una voce d'errata in più, una data che non
+è il giorno del commit. Su quel commit il passo web del cancello è verde con gli stessi numeri del Passo 9.
+
+| Domanda | Esito, e il comando o la misura |
+|---|---|
+| 1 — la sonda è sbagliata? | no: le righe del Passo 8, una per volta sulla copia, rosse **per la ragione scritta** — i cinque messaggi del linter, un problema per corsa; `expected [ 'models' ] to deeply equal []`; `Unable to get [role="status"] within: <!--v-if-->` —, verde il codice giusto e verde il `v-if="$slots.default"` che il Passo 8 dice verde. E mordono anche le prove che il Passo 8 non muta: `iconOnly` fatto `computed` → `expected undefined to be 'Stacca'`; la riga `@ts-expect-error` tolta → `TS2322` nel *build*, e con un nome della mappa → `TS2578`; il gruppo di radio lasciato a sé → `expected [ 'false', 'true' ] to deeply equal [ 'true', 'false' ]`. Ogni file tornato dalla copia salvata, confrontato byte per byte, e `git status --porcelain` alla fine uguale a quello di prima |
+| 2 — manca una sonda? | **sì, tre**: **E15**, **E16** ed **E18**. Le prime due hanno la stessa forma: una riga di un pezzo che porta il suo perché nel commento, tolta, lascia verdi tutte le prove |
+| 3 — l'artefatto è sbagliato? | no, sulla copia dal testo; e **da fuori**: nella cartella di prova `%TEMP%\pds`, ramo `task8`, i compiti 4–8 sono costruiti sopra questi pezzi, e gli otto `Base*.vue`, `icons.ts` e `kit.test.ts` sono **uguali** a quelli rifatti oggi, a meno dei CR — nessun compito dopo li cambia; `testing/axe.ts` differisce per il commento di P-25 e per `contrastJudged` del compito 8, `eslint.config.js` per i blocchi dei compiti 4 e 5. `git diff --stat` fra la base e il compito, su `crates/` e `gui/schema/`, vuoto |
+| 4 — è già eseguito? | no: `gui/package.json` non ha `lucide`, `gui/src/testing/` non esiste, e in `gui/src/components/` ci sono i soli `Confirm.vue`, `markdown.ts` e `markdown.test.ts` |
+| 5 — il contratto è cresciuto sotto il piano? | sì, e regge. Il compito 2 ha portato due `.ts` nuovi, `browser.d.ts` e `tokens.browser.test.ts`, che il blocco `harness/ts` fa leggere al linter: verde; `eslint src` legge **48** `.ts`, prima nessuno, contati col rapporto JSON; il lint, a cache calda, da 10,5 a 11,5 s. I due progetti di `vitest`: i comandi dei Passi 2, 3 e 6 filtrano per file e girano, il Passo 8 dice `--project jsdom`. La colonna **Commit** della riga 2 è `` `23b3134`, con la cura `5f32158` ``: il Passo 9 dice *«l'hash del compito 2»*, e il prompt detta la cella intera, come fece per la riga 1 nel compito 2 |
+| 6 — un commento o un banco lo smentisce? | **sì**: **E17**, la frase di `eslint.config.js` sulle parole singole. Le altre frasi dei file che il compito tocca reggono: la quarta sostituzione del Passo 7 corregge già quella sui `.ts`, e il commento che la terza sostituzione del Passo 2 toglie — *«on every text colour over every surface»*, falso dal compito 1, che prova il contrasto per le famiglie di P-1 — se ne va col suo aiutante |
+| 7, 8 | non si applicano: il compito non tocca un ADR e non è un rapporto |
+
+Lo stato alla chiusura, riga per riga col comando che la rifà:
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **cancello** | `GATE GREEN` all'apertura, a `fa4b3f4`, sulla macchina `zagor` — sotto `gui/` il progetto `jsdom` con 17 file passati e uno saltato, 100 prove passate e una saltata, il progetto `browser` con un file e 5 prove, il pezzo JavaScript `663.93 kB`, `found 0 vulnerabilities` — e prima del commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
+| **la CI** | verdi sui due sistemi le corse fino a `ee084d7`, il commit del pre-controllo, lette alla chiusura; quella del commit che scrive questa riga **in corso**: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **codice di prodotto** | non toccato: questa sessione ha scritto il piano e la cartella del dispaccio, e il codice del compito 3 vive solo nella copia |
+| **la copia del pre-controllo** | ⚠️ **solo sulla macchina `zagor`**: `%TEMP%\pc3`, senza `origin`, coi rami `task3` — il compito rifatto dal testo di `fa4b3f4` —, `task3-cured` — con le correzioni di E15–E17 —, `base3` e `t3` — il piano di questa sessione e il compito rifatto dal suo testo, il confronto di `compare_task3.py` — e i sette mutanti `m1`…`m7`, e gli attrezzi in `%TEMP%\pc3-tools\`: le ricette, lo script della terza sostituzione, quello delle violazioni, quello delle correzioni, quello dei mutanti, e i log delle misure in `logs\`. Altrove non serve: il confronto col testo del piano lo fa `compare_task3.py` su qualunque clone. Si cancella dopo il compito 3 |
+| **il dispaccio** | ✅ **viaggia con git**, per il punto 8 di *«Come si esegue un compito»*: nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/` il **modello** del prompt, `dispatch-task-3.md` — coi campi `<repo>`, `<HEAD>`, `<data>`, `<scratchpad>` e la tabella delle due macchine, e i fine-riga detti per **forma** (la lezione 1 della consegna precedente) —; `_extract_brief_3.py`, che scrive il brief nella cartella di lavoro ignorata; `compare_task3.py`, nato da `compare_task2.py` curato: ciò che è dettato conta, ciò che non lo è si mostra (la lezione 2). Il prompt del revisore si scrive sul modello di `review-2-prompt.md`. Il brief **non** si committa: è una copia del piano |
+| **le voci registrate, non prese** | ⚠️ **la finestra delle prove, 1440 × 900**, com'era registrata dalla consegna precedente, in archivio: nessuna prova la tiene e nessun controllo del disegno lo chiede; le prove della cornice del compito 8 sono scritte a quella finestra |
+| **le copie delle sessioni prima** | la copia `%TEMP%\pc2` del pre-controllo del compito 2, sulla macchina `Jays`, non serve più e si può cancellare |
+| **le due macchine** | quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, dove questa sessione ha lavorato: `core.autocrlf` `true` dal file di sistema, l'albero `w/crlf` per i file che git ha scritto e `w/lf` per `gui/eslint.config.js` e `gui/src/a11y.test.ts`, Node v24.19.0, Chrome `153.0.8010.53` con la `154.0.8037.58` già scaricata come `new_chrome.exe`; e quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, `core.autocrlf` `false` e l'albero `w/lf`, Chrome 154. ⛔ Sulla macchina che esegue gli Attesi di **forma** si misurano, non si copiano (E72): il §4 del prompt lo dice |
+
+📌 **La ricetta del compito 3**, per rifarlo o confrontarlo dal testo del piano, vale per il piano del commit che scrive questa
+riga: `W` è il file intero dal recinto aperto a quella riga; `R` sostituisce l'occorrenza unica del primo recinto col secondo;
+`B` è la terza sostituzione del Passo 2, il blocco preso **dal file** — `apply_plan.py` della cartella di prova non la
+conosce, e sulla copia l'ha fatta uno script a parte. `lucide` si installa **prima**, a mano, col Passo 1.
+
+```text
+W gui/src/testing/axe.ts 1757
+R gui/src/a11y.test.ts 1778 1785
+R gui/src/a11y.test.ts 1791 1797
+B gui/src/a11y.test.ts
+W gui/src/components/kit.test.ts 1819
+W gui/src/components/icons.ts 2064
+W gui/src/components/BaseIcon.vue 2142
+W gui/src/components/BaseButton.vue 2204
+W gui/src/components/BaseLabel.vue 2356
+W gui/src/components/BaseList.vue 2394
+W gui/src/components/BaseStatus.vue 2438
+W gui/src/components/BaseTextField.vue 2457
+W gui/src/components/BaseRadioGroup.vue 2559
+W gui/src/components/BaseDialog.vue 2669
+R gui/eslint.config.js 2793 2799
+R gui/eslint.config.js 2821 2828
+R gui/eslint.config.js 2846 2856
+R gui/eslint.config.js 2897 2904
+R gui/eslint.config.js 2911 2917
+```
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
+del sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **una riga che porta il suo perché nel commento può non avere una prova che cada senza di lei**: `inheritAttrs: false` di `BaseTextField` e il `v-bind` di R2-18 in `BaseDialog` — tolte, le 23 prove restavano verdi — E15, E16 | nel pre-controllo, per ogni riga di un artefatto che dichiara il suo perché: tolta, quale prova cade? |
+| 2 | **un commento che quantifica su una cartella diventa falso quando il compito ci aggiunge file**: *«every `.vue` file here but `ViewBar` is single-word»* e gli otto `Base*.vue` — E17 | si rilegge ogni commento che dice *«ogni»* o *«tutti»* sui file che il compito fa crescere |
+| 3 | **un blocco del linter si prova sul suo confine**, non solo sul caso che lo motiva: la mappa delle icone toglie `lucide` dal divieto e ci tiene l'altra regola, e la seconda metà non aveva la sua riga — E18 | il pre-controllo del **compito 4** guarda lo stesso sul blocco `harness/kit-page-specimens`, che spegne `no-raw-text` su `src/kit/**` |
+
+**Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. Questa sezione; poi il dispaccio: dalla radice del repository il brief, con
+   `python docs/superpowers/plans/2026-09-23-design-system-esecuzione/_extract_brief_3.py`, e il prompt dal modello
+   `dispatch-task-3.md` della stessa cartella, coi campi e i valori della macchina che esegue — il riquadro in testa al
+   modello dice come.
+3. ⛔ **Il costo, prima di dispacciare, e il sì del proprietario**: la banda è quella del compito 2, nella consegna
+   precedente in archivio — l'implementatore ~223k token e ~29 minuti, il revisore ~375k e ~56 minuti.
+4. L'**esecuzione del compito 3**, con `superpowers:subagent-driven-development`; il revisore rilancia ogni comando e
+   confronta con `compare_task3.py`; alla chiusura del compito, i file del dispaccio nella cartella tracciata (punto 8).
+   Poi il pre-controllo del compito 4, in un'altra sessione, con la prossima voce d'errata libera, **E19**; e così compito
+   per compito, fino al 9.

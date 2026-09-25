@@ -8628,98 +8628,56 @@ compito 1 — o in una voce d'errata. Un nome senza casa è una voce d'errata nu
 
 ---
 
-## Come si riprende — il pre-controllo del compito 3, 2026-09-25
+## Come si riprende — l'esecuzione del compito 3, 2026-09-25
 
-✅ **Il pre-controllo del compito 3 è fatto, e ha trovato quattro difetti**: **E15**, **E16**, **E17** ed **E18**, scritti
-nell'errata e **già applicati** al testo del compito, che si esegue com'è scritto adesso. Nessuno tocca il merito approvato,
-quindi nessuno è del proprietario. La consegna precedente — l'esecuzione del compito 2 — sta parola per parola in
+✅ **Il compito 3 è eseguito, rivisto e curato.** La consegna precedente — il pre-controllo — sta parola per parola in
 [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
 
-⚠️ **Perché è una misura e non un'impressione.** Il compito è stato **rifatto per intero dal testo del piano** su una copia
-pulita di `fa4b3f4` — `git clone` in `%TEMP%\pc3`, sulla macchina `zagor`, senza `origin`, `npm ci`, poi i Passi 1–7 coi
-recinti del piano, applicati con `apply_plan.py` della cartella di prova `%TEMP%\pds`, e la terza sostituzione del Passo 2
-da uno script che prende il blocco dal file —, e ogni *Atteso* è tornato: Passo 1, `lucide@1.47.0` in `dependencies`, un
-pacchetto nuovo, `ISC`, e il suo `LICENSE` dice MIT per le icone di Feather; Passo 2, `a11y.test.ts` verde con le sue 11
-prove; Passo 3, rosso, `Failed to resolve import "./BaseIcon.vue"`; Passi 4–6, 2 file e 28 prove verdi, il *build* verde e il
-pezzo JavaScript `663.93 kB` col nome di prima, `index-DLsd9Y_U.js`; Passo 7, il lint verde; Passo 8, ogni riga rossa per la
-ragione scritta e il codice giusto verde; Passo 9, il passo web del cancello verde — `--project jsdom` 18 file passati e uno
-saltato, 123 prove passate e una saltata; `--project browser` 1 file e 5 prove; `found 0 vulnerabilities`. Scritte le voci,
-il compito è stato **rifatto dal testo corretto**, con la ricetta qui sotto, e `compare_task3.py` è stato provato su quel
-commit: il commit fedele esce **0**, sedici percorsi `OK`; cinque mutanti escono **1** ciascuno — un token cambiato
-in `BaseButton.vue`, un file in più, `lucide` non esatto, la riga 2 senza la cura, l'aiutante di `axe` lasciato in
-`a11y.test.ts` —; e due cambi non dettati escono **0** con `CHECK BY HAND` — una voce d'errata in più, una data che non
-è il giorno del commit. Su quel commit il passo web del cancello è verde con gli stessi numeri del Passo 9.
-
-| Domanda | Esito, e il comando o la misura |
+| Commit | Che cosa |
 |---|---|
-| 1 — la sonda è sbagliata? | no: le righe del Passo 8, una per volta sulla copia, rosse **per la ragione scritta** — i cinque messaggi del linter, un problema per corsa; `expected [ 'models' ] to deeply equal []`; `Unable to get [role="status"] within: <!--v-if-->` —, verde il codice giusto e verde il `v-if="$slots.default"` che il Passo 8 dice verde. E mordono anche le prove che il Passo 8 non muta: `iconOnly` fatto `computed` → `expected undefined to be 'Stacca'`; la riga `@ts-expect-error` tolta → `TS2322` nel *build*, e con un nome della mappa → `TS2578`; il gruppo di radio lasciato a sé → `expected [ 'false', 'true' ] to deeply equal [ 'true', 'false' ]`. Ogni file tornato dalla copia salvata, confrontato byte per byte, e `git status --porcelain` alla fine uguale a quello di prima |
-| 2 — manca una sonda? | **sì, tre**: **E15**, **E16** ed **E18**. Le prime due hanno la stessa forma: una riga di un pezzo che porta il suo perché nel commento, tolta, lascia verdi tutte le prove |
-| 3 — l'artefatto è sbagliato? | no, sulla copia dal testo; e **da fuori**: nella cartella di prova `%TEMP%\pds`, ramo `task8`, i compiti 4–8 sono costruiti sopra questi pezzi, e gli otto `Base*.vue`, `icons.ts` e `kit.test.ts` sono **uguali** a quelli rifatti oggi, a meno dei CR — nessun compito dopo li cambia; `testing/axe.ts` differisce per il commento di P-25 e per `contrastJudged` del compito 8, `eslint.config.js` per i blocchi dei compiti 4 e 5. `git diff --stat` fra la base e il compito, su `crates/` e `gui/schema/`, vuoto |
-| 4 — è già eseguito? | no: `gui/package.json` non ha `lucide`, `gui/src/testing/` non esiste, e in `gui/src/components/` ci sono i soli `Confirm.vue`, `markdown.ts` e `markdown.test.ts` |
-| 5 — il contratto è cresciuto sotto il piano? | sì, e regge. Il compito 2 ha portato due `.ts` nuovi, `browser.d.ts` e `tokens.browser.test.ts`, che il blocco `harness/ts` fa leggere al linter: verde; `eslint src` legge **48** `.ts`, prima nessuno, contati col rapporto JSON; il lint, a cache calda, da 10,5 a 11,5 s. I due progetti di `vitest`: i comandi dei Passi 2, 3 e 6 filtrano per file e girano, il Passo 8 dice `--project jsdom`. La colonna **Commit** della riga 2 è `` `23b3134`, con la cura `5f32158` ``: il Passo 9 dice *«l'hash del compito 2»*, e il prompt detta la cella intera, come fece per la riga 1 nel compito 2 |
-| 6 — un commento o un banco lo smentisce? | **sì**: **E17**, la frase di `eslint.config.js` sulle parole singole. Le altre frasi dei file che il compito tocca reggono: la quarta sostituzione del Passo 7 corregge già quella sui `.ts`, e il commento che la terza sostituzione del Passo 2 toglie — *«on every text colour over every surface»*, falso dal compito 1, che prova il contrasto per le famiglie di P-1 — se ne va col suo aiutante |
-| 7, 8 | non si applicano: il compito non tocca un ADR e non è un rapporto |
-
-Lo stato alla chiusura, riga per riga col comando che la rifà:
+| `c7b7bcd` | **il compito 3**, dall'implementatore — conforme al dettato: `compare_task3.py ef3e865 c7b7bcd` esce 0, sedici percorsi `OK`, e la revisione l'ha provato nelle due direzioni |
+| `9d2ffb0` | le cure della revisione, dal coordinatore (scelta **A** del proprietario, senza ri-revisione): **E19**–**E23** nell'errata e nel codice, i recinti dei Passi 3, 5, 6 e 7 allineati — il piano rifà i quattro file curati, confrontati a macchina —, e **M-6** in `compare_task3.py` |
+| il commit che scrive questa riga | il dispaccio del compito 3 nella cartella tracciata, e questa consegna |
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
-| **cancello** | `GATE GREEN` all'apertura, a `fa4b3f4`, sulla macchina `zagor` — sotto `gui/` il progetto `jsdom` con 17 file passati e uno saltato, 100 prove passate e una saltata, il progetto `browser` con un file e 5 prove, il pezzo JavaScript `663.93 kB`, `found 0 vulnerabilities` — e prima del commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
-| **la CI** | verdi sui due sistemi le corse fino a `ee084d7`, il commit del pre-controllo, lette alla chiusura; quella del commit che scrive questa riga **in corso**: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
-| **codice di prodotto** | non toccato: questa sessione ha scritto il piano e la cartella del dispaccio, e il codice del compito 3 vive solo nella copia |
-| **la copia del pre-controllo** | ⚠️ **solo sulla macchina `zagor`**: `%TEMP%\pc3`, senza `origin`, coi rami `task3` — il compito rifatto dal testo di `fa4b3f4` —, `task3-cured` — con le correzioni di E15–E17 —, `base3` e `t3` — il piano di questa sessione e il compito rifatto dal suo testo, il confronto di `compare_task3.py` — e i sette mutanti `m1`…`m7`, e gli attrezzi in `%TEMP%\pc3-tools\`: le ricette, lo script della terza sostituzione, quello delle violazioni, quello delle correzioni, quello dei mutanti, e i log delle misure in `logs\`. Altrove non serve: il confronto col testo del piano lo fa `compare_task3.py` su qualunque clone. Si cancella dopo il compito 3 |
-| **il dispaccio** | ✅ **viaggia con git**, per il punto 8 di *«Come si esegue un compito»*: nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/` il **modello** del prompt, `dispatch-task-3.md` — coi campi `<repo>`, `<HEAD>`, `<data>`, `<scratchpad>` e la tabella delle due macchine, e i fine-riga detti per **forma** (la lezione 1 della consegna precedente) —; `_extract_brief_3.py`, che scrive il brief nella cartella di lavoro ignorata; `compare_task3.py`, nato da `compare_task2.py` curato: ciò che è dettato conta, ciò che non lo è si mostra (la lezione 2). Il prompt del revisore si scrive sul modello di `review-2-prompt.md`. Il brief **non** si committa: è una copia del piano |
-| **le voci registrate, non prese** | ⚠️ **la finestra delle prove, 1440 × 900**, com'era registrata dalla consegna precedente, in archivio: nessuna prova la tiene e nessun controllo del disegno lo chiede; le prove della cornice del compito 8 sono scritte a quella finestra |
-| **le copie delle sessioni prima** | la copia `%TEMP%\pc2` del pre-controllo del compito 2, sulla macchina `Jays`, non serve più e si può cancellare |
-| **le due macchine** | quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, dove questa sessione ha lavorato: `core.autocrlf` `true` dal file di sistema, l'albero `w/crlf` per i file che git ha scritto e `w/lf` per `gui/eslint.config.js` e `gui/src/a11y.test.ts`, Node v24.19.0, Chrome `153.0.8010.53` con la `154.0.8037.58` già scaricata come `new_chrome.exe`; e quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, `core.autocrlf` `false` e l'albero `w/lf`, Chrome 154. ⛔ Sulla macchina che esegue gli Attesi di **forma** si misurano, non si copiano (E72): il §4 del prompt lo dice |
+| **cancello** | `GATE GREEN` a `9d2ffb0`, sulla macchina `zagor`: sotto `gui/` il progetto `jsdom` con 18 file passati e uno saltato, **125** prove passate e una saltata — le cento di prima e le 25 di `kit.test.ts` —, il progetto `browser` con un file e 5 prove; il pezzo JavaScript `663.93 kB`, invariato: il kit non entra ancora nel pacchetto della SPA; `found 0 vulnerabilities` — si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | verde sui due sistemi `c7b7bcd`, letta alla chiusura; `9d2ffb0` e il commit che scrive questa riga **in corso**: la sessione dopo li legge per primi, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | la riga **3** a `✅ 2026-09-25`; la sua colonna **Commit** la scrive il compito 4 (R1-16): `` `c7b7bcd`, con la cura `9d2ffb0` `` |
+| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il prompt **spedito**, `dispatch-task-3.md`, al posto del modello — gli stessi testi coi valori della macchina `zagor` —; il rapporto dell'implementatore; il prompt del revisore, `review-3-prompt.md`, col messaggio della ripresa in coda; la revisione; e `compare_task3.py` curato (M-6), il modello di `compare_task4.py` |
+| **le copie** | sulla macchina `zagor` restano il clone della revisione, `%TEMP%\rv3` — coi commit sonda della revisione e del coordinatore, staccati —, la copia del pre-controllo, `%TEMP%\pc3`, e i suoi attrezzi, `%TEMP%\pc3-tools`: non servono più e si possono cancellare, e questa sessione non l'ha fatto. Il banco `%TEMP%\pds` porta i pezzi del compito 3 di **prima** delle cure |
+| **le voci registrate, non prese** | ⚠️ **la finestra delle prove, 1440 × 900**, com'era registrata dalle consegne precedenti; ⚠️ **N-4 della revisione**: un `BaseButton` `card` con una misura prende l'altezza di un controllo, e il testo esce — nessun compito del piano la usa, e se uno la userà la cura è sua; ⚠️ la strada **B** di **E23**, `lucide/…` preso nella regola; ⚠️ **il controllo dei pacchetti ritirati di `cargo audit` non fa rosso senza il registro**: nel cancello della revisione, alle 13:26–13:32, 39 righe `error: couldn't check if the package is yanked: registry: request could not be completed in the allotted timeframe`, e il cancello verde; in quello delle cure, zero. Tocca **X-3** dell'audit, ed è del proprietario |
+| **le due macchine** | quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, dove questa sessione ha lavorato: `core.autocrlf` `true` dal file di sistema, Node v24.19.0, e Chrome **`154.0.8037.58`** — aggiornato **da sé** il 2026-09-25 alle 14:25, durante la revisione: la riga del §0 del modello del dispaccio che dice 153 non vale più —; e quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, `core.autocrlf` `false` e l'albero `w/lf`, Chrome 154. ⛔ Sulla macchina che esegue, gli Attesi di **forma** si misurano, non si copiano (E72) |
 
-📌 **La ricetta del compito 3**, per rifarlo o confrontarlo dal testo del piano, vale per il piano del commit che scrive questa
-riga: `W` è il file intero dal recinto aperto a quella riga; `R` sostituisce l'occorrenza unica del primo recinto col secondo;
-`B` è la terza sostituzione del Passo 2, il blocco preso **dal file** — `apply_plan.py` della cartella di prova non la
-conosce, e sulla copia l'ha fatta uno script a parte. `lucide` si installa **prima**, a mano, col Passo 1.
-
-```text
-W gui/src/testing/axe.ts 1757
-R gui/src/a11y.test.ts 1778 1785
-R gui/src/a11y.test.ts 1791 1797
-B gui/src/a11y.test.ts
-W gui/src/components/kit.test.ts 1819
-W gui/src/components/icons.ts 2064
-W gui/src/components/BaseIcon.vue 2142
-W gui/src/components/BaseButton.vue 2204
-W gui/src/components/BaseLabel.vue 2356
-W gui/src/components/BaseList.vue 2394
-W gui/src/components/BaseStatus.vue 2438
-W gui/src/components/BaseTextField.vue 2457
-W gui/src/components/BaseRadioGroup.vue 2559
-W gui/src/components/BaseDialog.vue 2669
-R gui/eslint.config.js 2793 2799
-R gui/eslint.config.js 2821 2828
-R gui/eslint.config.js 2846 2856
-R gui/eslint.config.js 2897 2904
-R gui/eslint.config.js 2911 2917
-```
+**La revisione** — un revisore Opus fresco, **interrotto** a metà dalla chiusura del processo di Claude Code verso le 14:05
+e **ripreso** alle 14:12 con `SendMessage`: **conforme**; **0** critici, **0** importanti, **6** minori, **6** nit. M-1…M-5 e
+N-1…N-3 sono curati o dichiarati da **E19**–**E23**, M-6 da `compare_task3.py`; N-4 è registrato; N-5 e N-6 non chiedono
+cure — una frase del rapporto dell'implementatore, e l'ordine *misure, cancello, commit*. Il costo misurato:
+l'implementatore **~238k** token, 97 chiamate, **~33** minuti; il revisore **~385k** al rapporto finale — 29 chiamate e ~19
+minuti dopo la ripresa, ~43 minuti prima —; ~0,6 milioni in tutto, dentro la banda detta al proprietario (0,6–0,9).
 
 📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
 del sotto-progetto.
 
 | | Che cosa | Che cosa se ne fa |
 |---|---|---|
-| 1 | **una riga che porta il suo perché nel commento può non avere una prova che cada senza di lei**: `inheritAttrs: false` di `BaseTextField` e il `v-bind` di R2-18 in `BaseDialog` — tolte, le 23 prove restavano verdi — E15, E16 | nel pre-controllo, per ogni riga di un artefatto che dichiara il suo perché: tolta, quale prova cade? |
-| 2 | **un commento che quantifica su una cartella diventa falso quando il compito ci aggiunge file**: *«every `.vue` file here but `ViewBar` is single-word»* e gli otto `Base*.vue` — E17 | si rilegge ogni commento che dice *«ogni»* o *«tutti»* sui file che il compito fa crescere |
-| 3 | **un blocco del linter si prova sul suo confine**, non solo sul caso che lo motiva: la mappa delle icone toglie `lucide` dal divieto e ci tiene l'altra regola, e la seconda metà non aveva la sua riga — E18 | il pre-controllo del **compito 4** guarda lo stesso sul blocco `harness/kit-page-specimens`, che spegne `no-raw-text` su `src/kit/**` |
+| 1 | **l'aspetto di un pezzo non ha prove in jsdom**, che non applica il foglio: M-1 e M-2 si vedono solo nel browser vero | il pre-controllo del compito 4 chiede, fra le prove nel browser della pagina kit, il colore di ogni variante spenta contro `--color-text-disabled` e il bordo dell'errore sotto il puntatore (**E19**, **E20**) |
+| 2 | **la cura di una direzione lascia scoperta l'altra**: E16 provava la finestra **senza** descrizione, e con la descrizione nessuna prova cadeva (M-3) | per ogni voce d'errata che aggiunge una prova: e l'altra direzione? |
+| 3 | **una frase che si ripete si cura in tutte le sue case**: i segni `data-*` con `\|\| undefined` erano quattro, non tre — `data-error` l'ha trovato la cura | prima di curare, il `grep` della frase nel file e nei suoi fratelli |
+| 4 | **`chrome.exe --version`, su Windows, apre il browser** col profilo dell'utente, e non stampa niente: il revisore l'ha fatto alle 14:26 e l'ha richiuso | la versione si legge dal file — `(Get-Item '<cartella>\chrome.exe').VersionInfo.ProductVersion` — o dal nome della cartella della versione; il modello del prompt del revisore del compito 4 lo dice |
+| 5 | **Chrome si aggiorna da sé fra una corsa e l'altra**: alle 14:25 la 154 ha preso il posto della 153, e una corsa di Playwright in quel minuto è caduta con `browserType.launch: Target page, context or browser has been closed`; una alle 14:02, `Failed to connect to the browser session … within the timeout`, ha la causa non separata fra la memoria di P-21 e l'aggiornamento in attesa | un rosso del progetto `browser` si rilancia dopo aver letto la versione, prima di cercarne la causa nel codice |
+| 6 | **un subagente interrotto dalla chiusura del processo non è perso**: il suo trascritto resta, e `SendMessage` lo riprende. ⚠️ E lo stato si legge **intero**: il messaggio della ripresa diceva *«nessun log del cancello intero»*, perché un `ls \| tail -20` aveva tagliato `gate-review-c7b7bcd.log` | prima della ripresa si misurano albero, clone, processi e log, senza `tail` sugli elenchi, e il messaggio dice lo stato |
 
 **Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
 
-1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
-2. Questa sezione; poi il dispaccio: dalla radice del repository il brief, con
-   `python docs/superpowers/plans/2026-09-23-design-system-esecuzione/_extract_brief_3.py`, e il prompt dal modello
-   `dispatch-task-3.md` della stessa cartella, coi campi e i valori della macchina che esegue — il riquadro in testa al
-   modello dice come.
-3. ⛔ **Il costo, prima di dispacciare, e il sì del proprietario**: la banda è quella del compito 2, nella consegna
-   precedente in archivio — l'implementatore ~223k token e ~29 minuti, il revisore ~375k e ~56 minuti.
-4. L'**esecuzione del compito 3**, con `superpowers:subagent-driven-development`; il revisore rilancia ogni comando e
-   confronta con `compare_task3.py`; alla chiusura del compito, i file del dispaccio nella cartella tracciata (punto 8).
-   Poi il pre-controllo del compito 4, in un'altra sessione, con la prossima voce d'errata libera, **E19**; e così compito
+1. `git fetch --all --prune`, `git status -sb`; la CI di `9d2ffb0` e del commit che scrive questa riga, per prima.
+2. Il **pre-controllo del compito 4**, con le quattro domande di `CLAUDE.md` e le righe 5–8, contro il codice di **adesso**:
+   il compito 3 e le sue cure hanno cambiato `kit.test.ts` — **25** prove, non 23 —, `BaseButton.vue`, `BaseTextField.vue`
+   ed `eslint.config.js`, a cui il compito 4 aggiunge un blocco: i suoi *Trova* si rilanciano sul file di oggi. Le voci che
+   trova vanno nell'errata, e la prossima libera è **E24**. Porta con sé tre cose: la sonda del browser per **E19** ed
+   **E20** (lezione 1); il blocco `harness/kit-page-specimens`, che spegne `no-raw-text` su `src/kit/**`, provato sul suo
+   **confine** (lezione 3 della consegna del pre-controllo del compito 3, in archivio); e il modello del dispaccio con la
+   riga di Chrome del §0 rimisurata e la lezione 4. Il banco `%TEMP%\pds`, se serve, si rifà dal piano di oggi.
+3. L'**esecuzione del compito 4**, in un'altra sessione, col costo detto prima e il sì del proprietario; e così compito
    per compito, fino al 9.

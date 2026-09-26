@@ -208,6 +208,7 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | **E40** | ⚠️ **Compito 5, Passo 5 — la premessa di E2 non la teneva il codice:** il gruppo del tema era acceso **prima** del benvenuto del core, e `chooseTheme` con `saved` nullo manda `{"layouts":{},…}` — misurato dalla revisione del compito 5 (M-2) sotto jsdom. Con un core lento il `SaveLayout` arriva dopo il benvenuto, e il core custodisce il pacchetto senza le disposizioni: perse in silenzio — dedotto dal codice di `stores/layout.ts`, non misurato, perché qui un core vero non c'è. ✅ **Curata** nel commit che scrive questa riga con la strada **A** della revisione, decisa coi cinque criteri: il gruppo spento finché `layout.arrivals` è zero, come la policy finché il core non l'ha detta, *«the rest off»* (§6a); la strada **B**, la scelta tenuta e fusa all'arrivo, cambiava il negozio della parte 2 per una finestra che la **A** chiude nel componente. Nel blocco di Impostazioni del Passo 1 una prova nuova, scritta prima e vista rossa sul codice del compito, `expected false to be true`, verde con la cura; e la prova *«chooses the theme…»* consegna prima il benvenuto. ⚠️ **La stessa finestra vale per il `settle` del dock, dalla parte 2** — una mossa prima del benvenuto manda la sola vista aperta —: la domanda è di classe e del proprietario, **registrata e non presa** |
 | **E41** | ⚠️ **Compito 5, Passo 1 — «Escape e il velo sono il no» (ADR-0016) senza una prova:** tolta la riga `if (value !== true) invoke.refuse();` da `Confirm.vue`, `npm test` restava verde. Già così a `39827e8`, ma la strada è nuova — il `defineModel` di `BaseDialog.vue`. Trovata dalla revisione del compito 5 (M-3), che ha scritto la prova e l'ha provata nel suo clone. ✅ **Curata** nel commit che scrive questa riga, col testo della revisione: una terza prova in `describe("the confirmation window", …)`, una sostituzione nel Passo 1. Misurata dal coordinatore il 2026-09-26: verde col `Confirm.vue` di `39827e8`, quindi nel Passo 1 è verde come le altre due della finestra; verde con quello del compito; con `void value;` al posto della riga, rossa, `expected { tool: 'arbiter', …(2) } to be null`, e la copia salvata tornata, `cmp` uguale |
 | **E42** | Nit — **Compito 5, Passo 5 — la regione vuota di Impostazioni raddoppiava lo spazio fra i due gruppi:** alta zero, ma nella colonna col `gap` prendeva due spazi, 32 px dove altrove sono 16. Trovata dall'implementatore del compito 5 e confermata dalla revisione (N-1). ✅ **Curata** nel commit che scrive questa riga: il gruppo della policy e la sua regione in un contenitore solo, e le parole della regione a `--space-2` dal loro gruppo — non `display: none` né `display: contents`, perché M-3 vuole la regione nell'albero **prima** delle parole. Misurata dal coordinatore il 2026-09-26 nel clone, nei due temi: vuota, 16 px fra i gruppi; con una chiamata in volo, le parole a 8 px dal loro gruppo e a 16 dal tema |
+| **E43** | ⚠️ **Compito 5, Passo 8 — la fascia che entra fa lampeggiare le due barre di scorrimento della pagina:** `dockview` 8.3.1 si ridimensiona un fotogramma dopo — `watchElementResize` passa la misura nuova a un `requestAnimationFrame` —, e per quel fotogramma la griglia del dock resta alta di prima e sborda dal suo contenitore, `.dock` di `Frame.vue`, che non la taglia: lo sbordo arriva alla pagina, che mostra le sue due barre, in basso e di lato. Visto dal proprietario al Passo 8, nel suo Chrome: *«sembra flickerare quando scompare la fascia come se comparissero e scomparissero continuamente le barre di scorrimento in basso ed al lato di essa»*. Misurato dal coordinatore il 2026-09-26 in Chrome senza finestra **con le barre accese** — Playwright le spegne per difetto, `--hide-scrollbars` —, un fotogramma per volta, a 1920 × 950, 1400 × 960, 1000 × 700 e altre misure: all'ingresso della fascia, `StaleBuild`, la pagina con le due barre per un fotogramma; all'uscita, nulla. La differenza col momento che il proprietario ha riportato resta; la cura l'ha chiusa nel suo Chrome. **Di prima del compito 5**: lo stesso lampo a `39827e8`, dalla parte 2; la revisione del compito 5 ha guardato la SPA con Playwright, che spegne le barre. ✅ **Curata** nel commit che scrive questa riga: `overflow: clip` su `.dock`, col perché nel commento — `clip` e non `hidden`, perché niente deve poter scorrere quella scatola —; i contenitori interni di `dockview` tagliano già sullo stesso bordo, quindi a regime non cambia nulla di ciò che si vede. Misurata: con la cura nessun fotogramma con le barre della pagina, alle stesse misure; e il proprietario, di nuovo nel suo Chrome: *«non tremola più»*. Una sostituzione nel Passo 4, il file nella riga *Files*, e la riga allineata nel *Trova* e nel *Sostituisci* del compito 6 e nel `Frame.vue` del compito 8. ⛔ **La sonda resta al compito 8**, che monta la cornice intera nel browser: il suo pre-controllo vi porta la pagina che non sborda mai quando la fascia entra, fotogramma per fotogramma — lo sbordo si legge su `scrollHeight`, che le barre spente non nascondono |
 
 ---
 
@@ -3927,6 +3928,7 @@ controlli **11–13**; la trappola **10**; **P-8** e **P-20** di questo piano; l
 - Modify: `gui/eslint.config.js` — le due regole su `panels/` e `frame/`
 - Modify: `gui/src/tokens/dock.css` — il commento del ponte, che nominava i radio nativi di Impostazioni (**E36**)
 - Modify: `gui/src/components/BaseDialog.vue` — la forma `sheet` tiene in vista le sue azioni (**E38**)
+- Modify: `gui/src/frame/Frame.vue` — il contenitore del dock tiene per sé ciò che sborda (**E43**)
 
 **Interfaces:**
 - Consumes: gli otto pezzi del compito 3; `useLayout().theme`, `chooseTheme`, `THEME_CHOICES`, `isThemeChoice` del
@@ -4578,6 +4580,29 @@ In `gui/src/panels/Status.vue`, *Trova*:
 
 E l'import: *Trova* `import { useConnection } from "../stores/connection";` in `Status.vue` — *Sostituisci con* le due righe
 `import BaseStatus from "../components/BaseStatus.vue";` e `import { useConnection } from "../stores/connection";`.
+
+E in `gui/src/frame/Frame.vue` il contenitore del dock tiene per sé ciò che sborda (**E43**): quando la fascia entra, `dockview` 8.3.1 si ridimensiona un fotogramma dopo, e la sua griglia, alta di prima, arrivava alla pagina. *Trova*:
+
+```css
+.dock {
+  flex: 1;
+  min-height: 0;
+}
+```
+
+*Sostituisci con:*
+
+```css
+.dock {
+  flex: 1;
+  min-height: 0;
+  /* ⛔ THE DOCK KEEPS ITS SPILL TO ITSELF (E43): `dockview` 8.3.1 resizes one frame late -- its ResizeObserver hands the
+     new size to a `requestAnimationFrame` -- so for a frame after the band comes in, the grid is as tall as before and
+     spills out of this box; unclipped, the spill reached the page and flashed both its scrollbars. `clip` and not
+     `hidden`: nothing may scroll this box either. */
+  overflow: clip;
+}
+```
 
 - [ ] **Passo 5: Impostazioni — la policy e il tema, su `BaseRadioGroup`**
 
@@ -5587,6 +5612,11 @@ In `gui/src/frame/Frame.vue`, *Trova*:
 .dock {
   flex: 1;
   min-height: 0;
+  /* ⛔ THE DOCK KEEPS ITS SPILL TO ITSELF (E43): `dockview` 8.3.1 resizes one frame late -- its ResizeObserver hands the
+     new size to a `requestAnimationFrame` -- so for a frame after the band comes in, the grid is as tall as before and
+     spills out of this box; unclipped, the spill reached the page and flashed both its scrollbars. `clip` and not
+     `hidden`: nothing may scroll this box either. */
+  overflow: clip;
 }
 ```
 
@@ -5600,6 +5630,11 @@ In `gui/src/frame/Frame.vue`, *Trova*:
   flex: 1;
   min-height: 0;
   margin: 0 var(--space-3) var(--space-6);
+  /* ⛔ THE DOCK KEEPS ITS SPILL TO ITSELF (E43): `dockview` 8.3.1 resizes one frame late -- its ResizeObserver hands the
+     new size to a `requestAnimationFrame` -- so for a frame after the band comes in, the grid is as tall as before and
+     spills out of this box; unclipped, the spill reached the page and flashed both its scrollbars. `clip` and not
+     `hidden`: nothing may scroll this box either. */
+  overflow: clip;
 }
 ```
 
@@ -8169,6 +8204,11 @@ function snapshot(): SerializedDockview {
   flex: 1;
   min-height: 0;
   margin: 0 var(--space-3) var(--space-6);
+  /* ⛔ THE DOCK KEEPS ITS SPILL TO ITSELF (E43): `dockview` 8.3.1 resizes one frame late -- its ResizeObserver hands the
+     new size to a `requestAnimationFrame` -- so for a frame after the band comes in, the grid is as tall as before and
+     spills out of this box; unclipped, the spill reached the page and flashed both its scrollbars. `clip` and not
+     `hidden`: nothing may scroll this box either. */
+  overflow: clip;
 }
 </style>
 ```
@@ -8665,6 +8705,8 @@ tabella nomina: qui la provenienza, lì il merito — una casa ciascuno.
 | `vitest` 4.1.11 installato: `passWithNoTests` fra le `NonProjectOptions` dei suoi tipi, un'opzione solo globale — `grep -rn 'passWithNoTests' gui/node_modules/vitest/dist` | 2026-09-24 | un progetto vuoto dentro una corsa a due è verde, da solo è rosso — E10 |
 | `@vitest/browser` 4.1.11 installato: su *«optimized dependencies changed. reloading»* stampa *«Vite unexpectedly reloaded a test. This may cause tests to fail…»* e consiglia `optimizeDeps.include` — `grep -n 'unexpectedly reloaded' gui/node_modules/@vitest/browser/dist/index.js` | 2026-09-25 | la cache stantia del progetto `browser`, e la via scartata — E24 |
 | Vite, *Dep Optimization Options*, `https://vite.dev/config/dep-optimization-options`: `optimizeDeps.force`, *«Set to `true` to force dependency pre-bundling, ignoring previously cached optimized dependencies»*, senza marca di sperimentale; nei tipi di Vite 8.3.0 installato è `@experimental` — `grep -n -B3 'force?: boolean' gui/node_modules/vite/dist/node/index.d.ts` | 2026-09-25 | la cura di E24 |
+| `dockview-core` 8.3.1 installato: `dist/package/main.esm.mjs` — `watchElementResize` passa la misura nuova a un `requestAnimationFrame` | 2026-09-26 | il dock che si ridimensiona un fotogramma dopo, e sborda — E43 |
+| Playwright 1.63.0 installato: `lib/coreBundle.js`, senza finestra aggiunge `--hide-scrollbars` — `grep -n -- '--hide-scrollbars' gui/node_modules/playwright-core/lib/coreBundle.js` | 2026-09-26 | un'occhiata senza finestra non vede le barre di scorrimento: si lancia con `ignoreDefaultArgs: ["--hide-scrollbars"]` — E43 |
 
 ### Le misure dell'esecuzione
 

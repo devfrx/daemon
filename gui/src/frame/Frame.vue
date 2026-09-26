@@ -57,5 +57,10 @@ function switchTo(view: ViewName): void {
 .dock {
   flex: 1;
   min-height: 0;
+  /* ⛔ THE DOCK KEEPS ITS SPILL TO ITSELF (E43): `dockview` 8.3.1 resizes one frame late -- its ResizeObserver hands the
+     new size to a `requestAnimationFrame` -- so for a frame after the band comes in, the grid is as tall as before and
+     spills out of this box; unclipped, the spill reached the page and flashed both its scrollbars. `clip` and not
+     `hidden`: nothing may scroll this box either. */
+  overflow: clip;
 }
 </style>

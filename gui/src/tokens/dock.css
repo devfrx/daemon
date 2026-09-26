@@ -1,78 +1,130 @@
-/* The frame's rules that no SFC dresses -- design system, task 1: moved here from `tokens.css`, which
-   leaves, with the names of the (a). ⛔ Task 6 rewrites this file as OUR `dockview` theme; until then
-   `themeAbyss` stays, and these rules keep the grab of SP-8 on it.
+/* OUR `dockview` THEME, `dockview-theme-harness` (design system, section (c); task 6 of its plan): `frame/dock.ts` puts the
+   class on the dock's shell, and this sheet dresses it with our roles and tokens only -- no colour by hand (control 5,
+   `usage.test.ts`). It sets every variable `themeAbyss` set, but the tab groups' and the palette's (`dock.test.ts`).
 
-   ⛔ `frame/BigTab.ts` and `frame/VueContent.ts` build plain DOM, because `dockview` asks for a RENDERER and
-   not a component: the classes they name -- `bigtab`, `bigtab-title`, `panel` -- live here and not in a
-   scoped <style> (E165, E166 of the part-2 plan). */
+   ⛔ `frame/VueContent.ts` and `frame/BigTab.ts` hand `dockview` plain elements, because it asks for RENDERERS and not
+   components: the classes they name -- `panel`, `bigtab` -- live here and not in a scoped <style> (E165, E166 of the
+   part-2 plan). */
 
-/* ⛔ THE GRAB IS THE CONTAINER'S, NOT THE TAB'S (E170): `dockview` sizes the whole tab strip from
-   `--dv-tabs-and-actions-container-height` and clips `.dv-tabs-container`, so the VARIABLE moves and the tab
-   fills it. 40 px is the grab move 5 of SP-8 was judged on, and the (a) now names it. */
-.dock .dockview-theme-abyss {
+.dockview-theme-harness {
+  /* ⛔ THE GRAB IS THE CONTAINER'S, NOT THE TAB'S (E170): `dockview` sizes the whole tab strip from this variable and clips
+     `.dv-tabs-container`, so the variable moves and the tab fills it -- 40 px, the grab move 5 of SP-8 was judged on. */
   --dv-tabs-and-actions-container-height: var(--size-control-lg);
-}
+  --dv-tabs-and-actions-container-font-size: inherit;
+  --dv-tab-font-size: inherit;
+  --dv-tab-margin: 0;
+  --dv-tab-border-radius: 0;
+  --dv-tab-close-icon-size: var(--size-icon-sm);
+  --dv-tabs-container-scrollbar-color: var(--color-border-strong);
+  --dv-icon-hover-background-color: var(--color-bg-fill-hover);
+  --dv-dropdown-border-radius: var(--radius-control);
 
-/* ⛔ A BRIDGE UNTIL TASK 6 DRESSES THE DOCK: `themeAbyss` paints the groups and the tabs dark, and the light theme's
-   text would sit on them at 1.11:1, the big grab's buttons at 1.06:1 (measured). These bind the few variables that
-   paint behind text to our roles; task 6 replaces this block with a theme of our own. It wins over `dockview.css`
-   because it is loaded after it. And `themeAbyss` sets `color-scheme: dark` on this same selector: without the first
-   line below, the native controls inside the dock -- the scrollbars -- are drawn dark under the light theme (E4 of the
-   design-system plan; until its task 5 the radios of Impostazioni were native too, and the one NOT chosen looked
-   chosen). */
-.dockview-theme-abyss {
-  color-scheme: inherit;
+  /* Every group is a CARD, header included (the (c)). The space AROUND the dock is the margin of `.dock` in `Frame.vue`, the
+     space BETWEEN groups is the theme's `gap`: nothing is padding here (P-7 of the plan). */
   --dv-group-view-background-color: var(--color-bg-surface);
-  --dv-tabs-and-actions-container-background-color: var(--color-bg);
+  --dv-tabs-and-actions-container-background-color: var(--color-bg-surface);
+  --dv-border-radius: var(--radius-card);
+  --dv-spacing-padding: 0;
+
+  /* The visible tab of a group in full, the hidden ones muted (the (c)); the mark follows, below. */
   --dv-activegroup-visiblepanel-tab-background-color: var(--color-bg-surface);
-  --dv-activegroup-hiddenpanel-tab-background-color: var(--color-bg);
+  --dv-activegroup-hiddenpanel-tab-background-color: var(--color-bg-surface);
   --dv-inactivegroup-visiblepanel-tab-background-color: var(--color-bg-surface);
-  --dv-inactivegroup-hiddenpanel-tab-background-color: var(--color-bg);
+  --dv-inactivegroup-hiddenpanel-tab-background-color: var(--color-bg-surface);
   --dv-activegroup-visiblepanel-tab-color: var(--color-text);
   --dv-activegroup-hiddenpanel-tab-color: var(--color-text-muted);
-  --dv-inactivegroup-visiblepanel-tab-color: var(--color-text-muted);
+  --dv-inactivegroup-visiblepanel-tab-color: var(--color-text);
   --dv-inactivegroup-hiddenpanel-tab-color: var(--color-text-muted);
   --dv-tab-divider-color: var(--color-border);
-  --dv-separator-border: var(--color-border);
   --dv-paneview-header-border-color: var(--color-border);
+  --dv-paneview-active-outline-color: var(--color-focus);
+
+  /* The dividers are invisible until the pointer is on one (the (c)). */
+  --dv-separator-border: transparent;
+  --dv-sash-color: transparent;
+  --dv-active-sash-color: var(--color-border-strong);
+  --dv-sash-border-radius: var(--radius-full);
+  --dv-active-sash-transition-duration: var(--duration-fast);
+  --dv-active-sash-transition-delay: var(--duration-slow);
+
+  /* The drop zone: the accent's subtle tint, the mark around it (the (c)). ⚠️ `--dv-drag-over-border` is this sheet's:
+     `updateTheme` writes it inline only when the theme carries `dndOverlayBorder`, and ours does not -- one house. */
+  --dv-drag-over-background-color: var(--color-bg-accent-subtle);
+  --dv-drag-over-border-color: var(--color-mark);
+  --dv-drag-over-border: var(--border-width) solid var(--color-mark);
+  --dv-edge-dock-indicator-color: var(--color-mark);
+
+  /* A floating group is raised, with the overlay's shadow (the (c)); its level is set on its container, below. */
+  --dv-floating-box-shadow: var(--shadow-overlay);
+  --dv-floating-border: var(--border-width) solid var(--color-border-card);
+  --dv-floating-group-border: none;
+  --dv-floating-group-dragging-opacity: 0.5;
+  --dv-floating-titlebar-height: var(--size-target-min);
+  --dv-floating-titlebar-background-color: var(--color-bg-raised);
+  --dv-floating-titlebar-border-bottom: var(--border-width) solid var(--color-border);
+  --dv-overlay-z-index: var(--z-floating);
 }
 
-/* ⛔ No vertical padding on the strip's tabs, so the grab is the whole height; and the CHILD combinator,
-   because the overflow dropdown renders `.dv-tab` rows inside the dock too (E173). */
-.dock .dv-tabs-container > .dv-tab {
+/* ⛔ AND THE TAB FILLS IT (E170, E173 of the part-2 plan; E45 of the design-system plan): no vertical padding on the
+   strip's tabs, or the 0.25rem of `dockview.css` leaves a grab of 32 px in the strip of 40. The CHILD combinator, because
+   the overflow dropdown renders `.dv-tab` rows inside the dock too. */
+.dockview-theme-harness .dv-tabs-container > .dv-tab {
   padding-top: 0;
   padding-bottom: 0;
 }
 
+/* The card: the radius, the border the dark theme draws and the light one leaves transparent, the shadow the light one
+   casts. `border-box`, or the border would add to the size `dockview` gives the group. */
+.dockview-theme-harness .dv-groupview {
+  box-sizing: border-box;
+  border: var(--border-width) solid var(--color-border-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+/* The mark of the visible tab (the (c)): the icon of its label in `--color-mark`, the hidden tabs' in the tab's own colour.
+   ⛔ Over `BaseLabel`'s scoped colour, which is muted everywhere else: here the tab's colour, above, decides. */
+.dockview-theme-harness .dv-tab .base-label {
+  color: inherit;
+}
+.dockview-theme-harness .dv-tab.dv-inactive-tab .base-label .base-icon {
+  color: inherit;
+}
+
+/* ⛔ THE FLOATING CONTAINER RE-DECLARES THE LEVEL ON ITSELF, AS A CYCLE: `.dv-resize-container { --dv-overlay-z-index:
+   var(--dv-overlay-z-index, 999) }` in `dockview.css` 8.3.1, so a value set on the shell never reaches it and the group
+   floats at 999, over our dialogs at `--z-overlay` (R3-17 of the design-system review). The value goes on the container.
+   ⚠️ DECLARED LIMIT: `dockview-core` lifts each open floating group 2 above the one before -- `+ 2i` inline, in the order
+   they were last raised -- so with n of them the top one sits at `--z-floating` + 2(n - 1): under `--z-popover` up to 25,
+   under `--z-overlay` up to 75, with the board's values of 2026-09-23. */
+.dockview-theme-harness .dv-resize-container {
+  --dv-overlay-z-index: var(--z-floating);
+  /* Raised, as the (c) wants -- its tabs too, or each draws a block of surface on the raised header (E47). */
+  --dv-group-view-background-color: var(--color-bg-raised);
+  --dv-tabs-and-actions-container-background-color: var(--color-bg-raised);
+  --dv-activegroup-visiblepanel-tab-background-color: var(--color-bg-raised);
+  --dv-activegroup-hiddenpanel-tab-background-color: var(--color-bg-raised);
+  --dv-inactivegroup-visiblepanel-tab-background-color: var(--color-bg-raised);
+  --dv-inactivegroup-hiddenpanel-tab-background-color: var(--color-bg-raised);
+  border-radius: var(--radius-card);
+}
+.dockview-theme-harness .dv-resize-container > .dv-floating-titlebar {
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+}
+/* Inside a floating container the group is not a second card: the container is. */
+.dockview-theme-harness .dv-resize-container .dv-groupview {
+  border: 0;
+  border-radius: 0 0 var(--radius-card) var(--radius-card);
+  box-shadow: none;
+}
+
+/* The element `BigTab` hands to `dockview`, where it mounts the face of the grab: without a height of its own the face's
+   `height: 100%` resolves against nothing. */
 .bigtab {
-  display: flex;
-  align-items: center;
-  gap: 6px;
   height: 100%;
-  padding: 0 10px;
-  font-weight: 600;
-  cursor: grab;
-  user-select: none;
 }
 
-.bigtab-title {
-  flex: 1;
-}
-
-/* The element `VueContent` hands to `dockview`: without a height of its own, every `height: 100%` inside a
-   panel resolves against nothing. */
+/* The element `VueContent` hands to `dockview`: the same, for every `height: 100%` inside a panel. */
 .panel {
   height: 100%;
-}
-
-/* The two commands of the big grab handle. */
-.bigtab button {
-  font: inherit;
-  width: 26px;
-  height: 26px;
-  background: var(--color-bg-raised);
-  color: inherit;
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-control);
-  cursor: pointer;
 }

@@ -19,6 +19,14 @@ function describe(element: Element): string {
  * corner must share the centre, and one OFF the corner must not be rounder than the outer radius minus the smaller
  * distance. A straight corner, inside or outside, is never compared (answer 20) -- a sheet's `r r 0 0` included. SVG
  * content is a drawing, not a surface.
+ *
+ * ⛔ THE RADIUS A CORNER IS DRAWN WITH, NOT THE ONE WRITTEN (E46 of the design-system plan): where the two radii of a side
+ * add up to more than the side, CSS shrinks ALL the radii of the box by one factor (css-backgrounds-3, section 4.5,
+ * "Overlapping Curves") -- so a pill's 9999px is half its height, and a 24 px bar's `20px 20px 0 0` stays 20. Halving
+ * each corner on its own read that bar, the dock's floating title bar, as 12.
+ * ⛔ WHAT SCROLLS IS NOT PLACED (E44): an element that reaches its ancestor through a box whose content scrolls sits where
+ * the scroll put it, not at a distance anyone drew -- the dock's Impostazioni, taller than its card, put a radio 19 px
+ * from a corner. It is not judged; what does not scroll still is.
  */
 export function concentricRadii(roots: Element[]): { near: number; bad: string[] } {
   const CORNERS = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"] as const;
@@ -28,7 +36,20 @@ export function concentricRadii(roots: Element[]): { near: number; bad: string[]
   const rounded = (element: Element): boolean => CORNERS.some((corner) => radius(element, corner) > 0);
   const effective = (element: Element, corner: Corner): number => {
     const box = element.getBoundingClientRect();
-    return Math.min(radius(element, corner), box.height / 2, box.width / 2);
+    const [tl, tr, bl, br] = CORNERS.map((c) => radius(element, c)) as [number, number, number, number];
+    const room = (side: number, radii: number): number => (radii > 0 ? side / radii : Number.POSITIVE_INFINITY);
+    const across = Math.min(room(box.width, tl + tr), room(box.width, bl + br));
+    const down = Math.min(room(box.height, tl + bl), room(box.height, tr + br));
+    return radius(element, corner) * Math.min(1, across, down);
+  };
+  const scrolled = (element: Element, ancestor: Element): boolean => {
+    for (let box = element.parentElement; box !== null && box !== ancestor; box = box.parentElement) {
+      const style = getComputedStyle(box);
+      const acrossScrolls = /auto|scroll/.test(style.overflowX) && box.scrollWidth > box.clientWidth + 1;
+      const downScrolls = /auto|scroll/.test(style.overflowY) && box.scrollHeight > box.clientHeight + 1;
+      if (acrossScrolls || downScrolls) return true;
+    }
+    return false;
   };
   const bad: string[] = [];
   let near = 0;
@@ -39,6 +60,7 @@ export function concentricRadii(roots: Element[]): { near: number; bad: string[]
       let ancestor = element.parentElement;
       while (ancestor !== null && !rounded(ancestor)) ancestor = ancestor.parentElement;
       if (ancestor === null || !root.contains(ancestor)) continue;
+      if (scrolled(element, ancestor)) continue;
       const b = element.getBoundingClientRect();
       const B = ancestor.getBoundingClientRect();
       const corners: [string, Corner, number, number][] = [

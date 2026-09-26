@@ -1,13 +1,40 @@
-import { createDockview, themeAbyss, type DockviewApi, type SerializedDockview } from "dockview-core";
+import { createDockview, type DockviewApi, type DockviewTheme, type SerializedDockview } from "dockview-core";
 import { watch } from "vue";
 
 import { componentFor, isBuilt, placeholderParams } from "../panels/registry";
 import { useLayout, type LayoutPack, type ViewName } from "../stores/layout";
 import { VIEWS } from "../panels/views";
+import { readToken } from "../tokens/readToken";
+import { shownTheme } from "../tokens/theme";
 
 import { BigTab } from "./BigTab";
 
 const GRID = 24;
+
+/** A token that is a length in px, as the number `dockview` wants. ⛔ THE UNIT IS CHECKED, NOT
+ * DROPPED: `parseFloat("0.75rem")` is 0.75, and a board that moved a space to `rem` would shrink
+ * the gap to nothing without a word. */
+function pixels(name: string): number {
+  const value = readToken(name);
+  const found = /^(\d+(?:\.\d+)?)px$/.exec(value);
+  if (found === null) throw new Error(`the token ${name} is "${value}", not a length in px`);
+  return Number(found[1]);
+}
+
+/**
+ * OUR `dockview` THEME (design system, section (c)): `tokens/dock.css` dresses its class, and the
+ * space between the groups is the token `--space-3`, read and not retyped.
+ *
+ * ⚠️ `colorScheme` FOLLOWS THE THEME ON SCREEN, AS THE (c) WANTS, AND DRAWS NOTHING: in
+ * `dockview-core` 8.3.1 `updateTheme` reads the class, the gap, the edge groups' size, the drop
+ * border, the overlay's mounting and the tab groups' indicator -- not `colorScheme`, which the
+ * library keeps for whoever reads its options (R3-21 of the design-system review).
+ * ⚠️ NO `dndOverlayBorder`: the drop zone's border is `--dv-drag-over-border` in `dock.css`, which
+ * `updateTheme` leaves to the sheet when the field is absent -- one house for a colour.
+ */
+export function harnessTheme(): DockviewTheme {
+  return { name: "harness", className: "dockview-theme-harness", colorScheme: shownTheme.value, gap: pixels("--space-3") };
+}
 
 /** Sorts object keys recursively: key order is not layout. */
 export function canonical(value: unknown): unknown {
@@ -50,10 +77,9 @@ function same(a: SerializedDockview, b: SerializedDockview): boolean {
 export function createDock(host: HTMLElement): DockviewApi {
   const layout = useLayout();
   const api = createDockview(host, {
-    // The theme the eight moves were judged on. Our own tokens dress what WE draw -- the bar,
-    // the band, the drawer, the strip, the placeholder -- and the design system is decided in
-    // its own three moments, none of which is this task.
-    theme: themeAbyss,
+    // ⛔ OUR THEME AND NOT `themeAbyss`, on which the eight moves were judged: that one is dark
+    // only, and the design system has two themes (section (c), answers 5 and 18).
+    theme: harnessTheme(),
     defaultTabComponent: "bigtab",
     // Q4 of SP-8: the doc recommends `pointer` where HTML5 drag is unreliable and names embedded
     // webviews; and ADR-0039's hand needs it, because a script cannot start a native HTML5 drag.
@@ -69,7 +95,12 @@ export function createDock(host: HTMLElement): DockviewApi {
     createTabComponent: () => new BigTab(),
   });
 
+  // ⚠️ `clientWidth` IS THE CONTENT: the space around the dock is a MARGIN of `.dock` (`Frame.vue`),
+  // outside the box, so the grid gets exactly the room it has (P-7 of the design-system plan).
   api.layout(host.clientWidth, host.clientHeight);
+
+  // The theme follows the one on screen (the (c)): `updateOptions` hands it to `updateTheme` again.
+  watch(shownTheme, () => api.updateOptions({ theme: harnessTheme() }));
 
   function show(view: ViewName): SerializedDockview {
     apply(api, view, layout.saved);

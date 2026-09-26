@@ -54,9 +54,13 @@ function switchTo(view: ViewName): void {
   flex-direction: column;
   height: 100%;
 }
+/* Answer 20 of the design system: the dock -- the strip is its last row -- 12 px from the sides and 24 from the bottom,
+   away from the window's corners; the bar above has none. A MARGIN and not a padding, so `clientWidth` is the room the
+   grid gets (P-7 of its plan). */
 .dock {
   flex: 1;
   min-height: 0;
+  margin: 0 var(--space-3) var(--space-6);
   /* ⛔ THE DOCK KEEPS ITS SPILL TO ITSELF (E43): `dockview` 8.3.1 resizes one frame late -- its ResizeObserver hands the
      new size to a `requestAnimationFrame` -- so for a frame after the band comes in, the grid is as tall as before and
      spills out of this box; unclipped, the spill reached the page and flashed both its scrollbars. `clip` and not

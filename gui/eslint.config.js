@@ -152,7 +152,7 @@ export default [
      * ⛔ THE VIEWS ARE MADE OF PIECES (design system, section (b); criterion 5 of its perimeter): in the panels and in the
      * frame a button is `BaseButton` and a list is `BaseList`, and `reka-ui` is reached through the base pieces only.
      * ⚠️ `vue/no-restricted-html-elements` READS TEMPLATES: a `document.createElement("button")` in a `.ts` is invisible
-     * to it (trap 5) -- `frame/BigTab.ts` until task 6.
+     * to it (trap 5). `frame/BigTab.ts` built its two commands so until task 6, and mounts the kit's pieces since.
      */
     name: "harness/panels-and-frame",
     files: ["src/panels/**/*.{vue,ts}", "src/frame/**/*.{vue,ts}"],

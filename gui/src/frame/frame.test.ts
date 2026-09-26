@@ -11,9 +11,10 @@ import Placeholder from "../panels/Placeholder.vue";
 import type { IpcMessage } from "../schema/messages";
 import { useConnection } from "../stores/connection";
 import { pack_, useLayout, type LayoutPack } from "../stores/layout";
+import { shownTheme } from "../tokens/theme";
 import { createFakeBridge, type FakeBridge } from "../transport/fakeBridge";
 
-import { createDock } from "./dock";
+import { createDock, harnessTheme } from "./dock";
 
 beforeEach(() => {
   setActivePinia(createPinia());
@@ -185,6 +186,40 @@ describe("the dock", () => {
     expect(api.getPanel("strip")?.params ?? {}).toEqual({});
     // And a module type nobody built still carries its own, from the registry.
     expect(api.getPanel("knowledge")?.params).toEqual(placeholderParams("knowledge"));
+  });
+
+  it("wears our theme, and hands it to dockview again when the theme on screen changes (design system, section (c))", async () => {
+    useLayout().attach(createFakeBridge());
+    const where = host();
+    const api = createDock(where);
+    // ⛔ THE SHELL WEARS OUR CLASS, the one `tokens/dock.css` dresses -- and `themeAbyss`'s is gone (control 15).
+    expect(where.querySelector(".dv-shell")?.classList.contains("dockview-theme-harness")).toBe(true);
+    expect(where.querySelector(".dockview-theme-abyss")).toBeNull();
+    const handed: unknown[] = [];
+    const update = api.updateOptions.bind(api);
+    api.updateOptions = (options) => {
+      handed.push(options.theme?.colorScheme);
+      update(options);
+    };
+    shownTheme.value = "light";
+    await flush();
+    shownTheme.value = "dark";
+    await flush();
+    // ⛔ WHAT THE DOCK WAS HANDED, NOT WHAT IT DRAWS: `colorScheme` draws nothing in `dockview-core` 8.3.1 (R3-21).
+    expect(handed).toEqual(["light", "dark"]);
+  });
+
+  it("refuses a gap that is not a length in px, and builds the theme from the token that is", () => {
+    document.documentElement.style.setProperty("--space-3", "0.75rem");
+    try {
+      // ⛔ `parseFloat` would read 0.75 and shrink the gap without a word.
+      expect(() => harnessTheme()).toThrow(/not a length in px/);
+    } finally {
+      document.documentElement.style.removeProperty("--space-3");
+    }
+    // ⛔ THE SECOND DIRECTION: the token as the board has it, read from `base.css` (`src/jsdom-setup.ts`).
+    expect(harnessTheme()).toMatchObject({ name: "harness", className: "dockview-theme-harness" });
+    expect(harnessTheme().gap).toBeGreaterThan(0);
   });
 });
 

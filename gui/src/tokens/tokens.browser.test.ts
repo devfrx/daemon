@@ -2,6 +2,7 @@ import { commands, userEvent } from "vitest/browser";
 import { afterEach, describe, expect, it } from "vitest";
 
 import "./index";
+import { readToken } from "./readToken";
 import { watchTheme, type ThemeChoice } from "./theme";
 
 // ⛔ THIS FILE RUNS IN THE INSTALLED CHROME (design system, section (f)): the tokens and the fonts are the
@@ -117,5 +118,15 @@ describe("the tokens, in a real browser (design system, sections (a) and (f))", 
     await commands.emulateMedia({ colorScheme: "light" });
     await expect.poll(() => root.dataset.theme).toBe("light");
     stop();
+  });
+
+  it("reach TypeScript through `readToken` as the layout engine draws them, and a missing one is refused (control 16)", () => {
+    const box = document.createElement("div");
+    box.style.cssText = "position:absolute;width:var(--space-3)";
+    document.body.append(box);
+    // ⛔ TWO ORACLES THAT SHARE NO COPY: the token's text, and the width the engine draws from it.
+    expect(readToken("--space-3")).toBe(`${box.getBoundingClientRect().width}px`);
+    // ⛔ THE SECOND DIRECTION: a token the page does not define is an error, not "" -- a `gap` of NaN is what "" became.
+    expect(() => readToken("--space-that-is-not")).toThrow(/is not defined here/);
   });
 });

@@ -209,6 +209,11 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | **E41** | ⚠️ **Compito 5, Passo 1 — «Escape e il velo sono il no» (ADR-0016) senza una prova:** tolta la riga `if (value !== true) invoke.refuse();` da `Confirm.vue`, `npm test` restava verde. Già così a `39827e8`, ma la strada è nuova — il `defineModel` di `BaseDialog.vue`. Trovata dalla revisione del compito 5 (M-3), che ha scritto la prova e l'ha provata nel suo clone. ✅ **Curata** nel commit che scrive questa riga, col testo della revisione: una terza prova in `describe("the confirmation window", …)`, una sostituzione nel Passo 1. Misurata dal coordinatore il 2026-09-26: verde col `Confirm.vue` di `39827e8`, quindi nel Passo 1 è verde come le altre due della finestra; verde con quello del compito; con `void value;` al posto della riga, rossa, `expected { tool: 'arbiter', …(2) } to be null`, e la copia salvata tornata, `cmp` uguale |
 | **E42** | Nit — **Compito 5, Passo 5 — la regione vuota di Impostazioni raddoppiava lo spazio fra i due gruppi:** alta zero, ma nella colonna col `gap` prendeva due spazi, 32 px dove altrove sono 16. Trovata dall'implementatore del compito 5 e confermata dalla revisione (N-1). ✅ **Curata** nel commit che scrive questa riga: il gruppo della policy e la sua regione in un contenitore solo, e le parole della regione a `--space-2` dal loro gruppo — non `display: none` né `display: contents`, perché M-3 vuole la regione nell'albero **prima** delle parole. Misurata dal coordinatore il 2026-09-26 nel clone, nei due temi: vuota, 16 px fra i gruppi; con una chiamata in volo, le parole a 8 px dal loro gruppo e a 16 dal tema |
 | **E43** | ⚠️ **Compito 5, Passo 8 — la fascia che entra fa lampeggiare le due barre di scorrimento della pagina:** `dockview` 8.3.1 si ridimensiona un fotogramma dopo — `watchElementResize` passa la misura nuova a un `requestAnimationFrame` —, e per quel fotogramma la griglia del dock resta alta di prima e sborda dal suo contenitore, `.dock` di `Frame.vue`, che non la taglia: lo sbordo arriva alla pagina, che mostra le sue due barre, in basso e di lato. Visto dal proprietario al Passo 8, nel suo Chrome: *«sembra flickerare quando scompare la fascia come se comparissero e scomparissero continuamente le barre di scorrimento in basso ed al lato di essa»*. Misurato dal coordinatore il 2026-09-26 in Chrome senza finestra **con le barre accese** — Playwright le spegne per difetto, `--hide-scrollbars` —, un fotogramma per volta, a 1920 × 950, 1400 × 960, 1000 × 700 e altre misure: all'ingresso della fascia, `StaleBuild`, la pagina con le due barre per un fotogramma; all'uscita, nulla. La differenza col momento che il proprietario ha riportato resta; la cura l'ha chiusa nel suo Chrome. **Di prima del compito 5**: lo stesso lampo a `39827e8`, dalla parte 2; la revisione del compito 5 ha guardato la SPA con Playwright, che spegne le barre. ✅ **Curata** nel commit che scrive questa riga: `overflow: clip` su `.dock`, col perché nel commento — `clip` e non `hidden`, perché niente deve poter scorrere quella scatola —; i contenitori interni di `dockview` tagliano già sullo stesso bordo, quindi a regime non cambia nulla di ciò che si vede. Misurata: con la cura nessun fotogramma con le barre della pagina, alle stesse misure; e il proprietario, di nuovo nel suo Chrome: *«non tremola più»*. Una sostituzione nel Passo 4, il file nella riga *Files*, e la riga allineata nel *Trova* e nel *Sostituisci* del compito 6 e nel `Frame.vue` del compito 8. ⛔ **La sonda resta al compito 8**, che monta la cornice intera nel browser: il suo pre-controllo vi porta la pagina che non sborda mai quando la fascia entra, fotogramma per fotogramma — lo sbordo si legge su `scrollHeight`, che le barre spente non nascondono |
+| **E44** | ⚠️ **Compito 6, Passi 3, 4 e 7 — la prova dei raggi del dock giudicava ciò che il dock non disegna, e il contenitore galleggiante della (c) non lo giudicava nessuno.** Misurato il 2026-09-26 dal pre-controllo sulla copia `%TEMP%\pc6`, macchina `Jays`, col compito rifatto dal testo del piano su `3a8cfdd`: al Passo 4 l'Atteso *«verde»* è falso — *«keeps every radius in it concentric (answer 4)»* rossa nei due temi, `radio in dv-groupview, bottom-left: radius 12.0, outer 20.0, distance 13.0/19.0`. È un radio di Impostazioni: nella Home, su un ospite di 1400 × 800, il pannello ha 198 px per 256 di contenuto e scorre, e il radio «Chiaro» cade a 19 px dal fondo della scheda, dove la regola *fuori dall'angolo* lo rifiuta; con la `Settings.vue` di `545f500`, prima di **E42**, il contenuto era alto 272, il radio a 3 px e le sei prove verdi — il compito era scritto contro il compito 5 dettato, non contro quello curato (la riga 5 di `CLAUDE.md`). ⛔ **E la radice è più larga del rosso:** nella Home la sonda incontrava sei coppie vicine, e nessuna del dock — quattro erano il puntino dentro un radio, un pezzo del kit, e due i radio che scorrono sotto il bordo —: la guardia `near > 0` la teneva ciò che il dock non disegna, la malattia di **E29**; e il contenitore galleggiante, che la (c) vuole col raggio dei token e per cui **E30** era nata, non lo giudicava nessuna prova. ✅ **Corretta** nel commit che la scrive: la prova stacca un gruppo, come quella del livello, con un aiutante comune; il contenitore ha `--radius-card`; nei suoi angoli la sonda incontra almeno quattro coppie — la barra del titolo sopra, il gruppo sotto — e nessuna storta; e nel dock intero nessuna storta. La sonda non giudica più ciò che arriva al suo antenato **attraverso una scatola che scorre**: sta dove l'ha messo lo scorrimento, non a una distanza che qualcuno ha disegnato — con una prova a mano nelle due direzioni in `probes.browser.test.ts`. Scartato un `skip` sul contenuto dei pannelli, provato sulla copia: toglieva al giudizio anche il pulsante a pillola della striscia, che non scorre, e che la riga *«la pillola»* del Passo 7 del compito 8 vuole giudicato proprio dalla prova dei raggi del dock. Nella riga *«la distanza»* del Passo 7 il ⚠️ dei raggi esce, e sette righe nuove provano le cure di **E44**…**E47**. ⚠️ **Col gruppo staccato Stato lascia la colonna, e Impostazioni non scorre più:** senza la regola dello scorrimento la prova del dock resta verde, misurato — la regola c'è perché un pannello che cresce non faccia cadere la prova del dock, e la tiene la sua prova a mano |
+| **E45** | ⚠️ **Compito 6, Passo 4 — la riscrittura di `dock.css` toglieva la regola di E170 ed E173 della parte 2, e la presa grande era alta 32 px, non 40.** `.dock .dv-tabs-container > .dv-tab { padding-top: 0; padding-bottom: 0; }` non c'era più, e tornava il `padding: 0.25rem 0.5rem` di `.dv-tab` in `dockview.css` 8.3.1: misurato sulla copia il 2026-09-26, ogni linguetta visibile alta 40 e il suo `.bigtab` 32, `padding` `4px`/`4px`. La (c) vuole la presa alta 40 px, `--size-control-lg`; la mossa 5 di SP-8 fu giudicata su 40; e il commento del blocco del tema lo dice ancora, *«the tab fills it»* (gotcha **#58**). Nessuna prova la vedeva: sotto jsdom non c'è disposizione, e quelle del browser guardavano schede, raggi e livello. ✅ **Corretta** nel commit che la scrive: la regola sotto la nostra classe, `.dockview-theme-harness .dv-tabs-container > .dv-tab`, col combinatore di figlio di **E173** e il perché nel commento; e una prova nel browser, *«keeps the grab as tall as its strip»*, contro `--size-control-lg` calcolato. Misurata: verde con la regola; senza, rossa nei due temi, `expected [ 32, 32, 32, 32, 32 ] to deeply equal []`; e al Passo 8 le cinque prese a 40, `padding` `0px 8px` |
+| **E46** | ⚠️ **Compito 6, dalla sonda del compito 4 — `concentricRadii` dimezzava ogni angolo da solo, e il CSS no.** `effective` prendeva `min(r, h/2, w/2)`, giusto solo per quattro angoli uguali: il CSS riduce **tutti** i raggi di un fattore solo, e solo se i due raggi di un lato superano il lato — CSS Backgrounds 3, §4.5 *«Overlapping Curves»*, letta alla fonte il 2026-09-26. La barra del titolo del gruppo galleggiante, `20px 20px 0 0` in 24 px, si disegna a 20, perché ogni lato tiene 20 + 0 in 24; la sonda la leggeva 12, e con la cura di **E44** dava un rosso falso nei due temi, `dv-floating-titlebar in dv-resize-container, top-left: radius 12.0, outer 20.0, distance 1.0/1.0`. **E30** aveva letto un raggio per angolo e tenuto la riduzione del caso simmetrico. Trovata dal pre-controllo il 2026-09-26, curando E44. ✅ **Corretta** nel commit che la scrive: il fattore della regola in `effective`, col perché e la fonte nel commento; due prove a mano in `probes.browser.test.ts` — la barra `20px 20px 0 0` alta 24 a 1/1, `{ near: 2, bad: [] }`, e la stessa coi quattro angoli a 20, disegnati a 12, rifiutata nei due angoli di sopra —; e la fonte nella tabella del compito 9. Misurata: con la riduzione di prima, rosse la prova della barra e quella dei raggi del dock nei due temi; senza nessuna riduzione, rosse la prova della pillola, quella di ciò che scorre, il cui pezzo è una pillola, e quella del dock; sulla pagina kit, dove ogni pezzo ha i quattro angoli uguali, nessun esito cambia |
+| **E47** | ⚠️ **Compito 6, Passo 4 — nel gruppo galleggiante la linguetta restava sul fondo della superficie:** il blocco del contenitore ridichiarava a `--color-bg-raised` il fondo del gruppo e quello dell'intestazione, e non i quattro delle linguette, che il blocco del tema lega a `--color-bg-surface`. Visto dal pre-controllo al Passo 8, nello scuro: dietro «STATO» e i suoi due comandi un rettangolo più scuro sull'intestazione rialzata — misurato, la linguetta `rgb(27, 23, 24)` e l'intestazione `rgb(36, 31, 32)`; nel chiaro i due ruoli hanno lo stesso valore, e non si vede. La (c) vuole i gruppi galleggianti `--color-bg-raised`. ✅ **Corretta** nel commit che la scrive: i quattro fondi delle linguette a `--color-bg-raised` nel blocco del contenitore, col perché nel commento; e nella prova del livello, che stacca già un gruppo, l'intestazione e la linguetta contro `--color-bg-raised` calcolato. Misurata: verde con la cura; senza, rossa la sola prova dello scuro, `expected 'rgb(27, 23, 24)' to be 'rgb(36, 31, 32)'` — ⚠️ la metà chiara non può mordere, perché nella tavola i due ruoli coincidono |
+| **E48** | Nit — **Compito 6, Passo 8 — il guardare non nominava ciò che solo lì si vede:** **(a)** con Playwright senza finestra le barre di scorrimento non si vedono (la lezione 1 della consegna dell'esecuzione del compito 5, in archivio), e le barre dei pannelli che scorrono — Stato e Impostazioni nella Home a 1440 × 900 — arrivano ora all'angolo tondo della scheda, che ne taglia il binario: la freccia resta intera, misurato ingrandendo i due angoli nei due temi, ed è aspetto, che giudica il proprietario (controllo 15); **(b)** **E47** si vedeva solo nello scuro, e col gruppo staccato. ✅ **Corretta** nel commit che la scrive: il Passo 8 nomina il gruppo staccato e le barre all'angolo, e dice di guardare con le barre accese |
 
 ---
 
@@ -5017,7 +5022,8 @@ Nella riga **4** della tabella della posizione la colonna **Commit** con l'hash 
 ## Compito 6: il dock vestito — il tema nostro, le schede, la presa grande coi pezzi del kit
 
 **Da:** la (c) del disegno, per intero; i controlli **15** e **16**; le trappole **5** e **9**; **P-6**, **P-7** e
-**P-15**…**P-18** di questo piano; **D9**…**D11**; R3-17, R3-21, R3-22, R1-10 e A-2 della revisione.
+**P-15**…**P-18** di questo piano; **D9**…**D11**; R3-17, R3-21, R3-22, R1-10 e A-2 della revisione; **E44**…**E48**
+dell'errata, dal pre-controllo.
 
 **Files:**
 - Create: `gui/src/tokens/readToken.ts`, `gui/src/tokens/dock.test.ts`, `gui/src/frame/BigTabFace.vue`,
@@ -5025,15 +5031,18 @@ Nella riga **4** della tabella della posizione la colonna **Commit** con l'hash 
 - Rewrite: `gui/src/tokens/dock.css`, `gui/src/frame/BigTab.ts`, `gui/src/frame/bigtab.test.ts`, `gui/src/jsdom-setup.ts` —
   ciascuno **per intero**, col terminatore che ha oggi
 - Modify: `gui/src/frame/dock.ts`, `gui/src/frame/Frame.vue`, `gui/src/frame/frame.test.ts`,
-  `gui/src/tokens/tokens.browser.test.ts`; `gui/eslint.config.js` — un commento
+  `gui/src/tokens/tokens.browser.test.ts`, `gui/src/testing/probes.ts` e `gui/src/testing/probes.browser.test.ts` (**E44**,
+  **E46**); `gui/eslint.config.js` — un commento
 
 **Interfaces:**
 - Consumes: `shownTheme` di `tokens/theme.ts` (compito 1); il progetto `browser` (compito 2); `BaseLabel`, `BaseButton`,
-  `isIconName` e `type IconName` (compito 3); `concentricRadii` di `testing/probes.ts` (compito 4).
+  `isIconName` e `type IconName` (compito 3); `concentricRadii` di `testing/probes.ts` (compito 4), che il compito corregge
+  (**E44**, **E46**).
 - Produces: `readToken(name: string, element?: Element): string` da `tokens/readToken.ts` — il valore calcolato di un token,
   e un **errore** per un token che la pagina non definisce; `harnessTheme(): DockviewTheme` da `frame/dock.ts`; la classe
   `dockview-theme-harness`, che `tokens/dock.css` veste; `BigTabFace.vue` — props `title: string`, `icon?: IconName`, eventi
-  `float` e `page`. Sotto jsdom, `base.css` caricato da `src/jsdom-setup.ts` (D9).
+  `float` e `page`. Sotto jsdom, `base.css` caricato da `src/jsdom-setup.ts` (D9). `concentricRadii` legge il raggio che il
+  CSS disegna, e non giudica ciò che arriva a un angolo attraverso una scatola che scorre (**E44**, **E46**).
 
 ⚠️ **Che cosa la scrittura di questo compito ha misurato**, il 2026-09-23 nel Chrome installato 154 e sotto jsdom, sulla
 cartella di prova coi compiti 1–5 applicati; le righe intere sono **P-15**…**P-18**, in testa al piano:
@@ -5192,7 +5201,7 @@ describe("our dockview theme", () => {
 });
 ```
 
-Crea `gui/src/frame/dock.browser.test.ts` (LF) — le schede, i raggi e il livello, nei due temi:
+Crea `gui/src/frame/dock.browser.test.ts` (LF) — le schede, i raggi, la presa e il livello, nei due temi:
 
 ```ts
 import "dockview/dist/styles/dockview.css";
@@ -5209,8 +5218,8 @@ import { readToken } from "../tokens/readToken";
 import { createDock } from "./dock";
 
 // ⛔ THE DRESSED DOCK IN THE INSTALLED CHROME (design system, section (c)): what only a layout engine can judge -- the
-// space between the cards, their radius and surface, the level of a floating group. The stylesheets are the SPA's own,
-// in the order `main.ts` loads them: `dockview.css` first, our tokens after it.
+// space between the cards, their radius and surface, the grab's height, the level and the surface of a floating group.
+// The stylesheets are the SPA's own, in the order `main.ts` loads them: `dockview.css` first, our tokens after it.
 
 const docks: DockviewApi[] = [];
 
@@ -5237,6 +5246,17 @@ async function dock(theme: "light" | "dark") {
   docks.push(api);
   await new Promise((resolve) => setTimeout(resolve, 50));
   return { host, api };
+}
+
+/** The Status panel floated where the grab's first command puts it, and its container once laid out. */
+async function floatStatus(host: HTMLElement, api: DockviewApi): Promise<Element> {
+  const panel = api.getPanel("status");
+  expect(panel).toBeDefined();
+  if (panel !== undefined) api.addFloatingGroup(panel, { x: 60, y: 60, width: 460, height: 320 });
+  await new Promise((resolve) => setTimeout(resolve, 50));
+  const floating = [...host.querySelectorAll(".dv-resize-container")];
+  expect(floating).toHaveLength(1);
+  return floating[0] as Element;
 }
 
 /** What a declaration of `property: var(token)` computes to here: the oracle of a role, with no copy of its value. */
@@ -5275,25 +5295,45 @@ for (const theme of ["light", "dark"] as const) {
       expect(gaps.filter((gap) => Math.abs(gap - space) > 0.5)).toEqual([]);
     });
 
-    it("keeps every radius in it concentric (answer 4)", async () => {
+    it("keeps every radius of its own concentric, a floating group's too (answer 4)", async () => {
+      const { host, api } = await dock(theme);
+      const floating = await floatStatus(host, api);
+      // A card too, with the tokens' radius -- not the 8px the spaced themes write under their own class (the (c)).
+      expect(getComputedStyle(floating).borderTopLeftRadius).toBe(computed("border-top-left-radius", "--radius-card"));
+      // ⛔ NON-VACUITY ON THE CASE THAT JUDGES (trap 1, E29): in the Home view nothing the dock draws sits near a corner,
+      // and what did -- the dot in a radio, a radio scrolled to the card's edge -- is not the dock's (E44). The floating
+      // container is: its title bar in the two top corners, its group in the two bottom ones (E30, E46).
+      const own = concentricRadii([floating]);
+      expect(own.near).toBeGreaterThanOrEqual(4);
+      expect(own.bad).toEqual([]);
+      expect(concentricRadii([host]).bad).toEqual([]);
+    });
+
+    it("keeps the grab as tall as its strip, `--size-control-lg` (move 5 of SP-8, E45)", async () => {
       const { host } = await dock(theme);
-      const report = concentricRadii([host]);
-      // ⛔ NON-VACUITY (trap 1): a probe that met no corner near another is green for nothing.
-      expect(report.near).toBeGreaterThan(0);
-      expect(report.bad).toEqual([]);
+      const grabs = [...host.querySelectorAll(".dv-tabs-container > .dv-tab .bigtab")].filter(
+        (grab) => grab.getBoundingClientRect().width > 0,
+      );
+      // ⛔ NON-VACUITY: the Home view shows the tabs of five of its groups.
+      expect(grabs.length).toBeGreaterThan(0);
+      const tall = Number.parseFloat(computed("height", "--size-control-lg"));
+      const heights = grabs.map((grab) => grab.getBoundingClientRect().height);
+      expect(heights.filter((height) => Math.abs(height - tall) > 0.5)).toEqual([]);
     });
 
     it("floats a group BELOW the dialogs: at `--z-floating`, under `--z-overlay` (trap 9, R3-17)", async () => {
       const { host, api } = await dock(theme);
-      const panel = api.getPanel("status");
-      expect(panel).toBeDefined();
-      if (panel !== undefined) api.addFloatingGroup(panel, { x: 60, y: 60, width: 460, height: 320 });
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      const floating = [...host.querySelectorAll(".dv-resize-container")];
-      expect(floating).toHaveLength(1);
-      const level = Number(getComputedStyle(floating[0] as Element).zIndex);
+      const floating = await floatStatus(host, api);
+      const level = Number(getComputedStyle(floating).zIndex);
       expect(level).toBe(Number(readToken("--z-floating")));
       expect(level).toBeLessThan(Number(readToken("--z-overlay")));
+      // And raised, its tab too (the (c), E47): a tab left on the surface draws a darker block on the raised header.
+      const raised = computed("background-color", "--color-bg-raised");
+      for (const part of [".dv-tabs-and-actions-container", ".dv-tab"]) {
+        const element = floating.querySelector(part);
+        expect(element).not.toBeNull();
+        expect(getComputedStyle(element as Element).backgroundColor).toBe(raised);
+      }
     });
   });
 }
@@ -5372,17 +5412,97 @@ import { createDock, harnessTheme } from "./dock";
 });
 ```
 
+In `gui/src/testing/probes.browser.test.ts` (`replace_unique.py`), due sostituzioni — **E44** ed **E46**: la prova dei
+raggi del dock giudica il contenitore galleggiante soltanto se la sonda legge il raggio che il CSS disegna e lascia stare
+ciò che scorre, e ciascuna delle due cose ha qui la sua prova a mano. *Trova*:
+
+```ts
+// ⛔ THE RADIUS PROBE ON BOXES DRAWN BY HAND (E30 and E33 of the design-system plan): the kit page gives every piece four
+// equal corners and puts it IN its corner, so two things would stay unproven there -- that each corner is read with its
+// own radius, and the rule OFF the corner. ⛔ NON-VACUITY (trap 1): every case says the WHOLE report, `near` included,
+// so a probe that met no corner cannot pass.
+```
+
+*Sostituisci con:*
+
+```ts
+// ⛔ THE RADIUS PROBE ON BOXES DRAWN BY HAND (E30 and E33 of the design-system plan): the kit page gives every piece four
+// equal corners and puts it IN its corner, so two things would stay unproven there -- that each corner is read with its
+// own radius, and the rule OFF the corner; and, from task 6, two more -- the radius a corner is DRAWN with (E46), and
+// what reaches a corner through a box that scrolls (E44). ⛔ NON-VACUITY (trap 1): every case says the WHOLE report,
+// `near` included, so a probe that met no corner cannot pass.
+```
+
+*Trova* — la fine del file:
+
+```ts
+it("off the corner, lets a smaller radius be (E33)", () => {
+  const root = outer();
+  box("piece", "position:absolute;left:17px;bottom:13px;width:120px;height:40px;border-radius:8px", root);
+  expect(concentricRadii([root])).toEqual({ near: 1, bad: [] });
+});
+```
+
+*Sostituisci con:*
+
+```ts
+it("off the corner, lets a smaller radius be (E33)", () => {
+  const root = outer();
+  box("piece", "position:absolute;left:17px;bottom:13px;width:120px;height:40px;border-radius:8px", root);
+  expect(concentricRadii([root])).toEqual({ near: 1, bad: [] });
+});
+
+it("reads the radius a corner is DRAWN with: a short bar's r r 0 0 keeps it (E46)", () => {
+  const root = outer();
+  // 24 px tall, `20px 20px 0 0`, 1/1 inside the top corners: each side's two radii fit in the side, so CSS draws 20,
+  // and the outer corner wants 19 -- in the probe's slack. Halving each corner on its own read 12.
+  box("bar", "position:absolute;left:1px;right:1px;top:1px;height:24px;border-radius:20px 20px 0 0", root);
+  expect(concentricRadii([root])).toEqual({ near: 2, bad: [] });
+});
+
+it("still shrinks the radii where CSS does: the same bar with four corners (E46)", () => {
+  const root = outer();
+  // Four corners of 20 in 24 px: each side would hold 40, CSS draws 12 -- and 12 is not 19.
+  box("pill", "position:absolute;left:1px;right:1px;top:1px;height:24px;border-radius:20px", root);
+  expect(concentricRadii([root])).toEqual({
+    near: 2,
+    bad: [
+      "pill in outer, top-left: radius 12.0, outer 20.0, distance 1.0/1.0",
+      "pill in outer, top-right: radius 12.0, outer 20.0, distance 1.0/1.0",
+    ],
+  });
+});
+
+it("does not judge what reaches the corner through a box that scrolls, and judges it while the box does not (E44)", () => {
+  const root = outer();
+  const scroller = box("scroller", "position:absolute;inset:0;overflow:auto", root);
+  // Too round for the corner it sits in: 15 drawn, 20 wanted.
+  box("piece", "position:absolute;left:0;bottom:0;width:60px;height:30px;border-radius:30px", scroller);
+  expect(concentricRadii([root])).toEqual({
+    near: 1,
+    bad: ["piece in outer, bottom-left: radius 15.0, outer 20.0, distance 0.0/0.0"],
+  });
+  // The same piece in the same place, once the box holds more than it shows: where it lands is the scroll's.
+  box("filler", "position:absolute;left:0;top:0;width:1px;height:400px", scroller);
+  expect(concentricRadii([root])).toEqual({ near: 0, bad: [] });
+});
+```
+
 ```bash
 (cd gui && npx vitest run --project jsdom src/tokens/dock.test.ts src/frame/frame.test.ts)
-(cd gui && npx vitest run --project browser src/frame/dock.browser.test.ts)
+(cd gui && npx vitest run --project browser src/frame/dock.browser.test.ts src/testing/probes.browser.test.ts)
 ```
 
 Atteso: **rosso**, e per le ragioni giuste. `dock.test.ts`: la guardia verde, e la prova che elenca **tutte** le variabili che
 il tema nostro non imposta ancora — `expected [ …(43) ] to deeply equal []` il 2026-09-23. `frame.test.ts`: `expected false to
 be true` sul guscio, che porta ancora `dockview-theme-abyss`, e `harnessTheme` che non esiste — `expected [Function] to throw
 error matching /not a length in px/ but got '(0 , __vite_ssr_import_13__.harnessTh…'`. `dock.browser.test.ts`, nei due temi:
-`expected '0px' to be '20px'` sulle schede, ed `expected 999 to be 50` sul gruppo galleggiante — il difetto di R3-17 **già
-oggi**; verdi, a questo punto, le due prove dei raggi concentrici. Un rosso per un'altra ragione è una voce d'errata.
+`expected '0px' to be '20px'` sulle schede e sul contenitore galleggiante, `expected [ 27, 27, 27, 27, 27 ] to deeply equal
+[]` sulla presa — la striscia di `themeAbyss` —, ed `expected 999 to be 50` sul gruppo galleggiante — il difetto di R3-17
+**già oggi**. `probes.browser.test.ts`: rosse le due prove che la sonda di oggi non sa, la barra — `expected { near: 2, bad:
+[ …(2) ] } to deeply equal { near: 2, bad: [] }` (**E46**) — e ciò che scorre — `expected { near: 1, …(1) } to deeply
+equal { near: +0, bad: [] }` (**E44**) —, e verde la pillola, che la sonda di oggi già riduce. Il 2026-09-26, sulla copia
+del pre-controllo, dieci rosse su quindici nel browser. Un rosso per un'altra ragione è una voce d'errata.
 
 - [ ] **Passo 4: il tema nostro — `dock.css`, `dock.ts`, il margine, i token sotto jsdom**
 
@@ -5457,6 +5577,14 @@ passano nella sua faccia (passo 5):
   --dv-overlay-z-index: var(--z-floating);
 }
 
+/* ⛔ AND THE TAB FILLS IT (E170, E173 of the part-2 plan; E45 of the design-system plan): no vertical padding on the
+   strip's tabs, or the 0.25rem of `dockview.css` leaves a grab of 32 px in the strip of 40. The CHILD combinator, because
+   the overflow dropdown renders `.dv-tab` rows inside the dock too. */
+.dockview-theme-harness .dv-tabs-container > .dv-tab {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 /* The card: the radius, the border the dark theme draws and the light one leaves transparent, the shadow the light one
    casts. `border-box`, or the border would add to the size `dockview` gives the group. */
 .dockview-theme-harness .dv-groupview {
@@ -5483,8 +5611,13 @@ passano nella sua faccia (passo 5):
    under `--z-overlay` up to 75, with the board's values of 2026-09-23. */
 .dockview-theme-harness .dv-resize-container {
   --dv-overlay-z-index: var(--z-floating);
+  /* Raised, as the (c) wants -- its tabs too, or each draws a block of surface on the raised header (E47). */
   --dv-group-view-background-color: var(--color-bg-raised);
   --dv-tabs-and-actions-container-background-color: var(--color-bg-raised);
+  --dv-activegroup-visiblepanel-tab-background-color: var(--color-bg-raised);
+  --dv-activegroup-hiddenpanel-tab-background-color: var(--color-bg-raised);
+  --dv-inactivegroup-visiblepanel-tab-background-color: var(--color-bg-raised);
+  --dv-inactivegroup-hiddenpanel-tab-background-color: var(--color-bg-raised);
   border-radius: var(--radius-card);
 }
 .dockview-theme-harness .dv-resize-container > .dv-floating-titlebar {
@@ -5669,13 +5802,85 @@ sheet.textContent = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "
 document.head.append(sheet);
 ```
 
-```bash
-(cd gui && npx vitest run --project jsdom src/tokens src/frame && npx vitest run --project browser src/frame src/tokens)
+In `gui/src/testing/probes.ts` (`replace_unique.py`), tre sostituzioni — **E46** ed **E44**. *Trova*:
+
+```ts
+ * distance. A straight corner, inside or outside, is never compared (answer 20) -- a sheet's `r r 0 0` included. SVG
+ * content is a drawing, not a surface.
+ */
+export function concentricRadii(roots: Element[]): { near: number; bad: string[] } {
 ```
 
-Atteso: **verde** — P-6, le prove del dock sotto jsdom, le schede a `--space-3` col raggio della scheda, i raggi concentrici
-e il gruppo galleggiante a `--z-floating`, nei due temi; e ancora verdi le prove di `bigtab.test.ts`, che il passo 5
-riscrive. Il 2026-09-23, sulla cartella di prova: jsdom, otto file e 37 prove; browser, due file e dodici prove.
+*Sostituisci con:*
+
+```ts
+ * distance. A straight corner, inside or outside, is never compared (answer 20) -- a sheet's `r r 0 0` included. SVG
+ * content is a drawing, not a surface.
+ *
+ * ⛔ THE RADIUS A CORNER IS DRAWN WITH, NOT THE ONE WRITTEN (E46 of the design-system plan): where the two radii of a side
+ * add up to more than the side, CSS shrinks ALL the radii of the box by one factor (css-backgrounds-3, section 4.5,
+ * "Overlapping Curves") -- so a pill's 9999px is half its height, and a 24 px bar's `20px 20px 0 0` stays 20. Halving
+ * each corner on its own read that bar, the dock's floating title bar, as 12.
+ * ⛔ WHAT SCROLLS IS NOT PLACED (E44): an element that reaches its ancestor through a box whose content scrolls sits where
+ * the scroll put it, not at a distance anyone drew -- the dock's Impostazioni, taller than its card, put a radio 19 px
+ * from a corner. It is not judged; what does not scroll still is.
+ */
+export function concentricRadii(roots: Element[]): { near: number; bad: string[] } {
+```
+
+*Trova*:
+
+```ts
+  const effective = (element: Element, corner: Corner): number => {
+    const box = element.getBoundingClientRect();
+    return Math.min(radius(element, corner), box.height / 2, box.width / 2);
+  };
+```
+
+*Sostituisci con:*
+
+```ts
+  const effective = (element: Element, corner: Corner): number => {
+    const box = element.getBoundingClientRect();
+    const [tl, tr, bl, br] = CORNERS.map((c) => radius(element, c)) as [number, number, number, number];
+    const room = (side: number, radii: number): number => (radii > 0 ? side / radii : Number.POSITIVE_INFINITY);
+    const across = Math.min(room(box.width, tl + tr), room(box.width, bl + br));
+    const down = Math.min(room(box.height, tl + bl), room(box.height, tr + br));
+    return radius(element, corner) * Math.min(1, across, down);
+  };
+  const scrolled = (element: Element, ancestor: Element): boolean => {
+    for (let box = element.parentElement; box !== null && box !== ancestor; box = box.parentElement) {
+      const style = getComputedStyle(box);
+      const acrossScrolls = /auto|scroll/.test(style.overflowX) && box.scrollWidth > box.clientWidth + 1;
+      const downScrolls = /auto|scroll/.test(style.overflowY) && box.scrollHeight > box.clientHeight + 1;
+      if (acrossScrolls || downScrolls) return true;
+    }
+    return false;
+  };
+```
+
+*Trova*:
+
+```ts
+      if (ancestor === null || !root.contains(ancestor)) continue;
+```
+
+*Sostituisci con:*
+
+```ts
+      if (ancestor === null || !root.contains(ancestor)) continue;
+      if (scrolled(element, ancestor)) continue;
+```
+
+```bash
+(cd gui && npx vitest run --project jsdom src/tokens src/frame && npx vitest run --project browser src/frame src/tokens src/testing)
+```
+
+Atteso: **verde** — P-6, le prove del dock sotto jsdom, le schede a `--space-3` col raggio della scheda, la presa alta
+quanto la sua striscia (**E45**), i raggi concentrici del dock e del gruppo staccato (**E44**, **E46**), il gruppo
+galleggiante a `--z-floating` e rialzato con la sua linguetta (**E47**), nei due temi, e le prove a mano della sonda; e
+ancora verdi le prove di `bigtab.test.ts`, che il passo 5 riscrive. Il 2026-09-26, sulla copia del pre-controllo: jsdom,
+otto file e 37 prove; browser, tre file e 21 prove.
 
 - [ ] **Passo 5: la presa grande coi pezzi del kit — la prova, poi la faccia**
 
@@ -5901,7 +6106,8 @@ accanto a quella del passo 1: il 2026-09-23, sulla cartella di prova, da 689,58 
 - [ ] **Passo 7: le due direzioni**
 
 Una violazione alla volta, poi indietro con la **copia salvata** e `cmp` (vincolo 11): `dock.css`, `BigTab.ts` e
-`jsdom-setup.ts` il compito li ha riscritti, e `readToken.ts`, `dock.test.ts` e `BigTabFace.vue` sono nati qui — `git
+`jsdom-setup.ts` il compito li ha riscritti, `probes.ts` l'ha cambiato, e `readToken.ts`, `dock.test.ts` e `BigTabFace.vue`
+sono nati qui — `git
 checkout` non conosce i secondi e toglierebbe ai primi il lavoro del compito (A-1).
 
 | La prova | La violazione messa a mano | Atteso, misurato il 2026-09-23 |
@@ -5916,9 +6122,16 @@ checkout` non conosce i secondi e toglierebbe ai primi il lavoro del compito (A-
 | i token sotto jsdom | in `src/jsdom-setup.ts` tolta la riga `document.head.append(sheet);` | rosso, **cinque** prove di `frame.test.ts` — le quattro che montano il dock e quella del `gap` —, tutte con `Error: the token --space-3 is not defined here: are the token sheets loaded?` |
 | `tokens.browser.test.ts`, `readToken` | in `readToken.ts` tolta la riga dell'`if` | rosso: `expected [Function] to throw an error` |
 | `dock.browser.test.ts`, le schede | in `dock.css`, nel blocco `.dockview-theme-harness .dv-groupview`, tolta `border-radius: var(--radius-card);` | rosso, nei due temi: `expected '0px' to be '20px'` |
-| `dock.browser.test.ts`, la distanza | in `dock.ts` `gap: 0 };` al posto di `` gap: pixels("--space-3") }; `` | rosso, nei due temi: `expected [ Array(10) ] to deeply equal []`, le distanze a 0 — ⚠️ e anche i raggi concentrici: con le altezze cambiate un radio di Impostazioni finisce a 13 px dall'angolo della sua scheda, `radio in dv-groupview, bottom-left: radius 12.0, outer 20.0, distance 13.0/13.0` |
-| `dock.browser.test.ts`, i raggi | in `dock.css`, prima del commento *«The mark of the visible tab»*, `.dockview-theme-harness .dv-tabs-and-actions-container { border-radius: var(--radius-control); }` | rosso, nei due temi: `dv-tabs-and-actions-container in dv-groupview, top-left: radius 8.0, outer 20.0, distance 1.0/1.0` |
+| `dock.browser.test.ts`, la distanza | in `dock.ts` `gap: 0 };` al posto di `` gap: pixels("--space-3") }; `` | rosso, nei due temi: `expected [ Array(10) ] to deeply equal []`, le distanze a 0 |
+| `dock.browser.test.ts`, i raggi | in `dock.css`, prima del commento *«The mark of the visible tab»*, `.dockview-theme-harness .dv-tabs-and-actions-container { border-radius: var(--radius-control); }` | rosso, nei due temi, l'ultima attesa: `expected [ …(8) ] to deeply equal []`, fra le voci `dv-tabs-and-actions-container in dv-groupview, top-left: radius 8.0, outer 20.0, distance 1.0/1.0` e il suo `top-right` |
 | `dock.browser.test.ts`, il livello | in `dock.css` tolta, dal blocco `.dockview-theme-harness .dv-resize-container`, la riga `--dv-overlay-z-index: var(--z-floating);` | rosso, nei due temi: `expected 999 to be 50` — R3-17 |
+| `dock.browser.test.ts`, la presa | in `dock.css`, nella regola `.dockview-theme-harness .dv-tabs-container > .dv-tab`, tolte le due righe del `padding` | rosso, nei due temi: `expected [ 32, 32, 32, 32, 32 ] to deeply equal []` — **E45** |
+| `dock.browser.test.ts`, il raggio del contenitore | in `dock.css`, dal blocco `.dockview-theme-harness .dv-resize-container`, tolta `border-radius: var(--radius-card);` | rosso, nei due temi: `expected '0px' to be '20px'` — **E44** |
+| `dock.browser.test.ts`, la barra del titolo | in `dock.css` tolta la regola `.dockview-theme-harness .dv-resize-container > .dv-floating-titlebar` | rosso, nei due temi: `expected 2 to be greater than or equal to 4` — dei quattro angoli del contenitore ne restano due, e la guardia lo vede (**E44**) |
+| `dock.browser.test.ts`, il fondo delle linguette | in `dock.css`, dal blocco `.dockview-theme-harness .dv-resize-container`, tolte le quattro righe `--dv-…-tab-background-color` | rosso, nello scuro: `expected 'rgb(27, 23, 24)' to be 'rgb(36, 31, 32)'` — ⚠️ nel chiaro i due ruoli hanno lo stesso valore, e quella metà non può mordere (**E47**) |
+| `probes.browser.test.ts`, il raggio disegnato | in `probes.ts` `return Math.min(radius(element, corner), box.height / 2, box.width / 2);` al posto di `return radius(element, corner) * Math.min(1, across, down);` | rosso: la prova della barra, `expected { near: 2, bad: [ …(2) ] } to deeply equal { near: 2, bad: [] }`, e nei due temi quella dei raggi del dock, `expected [ …(2) ] to deeply equal []` — la barra del titolo letta 12 (**E46**) |
+| `probes.browser.test.ts`, la riduzione | la stessa riga sostituita da `return radius(element, corner);` | rosso: la prova della pillola, `expected { near: 2, bad: [] } to deeply equal { near: 2, bad: [ …(2) ] }`, quella di ciò che scorre, il cui pezzo è una pillola, e nei due temi quella dei raggi del dock, `expected [ …(24) ] to deeply equal []` (**E46**) |
+| `probes.browser.test.ts`, ciò che scorre | in `probes.ts` tolta la riga `if (scrolled(element, ancestor)) continue;` | rosso: la sola prova di ciò che scorre, `expected { near: 1, …(1) } to deeply equal { near: +0, bad: [] }` — ⚠️ quella del dock resta verde: col gruppo staccato Impostazioni non scorre più (**E44**) |
 
 Alla fine, dalla radice del repository, `git status --porcelain | diff <scratchpad>/prima.txt -` rende soltanto i file del
 compito: nessun file nato dai rossi del browser (R2-3).
@@ -5954,7 +6167,11 @@ Poi il livello, sulla SPA vera: «Stacca la tessera» su Stato, poi «+ moduli»
 ```
 
 Atteso: `base-dialog-veil` — il velo del cassetto **sopra** il gruppo galleggiante. Poi si **guarda**, nei due temi: le
-schede, le linguette col segno, i divisori che compaiono al passaggio, la zona d'arrivo trascinando una linguetta. ⛔ Il
+schede, le linguette col segno, i divisori che compaiono al passaggio, la zona d'arrivo trascinando una linguetta; il gruppo
+staccato, raggio e fondo della sua linguetta compresi — **E47** si vedeva solo nello scuro —; e le barre di scorrimento dei
+pannelli che scorrono, Stato e Impostazioni nella Home, che arrivano all'angolo tondo della scheda, e l'arco ne taglia il
+binario (**E48**). ⚠️ Chi guarda con Playwright senza finestra lancia Chrome con `ignoreDefaultArgs: ["--hide-scrollbars"]`:
+senza, le barre non si vedono. ⛔ Il
 bersaglio è la Home della tavola dello stile, e l'aspetto lo **giudica il proprietario** alla prima prova (controllo 15): ciò
 che non gli piace è una voce d'errata col suo *«perché»*, non un ritocco di chi esegue.
 
@@ -8706,6 +8923,7 @@ tabella nomina: qui la provenienza, lì il merito — una casa ciascuno.
 | `@vitest/browser` 4.1.11 installato: su *«optimized dependencies changed. reloading»* stampa *«Vite unexpectedly reloaded a test. This may cause tests to fail…»* e consiglia `optimizeDeps.include` — `grep -n 'unexpectedly reloaded' gui/node_modules/@vitest/browser/dist/index.js` | 2026-09-25 | la cache stantia del progetto `browser`, e la via scartata — E24 |
 | Vite, *Dep Optimization Options*, `https://vite.dev/config/dep-optimization-options`: `optimizeDeps.force`, *«Set to `true` to force dependency pre-bundling, ignoring previously cached optimized dependencies»*, senza marca di sperimentale; nei tipi di Vite 8.3.0 installato è `@experimental` — `grep -n -B3 'force?: boolean' gui/node_modules/vite/dist/node/index.d.ts` | 2026-09-25 | la cura di E24 |
 | `dockview-core` 8.3.1 installato: `dist/package/main.esm.mjs` — `watchElementResize` passa la misura nuova a un `requestAnimationFrame` | 2026-09-26 | il dock che si ridimensiona un fotogramma dopo, e sborda — E43 |
+| CSS Backgrounds and Borders Module Level 3, W3C Candidate Recommendation Draft dell'11 marzo 2024, §4.5 *«Overlapping Curves»*, `https://www.w3.org/TR/css-backgrounds-3/#corner-overlap`: `f = min(Li/Si)`, e se `f < 1` **tutti** i raggi si moltiplicano per `f` | 2026-09-26 | il raggio che un angolo disegna, nella sonda dei raggi — E46 |
 | Playwright 1.63.0 installato: `lib/coreBundle.js`, senza finestra aggiunge `--hide-scrollbars` — `grep -n -- '--hide-scrollbars' gui/node_modules/playwright-core/lib/coreBundle.js` | 2026-09-26 | un'occhiata senza finestra non vede le barre di scorrimento: si lancia con `ignoreDefaultArgs: ["--hide-scrollbars"]` — E43 |
 
 ### Le misure dell'esecuzione
@@ -8990,101 +9208,69 @@ compito 1 — o in una voce d'errata. Un nome senza casa è una voce d'errata nu
 
 ---
 
-## Come si riprende — l'esecuzione del compito 5, 2026-09-26
+## Come si riprende — il pre-controllo del compito 6, 2026-09-26
 
-✅ **Il compito 5 è eseguito, rivisto e curato, e il Passo 8 è fatto col proprietario.** La consegna precedente — il
-pre-controllo del compito 5 — sta parola per parola in
+✅ **Il pre-controllo del compito 6 è fatto, e ha trovato cinque difetti**: **E44**, **E45**, **E46**, **E47** ed **E48**,
+scritti nell'errata e applicati al testo del compito nel commit che scrive questa riga. La consegna precedente —
+l'esecuzione del compito 5 — sta parola per parola in
 [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
-
-| Commit | Che cosa |
-|---|---|
-| `545f500` | **il compito 5**, dall'implementatore — conforme al dettato: `compare_task5.py 39827e8 545f500` esce 0, diciotto percorsi `OK`, e la revisione l'ha provato nelle due direzioni |
-| `7e25d03` | le cure della revisione, dal coordinatore e senza ri-revisione, come per i compiti 3 e 4: **E38**–**E42** nell'errata e nel codice, i recinti dei Passi 1, 3, 5 e 6 e quello della barra del compito 8 allineati, `BaseDialog.vue` nella riga *Files* |
-| `9e6657b` | **E43**, dal Passo 8: il dock tiene per sé ciò che sborda; la riga allineata nel compito 6 e nel compito 8, e due fonti nella tabella del compito 9 |
-| il commit che scrive questa riga | il verbale del Passo 8 nella riga 5, il dispaccio del compito 5 nella cartella tracciata, e questa consegna |
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
-| **cancello** | `GATE GREEN` sull'albero di `9e6657b`, sulla macchina `Jays`: sotto `gui/` il progetto `jsdom` con 18 file passati e uno saltato, **132** prove passate e una saltata — le 125 di prima, le cinque del compito e le due delle cure —; il progetto `browser` con **4** file e **28** prove; il pezzo JavaScript da `663.93 kB` a **`689.65 kB`**, e la cifra è del proprietario (N-2); `found 0 vulnerabilities` — si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
-| **la CI** | verde sui due sistemi per `39827e8` e `7e25d03`, lette in questa sessione; quelle di `9e6657b` e del commit che scrive questa riga le legge per prime la sessione dopo, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
-| **la posizione** | la riga **5** a `✅ 2026-09-26`, col verbale del Passo 8 nella cella; la sua colonna **Commit** la scrive il compito 6 (R1-16): `` `545f500`, con le cure `7e25d03` e `9e6657b` `` |
-| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il prompt **spedito**, `dispatch-task-5.md`, al posto del modello — gli stessi testi coi valori della macchina `Jays`, più due precisazioni misurate dal coordinatore: su questa macchina la seconda cartella di Chrome non c'è, e il cancello d'apertura rimisurato a `39827e8` —; il rapporto dell'implementatore, `task-5-report.md`; il prompt del revisore, `review-5-prompt.md`; la revisione, `task-5-review.md`. `compare_task5.py` resta quello del pre-controllo, che ha giudicato `545f500`; per il compito curato vale la ricetta qui sotto |
-| **le copie** | sulla macchina `Jays` restano il clone della revisione, `%TEMP%\rv5`, a `7e25d03` e pulito; le copie del pre-controllo, `%TEMP%\pc5`, `%TEMP%\pc5b` e `%TEMP%\pc5c`; e quelle di prima, `%TEMP%\rv4`, `pc4`, `pc4b`, `pc4c`, `pc2` e il banco `pds`. Non servono più e si possono cancellare: questa sessione non l'ha fatto |
-| **le voci registrate, non prese** | quelle della consegna precedente, in archivio: la finestra delle prove, 1440 × 900; **N-4** della revisione del compito 3; la strada B di **E23**; il controllo dei pacchetti ritirati di `cargo audit` senza il registro, che tocca **X-3** ed è del proprietario; la pagina kit che mostra la finestra nella sola forma `center`; i margini del `<p>` dentro `BaseStatus` sulla pagina kit; il 404 di `/favicon.ico`; nessuna prova che apra il cassetto o guardi il pulsante di vista della barra, che il compito 8 riscrive. ⚠️ **E due nuove**: il `settle` del dock **prima del benvenuto** del core manda la sola vista aperta — la stessa finestra che **E40** ha chiuso per il tema; è della parte 2, e la domanda è di classe e del **proprietario** —; e **N-2** della revisione: l'azione di «Riprova» in `Band.vue` e la ricerca spenta in `ViewBar.vue` portano il loro perché nel commento e nessuna prova, già così a `39827e8` — il compito 8 riscrive la barra |
-| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, dove questa sessione ha lavorato: `core.autocrlf` `false` in `.git/config` e l'albero `w/lf`, Node v24.19.0, Chrome `154.0.8037.58` letto dal nome della cartella; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, `core.autocrlf` `true` dal file di sistema, Node v24.19.0, Chrome `154.0.8037.58` dalla consegna dell'esecuzione del compito 3 — si aggiorna da sé, e si rilegge. ⛔ Sulla macchina che esegue, gli Attesi di **forma** si misurano, non si copiano (E72) |
-| **dall'altra macchina** | si riprende da `origin`, perché tutto ciò che serve è tracciato: questa sezione, la cartella del dispaccio e il piano. Restano **solo** su `Jays`, e non servono per riprendere: gli script delle cure e delle misure nello scratchpad della sessione, le copie in `%TEMP%` della riga **le copie**, e le note di memoria dell'agente, fuori dal repository — le lezioni che contano sono nella tabella qui sotto |
+| **cancello** | `GATE GREEN` all'apertura, sull'albero di `3a8cfdd`, macchina `Jays`: sotto `gui/` il progetto `jsdom` con 18 file passati e uno saltato, **132** prove passate e una saltata; il progetto `browser` con **4** file e **28** prove; il pezzo JavaScript `689.65 kB`; `found 0 vulnerabilities`. E di nuovo sull'albero del commit che scrive questa riga, prima del commit — si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | all'apertura `9e6657b` verde su `ubuntu-latest` e in corsa su `windows-latest`, e `3a8cfdd` in corsa sui due: le legge per prime la sessione dopo, con quella del commit che scrive questa riga, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | invariata: la riga 5 a `✅ 2026-09-26` con la colonna **Commit** a `—`, che scrive il compito 6 (R1-16); la riga 6 a `⬜` |
+| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il **modello** `dispatch-task-6.md`, coi campi della macchina fra `<…>` e un riquadro per il coordinatore; `_extract_brief_6.py`, che scrive `task-6-brief.md` nella cartella di lavoro ignorata; `compare_task6.py`, che giudica il commit dell'implementatore dal testo del piano con la ricetta qui sotto — provato su `%TEMP%\pc6c`: il commit fedele esce 0, sedici percorsi `OK`; otto mutanti escono 1 — una riga di `dock.css`, la regola dello scorrimento tolta dalla sonda, una prova tolta, un file che nessun passo detta, `gui/package.json` toccato, la riga 6 rimasta a `⬜`, la riga 5 senza le cure, un cambio di modo —; e tre casi escono 0 — un giorno diverso da quello del commit e una voce d'errata in più, con `CHECK BY HAND`, e un file nuovo in CRLF, perché i fine-riga stanno a parte |
+| **le copie** | sulla macchina `Jays`: `%TEMP%\pc6`, il compito dal testo dettato con sopra le cure provate; `%TEMP%\pc6b`, il compito rifatto dal testo corretto, non committato; `%TEMP%\pc6c`, la prova di `compare_task6.py`; e quelle di prima, `rv5`, `pc5`, `pc5b`, `pc5c`, `rv4`, `pc4`, `pc4b`, `pc4c`, `pc2` e il banco `pds`. Si possono cancellare tutte; `pc6b` può servire alla revisione del compito 6 come confronto. Questa sessione non l'ha fatto |
+| **le voci registrate, non prese** | quelle della consegna precedente, in archivio — fra cui il `settle` del dock prima del benvenuto, del proprietario, e **N-2** della revisione del compito 5 —; e due nuove: la sonda dei raggi **non giudica più ciò che scorre** (**E44**), e se la Panoramica del compito 8 scorre le sue carte escono dal giudizio — la misura il pre-controllo del compito 8; e le barre di scorrimento dei pannelli, che arrivano all'angolo tondo delle schede (**E48**), sono aspetto, del proprietario al Passo 8 del compito 6 |
+| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, dove questa sessione ha lavorato: `core.autocrlf` `false` in `.git/config` e l'albero `w/lf`, Node v24.19.0, Chrome `154.0.8037.58`; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, `core.autocrlf` `true` dal file di sistema — Chrome si aggiorna da sé, e si rilegge. ⛔ Sulla macchina che esegue, gli Attesi di **forma** si misurano, non si copiano (E72) |
+| **dall'altra macchina** | si riprende da `origin`, perché tutto ciò che serve è tracciato: questa sezione, la cartella del dispaccio e il piano. Restano **solo** su `Jays`, e non servono per riprendere: gli script delle misure nello scratchpad della sessione, le copie in `%TEMP%` e le note di memoria dell'agente |
 
-**La revisione** — un revisore Opus fresco: **conforme**; **0** critici, **1** importante, **3** minori, **3** nit, sei su
-sette difetti del **dettato**. I-1, M-1, M-2, M-3 e N-1 sono curati da **E38**, **E39**, **E40**, **E41** ed **E42**; N-2 è
-registrato; N-3 è una frase del rapporto dell'implementatore — al caricamento la regione della fascia porta la fascia, non è
-vuota. Per **E40** la revisione offriva due strade, e il coordinatore ha preso la **A** coi cinque criteri: la **B** cambiava
-il negozio della parte 2 per una finestra che la **A** chiude nel componente. La cura di **E38** va oltre la proposta della
-revisione: con la sola `bottom: 0` le righe si vedevano passare nel `padding` del foglio, e l'anello del fuoco si disegnava
-sulla riga sotto la barra — misurato nel clone prima di scriverla. Il costo misurato: l'implementatore **~322k** token, 145
-chiamate, **~18** minuti; il revisore **~500k**, 202 chiamate, **~37** minuti; **~0,82 milioni** in tutto, dentro la banda
-detta al proprietario (0,8–1,0).
+**Che cosa ha fatto il pre-controllo.** Il compito rifatto dal testo del piano su `%TEMP%\pc6` — `git clone` da `3a8cfdd`,
+`npm ci`, i Passi 1–7 in fila, e il Passo 8 in Chrome senza finestra **con le barre accese** (lezione 1 della consegna
+precedente): i Passi 1, 2, 3 e 5 come gli Atteso; al Passo 4 la prova dei raggi rossa nei due temi (**E44**), e al Passo 6
+la stessa; al Passo 7 le righe 1–10 e 13 coi messaggi dettati, la 11 senza il rosso dei raggi che annunciava, la 12 con la
+sua voce fra otto; guardando, la presa alta 32 (**E45**) e, nello scuro, la linguetta del gruppo staccato più scura della
+sua intestazione (**E47**). Le cure provate sulla copia nelle due direzioni; curando E44 è uscito **E46**, e una prima
+cura di E44 — uno `skip` del contenuto dei pannelli — è caduta perché toglieva al compito 8 il giudizio della pillola (la
+riga *«la pillola»* del suo Passo 7). Poi il compito rifatto dal testo corretto su `%TEMP%\pc6b`, e ogni Atteso tornato:
+Passo 3 dieci rosse su quindici nel browser, Passo 4 jsdom 8 file e 37 prove e browser 3 file e 21, Passo 6 `npm test`
+con 178 prove e il pezzo `690.57 kB`, Passo 7 le venti righe e alla fine i soli quindici file del compito, Passo 8 il
+contrasto 6,22 e 6,41 su 33 scritte, le prese a 40, nessun fotogramma che sborda con la fascia, il velo sopra il gruppo
+staccato; e le prove del dock e della sonda stabili, **10** corse su 10 da sole e **5** su 5 nella suite intera.
 
-**Il Passo 8** — col proprietario, il 2026-09-26, nel suo Chrome con l'Assistente vocale; il verbale sta nella cella della riga
-5. E ha trovato ciò che nessuna occhiata aveva visto: le due barre di scorrimento della pagina che lampeggiavano col passaggio
-della fascia, **E43** — un difetto della parte 2, curato con una riga e confermato dal proprietario nel suo Chrome.
-
-📌 **La ricetta del compito 5 curato**, per rifarlo o confrontarlo dal testo del piano; vale per il piano di `9e6657b` e del
-commit che scrive questa riga. `W` è il file intero dal recinto aperto a quella riga; `R` sostituisce l'occorrenza unica del
-primo recinto col secondo; `RL` sostituisce il testo delle righe `<` con quello delle righe `>`; `X` sostituisce le righe
-dall'ancora `[` compresa all'ancora `]` esclusa col recinto; `S` è lo script del Passo 1. Le forme sono quelle di
-`compare_task5.py`, che però legge piano e ricetta dal commit di base: per il compito curato il piano è quello di questo
-commit, e i file su cui le sostituzioni si applicano sono quelli di `39827e8`. Le righe `#` nominano il passo.
+📌 **La ricetta del compito 6**, per rifarlo o confrontarlo dal testo del piano; vale per il piano del commit che scrive
+questa riga, da cui `compare_task6.py` la legge. `W` è il file intero dal recinto aperto a quella riga; `R` sostituisce
+l'occorrenza unica del primo recinto col secondo. Le righe `#` nominano il passo.
 
 ```text
-# 1
-S 3947
-R gui/src/panels/modules.test.ts 3984 3994
-X gui/src/panels/modules.test.ts 4024
-[ describe("Impostazioni", () => {
-] describe("the confirmation window", () => {
-RL gui/src/panels/modules.test.ts
-< import { useInvoke } from "../stores/invoke";
-> import { useInvoke } from "../stores/invoke";
-> import { useLayout } from "../stores/layout";
-R gui/src/panels/modules.test.ts 4138 4146
-R gui/src/frame/frame.test.ts 4165 4173
-W gui/src/panels/settings.browser.test.ts 4196
-# 2a
-R gui/src/locales/copy.test.ts 4279 4286
-R gui/src/locales/copy.test.ts 4294 4302
-R gui/src/locales/copy.test.ts 4317 4324
-R gui/src/locales/copy.test.ts 4330 4337
-# 2b
-R gui/src/locales/it.json 4356 4363
+# 2
+R gui/src/tokens/tokens.browser.test.ts 5085 5092
+R gui/src/tokens/tokens.browser.test.ts 5100 5109
+W gui/src/tokens/readToken.ts 5133
 # 3
-W gui/src/components/Confirm.vue 4382
-W gui/src/frame/Drawer.vue 4437
-R gui/src/components/BaseDialog.vue 4478 4489
+W gui/src/tokens/dock.test.ts 5156
+W gui/src/frame/dock.browser.test.ts 5206
+R gui/src/frame/frame.test.ts 5344 5353
+R gui/src/frame/frame.test.ts 5363 5373
+R gui/src/testing/probes.browser.test.ts 5419 5428
+R gui/src/testing/probes.browser.test.ts 5438 5448
 # 4
-W gui/src/frame/Band.vue 4513
-R gui/src/panels/Status.vue 4560 4570
-RL gui/src/panels/Status.vue
-< import { useConnection } from "../stores/connection";
-> import BaseStatus from "../components/BaseStatus.vue";
-> import { useConnection } from "../stores/connection";
-R gui/src/frame/Frame.vue 4586 4595
+W gui/src/tokens/dock.css 5512
+R gui/src/frame/dock.ts 5647 5662
+R gui/src/frame/dock.ts 5704 5714
+R gui/src/frame/dock.ts 5723 5731
+R gui/src/frame/Frame.vue 5744 5758
+W gui/src/jsdom-setup.ts 5776
+R gui/src/testing/probes.ts 5807 5816
+R gui/src/testing/probes.ts 5833 5842
+R gui/src/testing/probes.ts 5864 5870
 # 5
-W gui/src/panels/Settings.vue 4611
-R gui/src/tokens/dock.css 4715 4722
-# 6
-W gui/src/panels/Permissions.vue 4732
-W gui/src/panels/Steps.vue 4784
-RL gui/src/panels/Placeholder.vue
-<       <button type="button" @click="api?.close()">{{ $t("placeholder.closeMissing") }}</button>
->       <BaseButton @click="api?.close()">{{ $t("placeholder.closeMissing") }}</BaseButton>
-RL gui/src/panels/Placeholder.vue
-< import type { DockviewPanelApi } from "dockview-core";
-> import type { DockviewPanelApi } from "dockview-core";
-> import BaseButton from "../components/BaseButton.vue";
-W gui/src/frame/ViewBar.vue 4842
-# 7
-R gui/eslint.config.js 4930 4942
+W gui/src/frame/bigtab.test.ts 5889
+W gui/src/frame/BigTabFace.vue 5966
+W gui/src/frame/BigTab.ts 6011
+R gui/eslint.config.js 6075 6081
 ```
 
 📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
@@ -9092,22 +9278,21 @@ del sotto-progetto.
 
 | | Che cosa | Che cosa se ne fa |
 |---|---|---|
-| 1 | **un'occhiata con Playwright senza finestra non vede le barre di scorrimento**: `playwright-core` 1.63.0 aggiunge `--hide-scrollbars` a ogni lancio senza finestra, e il lampo di **E43** l'ha visto solo il proprietario, nel suo Chrome | chi *guarda* — il revisore, il coordinatore — lancia con `ignoreDefaultArgs: ["--hide-scrollbars"]`, e il prompt del revisore del compito 6 lo dice; una sonda nel cancello legge lo sbordo su `scrollHeight`, che le barre spente non nascondono |
-| 2 | **`dockview` 8.3.1 si ridimensiona un fotogramma dopo**: `watchElementResize` passa la misura nuova a un `requestAnimationFrame` (**E43**) | quando un compito cambia la misura del contenitore del dock — la fascia, un margine, la striscia —, si guarda il fotogramma del cambio, non solo lo stato a regime |
-| 3 | **il pannello del browser, nascosto, non disegna**: né `requestAnimationFrame` né i `ResizeObserver` vi girano, e uno script che li aspetta non finisce | un difetto di disegno si riproduce nel Chrome installato, senza finestra ma con le barre accese, non nel pannello nascosto |
-| 4 | **anche la cura proposta da una revisione è un'ipotesi**: quella di **E38**, con la sola `bottom: 0`, lasciava passare le righe nel `padding` del foglio e disegnava l'anello del fuoco sulla riga sotto la barra | una cura proposta si misura nel clone, nei due temi e nelle posizioni che contano, prima di entrare nel piano: la riga 8 di `CLAUDE.md`, applicata a una cura |
-| 5 | **su Windows un `os.replace` su un file che il server di sviluppo sta leggendo può fallire**, *«Accesso negato»*, e lasciare il temporaneo accanto | gli script che scrivono nel clone mentre il server gira riprovano, e poi si controlla che non restino `.tmp` |
+| 1 | **una sonda che giudica una pagina intera giudica anche ciò che non è del soggetto**: nella Home le sole coppie vicine erano del kit e di un pannello che scorre, e la guardia `near > 0` le contava (**E44**, la malattia di E29) | una prova che giudica un contenitore si dà il **caso** che giudica — qui il gruppo staccato — e la guardia su quel caso |
+| 2 | **la cura di una sonda comune tocca i compiti dopo**: lo `skip` dei pannelli toglieva al compito 8 la pillola, e lo ha detto soltanto un `grep` di `concentricRadii` e di `dock.browser.test.ts` nel resto del piano | prima di scegliere la cura di un pezzo che altri compiti usano, si cercano i suoi usi nei compiti dopo |
+| 3 | **un Atteso che diverge può essere la crescita del contratto**: **E42** ha spostato Impostazioni di 16 px, e la prova del compito 6 cadeva — detto rimettendo `Settings.vue` di `545f500` e rilanciando | quando un Atteso diverge, si rimette il file del compito prima e si rilancia: la riga 5 di `CLAUDE.md`, misurata |
+| 4 | **il CSS disegna un raggio diverso da quello scritto** dove due raggi di un lato superano il lato — CSS Backgrounds 3, §4.5 (**E46**) | una sonda che calcola una forma a mano segue la regola della fonte, non la sua abbreviazione |
+| 5 | **nel chiaro `--color-bg-raised` e `--color-bg-surface` coincidono**: una differenza fra i due si vede solo nello scuro (**E47**) | si guarda ogni cosa nei due temi, e un'attesa su un ruolo che nel chiaro coincide con un altro lo dichiara |
 
 **Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
 
-1. `git fetch --all --prune`, `git status -sb`; la CI di `9e6657b` e del commit che scrive questa riga, per prime.
-2. Il **pre-controllo del compito 6**, con le quattro domande di `CLAUDE.md` e le righe 5–8, contro il codice di **adesso**:
-   il compito 5 e le sue cure hanno cambiato `gui/src/frame/Frame.vue` — **E43**: il *Trova* del compito 6 è già allineato, e
-   si rilancia —, `gui/src/components/BaseDialog.vue`, `gui/src/panels/Settings.vue`, `gui/src/frame/ViewBar.vue`,
-   `gui/src/tokens/dock.css` — il ponte di **E36**, che il compito 6 riscrive — e i conti delle prove. Le voci che trova vanno
-   nell'errata, e la prossima libera è **E44**. Porta con sé le lezioni 1 e 2: il compito 6 mette un margine al dock, e la
-   fascia che entra si guarda con le barre accese.
-3. L'**esecuzione del compito 6**, in un'altra sessione, col costo detto prima e il sì del proprietario — la banda misurata dei
-   compiti 1–5 sta in queste consegne; e così compito per compito, fino al 9. Al **pre-controllo del compito 8** le tre sonde
-   che l'errata gli assegna: il cassetto aperto dalla tastiera col fuoco in vista (**E38**), il segnaposto della ricerca intero
-   (**E39**), la pagina che non sborda quando la fascia entra (**E43**).
+1. `git fetch --all --prune`, `git status -sb`; la CI di `9e6657b`, di `3a8cfdd` e del commit che scrive questa riga, per
+   prime.
+2. L'**esecuzione del compito 6**, col costo detto prima e il sì del proprietario — la banda misurata dei compiti 1–5 sta in
+   queste consegne: il brief rigenerato a `HEAD`, il modello riempito coi valori della macchina; il revisore guarda la SPA
+   **con le barre accese** e nei due temi, il gruppo staccato compreso; e l'aspetto del dock lo **giudica il proprietario**
+   (controllo 15, **D24**).
+3. E così compito per compito, fino al 9. Al **pre-controllo del compito 8** le tre sonde che l'errata gli assegna — il
+   cassetto aperto dalla tastiera col fuoco in vista (**E38**), il segnaposto della ricerca intero (**E39**), la pagina che non
+   sborda quando la fascia entra (**E43**) — e la domanda di **E44** sulla Panoramica: se scorre, la sonda dei raggi non ne
+   giudica le carte.

@@ -1111,3 +1111,82 @@ del sotto-progetto.
    confronta con `compare_task4.py` e **guarda** la pagina kit nel browser, nei due temi (punto 5 di *«Come si esegue un
    compito»*); alla chiusura del compito, i file del dispaccio nella cartella tracciata (punto 8). Poi il pre-controllo del
    compito 5, in un'altra sessione, con la prossima voce d'errata libera, **E28**; e così compito per compito, fino al 9.
+
+## Il pre-controllo del compito 5, del 2026-09-26
+
+Tolto dal piano il 2026-09-26, quando la sessione dopo ha fatto il **pre-controllo del compito 5** e scritto
+*«Come si riprende — il pre-controllo del compito 5»*. Il testo com'era, dal commit `257fc5a`, parola per parola; i
+rimandi sono riscritti per questa cartella.
+
+## Come si riprende — l'esecuzione del compito 4, 2026-09-26
+
+✅ **Il compito 4 è eseguito, rivisto e curato.** La consegna precedente — il pre-controllo del compito 4 — sta parola per
+parola in [`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+| Commit | Che cosa |
+|---|---|
+| `841dc54` | **il compito 4**, dall'implementatore — conforme al dettato: `compare_task4.py 1b531e9 841dc54` esce 0, nove percorsi `OK`, e la revisione l'ha provato nelle due direzioni. La data della riga 4 è quella del dispaccio, 2026-09-25, e il commit è del 26: lo script lo mostra `CHECK BY HAND`, com'era previsto |
+| `8d098d0` | le cure della revisione, dal coordinatore e senza ri-revisione, come per il compito 3 — là fu la scelta **A** del proprietario, qui non è stata richiesta di nuovo —: **E28**–**E33** nell'errata e nel codice, il file nuovo `gui/src/testing/probes.browser.test.ts`, i recinti dei Passi 1, 2, 4 e 6 allineati, quattro righe nel Passo 7, il conto della Definizione di «fatto» |
+| il commit che scrive questa riga | il dispaccio del compito 4 nella cartella tracciata, e questa consegna |
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **cancello** | `GATE GREEN` sull'albero di `8d098d0`, sulla macchina `Jays`: sotto `gui/` il progetto `jsdom` con 18 file passati e uno saltato, 125 prove passate e una saltata; il progetto `browser` con **3** file e **27** prove — le cinque del compito 2, le diciotto della pagina kit, nove per tema, e le quattro della sonda dei raggi a mano —; il pezzo JavaScript `663.93 kB`, invariato: la pagina kit resta fuori dal pacchetto; `found 0 vulnerabilities` — si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | verde sui due sistemi `1b531e9` e `841dc54`, lette in questa sessione; quella di `8d098d0` verde su `ubuntu-latest` e **in corso** su `windows-latest` alla chiusura, e quella del commit che scrive questa riga **in corso**: la sessione dopo le legge per prime, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | la riga **4** a `✅ 2026-09-25`; la sua colonna **Commit** la scrive il compito 5 (R1-16): `` `841dc54`, con la cura `8d098d0` `` |
+| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il prompt **spedito**, `dispatch-task-4.md`, al posto del modello — gli stessi testi coi valori della macchina `Jays` e la data 2026-09-25, più tre precisazioni misurate dal coordinatore: il comando che legge la versione di Chrome esce 2 pur stampandola, `--get-all` rende tre righe di `core.autocrlf` e vale l'ultima, e il cancello d'apertura rimisurato a `1b531e9` —; il rapporto dell'implementatore, `task-4-report.md`; il prompt del revisore, `review-4-prompt.md`; la revisione, `task-4-review.md`. `compare_task4.py` resta quello del pre-controllo, che ha giudicato `841dc54` |
+| **le copie** | sulla macchina `Jays` restano il clone della revisione, `%TEMP%\rv4`, a `841dc54` e pulito; le copie del pre-controllo, `%TEMP%\pc4`, `%TEMP%\pc4b` e `%TEMP%\pc4c`; e `%TEMP%\pc2` e il banco `%TEMP%\pds`, del 2026-09-23. Non servono più e si possono cancellare: questa sessione non l'ha fatto |
+| **le voci registrate, non prese** | quelle della consegna precedente, in archivio: la finestra delle prove, 1440 × 900; **N-4** della revisione del compito 3; la strada B di **E23**; il controllo dei pacchetti ritirati di `cargo audit` senza il registro, che tocca **X-3** ed è del proprietario; la pagina kit che mostra la finestra nella sola forma `center`, mentre la (b) dice *«ogni componente in ogni stato»*. ✅ La guardia di non-vacuità del Passo 6 ingannata da un `dist/` vecchio **non è più registrata**: l'ha chiusa **E31**. ⚠️ **E tre nuove**: **N-3** della revisione — `compare_task4.py` non vede la data del dispaccio quando coincide col giorno del commit, né un cambio del modo di un file —, che tocca il suo erede, `compare_task5.py`; nella scheda *Stato* della pagina kit il `<p>` dentro `BaseStatus` tiene i margini del browser, 16 px, uno spazio più largo delle altre schede che nessuna sonda giudica — nota di sola vista dell'implementatore —; e il server di sviluppo risponde 404 a `/favicon.ico`, che né `kit.html` né `index.html` dichiarano — misurato dal revisore; per la SPA come per la pagina kit, fuori dal compito |
+| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, dove questa sessione ha lavorato: `core.autocrlf` `false` in `.git/config` e l'albero `w/lf`, Node v24.19.0, Chrome `154.0.8037.58` letto dal nome della cartella; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, `core.autocrlf` `true` dal file di sistema, Node v24.19.0, Chrome `154.0.8037.58` dalla consegna dell'esecuzione del compito 3 — si aggiorna da sé, e si rilegge. ⛔ Sulla macchina che esegue, gli Attesi di **forma** si misurano, non si copiano (E72) |
+| **dall'altra macchina** | si riprende da `origin`, perché tutto ciò che serve è tracciato: questa sezione, la cartella del dispaccio e il piano. Restano **solo** su `Jays`, e non servono per riprendere: gli script delle cure nello scratchpad della sessione, le copie in `%TEMP%` della riga **le copie**, e le note di memoria dell'agente, fuori dal repository — le lezioni che contano sono nella tabella qui sotto |
+
+**La revisione** — un revisore Opus fresco: **conforme**; **0** critici, **0** importanti, **3** minori, **4** nit, tutti
+difetti del **dettato**. M-1, M-2 e M-3 sono curati da **E29**, **E30** ed **E31**; N-1, N-2 e N-4 da **E32**, **E33** ed
+**E28**; N-3 è registrato. Per **E30** la revisione offriva due strade, e il coordinatore ha preso la **A** coi cinque
+criteri: la **B** scriveva nel codice il contrario della (f), che è merito approvato — la voce dice il perché e il costo.
+La cura proposta per **E30** non portava prove nel cancello: le quattro prove a mano le ha scritte il coordinatore dalle
+prove usa-e-getta della revisione — con la forma `sheet` che attende anche `near` (lezione 2) e la coppia fuori
+dall'angolo di **E33** —, **prima** della cura, e le ha viste rosse sulla sonda di prima. Il costo misurato: l'implementatore **~350k** token, 203 chiamate, **~24**
+minuti; il revisore **~473k**, 190 chiamate, **~39** minuti; ~0,82 milioni in tutto, dentro la banda detta al proprietario
+(0,7–0,9) e sopra i ~0,6 del compito 3: il Passo 7 aveva più righe, e il revisore ha anche **guardato** la pagina.
+
+📌 **La ricetta del compito 4 curato**, per rifarlo o confrontarlo dal testo del piano; vale per il piano di `8d098d0` e del
+commit che scrive questa riga: `W` è il file intero dal recinto aperto a quella riga; `R` sostituisce l'occorrenza unica del
+primo recinto col secondo, sul file di `1b531e9`.
+
+```text
+W gui/src/testing/probes.ts 3090
+W gui/src/testing/probes.browser.test.ts 3231
+R gui/vite.config.ts 3296 3305
+W gui/src/kit/kit.browser.test.ts 3322
+W gui/kit.html 3491
+W gui/src/kit/main.ts 3508
+W gui/src/kit/Kit.vue 3521
+R gui/eslint.config.js 3795 3802
+R scripts/gate-gui.sh 3832 3839
+```
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
+del sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **una sonda copiata fedelmente da una tavola ne eredita i limiti**: `concentricRadii` e `iconsCentred` erano fedeli a `sonda-raggi.js` e `sonda-icone.js`, e la fedeltà era il difetto (**E30**, **E32**) | nel pre-controllo, una sonda si legge contro ciò che promettono la (f) e il nome della prova, non solo contro la tavola da cui viene |
+| 2 | **una prova a mano che attende solo `bad: []` è verde anche per una sonda che non guarda niente**: la prova della revisione sulla forma `sheet` rendeva `near: 0` | le prove a mano attendono il rapporto **intero**, `near` compreso, con un caso giudicato accanto — la trappola 1, sui casi fatti a mano |
+| 3 | **`TaskStop` chiude la shell di `npm run dev` ma non il suo `node`**, che resta in ascolto sulla 5173 — l'ha visto l'implementatore | il server si ferma per PID, dopo averne letto la riga di comando; e prima del cancello nessun `node` di `gui/` resta acceso |
+| 4 | **il pannello del browser, nascosto, rende a volte un fotogramma vecchio**, a metà di una transizione di tema — l'ha visto l'implementatore: `getComputedStyle` dava i colori giusti | un colore visto in un'immagine si controlla col colore calcolato prima di chiamarlo difetto |
+| 5 | **le frecce su un radio di `reka-ui` 2.10.4 scelgono solo se il tasto resta giù oltre un giro di timer** — `isArrowKeyPressed` e un `setTimeout` in `RadioGroupItem.js`: `keyboard.press("ArrowDown", { delay: 120 })` sceglie, senza attesa sposta solo il fuoco, misurato dal revisore | le prove della tastiera sui radio del compito 5, in Impostazioni, tengono il tasto giù: il pre-controllo del 5 lo verifica sul suo testo |
+
+**Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. Il **pre-controllo del compito 5**, con le quattro domande di `CLAUDE.md` e le righe 5–8, contro il codice di **adesso**:
+   il compito 4 e le sue cure hanno cambiato `gui/src/testing/probes.ts` — un raggio per angolo, lo `stroke` calcolato —,
+   `gui/eslint.config.js` — il blocco della pagina kit accanto a quello di `Chat.vue` —, `scripts/gate-gui.sh` e i conti del
+   progetto `browser`: i *Trova* del compito 5 si rilanciano sui file di oggi. Le voci che trova vanno nell'errata, e la
+   prossima libera è **E34**. Porta con sé la lezione 5, per le prove della tastiera sui radio; `compare_task5.py`, nato da
+   `compare_task4.py` con **N-3**; e la voce registrata sulla finestra nella sola forma `center`, che il cassetto del compito
+   5 tocca.
+3. L'**esecuzione del compito 5**, in un'altra sessione, col costo detto prima e il sì del proprietario — la banda misurata
+   dei compiti 1–4 sta in queste consegne; e così compito per compito, fino al 9.

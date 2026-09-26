@@ -1458,3 +1458,98 @@ del sotto-progetto.
    compiti 1–5 sta in queste consegne; e così compito per compito, fino al 9. Al **pre-controllo del compito 8** le tre sonde
    che l'errata gli assegna: il cassetto aperto dalla tastiera col fuoco in vista (**E38**), il segnaposto della ricerca intero
    (**E39**), la pagina che non sborda quando la fascia entra (**E43**).
+
+## L'esecuzione del compito 6, del 2026-09-26
+
+Tolto dal piano il 2026-09-26, quando la sessione dopo ha **eseguito il compito 6** e scritto *«Come si riprende —
+l'esecuzione del compito 6»*. Il testo com'era, dal commit `1a83208`, parola per parola; i rimandi sono riscritti per
+questa cartella.
+
+## Come si riprende — il pre-controllo del compito 6, 2026-09-26
+
+✅ **Il pre-controllo del compito 6 è fatto, e ha trovato cinque difetti**: **E44**, **E45**, **E46**, **E47** ed **E48**,
+scritti nell'errata e applicati al testo del compito nel commit che scrive questa riga. La consegna precedente —
+l'esecuzione del compito 5 — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **cancello** | `GATE GREEN` all'apertura, sull'albero di `3a8cfdd`, macchina `Jays`: sotto `gui/` il progetto `jsdom` con 18 file passati e uno saltato, **132** prove passate e una saltata; il progetto `browser` con **4** file e **28** prove; il pezzo JavaScript `689.65 kB`; `found 0 vulnerabilities`. E di nuovo sull'albero del commit che scrive questa riga, prima del commit — si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | all'apertura `9e6657b` verde su `ubuntu-latest` e in corsa su `windows-latest`, e `3a8cfdd` in corsa sui due: le legge per prime la sessione dopo, con quella del commit che scrive questa riga, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | invariata: la riga 5 a `✅ 2026-09-26` con la colonna **Commit** a `—`, che scrive il compito 6 (R1-16); la riga 6 a `⬜` |
+| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il **modello** `dispatch-task-6.md`, coi campi della macchina fra `<…>` e un riquadro per il coordinatore; `_extract_brief_6.py`, che scrive `task-6-brief.md` nella cartella di lavoro ignorata; `compare_task6.py`, che giudica il commit dell'implementatore dal testo del piano con la ricetta qui sotto — provato su `%TEMP%\pc6c`: il commit fedele esce 0, sedici percorsi `OK`; otto mutanti escono 1 — una riga di `dock.css`, la regola dello scorrimento tolta dalla sonda, una prova tolta, un file che nessun passo detta, `gui/package.json` toccato, la riga 6 rimasta a `⬜`, la riga 5 senza le cure, un cambio di modo —; e tre casi escono 0 — un giorno diverso da quello del commit e una voce d'errata in più, con `CHECK BY HAND`, e un file nuovo in CRLF, perché i fine-riga stanno a parte |
+| **le copie** | sulla macchina `Jays`: `%TEMP%\pc6`, il compito dal testo dettato con sopra le cure provate; `%TEMP%\pc6b`, il compito rifatto dal testo corretto, non committato; `%TEMP%\pc6c`, la prova di `compare_task6.py`; e quelle di prima, `rv5`, `pc5`, `pc5b`, `pc5c`, `rv4`, `pc4`, `pc4b`, `pc4c`, `pc2` e il banco `pds`. Si possono cancellare tutte; `pc6b` può servire alla revisione del compito 6 come confronto. Questa sessione non l'ha fatto |
+| **le voci registrate, non prese** | quelle della consegna precedente, in archivio — fra cui il `settle` del dock prima del benvenuto, del proprietario, e **N-2** della revisione del compito 5 —; e due nuove: la sonda dei raggi **non giudica più ciò che scorre** (**E44**), e se la Panoramica del compito 8 scorre le sue carte escono dal giudizio — la misura il pre-controllo del compito 8; e le barre di scorrimento dei pannelli, che arrivano all'angolo tondo delle schede (**E48**), sono aspetto, del proprietario al Passo 8 del compito 6 |
+| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, dove questa sessione ha lavorato: `core.autocrlf` `false` in `.git/config` e l'albero `w/lf`, Node v24.19.0, Chrome `154.0.8037.58`; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, `core.autocrlf` `true` dal file di sistema — Chrome si aggiorna da sé, e si rilegge. ⛔ Sulla macchina che esegue, gli Attesi di **forma** si misurano, non si copiano (E72) |
+| **dall'altra macchina** | si riprende da `origin`, perché tutto ciò che serve è tracciato: questa sezione, la cartella del dispaccio e il piano. Restano **solo** su `Jays`, e non servono per riprendere: gli script delle misure nello scratchpad della sessione, le copie in `%TEMP%` e le note di memoria dell'agente |
+
+**Che cosa ha fatto il pre-controllo.** Il compito rifatto dal testo del piano su `%TEMP%\pc6` — `git clone` da `3a8cfdd`,
+`npm ci`, i Passi 1–7 in fila, e il Passo 8 in Chrome senza finestra **con le barre accese** (lezione 1 della consegna
+precedente): i Passi 1, 2, 3 e 5 come gli Atteso; al Passo 4 la prova dei raggi rossa nei due temi (**E44**), e al Passo 6
+la stessa; al Passo 7 le righe 1–10 e 13 coi messaggi dettati, la 11 senza il rosso dei raggi che annunciava, la 12 con la
+sua voce fra otto; guardando, la presa alta 32 (**E45**) e, nello scuro, la linguetta del gruppo staccato più scura della
+sua intestazione (**E47**). Le cure provate sulla copia nelle due direzioni; curando E44 è uscito **E46**, e una prima
+cura di E44 — uno `skip` del contenuto dei pannelli — è caduta perché toglieva al compito 8 il giudizio della pillola (la
+riga *«la pillola»* del suo Passo 7). Poi il compito rifatto dal testo corretto su `%TEMP%\pc6b`, e ogni Atteso tornato:
+Passo 3 dieci rosse su quindici nel browser, Passo 4 jsdom 8 file e 37 prove e browser 3 file e 21, Passo 6 `npm test`
+con 178 prove e il pezzo `690.57 kB`, Passo 7 le venti righe e alla fine i soli quindici file del compito, Passo 8 il
+contrasto 6,22 e 6,41 su 33 scritte, le prese a 40, nessun fotogramma che sborda con la fascia, il velo sopra il gruppo
+staccato; e le prove del dock e della sonda stabili, **10** corse su 10 da sole e **5** su 5 nella suite intera.
+
+📌 **La ricetta del compito 6**, per rifarlo o confrontarlo dal testo del piano; vale per il piano del commit che scrive
+questa riga, da cui `compare_task6.py` la legge. `W` è il file intero dal recinto aperto a quella riga; `R` sostituisce
+l'occorrenza unica del primo recinto col secondo. Le righe `#` nominano il passo.
+
+```text
+# 2
+R gui/src/tokens/tokens.browser.test.ts 5085 5092
+R gui/src/tokens/tokens.browser.test.ts 5100 5109
+W gui/src/tokens/readToken.ts 5133
+# 3
+W gui/src/tokens/dock.test.ts 5156
+W gui/src/frame/dock.browser.test.ts 5206
+R gui/src/frame/frame.test.ts 5344 5353
+R gui/src/frame/frame.test.ts 5363 5373
+R gui/src/testing/probes.browser.test.ts 5419 5428
+R gui/src/testing/probes.browser.test.ts 5438 5448
+# 4
+W gui/src/tokens/dock.css 5512
+R gui/src/frame/dock.ts 5647 5662
+R gui/src/frame/dock.ts 5704 5714
+R gui/src/frame/dock.ts 5723 5731
+R gui/src/frame/Frame.vue 5744 5758
+W gui/src/jsdom-setup.ts 5776
+R gui/src/testing/probes.ts 5807 5816
+R gui/src/testing/probes.ts 5833 5842
+R gui/src/testing/probes.ts 5864 5870
+# 5
+W gui/src/frame/bigtab.test.ts 5889
+W gui/src/frame/BigTabFace.vue 5966
+W gui/src/frame/BigTab.ts 6011
+R gui/eslint.config.js 6075 6081
+```
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
+del sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **una sonda che giudica una pagina intera giudica anche ciò che non è del soggetto**: nella Home le sole coppie vicine erano del kit e di un pannello che scorre, e la guardia `near > 0` le contava (**E44**, la malattia di E29) | una prova che giudica un contenitore si dà il **caso** che giudica — qui il gruppo staccato — e la guardia su quel caso |
+| 2 | **la cura di una sonda comune tocca i compiti dopo**: lo `skip` dei pannelli toglieva al compito 8 la pillola, e lo ha detto soltanto un `grep` di `concentricRadii` e di `dock.browser.test.ts` nel resto del piano | prima di scegliere la cura di un pezzo che altri compiti usano, si cercano i suoi usi nei compiti dopo |
+| 3 | **un Atteso che diverge può essere la crescita del contratto**: **E42** ha spostato Impostazioni di 16 px, e la prova del compito 6 cadeva — detto rimettendo `Settings.vue` di `545f500` e rilanciando | quando un Atteso diverge, si rimette il file del compito prima e si rilancia: la riga 5 di `CLAUDE.md`, misurata |
+| 4 | **il CSS disegna un raggio diverso da quello scritto** dove due raggi di un lato superano il lato — CSS Backgrounds 3, §4.5 (**E46**) | una sonda che calcola una forma a mano segue la regola della fonte, non la sua abbreviazione |
+| 5 | **nel chiaro `--color-bg-raised` e `--color-bg-surface` coincidono**: una differenza fra i due si vede solo nello scuro (**E47**) | si guarda ogni cosa nei due temi, e un'attesa su un ruolo che nel chiaro coincide con un altro lo dichiara |
+
+**Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI di `9e6657b`, di `3a8cfdd` e del commit che scrive questa riga, per
+   prime.
+2. L'**esecuzione del compito 6**, col costo detto prima e il sì del proprietario — la banda misurata dei compiti 1–5 sta in
+   queste consegne: il brief rigenerato a `HEAD`, il modello riempito coi valori della macchina; il revisore guarda la SPA
+   **con le barre accese** e nei due temi, il gruppo staccato compreso; e l'aspetto del dock lo **giudica il proprietario**
+   (controllo 15, **D24**).
+3. E così compito per compito, fino al 9. Al **pre-controllo del compito 8** le tre sonde che l'errata gli assegna — il
+   cassetto aperto dalla tastiera col fuoco in vista (**E38**), il segnaposto della ricerca intero (**E39**), la pagina che non
+   sborda quando la fascia entra (**E43**) — e la domanda di **E44** sulla Panoramica: se scorre, la sonda dei raggi non ne
+   giudica le carte.

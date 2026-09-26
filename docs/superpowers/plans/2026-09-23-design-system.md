@@ -129,7 +129,7 @@ esegue** prima del proprio pre-controllo.
 | **3** | **il kit**: `lucide`; `BaseIcon` con `icons.ts`, `BaseButton`, `BaseLabel`, `BaseList`, `BaseStatus`, `BaseTextField`, `BaseRadioGroup`, `BaseDialog`; un test con `axe` ciascuno; il linter che legge anche i `.ts`, e le due regole sui pezzi di base | `c7b7bcd`, con la cura `9d2ffb0` | ✅ 2026-09-25 |
 | **4** | **la pagina kit**: `gui/kit.html` e `gui/src/kit/`, **fuori** dal pacchetto e provata sull'uscita del *build*; le prove nel browser sulla pagina kit, nei due temi — raggi concentrici, testo tagliato e niente che sborda, icone disegnate e centrate, `axe` col contrasto | `841dc54`, con la cura `8d098d0` | ✅ 2026-09-25 |
 | **5** | **il kit al lavoro**: i pezzi di base nei pannelli e nella cornice — la finestra di conferma, il cassetto, la fascia, Stato, Permessi, Passi, Impostazioni con la scelta del tema, il segnaposto, la barra; le due regole del linter su `panels/` e `frame/`; **M-3** chiusa per costruzione, e l'Assistente vocale a mano | `545f500`, con le cure `7e25d03` e `9e6657b` | ✅ 2026-09-26 — il Passo 8 col proprietario, nel suo Chrome con l'Assistente vocale: alle domande dei punti 3, 4 e 5 — *«senti …?»* — la risposta *«di quello che hai chiesto … funziona tutto»*, e il punto 1 non riportato a parte; e *«a parte il piccolo problema citato poco fa»*, il lampo delle barre di scorrimento con la fascia, curato da **E43** |
-| **6** | **il dock vestito**: il tema `dockview-theme-harness`, `dock.css` con ogni variabile del tema di riferimento, i gruppi come schede, `readToken`, `--z-floating`, la presa grande coi pezzi di base; `themeAbyss` esce | — | ✅ 2026-09-26 |
+| **6** | **il dock vestito**: il tema `dockview-theme-harness`, `dock.css` con ogni variabile del tema di riferimento, i gruppi come schede, `readToken`, `--z-floating`, la presa grande coi pezzi di base; `themeAbyss` esce | — | ⏳ 2026-09-26 — il compito in `c1102fc`, curato in `ca83dac` (**E49**–**E58**); il Passo 8 **non approvato** dal proprietario al secondo sguardo, e che cosa non approva lo dice lui alla ripresa |
 | **7** | **le viste col nome, sotto**: `named` e `openNamed` nel pacchetto, il negozio e il dock che le mostrano e le salvano; l'aiutante della geometria estratto da `moveActive.ts`; lo schema di una disposizione, per le miniature | — | ⬜ |
 | **8** | **la cornice**: la barra col nome della vista, la **Panoramica** su `BaseDialog` con le miniature e *«Salva questa vista»* — F3, frecce, Invio, Esc —, la **striscia** a pillola coi «moduli»; le prove nel browser della Panoramica e della striscia | — | ⬜ |
 | **9** | **la chiusura**: la riga «Accessibilità» di tracciabilità, la riga 14 della roadmap con *«Perché quest'ordine»*, `README.md`, la §12 e la §6 del compendio, `porta-di-qualita.md` con C-S0-1 (P-29), `riferimenti.md`; i richiami nel disegno e nella stella polare (P-28); la **Definizione di «fatto»**, eseguita, con le uscite del giorno | — | ⬜ |
@@ -9428,69 +9428,69 @@ compito 1 — o in una voce d'errata. Un nome senza casa è una voce d'errata nu
 
 ---
 
-## Come si riprende — il pre-controllo del compito 6, 2026-09-26
+## Come si riprende — l'esecuzione del compito 6, 2026-09-26
 
-✅ **Il pre-controllo del compito 6 è fatto, e ha trovato cinque difetti**: **E44**, **E45**, **E46**, **E47** ed **E48**,
-scritti nell'errata e applicati al testo del compito nel commit che scrive questa riga. La consegna precedente —
-l'esecuzione del compito 5 — sta parola per parola in
-[`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
+⏳ **Il compito 6 è eseguito e curato, e il suo Passo 8 NON è approvato.** Al secondo sguardo, nel suo Chrome, il
+proprietario ha risposto *«non è approvato ma continuiamo nella prossima sessione»*: **che cosa** non approva non l'ha
+detto, e la sessione dopo glielo chiede per prima. La consegna precedente — il pre-controllo del compito 6 — sta parola
+per parola in [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
-| **cancello** | `GATE GREEN` all'apertura, sull'albero di `3a8cfdd`, macchina `Jays`: sotto `gui/` il progetto `jsdom` con 18 file passati e uno saltato, **132** prove passate e una saltata; il progetto `browser` con **4** file e **28** prove; il pezzo JavaScript `689.65 kB`; `found 0 vulnerabilities`. E di nuovo sull'albero del commit che scrive questa riga, prima del commit — si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
-| **la CI** | all'apertura `9e6657b` verde su `ubuntu-latest` e in corsa su `windows-latest`, e `3a8cfdd` in corsa sui due: le legge per prime la sessione dopo, con quella del commit che scrive questa riga, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
-| **la posizione** | invariata: la riga 5 a `✅ 2026-09-26` con la colonna **Commit** a `—`, che scrive il compito 6 (R1-16); la riga 6 a `⬜` |
-| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il **modello** `dispatch-task-6.md`, coi campi della macchina fra `<…>` e un riquadro per il coordinatore; `_extract_brief_6.py`, che scrive `task-6-brief.md` nella cartella di lavoro ignorata; `compare_task6.py`, che giudica il commit dell'implementatore dal testo del piano con la ricetta qui sotto — provato su `%TEMP%\pc6c`: il commit fedele esce 0, sedici percorsi `OK`; otto mutanti escono 1 — una riga di `dock.css`, la regola dello scorrimento tolta dalla sonda, una prova tolta, un file che nessun passo detta, `gui/package.json` toccato, la riga 6 rimasta a `⬜`, la riga 5 senza le cure, un cambio di modo —; e tre casi escono 0 — un giorno diverso da quello del commit e una voce d'errata in più, con `CHECK BY HAND`, e un file nuovo in CRLF, perché i fine-riga stanno a parte |
-| **le copie** | sulla macchina `Jays`: `%TEMP%\pc6`, il compito dal testo dettato con sopra le cure provate; `%TEMP%\pc6b`, il compito rifatto dal testo corretto, non committato; `%TEMP%\pc6c`, la prova di `compare_task6.py`; e quelle di prima, `rv5`, `pc5`, `pc5b`, `pc5c`, `rv4`, `pc4`, `pc4b`, `pc4c`, `pc2` e il banco `pds`. Si possono cancellare tutte; `pc6b` può servire alla revisione del compito 6 come confronto. Questa sessione non l'ha fatto |
-| **le voci registrate, non prese** | quelle della consegna precedente, in archivio — fra cui il `settle` del dock prima del benvenuto, del proprietario, e **N-2** della revisione del compito 5 —; e due nuove: la sonda dei raggi **non giudica più ciò che scorre** (**E44**), e se la Panoramica del compito 8 scorre le sue carte escono dal giudizio — la misura il pre-controllo del compito 8; e le barre di scorrimento dei pannelli, che arrivano all'angolo tondo delle schede (**E48**), sono aspetto, del proprietario al Passo 8 del compito 6 |
+| **i commit** | `c1102fc`, il compito, dall'implementatore, conforme al dettato; `ca83dac`, le cure della revisione e del Passo 8, **E49**–**E58**, dal coordinatore e senza ri-revisione, come per i compiti 3–5; e il commit che scrive questa riga |
+| **cancello** | `GATE GREEN` all'apertura, su `1a83208`: jsdom 18 file e uno saltato, 132 prove e una saltata; browser 4 file e 28 prove; il pezzo `689.65 kB`. E sull'albero di `ca83dac`: jsdom 19 file e uno saltato, **137** prove e una saltata; browser 5 file e **48** prove; il pezzo `690.61 kB`, compresso `210.41 kB` — la cifra al proprietario (N-2) —; `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `ca83dac` verde su `ubuntu-latest` e `windows-latest`; `c1102fc` è partito con lo stesso push, e la corsa è della sola testa. Quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | la riga 5 con la colonna **Commit** scritta dal compito 6 (R1-16); la riga 6 a `⏳`, col Passo 8 non approvato: la porta a `✅`, col verbale, la sessione che lo chiude |
+| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il prompt spedito all'implementatore al posto del modello, il suo rapporto, il prompt del revisore e la revisione |
+| **le copie** | sulla macchina `Jays`: `%TEMP%\rv6`, il clone della revisione, **sporco** — vi sono copiati i file curati, per rifare i Passi 3, 4 e 6 —; `%TEMP%\pc6`, `pc6b` e `pc6c` del pre-controllo; e quelle di prima, `rv5`, `pc5`, `pc5b`, `pc5c`, `rv4`, `pc4`, `pc4b`, `pc4c`, `pc2` e il banco `pds`. Si possono cancellare tutte; questa sessione non l'ha fatto |
+| **le voci registrate, non prese** | quelle della consegna precedente, in archivio; e due nuove, **al pre-controllo del compito 8**: la regola dello scorrimento non esclude un antenato che scorre lui stesso (**E53**), e la sonda della barra senza fondo né riga (**E57**), che vuole la cornice intera nel browser, come **E43** |
 | **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, dove questa sessione ha lavorato: `core.autocrlf` `false` in `.git/config` e l'albero `w/lf`, Node v24.19.0, Chrome `154.0.8037.58`; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, `core.autocrlf` `true` dal file di sistema — Chrome si aggiorna da sé, e si rilegge. ⛔ Sulla macchina che esegue, gli Attesi di **forma** si misurano, non si copiano (E72) |
-| **dall'altra macchina** | si riprende da `origin`, perché tutto ciò che serve è tracciato: questa sezione, la cartella del dispaccio e il piano. Restano **solo** su `Jays`, e non servono per riprendere: gli script delle misure nello scratchpad della sessione, le copie in `%TEMP%` e le note di memoria dell'agente |
+| **dall'altra macchina** | si riprende da `origin`, perché tutto ciò che serve è tracciato: questa sezione, la cartella del dispaccio e il piano. Restano **solo** su `Jays`, e non servono per riprendere: gli script delle cure e delle misure nello scratchpad della sessione, le copie in `%TEMP%` e le note di memoria dell'agente |
 
-**Che cosa ha fatto il pre-controllo.** Il compito rifatto dal testo del piano su `%TEMP%\pc6` — `git clone` da `3a8cfdd`,
-`npm ci`, i Passi 1–7 in fila, e il Passo 8 in Chrome senza finestra **con le barre accese** (lezione 1 della consegna
-precedente): i Passi 1, 2, 3 e 5 come gli Atteso; al Passo 4 la prova dei raggi rossa nei due temi (**E44**), e al Passo 6
-la stessa; al Passo 7 le righe 1–10 e 13 coi messaggi dettati, la 11 senza il rosso dei raggi che annunciava, la 12 con la
-sua voce fra otto; guardando, la presa alta 32 (**E45**) e, nello scuro, la linguetta del gruppo staccato più scura della
-sua intestazione (**E47**). Le cure provate sulla copia nelle due direzioni; curando E44 è uscito **E46**, e una prima
-cura di E44 — uno `skip` del contenuto dei pannelli — è caduta perché toglieva al compito 8 il giudizio della pillola (la
-riga *«la pillola»* del suo Passo 7). Poi il compito rifatto dal testo corretto su `%TEMP%\pc6b`, e ogni Atteso tornato:
-Passo 3 dieci rosse su quindici nel browser, Passo 4 jsdom 8 file e 37 prove e browser 3 file e 21, Passo 6 `npm test`
-con 178 prove e il pezzo `690.57 kB`, Passo 7 le venti righe e alla fine i soli quindici file del compito, Passo 8 il
-contrasto 6,22 e 6,41 su 33 scritte, le prese a 40, nessun fotogramma che sborda con la fascia, il velo sopra il gruppo
-staccato; e le prove del dock e della sonda stabili, **10** corse su 10 da sole e **5** su 5 nella suite intera.
+**Che cosa ha fatto questa sessione.** Il dispaccio col sì del proprietario sulla banda detta prima, 0,85–1,1 milioni: un
+implementatore Opus fresco, `DONE_WITH_CONCERNS` — la candidata **E49** e un'osservazione sul controllo 15, che il
+coordinatore ha misurato vera (**E50**) —, e un revisore Opus fresco, **conforme**: 0 critici, 1 importante, 2 minori e 3
+nit, tutti del dettato. Il costo misurato: l'implementatore **~329k** token, 126 chiamate, **~21** minuti; il revisore
+**~541k**, 178 chiamate, **~41** minuti; **~0,87 milioni** in tutto. Poi il Passo 8 col proprietario, con quattro foto
+(**E55**–**E58**), e le cure delle dieci voci in `ca83dac`: ogni prova nuova vista rossa prima della cura, ogni cura tolta
+a mano e rimessa dalla copia salvata; i conti dei Passi 3, 4 e 6 rifatti sulla sequenza dei passi nel clone `rv6`.
 
-📌 **La ricetta del compito 6**, per rifarlo o confrontarlo dal testo del piano; vale per il piano del commit che scrive
-questa riga, da cui `compare_task6.py` la legge. `W` è il file intero dal recinto aperto a quella riga; `R` sostituisce
-l'occorrenza unica del primo recinto col secondo. Le righe `#` nominano il passo.
+📌 **La ricetta del compito 6 curato**, per rifarlo o confrontarlo dal testo del piano; vale per il piano di `ca83dac` e
+del commit che scrive questa riga: `W` è il file intero dal recinto aperto a quella riga; `R` sostituisce l'occorrenza
+unica del primo recinto col secondo, sul file di `1a83208`. Provata dal coordinatore con uno script dello scratchpad: sui
+diciotto file l'albero di `ca83dac` è uguale, uscita 0; `c1102fc` dice DIFFERS sui soli dieci curati, uscita 1.
 
 ```text
 # 2
-R gui/src/tokens/tokens.browser.test.ts 5085 5092
-R gui/src/tokens/tokens.browser.test.ts 5100 5109
-W gui/src/tokens/readToken.ts 5133
+R gui/src/tokens/tokens.browser.test.ts 5096 5103
+R gui/src/tokens/tokens.browser.test.ts 5111 5120
+W gui/src/tokens/readToken.ts 5144
 # 3
-W gui/src/tokens/dock.test.ts 5156
-W gui/src/frame/dock.browser.test.ts 5206
-R gui/src/frame/frame.test.ts 5344 5353
-R gui/src/frame/frame.test.ts 5363 5373
-R gui/src/testing/probes.browser.test.ts 5419 5428
-R gui/src/testing/probes.browser.test.ts 5438 5448
+W gui/src/tokens/dock.test.ts 5167
+W gui/src/frame/dock.browser.test.ts 5217
+R gui/src/frame/frame.test.ts 5441 5450
+R gui/src/frame/frame.test.ts 5460 5470
+R gui/src/testing/probes.browser.test.ts 5516 5525
+R gui/src/testing/probes.browser.test.ts 5535 5545
 # 4
-W gui/src/tokens/dock.css 5512
-R gui/src/frame/dock.ts 5647 5662
-R gui/src/frame/dock.ts 5704 5714
-R gui/src/frame/dock.ts 5723 5731
-R gui/src/frame/Frame.vue 5744 5758
-W gui/src/jsdom-setup.ts 5776
-R gui/src/testing/probes.ts 5807 5816
-R gui/src/testing/probes.ts 5833 5842
-R gui/src/testing/probes.ts 5864 5870
+W gui/src/tokens/dock.css 5613
+R gui/src/frame/dock.ts 5782 5797
+R gui/src/frame/dock.ts 5839 5849
+R gui/src/frame/dock.ts 5858 5866
+R gui/src/frame/Frame.vue 5879 5893
+W gui/src/jsdom-setup.ts 5911
+R gui/src/testing/probes.ts 5942 5951
+R gui/src/testing/probes.ts 5970 5979
+R gui/src/testing/probes.ts 6001 6007
+R gui/src/panels/Placeholder.vue 6017 6027
+R gui/src/panels/modules.test.ts 6041 6050
+R gui/src/frame/ViewBar.vue 6063 6072
 # 5
-W gui/src/frame/bigtab.test.ts 5889
-W gui/src/frame/BigTabFace.vue 5966
-W gui/src/frame/BigTab.ts 6011
-R gui/eslint.config.js 6075 6081
+W gui/src/frame/bigtab.test.ts 6094
+W gui/src/frame/BigTabFace.vue 6171
+W gui/src/frame/BigTab.ts 6217
+R gui/eslint.config.js 6281 6287
 ```
 
 📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
@@ -9498,21 +9498,21 @@ del sotto-progetto.
 
 | | Che cosa | Che cosa se ne fa |
 |---|---|---|
-| 1 | **una sonda che giudica una pagina intera giudica anche ciò che non è del soggetto**: nella Home le sole coppie vicine erano del kit e di un pannello che scorre, e la guardia `near > 0` le contava (**E44**, la malattia di E29) | una prova che giudica un contenitore si dà il **caso** che giudica — qui il gruppo staccato — e la guardia su quel caso |
-| 2 | **la cura di una sonda comune tocca i compiti dopo**: lo `skip` dei pannelli toglieva al compito 8 la pillola, e lo ha detto soltanto un `grep` di `concentricRadii` e di `dock.browser.test.ts` nel resto del piano | prima di scegliere la cura di un pezzo che altri compiti usano, si cercano i suoi usi nei compiti dopo |
-| 3 | **un Atteso che diverge può essere la crescita del contratto**: **E42** ha spostato Impostazioni di 16 px, e la prova del compito 6 cadeva — detto rimettendo `Settings.vue` di `545f500` e rilanciando | quando un Atteso diverge, si rimette il file del compito prima e si rilancia: la riga 5 di `CLAUDE.md`, misurata |
-| 4 | **il CSS disegna un raggio diverso da quello scritto** dove due raggi di un lato superano il lato — CSS Backgrounds 3, §4.5 (**E46**) | una sonda che calcola una forma a mano segue la regola della fonte, non la sua abbreviazione |
-| 5 | **nel chiaro `--color-bg-raised` e `--color-bg-surface` coincidono**: una differenza fra i due si vede solo nello scuro (**E47**) | si guarda ogni cosa nei due temi, e un'attesa su un ruolo che nel chiaro coincide con un altro lo dichiara |
+| 1 | **una prova su un elemento messo a mano può provare l'elemento sbagliato**: la prima cura di **E55** arrotondava `.dv-drop-target-anchor`, e la sua prova, su un'ancora creata dalla prova stessa, era verde; col montaggio predefinito di `dockview-core` 8.3.1 la zona vera è `.dv-drop-target-selection`, e l'ha detto solo un trascinamento con un mouse vero | la forma del DOM di una libreria si misura con un'interazione vera prima di vestirla o di provarla; la prova la esercita dal vero se si può |
+| 2 | `userEvent.dragAndDrop` di `vitest/browser` passa le opzioni a Playwright, e la 1.63 accetta `{ steps }`: con `dndStrategy: "pointer"` un salto solo non disegna la zona d'arrivo, e la guardia di non-vacuità lo ha detto | una prova di trascinamento porta i passi, e la sua guardia conta ciò che il trascinamento disegna |
+| 3 | **un bordo senza stile calcola 0**, qualunque spessore dica: `computed("border-top-width", "--border-width")` rendeva `0px` | un token di lunghezza si legge con `width`, come si fa già per `--space-3` |
+| 4 | **una prova che riconosce un pezzo dal testo di un attributo** — `class="placeholder"` — cade quando la radice prende una seconda classe | la classe si legge come parola, non come testo intero dell'attributo |
+| 5 | **la revisione aveva visto due sintomi** — le schede chiare quasi indistinte dal fondo, la zona d'arrivo ad angoli dritti — e li aveva portati all'occhio del proprietario; **la radice** del primo, la griglia del colore delle schede, e poi la barra col suo fondo e il nucleo vestito da scheda erano già **divergenze dalla tavola approvata** — *«sul fondo `--color-bg`»* della (c), `.m-bar`, `.m-core` —, non gusti nuovi | al pre-controllo di un compito che disegna, ogni superficie che il compito tocca si confronta con la tavola, `stile-approvato.html`; e un sintomo portato al proprietario si porta con la sua radice misurata |
 
 **Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
 
-1. `git fetch --all --prune`, `git status -sb`; la CI di `9e6657b`, di `3a8cfdd` e del commit che scrive questa riga, per
-   prime.
-2. L'**esecuzione del compito 6**, col costo detto prima e il sì del proprietario — la banda misurata dei compiti 1–5 sta in
-   queste consegne: il brief rigenerato a `HEAD`, il modello riempito coi valori della macchina; il revisore guarda la SPA
-   **con le barre accese** e nei due temi, il gruppo staccato compreso; e l'aspetto del dock lo **giudica il proprietario**
-   (controllo 15, **D24**).
-3. E così compito per compito, fino al 9. Al **pre-controllo del compito 8** le tre sonde che l'errata gli assegna — il
-   cassetto aperto dalla tastiera col fuoco in vista (**E38**), il segnaposto della ricerca intero (**E39**), la pagina che non
-   sborda quando la fascia entra (**E43**) — e la domanda di **E44** sulla Panoramica: se scorre, la sonda dei raggi non ne
-   giudica le carte.
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. **Il Passo 8 del compito 6, ripreso.** Al proprietario, per prima cosa, **che cosa** del dock non approva — una domanda
+   per volta, in A/B —; ogni punto diventa una voce d'errata col suo *«perché»*, dalla prossima libera, **E59**, e la sua
+   cura con la prova vista rossa, com'è stato per **E55**–**E58**; poi il suo sguardo, di nuovo. Il server:
+   `(cd gui && npm run dev)`, e nella console **prima di tutto** `harnessFake.deliverAll()`, o le radio del tema restano
+   spente (**E40**); fermato **per PID** prima del cancello.
+3. Quando il proprietario approva, la riga 6 della posizione a `✅` col verbale del Passo 8, e questa sezione in archivio.
+4. Poi il pre-controllo del compito 7, nella sua sessione, e così compito per compito fino al 9. Al **pre-controllo del
+   compito 8** le sonde che l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed **E57** — e la domanda di **E44**
+   sulla Panoramica.

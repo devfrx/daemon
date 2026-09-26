@@ -1707,3 +1707,77 @@ del sotto-progetto.
    archivio.
 5. Poi il pre-controllo del compito 7, e così compito per compito fino al 9. Al **pre-controllo del compito 8** le sonde che
    l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed **E57** — e la domanda di **E44** sulla Panoramica.
+
+## Il disegno delle tre voci, scritto, del 2026-09-27
+
+Tolto dal piano il 2026-09-27, quando la sessione dopo ha scritto il disegno di **E60** e la consegna *«Come si riprende —
+il disegno delle tre voci, scritto»*. Il testo com'era, dal commit `abf4f33`, parola per parola; i rimandi sono riscritti per
+questa cartella.
+
+## Come si riprende — il disegno delle tre voci, a metà, 2026-09-27
+
+⏳ **Il disegno delle tre voci del Passo 8 è a metà.** **E61** ed **E59** sono scritte nel
+[disegno](../superpowers/specs/2026-09-22-design-system-design.md) e in [`riferimenti.md`](../riferimenti.md); **E60** no. La tavola dei
+token **non** è toccata. La consegna precedente — il Passo 8 ripreso — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+⛔ **Da sapere subito: la tavola non cambia da sola nel blocco di `base.css`.** `gui/src/tokens/board.test.ts` vuole
+`gui/src/tokens/base.css` e `themes.css` uguali **byte per byte** ai due blocchi della
+[tavola](../superpowers/specs/2026-09-22-design-system-tavole/token.html): cambiare lì i raggi di E61, o la regola e il token di E59, senza
+ricopiarli fa **rosso** il cancello — e la copia è codice della cura, che cambia i raggi dell'app e vuole le sue prove viste rosse
+prima. Quindi la tavola vera la cambia il **piano della cura**, insieme alla copia; lo sguardo del proprietario sulle tre voci si fa
+su una **copia della tavola nello scratchpad**. Fuori dai due blocchi, la parte *«the board itself»* — i campioni come `.msg` — la
+prova non la confronta. ⚠️ La consegna precedente dettava *«la tavola dei token … Il proprietario la guarda»* nel passo del
+disegno: è questo capoverso che la corregge, letto il 2026-09-27 nel sorgente della prova.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **i commit** | `git log --oneline 42b948a..HEAD`: `06dc5d5`, la sezione E61; poi il commit che scrive questa riga — la sezione E59, i richiami in E59 ed E61, la riga 6 della posizione, questa sezione e la precedente in archivio. Nessun codice cambia: `git diff --stat 42b948a..HEAD -- . ':!docs'` non rende nulla |
+| **cancello** | `GATE GREEN` all'apertura su `42b948a`, prima di `06dc5d5` e prima del commit che scrive questa riga, sullo stesso codice: jsdom 19 file e uno saltato, 137 prove e una saltata; browser 5 file e 48 prove; il pezzo `690.61 kB`; `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo**, e col server di sviluppo spento |
+| **la CI** | `42b948a` e `06dc5d5` verdi su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | la riga 6 a `⏳`: le tre voci da curare, e il loro disegno a metà |
+| **le pagine di prova** | sulla macchina `Jays`, **non tracciate**: la forma degli angoli, `forma-degli-angoli.html`, coi token e i caratteri copiati accanto, in `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\b8859b03-05cf-4110-818a-58c73238360a\scratchpad\.superpowers\brainstorm\333-1790461051\content\`; la misura della barra, `scrollbar-axes.html`, nella cartella `scratchpad\` sopra; e le varianti di E59 ed E60 della sessione di prima, che la consegna in archivio elenca. Le regole approvate stanno nelle voci e nel disegno, e bastano a rifarle. Nessun server resta acceso |
+| **solo su `Jays`** | `.claude/launch.json`, esclusa da git: si può tenere o cancellare |
+| **dall'altra macchina** | si riprende da `origin`: le voci, il disegno, `riferimenti.md` e questa sezione bastano |
+
+**Che cosa ha fatto questa sessione.** Nessun dispaccio: il disegno di **E61** e di **E59**, una sezione per volta, col sì del
+proprietario a ciascuna. Nella voce E61 due decisioni nuove del proprietario: la **cornice conta il suo bordo**, 34 — misurata nel
+browser, la dimostrazione della tavola era già storta di 1 px —; e la **curva resta il quarto di cerchio** — alla sua domanda sulla
+concentricità le fonti, la Home misurata e lo squircle guardato in tre varianti su una pagina di prova, con la scelta lasciata al
+consiglio. Nella voce E59 tre precisioni del coordinatore, misurate: il distacco per asse, l'angolo trasparente, il token dello
+spessore.
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
+del sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **un valore che «segue» è una conseguenza non esaminata**: E61 diceva *«`--radius-frame` segue, 33»*, con la formula di prima, e la cornice della tavola ha il bordo | prima di scrivere un valore che segue, si cercano i posti che usano il token — `grep -rn` su `gui/src` e sulle tavole — e si misura |
+| 2 | **prima di spiegare un fastidio si misura l'app**: alla domanda sulla concentricità la Home aveva quattro coppie di angoli annidati, tutte esatte | la risposta viene dalla misura, e la teoria la accompagna |
+| 3 | **una misura si dice col suo metodo**: detto *«15,5 px in diagonale»* e corretto in 14,2 — la distanza vera fra le due curve, cioè la fascia che l'occhio vede —, e la correzione detta al proprietario | di una grandezza vista si calcola quella vista, e accanto al numero si dice come |
+| 4 | **una regola disegnata su un asse si prova sui due**: il `margin-block` approvato staccava la sola barra verticale, e l'angolo fra le due barre usciva chiaro | una regola della barra si guarda in verticale, in orizzontale e nei due sensi |
+| 5 | **gli attrezzi**: il pannello del browser dell'app non fotografa una pagina `file://`, e una pagina di misura nella cartella del compagno visivo diventerebbe lo schermo del proprietario | si serve lo scratchpad con `python -m http.server <porta> --bind 127.0.0.1`, in una scheda in secondo piano; e il server di sviluppo si spegne prima del cancello, che rifà `npm ci` (gotcha **#133**) |
+
+**Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. **Il disegno di E60**, una sezione per volta, in A/B:
+   - nella (b), il pezzo dei messaggi — `BaseMessage`, il nome da confermare — coi quattro toni, il neutro e `ok`, `warn`, `stop`;
+     l'icona del tono dalla mappa; titolo, testo e un'azione facoltativa. I pezzi di base diventano nove, e dal *«Fuori, finché non
+     tornano due volte»* escono i messaggi; restano fuori le notifiche (**E228**) e le pillole. **Verificato il 2026-09-27:** la
+     fascia, Impostazioni e Stato avvolgono in `BaseStatus` un contenuto con `v-if`, quindi il messaggio **entra** nella regione, che
+     resta sempre nel DOM — M-3 per costruzione; la mappa `gui/src/components/icons.ts` non ha icone di stato, e i quattro nomi
+     nostri sono da scegliere; i tre ruoli del tono neutro esistono nei due temi, nella tavola e in `themes.css` —
+     `grep -n -E -- '--color-(bg-accent-subtle|border-accent|text-accent):' gui/src/tokens/themes.css` —, quindi il neutro non
+     chiede colori nuovi;
+   - nella (d), la fascia sulla pagina, coi toni e le parole di oggi, com'è in **E60**;
+   - una riga nella tabella dei controlli per il pezzo nuovo.
+3. **Lo sguardo del proprietario sulle tre voci insieme**, su una copia della tavola nello scratchpad coi valori di E61, la regola
+   di E59 e il tono neutro, verificata prima con la sonda a mezzo pixel nei due temi — la decisione 5 del disegno.
+4. **Il piano della cura**, poi il suo pre-controllo e l'esecuzione: la tavola e la sua copia, `tokens/dock.css`, la sonda, il pezzo
+   nuovo e i tre componenti. Se sia un compito nuovo o il Passo 8 del compito 6 lo decide chi scrive il piano, col proprietario.
+5. Il secondo sguardo del proprietario sul dock; approvato, la riga 6 a `✅` col verbale del Passo 8, e questa sezione in
+   archivio.
+6. Poi il pre-controllo del compito 7, e così compito per compito fino al 9. Al **pre-controllo del compito 8** le sonde che
+   l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed **E57** — e la domanda di **E44** sulla Panoramica.

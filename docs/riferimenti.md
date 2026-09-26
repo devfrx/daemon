@@ -2817,6 +2817,16 @@ python -c "import math;k=(1-2**-.5)/(1-2**-.25);S=lambda o,R,n,N=1200:[(o+R-R*ab
 | un `margin-block` sul binario stacca dalle estremità la barra **verticale** e non l'**orizzontale**, che arriva ai lati; `margin-inline` sulla forma `:horizontal` la stacca | una pagina con due scatole da 120 × 80 che scorrono, una in verticale e una in orizzontale, le parti della barra colorate, prima col solo `margin-block` e poi con la regola per asse; guardata ingrandita tre volte |
 | l'angolo fra le due barre, in una scatola che scorre nei due sensi, Chromium lo disegna **chiaro**; con `::-webkit-scrollbar-corner` trasparente sparisce | la stessa pagina, con una scatola da 400 × 300 dentro una da 120 × 80 |
 
+#### Il messaggio — E60
+
+| Misura, il 2026-09-27 | Come si rifà |
+|---|---|
+| il **contrasto** delle coppie del messaggio, `BaseNotice`, nei due temi e nei quattro toni — il neutro col fondo dell'accento —: il titolo, `--color-text`, fra **11,61** e **14,53**; il testo sotto, `--color-text-muted`, fra **5,17** e **5,85**; l'icona, il testo del tono, fra **5,41** e **7,99**. Tutte sopra 4,5:1, e `contrast.test.ts` le giudica già, per famiglie. ⚠️ **Diverge da E60**, che dal pannello del browser dell'app, il 2026-09-26, dava *«il testo sul fondo del messaggio fra 11,6 e 16,8»*: il testo sotto il titolo in quella gamma non c'era, e il 16,8 da `themes.css` non si riproduce; le icone, fra 5,4 e 8,0, tornano | dai colori di `gui/src/tokens/themes.css`, col calcolo di `contrast.test.ts` — la luminanza relativa di WCAG 2.2 —: il comando qui sotto, dalla radice del repository, senza backslash |
+
+```bash
+python -c "import sys;c=open(sys.argv[1],encoding='utf-8').read();B=lambda s:{l.split(':',1)[0].strip()[2:]:l.split(':',1)[1].strip() for l in c[c.index(s+' {'):c.index('}',c.index(s+' {'))].split(';') if '--' in l and ':' in l};S=B(':root');H=lambda R,v,d=0:v if v.startswith('#') else (H(R,S.get(v[6:-1],R.get(v[6:-1],'')),d+1) if v.startswith('var(--') and d<5 else '');L=lambda h:sum(w*((x/12.92) if x<=0.04045 else ((x+0.055)/1.055)**2.4) for w,x in zip((0.2126,0.7152,0.0722),(int(h[i:i+2],16)/255 for i in (1,3,5))));K=lambda a,b:(max(L(a),L(b))+0.05)/(min(L(a),L(b))+0.05);D=lambda n:B('[data-theme='+chr(34)+n+chr(34)+']');r=[(p,K(H(R,R[f]),H(R,R['color-bg-'+t+'-subtle']))) for R in (D('dark'),D('light')) for t in ('accent','ok','warn','stop') for p,f in (('title','color-text'),('text','color-text-muted'),('icon','color-text-'+t))];[print(p,'%.2f'%min(v for q,v in r if q==p),'%.2f'%max(v for q,v in r if q==p)) for p in ('title','text','icon')]" gui/src/tokens/themes.css
+```
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

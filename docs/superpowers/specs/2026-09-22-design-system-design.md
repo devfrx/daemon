@@ -258,9 +258,11 @@ porta un significato: *«Le trappole»*, la provenienza della chat.
 | **i pezzi di base** | portano il prefisso **`Base`**; dentro, solo elementi HTML, altri pezzi di base e componenti UI di terzi; **mai lo stato globale**, *«e.g. from a Pinia store»*. È la regola *Base Component Names* della guida di stile di Vue, *strongly recommended*, letta il 2026-09-23 |
 | **quando un pezzo entra** | alla **seconda occorrenza**, non alla prima: la regola dei tre momenti, già approvata col disegno del 2. I pezzi qui sotto sono contati coi comandi del censimento, in *«Verificato, dedotto, assunto»* |
 
-### I pezzi di base — otto
+### I pezzi di base — nove
 
-Sette dalla risposta 17, e `BaseTextField` dalla (d), decisione 20.
+Sette dalla risposta 17, `BaseTextField` dalla (d), decisione 20, e `BaseNotice` da **E60**. ⚠️ **RICHIAMO DEL 2026-09-27 (E60
+del [piano](../plans/2026-09-23-design-system.md), A del proprietario del 2026-09-26):** qui stava *«otto»*; il nono è il pezzo dei
+messaggi, qui sotto.
 
 | Pezzo | Che cosa | La seconda occorrenza | Sopra |
 |---|---|---|---|
@@ -272,9 +274,12 @@ Sette dalla risposta 17, e `BaseTextField` dalla (d), decisione 20.
 | **`BaseLabel`** | l'etichetta in maiuscolo con l'icona | i titoli di Permessi e la presa grande | HTML |
 | **`BaseRadioGroup`** | la scelta fra poche opzioni | la policy VRAM delle Impostazioni e la scelta del tema della (a) | `RadioGroup` di `reka-ui` |
 | **`BaseTextField`** | il campo di testo | il nome di una vista salvata e la ricerca della barra — la (d) | HTML |
+| **`BaseNotice`** | il messaggio: un tono fra quattro con la sua icona, un titolo, e un testo e un'azione facoltativi | la fascia, la riga di Impostazioni e quella del verdetto di Stato — `Band.vue`, `Settings.vue`, `Status.vue`, oggi scritte a mano dentro `BaseStatus` | HTML, `BaseIcon`, `BaseButton` |
 
-**Fuori, finché non tornano due volte:** i messaggi e le notifiche, e le pillole. `Confirm.vue` resta un pezzo **composto** dai
-pezzi di base, e `markdown.ts` resta com'è.
+**Fuori, finché non tornano due volte:** le notifiche e le pillole. `Confirm.vue` resta un pezzo **composto** dai pezzi di base,
+e `markdown.ts` resta com'è. ⚠️ **Richiamo del 2026-09-27 (E60):** qui stavano anche i messaggi — le righe di Impostazioni e di
+Stato vi erano contate come regioni, `BaseStatus`, non come messaggi —; il proprietario ha voluto il pezzo **adesso**, coi tre usi,
+e le notifiche dei lavori lunghi restano di **E228**, sue.
 
 ### La forma di un pezzo di base
 
@@ -299,6 +304,32 @@ pezzi di base, e `markdown.ts` resta com'è.
 Esiste **sempre** nel DOM, vuota e alta zero, e il testo le **entra dentro**: così un lettore di schermo la annuncia, e non
 nasce una scatola vuota — la regola *«no empty box»* della §6a del disegno del 2. Chiude **per costruzione** la voce **M-3** di
 E187: la (e).
+
+### `BaseNotice` — richiamo del 2026-09-27, E60
+
+Il messaggio della tavola dei token, `.msg` in *«Gli stati»*, fatto pezzo: il proprietario l'ha voluto **universale**, per ogni
+messaggio di sistema, e il suo disegno sta in **E60** del [piano](../plans/2026-09-23-design-system.md), deciso il 2026-09-26
+guardando le pagine di prova.
+
+| | |
+|---|---|
+| **le parti** | l'**icona** del tono; un **titolo**, sempre, e sotto un **testo** facoltativo; in fondo alla riga un'**azione** facoltativa — un `BaseButton` piccolo, centrato in verticale, com'è nella pagina approvata. Come in `BaseDialog`, titolo e testo sono i props `title` e `description`, e l'azione è uno slot (decisione 29). **Nessun pulsante per chiuderlo:** segue uno stato, e sparisce quando lo stato cambia |
+| **i toni** | un **tipo** di quattro valori: `ok`, `warn` e `stop` come il `.msg` della tavola, e il **neutro** — N2 di E60, coi ruoli dell'accento: il fondo `--color-bg-accent-subtle`, il bordo `--color-border-accent`, l'icona `--color-text-accent` —, che nel codice si chiama **`info`** (decisione 28) |
+| **l'icona** | dalla mappa, **col nome del tono** (decisione 28): `info` → `info`, `ok` → `circle-check`, `warn` → `triangle-alert`, `stop` → `circle-x`, a `--size-icon-lg` — i tre disegni della tavola e `info`, tutti in `lucide` 1.47.0: `ls gui/node_modules/lucide/dist/esm/icons/{info,circle-check,triangle-alert,circle-x}.mjs` |
+| **il raggio** | lo dice chi lo usa: **in una scheda** `--radius-control`, com'è il `.msg` della tavola; **sulla pagina** `--radius-card` — la fascia, nella (d). 🔶 **L'azione sta solo sulla pagina**, per la regola dei raggi: lì il pulsante sta a `--space-3` più il bordo con `--radius-control`, concentrico per costruzione (**E61**); in una scheda starebbe a 13 px da un angolo di 8, e il raggio concentrico sarebbe negativo. Oggi nessun messaggio in una scheda ne ha una |
+| **con `BaseStatus`** | il messaggio **entra** nella regione, che resta sempre nel DOM: M-3 regge per costruzione. ⛔ **Lo spazio attorno è del messaggio, mai della regione**, che vuota resta alta zero e non prende posto — **E42** |
+| **il contrasto** | nessuna coppia nuova: `contrast.test.ts` giudica già ogni testo su ogni fondo tenue a 4,5:1 — anche l'icona, che ha il colore del testo del suo tono — e `--color-border-accent` fra i segni a 3:1. Letto in `families()` il 2026-09-27; le misure delle coppie, e il comando, in [`riferimenti.md`](../../riferimenti.md), *«Il messaggio — E60»* |
+
+**Chi lo usa, con le parole di oggi** — le chiavi di `gui/src/locales/it.json`, non ricopiate (**E39**):
+
+| Dove | Quando | Tono | Titolo | Testo | Azione |
+|---|---|---|---|---|---|
+| la fascia | il core non ha risposto | `warn` | `band.waiting` | — | `band.retry` |
+| la fascia | il timbro è diverso | **`stop`** — oggi `warn` | `band.stale` | `band.expected`, quando il core l'ha detto | — |
+| Impostazioni | una richiesta in volo | `info` | `settings.inFlight` | — | — |
+| Stato | l'ultimo verdetto: in coda | `info` | `status.verdict.Queued` | — | — |
+| Stato | concessa | `ok` | `status.verdict.Granted` | — | — |
+| Stato | rifiutata | `stop` | `status.verdict.Refused` | `status.refusedDetail` | — |
 
 ### I pezzi che non si riusano
 
@@ -361,6 +392,19 @@ disse di non volere — e il cassetto dei moduli, `<Drawer />`.
 Il pulsante **«Moduli»** scende nella **striscia**, dov'è nella tavola dello stile e nella [Panoramica](2026-09-22-design-system-tavole/panoramica.html).
 
 ⚠️ **RICHIAMO DEL 2026-09-26, il proprietario al Passo 8 del compito 6:** la barra è **parte della pagina** — né fondo né riga sotto, com'è `.m-bar` nella tavola; il fondo rialzato col bordo veniva dalla parte 2 (**E57** del [piano](../plans/2026-09-23-design-system.md)).
+
+### La fascia — richiamo del 2026-09-27, E60
+
+Oggi `frame/Band.vue` è una striscia da bordo a bordo, con la sola riga sotto, senza icona né titolo, e le schede la toccano: il
+dock ha 0 in alto (risposta 20). È una **divergenza dalla tavola approvata**, che ne disegna il messaggio — e l'esempio del `.msg`
+è il nostro, *«Il core non risponde»* —, come **E57** ed **E58** (**E60** del [piano](../plans/2026-09-23-design-system.md)).
+
+| | |
+|---|---|
+| **che cos'è** | un **`BaseNotice` sulla pagina**, fra la barra e il dock, com'è stato approvato guardandolo: il raggio della scheda, a `--space-3` dai lati — allineato alle schede — e dalle schede sotto; sopra, la barra le lascia i suoi 8 px, il `padding` di `.bar` in `ViewBar.vue` |
+| **«Riprova»** | l'azione, a `--space-3` più il bordo dal bordo della fascia, con `--radius-control`: concentrica per costruzione (**E61**) |
+| **i due casi** | le prime due righe di *«Chi lo usa»*, nella (b): il core che non ha risposto, `warn` con «Riprova»; il timbro diverso, **`stop`**, perché la finestra non procede — e la barra colora già il suo chip con `--color-text-stop`: `grep -n 'stale' gui/src/frame/ViewBar.vue` |
+| **ciò che non cambia** | la fascia **non è un pannello** (D50), e compare solo quando il core manca o il timbro è sbagliato (§6a del disegno del 2); la regione resta sempre nel DOM, e la fascia vi **entra** col suo spazio, come dice la (b) |
 
 ### La Panoramica
 
@@ -476,6 +520,7 @@ come si controlla: le proposte si **rileggono** col disegno, e il piano ne scegl
 | 20 | le **prove del browser** | la configurazione di `vitest` per il browser | ciascuna con la **guardia di non-vacuità**; il passo nel cancello rosso se il browser non parte, non verde | (f) |
 | 21 | la **riga «Accessibilità»** | `docs/tracciabilita.md` | 🔶 col richiamo datato; il comando del riquadro in testa al file si rilancia prima e dopo | (e) |
 | 22 | la **barra di scorrimento** — richiamo del 2026-09-27 | la regola in `base.css` | nel browser, su una scatola che scorre in verticale e su una in orizzontale: lo spessore misurato — `offsetWidth − clientWidth`, `offsetHeight − clientHeight` — uguale a `--size-scrollbar`, letto con `readToken`; rosso senza la regola. Il resto — il cursore nascosto, le frecce, il distacco — lo guarda il proprietario | E59 |
+| 23 | **`BaseNotice`** — richiamo del 2026-09-27 | `components/BaseNotice.vue`, e la fascia, Impostazioni e Stato | come ogni pezzo di base, la riga 11; in più: ogni tono disegna l'icona col suo nome, sotto jsdom, e prende i suoi ruoli, nel browser col colore calcolato contro `readToken`; i tre usi coi toni di *«Chi lo usa»*, nella (b), nelle **due direzioni** — la fascia `warn` con «Riprova» che riprova, e `stop` senza, col timbro solo quando c'è; il verdetto col suo tono; niente quando non c'è niente —, e la regione la stessa prima e dopo, com'è oggi (M-3); nel browser, la fascia **sulla pagina**: a 12 px dai lati e dalle schede, e i raggi della fascia e di «Riprova» con la sonda a mezzo pixel (**E61**). Il contrasto non chiede nulla di nuovo: la (b) | E60 |
 
 ## Verificato, dedotto, assunto
 
@@ -586,7 +631,7 @@ Le righe fino alla 22 sono quelle del brainstorming che restano **vive**, **paro
 sezioni le citano così; le decisioni del **metodo** del brainstorming — 1, 4, 6, 9 e 12: dove nasceva la consegna, il visual
 companion nello scratchpad, la cornice delle tavole, il confronto dei caratteri, le scatole del companion nella sonda — stanno
 nella [consegna in archivio](../../archivio/consegna-avvio-brainstorming-design-system.md). Le righe 23–27 sono della sessione
-che ha scritto il disegno.
+che ha scritto il disegno, la 28 e la 29 di quella che ha scritto il disegno di **E60**, il 2026-09-27.
 
 | | Decisione | Perché, e che cosa costa se è sbagliata |
 |---|---|---|
@@ -612,6 +657,8 @@ che ha scritto il disegno.
 | 25 | le **sviste** del diario — i ruoli per tema, `panels/chat/`, *«si sovrascrive»*, la legenda parafrasata — sono corrette **qui** con la misura, e restano nella consegna come erano | la regola di `CLAUDE.md`: *un'evidenza scritta prima della misura è un'ipotesi*, e dove diverge si registra la divergenza; nessuna tocca il merito approvato. Costo: nessuno |
 | 26 | il disegno **non entra** da solo nella §12 del compendio, in `README.md`, in `roadmap.md` né in `tracciabilita.md`; si muovono solo il puntatore della §6 e la riga d'intestazione del compendio | il precedente dei disegni dei gesti e della knowledge base — la misura 6 di quello della knowledge base: li scrive il piano; il puntatore si muove oggi perché il prossimo passo è cambiato. Costo se sbagliato: una riga nel piano in meno |
 | 27 | i controlli **proposti** della tabella del prodotto | ogni artefatto vuole un controllo, e alcune sezioni approvavano la regola senza dire come si controlla: la forma più piccola è scritta accanto, e il piano la sceglie. Costo se sbagliato: il piano ne sceglie un'altra |
+| 28 | i **nomi** di E60: il pezzo è **`BaseNotice`**, il tono neutro nel codice è **`info`**, e le icone dei toni prendono **il nome del tono** | il nome il proprietario l'ha lasciato al coordinatore il 2026-09-27, coi criteri di `decision-principles`. Nel codice della GUI *message* è già il messaggio del filo — `IpcMessage`, `schema/messages.ts`, `message.kind` nei negozi —, e `BaseMessage`, il nome di E60, gliene avrebbe dato un secondo; `BaseAlert` direbbe il ruolo ARIA che interrompe, e le regioni sono `status`; `BaseBanner` direbbe «tutta la pagina», e il pezzo vive anche nelle schede. `neutral` è già la scala del grigio caldo, `--ref-neutral-*` — il grigio di N1, scartato. Le icone col nome del tono, com'è per i moduli. Costo se sbagliato: un rinomino |
+| 29 | la **forma** di `BaseNotice`: `title` e `description` come in `BaseDialog`, l'azione in uno slot, e **nessuna chiusura** a mano | un secondo modo di dire titolo e testo sarebbe un secondo stile nel kit; un messaggio che si chiude a mano nasconde uno stato che c'è ancora, e un avviso che si chiude è una notifica, cioè **E228**. Costo se sbagliato: un prop in più |
 
 ## Vicoli ciechi e scelte scartate, col perché
 
@@ -666,6 +713,10 @@ che ha scritto il disegno.
 | 18 | `reka-ui` 2.10.5 al registro | se il piano sale, ricontrolla le frecce di `RovingFocusGroup` nel pacchetto nuovo |
 | 19 | il pre-controllo di ogni compito ha trovato un difetto in **tutti** i compiti dispacciati finora (`CLAUDE.md`) | ogni compito si rilegge contro il codice di **allora**, non contro questo disegno |
 | 20 | gli **attrezzi delle tavole** — il pannello del browser, `http.server` spento per PID, il visual companion | stanno nella consegna in archivio, *«Vicoli ciechi e trappole della prima sessione»*, e servono solo a chi fa una tavola nuova |
+| 21 | le **prove che leggono le righe di oggi** — richiamo del 2026-09-27, E60 | `modules.test.ts` cerca `.event`, la riga del verdetto, e `frame.test.ts` il testo della fascia: si riscrivono sul pezzo **senza perdere** ciò che provano — niente prima del verdetto, la regione la stessa prima e dopo (M-3). Le trova `grep -rn -e '".event"' -e 'band.waiting' -e 'band.stale' -e 'settings.inFlight' -e 'status.verdict' gui/src --include=*.test.ts` |
+| 22 | la pagina kit mostra **ogni** pezzo in ogni stato — E60 | il messaggio con l'azione si mostra **sulla pagina**, com'è la fascia, e non in una scheda: lì la regola dei raggi lo vieta — la (b) — e la sonda del kit lo coglierebbe |
+| 23 | le cifre degli **otto pezzi** nel piano — E60 | le portano la testa del piano e due righe del compito 9 — la riga della §12 che scrive e un commento del suo script —; le altre sono di compiti eseguiti, verbali: `grep -n 'otto pezzi' docs/superpowers/plans/2026-09-23-design-system.md`. Con `BaseNotice` diventano false, e una cifra che vive in più documenti **si toglie**, non si ricorregge (gotcha #68) |
+| 24 | il commento di `icons.ts` sopra `chat` — E60 | dice che i messaggi di stato *«would need another drawing if they entered the kit»*: entrano, coi disegni dei toni, e il commento si riscrive |
 
 ## Il prossimo passo
 

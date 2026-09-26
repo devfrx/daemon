@@ -215,6 +215,7 @@ detto al proprietario **prima** della risposta 16, ed è scritto lì, in archivi
 | **misure** | `--size-target-min`, `--size-control-sm`/`md`/`lg` | **nulla di cliccabile sotto 24 × 24** (2.5.8); la presa grande è `lg` |
 | **icone** | `--size-icon-sm`/`md`/`lg`, `--icon-stroke` | tre misure e un tratto solo |
 | **focus** | `--focus-width`, `--focus-offset` | un **contorno** di almeno 2 px a 3:1 (2.4.13), visibile (2.4.7) e non nascosto (2.4.11) |
+| **barra di scorrimento** | `--size-scrollbar`; per il resto ruoli e spazi che ci sono già | ⚠️ **RICHIAMO DEL 2026-09-27 (E59 del [piano](../plans/2026-09-23-design-system.md), A e C del proprietario del 2026-09-26):** **una regola sola**, accanto a `:focus-visible` e `::selection`, per **ogni** scatola che scorre — la nostra, quelle di `dockview` e di `reka-ui`, e quelle che arriveranno —, coi pseudo-elementi `::-webkit-scrollbar`: sottile; il cursore arrotondato dentro un bordo trasparente; il binario e l'angolo fra le due barre trasparenti; **senza frecce**; staccata dalle estremità **nei due sensi** — la verticale in alto e in basso, l'orizzontale ai lati —; il cursore si vede **solo** col puntatore sopra la scatola o col fuoco dentro, e si accende sotto il puntatore. Le proprietà standard, `scrollbar-width` e `scrollbar-color`, dicono solo colore e spessore, e le frecce restano. Il distacco per asse e l'angolo trasparente li ha **misurati** il disegno delle tre voci: col solo `margin-block` l'orizzontale arriva agli angoli, e l'angolo fra le barre Chromium lo disegna chiaro. ⚠️ **Il limite:** dove una scatola imposta una delle due proprietà standard, i pseudo-elementi si spengono e la regola non vale — `.dv-tabs-container` di `dockview` ha `scrollbar-width: thin`. Le fonti e le misure in [`riferimenti.md`](../../riferimenti.md) |
 | **movimento** | `--duration-fast`/`moderate`/`slow`, `--ease-standard`/`enter`/`exit` | le durate e le curve «productive» di Carbon; **a zero** con `prefers-reduced-motion: reduce` (2.3.3) |
 | **livelli** | `--z-floating`, `--z-popover`, `--z-overlay`, `--z-toast`, `--z-tooltip` | `--z-floating` è nato con la (c), sotto menu, dialoghi e avvisi — decisione 23 |
 
@@ -474,6 +475,7 @@ come si controlla: le proposte si **rileggono** col disegno, e il piano ne scegl
 | 19 | la **striscia** | la cornice | nel browser, a finestra piena: la pillola a 12 e 24 px, e nessuna scheda vicina a un angolo della pagina | proposta |
 | 20 | le **prove del browser** | la configurazione di `vitest` per il browser | ciascuna con la **guardia di non-vacuità**; il passo nel cancello rosso se il browser non parte, non verde | (f) |
 | 21 | la **riga «Accessibilità»** | `docs/tracciabilita.md` | 🔶 col richiamo datato; il comando del riquadro in testa al file si rilancia prima e dopo | (e) |
+| 22 | la **barra di scorrimento** — richiamo del 2026-09-27 | la regola in `base.css` | nel browser, su una scatola che scorre in verticale e su una in orizzontale: lo spessore misurato — `offsetWidth − clientWidth`, `offsetHeight − clientHeight` — uguale a `--size-scrollbar`, letto con `readToken`; rosso senza la regola. Il resto — il cursore nascosto, le frecce, il distacco — lo guarda il proprietario | E59 |
 
 ## Verificato, dedotto, assunto
 
@@ -547,6 +549,7 @@ delle immagini della CI: nella sezione *«Il design system della GUI — le font
 | il dock vestito dà l'aspetto della Home approvata | il proprietario, alla prima prova del piano |
 | l'Assistente vocale annuncia una `BaseStatus` che si riempie | il passo a mano del piano, decisione 21 |
 | sull'altra macchina c'è Chrome | la prima corsa là |
+| la barra di scorrimento regge con la preferenza di Windows che tiene **sempre visibili** le barre — il cursore resta nascosto finché il puntatore non entra — e sotto i **colori forzati** (E59) | il piano della cura, e lo sguardo del proprietario |
 
 ## Cosa questo disegno ha misurato, e che non era scritto da nessuna parte
 

@@ -2805,6 +2805,18 @@ Nel [disegno](superpowers/specs/2026-09-22-design-system-design.md) restano le r
 python -c "import math;k=(1-2**-.5)/(1-2**-.25);S=lambda o,R,n,N=1200:[(o+R-R*abs(math.cos(t))**(2/n),o+R-R*abs(math.sin(t))**(2/n)) for t in (math.pi/2*i/N for i in range(N+1))]+[(o+R+(80-R)*i/N,o) for i in range(N+1)]+[(o,o+R+(80-R)*i/N) for i in range(N+1)];B=lambda R,r,n:(lambda O,I:[min(math.dist(p,q) for q in O) for p in I])(S(0,R,n),[p for p in S(13,r,n)[::5] if max(p)<=R+2]);[print(f'{R:.1f}/{r:.1f} n={n}:',round(min(g),2),round(max(g),2)) for R,r,n in [(21,8,2),(21,8,4),(21*k,8*k,4)] for g in [B(R,r,n)]]"
 ```
 
+#### La barra di scorrimento — E59
+
+| Che cosa | Fonte primaria, letta il 2026-09-26 e riletta il 2026-09-27 |
+|---|---|
+| le proprietà standard, `scrollbar-width` e `scrollbar-color`, da Chrome **121**: il colore del cursore e del binario, e uno spessore fra `auto`, `thin` e `none` — nessuna lunghezza, nessun raggio, nessun margine, nessuna freccia | Chrome for Developers, *Scrollbar styling*, aggiornata il 2024-01-17 |
+| `::-webkit-scrollbar` e le sue parti — il cursore, il binario, i pulsanti con le frecce, l'angolo dove le due barre si incontrano, e le forme `:horizontal` e `:vertical` — sono **non standard**; dove `scrollbar-color` e `scrollbar-width` valgono altro che `auto` vincono loro, e `scrollbar-color` **si eredita** | MDN, `::-webkit-scrollbar`, aggiornata il 2026-08-27 |
+
+| Misura, il 2026-09-27, in Chromium 152 — il pannello del browser dell'app | Come si rifà |
+|---|---|
+| un `margin-block` sul binario stacca dalle estremità la barra **verticale** e non l'**orizzontale**, che arriva ai lati; `margin-inline` sulla forma `:horizontal` la stacca | una pagina con due scatole da 120 × 80 che scorrono, una in verticale e una in orizzontale, le parti della barra colorate, prima col solo `margin-block` e poi con la regola per asse; guardata ingrandita tre volte |
+| l'angolo fra le due barre, in una scatola che scorre nei due sensi, Chromium lo disegna **chiaro**; con `::-webkit-scrollbar-corner` trasparente sparisce | la stessa pagina, con una scatola da 400 × 300 dentro una da 120 × 80 |
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

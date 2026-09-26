@@ -1648,3 +1648,62 @@ del sotto-progetto.
 4. Poi il pre-controllo del compito 7, nella sua sessione, e così compito per compito fino al 9. Al **pre-controllo del
    compito 8** le sonde che l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed **E57** — e la domanda di **E44**
    sulla Panoramica.
+
+## Il disegno delle tre voci, a metà, del 2026-09-27
+
+Tolto dal piano il 2026-09-27, quando la sessione dopo ha scritto il disegno di **E61** e di **E59** e la consegna
+*«Come si riprende — il disegno delle tre voci, a metà»*. Il testo com'era, dal commit `42b948a`, parola per parola; i
+rimandi sono riscritti per questa cartella.
+
+## Come si riprende — il Passo 8 del compito 6 ripreso, 2026-09-26
+
+⏳ **Il Passo 8 del compito 6 resta non approvato, e ora si sa perché.** Ripreso col proprietario, ha dato **tre voci**,
+**E59**, **E60** ed **E61**, tutte **decise** con le sue risposte e **nessuna curata**: la barra di scorrimento, i messaggi
+con la fascia, il bordo nel raggio. La consegna precedente — l'esecuzione del compito 6 — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **i commit** | il solo commit che scrive questa riga: le tre voci, la riga 6 della posizione, questa sezione e la precedente in archivio. Nessun codice cambia |
+| **cancello** | `GATE GREEN` all'apertura, su `8b0a121`, e prima del commit che scrive questa riga, sullo stesso codice: jsdom 19 file e uno saltato, 137 prove e una saltata; browser 5 file e 48 prove; il pezzo `690.61 kB`; `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `8b0a121` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | la riga 6 a `⏳`, col perché: la porta a `✅`, col verbale, la sessione che chiude il Passo 8 dopo le cure |
+| **le pagine di prova** | le varianti che il proprietario ha guardato, **non tracciate**: sulla macchina `Jays`, nello scratchpad della sessione, `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\84c160b8-7141-45ac-906f-ff92860cfde8\scratchpad\.superpowers\brainstorm\1017-1790456318\content\` — `barra-di-scorrimento.html`, `messaggi-tono-neutro.html`, `fascia-al-suo-posto-v3.html` e `angoli-del-messaggio.html`, coi token e i caratteri copiati accanto —, servite dal compagno visivo di `superpowers:brainstorming`. Le regole approvate stanno **nelle voci**, e bastano a rifarle |
+| **solo su `Jays`** | `.claude/launch.json`, con cui il pannello del browser dell'app avvia `npm --prefix gui run dev`, esclusa da git da una riga in `.git/info/exclude`: si può tenere o cancellare. Le copie in `%TEMP%` delle sessioni di prima le elenca la consegna in archivio |
+| **dall'altra macchina** | si riprende da `origin`: le tre voci, questa sezione e il piano bastano |
+
+**Che cosa ha fatto questa sessione.** Nessun dispaccio. Il proprietario ha detto che cosa non approva — le viste, la barra
+di scorrimento, la fascia — e ha deciso in A/B e guardando varianti vive, coi token veri, nel suo Chrome; guardando un
+messaggio dentro una scheda ha trovato il pixel che il raggio della scheda non contava. **Le viste non hanno voce:**
+l'immagine che mostrava è la Panoramica della (d) — il nome della vista nella barra e le miniature coi moduli —, del
+**compito 8** sopra il **7**; le sue etichette, *«sei qui»* e *«predefinita»*, non sono quelle della tavola nel
+repository, e la miniatura di Compatta è il suo schema, **D18**.
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
+del sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **una misura che esclude qualcosa non si riporta come «tutto»**: la prima misura della pagina di prova saltava la sua cornice, e il proprietario ha visto a occhio ciò che la misura aveva escluso (**E61**) | si misura senza esclusioni, e ciò che si esclude si dice accanto al numero |
+| 2 | **uno scarto ammesso può nascondere una regola sbagliata**: il pixel del bordo stava nella tavola, nella pagina kit e nel gruppo staccato, e la sonda lo teneva verde con 1,5 px di scarto (**E61**) | uno scarto si sceglie più stretto del difetto più piccolo che la regola vuole vedere |
+| 3 | **ciò che il proprietario non approva può essere già nella tavola**: la fascia (**E60**), come la barra e il nucleo (**E57**, **E58**) | prima di disegnare si cerca il pezzo nelle quattro tavole, col `grep` sulla classe o sulle parole |
+| 4 | **un'immagine del proprietario non è per forza la tavola**: la Panoramica mostrata aveva etichette che il repository non ha | si confronta con la tavola prima di rispondere, e la differenza si dice |
+| 5 | **il compagno visivo scrive in `.superpowers/brainstorm/`, che non è ignorata**: il solo `.superpowers/sdd/` ha il suo `.gitignore` — `git check-ignore -v .superpowers/brainstorm/x.html` non risponde, sulla macchina `Jays` | `--project-dir` va nello scratchpad; i token e i caratteri si copiano nella cartella dei contenuti e si leggono da `/files/`, in una pagina intera |
+
+**Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. **Il disegno delle tre voci**: i richiami datati nel [disegno](../superpowers/specs/2026-09-22-design-system-design.md) — nella regola
+   dei raggi, dove *«la distanza vera»* conta il bordo (**E61**); nella (a), coi due token e la regola della barra (**E59**,
+   **E61**); nella (b), col pezzo dei messaggi, i quattro toni e l'uscita dal *«fuori finché»* (**E60**); nella (d), con la
+   fascia sulla pagina (**E60**); nella (f), con la sonda a mezzo pixel (**E61**) —; la tavola dei token, `token.html`, col
+   raggio, la barra e il tono neutro; le fonti di **E59** in [`riferimenti.md`](../riferimenti.md). Il proprietario la
+   guarda.
+3. **Il piano della cura**, poi il suo pre-controllo e l'esecuzione. Se la cura sia un compito nuovo o il Passo 8 del compito
+   6 lo decide chi scrive il piano, col proprietario: le voci sono tre, ma toccano la tavola, il kit, la sonda e tre
+   componenti.
+4. Il secondo sguardo del proprietario sul dock; approvato, la riga 6 a `✅` col verbale del Passo 8, e questa sezione in
+   archivio.
+5. Poi il pre-controllo del compito 7, e così compito per compito fino al 9. Al **pre-controllo del compito 8** le sonde che
+   l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed **E57** — e la domanda di **E44** sulla Panoramica.

@@ -127,7 +127,7 @@ com'era alla risposta 4 lo rende `git show 8c0bbe6:docs/superpowers/specs/2026-0
 | il **linguaggio della A, «Strumento»** | etichette in **maiuscolo spaziato** con un segno bordeaux e un'icona piccola; **numeri grandi e leggeri** con l'etichetta piccola sotto; la barra a segmenti; la riga «prossima» accesa; **divisori sottili** al posto delle scatole pesanti |
 | **dentro schede morbide**, come la B | gli angoli arrotondati; nello scuro un bordo, nel chiaro un'ombra leggera — la (a) |
 | il **bordeaux nello scuro** | sul carbone non basta né per un testo né per un segno sottile (contrasto WCAG): lì è un **fondo pieno** col testo off-white sopra, e i testi bordeaux diventano un **rosa antico** — la (a) |
-| i **raggi concentrici** | *raggio di fuori = raggio di dentro + distanza*, per costruzione nei token — `--radius-card` e `--radius-frame` sono `calc` — così, se cambia un margine, i raggi lo seguono da soli. Vale per **ogni** annidamento, con la distanza vera: un foglio con 24 di margine attorno a schede da 20 vuole 44. Un elemento che non può stare in un angolo con lo stesso centro **si allontana dall'angolo** |
+| i **raggi concentrici** | *raggio di fuori = raggio di dentro + distanza*, per costruzione nei token — `--radius-card` e `--radius-frame` sono `calc` — così, se cambia un margine, i raggi lo seguono da soli. Vale per **ogni** annidamento, con la distanza vera: un foglio con 24 di margine attorno a schede da 20 vuole 44. Un elemento che non può stare in un angolo con lo stesso centro **si allontana dall'angolo**. ⚠️ **RICHIAMO DEL 2026-09-27, il proprietario al Passo 8 del compito 6 e al disegno delle sue tre voci:** la distanza vera va **da bordo esterno a bordo esterno**, quindi conta anche il **bordo** di chi contiene. Ogni superficie nostra arrotondata che contiene qualcosa di arrotondato porta il suo bordo da 1 px, disegnato o trasparente, e i token lo sommano: una scheda con 12 di margine attorno a un controllo da 8 vuole 21, non 20; ciò che sta **subito dentro** il bordo prende il raggio meno il bordo. L'esempio del foglio diventa: 24 di margine attorno a schede da 21, più il bordo del foglio, vuole 46 (**E61** del [piano](../plans/2026-09-23-design-system.md)). La curva resta il **quarto di cerchio**: lo squircle è in *«Vicoli ciechi e scelte scartate»* |
 | il **movimento** | breve e sobrio, a zero con «meno movimento» — la (a) |
 
 Nel repository le tavole approvate sono **quattro**, in [`2026-09-22-design-system-tavole/`](2026-09-22-design-system-tavole/):
@@ -211,7 +211,7 @@ detto al proprietario **prima** della risposta 16, ed è scritto lì, in archivi
 |---|---|---|
 | **caratteri** | `--font-family-text` (Geist), `--font-family-tool` (Barlow), `--font-family-mono`; i pesi `--font-weight-*`; le scorciatoie `font`: `--font-label`, `--font-caption`, `--font-body`, `--font-body-strong`, `--font-title`, `--font-heading`, `--font-numeric`, `--font-display`, `--font-mono` | la scala dei caratteri di Carbon; il minimo è `label-small` di Material, 11/16; l'etichetta in **maiuscolo**, i numeri con le **cifre tabulari** |
 | **spazi** | `--space-0-5` … `--space-16` | la griglia da 4, gli spazi di Carbon |
-| **raggi** | `--radius-inline`, `--radius-control`, `--radius-card`, `--radius-frame`, `--radius-full` | `card` e `frame` sono **`calc`**: la regola dei raggi della risposta 4; `full` per le pillole — dentro una pillola va una pillola |
+| **raggi** | `--radius-inline`, `--radius-control`, `--radius-card`, `--radius-frame`, `--radius-full` | `card` e `frame` sono **`calc`**: la regola dei raggi della risposta 4; `full` per le pillole — dentro una pillola va una pillola. ⚠️ **Richiamo del 2026-09-27 (E61, e la A del proprietario sulla cornice):** i due `calc` sommano anche `--border-width`, perché la scheda e la cornice portano il loro bordo — la regola dei raggi, nel linguaggio visivo |
 | **misure** | `--size-target-min`, `--size-control-sm`/`md`/`lg` | **nulla di cliccabile sotto 24 × 24** (2.5.8); la presa grande è `lg` |
 | **icone** | `--size-icon-sm`/`md`/`lg`, `--icon-stroke` | tre misure e un tratto solo |
 | **focus** | `--focus-width`, `--focus-offset` | un **contorno** di almeno 2 px a 3:1 (2.4.13), visibile (2.4.7) e non nascosto (2.4.11) |
@@ -430,7 +430,10 @@ tavola dei token, la striscia della risposta 20. Quindi le tre sonde, e le prove
 ⛔ **Ogni prova del browser porta la guardia di non-vacuità** — quante cose ha guardato, **maggiore di zero** — perché una sonda
 che non trova niente è **verde**: è successo due volte nella quarta sessione, e con `near: 0` nella terza. ⛔ E
 `sonda-raggi.js` diventa un test con le **radici come parametro** — la registrata della terza sessione, perché su una pagina
-nuova non renda un verde vuoto — e un angolo **dritto** non lo confronta (risposta 20).
+nuova non renda un verde vuoto — e un angolo **dritto** non lo confronta (risposta 20). ⚠️ **RICHIAMO DEL 2026-09-27 (E61):** lo
+scarto che la sonda ammette sul raggio è di **mezzo pixel**: con 1,5 teneva verde il pixel del bordo, nella tavola, nella pagina
+kit e nel gruppo staccato — uno scarto si sceglie più stretto del difetto più piccolo che la regola vuole vedere. Se scenda anche
+la soglia che decide *«nell'angolo»* lo dice il piano della cura.
 
 **Il browser dei test:**
 
@@ -634,6 +637,7 @@ che ha scritto il disegno.
 | una **finestra modale fatta a mano** per la Panoramica | sarebbe un secondo modo di fare ciò che fa `BaseDialog` (decisione 18) |
 | **`RovingFocusGroup`** per la griglia della Panoramica | è lineare: giù andrebbe a destra (decisione 19) |
 | *«sempre le sonde, mai l'occhio»*, detto in chat alla risposta 22 | era falso per la prima volta, che l'ha vista il proprietario; corretto subito dopo la risposta |
+| lo **squircle** — `corner-shape: squircle`, la curva a curvatura continua —, guardato il 2026-09-27 su una pagina di prova nei due temi dopo la domanda del proprietario, *«anche se concentrici danno leggermente fastidio da vedere … non capisco se ci sfugge qualcosa»*: **B** coi raggi di oggi, **C** coi raggi moltiplicati perché sulla diagonale sia tondo come il quarto di cerchio | ✅ **il proprietario ha lasciato la scelta al consiglio: A, il quarto di cerchio.** La B allarga all'angolo la fascia fra due angoli annidati, e la regola dei raggi non vale più alla lettera; la C la tiene quasi costante, ma moltiplica ogni raggio e fa capsule di ciò che è basso — la fascia, «Riprova» —: un altro stile. E `corner-shape` è sperimentale, e la sonda dovrebbe impararne la geometria. Nella Home il fastidio non veniva dalla concentricità: le coppie di angoli annidati erano tutte esatte a mezzo pixel. Le fonti, le misure e i comandi in [`riferimenti.md`](../../riferimenti.md). ⚠️ **Si riapre** se, dopo le cure di **E59**–**E61**, il fastidio resta: il secondo sguardo del proprietario sul dock è la prova |
 
 ## Le trappole che mordono scrivendo il piano
 

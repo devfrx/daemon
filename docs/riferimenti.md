@@ -2779,6 +2779,32 @@ Il 2026-09-23, alla scrittura: `lucide` 1.47.0 del 2026-09-17, ISC; `@fontsource
 python -c "import json,urllib.request as u; [print(n, (lambda d: (d['dist-tags']['latest'], d['time'][d['dist-tags']['latest']][:10], d['versions'][d['dist-tags']['latest']].get('license')))(json.load(u.urlopen(u.Request('https://registry.npmjs.org/'+n.replace('/','%2F'),headers={'User-Agent':'harness'}))))) for n in ['lucide','@fontsource-variable/geist','@fontsource/barlow','@vitest/browser-playwright','playwright','vitest','reka-ui','dockview-core']]"
 ```
 
+### Le tre voci del Passo 8 del compito 6 — le fonti e le misure del loro disegno, 2026-09-27
+
+Le voci **E59**, **E60** ed **E61** dell'errata del [piano del design system](superpowers/plans/2026-09-23-design-system.md),
+decise dal proprietario il 2026-09-26 e disegnate il 2026-09-27: qui le fonti lette e le misure che le sostengono, coi metodi.
+Nel [disegno](superpowers/specs/2026-09-22-design-system-design.md) restano le regole e i rimandi.
+
+#### La forma degli angoli — E61, e lo squircle scartato
+
+| Che cosa | Fonte primaria, letta il 2026-09-27 |
+|---|---|
+| la concentricità è la regola: tre forme — fisse, capsule col raggio a metà dell'altezza, concentriche col raggio del genitore meno il padding —, e gli angoli troppo stretti o troppo svasati rompono l'equilibrio | Apple, WWDC25, sessione 356 *Get to know the new design system*, la trascrizione, capitolo *Structure* |
+| due stili d'angolo, a quarto di cerchio (`circular`) e a curvatura continua (`continuous`) | Apple, documentazione di SwiftUI, `RoundedCornerStyle`: la pagina si disegna in JavaScript, e si legge dal suo JSON, `https://developer.apple.com/tutorials/data/documentation/swiftui/roundedcornerstyle.json` |
+| `corner-shape` — `superellipse()`, `squircle` — nel Chrome **139** stabile, del 5 agosto 2025 | Chrome for Developers, note di rilascio di Chrome 139 |
+| `corner-shape` è **sperimentale** e non Baseline; `squircle` vale `superellipse(2)` e `round` `superellipse(1)`; bordo, contorno, ombra, sfondo e ritaglio seguono la forma, e senza `border-radius` non ha effetto | MDN, `corner-shape`, aggiornata il 2026-08-27 |
+| il valore di `superellipse()` è l'esponente di una potenza di 2: la curva ha esponente 2^K, e lo squircle 4 | Chrome for Developers, *The corner cases of implementing CSS corner-shape in Blink*, del 2026-02-19; *CSS Borders and Box Decorations Module Level 4*, bozza di lavoro del 2026-09-01 |
+
+| Misura, il 2026-09-27 | Come si rifà |
+|---|---|
+| lo squircle di Chromium ha **esponente 4**: in un angolo di raggio 100, lungo la diagonale, il bordo del quarto di cerchio e quello dello squircle distano **13,38 px**, quanto vuole la formula, 100 · (2^−1/4 − 2^−1/2) | in Chromium 152, il pannello del browser dell'app: un `div` di 300 × 300 con `border-radius: 100px`, e `document.elementFromPoint` a dicotomia lungo la diagonale dall'angolo, con `corner-shape: round` e poi `squircle`. I due valori assoluti stanno 1 px sotto la formula, la loro differenza no |
+| la **fascia** fra due angoli annidati a 13 px — la distanza minima fra le due curve —: quarto di cerchio coi raggi di E61, 21 e 8, **13,0** costante; squircle con gli stessi raggi, da **13,0** a **14,21**; squircle coi raggi × 1,841, perché sulla diagonale sia tondo come il cerchio, da **12,63** a **13,02** | il comando qui sotto |
+| nella **Home**, a 1440 × 900 nel tema scuro, col codice di `42b948a`: **quattro** coppie di angoli annidati e vicini, tutte esatte con uno scarto di mezzo pixel | la funzione `concentricRadii` di `gui/src/testing/probes.ts`, con lo scarto portato da 1,5 a 0,5, lanciata nella console sulla Home del server di sviluppo (`npm --prefix gui run dev`), su `document.body` |
+
+```bash
+python -c "import math;k=(1-2**-.5)/(1-2**-.25);S=lambda o,R,n,N=1200:[(o+R-R*abs(math.cos(t))**(2/n),o+R-R*abs(math.sin(t))**(2/n)) for t in (math.pi/2*i/N for i in range(N+1))]+[(o+R+(80-R)*i/N,o) for i in range(N+1)]+[(o,o+R+(80-R)*i/N) for i in range(N+1)];B=lambda R,r,n:(lambda O,I:[min(math.dist(p,q) for q in O) for p in I])(S(0,R,n),[p for p in S(13,r,n)[::5] if max(p)<=R+2]);[print(f'{R:.1f}/{r:.1f} n={n}:',round(min(g),2),round(max(g),2)) for R,r,n in [(21,8,2),(21,8,4),(21*k,8*k,4)] for g in [B(R,r,n)]]"
+```
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

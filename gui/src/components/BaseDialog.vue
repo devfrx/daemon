@@ -106,4 +106,15 @@ const open = defineModel<boolean | undefined>("open", { default: undefined });
   gap: var(--space-2);
   margin-top: var(--space-1);
 }
+/* ⛔ THE SHEET KEEPS ITS ACTIONS IN VIEW (E38): `reka-ui` 2.10.4 gives the first control the focus with `preventScroll`, and
+   in the drawer that control is "Chiudi", below a list longer than the sheet -- focused and out of sight. Stuck to the
+   sheet's bottom edge: the negative offset and margin cover the sheet's own padding, where the rows would show, and the
+   padding on top holds the focus ring, which would otherwise be drawn over the row passing under the bar. */
+.base-dialog[data-variant="sheet"] .actions {
+  position: sticky;
+  bottom: calc(-1 * var(--space-3));
+  margin: 0 0 calc(-1 * var(--space-3));
+  padding: calc(var(--focus-width) + var(--focus-offset)) 0 var(--space-3);
+  background: var(--color-bg-raised);
+}
 </style>

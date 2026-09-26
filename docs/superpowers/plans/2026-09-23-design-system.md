@@ -203,6 +203,11 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | **E35** | ⚠️ **Compito 5, Passi 8 e 9 — il verbale del lettore di schermo non lo può scrivere chi fa il commit:** il Passo 8 è *«un passo per il proprietario o per chi rivede, non per un subagente»*, e il Passo 9 dettava la riga 5 della tabella della posizione — *«Stato `✅ <data>` col verbale»* — nel commit dell'implementatore, che è un subagente e il verbale non l'ha; né l'ha il revisore, subagente anche lui: l'Assistente vocale lo sente solo il proprietario. Trovata dal pre-controllo il 2026-09-26. ✅ **Decisa dal coordinatore con `anthropic-skills:decision-principles`** — reversibile, poche righe, e la decisione 21 del disegno non cambia: la prova resta a mano, col verbale —: l'implementatore **salta** il Passo 8 e lascia la riga 5 a `⬜`; il Passo 8 lo fa il proprietario col coordinatore, dopo la revisione e le sue cure, sul codice che resta; il coordinatore porta la riga 5 a `✅ <data>` col verbale nel commit della chiusura, e se un annuncio dei punti 3, 4 o 5 non si sente lo dicono una voce d'errata e la cella. Scartata la via che lascia la cella all'implementatore, `✅` col verbale scritto dopo: fra i due commit la riga direbbe fatto un passo che non lo è. ✅ **Corretta** nel commit che la scrive: il testo dei Passi 8 e 9. ✅ **E le parole del Passo 8 tornano**, rifatto il 2026-09-26 sul server di sviluppo della copia fino al punto 5, **senza** l'Assistente vocale: la fascia al caricamento, via con `Accepted`, di nuovo con `StaleBuild`; dopo `Policy` e un clic vero su «Locale», *«Richiesta inviata: in attesa del core.»* nella regione di Impostazioni; col `Verdict`, *«Ultima richiesta di VRAM: rifiutata chiesti 4096 MiB, tetto 1024»* in quella di Stato. Che si **sentano** resta al proprietario |
 | **E36** | Nit — **Compito 5 — un commento di `gui/src/tokens/dock.css` che il compito rende falso** (gotcha **#58**): il ponte spiega `color-scheme: inherit;` coi controlli nativi del dock — *«scrollbars, the radios of Impostazioni»* — e con *«the radio NOT chosen looks chosen»* (**E4**), e dal Passo 5 i radio di Impostazioni sono i `button` di `reka-ui` (trappola 10). Nessun compito toccava la frase, e il compito 6 riscrive `dock.css` per intero: sarebbe rimasta falsa fra il 5 e il 6. La specie di **E17**, **E22** ed **E28**. Trovata dal pre-controllo il 2026-09-26. ✅ **Corretta** nel commit che la scrive: una sostituzione nel Passo 5, che tiene le barre di scorrimento e data i radio, e il file nella riga *Files*; si applica una volta sul file di oggi, e il linter e le prove restano verdi, misurato sulla copia |
 | **E37** | Nit — **Compito 5, Passo 1 — la guardia di non-vacuità di `settings.browser.test.ts` non porta il segno che la Definizione di «fatto» cerca:** la riga del controllo 20 conta, per ogni file del browser, `NON-VACUITY\|toBeGreaterThan\(0`, e sul file di questo compito rendeva **0** — misurato il 2026-09-26 sulla copia: `kit.browser.test.ts` 13, `probes.browser.test.ts` 1, `tokens.browser.test.ts` 4, `settings.browser.test.ts` 0. La guardia c'è, in un'altra forma, `expect(radios()).toHaveLength(2);`, e la Definizione dice che un file a 0 si legge; ma ogni altro file del browser la segna (vincolo 11), e il compito 9 sarebbe dovuto tornare qui. ✅ **Corretta** nel commit che la scrive: un commento `⛔ NON-VACUITY` sopra quella riga, nel recinto del Passo 1 |
+| **E38** | ⚠️ **Compito 5, Passo 3 — il cassetto aperto dalla tastiera dà il fuoco a «Chiudi» fuori dalla vista:** con `BaseList` le diciotto righe non stanno più nei `60vh` del foglio `sheet`, e `reka-ui` 2.10.4 dà il fuoco al primo controllo — «Chiudi», l'ultimo — con `preventScroll`: il foglio non scorre, e chi usa la tastiera non vede dove sta il fuoco. Rompe la riga «focus» della (a), *«visibile … e non nascosto»*; a `39827e8`, con la `Drawer.vue` di prima, il pulsante si vedeva. Trovata dalla revisione del compito 5 (I-1), guardando la SPA — nessuna prova apre il cassetto —, Chrome 154, 1440 × 900: «Chiudi» a y 993–1025 col foglio a 334–900 e `scrollTop` 0. ✅ **Curata** nel commit che scrive questa riga, in `BaseDialog.vue` e non nel cassetto, perché è la forma `sheet` che deve tenere in vista le sue azioni: la barra delle azioni `sticky` sul bordo del foglio, lo scostamento e il margine negativi che coprono il `padding` del foglio — dove, con la sola `bottom: 0` della revisione, le righe si vedevano passare —, e sopra i pulsanti lo spazio dell'anello del fuoco, che altrimenti si disegna sulla riga che passa sotto; una sostituzione nel Passo 3, e il file nella riga *Files*. Misurata dal coordinatore il 2026-09-26 nel clone della revisione, Chrome installato, 1440 × 900, nei due temi, col foglio aperto, a metà e in fondo: la barra a y 851–899, «Chiudi» col fuoco a 855–887, e sul bordo del foglio la barra, non una riga; lo scorrimento invariato, 702 su 564. ⛔ **La sonda resta al compito 8**, che riscrive il cassetto e ne porta la prova nel browser, oggi aperta col clic e attenta al solo ritorno del fuoco (P-22): il suo pre-controllo vi aggiunge l'apertura **dalla tastiera** e il fuoco **dentro la vista** |
+| **E39** | ⚠️ **Compito 5, Passo 6 — il segnaposto della ricerca non dice più chi la riempie:** in `BaseTextField` — 14 px di Geist, e l'icona — servono 315 px, e i `max-width: 320px` ne lasciano 270: a video resta *«…arriva col sotto-p»*. La decisione 16 della stella polare vuole che la casella dica chi la riempie, e il commento della riga lo dice ancora (gotcha **#58**, nella sua forma visiva); a `39827e8` ci stava, 288 su 312. Trovata dalla revisione del compito 5 (M-1), guardando la SPA: nessuna prova del browser guarda la barra. ✅ **Curata** nel commit che scrive questa riga: `max-width: 24rem;` nel recinto del Passo 6 e in quello del compito 8, che riscrive la barra con la stessa riga — un numero scritto a mano dal piano, come il 320, e in `rem` come la larghezza della finestra di `BaseDialog.vue`; le parole approvate della parte 2 non si toccano. Misurata dal coordinatore il 2026-09-26 nel clone, nei due temi: 315 px su 334, e il segnaposto intero a video. ⛔ **La sonda resta al compito 8**, che porta la prima prova del browser sulla barra: il suo pre-controllo vi misura il segnaposto contro la casella, come ha fatto la revisione |
+| **E40** | ⚠️ **Compito 5, Passo 5 — la premessa di E2 non la teneva il codice:** il gruppo del tema era acceso **prima** del benvenuto del core, e `chooseTheme` con `saved` nullo manda `{"layouts":{},…}` — misurato dalla revisione del compito 5 (M-2) sotto jsdom. Con un core lento il `SaveLayout` arriva dopo il benvenuto, e il core custodisce il pacchetto senza le disposizioni: perse in silenzio — dedotto dal codice di `stores/layout.ts`, non misurato, perché qui un core vero non c'è. ✅ **Curata** nel commit che scrive questa riga con la strada **A** della revisione, decisa coi cinque criteri: il gruppo spento finché `layout.arrivals` è zero, come la policy finché il core non l'ha detta, *«the rest off»* (§6a); la strada **B**, la scelta tenuta e fusa all'arrivo, cambiava il negozio della parte 2 per una finestra che la **A** chiude nel componente. Nel blocco di Impostazioni del Passo 1 una prova nuova, scritta prima e vista rossa sul codice del compito, `expected false to be true`, verde con la cura; e la prova *«chooses the theme…»* consegna prima il benvenuto. ⚠️ **La stessa finestra vale per il `settle` del dock, dalla parte 2** — una mossa prima del benvenuto manda la sola vista aperta —: la domanda è di classe e del proprietario, **registrata e non presa** |
+| **E41** | ⚠️ **Compito 5, Passo 1 — «Escape e il velo sono il no» (ADR-0016) senza una prova:** tolta la riga `if (value !== true) invoke.refuse();` da `Confirm.vue`, `npm test` restava verde. Già così a `39827e8`, ma la strada è nuova — il `defineModel` di `BaseDialog.vue`. Trovata dalla revisione del compito 5 (M-3), che ha scritto la prova e l'ha provata nel suo clone. ✅ **Curata** nel commit che scrive questa riga, col testo della revisione: una terza prova in `describe("the confirmation window", …)`, una sostituzione nel Passo 1. Misurata dal coordinatore il 2026-09-26: verde col `Confirm.vue` di `39827e8`, quindi nel Passo 1 è verde come le altre due della finestra; verde con quello del compito; con `void value;` al posto della riga, rossa, `expected { tool: 'arbiter', …(2) } to be null`, e la copia salvata tornata, `cmp` uguale |
+| **E42** | Nit — **Compito 5, Passo 5 — la regione vuota di Impostazioni raddoppiava lo spazio fra i due gruppi:** alta zero, ma nella colonna col `gap` prendeva due spazi, 32 px dove altrove sono 16. Trovata dall'implementatore del compito 5 e confermata dalla revisione (N-1). ✅ **Curata** nel commit che scrive questa riga: il gruppo della policy e la sua regione in un contenitore solo, e le parole della regione a `--space-2` dal loro gruppo — non `display: none` né `display: contents`, perché M-3 vuole la regione nell'albero **prima** delle parole. Misurata dal coordinatore il 2026-09-26 nel clone, nei due temi: vuota, 16 px fra i gruppi; con una chiamata in volo, le parole a 8 px dal loro gruppo e a 16 dal tema |
 
 ---
 
@@ -3921,6 +3926,7 @@ controlli **11–13**; la trappola **10**; **P-8** e **P-20** di questo piano; l
 - Create: `gui/src/panels/settings.browser.test.ts` — la via della tastiera sul radio, nel browser (R3-24)
 - Modify: `gui/eslint.config.js` — le due regole su `panels/` e `frame/`
 - Modify: `gui/src/tokens/dock.css` — il commento del ponte, che nominava i radio nativi di Impostazioni (**E36**)
+- Modify: `gui/src/components/BaseDialog.vue` — la forma `sheet` tiene in vista le sue azioni (**E38**)
 
 **Interfaces:**
 - Consumes: gli otto pezzi del compito 3; `useLayout().theme`, `chooseTheme`, `THEME_CHOICES`, `isThemeChoice` del
@@ -3969,6 +3975,45 @@ for path, text in out.items():
 
 ```bash
 python <scratchpad>/retarget_confirm.py "$(git rev-parse --show-toplevel)"
+```
+
+E Escape, che nessuna prova manda alla finestra (**E41**): in `gui/src/panels/modules.test.ts`, *Trova* — la fine del `describe("the confirmation window", …)`, col ruolo che lo script ha appena scritto:
+
+```ts
+    expect(core.pending).toBeNull();
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    wrapper.unmount();
+  });
+});
+```
+
+*Sostituisci con:*
+
+```ts
+    expect(core.pending).toBeNull();
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    wrapper.unmount();
+  });
+
+  it("takes Escape for a no: sends nothing, and closes (ADR-0016, E41)", async () => {
+    const { bridge, core, invoke } = wire();
+    const wrapper = mount(Confirm, { global: { plugins: [i18n] }, attachTo: document.body });
+    invoke.send({ function: VRAM_POLICY.name, argument: VRAM_POLICY.argument.local });
+    bridge.deliver("PermissionRequired");
+    await nextTick();
+    await nextTick();
+    // ⛔ NON-VACUITY: the window is open, or Escape would have nothing to refuse.
+    expect(document.querySelector('[role="dialog"]')).not.toBeNull();
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    await nextTick();
+    await nextTick();
+    await nextTick();
+    expect(bridge.sent.map((message) => message.kind)).toEqual(["Invoke"]);
+    expect(core.pending).toBeNull();
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    wrapper.unmount();
+  });
+});
 ```
 
 Poi in `gui/src/panels/modules.test.ts` il blocco `describe("Impostazioni", () => {` — dalla sua riga fino alla riga prima di
@@ -4052,6 +4097,9 @@ describe("Impostazioni", () => {
     wire();
     const wrapper = mount(Settings, { global: { plugins: [i18n] } });
     const layout = useLayout();
+    // The core's welcome first: before it the group is off (E40).
+    layout.receive({ kind: "Layout", value: { state: "Nothing" } });
+    await nextTick();
     expect(layout.theme).toBe("system");
     const themeRadios = wrapper.findAll('[role="radiogroup"]')[1]?.findAll('[role="radio"]') ?? [];
     expect(themeRadios.map((radio) => radio.attributes("aria-checked"))).toEqual(["true", "false", "false"]);
@@ -4059,6 +4107,20 @@ describe("Impostazioni", () => {
     await nextTick();
     expect(layout.theme).toBe("dark");
     expect(wrapper.findAll('[role="radiogroup"]')[1]?.findAll('[role="radio"]').map((radio) => radio.attributes("aria-checked"))).toEqual(["false", "false", "true"]);
+  });
+
+  it("keeps the theme off until the core's welcome: before it a choice would save a package without its layouts (E40)", async () => {
+    wire();
+    const wrapper = mount(Settings, { global: { plugins: [i18n] } });
+    const layout = useLayout();
+    const themeRadios = () => wrapper.findAll('[role="radiogroup"]')[1]?.findAll('[role="radio"]') ?? [];
+    // ⛔ NON-VACUITY: the three choices are there, or "off" would hold of nothing.
+    expect(themeRadios()).toHaveLength(3);
+    for (const radio of themeRadios()) expect((radio.element as HTMLButtonElement).disabled).toBe(true);
+    // ⛔ THE SECOND DIRECTION: the welcome -- a package, or none on a first run -- turns the group on.
+    layout.receive({ kind: "Layout", value: { state: "Nothing" } });
+    await nextTick();
+    for (const radio of themeRadios()) expect((radio.element as HTMLButtonElement).disabled).toBe(false);
   });
 });
 
@@ -4409,6 +4471,39 @@ const open = ref(false);
 </style>
 ```
 
+E la forma `sheet` di `gui/src/components/BaseDialog.vue` tiene in vista le sue azioni (**E38**): il cassetto aperto dalla tastiera dà il fuoco a «Chiudi», l'ultimo controllo, e `reka-ui` 2.10.4 lo dà con `preventScroll` — con le righe di `BaseList` il pulsante restava sotto il bordo del foglio. *Trova*:
+
+```css
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+```
+
+*Sostituisci con:*
+
+```css
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+/* ⛔ THE SHEET KEEPS ITS ACTIONS IN VIEW (E38): `reka-ui` 2.10.4 gives the first control the focus with `preventScroll`, and
+   in the drawer that control is "Chiudi", below a list longer than the sheet -- focused and out of sight. Stuck to the
+   sheet's bottom edge: the negative offset and margin cover the sheet's own padding, where the rows would show, and the
+   padding on top holds the focus ring, which would otherwise be drawn over the row passing under the bar. */
+.base-dialog[data-variant="sheet"] .actions {
+  position: sticky;
+  bottom: calc(-1 * var(--space-3));
+  margin: 0 0 calc(-1 * var(--space-3));
+  padding: calc(var(--focus-width) + var(--focus-offset)) 0 var(--space-3);
+  background: var(--color-bg-raised);
+}
+```
+
 - [ ] **Passo 4: le regioni di stato — M-3 chiusa per costruzione**
 
 Riscrivi `gui/src/frame/Band.vue`:
@@ -4540,18 +4635,29 @@ function chooseTheme(choice: string): void {
 
 <template>
   <section class="settings">
-    <!-- Off while the core has not said which policy is active: "the rest off" (§6a). -->
+    <!-- The group and its region together: the empty region takes no room between the groups (E42). -->
+    <div class="policy">
+      <!-- Off while the core has not said which policy is active: "the rest off" (§6a). -->
+      <BaseRadioGroup
+        :model-value="current"
+        :options="policies"
+        :legend="$t('settings.policy')"
+        :disabled="core.policy === null"
+        @update:model-value="choosePolicy"
+      />
+      <BaseStatus>
+        <p v-if="invoke.inFlight !== null">{{ $t("settings.inFlight") }}</p>
+      </BaseStatus>
+    </div>
+    <!-- Off until the core's welcome (E40): before it the package is not ours to write, and a choice would save one without
+         the layouts the core holds. -->
     <BaseRadioGroup
-      :model-value="current"
-      :options="policies"
-      :legend="$t('settings.policy')"
-      :disabled="core.policy === null"
-      @update:model-value="choosePolicy"
+      :model-value="layout.theme"
+      :options="themes"
+      :legend="$t('settings.themeTitle')"
+      :disabled="layout.arrivals === 0"
+      @update:model-value="chooseTheme"
     />
-    <BaseStatus>
-      <p v-if="invoke.inFlight !== null">{{ $t("settings.inFlight") }}</p>
-    </BaseStatus>
-    <BaseRadioGroup :model-value="layout.theme" :options="themes" :legend="$t('settings.themeTitle')" @update:model-value="chooseTheme" />
     <p class="who">{{ $t("settings.who") }}</p>
   </section>
 </template>
@@ -4568,6 +4674,9 @@ function chooseTheme(choice: string): void {
 }
 p {
   margin: 0;
+}
+.policy p {
+  margin-top: var(--space-2);
 }
 .who {
   color: var(--color-text-muted);
@@ -4766,7 +4875,7 @@ const emit = defineEmits<{ (event: "switch", view: ViewName): void }>();
 }
 .search {
   flex: 1;
-  max-width: 320px;
+  max-width: 24rem;
 }
 .chip[data-phase="connected"] {
   color: var(--color-text-accent);
@@ -7967,7 +8076,7 @@ const connection = useConnection();
 /* The search and the chip on the right, as on the board. */
 .search {
   flex: 1;
-  max-width: 320px;
+  max-width: 24rem;
   margin-left: auto;
 }
 .chip[data-phase="connected"] {

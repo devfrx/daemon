@@ -223,6 +223,9 @@ describe("Impostazioni", () => {
     wire();
     const wrapper = mount(Settings, { global: { plugins: [i18n] } });
     const layout = useLayout();
+    // The core's welcome first: before it the group is off (E40).
+    layout.receive({ kind: "Layout", value: { state: "Nothing" } });
+    await nextTick();
     expect(layout.theme).toBe("system");
     const themeRadios = wrapper.findAll('[role="radiogroup"]')[1]?.findAll('[role="radio"]') ?? [];
     expect(themeRadios.map((radio) => radio.attributes("aria-checked"))).toEqual(["true", "false", "false"]);
@@ -230,6 +233,20 @@ describe("Impostazioni", () => {
     await nextTick();
     expect(layout.theme).toBe("dark");
     expect(wrapper.findAll('[role="radiogroup"]')[1]?.findAll('[role="radio"]').map((radio) => radio.attributes("aria-checked"))).toEqual(["false", "false", "true"]);
+  });
+
+  it("keeps the theme off until the core's welcome: before it a choice would save a package without its layouts (E40)", async () => {
+    wire();
+    const wrapper = mount(Settings, { global: { plugins: [i18n] } });
+    const layout = useLayout();
+    const themeRadios = () => wrapper.findAll('[role="radiogroup"]')[1]?.findAll('[role="radio"]') ?? [];
+    // ⛔ NON-VACUITY: the three choices are there, or "off" would hold of nothing.
+    expect(themeRadios()).toHaveLength(3);
+    for (const radio of themeRadios()) expect((radio.element as HTMLButtonElement).disabled).toBe(true);
+    // ⛔ THE SECOND DIRECTION: the welcome -- a package, or none on a first run -- turns the group on.
+    layout.receive({ kind: "Layout", value: { state: "Nothing" } });
+    await nextTick();
+    for (const radio of themeRadios()) expect((radio.element as HTMLButtonElement).disabled).toBe(false);
   });
 });
 
@@ -274,6 +291,25 @@ describe("the confirmation window", () => {
     const no = [...document.querySelectorAll('[role="dialog"] button')].find((b) => b.textContent?.trim() === t("confirm.no"));
     (no as HTMLButtonElement).click();
     // reka-ui unmounts DialogContent through its own dismissable layer: THREE ticks, measured (R13-3).
+    await nextTick();
+    await nextTick();
+    await nextTick();
+    expect(bridge.sent.map((message) => message.kind)).toEqual(["Invoke"]);
+    expect(core.pending).toBeNull();
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    wrapper.unmount();
+  });
+
+  it("takes Escape for a no: sends nothing, and closes (ADR-0016, E41)", async () => {
+    const { bridge, core, invoke } = wire();
+    const wrapper = mount(Confirm, { global: { plugins: [i18n] }, attachTo: document.body });
+    invoke.send({ function: VRAM_POLICY.name, argument: VRAM_POLICY.argument.local });
+    bridge.deliver("PermissionRequired");
+    await nextTick();
+    await nextTick();
+    // ⛔ NON-VACUITY: the window is open, or Escape would have nothing to refuse.
+    expect(document.querySelector('[role="dialog"]')).not.toBeNull();
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
     await nextTick();
     await nextTick();
     await nextTick();

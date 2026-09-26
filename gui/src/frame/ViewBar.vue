@@ -58,7 +58,7 @@ const emit = defineEmits<{ (event: "switch", view: ViewName): void }>();
 }
 .search {
   flex: 1;
-  max-width: 320px;
+  max-width: 24rem;
 }
 .chip[data-phase="connected"] {
   color: var(--color-text-accent);

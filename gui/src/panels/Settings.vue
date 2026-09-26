@@ -49,18 +49,29 @@ function chooseTheme(choice: string): void {
 
 <template>
   <section class="settings">
-    <!-- Off while the core has not said which policy is active: "the rest off" (§6a). -->
+    <!-- The group and its region together: the empty region takes no room between the groups (E42). -->
+    <div class="policy">
+      <!-- Off while the core has not said which policy is active: "the rest off" (§6a). -->
+      <BaseRadioGroup
+        :model-value="current"
+        :options="policies"
+        :legend="$t('settings.policy')"
+        :disabled="core.policy === null"
+        @update:model-value="choosePolicy"
+      />
+      <BaseStatus>
+        <p v-if="invoke.inFlight !== null">{{ $t("settings.inFlight") }}</p>
+      </BaseStatus>
+    </div>
+    <!-- Off until the core's welcome (E40): before it the package is not ours to write, and a choice would save one without
+         the layouts the core holds. -->
     <BaseRadioGroup
-      :model-value="current"
-      :options="policies"
-      :legend="$t('settings.policy')"
-      :disabled="core.policy === null"
-      @update:model-value="choosePolicy"
+      :model-value="layout.theme"
+      :options="themes"
+      :legend="$t('settings.themeTitle')"
+      :disabled="layout.arrivals === 0"
+      @update:model-value="chooseTheme"
     />
-    <BaseStatus>
-      <p v-if="invoke.inFlight !== null">{{ $t("settings.inFlight") }}</p>
-    </BaseStatus>
-    <BaseRadioGroup :model-value="layout.theme" :options="themes" :legend="$t('settings.themeTitle')" @update:model-value="chooseTheme" />
     <p class="who">{{ $t("settings.who") }}</p>
   </section>
 </template>
@@ -77,6 +88,9 @@ function chooseTheme(choice: string): void {
 }
 p {
   margin: 0;
+}
+.policy p {
+  margin-top: var(--space-2);
 }
 .who {
   color: var(--color-text-muted);

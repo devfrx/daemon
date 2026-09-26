@@ -147,4 +147,25 @@ export default [
     files: ["src/components/icons.ts"],
     rules: { "no-restricted-imports": ["error", { patterns: [UPWARD] }] },
   },
+  {
+    /**
+     * ⛔ THE VIEWS ARE MADE OF PIECES (design system, section (b); criterion 5 of its perimeter): in the panels and in the
+     * frame a button is `BaseButton` and a list is `BaseList`, and `reka-ui` is reached through the base pieces only.
+     * ⚠️ `vue/no-restricted-html-elements` READS TEMPLATES: a `document.createElement("button")` in a `.ts` is invisible
+     * to it (trap 5) -- `frame/BigTab.ts` until task 6.
+     */
+    name: "harness/panels-and-frame",
+    files: ["src/panels/**/*.{vue,ts}", "src/frame/**/*.{vue,ts}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        { paths: [LUCIDE, { name: "reka-ui", message: "panels and frame use the base pieces, which sit on reka-ui (design system, section (b))" }] },
+      ],
+      "vue/no-restricted-html-elements": [
+        "error",
+        { element: ["button"], message: "a button is BaseButton (design system, section (b))" },
+        { element: ["ul", "ol"], message: "a list is BaseList (design system, section (b))" },
+      ],
+    },
+  },
 ];

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BaseStatus from "../components/BaseStatus.vue";
 import { useConnection } from "../stores/connection";
 import { useCore } from "../stores/core";
 
@@ -26,11 +27,14 @@ const core = useCore();
       <dd v-if="connection.protection === null">{{ $t("status.unknown") }}</dd>
       <dd v-else>{{ $t(`status.protectionValue.${connection.protection}`) }}</dd>
     </dl>
-    <!-- ONE EVENT ROW FOR THE LAST Verdict, AND ONLY WHEN ONE HAS ARRIVED (§6a): no empty box. -->
-    <p v-if="core.lastVerdict !== null" class="event" role="status">
-      {{ $t(`status.verdict.${core.lastVerdict.verdict}`) }}
-      <template v-if="core.lastVerdict.verdict === 'Refused'">{{ $t("status.refusedDetail", { asked: core.lastVerdict.asked, ceiling: core.lastVerdict.ceiling }) }}</template>
-    </p>
+    <!-- ONE EVENT ROW FOR THE LAST Verdict, AND ONLY WHEN ONE HAS ARRIVED (§6a): no empty box -- and the row ENTERS a region
+         that is always there (M-3 of E187, `BaseStatus`). -->
+    <BaseStatus>
+      <p v-if="core.lastVerdict !== null" class="event">
+        {{ $t(`status.verdict.${core.lastVerdict.verdict}`) }}
+        <template v-if="core.lastVerdict.verdict === 'Refused'">{{ $t("status.refusedDetail", { asked: core.lastVerdict.asked, ceiling: core.lastVerdict.ceiling }) }}</template>
+      </p>
+    </BaseStatus>
   </section>
 </template>
 

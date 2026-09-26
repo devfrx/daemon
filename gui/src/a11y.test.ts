@@ -105,7 +105,7 @@ describe("the SPA, with the welcome delivered", () => {
     invoke.send({ function: VRAM_POLICY.name, argument: VRAM_POLICY.argument.local });
     core.receive({ kind: "PermissionRequired", value: { tool: "registry", resource: "arbiter", operation: "Write" } });
     const { unmount } = await mounted(Confirm);
-    const dialog = document.querySelector(".confirm");
+    const dialog = document.querySelector('[role="dialog"]');
     expect(dialog).not.toBeNull();
     // The portal renders into `body`, so the whole document is the node under probe.
     expect(await violations(document.body)).toEqual([]);

@@ -4,6 +4,13 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
+// ⛔ AT THE TOP, NOT INSIDE A PROBE (P-20 of the design-system plan): an `await import` in a probe's body loads the
+// module's whole graph inside the probe's 5 s -- the registry's is `vue`, `vue-i18n` and, from the design system on,
+// the base pieces: from 0.5 to 5.2 s on 2026-09-24, and red twice for it. Here the file pays the load and each probe
+// takes milliseconds: a guard that can go red for being slow guards nothing.
+import { PANEL_TYPES } from "../panels/registry";
+import { THEME_CHOICES } from "../tokens/theme";
+
 import it_ from "./it.json";
 
 const GUI = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -14,8 +21,9 @@ const GUI = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
  * Task 13 wrote two probes here and called the file a net until task 15. Task 15 replaced the
  * first one -- bare words in a template -- with `@intlify/vue-i18n/no-raw-text` at `error`
  * (D65). It could NOT replace this one: the SPA BUILDS these keys, `modules.${type.module}` in
- * the drawer and `modules.${parameters.api.id}` in `BigTab.ts`, and `no-missing-keys` is blind
- * to a built key -- measured on 2026-09-15, both directions in one file (P-105).
+ * the drawer and `modules.${parameters.api.id}` in `BigTab.ts` -- and, from the design system on,
+ * `settings.theme.${choice}` in `Settings.vue` -- and `no-missing-keys` is blind to a built key
+ * -- measured on 2026-09-15, both directions in one file (P-105).
  *
  * ⚠️ NOT RENAMED: `src/frame/keys.test.ts` already exists (task 14), and two files of that name
  * in two folders is exactly the confusion this repository pays for when re-reading.
@@ -34,10 +42,16 @@ const GUI = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
  * plugin that renames the setting: that case is the review's, not this file's.
  */
 describe("the strings", () => {
-  it("has a name for every module type", async () => {
-    const { PANEL_TYPES } = await import("../panels/registry");
+  it("has a name for every module type", () => {
     const modules = (it_ as { modules?: Record<string, string> }).modules ?? {};
     for (const type of PANEL_TYPES) expect(Object.keys(modules), type.module).toContain(type.module);
+  });
+
+  it("has a word for every theme choice", () => {
+    const words = (it_ as { settings?: { theme?: Record<string, string> } }).settings?.theme ?? {};
+    // ⛔ NON-VACUITY: no choices would leave nothing to check.
+    expect(THEME_CHOICES.length).toBeGreaterThan(0);
+    for (const choice of THEME_CHOICES) expect(Object.keys(words), choice).toContain(choice);
   });
 
   it("keeps the lint's eyes on the locale: the config names the folder, and the folder is there", () => {

@@ -112,7 +112,13 @@
     "remote": "OpenRouter, VRAM libera",
     "local": "Locale",
     "inFlight": "Richiesta inviata: in attesa del core.",
-    "who": "Le altre preferenze arrivano coi sotto-progetti 3 e 10."
+    "who": "Le altre preferenze arrivano coi sotto-progetti 3 e 10.",
+    "themeTitle": "Tema",
+    "theme": {
+      "system": "Sistema",
+      "light": "Chiaro",
+      "dark": "Scuro"
+    }
   },
   "chat": {
     "noRun": "Nessuna run: col daemon vero non arriva nessun token fino al sotto-progetto 3.",

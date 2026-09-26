@@ -3,6 +3,7 @@
 // does not build says, in words, WHO fills it -- which is the rule §1 of the north star states
 // for the whole catalogue.
 import type { DockviewPanelApi } from "dockview-core";
+import BaseButton from "../components/BaseButton.vue";
 
 // `api` arrives from `VueContent`, which hands `dockview`'s init parameters to the app.
 defineProps<{ api?: DockviewPanelApi; params?: { module?: string; who?: number; missing?: boolean } }>();
@@ -22,7 +23,7 @@ const NUCLEUS = "knowledge";
            would take the words away before anyone read them, and only saying them would leave a
            dead tile in every layout saved from here on. So the panel says it and offers the
            close it is going to do. -->
-      <button type="button" @click="api?.close()">{{ $t("placeholder.closeMissing") }}</button>
+      <BaseButton @click="api?.close()">{{ $t("placeholder.closeMissing") }}</BaseButton>
     </template>
     <template v-else-if="params?.who !== undefined">
       <p v-if="params.module === NUCLEUS">{{ $t("placeholder.nucleus") }}</p>

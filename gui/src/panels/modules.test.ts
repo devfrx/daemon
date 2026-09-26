@@ -9,6 +9,7 @@ import type { Triple } from "../schema/messages";
 import { useConnection } from "../stores/connection";
 import { useCore } from "../stores/core";
 import { useInvoke } from "../stores/invoke";
+import { useLayout } from "../stores/layout";
 import { createFakeBridge } from "../transport/fakeBridge";
 
 import { VRAM_POLICY } from "./functions";
@@ -98,6 +99,17 @@ describe("Stato", () => {
     expect(event.text()).toContain(t("status.verdict.Refused"));
     expect(event.text()).toContain(t("status.refusedDetail", { asked: "4096", ceiling: "1024" }));
   });
+
+  it("keeps the event's status region before a Verdict, and the row enters that same region (M-3 of E187)", async () => {
+    const { bridge } = wire();
+    const wrapper = mount(Status, { global: { plugins: [i18n] } });
+    const region = wrapper.get('[role="status"]');
+    expect(region.text()).toBe("");
+    bridge.deliver("Verdict");
+    await nextTick();
+    expect(wrapper.get('[role="status"]').element).toBe(region.element);
+    expect(region.text()).toContain(t("status.verdict.Refused"));
+  });
 });
 
 describe("Permessi", () => {
@@ -135,10 +147,14 @@ describe("Passi", () => {
 });
 
 describe("Impostazioni", () => {
+  // The policy is the FIRST radio group of the panel; the theme is the second.
+
   it("is off until the core has said which policy is active", () => {
     wire();
     const wrapper = mount(Settings, { global: { plugins: [i18n] } });
-    expect(wrapper.get("fieldset").attributes("disabled")).toBeDefined();
+    const radios = wrapper.findAll('[role="radiogroup"]')[0]?.findAll('[role="radio"]') ?? [];
+    expect(radios).toHaveLength(2);
+    for (const radio of radios) expect((radio.element as HTMLButtonElement).disabled).toBe(true);
   });
 
   it("sends Invoke with the registry's literals on a change, and nothing on the current value", async () => {
@@ -146,54 +162,74 @@ describe("Impostazioni", () => {
     const wrapper = mount(Settings, { global: { plugins: [i18n] } });
     bridge.deliver("Policy");
     await nextTick();
-    const [remote, local] = wrapper.findAll("input[type=radio]");
-    expect((remote?.element as HTMLInputElement).checked).toBe(true);
-    await remote?.setValue(true);
+    const [remote, local] = wrapper.findAll('[role="radiogroup"]')[0]?.findAll('[role="radio"]') ?? [];
+    expect(remote?.attributes("aria-checked")).toBe("true");
+    await remote?.trigger("click");
     expect(bridge.sent).toEqual([]);
-    await local?.setValue(true);
+    await local?.trigger("click");
     expect(bridge.sent).toEqual([{ kind: "Invoke", value: { function: "vram-policy", argument: "local" } }]);
     expect(invoke.inFlight).not.toBeNull();
     expect(wrapper.text()).toContain(t("settings.inFlight"));
   });
 
+  it("keeps its status region before an Invoke, and the words enter that same region (M-3 of E187)", async () => {
+    const { bridge } = wire();
+    const wrapper = mount(Settings, { global: { plugins: [i18n] } });
+    bridge.deliver("Policy");
+    await nextTick();
+    const region = wrapper.get('[role="status"]');
+    expect(region.text()).toBe("");
+    await wrapper.findAll('[role="radiogroup"]')[0]?.findAll('[role="radio"]')[1]?.trigger("click");
+    await nextTick();
+    expect(wrapper.get('[role="status"]').element).toBe(region.element);
+    expect(region.text()).toContain(t("settings.inFlight"));
+  });
+
   it("leaves the control on the core's policy until the core answers, then moves with it", async () => {
-    // ⛔ E184: the probe above asserts what went ON THE WIRE and says nothing about the CONTROL,
-    // which is what the reviewer looks at -- "the core decides". Measured in the browser on
-    // 2026-09-22: with `v-model` the radio kept the click.
+    // ⛔ E184, AND THE TRAP 10 OF THE DESIGN SYSTEM: the radio is a `button` with `role="radio"` in `reka-ui` 2.10.4 now,
+    // and the group is CONTROLLED (P-8) -- the probe still asks what the CONTROL shows, not only what went on the wire.
     const { bridge, core } = wire();
     const wrapper = mount(Settings, { global: { plugins: [i18n] } });
     bridge.deliver("Policy");
     await nextTick();
-    const [remote, local] = wrapper.findAll("input[type=radio]");
-    await local?.setValue(true);
+    const policyRadios = () => wrapper.findAll('[role="radiogroup"]')[0]?.findAll('[role="radio"]') ?? [];
+    const checked = (): (string | undefined)[] => policyRadios().map((radio) => radio.attributes("aria-checked"));
+    await policyRadios()[1]?.trigger("click");
     await nextTick();
-    expect((local?.element as HTMLInputElement).checked).toBe(false);
-    expect((remote?.element as HTMLInputElement).checked).toBe(true);
-    // ⛔ THE SECOND DIRECTION: the core answers, and the control DOES move -- otherwise a control
-    // nailed to `remote` would pass the half above.
+    expect(checked()).toEqual(["true", "false"]);
+    // ⛔ THE SECOND DIRECTION: the core answers, and the control DOES move.
     core.receive({ kind: "Policy", value: { policy: "Local", allocated: "12288", total: "16384" } });
     await nextTick();
-    expect((local?.element as HTMLInputElement).checked).toBe(true);
-    expect((remote?.element as HTMLInputElement).checked).toBe(false);
+    expect(checked()).toEqual(["false", "true"]);
   });
 
   it("keeps saying a call is in flight after the yes, until the core answers with Policy", async () => {
-    // ⛔ I-1 OF THE REVIEW (E186): `approve()` used to clear the call, and the panel went silent for
-    // exactly the stretch its own comment names -- "after the confirmation window".
+    // ⛔ I-1 OF THE REVIEW (E186): the line must not go silent between the yes and `Policy`.
     const { bridge, invoke } = wire();
     const wrapper = mount(Settings, { global: { plugins: [i18n] } });
     bridge.deliver("Policy");
     await nextTick();
-    const [, local] = wrapper.findAll("input[type=radio]");
-    await local?.setValue(true);
+    await wrapper.findAll('[role="radiogroup"]')[0]?.findAll('[role="radio"]')[1]?.trigger("click");
     bridge.deliver("PermissionRequired");
     expect(invoke.approve()).toBe(true);
     await nextTick();
     expect(wrapper.text()).toContain(t("settings.inFlight"));
-    // ⛔ THE SECOND DIRECTION: `Policy` lands the call, and the line goes.
     bridge.deliver("Policy");
     await nextTick();
     expect(wrapper.text()).not.toContain(t("settings.inFlight"));
+  });
+
+  it("chooses the theme, which the layout package keeps at once (design system, section (a))", async () => {
+    wire();
+    const wrapper = mount(Settings, { global: { plugins: [i18n] } });
+    const layout = useLayout();
+    expect(layout.theme).toBe("system");
+    const themeRadios = wrapper.findAll('[role="radiogroup"]')[1]?.findAll('[role="radio"]') ?? [];
+    expect(themeRadios.map((radio) => radio.attributes("aria-checked"))).toEqual(["true", "false", "false"]);
+    await themeRadios[2]?.trigger("click");
+    await nextTick();
+    expect(layout.theme).toBe("dark");
+    expect(wrapper.findAll('[role="radiogroup"]')[1]?.findAll('[role="radio"]').map((radio) => radio.attributes("aria-checked"))).toEqual(["false", "false", "true"]);
   });
 });
 
@@ -204,18 +240,18 @@ describe("the confirmation window", () => {
     bridge.deliver("PermissionRequired");
     await nextTick();
     // ⛔ THE SECOND DIRECTION FIRST: a request that follows no Invoke of ours opens nothing.
-    expect(document.querySelector(".confirm")).toBeNull();
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
     core.settled();
     invoke.send({ function: VRAM_POLICY.name, argument: VRAM_POLICY.argument.local });
     bridge.deliver("PermissionRequired");
     await nextTick();
     await nextTick();
-    const dialog = document.querySelector(".confirm");
+    const dialog = document.querySelector('[role="dialog"]');
     expect(dialog).not.toBeNull();
     expect(dialog?.textContent).toContain(t("permissions.operation.Write"));
     // G20: the focus is INSIDE the window once it is open.
     expect(dialog?.contains(document.activeElement)).toBe(true);
-    const yes = [...document.querySelectorAll(".confirm button")].find((b) => b.textContent?.trim() === t("confirm.yes"));
+    const yes = [...document.querySelectorAll('[role="dialog"] button')].find((b) => b.textContent?.trim() === t("confirm.yes"));
     expect(yes).toBeDefined();
     (yes as HTMLButtonElement).click();
     // reka-ui unmounts DialogContent through its own dismissable layer: THREE ticks, measured (R13-2).
@@ -224,7 +260,7 @@ describe("the confirmation window", () => {
     await nextTick();
     expect(bridge.sent.at(-1)).toEqual({ kind: "Approve", triple: TRIPLE_OF_THE_FIXTURE, call: { function: "vram-policy", argument: "local" } });
     expect(core.pending).toBeNull();
-    expect(document.querySelector(".confirm")).toBeNull();
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
     wrapper.unmount();
   });
 
@@ -235,7 +271,7 @@ describe("the confirmation window", () => {
     bridge.deliver("PermissionRequired");
     await nextTick();
     await nextTick();
-    const no = [...document.querySelectorAll(".confirm button")].find((b) => b.textContent?.trim() === t("confirm.no"));
+    const no = [...document.querySelectorAll('[role="dialog"] button')].find((b) => b.textContent?.trim() === t("confirm.no"));
     (no as HTMLButtonElement).click();
     // reka-ui unmounts DialogContent through its own dismissable layer: THREE ticks, measured (R13-3).
     await nextTick();
@@ -243,7 +279,7 @@ describe("the confirmation window", () => {
     await nextTick();
     expect(bridge.sent.map((message) => message.kind)).toEqual(["Invoke"]);
     expect(core.pending).toBeNull();
-    expect(document.querySelector(".confirm")).toBeNull();
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
     wrapper.unmount();
   });
 });

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import BaseButton from "../components/BaseButton.vue";
+import BaseTextField from "../components/BaseTextField.vue";
 import { useConnection } from "../stores/connection";
 import { useLayout, type ViewName } from "../stores/layout";
 
@@ -13,20 +15,22 @@ const emit = defineEmits<{ (event: "switch", view: ViewName): void }>();
 <template>
   <header class="bar">
     <nav :aria-label="$t('bar.views')">
-      <button
+      <BaseButton
         v-for="name in views"
         :key="name"
-        type="button"
+        variant="quiet"
         :aria-current="layout.view === name ? 'page' : undefined"
         @click="emit('switch', name)"
       >
         {{ $t(`views.${name}`) }}
-      </button>
+      </BaseButton>
     </nav>
 
-    <!-- ⚠️ DISABLED AND SAYING WHO FILLS IT, not hidden: decision 16 of the north star wants the
-         search box to say who fills it, and a control that is simply absent teaches nothing. -->
-    <input class="search" type="search" disabled :placeholder="$t('bar.searchHint')" :aria-label="$t('bar.search')" />
+    <!-- ⚠️ DISABLED AND SAYING WHO FILLS IT, not hidden: decision 16 of the north star wants the search box to say who fills
+         it, and a control that is simply absent teaches nothing. -->
+    <div class="search">
+      <BaseTextField model-value="" type="search" icon="search" :label="$t('bar.search')" :placeholder="$t('bar.searchHint')" disabled />
+    </div>
 
     <span class="chip" :data-phase="connection.phase">
       {{ $t("bar.core") }}:

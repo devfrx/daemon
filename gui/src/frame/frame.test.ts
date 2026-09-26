@@ -200,4 +200,18 @@ describe("the band", () => {
     // would pass the first assertion and be a permanent warning over a working app.
     expect(wrapper.text()).toBe("");
   });
+
+  it("keeps its status region while connected, and the words enter that same region (M-3 of E187)", async () => {
+    const Band = (await import("./Band.vue")).default;
+    const connection = useConnection();
+    connection.receive({ kind: "Accepted", value: "AsSystemAccount" });
+    const wrapper = mount(Band, { global: { plugins: [i18n] } });
+    const region = wrapper.get('[role="status"]');
+    expect(region.text()).toBe("");
+    connection.receive({ kind: "StaleBuild", value: "81985529216486895" });
+    await nextTick();
+    // ⛔ THE SAME ELEMENT, NOW WITH WORDS: a region born with its text is the case many readers do not announce.
+    expect(wrapper.get('[role="status"]').element).toBe(region.element);
+    expect(region.text()).toContain(i18n.global.t("band.stale"));
+  });
 });

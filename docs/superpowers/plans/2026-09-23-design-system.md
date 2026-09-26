@@ -128,7 +128,7 @@ esegue** prima del proprio pre-controllo.
 | **2** | **il browser dei test**: `@vitest/browser-playwright` e `playwright`, i due progetti di `vitest` — jsdom e browser, sul Chrome installato e senza finestra — e il comando `emulateMedia`. Le prime prove vere: il browser è vero, i caratteri caricati con le cifre tabulari, il movimento ridotto nelle due direzioni, il contorno del focus sotto l'alto contrasto, il tema che segue il sistema | `23b3134`, con la cura `5f32158` | ✅ 2026-09-25 |
 | **3** | **il kit**: `lucide`; `BaseIcon` con `icons.ts`, `BaseButton`, `BaseLabel`, `BaseList`, `BaseStatus`, `BaseTextField`, `BaseRadioGroup`, `BaseDialog`; un test con `axe` ciascuno; il linter che legge anche i `.ts`, e le due regole sui pezzi di base | `c7b7bcd`, con la cura `9d2ffb0` | ✅ 2026-09-25 |
 | **4** | **la pagina kit**: `gui/kit.html` e `gui/src/kit/`, **fuori** dal pacchetto e provata sull'uscita del *build*; le prove nel browser sulla pagina kit, nei due temi — raggi concentrici, testo tagliato e niente che sborda, icone disegnate e centrate, `axe` col contrasto | `841dc54`, con la cura `8d098d0` | ✅ 2026-09-25 |
-| **5** | **il kit al lavoro**: i pezzi di base nei pannelli e nella cornice — la finestra di conferma, il cassetto, la fascia, Stato, Permessi, Passi, Impostazioni con la scelta del tema, il segnaposto, la barra; le due regole del linter su `panels/` e `frame/`; **M-3** chiusa per costruzione, e l'Assistente vocale a mano | — | ⬜ |
+| **5** | **il kit al lavoro**: i pezzi di base nei pannelli e nella cornice — la finestra di conferma, il cassetto, la fascia, Stato, Permessi, Passi, Impostazioni con la scelta del tema, il segnaposto, la barra; le due regole del linter su `panels/` e `frame/`; **M-3** chiusa per costruzione, e l'Assistente vocale a mano | — | ✅ 2026-09-26 — il Passo 8 col proprietario, nel suo Chrome con l'Assistente vocale: alle domande dei punti 3, 4 e 5 — *«senti …?»* — la risposta *«di quello che hai chiesto … funziona tutto»*, e il punto 1 non riportato a parte; e *«a parte il piccolo problema citato poco fa»*, il lampo delle barre di scorrimento con la fascia, curato da **E43** |
 | **6** | **il dock vestito**: il tema `dockview-theme-harness`, `dock.css` con ogni variabile del tema di riferimento, i gruppi come schede, `readToken`, `--z-floating`, la presa grande coi pezzi di base; `themeAbyss` esce | — | ⬜ |
 | **7** | **le viste col nome, sotto**: `named` e `openNamed` nel pacchetto, il negozio e il dock che le mostrano e le salvano; l'aiutante della geometria estratto da `moveActive.ts`; lo schema di una disposizione, per le miniature | — | ⬜ |
 | **8** | **la cornice**: la barra col nome della vista, la **Panoramica** su `BaseDialog` con le miniature e *«Salva questa vista»* — F3, frecce, Invio, Esc —, la **striscia** a pillola coi «moduli»; le prove nel browser della Panoramica e della striscia | — | ⬜ |
@@ -8990,103 +8990,91 @@ compito 1 — o in una voce d'errata. Un nome senza casa è una voce d'errata nu
 
 ---
 
-## Come si riprende — il pre-controllo del compito 5, 2026-09-26
+## Come si riprende — l'esecuzione del compito 5, 2026-09-26
 
-✅ **Il pre-controllo del compito 5 è fatto, e ha trovato quattro difetti**: **E34**, **E35**, **E36** ed **E37**, scritti
-nell'errata e **già applicati** al testo del compito, che si esegue com'è scritto adesso. **E35** cambia chi fa il Passo 8:
-il proprietario, col coordinatore, dopo la revisione — deciso coi cinque criteri, perché la decisione 21 del disegno non
-cambia —; ⚠️ **all'esecuzione serve quindi un minuto del proprietario**, con l'Assistente vocale. Nessuna voce tocca il
-merito approvato. La consegna precedente — l'esecuzione del compito 4 — sta parola per parola in
+✅ **Il compito 5 è eseguito, rivisto e curato, e il Passo 8 è fatto col proprietario.** La consegna precedente — il
+pre-controllo del compito 5 — sta parola per parola in
 [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
 
-⚠️ **Perché è una misura e non un'impressione.** Il compito è stato **rifatto per intero dal testo del piano** su una copia
-pulita di `257fc5a` — `git clone` in `%TEMP%\pc5`, sulla macchina `Jays`, senza `origin`, `npm ci`, poi i Passi 1–7 coi
-recinti del piano, applicati da uno script, in fila —, e ogni *Atteso* è tornato. Passo 1: sotto jsdom otto rosse — le sei
-di Impostazioni e le tre di M-3, una delle quali è di Impostazioni —, le tre di M-3 con `Unable to get [role="status"]`,
-verdi le prove della finestra di conferma; nel browser rossa la prova della tastiera, `expected [] to have a length of 2`.
-Passo 2: rosso `system: expected [] to include 'system'`, poi verde, e rosso `sepia` con la scelta in più. Passo 6:
-`npm test` verde, 22 file passati e uno saltato, 158 prove passate e una saltata; il *build* verde, e il pezzo JavaScript
-passa da `663.93 kB` a **`689.58 kB`**, `index-BS90oxvQ.js` — cresce, com'è previsto, e la cifra è del proprietario (N-2);
-la direzione rossa di M-3, `BaseStatus` dentro il `v-if` un pannello per volta, fa cadere ciascuna volta la **sola** prova
-del suo pannello. Passo 7: il linter verde e le tre righe rosse col messaggio atteso — ed è lì che si è visto **E34**, due
-errori sulle righe 1 e 2. La SPA, aperta dal server di sviluppo della copia nei due temi: la fascia, la barra coi pezzi del
-kit, il cassetto `sheet` che si apre e si chiude col fuoco che torna, la finestra di conferma col fuoco dentro, Esc che
-rifiuta senza mandare niente, il tema chiaro che parte subito nel pacchetto, le parole dei punti 1–5 del Passo 8 nelle loro
-regioni; nessun errore in console. La prova della tastiera tiene: 10 corse su 10 da sola, 5 su 5 nella suite intera, fra
-136 e 144 ms, e la prova dei nomi dei moduli a 2–3 ms (P-20). Scritte le voci, il compito è stato **rifatto dal testo
-corretto** su una seconda copia, `%TEMP%\pc5b`, con la ricetta qui sotto: gli stessi *Atteso*, le tre righe del Passo 7 con
-**un errore solo** ciascuna, il `grep` del controllo 20 a 1 sul file nuovo, e `git diff --stat` su `crates/` e `gui/schema/`
-vuoto. E `compare_task5.py` è stato provato su una terza copia, `%TEMP%\pc5c`, con questo piano committato in locale come
-base: il commit fedele alla ricetta esce **0**, diciotto percorsi `OK`, e i suoi diciassette file sono **uguali**, byte per
-byte, a quelli della copia `pc5b`; nove mutanti escono **1** ciascuno — un token cambiato in `Settings.vue`, un file in più,
-la riga 5 portata a ✅, la cella della riga 4 senza la cura, **E36** tolta, **E37** tolta, lo script del Passo 1 non
-applicato, `package.json` toccato, un cambio di modo (**N-3**) —; e una voce d'errata in più esce **0** con `CHECK BY HAND`.
-
-| Domanda | Esito, e il comando o la misura |
+| Commit | Che cosa |
 |---|---|
-| 1 — la sonda è sbagliata? | **sì**: **E34**, le righe 1 e 2 del Passo 7, rosse anche senza la regola, per `no-raw-text`. Le sonde nuove mordono per la ragione scritta, misurato una per una: senza la guardia `if (argument !== current.value)` di `Settings.vue` cadono *«…and nothing on the current value»* e la prova della tastiera; con `BaseStatus` dentro il `v-if` cade la sola prova di M-3 del suo pannello; con la via della freccia spenta dentro `reka-ui`, nella copia, cade la prova della tastiera, *«Matcher did not succeed in time»* |
-| 2 — manca una sonda? | **sì, una a metà**: **E37**, la guardia di `settings.browser.test.ts` senza il segno che la Definizione di «fatto» conta. ⚠️ **E il cassetto del compito 5 non lo apre nessuna prova**, né il pulsante di vista della barra: prima del compito era lo stesso, e il compito 8 li riscrive entrambi, col cassetto aperto sotto `axe` e il suo fuoco nel browser (P-22). Qui l'ho aperto a mano, nella copia: dal basso, diciotto righe, il fuoco su «Chiudi», che chiude e rende il fuoco a «+ moduli». Registrata, non presa: una prova nel 5 la riscriverebbe l'8 |
-| 3 — l'artefatto è sbagliato? | **sì, nel processo**: **E35**, il Passo 9 dettava una cella che l'implementatore non può scrivere. Nel codice no, e la SPA è stata **guardata**: la coppia nuova della fascia, `--color-text-warn` su `--color-bg-warn-subtle`, la giudica la prova del contrasto, per famiglie; un pulsante che l'immagine del pannello dava spento ha il colore calcolato `--color-text` — un fotogramma vecchio, la lezione 4 della consegna precedente. `git diff --stat` su `crates/` e `gui/schema/` vuoto |
-| 4 — è già eseguito? | no: `Settings.vue` porta ancora i radio nativi, e le tre `role="status"` nascono col `v-if` |
-| 5 — il contratto è cresciuto sotto il piano? | sì, e regge: il compito 4 e le sue cure hanno cambiato `gui/eslint.config.js`, `gui/src/testing/probes.ts` e i conti del progetto `browser`, e ogni *Trova* del compito si applica **una** volta sul file di oggi — lo script del Passo 1 coi suoi conteggi, 2, 4 e 1; il blocco di Impostazioni fra i suoi due ancoraggi. Il blocco nuovo del linter non perde niente: per `panels/` e `frame/` l'unica regola d'import di prima è il divieto di `lucide`, e il blocco lo ripete. La colonna **Commit** della riga 4 è `` `841dc54`, con la cura `8d098d0` ``: il Passo 9 dice *«l'hash del compito 4»*, e il prompt detta la cella intera. La Definizione di «fatto» conta già `settings.browser.test.ts` fra i sei file del browser |
-| 6 — un commento o un banco lo smentisce? | **sì**: **E36**, il commento del ponte di `dock.css` sui radio nativi di Impostazioni. Gli altri reggono: quello di `harness/ts` promette `reka-ui` *«from task 5»*, e il compito lo rende vero; la misura del parser di `harness/ts-in-vue` è datata; la testa delle regole d'import vuole che ogni blocco dica la lista intera, e il blocco nuovo la dice; il commento del tema in `frame/dock.ts` lo toglie il compito 6 |
-| 7, 8 | non si applicano: il compito non tocca un ADR e non è un rapporto |
-
-Lo stato alla chiusura, riga per riga col comando che la rifà:
+| `545f500` | **il compito 5**, dall'implementatore — conforme al dettato: `compare_task5.py 39827e8 545f500` esce 0, diciotto percorsi `OK`, e la revisione l'ha provato nelle due direzioni |
+| `7e25d03` | le cure della revisione, dal coordinatore e senza ri-revisione, come per i compiti 3 e 4: **E38**–**E42** nell'errata e nel codice, i recinti dei Passi 1, 3, 5 e 6 e quello della barra del compito 8 allineati, `BaseDialog.vue` nella riga *Files* |
+| `9e6657b` | **E43**, dal Passo 8: il dock tiene per sé ciò che sborda; la riga allineata nel compito 6 e nel compito 8, e due fonti nella tabella del compito 9 |
+| il commit che scrive questa riga | il verbale del Passo 8 nella riga 5, il dispaccio del compito 5 nella cartella tracciata, e questa consegna |
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
-| **cancello** | `GATE GREEN` all'apertura, a `257fc5a`, sulla macchina `Jays` — sotto `gui/` il progetto `jsdom` con 18 file passati e uno saltato, 125 prove passate e una saltata, il progetto `browser` con 3 file e 27 prove, il pezzo JavaScript `663.93 kB`, `found 0 vulnerabilities` — e prima del commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
-| **la CI** | verde sui due sistemi fino a `257fc5a`, letta in questa sessione, e con lei `8d098d0` su `windows-latest`, che alla chiusura di prima era in corso; quella del commit che scrive questa riga **in corso**: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
-| **codice di prodotto** | non toccato: il codice del compito 5 vive solo nelle copie |
-| **le copie del pre-controllo** | solo sulla macchina `Jays`, e non servono altrove — il confronto col testo del piano lo fa `compare_task5.py` su qualunque clone: `%TEMP%\pc5`, il compito dal testo di `257fc5a`; `%TEMP%\pc5b`, dal testo corretto; `%TEMP%\pc5c`, la prova di `compare_task5.py`. Si cancellano dopo il compito 5, con quelle di prima — `%TEMP%\rv4`, `pc4`, `pc4b`, `pc4c`, `pc2` e il banco `pds` —, che questa sessione non ha toccato |
-| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il **modello** del prompt, `dispatch-task-5.md`, coi campi della macchina da riempire; `_extract_brief_5.py`, che scrive il brief nella cartella di lavoro ignorata; `compare_task5.py`, nato da `compare_task4.py` con le forme nuove della ricetta — lo script del Passo 1, il blocco fra due ancoraggi, le sostituzioni in linea — e con **N-3** curata: un cambio di modo è `UNEXPECTED`, e la data non c'è più da confrontare, perché la riga 5 la scrive il coordinatore (**E35**). Il prompt del revisore si scrive sul modello di `review-4-prompt.md`: rilancia ogni comando, confronta con `compare_task5.py` e **guarda** la SPA nei due temi (punto 5 di *«Come si esegue un compito»*) |
-| **le voci registrate, non prese** | quelle della consegna precedente, in archivio: la finestra delle prove, 1440 × 900; **N-4** della revisione del compito 3; la strada B di **E23**; il controllo dei pacchetti ritirati di `cargo audit` senza il registro, che tocca **X-3** ed è del proprietario; la pagina kit che mostra la finestra nella sola forma `center` — dal compito 5 la forma `sheet` è in uso nel cassetto, e la prova `axe` del cassetto aperto arriva col compito 8 —; i margini del `<p>` dentro `BaseStatus` sulla pagina kit; il 404 di `/favicon.ico`. ✅ **N-3** della revisione del compito 4 non è più registrata: la cura sta in `compare_task5.py`. ⚠️ **E una nuova**: nessuna prova apre il cassetto del compito 5 né guarda il pulsante di vista della barra — la domanda 2 qui sopra |
+| **cancello** | `GATE GREEN` sull'albero di `9e6657b`, sulla macchina `Jays`: sotto `gui/` il progetto `jsdom` con 18 file passati e uno saltato, **132** prove passate e una saltata — le 125 di prima, le cinque del compito e le due delle cure —; il progetto `browser` con **4** file e **28** prove; il pezzo JavaScript da `663.93 kB` a **`689.65 kB`**, e la cifra è del proprietario (N-2); `found 0 vulnerabilities` — si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | verde sui due sistemi per `39827e8` e `7e25d03`, lette in questa sessione; quelle di `9e6657b` e del commit che scrive questa riga le legge per prime la sessione dopo, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | la riga **5** a `✅ 2026-09-26`, col verbale del Passo 8 nella cella; la sua colonna **Commit** la scrive il compito 6 (R1-16): `` `545f500`, con le cure `7e25d03` e `9e6657b` `` |
+| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il prompt **spedito**, `dispatch-task-5.md`, al posto del modello — gli stessi testi coi valori della macchina `Jays`, più due precisazioni misurate dal coordinatore: su questa macchina la seconda cartella di Chrome non c'è, e il cancello d'apertura rimisurato a `39827e8` —; il rapporto dell'implementatore, `task-5-report.md`; il prompt del revisore, `review-5-prompt.md`; la revisione, `task-5-review.md`. `compare_task5.py` resta quello del pre-controllo, che ha giudicato `545f500`; per il compito curato vale la ricetta qui sotto |
+| **le copie** | sulla macchina `Jays` restano il clone della revisione, `%TEMP%\rv5`, a `7e25d03` e pulito; le copie del pre-controllo, `%TEMP%\pc5`, `%TEMP%\pc5b` e `%TEMP%\pc5c`; e quelle di prima, `%TEMP%\rv4`, `pc4`, `pc4b`, `pc4c`, `pc2` e il banco `pds`. Non servono più e si possono cancellare: questa sessione non l'ha fatto |
+| **le voci registrate, non prese** | quelle della consegna precedente, in archivio: la finestra delle prove, 1440 × 900; **N-4** della revisione del compito 3; la strada B di **E23**; il controllo dei pacchetti ritirati di `cargo audit` senza il registro, che tocca **X-3** ed è del proprietario; la pagina kit che mostra la finestra nella sola forma `center`; i margini del `<p>` dentro `BaseStatus` sulla pagina kit; il 404 di `/favicon.ico`; nessuna prova che apra il cassetto o guardi il pulsante di vista della barra, che il compito 8 riscrive. ⚠️ **E due nuove**: il `settle` del dock **prima del benvenuto** del core manda la sola vista aperta — la stessa finestra che **E40** ha chiuso per il tema; è della parte 2, e la domanda è di classe e del **proprietario** —; e **N-2** della revisione: l'azione di «Riprova» in `Band.vue` e la ricerca spenta in `ViewBar.vue` portano il loro perché nel commento e nessuna prova, già così a `39827e8` — il compito 8 riscrive la barra |
 | **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, dove questa sessione ha lavorato: `core.autocrlf` `false` in `.git/config` e l'albero `w/lf`, Node v24.19.0, Chrome `154.0.8037.58` letto dal nome della cartella; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, `core.autocrlf` `true` dal file di sistema, Node v24.19.0, Chrome `154.0.8037.58` dalla consegna dell'esecuzione del compito 3 — si aggiorna da sé, e si rilegge. ⛔ Sulla macchina che esegue, gli Attesi di **forma** si misurano, non si copiano (E72) |
+| **dall'altra macchina** | si riprende da `origin`, perché tutto ciò che serve è tracciato: questa sezione, la cartella del dispaccio e il piano. Restano **solo** su `Jays`, e non servono per riprendere: gli script delle cure e delle misure nello scratchpad della sessione, le copie in `%TEMP%` della riga **le copie**, e le note di memoria dell'agente, fuori dal repository — le lezioni che contano sono nella tabella qui sotto |
 
-📌 **La ricetta del compito 5**, per rifarlo o confrontarlo dal testo del piano; vale per il piano del commit che scrive questa
-riga. `W` è il file intero dal recinto aperto a quella riga; `R` sostituisce l'occorrenza unica del primo recinto col secondo;
-`RL` sostituisce il testo delle righe `<` con quello delle righe `>`, i *Trova/Sostituisci* scritti in linea nella prosa; `X`
-sostituisce le righe dall'ancora `[` compresa all'ancora `]` esclusa col recinto; `S` è lo script del Passo 1. Le righe `#`
-nominano il passo.
+**La revisione** — un revisore Opus fresco: **conforme**; **0** critici, **1** importante, **3** minori, **3** nit, sei su
+sette difetti del **dettato**. I-1, M-1, M-2, M-3 e N-1 sono curati da **E38**, **E39**, **E40**, **E41** ed **E42**; N-2 è
+registrato; N-3 è una frase del rapporto dell'implementatore — al caricamento la regione della fascia porta la fascia, non è
+vuota. Per **E40** la revisione offriva due strade, e il coordinatore ha preso la **A** coi cinque criteri: la **B** cambiava
+il negozio della parte 2 per una finestra che la **A** chiude nel componente. La cura di **E38** va oltre la proposta della
+revisione: con la sola `bottom: 0` le righe si vedevano passare nel `padding` del foglio, e l'anello del fuoco si disegnava
+sulla riga sotto la barra — misurato nel clone prima di scriverla. Il costo misurato: l'implementatore **~322k** token, 145
+chiamate, **~18** minuti; il revisore **~500k**, 202 chiamate, **~37** minuti; **~0,82 milioni** in tutto, dentro la banda
+detta al proprietario (0,8–1,0).
+
+**Il Passo 8** — col proprietario, il 2026-09-26, nel suo Chrome con l'Assistente vocale; il verbale sta nella cella della riga
+5. E ha trovato ciò che nessuna occhiata aveva visto: le due barre di scorrimento della pagina che lampeggiavano col passaggio
+della fascia, **E43** — un difetto della parte 2, curato con una riga e confermato dal proprietario nel suo Chrome.
+
+📌 **La ricetta del compito 5 curato**, per rifarlo o confrontarlo dal testo del piano; vale per il piano di `9e6657b` e del
+commit che scrive questa riga. `W` è il file intero dal recinto aperto a quella riga; `R` sostituisce l'occorrenza unica del
+primo recinto col secondo; `RL` sostituisce il testo delle righe `<` con quello delle righe `>`; `X` sostituisce le righe
+dall'ancora `[` compresa all'ancora `]` esclusa col recinto; `S` è lo script del Passo 1. Le forme sono quelle di
+`compare_task5.py`, che però legge piano e ricetta dal commit di base: per il compito curato il piano è quello di questo
+commit, e i file su cui le sostituzioni si applicano sono quelli di `39827e8`. Le righe `#` nominano il passo.
 
 ```text
 # 1
-S 3939
-X gui/src/panels/modules.test.ts 3977
+S 3947
+R gui/src/panels/modules.test.ts 3984 3994
+X gui/src/panels/modules.test.ts 4024
 [ describe("Impostazioni", () => {
 ] describe("the confirmation window", () => {
 RL gui/src/panels/modules.test.ts
 < import { useInvoke } from "../stores/invoke";
 > import { useInvoke } from "../stores/invoke";
 > import { useLayout } from "../stores/layout";
-R gui/src/panels/modules.test.ts 4074 4082
-R gui/src/frame/frame.test.ts 4101 4109
-W gui/src/panels/settings.browser.test.ts 4132
+R gui/src/panels/modules.test.ts 4138 4146
+R gui/src/frame/frame.test.ts 4165 4173
+W gui/src/panels/settings.browser.test.ts 4196
 # 2a
-R gui/src/locales/copy.test.ts 4215 4222
-R gui/src/locales/copy.test.ts 4230 4238
-R gui/src/locales/copy.test.ts 4253 4260
-R gui/src/locales/copy.test.ts 4266 4273
+R gui/src/locales/copy.test.ts 4279 4286
+R gui/src/locales/copy.test.ts 4294 4302
+R gui/src/locales/copy.test.ts 4317 4324
+R gui/src/locales/copy.test.ts 4330 4337
 # 2b
-R gui/src/locales/it.json 4292 4299
+R gui/src/locales/it.json 4356 4363
 # 3
-W gui/src/components/Confirm.vue 4318
-W gui/src/frame/Drawer.vue 4373
+W gui/src/components/Confirm.vue 4382
+W gui/src/frame/Drawer.vue 4437
+R gui/src/components/BaseDialog.vue 4478 4489
 # 4
-W gui/src/frame/Band.vue 4416
-R gui/src/panels/Status.vue 4463 4473
+W gui/src/frame/Band.vue 4513
+R gui/src/panels/Status.vue 4560 4570
 RL gui/src/panels/Status.vue
 < import { useConnection } from "../stores/connection";
 > import BaseStatus from "../components/BaseStatus.vue";
 > import { useConnection } from "../stores/connection";
+R gui/src/frame/Frame.vue 4586 4595
 # 5
-W gui/src/panels/Settings.vue 4491
-R gui/src/tokens/dock.css 4581 4588
+W gui/src/panels/Settings.vue 4611
+R gui/src/tokens/dock.css 4715 4722
 # 6
-W gui/src/panels/Permissions.vue 4598
-W gui/src/panels/Steps.vue 4650
+W gui/src/panels/Permissions.vue 4732
+W gui/src/panels/Steps.vue 4784
 RL gui/src/panels/Placeholder.vue
 <       <button type="button" @click="api?.close()">{{ $t("placeholder.closeMissing") }}</button>
 >       <BaseButton @click="api?.close()">{{ $t("placeholder.closeMissing") }}</BaseButton>
@@ -9094,9 +9082,9 @@ RL gui/src/panels/Placeholder.vue
 < import type { DockviewPanelApi } from "dockview-core";
 > import type { DockviewPanelApi } from "dockview-core";
 > import BaseButton from "../components/BaseButton.vue";
-W gui/src/frame/ViewBar.vue 4708
+W gui/src/frame/ViewBar.vue 4842
 # 7
-R gui/eslint.config.js 4796 4808
+R gui/eslint.config.js 4930 4942
 ```
 
 📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
@@ -9104,22 +9092,22 @@ del sotto-progetto.
 
 | | Che cosa | Che cosa se ne fa |
 |---|---|---|
-| 1 | **una violazione del linter con parole dentro ne rompe due**: la `x` dei recinti del Passo 7 la prendeva anche `no-raw-text` (**E34**) | una riga rossa del linter si giudica dal **numero** degli errori, e la stessa violazione si lancia anche **senza** la regola: dev'essere verde |
-| 2 | **un passo a mano non sta nel commit di un subagente** (**E35**) | per ogni passo si chiede chi lo può fare nella modalità scelta; una cella della posizione che dipende da un passo a mano la scrive chi lo fa |
-| 3 | **la lezione 5 della consegna precedente non si è riprodotta nella forma scritta**: con `userEvent.keyboard("{ArrowDown}")`, premuto e rilasciato, la prova ha chiesto al core **3 volte su 3**, da sola — P-19 misurava una caduta su dieci della suite intera, non un rosso fisso | il tasto tenuto resta la forma giusta, perché la caduta è rara e non assente; e una sonda che esiste per un aggiornamento di una libreria si prova spegnendo quella via **dentro** la libreria, nella copia: lì la prova della tastiera cade |
-| 4 | **un conto che la Definizione di «fatto» fa col `grep` vuole il segno, non solo la guardia** (**E37**) | un file nuovo del browser porta il commento `NON-VACUITY` accanto alla sua guardia |
+| 1 | **un'occhiata con Playwright senza finestra non vede le barre di scorrimento**: `playwright-core` 1.63.0 aggiunge `--hide-scrollbars` a ogni lancio senza finestra, e il lampo di **E43** l'ha visto solo il proprietario, nel suo Chrome | chi *guarda* — il revisore, il coordinatore — lancia con `ignoreDefaultArgs: ["--hide-scrollbars"]`, e il prompt del revisore del compito 6 lo dice; una sonda nel cancello legge lo sbordo su `scrollHeight`, che le barre spente non nascondono |
+| 2 | **`dockview` 8.3.1 si ridimensiona un fotogramma dopo**: `watchElementResize` passa la misura nuova a un `requestAnimationFrame` (**E43**) | quando un compito cambia la misura del contenitore del dock — la fascia, un margine, la striscia —, si guarda il fotogramma del cambio, non solo lo stato a regime |
+| 3 | **il pannello del browser, nascosto, non disegna**: né `requestAnimationFrame` né i `ResizeObserver` vi girano, e uno script che li aspetta non finisce | un difetto di disegno si riproduce nel Chrome installato, senza finestra ma con le barre accese, non nel pannello nascosto |
+| 4 | **anche la cura proposta da una revisione è un'ipotesi**: quella di **E38**, con la sola `bottom: 0`, lasciava passare le righe nel `padding` del foglio e disegnava l'anello del fuoco sulla riga sotto la barra | una cura proposta si misura nel clone, nei due temi e nelle posizioni che contano, prima di entrare nel piano: la riga 8 di `CLAUDE.md`, applicata a una cura |
+| 5 | **su Windows un `os.replace` su un file che il server di sviluppo sta leggendo può fallire**, *«Accesso negato»*, e lasciare il temporaneo accanto | gli script che scrivono nel clone mentre il server gira riprovano, e poi si controlla che non restino `.tmp` |
 
 **Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
 
-1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
-2. Questa sezione; poi il dispaccio: dalla radice del repository il brief, con
-   `python docs/superpowers/plans/2026-09-23-design-system-esecuzione/_extract_brief_5.py`, e il prompt dal modello
-   `dispatch-task-5.md` della stessa cartella, coi campi e i valori della macchina che esegue — il riquadro in testa al
-   modello dice come.
-3. ⛔ **Il costo, prima di dispacciare, e il sì del proprietario**: la banda è quella dei compiti 3 e 4, nelle consegne in
-   archivio — per il 4 l'implementatore ~350k token e ~24 minuti, il revisore ~473k, ~0,82 milioni in tutto.
-4. L'**esecuzione del compito 5**, con `superpowers:subagent-driven-development`; il revisore rilancia ogni comando,
-   confronta con `compare_task5.py` e **guarda** la SPA nel browser, nei due temi; dopo la revisione e le sue cure il
-   **Passo 8 col proprietario** — l'Assistente vocale, un minuto — e la riga 5 col verbale nel commit della chiusura
-   (**E35**); alla chiusura del compito, i file del dispaccio nella cartella tracciata. Poi il pre-controllo del compito 6,
-   in un'altra sessione, con la prossima voce d'errata libera, **E38**; e così compito per compito, fino al 9.
+1. `git fetch --all --prune`, `git status -sb`; la CI di `9e6657b` e del commit che scrive questa riga, per prime.
+2. Il **pre-controllo del compito 6**, con le quattro domande di `CLAUDE.md` e le righe 5–8, contro il codice di **adesso**:
+   il compito 5 e le sue cure hanno cambiato `gui/src/frame/Frame.vue` — **E43**: il *Trova* del compito 6 è già allineato, e
+   si rilancia —, `gui/src/components/BaseDialog.vue`, `gui/src/panels/Settings.vue`, `gui/src/frame/ViewBar.vue`,
+   `gui/src/tokens/dock.css` — il ponte di **E36**, che il compito 6 riscrive — e i conti delle prove. Le voci che trova vanno
+   nell'errata, e la prossima libera è **E44**. Porta con sé le lezioni 1 e 2: il compito 6 mette un margine al dock, e la
+   fascia che entra si guarda con le barre accese.
+3. L'**esecuzione del compito 6**, in un'altra sessione, col costo detto prima e il sì del proprietario — la banda misurata dei
+   compiti 1–5 sta in queste consegne; e così compito per compito, fino al 9. Al **pre-controllo del compito 8** le tre sonde
+   che l'errata gli assegna: il cassetto aperto dalla tastiera col fuoco in vista (**E38**), il segnaposto della ricerca intero
+   (**E39**), la pagina che non sborda quando la fascia entra (**E43**).

@@ -1,25 +1,16 @@
-> ⚠️ **Per il coordinatore, prima di dispacciare** — questo file è il **modello**, e viaggia con git. Il prompt che parte
-> si scrive nella cartella di lavoro `.superpowers/sdd/2026-09-23-design-system/`, ignorata, **senza** questo riquadro e
-> coi campi fra `<…>` riempiti: `<repo>`, `<HEAD>` — l'ultimo commit di `main` —, `<scratchpad>`, e i valori della
-> macchina del §0 misurati, non copiati. Il compito 5 non scrive date: la riga 5 della posizione la porta a ✅ il
-> coordinatore, dopo il Passo 8 del proprietario (**E35**). Il brief si genera **prima**, dalla radice del repository,
-> con `python docs/superpowers/plans/2026-09-23-design-system-esecuzione/_extract_brief_5.py`, e deve dire *«piano e
-> disegno coincidono con `HEAD`»*. Alla chiusura del compito il prompt spedito, il rapporto, il prompt del revisore e la
-> revisione si copiano nella cartella tracciata e si committano: il punto 8 di *«Come si esegue un compito»*.
-
 Sei l'**implementatore del compito 5** — *il kit al lavoro: i pezzi di base nei pannelli e nella cornice* — del piano
-`docs/superpowers/plans/2026-09-23-design-system.md`, nel repository `<repo>`. Sei un subagente fresco: tutto ciò che ti
+`docs/superpowers/plans/2026-09-23-design-system.md`, nel repository `E:\ALL\DEV\MY_REPOS\daemon` (Windows; il tool Bash è Git Bash). Sei un subagente fresco: tutto ciò che ti
 serve è qui e nel brief che questo prompt nomina. Il compito è **codice della GUI** — sette componenti riscritti per intero
 sui pezzi di base, due toccati, le prove che cambiano e una nuova nel browser, le parole del tema, le due regole del linter
 su `panels/` e `frame/`, un commento di `gui/src/tokens/dock.css` — e **una cella** del piano.
 
-**All'avvio verifichi, e se non torna ti fermi e lo riporti:** `git rev-parse --short HEAD` → `<HEAD>`;
+**All'avvio verifichi, e se non torna ti fermi e lo riporti:** `git rev-parse --short HEAD` → `39827e8`;
 `git status --porcelain` → vuoto; `node --version` → una versione che `gui/package.json` accetta (`engines`);
 `git config --show-origin --get-all core.autocrlf` → il valore di questa macchina, nel §0; Google Chrome stabile
 installato, e la sua versione **letta dal nome della cartella** —
 `ls "/c/Program Files/Google/Chrome/Application/" "$LOCALAPPDATA/Google/Chrome/Application/" 2>/dev/null` rende almeno una
-cartella di versione, come `154.0.8037.58`; se una delle due cartelle manca il comando esce **2** pur stampando la
-versione: conta la cartella, non l'uscita. ⛔ **Mai `chrome.exe --version`**: su Windows apre il browser col profilo
+cartella di versione, come `154.0.8037.58` — su questa macchina la seconda cartella non esiste, e il comando esce **2**
+pur stampando la versione: conta la cartella, non l'uscita. ⛔ **Mai `chrome.exe --version`**: su Windows apre il browser col profilo
 dell'utente e non stampa nulla (lezione 4 della consegna dell'esecuzione del compito 3, in archivio).
 
 ## 0. La macchina
@@ -31,7 +22,7 @@ del piano della parte 2, ed **E1** di questo piano.
 |---|---|---|
 | il repository | `E:\ALL\DEV\MY_REPOS\daemon` | `C:\Users\zagor\Desktop\harness` |
 | `core.autocrlf` | `false` in `.git/config`, quindi l'albero è `w/lf` — `--get-all` rende tre righe, `true` dal file di sistema, `false` da `C:/Users/Jays/.gitconfig` e `false` da `.git/config`, e vale l'ultima | `true` dal file di sistema: l'albero è `w/crlf` per i file che git ha scritto, e `w/lf` per quelli nati o riscritti LF su quella macchina |
-| Google Chrome | `154.0.8037.58`, letto dal nome della cartella il 2026-09-26 — si rilegge prima del dispaccio | `154.0.8037.58` dalla consegna dell'esecuzione del compito 3: si aggiorna **da sé** — si rilegge |
+| Google Chrome | `154.0.8037.58`, letto dal nome della cartella il 2026-09-26, e riletto dal coordinatore prima del dispaccio | `154.0.8037.58` dalla consegna dell'esecuzione del compito 3: si aggiorna **da sé** — si rilegge |
 | Node | v24.19.0 | v24.19.0 |
 
 ---
@@ -43,7 +34,7 @@ La cartella di lavoro è `.superpowers/sdd/2026-09-23-design-system/`, git-ignor
 
 | File | Che cos'è |
 |---|---|
-| `task-5-brief.md` | **il compito**: la testa del piano (obiettivo, architettura, pila, disegno, **strumenti** con `replace_unique.py`), i *Vincoli globali*, *A che punto è* e *Come si esegue un compito*, l'**errata** — **E34**, **E35**, **E36** ed **E37** sono del compito 5, ed **E2** ed **E4** sono le cure del compito 1 su cui si appoggia —, le voci **P-3**, **P-8**, **P-19** e **P-20**, le voci aperte che il piano sa, **il compito 5 intero**, e dal disegno le risposte **5**, **16**, **17** e **21**, *«I due temi»* della sezione **(a)**, i pezzi di base, `BaseStatus` e le regole del linter della sezione **(b)**, la sezione **(e)**, i controlli **11**, **12** e **13**, le trappole **5** e **10** e la decisione **21** del coordinatore — **copiati parola per parola** da `_extract_brief_5.py`, a `HEAD` = `<HEAD>`. Leggilo **tutto**, a blocchi |
+| `task-5-brief.md` | **il compito**: la testa del piano (obiettivo, architettura, pila, disegno, **strumenti** con `replace_unique.py`), i *Vincoli globali*, *A che punto è* e *Come si esegue un compito*, l'**errata** — **E34**, **E35**, **E36** ed **E37** sono del compito 5, ed **E2** ed **E4** sono le cure del compito 1 su cui si appoggia —, le voci **P-3**, **P-8**, **P-19** e **P-20**, le voci aperte che il piano sa, **il compito 5 intero**, e dal disegno le risposte **5**, **16**, **17** e **21**, *«I due temi»* della sezione **(a)**, i pezzi di base, `BaseStatus` e le regole del linter della sezione **(b)**, la sezione **(e)**, i controlli **11**, **12** e **13**, le trappole **5** e **10** e la decisione **21** del coordinatore — **copiati parola per parola** da `_extract_brief_5.py`, a `HEAD` = `39827e8`. Leggilo **tutto**, a blocchi |
 
 Poi, **per le sole parti che il compito nomina o che modifichi**, e **prima** di scriverle: i file della lista *Files* del
 compito che esistono; gli otto pezzi di base in `gui/src/components/`, di cui i componenti riscritti usano props, slot ed
@@ -73,7 +64,8 @@ piano su una copia pulita, e poi dal testo corretto su una seconda, e ha aperto 
 
 **Il cancello d'apertura del pre-controllo**, a `257fc5a`: `GATE GREEN`; sotto `gui/` il progetto `jsdom` con **18** file
 passati e uno saltato, **125** prove passate e una saltata, il progetto `browser` con **3** file e **27** prove; il pezzo
-JavaScript `663.93 kB`; `found 0 vulnerabilities`; la CI verde sui due sistemi. ⛔ Li **rimisuri tu** prima di toccare.
+JavaScript `663.93 kB`; `found 0 vulnerabilities`; la CI verde sui due sistemi. Il coordinatore l'ha rilanciato
+all'apertura di questa sessione, a `39827e8`: gli stessi numeri, e la CI di `39827e8` verde sui due sistemi. ⛔ Li **rimisuri tu** prima di toccare.
 
 **Misurati dal pre-controllo**, sulla copia col compito rifatto dal testo corretto — ⚠️ sono **riferimenti**, non Attesi
 nuovi: tu **misuri**, e un numero diverso si **riporta**, non si insegue:
@@ -97,17 +89,17 @@ dipendono dal suo `core.autocrlf` (§0). **Dopo**, la **forma**, non il numero d
 su un file CRLF i CR sono **uguali alle righe**, su un file LF sono **zero**, e la colonna `w/…` è quella di prima; i file
 **nuovi** nascono **LF**, zero CR; un file riscritto per intero tiene il terminatore che ha oggi. Scrivi con Python
 `newline=""` (temporaneo più `os.replace`) o con `replace_unique.py`, che conserva il fine-riga del file che trova e che
-copi dagli *Strumenti* del brief **nello scratchpad** `<scratchpad>`, mai nel repository; lì vanno anche
+copi dagli *Strumenti* del brief **nello scratchpad** `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\b62a978b-28b5-4b69-963c-b58323e34338\scratchpad\task5` — in Git Bash `/c/Users/Jays/AppData/Local/Temp/claude/E--ALL-DEV-MY-REPOS-daemon/b62a978b-28b5-4b69-963c-b58323e34338/scratchpad/task5` —, mai nel repository; lì vanno anche
 `retarget_confirm.py` del Passo 1 e i log. ⛔ **Mai `sed -i`.**
 
 ## 5. Ciò che da qui non si misura, e come lo fai
 
 - ⚠️ **Ogni direzione rossa si torna indietro con la COPIA SALVATA, mai con `git checkout`** (vincolo 11): prima della prima
-  violazione `git status --porcelain > <scratchpad>/prima.txt` e una copia di ogni file che le violazioni toccano —
+  violazione `git status --porcelain > /c/Users/Jays/AppData/Local/Temp/claude/E--ALL-DEV-MY-REPOS-daemon/b62a978b-28b5-4b69-963c-b58323e34338/scratchpad/task5/prima.txt` e una copia di ogni file che le violazioni toccano —
   `gui/src/tokens/theme.ts` per il Passo 2; `gui/src/frame/Band.vue`, `gui/src/panels/Settings.vue` e
   `gui/src/panels/Status.vue` per il Passo 6, che questo compito ha già riscritto; `gui/src/panels/Strip.vue`,
   `gui/src/frame/ViewBar.vue` e `gui/src/frame/moveActive.ts` per il Passo 7 —; dopo **ciascuna** la copia torna e `cmp` lo
-  conferma; alla fine `git status --porcelain | diff <scratchpad>/prima.txt -` non rende nulla. Per ogni violazione riporti
+  conferma; alla fine `git status --porcelain | diff /c/Users/Jays/AppData/Local/Temp/claude/E--ALL-DEV-MY-REPOS-daemon/b62a978b-28b5-4b69-963c-b58323e34338/scratchpad/task5/prima.txt -` non rende nulla. Per ogni violazione riporti
   il **messaggio rosso vero** — la prima riga che nomina la ragione —, **quali** prove cadono e, nel Passo 7, **quanti**
   errori dà il linter, non «rosso».
 - ⚠️ **Il cancello dura da uno a dieci minuti**, secondo le cache. Lancialo **da solo**, in background, con l'uscita in un

@@ -1190,3 +1190,143 @@ del sotto-progetto.
    5 tocca.
 3. L'**esecuzione del compito 5**, in un'altra sessione, col costo detto prima e il sì del proprietario — la banda misurata
    dei compiti 1–4 sta in queste consegne; e così compito per compito, fino al 9.
+
+## L'esecuzione del compito 5, del 2026-09-26
+
+Tolto dal piano il 2026-09-26, quando la sessione dopo ha eseguito il **compito 5** — l'implementatore, la revisione,
+le cure e il Passo 8 col proprietario — e scritto *«Come si riprende — l'esecuzione del compito 5»*. Il testo com'era,
+dal commit `39827e8`, parola per parola; i rimandi sono riscritti per questa cartella.
+
+## Come si riprende — il pre-controllo del compito 5, 2026-09-26
+
+✅ **Il pre-controllo del compito 5 è fatto, e ha trovato quattro difetti**: **E34**, **E35**, **E36** ed **E37**, scritti
+nell'errata e **già applicati** al testo del compito, che si esegue com'è scritto adesso. **E35** cambia chi fa il Passo 8:
+il proprietario, col coordinatore, dopo la revisione — deciso coi cinque criteri, perché la decisione 21 del disegno non
+cambia —; ⚠️ **all'esecuzione serve quindi un minuto del proprietario**, con l'Assistente vocale. Nessuna voce tocca il
+merito approvato. La consegna precedente — l'esecuzione del compito 4 — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+⚠️ **Perché è una misura e non un'impressione.** Il compito è stato **rifatto per intero dal testo del piano** su una copia
+pulita di `257fc5a` — `git clone` in `%TEMP%\pc5`, sulla macchina `Jays`, senza `origin`, `npm ci`, poi i Passi 1–7 coi
+recinti del piano, applicati da uno script, in fila —, e ogni *Atteso* è tornato. Passo 1: sotto jsdom otto rosse — le sei
+di Impostazioni e le tre di M-3, una delle quali è di Impostazioni —, le tre di M-3 con `Unable to get [role="status"]`,
+verdi le prove della finestra di conferma; nel browser rossa la prova della tastiera, `expected [] to have a length of 2`.
+Passo 2: rosso `system: expected [] to include 'system'`, poi verde, e rosso `sepia` con la scelta in più. Passo 6:
+`npm test` verde, 22 file passati e uno saltato, 158 prove passate e una saltata; il *build* verde, e il pezzo JavaScript
+passa da `663.93 kB` a **`689.58 kB`**, `index-BS90oxvQ.js` — cresce, com'è previsto, e la cifra è del proprietario (N-2);
+la direzione rossa di M-3, `BaseStatus` dentro il `v-if` un pannello per volta, fa cadere ciascuna volta la **sola** prova
+del suo pannello. Passo 7: il linter verde e le tre righe rosse col messaggio atteso — ed è lì che si è visto **E34**, due
+errori sulle righe 1 e 2. La SPA, aperta dal server di sviluppo della copia nei due temi: la fascia, la barra coi pezzi del
+kit, il cassetto `sheet` che si apre e si chiude col fuoco che torna, la finestra di conferma col fuoco dentro, Esc che
+rifiuta senza mandare niente, il tema chiaro che parte subito nel pacchetto, le parole dei punti 1–5 del Passo 8 nelle loro
+regioni; nessun errore in console. La prova della tastiera tiene: 10 corse su 10 da sola, 5 su 5 nella suite intera, fra
+136 e 144 ms, e la prova dei nomi dei moduli a 2–3 ms (P-20). Scritte le voci, il compito è stato **rifatto dal testo
+corretto** su una seconda copia, `%TEMP%\pc5b`, con la ricetta qui sotto: gli stessi *Atteso*, le tre righe del Passo 7 con
+**un errore solo** ciascuna, il `grep` del controllo 20 a 1 sul file nuovo, e `git diff --stat` su `crates/` e `gui/schema/`
+vuoto. E `compare_task5.py` è stato provato su una terza copia, `%TEMP%\pc5c`, con questo piano committato in locale come
+base: il commit fedele alla ricetta esce **0**, diciotto percorsi `OK`, e i suoi diciassette file sono **uguali**, byte per
+byte, a quelli della copia `pc5b`; nove mutanti escono **1** ciascuno — un token cambiato in `Settings.vue`, un file in più,
+la riga 5 portata a ✅, la cella della riga 4 senza la cura, **E36** tolta, **E37** tolta, lo script del Passo 1 non
+applicato, `package.json` toccato, un cambio di modo (**N-3**) —; e una voce d'errata in più esce **0** con `CHECK BY HAND`.
+
+| Domanda | Esito, e il comando o la misura |
+|---|---|
+| 1 — la sonda è sbagliata? | **sì**: **E34**, le righe 1 e 2 del Passo 7, rosse anche senza la regola, per `no-raw-text`. Le sonde nuove mordono per la ragione scritta, misurato una per una: senza la guardia `if (argument !== current.value)` di `Settings.vue` cadono *«…and nothing on the current value»* e la prova della tastiera; con `BaseStatus` dentro il `v-if` cade la sola prova di M-3 del suo pannello; con la via della freccia spenta dentro `reka-ui`, nella copia, cade la prova della tastiera, *«Matcher did not succeed in time»* |
+| 2 — manca una sonda? | **sì, una a metà**: **E37**, la guardia di `settings.browser.test.ts` senza il segno che la Definizione di «fatto» conta. ⚠️ **E il cassetto del compito 5 non lo apre nessuna prova**, né il pulsante di vista della barra: prima del compito era lo stesso, e il compito 8 li riscrive entrambi, col cassetto aperto sotto `axe` e il suo fuoco nel browser (P-22). Qui l'ho aperto a mano, nella copia: dal basso, diciotto righe, il fuoco su «Chiudi», che chiude e rende il fuoco a «+ moduli». Registrata, non presa: una prova nel 5 la riscriverebbe l'8 |
+| 3 — l'artefatto è sbagliato? | **sì, nel processo**: **E35**, il Passo 9 dettava una cella che l'implementatore non può scrivere. Nel codice no, e la SPA è stata **guardata**: la coppia nuova della fascia, `--color-text-warn` su `--color-bg-warn-subtle`, la giudica la prova del contrasto, per famiglie; un pulsante che l'immagine del pannello dava spento ha il colore calcolato `--color-text` — un fotogramma vecchio, la lezione 4 della consegna precedente. `git diff --stat` su `crates/` e `gui/schema/` vuoto |
+| 4 — è già eseguito? | no: `Settings.vue` porta ancora i radio nativi, e le tre `role="status"` nascono col `v-if` |
+| 5 — il contratto è cresciuto sotto il piano? | sì, e regge: il compito 4 e le sue cure hanno cambiato `gui/eslint.config.js`, `gui/src/testing/probes.ts` e i conti del progetto `browser`, e ogni *Trova* del compito si applica **una** volta sul file di oggi — lo script del Passo 1 coi suoi conteggi, 2, 4 e 1; il blocco di Impostazioni fra i suoi due ancoraggi. Il blocco nuovo del linter non perde niente: per `panels/` e `frame/` l'unica regola d'import di prima è il divieto di `lucide`, e il blocco lo ripete. La colonna **Commit** della riga 4 è `` `841dc54`, con la cura `8d098d0` ``: il Passo 9 dice *«l'hash del compito 4»*, e il prompt detta la cella intera. La Definizione di «fatto» conta già `settings.browser.test.ts` fra i sei file del browser |
+| 6 — un commento o un banco lo smentisce? | **sì**: **E36**, il commento del ponte di `dock.css` sui radio nativi di Impostazioni. Gli altri reggono: quello di `harness/ts` promette `reka-ui` *«from task 5»*, e il compito lo rende vero; la misura del parser di `harness/ts-in-vue` è datata; la testa delle regole d'import vuole che ogni blocco dica la lista intera, e il blocco nuovo la dice; il commento del tema in `frame/dock.ts` lo toglie il compito 6 |
+| 7, 8 | non si applicano: il compito non tocca un ADR e non è un rapporto |
+
+Lo stato alla chiusura, riga per riga col comando che la rifà:
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **cancello** | `GATE GREEN` all'apertura, a `257fc5a`, sulla macchina `Jays` — sotto `gui/` il progetto `jsdom` con 18 file passati e uno saltato, 125 prove passate e una saltata, il progetto `browser` con 3 file e 27 prove, il pezzo JavaScript `663.93 kB`, `found 0 vulnerabilities` — e prima del commit: si rilancia, non si cita — `bash scripts/gate.sh`, **da solo** |
+| **la CI** | verde sui due sistemi fino a `257fc5a`, letta in questa sessione, e con lei `8d098d0` su `windows-latest`, che alla chiusura di prima era in corso; quella del commit che scrive questa riga **in corso**: la sessione dopo la legge per prima, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **codice di prodotto** | non toccato: il codice del compito 5 vive solo nelle copie |
+| **le copie del pre-controllo** | solo sulla macchina `Jays`, e non servono altrove — il confronto col testo del piano lo fa `compare_task5.py` su qualunque clone: `%TEMP%\pc5`, il compito dal testo di `257fc5a`; `%TEMP%\pc5b`, dal testo corretto; `%TEMP%\pc5c`, la prova di `compare_task5.py`. Si cancellano dopo il compito 5, con quelle di prima — `%TEMP%\rv4`, `pc4`, `pc4b`, `pc4c`, `pc2` e il banco `pds` —, che questa sessione non ha toccato |
+| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il **modello** del prompt, `dispatch-task-5.md`, coi campi della macchina da riempire; `_extract_brief_5.py`, che scrive il brief nella cartella di lavoro ignorata; `compare_task5.py`, nato da `compare_task4.py` con le forme nuove della ricetta — lo script del Passo 1, il blocco fra due ancoraggi, le sostituzioni in linea — e con **N-3** curata: un cambio di modo è `UNEXPECTED`, e la data non c'è più da confrontare, perché la riga 5 la scrive il coordinatore (**E35**). Il prompt del revisore si scrive sul modello di `review-4-prompt.md`: rilancia ogni comando, confronta con `compare_task5.py` e **guarda** la SPA nei due temi (punto 5 di *«Come si esegue un compito»*) |
+| **le voci registrate, non prese** | quelle della consegna precedente, in archivio: la finestra delle prove, 1440 × 900; **N-4** della revisione del compito 3; la strada B di **E23**; il controllo dei pacchetti ritirati di `cargo audit` senza il registro, che tocca **X-3** ed è del proprietario; la pagina kit che mostra la finestra nella sola forma `center` — dal compito 5 la forma `sheet` è in uso nel cassetto, e la prova `axe` del cassetto aperto arriva col compito 8 —; i margini del `<p>` dentro `BaseStatus` sulla pagina kit; il 404 di `/favicon.ico`. ✅ **N-3** della revisione del compito 4 non è più registrata: la cura sta in `compare_task5.py`. ⚠️ **E una nuova**: nessuna prova apre il cassetto del compito 5 né guarda il pulsante di vista della barra — la domanda 2 qui sopra |
+| **le due macchine** | quella dell'account `Jays`, col repository in `E:\ALL\DEV\MY_REPOS\daemon`, dove questa sessione ha lavorato: `core.autocrlf` `false` in `.git/config` e l'albero `w/lf`, Node v24.19.0, Chrome `154.0.8037.58` letto dal nome della cartella; e quella dell'account `zagor`, col repository in `C:\Users\zagor\Desktop\harness`, `core.autocrlf` `true` dal file di sistema, Node v24.19.0, Chrome `154.0.8037.58` dalla consegna dell'esecuzione del compito 3 — si aggiorna da sé, e si rilegge. ⛔ Sulla macchina che esegue, gli Attesi di **forma** si misurano, non si copiano (E72) |
+
+📌 **La ricetta del compito 5**, per rifarlo o confrontarlo dal testo del piano; vale per il piano del commit che scrive questa
+riga. `W` è il file intero dal recinto aperto a quella riga; `R` sostituisce l'occorrenza unica del primo recinto col secondo;
+`RL` sostituisce il testo delle righe `<` con quello delle righe `>`, i *Trova/Sostituisci* scritti in linea nella prosa; `X`
+sostituisce le righe dall'ancora `[` compresa all'ancora `]` esclusa col recinto; `S` è lo script del Passo 1. Le righe `#`
+nominano il passo.
+
+```text
+# 1
+S 3939
+X gui/src/panels/modules.test.ts 3977
+[ describe("Impostazioni", () => {
+] describe("the confirmation window", () => {
+RL gui/src/panels/modules.test.ts
+< import { useInvoke } from "../stores/invoke";
+> import { useInvoke } from "../stores/invoke";
+> import { useLayout } from "../stores/layout";
+R gui/src/panels/modules.test.ts 4074 4082
+R gui/src/frame/frame.test.ts 4101 4109
+W gui/src/panels/settings.browser.test.ts 4132
+# 2a
+R gui/src/locales/copy.test.ts 4215 4222
+R gui/src/locales/copy.test.ts 4230 4238
+R gui/src/locales/copy.test.ts 4253 4260
+R gui/src/locales/copy.test.ts 4266 4273
+# 2b
+R gui/src/locales/it.json 4292 4299
+# 3
+W gui/src/components/Confirm.vue 4318
+W gui/src/frame/Drawer.vue 4373
+# 4
+W gui/src/frame/Band.vue 4416
+R gui/src/panels/Status.vue 4463 4473
+RL gui/src/panels/Status.vue
+< import { useConnection } from "../stores/connection";
+> import BaseStatus from "../components/BaseStatus.vue";
+> import { useConnection } from "../stores/connection";
+# 5
+W gui/src/panels/Settings.vue 4491
+R gui/src/tokens/dock.css 4581 4588
+# 6
+W gui/src/panels/Permissions.vue 4598
+W gui/src/panels/Steps.vue 4650
+RL gui/src/panels/Placeholder.vue
+<       <button type="button" @click="api?.close()">{{ $t("placeholder.closeMissing") }}</button>
+>       <BaseButton @click="api?.close()">{{ $t("placeholder.closeMissing") }}</BaseButton>
+RL gui/src/panels/Placeholder.vue
+< import type { DockviewPanelApi } from "dockview-core";
+> import type { DockviewPanelApi } from "dockview-core";
+> import BaseButton from "../components/BaseButton.vue";
+W gui/src/frame/ViewBar.vue 4708
+# 7
+R gui/eslint.config.js 4796 4808
+```
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
+del sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **una violazione del linter con parole dentro ne rompe due**: la `x` dei recinti del Passo 7 la prendeva anche `no-raw-text` (**E34**) | una riga rossa del linter si giudica dal **numero** degli errori, e la stessa violazione si lancia anche **senza** la regola: dev'essere verde |
+| 2 | **un passo a mano non sta nel commit di un subagente** (**E35**) | per ogni passo si chiede chi lo può fare nella modalità scelta; una cella della posizione che dipende da un passo a mano la scrive chi lo fa |
+| 3 | **la lezione 5 della consegna precedente non si è riprodotta nella forma scritta**: con `userEvent.keyboard("{ArrowDown}")`, premuto e rilasciato, la prova ha chiesto al core **3 volte su 3**, da sola — P-19 misurava una caduta su dieci della suite intera, non un rosso fisso | il tasto tenuto resta la forma giusta, perché la caduta è rara e non assente; e una sonda che esiste per un aggiornamento di una libreria si prova spegnendo quella via **dentro** la libreria, nella copia: lì la prova della tastiera cade |
+| 4 | **un conto che la Definizione di «fatto» fa col `grep` vuole il segno, non solo la guardia** (**E37**) | un file nuovo del browser porta il commento `NON-VACUITY` accanto alla sua guardia |
+
+**Il prossimo passo** — una fase nuova, nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. Questa sezione; poi il dispaccio: dalla radice del repository il brief, con
+   `python docs/superpowers/plans/2026-09-23-design-system-esecuzione/_extract_brief_5.py`, e il prompt dal modello
+   `dispatch-task-5.md` della stessa cartella, coi campi e i valori della macchina che esegue — il riquadro in testa al
+   modello dice come.
+3. ⛔ **Il costo, prima di dispacciare, e il sì del proprietario**: la banda è quella dei compiti 3 e 4, nelle consegne in
+   archivio — per il 4 l'implementatore ~350k token e ~24 minuti, il revisore ~473k, ~0,82 milioni in tutto.
+4. L'**esecuzione del compito 5**, con `superpowers:subagent-driven-development`; il revisore rilancia ogni comando,
+   confronta con `compare_task5.py` e **guarda** la SPA nel browser, nei due temi; dopo la revisione e le sue cure il
+   **Passo 8 col proprietario** — l'Assistente vocale, un minuto — e la riga 5 col verbale nel commit della chiusura
+   (**E35**); alla chiusura del compito, i file del dispaccio nella cartella tracciata. Poi il pre-controllo del compito 6,
+   in un'altra sessione, con la prossima voce d'errata libera, **E38**; e così compito per compito, fino al 9.

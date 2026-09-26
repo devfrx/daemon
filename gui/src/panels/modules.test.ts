@@ -58,10 +58,11 @@ describe("the registry, with the modules plugged in", () => {
     };
     for (const name of Object.keys(MODULES)) expect(drawn(name), name).not.toContain("placeholder");
     // ⛔ THE SECOND DIRECTION: a module type nobody built is still the placeholder, saying who
-    // fills it -- otherwise plugging five in would have to be checked in the browser.
+    // fills it -- otherwise plugging five in would have to be checked in the browser. Its root carries the CLASS, and
+    // the nucleus's carries `nucleus` too (E58): the class is read as a word, not as the attribute's whole text.
     const unbuilt = PANEL_TYPES.filter((type) => !(type.name in MODULES));
     expect(unbuilt.length).toBeGreaterThan(0);
-    for (const type of unbuilt) expect(drawn(type.name), type.name).toContain('class="placeholder"');
+    for (const type of unbuilt) expect(drawn(type.name), type.name).toMatch(/\bclass="placeholder\b/);
   });
 });
 

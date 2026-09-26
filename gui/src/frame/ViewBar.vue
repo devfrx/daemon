@@ -53,8 +53,8 @@ const emit = defineEmits<{ (event: "switch", view: ViewName): void }>();
   gap: var(--space-3);
   align-items: center;
   padding: var(--space-2) var(--space-3);
-  background: var(--color-bg-raised);
-  border-bottom: var(--border-width) solid var(--color-border);
+  /* ⛔ NO SURFACE AND NO LINE UNDER IT (the owner at step 8 of task 6, E57): the bar is part of the page, as the board's
+     `.m-bar` is. */
 }
 .search {
   flex: 1;

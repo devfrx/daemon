@@ -77,8 +77,8 @@ function same(a: SerializedDockview, b: SerializedDockview): boolean {
 export function createDock(host: HTMLElement): DockviewApi {
   const layout = useLayout();
   const api = createDockview(host, {
-    // ⛔ OUR THEME AND NOT `themeAbyss`, on which the eight moves were judged: that one is dark
-    // only, and the design system has two themes (section (c), answers 5 and 18).
+    // ⛔ OUR THEME AND NOT `dockview`'s abyss theme, on which the eight moves were judged: that one
+    // is dark only, and the design system has two themes (section (c), answers 5 and 18).
     theme: harnessTheme(),
     defaultTabComponent: "bigtab",
     // Q4 of SP-8: the doc recommends `pointer` where HTML5 drag is unreliable and names embedded

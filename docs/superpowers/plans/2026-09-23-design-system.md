@@ -214,6 +214,16 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | **E46** | ⚠️ **Compito 6, dalla sonda del compito 4 — `concentricRadii` dimezzava ogni angolo da solo, e il CSS no.** `effective` prendeva `min(r, h/2, w/2)`, giusto solo per quattro angoli uguali: il CSS riduce **tutti** i raggi di un fattore solo, e solo se i due raggi di un lato superano il lato — CSS Backgrounds 3, §4.5 *«Overlapping Curves»*, letta alla fonte il 2026-09-26. La barra del titolo del gruppo galleggiante, `20px 20px 0 0` in 24 px, si disegna a 20, perché ogni lato tiene 20 + 0 in 24; la sonda la leggeva 12, e con la cura di **E44** dava un rosso falso nei due temi, `dv-floating-titlebar in dv-resize-container, top-left: radius 12.0, outer 20.0, distance 1.0/1.0`. **E30** aveva letto un raggio per angolo e tenuto la riduzione del caso simmetrico. Trovata dal pre-controllo il 2026-09-26, curando E44. ✅ **Corretta** nel commit che la scrive: il fattore della regola in `effective`, col perché e la fonte nel commento; due prove a mano in `probes.browser.test.ts` — la barra `20px 20px 0 0` alta 24 a 1/1, `{ near: 2, bad: [] }`, e la stessa coi quattro angoli a 20, disegnati a 12, rifiutata nei due angoli di sopra —; e la fonte nella tabella del compito 9. Misurata: con la riduzione di prima, rosse la prova della barra e quella dei raggi del dock nei due temi; senza nessuna riduzione, rosse la prova della pillola, quella di ciò che scorre, il cui pezzo è una pillola, e quella del dock; sulla pagina kit, dove ogni pezzo ha i quattro angoli uguali, nessun esito cambia |
 | **E47** | ⚠️ **Compito 6, Passo 4 — nel gruppo galleggiante la linguetta restava sul fondo della superficie:** il blocco del contenitore ridichiarava a `--color-bg-raised` il fondo del gruppo e quello dell'intestazione, e non i quattro delle linguette, che il blocco del tema lega a `--color-bg-surface`. Visto dal pre-controllo al Passo 8, nello scuro: dietro «STATO» e i suoi due comandi un rettangolo più scuro sull'intestazione rialzata — misurato, la linguetta `rgb(27, 23, 24)` e l'intestazione `rgb(36, 31, 32)`; nel chiaro i due ruoli hanno lo stesso valore, e non si vede. La (c) vuole i gruppi galleggianti `--color-bg-raised`. ✅ **Corretta** nel commit che la scrive: i quattro fondi delle linguette a `--color-bg-raised` nel blocco del contenitore, col perché nel commento; e nella prova del livello, che stacca già un gruppo, l'intestazione e la linguetta contro `--color-bg-raised` calcolato. Misurata: verde con la cura; senza, rossa la sola prova dello scuro, `expected 'rgb(27, 23, 24)' to be 'rgb(36, 31, 32)'` — ⚠️ la metà chiara non può mordere, perché nella tavola i due ruoli coincidono |
 | **E48** | Nit — **Compito 6, Passo 8 — il guardare non nominava ciò che solo lì si vede:** **(a)** con Playwright senza finestra le barre di scorrimento non si vedono (la lezione 1 della consegna dell'esecuzione del compito 5, in archivio), e le barre dei pannelli che scorrono — Stato e Impostazioni nella Home a 1440 × 900 — arrivano ora all'angolo tondo della scheda, che ne taglia il binario: la freccia resta intera, misurato ingrandendo i due angoli nei due temi, ed è aspetto, che giudica il proprietario (controllo 15); **(b)** **E47** si vedeva solo nello scuro, e col gruppo staccato. ✅ **Corretta** nel commit che la scrive: il Passo 8 nomina il gruppo staccato e le barre all'angolo, e dice di guardare con le barre accese |
+| **E49** | Nit — **Compito 6, Passo 7 — due righe facevano cadere più prove di quelle che l'Atteso nomina**, la specie di **E12**: dal rapporto dell'implementatore, confermata dalla revisione. **(a)** *«la distanza»*, `gap: 0 };`, fa cadere anche sotto jsdom la prova del `gap` in px di `frame.test.ts`, `expected [Function] to throw an error` — il `gap` scritto a mano non legge il token —, `Tests  3 failed \| 174 passed \| 1 skipped (178)`; **(b)** *«la riduzione»*, `return radius(element, corner);`, fa cadere anche nei due temi *«keeps every radius concentric (answer 4)»* della pagina kit, `expected [ …(24) ] to deeply equal []` — radio e pillole letti 9999 —, `Tests  6 failed \| 171 passed \| 1 skipped (178)`. Nessun codice cambia. ✅ **Corretta** nel commit che la scrive: le due righe del Passo 7 le nominano |
+| **E50** | ⚠️ **Compito 6 — quattro commenti dettati nominavano `themeAbyss`**, e il controllo 15 del disegno dice *«`themeAbyss` non compare più nel sorgente»*: la sua riga nella *Definizione di «fatto»*, `grep -rn 'themeAbyss' gui/src \| wc -l` con l'attesa `0`, avrebbe reso **4** al compito 9 — misurato dal coordinatore e dalla revisione (I-1) a `c1102fc`, in `frame/dock.ts`, `frame/frame.test.ts`, `tokens/dock.css` e `tokens/dock.test.ts`, nessun `import` e nessun uso. Scartate la strada B, un comando che guardi il solo codice, che lascia falso alla lettera il controllo del disegno — merito approvato, e un filtro sui commenti è fragile —, e la C, un `4` scritto, che invecchia (gotcha #31). ✅ **Corretta** nel commit che la scrive, la strada A: i quattro commenti dicono *«the abyss theme»* col senso di prima, nei sorgenti e nei recinti; nessuna prova cambia, e il comando torna a rendere 0 |
+| **E51** | ⚠️ **Compito 6, Passo 4 — il secondo ciclo di `--dv-overlay-z-index` non era curato:** `.dv-render-overlay { --dv-overlay-z-index: var(--dv-overlay-z-index, 999) }` in `dockview.css` 8.3.1, che il Passo 1 misura accanto a quello del contenitore, e `dockview-core` alza il contenuto di un pannello `renderer: "always"` in un gruppo staccato a quel livello + 2i + 1: misurato dalla revisione (M-1) a **1000**, sopra una scatola a `--z-overlay`, col contenitore a 50. Oggi latente — nessun pannello è `always` —, e della specie di R3-17. ✅ **Corretta** nel commit che la scrive: la regola su `.dv-render-overlay`, nel tema; in `dock.browser.test.ts` la prova *«keeps an always-rendered panel's content…»*, che porta lei il pannello, rossa senza la regola nei due temi, `expected 1000 to be 51`; una riga nel Passo 7 |
+| **E52** | Minore — **Compito 6, Passo 3 — la prova delle schede non guardava il bordo né l'ombra** che la (c) nomina: tolti, la suite restava verde (revisione, M-2). ✅ **Corretta** nel commit che la scrive: due attese, `borderTopColor` a `--color-border-card` e `boxShadow` a `--shadow-card`; senza il bordo rossa nei due temi, senza l'ombra nel solo chiaro — nello scuro `--shadow-card` è `none`, come per **E47**; due righe nel Passo 7 |
+| **E53** | Nit — **Compito 6, Passo 4 — la regola di ciò che scorre guarda le sole scatole FRA l'elemento e l'antenato:** un antenato tondo che scorre lui stesso è giudicato lo stesso, alla posizione di scorrimento che ha — misurato dalla revisione (N-2) con un caso a mano; oggi latente. ✅ **Corretta** nel commit che la scrive: il commento della sonda lo dichiara. ⚠️ **Al pre-controllo del compito 8**, accanto alla domanda di **E44** sulla Panoramica |
+| **E54** | Nit — **Compito 6, Passo 5 — il commento della presa diceva che `dockview` comincia il trascinamento anche su `mousedown`:** 8.3.1 non lo ascolta — `grep -c '"mousedown"' gui/node_modules/dockview-core/dist/package/main.esm.mjs` → 0, il 2026-09-26 —, e `@mousedown.stop` e `@click.stop` non hanno una prova (revisione, N-3); ereditato da `BigTab.ts` di `1a83208`. ✅ **Corretta** nel commit che la scrive: il commento dice che la prova tiene `pointerdown`, e che gli altri due restano, come SP-8 li ha giudicati, senza prova — dichiarati, non tolti |
+| **E55** | ⚠️ **Compito 6, Passo 8 — la zona d'arrivo aveva gli angoli dritti dentro la scheda tonda:** il proprietario, nel suo Chrome, il 2026-09-26. Col montaggio predefinito di 8.3.1 la zona è `.dv-drop-target-selection`, dentro il `.dv-content-container` del gruppo — misurato trascinando con un mouse vero, Playwright sul Chrome installato —, e **non** il `.dv-drop-target-anchor` che i temi «spaced» arrotondano, che è del montaggio `absolute`: una prima cura su quello, provata su un elemento messo a mano, era verde e non toccava la zona vera. ✅ **Corretta** nel commit che la scrive: nel tema `.dv-drop-target-selection` col raggio della scheda meno il bordo (risposta 4); in `dock.browser.test.ts` una prova che **trascina davvero** una linguetta — `userEvent.dragAndDrop` con `{ steps: 12 }`, perché con `dndStrategy: "pointer"` un salto solo non disegna la zona, misurato: la guardia rossa — e la legge con un osservatore; rossa senza la regola nei due temi, `expected [ '0px' ] to deeply equal [ '19px' ]`; stabile, 5 corse su 5; una riga nel Passo 7. Il richiamo nella (c) del disegno |
+| **E56** | ⚠️ **Compito 6, Passo 8 — due sfondi, e nel chiaro le schede sprofondavano:** il proprietario, il 2026-09-26. `.dv-dockview { background-color: var(--dv-group-view-background-color) }` in `dockview.css` 8.3.1, e il nostro tema dà a quella variabile la superficie delle schede: la griglia intera si dipingeva del loro colore, sotto e intorno fino al margine di `.dock`, contro la (c), *«sul fondo `--color-bg`»* — misurato risalendo gli strati: l'unico dipinto è `dv-grid-view dv-dockview`, `rgb(251, 248, 243)` nel chiaro e `rgb(27, 23, 24)` nello scuro. ✅ **Corretta** nel commit che la scrive: nel tema la griglia trasparente; in `dock.browser.test.ts` la prova *«paints nothing between the cards…»*, che risale da ogni scheda all'ospite, rossa senza la regola nei due temi, `expected [ Array(1) ] to deeply equal []`; una riga nel Passo 7 |
+| **E57** | ⚠️ **Compito 6, Passo 8 — la barra aveva un fondo suo e una riga sotto:** il proprietario, il 2026-09-26: *«eviterei di colorarla diversamente dallo sfondo (anche il border bottom) e renderla un tutt'uno con esso»*. È ciò che la tavola disegna — `.m-bar`, né fondo né bordo —: il fondo `--color-bg-raised` col bordo veniva dalla parte 2, e i compiti 5 e 8 lo portavano avanti. ✅ **Corretta** nel commit che la scrive: `frame/ViewBar.vue` senza le due righe, col perché nel commento, al Passo 4; il recinto di `ViewBar.vue` del compito 8 allineato; il richiamo in *«La barra»* del disegno. ⚠️ **La sonda al pre-controllo del compito 8**, che monta la cornice intera nel browser (`frame.browser.test.ts`), come per **E43** |
+| **E58** | ⚠️ **Compito 6, Passo 8 — il nucleo era vestito da scheda:** il proprietario, il 2026-09-26: *«la scheda del grafo … deve fare eccezione, ed essere un tutt'uno con lo sfondo»*. È la stella polare — *«il nucleo al centro … intorno le tessere»* — e la tavola, `.m-core` fra le schede `.m-mod`. ✅ **Corretta** nel commit che la scrive, sullo schema della striscia del compito 8 (*«Found by what it holds»*): la radice del nucleo porta `.nucleus` — oggi quella di `Placeholder.vue`, per il modulo che lo interpreta —, e il tema toglie al suo gruppo fondo, bordo e ombra con `:has(.nucleus)`; in `dock.browser.test.ts` la prova *«draws the nucleus on the page…»*, e la prova delle schede lo salta; rossa senza la regola nei due temi e, senza il segno, `expected [] to have a length of 1 but got +0`; due righe nel Passo 7. La prova di `modules.test.ts` riconosceva il segnaposto dal testo `class="placeholder"`, e con la seconda classe cadeva: legge ora la classe come parola. Il richiamo nella (c) del disegno |
 
 ---
 
@@ -5032,7 +5042,8 @@ dell'errata, dal pre-controllo.
   ciascuno **per intero**, col terminatore che ha oggi
 - Modify: `gui/src/frame/dock.ts`, `gui/src/frame/Frame.vue`, `gui/src/frame/frame.test.ts`,
   `gui/src/tokens/tokens.browser.test.ts`, `gui/src/testing/probes.ts` e `gui/src/testing/probes.browser.test.ts` (**E44**,
-  **E46**); `gui/eslint.config.js` — un commento
+  **E46**); `gui/eslint.config.js` — un commento; dal Passo 8, `gui/src/panels/Placeholder.vue` e
+  `gui/src/panels/modules.test.ts` (**E58**) e `gui/src/frame/ViewBar.vue` (**E57**)
 
 **Interfaces:**
 - Consumes: `shownTheme` di `tokens/theme.ts` (compito 1); il progetto `browser` (compito 2); `BaseLabel`, `BaseButton`,
@@ -5176,7 +5187,7 @@ function setIn(css: string, selector: string): string[] {
 }
 
 /**
- * ⛔ OUR THEME REPLACES `themeAbyss`, SO IT SETS WHAT `themeAbyss` SETS (design system, section (c); P-6 of the plan).
+ * ⛔ OUR THEME REPLACES THE ABYSS THEME, SO IT SETS WHAT THAT ONE SETS (design system, section (c); P-6 of the plan).
  * The reference is `.dockview-theme-abyss`, in its two blocks of `dockview.css` 8.3.1: a variable it sets and ours
  * forgot would fall back to `dockview`'s own default -- a colour by hand from a stylesheet we do not own. Two families
  * are out, each with its reason, measured in `dockview.css` 8.3.1 on 2026-09-23:
@@ -5210,6 +5221,7 @@ import "../tokens";
 import type { DockviewApi } from "dockview-core";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { userEvent } from "vitest/browser";
 
 import { registerModules } from "../panels/modules";
 import { concentricRadii } from "../testing/probes";
@@ -5279,7 +5291,13 @@ for (const theme of ["light", "dark"] as const) {
       for (const group of groups) {
         const style = getComputedStyle(group);
         expect(style.borderTopLeftRadius).toBe(computed("border-top-left-radius", "--radius-card"));
+        // ⛔ THE NUCLEUS IS NOT A CARD (E58): the page shows through it, and its test is its own, below.
+        if (group.querySelector(".nucleus") !== null) continue;
         expect(style.backgroundColor).toBe(computed("background-color", "--color-bg-surface"));
+        // The border the dark theme draws, the shadow the light one casts (E52): tokens that are transparent or `none`
+        // in the other theme, so each bites in its own.
+        expect(style.borderTopColor).toBe(computed("border-top-color", "--color-border-card"));
+        expect(style.boxShadow).toBe(computed("box-shadow", "--shadow-card"));
       }
       // The nearest neighbour on the right and below, where the two overlap: the distance between the facing edges.
       const boxes = groups.map((group) => group.getBoundingClientRect());
@@ -5293,6 +5311,66 @@ for (const theme of ["light", "dark"] as const) {
       expect(gaps.length).toBeGreaterThan(1);
       const space = Number.parseFloat(computed("width", "--space-3"));
       expect(gaps.filter((gap) => Math.abs(gap - space) > 0.5)).toEqual([]);
+    });
+
+    it("paints nothing between the cards: the page shows through (E56)", async () => {
+      const { host } = await dock(theme);
+      // ⛔ FROM EVERY CARD UP TO THE HOST, NOTHING PAINTS (the owner at step 8 of task 6): `dockview.css` 8.3.1 paints the
+      // whole grid in the cards' surface, a second background under them and around them, where the light cards sink.
+      const painted = new Set<string>();
+      let seen = 0;
+      for (const group of [...host.querySelectorAll(".dv-groupview")]) {
+        for (let element = group.parentElement; element !== null && element !== host; element = element.parentElement) {
+          seen += 1;
+          const { backgroundColor } = getComputedStyle(element);
+          if (backgroundColor !== "rgba(0, 0, 0, 0)") painted.add(`${element.className}: ${backgroundColor}`);
+        }
+      }
+      // ⛔ NON-VACUITY: the layers between the cards and the host were walked.
+      expect(seen).toBeGreaterThan(0);
+      expect([...painted]).toEqual([]);
+    });
+
+    it("draws the nucleus on the page, not as a card (E58)", async () => {
+      const { host } = await dock(theme);
+      const groups = [...host.querySelectorAll(".dv-groupview")];
+      const nuclei = groups.filter((group) => group.querySelector(".nucleus") !== null);
+      // ⛔ NON-VACUITY: the Home view has its nucleus, and one.
+      expect(nuclei).toHaveLength(1);
+      const style = getComputedStyle(nuclei[0] as Element);
+      expect(style.backgroundColor).toBe("rgba(0, 0, 0, 0)");
+      expect(style.borderTopColor).toBe("rgba(0, 0, 0, 0)");
+      expect(style.boxShadow).toBe("none");
+    });
+
+    it("rounds the drop zone like the cards, a tab dragged for real (E55)", async () => {
+      const { host, api } = await dock(theme);
+      // ⛔ THE DROP ZONE LIVES ONLY WHILE A TAB IS DRAGGED, so an observer reads it the moment `dockview` draws it: with
+      // the default mounting of 8.3.1 it is `.dv-drop-target-selection`, inside the target group's content container --
+      // measured with a real mouse on 2026-09-26, and NOT the `.dv-drop-target-anchor` of the absolute mounting.
+      const radii = new Set<string>();
+      const observer = new MutationObserver(() => {
+        for (const selection of host.querySelectorAll(".dv-drop-target-selection")) {
+          radii.add(getComputedStyle(selection).borderTopLeftRadius);
+        }
+      });
+      observer.observe(host, { childList: true, subtree: true, attributes: true });
+      const tab = api.getPanel("permissions")?.group.element.querySelector(".dv-tabs-container > .dv-tab");
+      const target = api.getPanel("activity")?.group.element.querySelector(".dv-content-container");
+      expect(tab).toBeInstanceOf(HTMLElement);
+      expect(target).toBeInstanceOf(HTMLElement);
+      // ⛔ IN STEPS: with `dndStrategy: "pointer"` a drag starts past a threshold, and one jump from tab to target never
+      // draws the zone -- measured, the guard below red. Playwright 1.63 interpolates the moves, and `vitest` hands it
+      // the option.
+      await userEvent.dragAndDrop(tab as HTMLElement, target as HTMLElement, { steps: 12 });
+      observer.disconnect();
+      // ⛔ NON-VACUITY: the drag drew a drop zone.
+      expect(radii.size).toBeGreaterThan(0);
+      // Concentric with the card it sits in: one border inside the card's edge (answer 4).
+      const card = Number.parseFloat(computed("border-top-left-radius", "--radius-card"));
+      // `width`, not `border-top-width`: a border with no style computes to 0, whatever its width says.
+      const border = Number.parseFloat(computed("width", "--border-width"));
+      expect([...radii]).toEqual([`${card - border}px`]);
     });
 
     it("keeps every radius of its own concentric, a floating group's too (answer 4)", async () => {
@@ -5334,6 +5412,25 @@ for (const theme of ["light", "dark"] as const) {
         expect(element).not.toBeNull();
         expect(getComputedStyle(element as Element).backgroundColor).toBe(raised);
       }
+    });
+
+    it("keeps an always-rendered panel's content with its floating group, under the dialogs (E51)", async () => {
+      const { host, api } = await dock(theme);
+      // ⛔ A PANEL THE SPA DOES NOT HAVE YET, BROUGHT BY THE TEST: `renderer: "always"` keeps its content in an overlay of
+      // its own, which `dockview.css` 8.3.1 gives the floating container's cycle (E51).
+      api.addPanel({
+        id: "always",
+        component: "knowledge",
+        renderer: "always",
+        floating: { x: 100, y: 100, width: 400, height: 300 },
+      });
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      const overlays = [...host.querySelectorAll(".dv-render-overlay")];
+      // ⛔ NON-VACUITY: the one panel that is rendered always.
+      expect(overlays).toHaveLength(1);
+      const level = Number(getComputedStyle(overlays[0] as Element).zIndex);
+      expect(level).toBe(Number(readToken("--z-floating")) + 1);
+      expect(level).toBeLessThan(Number(readToken("--z-overlay")));
     });
   });
 }
@@ -5380,7 +5477,7 @@ import { createDock, harnessTheme } from "./dock";
     useLayout().attach(createFakeBridge());
     const where = host();
     const api = createDock(where);
-    // ⛔ THE SHELL WEARS OUR CLASS, the one `tokens/dock.css` dresses -- and `themeAbyss`'s is gone (control 15).
+    // ⛔ THE SHELL WEARS OUR CLASS, the one `tokens/dock.css` dresses -- and the abyss theme's is gone (control 15).
     expect(where.querySelector(".dv-shell")?.classList.contains("dockview-theme-harness")).toBe(true);
     expect(where.querySelector(".dockview-theme-abyss")).toBeNull();
     const handed: unknown[] = [];
@@ -5502,7 +5599,11 @@ error matching /not a length in px/ but got '(0 , __vite_ssr_import_13__.harness
 **già oggi**. `probes.browser.test.ts`: rosse le due prove che la sonda di oggi non sa, la barra — `expected { near: 2, bad:
 [ …(2) ] } to deeply equal { near: 2, bad: [] }` (**E46**) — e ciò che scorre — `expected { near: 1, …(1) } to deeply
 equal { near: +0, bad: [] }` (**E44**) —, e verde la pillola, che la sonda di oggi già riduce. Il 2026-09-26, sulla copia
-del pre-controllo, dieci rosse su quindici nel browser. Un rosso per un'altra ragione è una voce d'errata.
+del pre-controllo, dieci rosse su quindici nel browser. Un rosso per un'altra ragione è una voce d'errata. ⚠️ **Col
+compito curato** — le prove di **E51**, **E55**, **E56** ed **E58**, sulla sequenza dei passi nel clone della revisione il
+2026-09-26 —: nel browser `Tests  18 failed | 5 passed (23)`, in più per tema `expected 1000 to be 51`, `expected [
+Array(1) ] to deeply equal []`, `expected [] to have a length of 1 but got +0` ed `expected [ '0px' ] to deeply equal [
+'19px' ]`; sotto jsdom com'era.
 
 - [ ] **Passo 4: il tema nostro — `dock.css`, `dock.ts`, il margine, i token sotto jsdom**
 
@@ -5512,7 +5613,8 @@ passano nella sua faccia (passo 5):
 ```css
 /* OUR `dockview` THEME, `dockview-theme-harness` (design system, section (c); task 6 of its plan): `frame/dock.ts` puts the
    class on the dock's shell, and this sheet dresses it with our roles and tokens only -- no colour by hand (control 5,
-   `usage.test.ts`). It sets every variable `themeAbyss` set, but the tab groups' and the palette's (`dock.test.ts`).
+   `usage.test.ts`). It sets every variable `dockview`'s abyss theme set, but the tab groups' and the palette's
+   (`dock.test.ts`).
 
    ⛔ `frame/VueContent.ts` and `frame/BigTab.ts` hand `dockview` plain elements, because it asks for RENDERERS and not
    components: the classes they name -- `panel`, `bigtab` -- live here and not in a scoped <style> (E165, E166 of the
@@ -5594,6 +5696,32 @@ passano nella sua faccia (passo 5):
   box-shadow: var(--shadow-card);
 }
 
+/* ⛔ ONLY THE CARDS PAINT (the owner at step 8 of task 6, E56): `.dv-dockview { background-color:
+   var(--dv-group-view-background-color) }` in `dockview.css` 8.3.1 paints the whole grid in the cards' surface -- a
+   second background under the cards and around them, up to the margin of `.dock`, where the light cards sink. Between
+   the cards and around them, the page. */
+.dockview-theme-harness .dv-dockview {
+  background-color: transparent;
+}
+
+/* ⛔ THE NUCLEUS IS NOT A CARD (the owner at step 8 of task 6, E58): the north star's Home is the nucleus at the centre
+   and the tiles around it, and the board draws it on the page, `.m-core` among the `.m-mod` cards. Its group paints
+   nothing -- the border stays, transparent, so its content sits where a card's would. Found by what it holds, like the
+   strip: `.nucleus` is the root of the nucleus, today `Placeholder.vue`'s for the module that plays it. */
+.dockview-theme-harness .dv-groupview:has(.nucleus) {
+  --dv-group-view-background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* ⛔ THE DROP ZONE IS ROUNDED LIKE THE CARDS (the owner at step 8 of task 6, E55): with the default mounting of 8.3.1 it
+   is `.dv-drop-target-selection`, filling the target group's content -- or its half, over an edge --, one border inside
+   the card's edge; so concentric, the card's radius less the border (answer 4). The `.dv-drop-target-anchor` that
+   `dockview`'s spaced themes round belongs to `dndOverlayMounting: "absolute"`, which the SPA does not use. */
+.dockview-theme-harness .dv-drop-target-selection {
+  border-radius: calc(var(--radius-card) - var(--border-width));
+}
+
 /* The mark of the visible tab (the (c)): the icon of its label in `--color-mark`, the hidden tabs' in the tab's own colour.
    ⛔ Over `BaseLabel`'s scoped colour, which is muted everywhere else: here the tab's colour, above, decides. */
 .dockview-theme-harness .dv-tab .base-label {
@@ -5628,6 +5756,13 @@ passano nella sua faccia (passo 5):
   border: 0;
   border-radius: 0 0 var(--radius-card) var(--radius-card);
   box-shadow: none;
+}
+/* ⛔ AND THE RENDER OVERLAY, THE SAME CYCLE (E51): `.dv-render-overlay { --dv-overlay-z-index: var(--dv-overlay-z-index,
+   999) }` in `dockview.css` 8.3.1, and `dockview-core` lifts the content of a `renderer: "always"` panel in a floating
+   group to that level + 2i + 1 -- measured at 1000, over our dialogs, with its container at 50. No panel of the SPA is
+   `always` today; the first that keeps a context alive, a 3D view for one, would float over the dialogs unseen. */
+.dockview-theme-harness .dv-render-overlay {
+  --dv-overlay-z-index: var(--z-floating);
 }
 
 /* The element `BigTab` hands to `dockview`, where it mounts the face of the grab: without a height of its own the face's
@@ -5713,8 +5848,8 @@ export function harnessTheme(): DockviewTheme {
 
 ```ts
   const api = createDockview(host, {
-    // ⛔ OUR THEME AND NOT `themeAbyss`, on which the eight moves were judged: that one is dark
-    // only, and the design system has two themes (section (c), answers 5 and 18).
+    // ⛔ OUR THEME AND NOT `dockview`'s abyss theme, on which the eight moves were judged: that one
+    // is dark only, and the design system has two themes (section (c), answers 5 and 18).
     theme: harnessTheme(),
 ```
 
@@ -5823,7 +5958,9 @@ export function concentricRadii(roots: Element[]): { near: number; bad: string[]
  * each corner on its own read that bar, the dock's floating title bar, as 12.
  * ⛔ WHAT SCROLLS IS NOT PLACED (E44): an element that reaches its ancestor through a box whose content scrolls sits where
  * the scroll put it, not at a distance anyone drew -- the dock's Impostazioni, taller than its card, put a radio 19 px
- * from a corner. It is not judged; what does not scroll still is.
+ * from a corner. It is not judged; what does not scroll still is. ⚠️ ONLY A BOX BETWEEN THE TWO (E53): an ancestor
+ * that scrolls ITSELF is still judged, at the scroll it has -- today no root the tests judge holds one scrolled, and the
+ * dialog's sheet, which scrolls, has its top corners placed by its padding at 0.
  */
 export function concentricRadii(roots: Element[]): { near: number; bad: string[] } {
 ```
@@ -5872,6 +6009,73 @@ export function concentricRadii(roots: Element[]): { near: number; bad: string[]
       if (scrolled(element, ancestor)) continue;
 ```
 
+In `gui/src/panels/Placeholder.vue` (`replace_unique.py`) il nucleo lo dice alla sua radice, `.nucleus`, e il tema
+non gli disegna la scheda (**E58**, dal Passo 8):
+
+*Trova*:
+
+```vue
+const NUCLEUS = "knowledge";
+</script>
+
+<template>
+  <section class="placeholder">
+```
+
+*Sostituisci con:*
+
+```vue
+// ⛔ AND ITS ROOT SAYS SO, `.nucleus`: the dock's theme draws no card around it (`tokens/dock.css`, E58).
+const NUCLEUS = "knowledge";
+</script>
+
+<template>
+  <section class="placeholder" :class="{ nucleus: params?.module === NUCLEUS }">
+```
+
+In `gui/src/panels/modules.test.ts` (`replace_unique.py`) la prova riconosce il segnaposto dalla classe letta come
+parola, perché la radice del nucleo ne porta due (**E58**):
+
+*Trova*:
+
+```ts
+    // fills it -- otherwise plugging five in would have to be checked in the browser.
+    const unbuilt = PANEL_TYPES.filter((type) => !(type.name in MODULES));
+    expect(unbuilt.length).toBeGreaterThan(0);
+    for (const type of unbuilt) expect(drawn(type.name), type.name).toContain('class="placeholder"');
+```
+
+*Sostituisci con:*
+
+```ts
+    // fills it -- otherwise plugging five in would have to be checked in the browser. Its root carries the CLASS, and
+    // the nucleus's carries `nucleus` too (E58): the class is read as a word, not as the attribute's whole text.
+    const unbuilt = PANEL_TYPES.filter((type) => !(type.name in MODULES));
+    expect(unbuilt.length).toBeGreaterThan(0);
+    for (const type of unbuilt) expect(drawn(type.name), type.name).toMatch(/\bclass="placeholder\b/);
+```
+
+In `gui/src/frame/ViewBar.vue` (`replace_unique.py`) la barra è parte della pagina, com'è `.m-bar` nella tavola
+(**E57**, dal Passo 8):
+
+*Trova*:
+
+```css
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-raised);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+```
+
+*Sostituisci con:*
+
+```css
+  padding: var(--space-2) var(--space-3);
+  /* ⛔ NO SURFACE AND NO LINE UNDER IT (the owner at step 8 of task 6, E57): the bar is part of the page, as the board's
+     `.m-bar` is. */
+}
+```
+
 ```bash
 (cd gui && npx vitest run --project jsdom src/tokens src/frame && npx vitest run --project browser src/frame src/tokens src/testing)
 ```
@@ -5880,7 +6084,8 @@ Atteso: **verde** — P-6, le prove del dock sotto jsdom, le schede a `--space-3
 quanto la sua striscia (**E45**), i raggi concentrici del dock e del gruppo staccato (**E44**, **E46**), il gruppo
 galleggiante a `--z-floating` e rialzato con la sua linguetta (**E47**), nei due temi, e le prove a mano della sonda; e
 ancora verdi le prove di `bigtab.test.ts`, che il passo 5 riscrive. Il 2026-09-26, sulla copia del pre-controllo: jsdom,
-otto file e 37 prove; browser, tre file e 21 prove.
+otto file e 37 prove; browser, tre file e 21 prove. ⚠️ Col compito curato, il 2026-09-26: browser, tre file e **29**
+prove (**E51**, **E55**, **E56**, **E58**); jsdom com'era.
 
 - [ ] **Passo 5: la presa grande coi pezzi del kit — la prova, poi la faccia**
 
@@ -5973,9 +6178,10 @@ import type { IconName } from "../components/icons";
  * The face of the big grab handle (design system, section (c)): the module's label with its icon, and the two commands as
  * base pieces -- `BigTab.ts` mounts it in the element `dockview` drags.
  *
- * ⛔ A PRESS ON A COMMAND MUST NOT START A DRAG, and stopping `click` alone is not enough: `dockview` begins the drag on
- * `pointerdown`/`mousedown`, so both stop on the button. Measured in SP-8; without it, every press of a command drags the
- * tile a few pixels first.
+ * ⛔ A PRESS ON A COMMAND MUST NOT START A DRAG, and stopping `click` alone is not enough: `dockview-core` 8.3.1 begins
+ * its pointer drag on `pointerdown`, stopped here and held by `bigtab.test.ts` -- without it, every press of a command
+ * drags the tile a few pixels first (SP-8). ⚠️ `mousedown` and `click` stop too, as SP-8 judged the grab with them,
+ * and no test holds those two (E54): 8.3.1 does not listen to `mousedown` at all.
  */
 defineProps<{ title: string; icon?: IconName }>();
 const emit = defineEmits<{ float: []; page: [] }>();
@@ -6101,12 +6307,13 @@ leggono: niente `<button>` scritto a mano, niente scritta fuori da `it.json`.
 Atteso: **verde** su tutto; il conto dei file di prova più alto di quello del compito 5 di **due**, `dock.test.ts` e
 `dock.browser.test.ts`. La riga del pezzo JavaScript — `npm run build 2>&1 | grep -E 'assets/index-.*\.js '` — va nel commit
 accanto a quella del passo 1: il 2026-09-23, sulla cartella di prova, da 689,58 kB a **690,50 kB**, compressi da 209,99 a
-210,37 — `themeAbyss` esce, la faccia entra (**N-2**, la cifra per il proprietario).
+210,37 — `themeAbyss` esce, la faccia entra (**N-2**, la cifra per il proprietario). ⚠️ Col compito curato, il
+2026-09-26: `Tests  185 passed | 1 skipped (186)`, e il pezzo `690.61 kB`, compresso `210.41 kB`.
 
 - [ ] **Passo 7: le due direzioni**
 
 Una violazione alla volta, poi indietro con la **copia salvata** e `cmp` (vincolo 11): `dock.css`, `BigTab.ts` e
-`jsdom-setup.ts` il compito li ha riscritti, `probes.ts` l'ha cambiato, e `readToken.ts`, `dock.test.ts` e `BigTabFace.vue`
+`jsdom-setup.ts` il compito li ha riscritti, `probes.ts` e `Placeholder.vue` li ha cambiati, e `readToken.ts`, `dock.test.ts` e `BigTabFace.vue`
 sono nati qui — `git
 checkout` non conosce i secondi e toglierebbe ai primi il lavoro del compito (A-1).
 
@@ -6122,7 +6329,7 @@ checkout` non conosce i secondi e toglierebbe ai primi il lavoro del compito (A-
 | i token sotto jsdom | in `src/jsdom-setup.ts` tolta la riga `document.head.append(sheet);` | rosso, **cinque** prove di `frame.test.ts` — le quattro che montano il dock e quella del `gap` —, tutte con `Error: the token --space-3 is not defined here: are the token sheets loaded?` |
 | `tokens.browser.test.ts`, `readToken` | in `readToken.ts` tolta la riga dell'`if` | rosso: `expected [Function] to throw an error` |
 | `dock.browser.test.ts`, le schede | in `dock.css`, nel blocco `.dockview-theme-harness .dv-groupview`, tolta `border-radius: var(--radius-card);` | rosso, nei due temi: `expected '0px' to be '20px'` |
-| `dock.browser.test.ts`, la distanza | in `dock.ts` `gap: 0 };` al posto di `` gap: pixels("--space-3") }; `` | rosso, nei due temi: `expected [ Array(10) ] to deeply equal []`, le distanze a 0 |
+| `dock.browser.test.ts`, la distanza | in `dock.ts` `gap: 0 };` al posto di `` gap: pixels("--space-3") }; `` | rosso, nei due temi: `expected [ Array(10) ] to deeply equal []`, le distanze a 0; e sotto jsdom la prova del `gap` in px di `frame.test.ts`, `expected [Function] to throw an error`: il `gap` scritto a mano non legge il token (**E49**) |
 | `dock.browser.test.ts`, i raggi | in `dock.css`, prima del commento *«The mark of the visible tab»*, `.dockview-theme-harness .dv-tabs-and-actions-container { border-radius: var(--radius-control); }` | rosso, nei due temi, l'ultima attesa: `expected [ …(8) ] to deeply equal []`, fra le voci `dv-tabs-and-actions-container in dv-groupview, top-left: radius 8.0, outer 20.0, distance 1.0/1.0` e il suo `top-right` |
 | `dock.browser.test.ts`, il livello | in `dock.css` tolta, dal blocco `.dockview-theme-harness .dv-resize-container`, la riga `--dv-overlay-z-index: var(--z-floating);` | rosso, nei due temi: `expected 999 to be 50` — R3-17 |
 | `dock.browser.test.ts`, la presa | in `dock.css`, nella regola `.dockview-theme-harness .dv-tabs-container > .dv-tab`, tolte le due righe del `padding` | rosso, nei due temi: `expected [ 32, 32, 32, 32, 32 ] to deeply equal []` — **E45** |
@@ -6130,8 +6337,15 @@ checkout` non conosce i secondi e toglierebbe ai primi il lavoro del compito (A-
 | `dock.browser.test.ts`, la barra del titolo | in `dock.css` tolta la regola `.dockview-theme-harness .dv-resize-container > .dv-floating-titlebar` | rosso, nei due temi: `expected 2 to be greater than or equal to 4` — dei quattro angoli del contenitore ne restano due, e la guardia lo vede (**E44**) |
 | `dock.browser.test.ts`, il fondo delle linguette | in `dock.css`, dal blocco `.dockview-theme-harness .dv-resize-container`, tolte le quattro righe `--dv-…-tab-background-color` | rosso, nello scuro: `expected 'rgb(27, 23, 24)' to be 'rgb(36, 31, 32)'` — ⚠️ nel chiaro i due ruoli hanno lo stesso valore, e quella metà non può mordere (**E47**) |
 | `probes.browser.test.ts`, il raggio disegnato | in `probes.ts` `return Math.min(radius(element, corner), box.height / 2, box.width / 2);` al posto di `return radius(element, corner) * Math.min(1, across, down);` | rosso: la prova della barra, `expected { near: 2, bad: [ …(2) ] } to deeply equal { near: 2, bad: [] }`, e nei due temi quella dei raggi del dock, `expected [ …(2) ] to deeply equal []` — la barra del titolo letta 12 (**E46**) |
-| `probes.browser.test.ts`, la riduzione | la stessa riga sostituita da `return radius(element, corner);` | rosso: la prova della pillola, `expected { near: 2, bad: [] } to deeply equal { near: 2, bad: [ …(2) ] }`, quella di ciò che scorre, il cui pezzo è una pillola, e nei due temi quella dei raggi del dock, `expected [ …(24) ] to deeply equal []` (**E46**) |
+| `probes.browser.test.ts`, la riduzione | la stessa riga sostituita da `return radius(element, corner);` | rosso: la prova della pillola, `expected { near: 2, bad: [] } to deeply equal { near: 2, bad: [ …(2) ] }`, quella di ciò che scorre, il cui pezzo è una pillola, e nei due temi quella dei raggi del dock, `expected [ …(24) ] to deeply equal []` (**E46**); e nei due temi quella dei raggi della pagina kit, `expected [ …(24) ] to deeply equal []`, i radio e le pillole letti 9999 (**E49**) |
 | `probes.browser.test.ts`, ciò che scorre | in `probes.ts` tolta la riga `if (scrolled(element, ancestor)) continue;` | rosso: la sola prova di ciò che scorre, `expected { near: 1, …(1) } to deeply equal { near: +0, bad: [] }` — ⚠️ quella del dock resta verde: col gruppo staccato Impostazioni non scorre più (**E44**) |
+| `dock.browser.test.ts`, il livello del contenuto | in `dock.css` tolta la regola `.dockview-theme-harness .dv-render-overlay` | rosso, nei due temi, il 2026-09-26: `expected 1000 to be 51` (**E51**) |
+| `dock.browser.test.ts`, il bordo della scheda | in `dock.css`, dalla regola `.dockview-theme-harness .dv-groupview`, tolta la riga `border: …` | rosso, nei due temi, il 2026-09-26: `expected 'rgb(27, 23, 24)' to be 'rgba(0, 0, 0, 0)'` nel chiaro ed `expected 'rgb(236, 230, 218)' to be 'rgb(47, 40, 41)'` nello scuro — senza il bordo il colore torna `currentColor` (**E52**) |
+| `dock.browser.test.ts`, l'ombra della scheda | dalla stessa regola tolta `box-shadow: var(--shadow-card);` | rosso nel solo chiaro, il 2026-09-26: `expected 'none' to be 'rgba(29, 23, 24, 0.06) 0px 1px 2px 0p…'` — ⚠️ nello scuro `--shadow-card` è `none`, e quella metà non può mordere (**E52**) |
+| `dock.browser.test.ts`, la zona d'arrivo | in `dock.css` tolta la regola `.dockview-theme-harness .dv-drop-target-selection` | rosso, nei due temi, il 2026-09-26: `expected [ '0px' ] to deeply equal [ '19px' ]` (**E55**) |
+| `dock.browser.test.ts`, la pagina fra le schede | in `dock.css` tolta la regola `.dockview-theme-harness .dv-dockview` | rosso, nei due temi, il 2026-09-26: `expected [ Array(1) ] to deeply equal []`, la voce `dv-grid-view dv-dockview` (**E56**) |
+| `dock.browser.test.ts`, il nucleo | in `dock.css` tolta la regola `.dockview-theme-harness .dv-groupview:has(.nucleus)` | rosso, nei due temi, il 2026-09-26: `expected 'rgb(251, 248, 243)' to be 'rgba(0, 0, 0, 0)'` ed `expected 'rgb(27, 23, 24)' to be 'rgba(0, 0, 0, 0)'` (**E58**) |
+| `dock.browser.test.ts`, il segno del nucleo | in `Placeholder.vue` tolto `:class="{ nucleus: params?.module === NUCLEUS }"` | rosso, nei due temi, il 2026-09-26: `expected [] to have a length of 1 but got +0` (**E58**) |
 
 Alla fine, dalla radice del repository, `git status --porcelain | diff <scratchpad>/prima.txt -` rende soltanto i file del
 compito: nessun file nato dai rossi del browser (R2-3).
@@ -6174,6 +6388,12 @@ binario (**E48**). ⚠️ Chi guarda con Playwright senza finestra lancia Chrome
 senza, le barre non si vedono. ⛔ Il
 bersaglio è la Home della tavola dello stile, e l'aspetto lo **giudica il proprietario** alla prima prova (controllo 15): ciò
 che non gli piace è una voce d'errata col suo *«perché»*, non un ritocco di chi esegue.
+
+✅ **Il 2026-09-26 il proprietario, nel suo Chrome, con quattro foto:** la zona d'arrivo ad angoli dritti (**E55**), due
+sfondi — la griglia di `dockview` del colore delle schede, e nel chiaro le schede che vi sprofondavano (**E56**) —, la barra
+con un fondo suo e una riga sotto (**E57**), e il nucleo vestito da scheda (**E58**): curati nel commit delle cure, e il
+secondo sguardo dopo. Le radio del tema erano spente perché il benvenuto del core finto non era consegnato:
+`harnessFake.deliverAll()`, com'è scritto qui sopra — **E40** del compito 5, non un difetto.
 
 - [ ] **Passo 9: il cancello, il commit, la posizione**
 
@@ -8322,8 +8542,8 @@ const connection = useConnection();
   gap: var(--space-3);
   align-items: center;
   padding: var(--space-2) var(--space-3);
-  background: var(--color-bg-raised);
-  border-bottom: var(--border-width) solid var(--color-border);
+  /* ⛔ NO SURFACE AND NO LINE UNDER IT (the owner at step 8 of task 6, E57): the bar is part of the page, as the board's
+     `.m-bar` is. */
 }
 /* The search and the chip on the right, as on the board. */
 .search {

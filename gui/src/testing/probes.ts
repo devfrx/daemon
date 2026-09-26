@@ -26,7 +26,9 @@ function describe(element: Element): string {
  * each corner on its own read that bar, the dock's floating title bar, as 12.
  * ⛔ WHAT SCROLLS IS NOT PLACED (E44): an element that reaches its ancestor through a box whose content scrolls sits where
  * the scroll put it, not at a distance anyone drew -- the dock's Impostazioni, taller than its card, put a radio 19 px
- * from a corner. It is not judged; what does not scroll still is.
+ * from a corner. It is not judged; what does not scroll still is. ⚠️ ONLY A BOX BETWEEN THE TWO (E53): an ancestor
+ * that scrolls ITSELF is still judged, at the scroll it has -- today no root the tests judge holds one scrolled, and the
+ * dialog's sheet, which scrolls, has its top corners placed by its padding at 0.
  */
 export function concentricRadii(roots: Element[]): { near: number; bad: string[] } {
   const CORNERS = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"] as const;

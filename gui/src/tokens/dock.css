@@ -1,6 +1,7 @@
 /* OUR `dockview` THEME, `dockview-theme-harness` (design system, section (c); task 6 of its plan): `frame/dock.ts` puts the
    class on the dock's shell, and this sheet dresses it with our roles and tokens only -- no colour by hand (control 5,
-   `usage.test.ts`). It sets every variable `themeAbyss` set, but the tab groups' and the palette's (`dock.test.ts`).
+   `usage.test.ts`). It sets every variable `dockview`'s abyss theme set, but the tab groups' and the palette's
+   (`dock.test.ts`).
 
    ⛔ `frame/VueContent.ts` and `frame/BigTab.ts` hand `dockview` plain elements, because it asks for RENDERERS and not
    components: the classes they name -- `panel`, `bigtab` -- live here and not in a scoped <style> (E165, E166 of the
@@ -82,6 +83,32 @@
   box-shadow: var(--shadow-card);
 }
 
+/* ⛔ ONLY THE CARDS PAINT (the owner at step 8 of task 6, E56): `.dv-dockview { background-color:
+   var(--dv-group-view-background-color) }` in `dockview.css` 8.3.1 paints the whole grid in the cards' surface -- a
+   second background under the cards and around them, up to the margin of `.dock`, where the light cards sink. Between
+   the cards and around them, the page. */
+.dockview-theme-harness .dv-dockview {
+  background-color: transparent;
+}
+
+/* ⛔ THE NUCLEUS IS NOT A CARD (the owner at step 8 of task 6, E58): the north star's Home is the nucleus at the centre
+   and the tiles around it, and the board draws it on the page, `.m-core` among the `.m-mod` cards. Its group paints
+   nothing -- the border stays, transparent, so its content sits where a card's would. Found by what it holds, like the
+   strip: `.nucleus` is the root of the nucleus, today `Placeholder.vue`'s for the module that plays it. */
+.dockview-theme-harness .dv-groupview:has(.nucleus) {
+  --dv-group-view-background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* ⛔ THE DROP ZONE IS ROUNDED LIKE THE CARDS (the owner at step 8 of task 6, E55): with the default mounting of 8.3.1 it
+   is `.dv-drop-target-selection`, filling the target group's content -- or its half, over an edge --, one border inside
+   the card's edge; so concentric, the card's radius less the border (answer 4). The `.dv-drop-target-anchor` that
+   `dockview`'s spaced themes round belongs to `dndOverlayMounting: "absolute"`, which the SPA does not use. */
+.dockview-theme-harness .dv-drop-target-selection {
+  border-radius: calc(var(--radius-card) - var(--border-width));
+}
+
 /* The mark of the visible tab (the (c)): the icon of its label in `--color-mark`, the hidden tabs' in the tab's own colour.
    ⛔ Over `BaseLabel`'s scoped colour, which is muted everywhere else: here the tab's colour, above, decides. */
 .dockview-theme-harness .dv-tab .base-label {
@@ -116,6 +143,13 @@
   border: 0;
   border-radius: 0 0 var(--radius-card) var(--radius-card);
   box-shadow: none;
+}
+/* ⛔ AND THE RENDER OVERLAY, THE SAME CYCLE (E51): `.dv-render-overlay { --dv-overlay-z-index: var(--dv-overlay-z-index,
+   999) }` in `dockview.css` 8.3.1, and `dockview-core` lifts the content of a `renderer: "always"` panel in a floating
+   group to that level + 2i + 1 -- measured at 1000, over our dialogs, with its container at 50. No panel of the SPA is
+   `always` today; the first that keeps a context alive, a 3D view for one, would float over the dialogs unseen. */
+.dockview-theme-harness .dv-render-overlay {
+  --dv-overlay-z-index: var(--z-floating);
 }
 
 /* The element `BigTab` hands to `dockview`, where it mounts the face of the grab: without a height of its own the face's

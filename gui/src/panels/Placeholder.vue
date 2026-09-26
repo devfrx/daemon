@@ -12,11 +12,12 @@ defineProps<{ api?: DockviewPanelApi; params?: { module?: string; who?: number; 
 // modello della GUI", and row 7 of §3 of the north star): the centre of Home is the knowledge
 // base's graph, and until sub-project 6 it says so in its own words, not with a tile's phrase
 // (R6-14, 2026-09-16). It still says who fills it, because the drawer does too.
+// ⛔ AND ITS ROOT SAYS SO, `.nucleus`: the dock's theme draws no card around it (`tokens/dock.css`, E58).
 const NUCLEUS = "knowledge";
 </script>
 
 <template>
-  <section class="placeholder">
+  <section class="placeholder" :class="{ nucleus: params?.module === NUCLEUS }">
     <template v-if="params?.missing">
       <p>{{ $t("placeholder.missing") }}</p>
       <!-- ⛔ ROW 8 OF §2 SAYS "SAYS SO **AND CLOSES**", AND BOTH HALVES MATTER: closing at once

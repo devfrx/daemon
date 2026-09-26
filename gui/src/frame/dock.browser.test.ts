@@ -4,6 +4,7 @@ import "../tokens";
 import type { DockviewApi } from "dockview-core";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { userEvent } from "vitest/browser";
 
 import { registerModules } from "../panels/modules";
 import { concentricRadii } from "../testing/probes";
@@ -73,7 +74,13 @@ for (const theme of ["light", "dark"] as const) {
       for (const group of groups) {
         const style = getComputedStyle(group);
         expect(style.borderTopLeftRadius).toBe(computed("border-top-left-radius", "--radius-card"));
+        // ⛔ THE NUCLEUS IS NOT A CARD (E58): the page shows through it, and its test is its own, below.
+        if (group.querySelector(".nucleus") !== null) continue;
         expect(style.backgroundColor).toBe(computed("background-color", "--color-bg-surface"));
+        // The border the dark theme draws, the shadow the light one casts (E52): tokens that are transparent or `none`
+        // in the other theme, so each bites in its own.
+        expect(style.borderTopColor).toBe(computed("border-top-color", "--color-border-card"));
+        expect(style.boxShadow).toBe(computed("box-shadow", "--shadow-card"));
       }
       // The nearest neighbour on the right and below, where the two overlap: the distance between the facing edges.
       const boxes = groups.map((group) => group.getBoundingClientRect());
@@ -87,6 +94,66 @@ for (const theme of ["light", "dark"] as const) {
       expect(gaps.length).toBeGreaterThan(1);
       const space = Number.parseFloat(computed("width", "--space-3"));
       expect(gaps.filter((gap) => Math.abs(gap - space) > 0.5)).toEqual([]);
+    });
+
+    it("paints nothing between the cards: the page shows through (E56)", async () => {
+      const { host } = await dock(theme);
+      // ⛔ FROM EVERY CARD UP TO THE HOST, NOTHING PAINTS (the owner at step 8 of task 6): `dockview.css` 8.3.1 paints the
+      // whole grid in the cards' surface, a second background under them and around them, where the light cards sink.
+      const painted = new Set<string>();
+      let seen = 0;
+      for (const group of [...host.querySelectorAll(".dv-groupview")]) {
+        for (let element = group.parentElement; element !== null && element !== host; element = element.parentElement) {
+          seen += 1;
+          const { backgroundColor } = getComputedStyle(element);
+          if (backgroundColor !== "rgba(0, 0, 0, 0)") painted.add(`${element.className}: ${backgroundColor}`);
+        }
+      }
+      // ⛔ NON-VACUITY: the layers between the cards and the host were walked.
+      expect(seen).toBeGreaterThan(0);
+      expect([...painted]).toEqual([]);
+    });
+
+    it("draws the nucleus on the page, not as a card (E58)", async () => {
+      const { host } = await dock(theme);
+      const groups = [...host.querySelectorAll(".dv-groupview")];
+      const nuclei = groups.filter((group) => group.querySelector(".nucleus") !== null);
+      // ⛔ NON-VACUITY: the Home view has its nucleus, and one.
+      expect(nuclei).toHaveLength(1);
+      const style = getComputedStyle(nuclei[0] as Element);
+      expect(style.backgroundColor).toBe("rgba(0, 0, 0, 0)");
+      expect(style.borderTopColor).toBe("rgba(0, 0, 0, 0)");
+      expect(style.boxShadow).toBe("none");
+    });
+
+    it("rounds the drop zone like the cards, a tab dragged for real (E55)", async () => {
+      const { host, api } = await dock(theme);
+      // ⛔ THE DROP ZONE LIVES ONLY WHILE A TAB IS DRAGGED, so an observer reads it the moment `dockview` draws it: with
+      // the default mounting of 8.3.1 it is `.dv-drop-target-selection`, inside the target group's content container --
+      // measured with a real mouse on 2026-09-26, and NOT the `.dv-drop-target-anchor` of the absolute mounting.
+      const radii = new Set<string>();
+      const observer = new MutationObserver(() => {
+        for (const selection of host.querySelectorAll(".dv-drop-target-selection")) {
+          radii.add(getComputedStyle(selection).borderTopLeftRadius);
+        }
+      });
+      observer.observe(host, { childList: true, subtree: true, attributes: true });
+      const tab = api.getPanel("permissions")?.group.element.querySelector(".dv-tabs-container > .dv-tab");
+      const target = api.getPanel("activity")?.group.element.querySelector(".dv-content-container");
+      expect(tab).toBeInstanceOf(HTMLElement);
+      expect(target).toBeInstanceOf(HTMLElement);
+      // ⛔ IN STEPS: with `dndStrategy: "pointer"` a drag starts past a threshold, and one jump from tab to target never
+      // draws the zone -- measured, the guard below red. Playwright 1.63 interpolates the moves, and `vitest` hands it
+      // the option.
+      await userEvent.dragAndDrop(tab as HTMLElement, target as HTMLElement, { steps: 12 });
+      observer.disconnect();
+      // ⛔ NON-VACUITY: the drag drew a drop zone.
+      expect(radii.size).toBeGreaterThan(0);
+      // Concentric with the card it sits in: one border inside the card's edge (answer 4).
+      const card = Number.parseFloat(computed("border-top-left-radius", "--radius-card"));
+      // `width`, not `border-top-width`: a border with no style computes to 0, whatever its width says.
+      const border = Number.parseFloat(computed("width", "--border-width"));
+      expect([...radii]).toEqual([`${card - border}px`]);
     });
 
     it("keeps every radius of its own concentric, a floating group's too (answer 4)", async () => {
@@ -128,6 +195,25 @@ for (const theme of ["light", "dark"] as const) {
         expect(element).not.toBeNull();
         expect(getComputedStyle(element as Element).backgroundColor).toBe(raised);
       }
+    });
+
+    it("keeps an always-rendered panel's content with its floating group, under the dialogs (E51)", async () => {
+      const { host, api } = await dock(theme);
+      // ⛔ A PANEL THE SPA DOES NOT HAVE YET, BROUGHT BY THE TEST: `renderer: "always"` keeps its content in an overlay of
+      // its own, which `dockview.css` 8.3.1 gives the floating container's cycle (E51).
+      api.addPanel({
+        id: "always",
+        component: "knowledge",
+        renderer: "always",
+        floating: { x: 100, y: 100, width: 400, height: 300 },
+      });
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      const overlays = [...host.querySelectorAll(".dv-render-overlay")];
+      // ⛔ NON-VACUITY: the one panel that is rendered always.
+      expect(overlays).toHaveLength(1);
+      const level = Number(getComputedStyle(overlays[0] as Element).zIndex);
+      expect(level).toBe(Number(readToken("--z-floating")) + 1);
+      expect(level).toBeLessThan(Number(readToken("--z-overlay")));
     });
   });
 }

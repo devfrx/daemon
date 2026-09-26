@@ -20,7 +20,7 @@ function setIn(css: string, selector: string): string[] {
 }
 
 /**
- * ⛔ OUR THEME REPLACES `themeAbyss`, SO IT SETS WHAT `themeAbyss` SETS (design system, section (c); P-6 of the plan).
+ * ⛔ OUR THEME REPLACES THE ABYSS THEME, SO IT SETS WHAT THAT ONE SETS (design system, section (c); P-6 of the plan).
  * The reference is `.dockview-theme-abyss`, in its two blocks of `dockview.css` 8.3.1: a variable it sets and ours
  * forgot would fall back to `dockview`'s own default -- a colour by hand from a stylesheet we do not own. Two families
  * are out, each with its reason, measured in `dockview.css` 8.3.1 on 2026-09-23:

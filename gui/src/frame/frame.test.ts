@@ -192,7 +192,7 @@ describe("the dock", () => {
     useLayout().attach(createFakeBridge());
     const where = host();
     const api = createDock(where);
-    // ⛔ THE SHELL WEARS OUR CLASS, the one `tokens/dock.css` dresses -- and `themeAbyss`'s is gone (control 15).
+    // ⛔ THE SHELL WEARS OUR CLASS, the one `tokens/dock.css` dresses -- and the abyss theme's is gone (control 15).
     expect(where.querySelector(".dv-shell")?.classList.contains("dockview-theme-harness")).toBe(true);
     expect(where.querySelector(".dockview-theme-abyss")).toBeNull();
     const handed: unknown[] = [];

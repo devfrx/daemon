@@ -7,9 +7,10 @@ import type { IconName } from "../components/icons";
  * The face of the big grab handle (design system, section (c)): the module's label with its icon, and the two commands as
  * base pieces -- `BigTab.ts` mounts it in the element `dockview` drags.
  *
- * ⛔ A PRESS ON A COMMAND MUST NOT START A DRAG, and stopping `click` alone is not enough: `dockview` begins the drag on
- * `pointerdown`/`mousedown`, so both stop on the button. Measured in SP-8; without it, every press of a command drags the
- * tile a few pixels first.
+ * ⛔ A PRESS ON A COMMAND MUST NOT START A DRAG, and stopping `click` alone is not enough: `dockview-core` 8.3.1 begins
+ * its pointer drag on `pointerdown`, stopped here and held by `bigtab.test.ts` -- without it, every press of a command
+ * drags the tile a few pixels first (SP-8). ⚠️ `mousedown` and `click` stop too, as SP-8 judged the grab with them,
+ * and no test holds those two (E54): 8.3.1 does not listen to `mousedown` at all.
  */
 defineProps<{ title: string; icon?: IconName }>();
 const emit = defineEmits<{ float: []; page: [] }>();

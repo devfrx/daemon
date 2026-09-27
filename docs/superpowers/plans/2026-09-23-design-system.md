@@ -131,7 +131,7 @@ esegue** prima del proprio pre-controllo.
 | **5** | **il kit al lavoro**: i pezzi di base nei pannelli e nella cornice — la finestra di conferma, il cassetto, la fascia, Stato, Permessi, Passi, Impostazioni con la scelta del tema, il segnaposto, la barra; le due regole del linter su `panels/` e `frame/`; **M-3** chiusa per costruzione, e l'Assistente vocale a mano | `545f500`, con le cure `7e25d03` e `9e6657b` | ✅ 2026-09-26 — il Passo 8 col proprietario, nel suo Chrome con l'Assistente vocale: alle domande dei punti 3, 4 e 5 — *«senti …?»* — la risposta *«di quello che hai chiesto … funziona tutto»*, e il punto 1 non riportato a parte; e *«a parte il piccolo problema citato poco fa»*, il lampo delle barre di scorrimento con la fascia, curato da **E43** |
 | **6** | **il dock vestito**: il tema `dockview-theme-harness`, `dock.css` con ogni variabile del tema di riferimento, i gruppi come schede, `readToken`, `--z-floating`, la presa grande coi pezzi di base; `themeAbyss` esce | `c1102fc`, con la cura `ca83dac` | ✅ 2026-09-27 — il Passo 8 col proprietario, nel suo Chrome: il 2026-09-26 quattro foto — la zona d'arrivo ad angoli dritti, due sfondi, la barra con un fondo suo, il nucleo vestito da scheda —, curate (**E55**–**E58**); ripreso lo stesso giorno, tre voci **non approvate** — la barra di scorrimento, i messaggi con la fascia, il bordo nel raggio (**E59**–**E61**) —, disegnate e approvate il 2026-09-27 e curate dal compito **6bis**; lo sguardo del 6bis le ha approvate, e con lui si chiude questa riga |
 | **6bis** | **la cura delle tre voci del Passo 8 del 6**: nella tavola il bordo nei raggi, la barra di scorrimento col suo innesco e il messaggio, e la copia; la sonda a mezzo pixel; le barre mostrate al progetto browser; `BaseNotice` con le icone dei toni, nella pagina kit, nella fascia sulla pagina, in Impostazioni e in Stato; `frame.browser.test.ts` | `da7a522`, con la cura `5105ad0` | ✅ 2026-09-27 — rivisto **conforme**: 0 critici, 0 importanti, 2 minori e 2 nit, tutti del dettato e curati (**E70**–**E73**). Il Passo 16 col proprietario, nel suo Chrome col mouse vero — la fascia prima e dopo la consegna, i messaggi, la barra col cursore che compare sotto il puntatore, i raggi —: *«quello che mi hai chiesto funziona»*, A, a condizione che la chiusura segua `anthropic-skills:decision-principles`; il frammento del contrasto sulla SPA a 1440 × 900, misurato dal coordinatore, 5,39 nel chiaro e 5,4 nello scuro. Due difetti di prima, trovati dalla revisione e detti prima dello sguardo, che non li ha commentati: il bordo di «Riprova» sulla fascia, 1,22 e 1,00, è il bordo di decoro che la (a) esenta (**E5**), e resta; l'anello del fuoco tagliato è **E74**, aperta |
-| **7** | **le viste col nome, sotto**: `named` e `openNamed` nel pacchetto, il negozio e il dock che le mostrano e le salvano; l'aiutante della geometria estratto da `moveActive.ts`; lo schema di una disposizione, per le miniature | — | ✅ 2026-09-27 |
+| **7** | **le viste col nome, sotto**: `named` e `openNamed` nel pacchetto, il negozio e il dock che le mostrano e le salvano; l'aiutante della geometria estratto da `moveActive.ts`; lo schema di una disposizione, per le miniature | — | ✅ 2026-09-27 — rivisto **conforme**: 0 critici, 0 importanti, 4 minori e 5 nit, tutti del dettato e curati (**E82**–**E89**), e **E90** al pre-controllo del compito 8. Nessuno sguardo del proprietario: la regola 5 non nomina il compito 7. La colonna Commit la scrive il compito 8 (**E79**): `0417c9c`, con la cura `a606f33` |
 | **8** | **la cornice**: la barra col nome della vista, la **Panoramica** su `BaseDialog` con le miniature e *«Salva questa vista»* — F3, frecce, Invio, Esc —, la **striscia** a pillola coi «moduli»; le prove nel browser della Panoramica e della striscia | — | ⬜ |
 | **9** | **la chiusura**: la riga «Accessibilità» di tracciabilità, la riga 14 della roadmap con *«Perché quest'ordine»*, `README.md`, la §12 e la §6 del compendio, `porta-di-qualita.md` con C-S0-1 (P-29), `riferimenti.md`; i richiami nel disegno e nella stella polare (P-28); la **Definizione di «fatto»**, eseguita, con le uscite del giorno | — | ⬜ |
 
@@ -10930,6 +10930,7 @@ tabella nomina: qui la provenienza, lì il merito — una casa ciascuno.
 | `dockview-core` 8.3.1 installato: `dist/package/main.esm.mjs` — `watchElementResize` passa la misura nuova a un `requestAnimationFrame` | 2026-09-26 | il dock che si ridimensiona un fotogramma dopo, e sborda — E43 |
 | CSS Backgrounds and Borders Module Level 3, W3C Candidate Recommendation Draft dell'11 marzo 2024, §4.5 *«Overlapping Curves»*, `https://www.w3.org/TR/css-backgrounds-3/#corner-overlap`: `f = min(Li/Si)`, e se `f < 1` **tutti** i raggi si moltiplicano per `f` | 2026-09-26 | il raggio che un angolo disegna, nella sonda dei raggi — E46 |
 | Playwright 1.63.0 installato: `lib/coreBundle.js`, senza finestra aggiunge `--hide-scrollbars` — `grep -n -- '--hide-scrollbars' gui/node_modules/playwright-core/lib/coreBundle.js` | 2026-09-26 | un'occhiata senza finestra non vede le barre di scorrimento: si lancia con `ignoreDefaultArgs: ["--hide-scrollbars"]` — E43 |
+| `dockview-core` 8.3.1 installato: `dist/package/main.esm.mjs` — `serialize()` della griglia scrive `maximizedNode: { location }`, gli indici dalla radice fino al gruppo ingrandito; e `dist/cjs/dockview/dockviewComponent.d.ts`, dove `SerializedDockview` non lo dichiara | 2026-09-27 | la miniatura di un gruppo ingrandito — E85 |
 
 ### Le misure dell'esecuzione
 
@@ -11217,94 +11218,68 @@ compito 1 — o in una voce d'errata. Un nome senza casa è una voce d'errata nu
 
 ---
 
-## Come si riprende — il pre-controllo del compito 7, 2026-09-27
+## Come si riprende — l'esecuzione del compito 7, 2026-09-27
 
-✅ **Il pre-controllo del compito 7 è fatto: sette voci, E75…E81**, scritte nell'errata; sei applicate al testo — tutte fuori dal
-merito approvato, e decise dal coordinatore coi cinque criteri —, e **E81** consegnata al pre-controllo del compito 8. Il
-compito rifatto per intero dal testo del piano su un `git worktree` di `1c168a1` nello scratchpad, macchina `Jays`, con
-`plan_ops.py`: ogni Atteso dei Passi 1–7 **tornato**; le quattordici violazioni del Passo 8 lanciate sulla suite intera, undici
-col rosso dettato e tre con prove in più (**E77**), e ogni file tornato dalla copia salvata; cinque corse della suite, 211 prove
-passate ciascuna; e sopra, il compito 8, col solo rifiuto di **E63**. Poi il testo **corretto** rifatto su una copia pulita: gli
-Atteso come li scrive, le quindici righe della tabella nuova rosse coi loro messaggi, la riga di `Frame.vue` che nessuna prova
-tiene (**E76**) verde, cinque corse con 212 prove ciascuna; e sopra, di nuovo il compito 8, col solo rifiuto di **E63**. Nella
-cartella del dispaccio il modello `dispatch-task-7.md`, `_extract_brief_7.py` e `compare_task7.py`, con la ricetta qui sotto,
-provato su due commit di prova. La consegna precedente — l'esecuzione del compito 6bis — sta parola per parola in
+✅ **Il compito 7 è eseguito e curato.** Il dispaccio col sì del proprietario sulla banda detta prima, 0,8–1,05 milioni di
+token: l'implementatore ha consegnato `0417c9c`, **uguale al testo del piano** — `compare_task7.py fa1ae0e 0417c9c`, dieci file
+`OK` e del piano la sola riga 7 —, con ogni rosso e ogni verde dei Passi 1–8 come il pre-controllo li aveva misurati; il
+revisore l'ha detto **conforme**, con quattro minori e cinque nit, tutti del dettato, e il coordinatore li ha curati senza
+ri-revisione, come per i compiti 3–6bis: `a606f33`, **E82**…**E90**. Il testo curato del piano, applicato a `fa1ae0e` con
+`plan_ops.py`, rende i dieci file dell'albero byte per byte, e i passi tornano: il Passo 2 rosso com'era scritto, poi 8, 3, 20
+e 15. Il costo misurato, ~0,73 milioni — l'implementatore ~307k token in 15 minuti, il revisore ~419k in ~31 —, **sotto** la
+banda detta. Il compito 7 non ha uno sguardo del proprietario: la regola 5 di *«Come si esegue un compito»* non lo nomina.
+La riga 7 della posizione è a `✅`; nella cartella del dispaccio il prompt spedito al posto del modello, il rapporto, il
+prompt del revisore e la revisione. La consegna precedente — il pre-controllo del compito 7 — sta parola per parola in
 [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
 
 ⛔ **Da sapere subito.**
 
-1. **Il codice del repository non è toccato**: lo cambia l'esecuzione. Il compito è provato su `1c168a1`; se prima del dispaccio
-   un commit tocca `gui/`, il compito si rilegge contro il codice di allora: `git log --oneline 1c168a1..HEAD -- gui/`.
-2. **E75 cambia il codice dettato**: in `receive` il nome della vista col nome si rilegge sempre dal pacchetto, e il Passo 2
-   porta una sesta prova del negozio.
-3. **E76 ed E81 vanno al pre-controllo del compito 8**: la sua prova della Panoramica non tiene che una delle tre chiuda la
-   vista col nome, e *«Salva questa vista»* prima del benvenuto perde le disposizioni salvate.
-4. **E74 e l'assunzione della barra restano del proprietario**: le due domande del punto 4 qui sotto.
-5. **La memoria libera di questa macchina era 5,5 GB su 31,2** all'apertura, e nessuna prova è caduta: si rimisura prima del
-   dispaccio.
+1. **E85 ha cambiato ciò che lo schema disegna**, decisa dal coordinatore coi cinque criteri, come **E30**: un gruppo
+   **ingrandito** si disegna **solo**, sul quadrato intero — ciò che la vista apre. Come si **disegni** la miniatura resta
+   dello sguardo del compito 8.
+2. **E90 va al pre-controllo del compito 8**, con **E76** ed **E81**: una disposizione malformata rompe tutta la Panoramica;
+   `openNamed` si scrive senza guardia; `nearest` con rettangoli nulli rende la scheda di partenza.
+3. **La colonna Commit della riga 7 la scrive il compito 8**, com'è il suo Passo 11 (**E79**): `0417c9c`, **con la cura
+   `a606f33`**.
+4. **E74 e l'assunzione della barra restano del proprietario**: le due domande del punto 3 qui sotto.
+5. **In `%TEMP%` restano cartelle di prova di sessioni passate** — `pc2`, `pc4`, `pc4b`, `pc4c`, `pc5`, `pc5b`, `pc5c`, `pc6`,
+   `pc6b`, `pc6c`, `rv4`, `rv5`, `rv6`, ciascuna col suo `node_modules` —, che nessuna consegna nomina: `ls -d
+   /c/Users/Jays/AppData/Local/Temp/pc* /c/Users/Jays/AppData/Local/Temp/rv*` le elenca, e toglierle è del proprietario.
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
-| **i commit** | `git log --oneline 1c168a1..HEAD`: uno, quello che scrive questa riga — le voci **E75**…**E81** e le correzioni nel compito 7, in **D13**, nella riga **N-2** e nella riga 7 della posizione; nella cartella del dispaccio i tre file del compito 7; questa sezione, e la precedente in archivio. Nessun codice cambia: `git diff --stat 1c168a1..HEAD -- . ':!docs'` non rende nulla |
-| **cancello** | `GATE GREEN` all'apertura su `1c168a1` e prima del commit che scrive questa riga: jsdom 144 prove passate e una saltata, browser 56, il pezzo `691.82 kB`, `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
-| **la CI** | `1c168a1` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
-| **la posizione** | le righe dalla 1 alla 6bis a `✅`; la 7 a `⬜`, pre-controllata; l'8 e la 9 a `⬜` |
-| **lo scratchpad** | sulla macchina `Jays`, **non tracciato**, in `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\8822e34d-7a9d-4041-88e7-8d91a2a47eb9\scratchpad\`: in `tools/` gli attrezzi — `plan_ops.py`, `violations7.py` con le sedici violazioni, i due script delle correzioni —; in `logs/` le corse. Non servono a riprendere: il piano basta |
-| **server e cartelle di prova** | nessun server acceso; i due `git worktree` di prova tolti — `git worktree list` rende la sola cartella del repository —; `.claude/launch.json` com'era |
+| **i commit** | `git log --oneline fa1ae0e..HEAD`: tre — `0417c9c` il compito, `a606f33` le cure, e quello che scrive questa riga: la riga 7 della posizione col verbale, la fonte di **E85** nella tabella del compito 9, questa sezione e la precedente in archivio, i quattro file del dispaccio. Nessun codice cambia dopo `a606f33`: `git diff --stat a606f33..HEAD -- gui/` non rende nulla |
+| **cancello** | `GATE GREEN` all'apertura su `fa1ae0e`, sulle cure e prima del commit che scrive questa riga: jsdom 157 prove passate e una saltata, browser 56, il pezzo `693.02 kB`, `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `fa1ae0e` e `a606f33` verdi su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | le righe dalla 1 alla 7 a `✅`; l'8 e la 9 a `⬜` |
+| **lo scratchpad** | sulla macchina `Jays`, **non tracciato**, in `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\e4b4f474-4c3b-4180-b8de-ae411307e17a\scratchpad\`: in `tools/` gli attrezzi delle cure — `cure_task7.py`, `violations_cure7.py` con le ventiquattro mutazioni, `plan_cure7.py` —; in `cure/` e `logs/` le corse; in `task7/` e `review7/` i file dell'implementatore e del revisore. Non servono a riprendere: il piano basta |
+| **server e cartelle di prova** | nessun server acceso; nessun `git worktree` — `git worktree list` rende la sola cartella del repository —; il clone della revisione, `%TEMP%\rv7`, tolto dal coordinatore |
 
-**Che cosa ha fatto questa sessione.** Nessun dispaccio, nessun codice nel repository. La ripresa coi comandi e il cancello
-d'apertura; il compito rifatto dal testo e rimisurato passo per passo; le violazioni sulla suite intera, più una per la riga
-che nessuna prova tiene; due prove usa-e-getta, per **E75** e per **E81**; il compito 8 applicato sopra, due volte; i commenti
-che il compito rende falsi, cercati sulla copia coi compiti 7 e 8; le sette voci; il testo corretto rifatto; il dispaccio, e il
-confronto provato su due commit di prova.
+**Che cosa ha fatto questa sessione.** La ripresa coi comandi, la CI di `fa1ae0e` e il cancello d'apertura; il brief, il
+prompt e la banda dei costi, col sì del proprietario; l'implementatore; il prompt del revisore, coi suoi comandi lanciati
+prima; il revisore; le cure, con le mutazioni sulla suite intera, le quattordici righe di prima del Passo 8 rifatte
+sull'albero curato, e il testo del piano curato rifatto dal testo su un clone; la chiusura.
 
 📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura del
 sotto-progetto.
 
 | | Che cosa | Che cosa se ne fa |
 |---|---|---|
-| 1 | **uno stato derivato si riscrive anche quando la sua fonte sparisce**: `openNamed` si rileggeva dal pacchetto solo se il pacchetto c'era, e un `Nothing` lo lasciava a un nome che nessuno teneva più — **E75** | ogni stato derivato si prova anche sul ramo in cui la fonte è `null` |
-| 2 | **una violazione si lancia sulla suite intera, non sul solo file che l'Atteso nomina**: tre righe su quattordici facevano cadere prove di altri file — **E77** —, e la suite intera costa sei secondi | `violations7.py` lancia `npx vitest run` intero, i due progetti |
-| 3 | **un fatto che la scrittura del piano ha misurato può smentirlo un compito inserito dopo**: *«nessuna prova monta `Frame.vue`»* era vero il 2026-09-23, e il 6bis l'ha reso falso — **E76**, la riga 5 di `CLAUDE.md` | le righe *«Che cosa la scrittura di questo compito ha misurato»* si rimisurano tutte, non solo i comandi del Passo 1 |
-| 4 | **uno strumento che muta un file lo rimette a posto anche quando fallisce**: `violations7.py` scriveva il log prima di rimettere la copia, in una cartella che non c'era — creata in tempo, a corsa avviata | il ripristino di una violazione va in un `finally` |
-
-📌 **La ricetta del compito 7**, per rifarlo o confrontarlo dal testo del piano, vale per il piano del commit che scrive
-questa riga — le righe prima di questa sezione non cambiano chiudendo una sessione. `compare_task7.py <base> <target>` la
-legge: `W` un file intero, creato o riscritto, `R` il *Trova* e il *Sostituisci* di una sostituzione.
-
-```text
-# Passo 2
-W gui/src/frame/nearest.test.ts 8101
-W gui/src/frame/schematic.test.ts 8148
-R gui/src/stores/stores.test.ts 8205 8211
-R gui/src/stores/stores.test.ts 8217 8227
-R gui/src/frame/frame.test.ts 8345 8354
-# Passo 3
-W gui/src/frame/nearest.ts 8393
-R gui/src/frame/moveActive.ts 8438 8447
-R gui/src/frame/moveActive.ts 8457 8483
-# Passo 4
-W gui/src/frame/schematic.ts 8507
-# Passo 5
-W gui/src/stores/layout.ts 8576
-# Passo 6
-R gui/src/frame/dock.ts 8813 8823
-R gui/src/frame/dock.ts 8834 8848
-R gui/src/frame/dock.ts 8863 8872
-R gui/src/frame/Frame.vue 8884 8891
-```
+| 1 | **`git diff <commit>` dà per CANCELLATO un file nuovo che sta sul disco ma non nell'indice**: il confronto dell'`apply` di `plan_ops.py` col commit, scritto com'era nel prompt del revisore del 6bis, avrebbe dato un rosso falso sui file che il compito crea — misurato su un repository usa-e-getta | `git add -A`, poi `git diff --cached --stat <commit>`, com'è ora nel prompt del revisore del 7 |
+| 2 | **il consumatore da fuori trova ciò che le mutazioni non trovano**: **E85** e le tre cose di **E90** sono uscite usando le interfacce come le userà il compito 8, non mutando il codice del 7 — la domanda 3 del pre-controllo, dal lato della revisione | il prompt di ogni revisore che consegna interfacce a un compito dopo chiede quel consumatore |
+| 3 | **un rosso si legge prima di crederci**: la prova di **E85**, la prima volta, cadeva perché i pannelli veri leggono i negozi, e senza la Pinia `fromJSON` torna indietro — *«dockview: failed to deserialize layout»* — e non per l'asserzione | una prova che monta i pannelli veri imposta la Pinia, come `frame.test.ts` |
+| 4 | **una direzione nuova sta meglio in una prova che c'è, quando ci entra**: le cure di **E82**, **E83**, **E84** ed **E88** non cambiano né i conti né i rossi del Passo 2, e la tabella del Passo 8 resta vera, rifatta sull'albero curato | prima di aggiungere una prova, chiedersi se la direzione sta in una che c'è |
+| 5 | **un compito senza sguardo nel browser costa meno della banda dei compiti con lo sguardo**: ~0,73 milioni contro gli 0,82–0,94 dei compiti 4, 6 e 6bis, pur col consumatore da fuori | la banda di un compito senza sguardo si abbassa |
 
 **Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
 
 1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
-2. **L'esecuzione del compito 7**: il prompt dal modello `dispatch-task-7.md`, il brief da `_extract_brief_7.py`, la banda dei
-   costi detta prima del sì; un subagente fresco, la revisione — che confronta il commit col testo con `compare_task7.py` e
-   rifà i rossi dei passi con `plan_ops.py` —, le cure; la chiusura, e questa sezione in archivio. Il compito 7 non ha uno
-   sguardo del proprietario: la regola 5 di *«Come si esegue un compito»* non lo nomina.
-3. Poi il pre-controllo del compito 8, con le sonde che l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed
-   **E57** —, la domanda di **E44** sulla Panoramica, **E63**, i conti dedotti di **E64**, la strada più larga di **E70**,
-   **E73**, la prova della Panoramica di **E76**, la finestra prima del benvenuto di **E81**, e la sonda di **E74** se il
-   proprietario ne avrà deciso la forma; a quello del **9**, la Definizione di «fatto» con le righe 22 e 23.
-4. ⏳ **Due domande per il proprietario**, una per volta e quando vuole: la forma della cura di **E74**; e se l'assunzione della
+2. **Il pre-controllo del compito 8**, contro il codice di **adesso**, con le cure del 7 — lo schema che disegna un gruppo
+   ingrandito solo (**E85**), le prove delle viste col nome che ne portano due (**E82**) —; con le sonde che l'errata gli
+   assegna, **E38**, **E39**, **E43**, **E53** ed **E57**; la domanda di **E44** sulla Panoramica; **E63**, i conti dedotti di
+   **E64**, la strada più larga di **E70** ed **E73**; la prova della Panoramica di **E76**; la finestra prima del benvenuto di
+   **E81**; le tre cose di **E90**; la colonna Commit della riga 7 con la cura; e la sonda di **E74**, se il proprietario ne
+   avrà deciso la forma. A quello del **9**, la Definizione di «fatto» con le righe 22 e 23.
+3. ⏳ **Due domande per il proprietario**, una per volta e quando vuole: la forma della cura di **E74**; e se l'assunzione della
    barra debba avere un compito che la misuri.

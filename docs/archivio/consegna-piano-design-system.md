@@ -2179,3 +2179,99 @@ sotto-progetto.
    «fatto» con le righe 22 e 23.
 4. ⏳ **Due domande per il proprietario**, una per volta e quando vuole: la forma della cura di **E74**; e se l'assunzione della
    barra debba avere un compito che la misuri.
+
+## L'esecuzione del compito 7, del 2026-09-27
+
+Tolto dal piano il 2026-09-27, quando la sessione dopo ha eseguito il compito 7 — il dispaccio col sì del proprietario, la revisione, le cure — e ha scritto la consegna *«Come si riprende — l'esecuzione del compito 7»*. Il testo com'era, dal commit `fa1ae0e`, parola per parola; i rimandi sono riscritti per questa cartella.
+
+## Come si riprende — il pre-controllo del compito 7, 2026-09-27
+
+✅ **Il pre-controllo del compito 7 è fatto: sette voci, E75…E81**, scritte nell'errata; sei applicate al testo — tutte fuori dal
+merito approvato, e decise dal coordinatore coi cinque criteri —, e **E81** consegnata al pre-controllo del compito 8. Il
+compito rifatto per intero dal testo del piano su un `git worktree` di `1c168a1` nello scratchpad, macchina `Jays`, con
+`plan_ops.py`: ogni Atteso dei Passi 1–7 **tornato**; le quattordici violazioni del Passo 8 lanciate sulla suite intera, undici
+col rosso dettato e tre con prove in più (**E77**), e ogni file tornato dalla copia salvata; cinque corse della suite, 211 prove
+passate ciascuna; e sopra, il compito 8, col solo rifiuto di **E63**. Poi il testo **corretto** rifatto su una copia pulita: gli
+Atteso come li scrive, le quindici righe della tabella nuova rosse coi loro messaggi, la riga di `Frame.vue` che nessuna prova
+tiene (**E76**) verde, cinque corse con 212 prove ciascuna; e sopra, di nuovo il compito 8, col solo rifiuto di **E63**. Nella
+cartella del dispaccio il modello `dispatch-task-7.md`, `_extract_brief_7.py` e `compare_task7.py`, con la ricetta qui sotto,
+provato su due commit di prova. La consegna precedente — l'esecuzione del compito 6bis — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+⛔ **Da sapere subito.**
+
+1. **Il codice del repository non è toccato**: lo cambia l'esecuzione. Il compito è provato su `1c168a1`; se prima del dispaccio
+   un commit tocca `gui/`, il compito si rilegge contro il codice di allora: `git log --oneline 1c168a1..HEAD -- gui/`.
+2. **E75 cambia il codice dettato**: in `receive` il nome della vista col nome si rilegge sempre dal pacchetto, e il Passo 2
+   porta una sesta prova del negozio.
+3. **E76 ed E81 vanno al pre-controllo del compito 8**: la sua prova della Panoramica non tiene che una delle tre chiuda la
+   vista col nome, e *«Salva questa vista»* prima del benvenuto perde le disposizioni salvate.
+4. **E74 e l'assunzione della barra restano del proprietario**: le due domande del punto 4 qui sotto.
+5. **La memoria libera di questa macchina era 5,5 GB su 31,2** all'apertura, e nessuna prova è caduta: si rimisura prima del
+   dispaccio.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **i commit** | `git log --oneline 1c168a1..HEAD`: uno, quello che scrive questa riga — le voci **E75**…**E81** e le correzioni nel compito 7, in **D13**, nella riga **N-2** e nella riga 7 della posizione; nella cartella del dispaccio i tre file del compito 7; questa sezione, e la precedente in archivio. Nessun codice cambia: `git diff --stat 1c168a1..HEAD -- . ':!docs'` non rende nulla |
+| **cancello** | `GATE GREEN` all'apertura su `1c168a1` e prima del commit che scrive questa riga: jsdom 144 prove passate e una saltata, browser 56, il pezzo `691.82 kB`, `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `1c168a1` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | le righe dalla 1 alla 6bis a `✅`; la 7 a `⬜`, pre-controllata; l'8 e la 9 a `⬜` |
+| **lo scratchpad** | sulla macchina `Jays`, **non tracciato**, in `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\8822e34d-7a9d-4041-88e7-8d91a2a47eb9\scratchpad\`: in `tools/` gli attrezzi — `plan_ops.py`, `violations7.py` con le sedici violazioni, i due script delle correzioni —; in `logs/` le corse. Non servono a riprendere: il piano basta |
+| **server e cartelle di prova** | nessun server acceso; i due `git worktree` di prova tolti — `git worktree list` rende la sola cartella del repository —; `.claude/launch.json` com'era |
+
+**Che cosa ha fatto questa sessione.** Nessun dispaccio, nessun codice nel repository. La ripresa coi comandi e il cancello
+d'apertura; il compito rifatto dal testo e rimisurato passo per passo; le violazioni sulla suite intera, più una per la riga
+che nessuna prova tiene; due prove usa-e-getta, per **E75** e per **E81**; il compito 8 applicato sopra, due volte; i commenti
+che il compito rende falsi, cercati sulla copia coi compiti 7 e 8; le sette voci; il testo corretto rifatto; il dispaccio, e il
+confronto provato su due commit di prova.
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura del
+sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **uno stato derivato si riscrive anche quando la sua fonte sparisce**: `openNamed` si rileggeva dal pacchetto solo se il pacchetto c'era, e un `Nothing` lo lasciava a un nome che nessuno teneva più — **E75** | ogni stato derivato si prova anche sul ramo in cui la fonte è `null` |
+| 2 | **una violazione si lancia sulla suite intera, non sul solo file che l'Atteso nomina**: tre righe su quattordici facevano cadere prove di altri file — **E77** —, e la suite intera costa sei secondi | `violations7.py` lancia `npx vitest run` intero, i due progetti |
+| 3 | **un fatto che la scrittura del piano ha misurato può smentirlo un compito inserito dopo**: *«nessuna prova monta `Frame.vue`»* era vero il 2026-09-23, e il 6bis l'ha reso falso — **E76**, la riga 5 di `CLAUDE.md` | le righe *«Che cosa la scrittura di questo compito ha misurato»* si rimisurano tutte, non solo i comandi del Passo 1 |
+| 4 | **uno strumento che muta un file lo rimette a posto anche quando fallisce**: `violations7.py` scriveva il log prima di rimettere la copia, in una cartella che non c'era — creata in tempo, a corsa avviata | il ripristino di una violazione va in un `finally` |
+
+📌 **La ricetta del compito 7**, per rifarlo o confrontarlo dal testo del piano, vale per il piano del commit che scrive
+questa riga — le righe prima di questa sezione non cambiano chiudendo una sessione. `compare_task7.py <base> <target>` la
+legge: `W` un file intero, creato o riscritto, `R` il *Trova* e il *Sostituisci* di una sostituzione.
+
+```text
+# Passo 2
+W gui/src/frame/nearest.test.ts 8101
+W gui/src/frame/schematic.test.ts 8148
+R gui/src/stores/stores.test.ts 8205 8211
+R gui/src/stores/stores.test.ts 8217 8227
+R gui/src/frame/frame.test.ts 8345 8354
+# Passo 3
+W gui/src/frame/nearest.ts 8393
+R gui/src/frame/moveActive.ts 8438 8447
+R gui/src/frame/moveActive.ts 8457 8483
+# Passo 4
+W gui/src/frame/schematic.ts 8507
+# Passo 5
+W gui/src/stores/layout.ts 8576
+# Passo 6
+R gui/src/frame/dock.ts 8813 8823
+R gui/src/frame/dock.ts 8834 8848
+R gui/src/frame/dock.ts 8863 8872
+R gui/src/frame/Frame.vue 8884 8891
+```
+
+**Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. **L'esecuzione del compito 7**: il prompt dal modello `dispatch-task-7.md`, il brief da `_extract_brief_7.py`, la banda dei
+   costi detta prima del sì; un subagente fresco, la revisione — che confronta il commit col testo con `compare_task7.py` e
+   rifà i rossi dei passi con `plan_ops.py` —, le cure; la chiusura, e questa sezione in archivio. Il compito 7 non ha uno
+   sguardo del proprietario: la regola 5 di *«Come si esegue un compito»* non lo nomina.
+3. Poi il pre-controllo del compito 8, con le sonde che l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed
+   **E57** —, la domanda di **E44** sulla Panoramica, **E63**, i conti dedotti di **E64**, la strada più larga di **E70**,
+   **E73**, la prova della Panoramica di **E76**, la finestra prima del benvenuto di **E81**, e la sonda di **E74** se il
+   proprietario ne avrà deciso la forma; a quello del **9**, la Definizione di «fatto» con le righe 22 e 23.
+4. ⏳ **Due domande per il proprietario**, una per volta e quando vuole: la forma della cura di **E74**; e se l'assunzione della
+   barra debba avere un compito che la misuri.

@@ -2275,3 +2275,73 @@ R gui/src/frame/Frame.vue 8884 8891
    proprietario ne avrà deciso la forma; a quello del **9**, la Definizione di «fatto» con le righe 22 e 23.
 4. ⏳ **Due domande per il proprietario**, una per volta e quando vuole: la forma della cura di **E74**; e se l'assunzione della
    barra debba avere un compito che la misuri.
+
+## Il pre-controllo del compito 8, del 2026-09-27
+
+Tolto dal piano il 2026-09-27, quando la sessione dopo ha fatto il pre-controllo del compito 8 — il compito rifatto dal testo su una copia, le undici voci **E91**…**E101**, la domanda di **E74** al proprietario, il dispaccio — e ha scritto la consegna *«Come si riprende — il pre-controllo del compito 8»*. Il testo com'era, dal commit `f3206c7`, parola per parola; i rimandi sono riscritti per questa cartella.
+
+## Come si riprende — l'esecuzione del compito 7, 2026-09-27
+
+✅ **Il compito 7 è eseguito e curato.** Il dispaccio col sì del proprietario sulla banda detta prima, 0,8–1,05 milioni di
+token: l'implementatore ha consegnato `0417c9c`, **uguale al testo del piano** — `compare_task7.py fa1ae0e 0417c9c`, dieci file
+`OK` e del piano la sola riga 7 —, con ogni rosso e ogni verde dei Passi 1–8 come il pre-controllo li aveva misurati; il
+revisore l'ha detto **conforme**, con quattro minori e cinque nit, tutti del dettato, e il coordinatore li ha curati senza
+ri-revisione, come per i compiti 3–6bis: `a606f33`, **E82**…**E90**. Il testo curato del piano, applicato a `fa1ae0e` con
+`plan_ops.py`, rende i dieci file dell'albero byte per byte, e i passi tornano: il Passo 2 rosso com'era scritto, poi 8, 3, 20
+e 15. Il costo misurato, ~0,73 milioni — l'implementatore ~307k token in 15 minuti, il revisore ~419k in ~31 —, **sotto** la
+banda detta. Il compito 7 non ha uno sguardo del proprietario: la regola 5 di *«Come si esegue un compito»* non lo nomina.
+La riga 7 della posizione è a `✅`; nella cartella del dispaccio il prompt spedito al posto del modello, il rapporto, il
+prompt del revisore e la revisione. La consegna precedente — il pre-controllo del compito 7 — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+⛔ **Da sapere subito.**
+
+1. **E85 ha cambiato ciò che lo schema disegna**, decisa dal coordinatore coi cinque criteri, come **E30**: un gruppo
+   **ingrandito** si disegna **solo**, sul quadrato intero — ciò che la vista apre. Come si **disegni** la miniatura resta
+   dello sguardo del compito 8.
+2. **E90 va al pre-controllo del compito 8**, con **E76** ed **E81**: una disposizione malformata rompe tutta la Panoramica;
+   `openNamed` si scrive senza guardia; `nearest` con rettangoli nulli rende la scheda di partenza.
+3. **La colonna Commit della riga 7 la scrive il compito 8**, com'è il suo Passo 11 (**E79**): `0417c9c`, **con la cura
+   `a606f33`**.
+4. **E74 e l'assunzione della barra restano del proprietario**: le due domande del punto 3 qui sotto.
+5. **In `%TEMP%` restano cartelle di prova di sessioni passate** — `pc2`, `pc4`, `pc4b`, `pc4c`, `pc5`, `pc5b`, `pc5c`, `pc6`,
+   `pc6b`, `pc6c`, `rv4`, `rv5`, `rv6`, ciascuna col suo `node_modules` —, che nessuna consegna nomina: `ls -d
+   /c/Users/Jays/AppData/Local/Temp/pc* /c/Users/Jays/AppData/Local/Temp/rv*` le elenca, e toglierle è del proprietario.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **i commit** | `git log --oneline fa1ae0e..HEAD`: tre — `0417c9c` il compito, `a606f33` le cure, e quello che scrive questa riga: la riga 7 della posizione col verbale, la fonte di **E85** nella tabella del compito 9, questa sezione e la precedente in archivio, i quattro file del dispaccio. Nessun codice cambia dopo `a606f33`: `git diff --stat a606f33..HEAD -- gui/` non rende nulla |
+| **cancello** | `GATE GREEN` all'apertura su `fa1ae0e`, sulle cure e prima del commit che scrive questa riga: jsdom 157 prove passate e una saltata, browser 56, il pezzo `693.02 kB`, `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `fa1ae0e` e `a606f33` verdi su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | le righe dalla 1 alla 7 a `✅`; l'8 e la 9 a `⬜` |
+| **lo scratchpad** | sulla macchina `Jays`, **non tracciato**, in `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\e4b4f474-4c3b-4180-b8de-ae411307e17a\scratchpad\`: in `tools/` gli attrezzi delle cure — `cure_task7.py`, `violations_cure7.py` con le ventiquattro mutazioni, `plan_cure7.py` —; in `cure/` e `logs/` le corse; in `task7/` e `review7/` i file dell'implementatore e del revisore. Non servono a riprendere: il piano basta |
+| **server e cartelle di prova** | nessun server acceso; nessun `git worktree` — `git worktree list` rende la sola cartella del repository —; il clone della revisione, `%TEMP%\rv7`, tolto dal coordinatore |
+
+**Che cosa ha fatto questa sessione.** La ripresa coi comandi, la CI di `fa1ae0e` e il cancello d'apertura; il brief, il
+prompt e la banda dei costi, col sì del proprietario; l'implementatore; il prompt del revisore, coi suoi comandi lanciati
+prima; il revisore; le cure, con le mutazioni sulla suite intera, le quattordici righe di prima del Passo 8 rifatte
+sull'albero curato, e il testo del piano curato rifatto dal testo su un clone; la chiusura.
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura del
+sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **`git diff <commit>` dà per CANCELLATO un file nuovo che sta sul disco ma non nell'indice**: il confronto dell'`apply` di `plan_ops.py` col commit, scritto com'era nel prompt del revisore del 6bis, avrebbe dato un rosso falso sui file che il compito crea — misurato su un repository usa-e-getta | `git add -A`, poi `git diff --cached --stat <commit>`, com'è ora nel prompt del revisore del 7 |
+| 2 | **il consumatore da fuori trova ciò che le mutazioni non trovano**: **E85** e le tre cose di **E90** sono uscite usando le interfacce come le userà il compito 8, non mutando il codice del 7 — la domanda 3 del pre-controllo, dal lato della revisione | il prompt di ogni revisore che consegna interfacce a un compito dopo chiede quel consumatore |
+| 3 | **un rosso si legge prima di crederci**: la prova di **E85**, la prima volta, cadeva perché i pannelli veri leggono i negozi, e senza la Pinia `fromJSON` torna indietro — *«dockview: failed to deserialize layout»* — e non per l'asserzione | una prova che monta i pannelli veri imposta la Pinia, come `frame.test.ts` |
+| 4 | **una direzione nuova sta meglio in una prova che c'è, quando ci entra**: le cure di **E82**, **E83**, **E84** ed **E88** non cambiano né i conti né i rossi del Passo 2, e la tabella del Passo 8 resta vera, rifatta sull'albero curato | prima di aggiungere una prova, chiedersi se la direzione sta in una che c'è |
+| 5 | **un compito senza sguardo nel browser costa meno della banda dei compiti con lo sguardo**: ~0,73 milioni contro gli 0,82–0,94 dei compiti 4, 6 e 6bis, pur col consumatore da fuori | la banda di un compito senza sguardo si abbassa |
+
+**Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. **Il pre-controllo del compito 8**, contro il codice di **adesso**, con le cure del 7 — lo schema che disegna un gruppo
+   ingrandito solo (**E85**), le prove delle viste col nome che ne portano due (**E82**) —; con le sonde che l'errata gli
+   assegna, **E38**, **E39**, **E43**, **E53** ed **E57**; la domanda di **E44** sulla Panoramica; **E63**, i conti dedotti di
+   **E64**, la strada più larga di **E70** ed **E73**; la prova della Panoramica di **E76**; la finestra prima del benvenuto di
+   **E81**; le tre cose di **E90**; la colonna Commit della riga 7 con la cura; e la sonda di **E74**, se il proprietario ne
+   avrà deciso la forma. A quello del **9**, la Definizione di «fatto» con le righe 22 e 23.
+3. ⏳ **Due domande per il proprietario**, una per volta e quando vuole: la forma della cura di **E74**; e se l'assunzione della
+   barra debba avere un compito che la misuri.

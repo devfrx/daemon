@@ -257,6 +257,17 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | **E88** | Nit — **Compito 7, Passo 2 — le guardie di `readNamed` su una voce `null` e su una disposizione `null` non le teneva nessuna prova:** tolta la prima, una voce `null` fa lanciare la destrutturazione dentro il `try` di `unpack`, che rende `null` — **tutto** il pacchetto perso, disposizioni e tema —; tolta la seconda, resta una vista col nome senza disposizione. Misurato dalla revisione (N-3): la suite verde sotto ciascuna. ✅ **Curata** nel commit che scrive questa riga: nella lista di *«drops what it cannot read…»* anche `null` e `{ name: "Nulla", layout: null }`, col perché nel commento. Misurata dal coordinatore: verde sul codice; rossa senza la prima guardia, `expected null to deeply equal { view: 'home', …(2) }`, e senza la seconda, `expected { view: 'home', …(2) } to deeply equal { view: 'home', …(2) }`. Due righe nel Passo 8 |
 | **E89** | Nit — **Compito 7 — due rami difensivi senza sonda:** in `schematic.ts` la divisione in parti uguali quando le misure di un ramo sommano a zero — nessuna disposizione vera le ha a zero —, e in `apply` il ritorno alla vista di sempre per un nome che il pacchetto non ha — dopo **E75** la strada c'è solo scrivendo in `openNamed` un nome che la lista non ha, e il compito 8 scrive solo nomi della lista. Misurato dalla revisione (N-4): verde senza l'uno o l'altro. ✅ **Dichiarati, non sondati**, decisi coi cinque criteri come **E76**: una prova terrebbe un caso che nessuno produce. Due righe dopo la tabella del Passo 8; la porta di `openNamed` è di **E90** |
 | **E90** | ⚠️ **Compito 8, al suo pre-controllo — tre cose che la revisione del compito 7 ha trovato usando da fuori le interfacce che il compito 8 consuma:** **(a)** una disposizione malformata rompe **tutta** la Panoramica: `unpack` tiene come disposizione ogni oggetto, `schematic({})` lancia `TypeError: Cannot read properties of undefined (reading 'root')` — e, dopo **E85**, così fa un `maximizedNode` i cui indici non portano a una foglia —, e il `computed` delle schede chiama `schematic` su ogni vista insieme; il dock lancia già sulla stessa, `root must be of type branch`, ma solo quando la mostra: la classe è della parte 2; **(b)** `openNamed` si scrive senza guardia: con un nome che la lista non ha il dock ricade sulla vista di sempre, e il `settle` dopo perde la mossa in silenzio — la malattia di **E75** da un'altra porta; **(c)** `nearest` esclude la scheda di partenza per geometria, non per identità: con rettangoli nulli, come sotto jsdom, rende la scheda stessa, e il titolo *«never the card it starts from»* vale per rettangoli più larghi di un pixel. **(a)** misurato dal consumatore della revisione; **(b)** e **(c)** **dedotti** dal testo del compito 8 — che scrive solo nomi della lista, e il cui `onArrow` toglie `from` dai candidati come `moveActive` —, non misurati sul suo codice, che non esiste ancora. ⏳ **Al pre-controllo del compito 8**: per **(a)** una miniatura che non si legge disegnata vuota, con la sua prova; per **(b)** una prova che lo tenga, o un `showNamed(name)` che rifiuti un nome ignoto, simmetrico a `showView`; per **(c)** le sue prove sotto jsdom |
+| **E91** | Nit — **Compito 8, Passo 1 — `grep -rn 'F3' gui/src` non è vuoto dal compito 1:** `themes.css` copia la tavola, e `--ref-neutral-94: #F3EEE6` contiene `F3`. La sonda cerca un tasto e trova un colore — l'Atteso *«`F3` in nessun file»* era falso a ogni esecuzione. Misurato il 2026-09-27 dal pre-controllo del compito 8 sulla copia, un `git worktree` di `f3206c7` nello scratchpad, macchina `Jays`. E il Passo 1 non misurava il pezzo JavaScript, che il Passo 8 porta nel commit accanto alla baseline: la regola di **N-2**, dal compito 7 (**E80**). ✅ **Corretta** nel commit che la scrive: `grep -rnw`, che non prende `F3` dentro `#F3EEE6` — vuoto, misurato —; e la riga del *build* nel Passo 1, `693.02 kB`, compresso `211.20 kB`, a `f3206c7`, gli stessi del cancello d'apertura |
+| **E92** | ⚠️ **Compito 8, Passo 2 — E63 ed E73.** La *Crea* di `frame.browser.test.ts` rifiutava, *«exists already»*: il file c'è dal 6bis (**D29**). ✅ **Corretta** nel commit che la scrive: il compito lo **estende** con quattro sostituzioni — gli import; l'aiutante `computed` che esce, e al suo posto le due porte della Panoramica; la prova della fascia seguita da quelle del compito —, che applicate al file di `f3206c7` rendono quello della copia. **E73 (a)**, decisa dal coordinatore coi cinque criteri — reversibile, poche righe, solo prove, fuori dal merito —: l'oracolo `computed(property, token)`, identico riga per riga in `dock.browser.test.ts` e in `frame.browser.test.ts`, e `colourOf` di `kit.browser.test.ts`, lo stesso per `color`, vivono **una volta** in `testing/probes.ts`, com'è per `contrastJudged` in `testing/axe.ts` nello stesso compito; `colourOf` resta, e passa da lì. Scartata la copia dichiarata: un secondo modo della stessa cosa, la ragione di **D29**. **E73 (b)**: in quel file il compito non stacca un gruppo — `grep -c 'floating'` rende 0 sulla copia —, e il dock resta com'è. Misurato: le prove del dock, della pagina kit e della cornice verdi con l'oracolo spostato |
+| **E93** | ⚠️ **Compiti 8 — i conti di E64, dedotti, misurati.** Il compito com'era scritto, rifatto sulla copia: al Passo 3 le prove dei tre file del browser sono **quarantasette**, non trentasette — il dock ne ha **sedici** dalle cure del compito 6 (**E44**…**E58**), che **E64** non contava —, e ne cadono **nove**, coi messaggi scritti; al Passo 7 quarantasette su quarantasette; al Passo 8 `Tests  229 passed \| 1 skipped (230)`, sedici in più, e cinque corse uguali. Col testo corretto: al Passo 3 sotto jsdom i due import e `layout.showNamed is not a function`, nel browser **dieci** rosse su **quarantanove** — la nuova è **E100** —; al Passo 7 `Tests  61 passed (61)` nei quattro file jsdom e `Tests  49 passed (49)`; al Passo 8 `Tests  234 passed \| 1 skipped (235)`, **ventuno** in più, e cinque corse su cinque, 234 passate ciascuna; il pezzo `698.14 kB`, compresso `212.98 kB`. ✅ **Corretta** nel commit che la scrive: gli Atteso dei Passi 3, 7 e 8 coi numeri misurati, e `stores.test.ts` nei comandi dei Passi 3 e 7 |
+| **E94** | Nit — **Compito 8, Passo 6 — la riscrittura di `Frame.vue` rimetteva il commento che E86 ha corretto:** *«The mapping and the geometry live in `moveActive.ts`»*, falso dal Passo 3 del compito 7, che ha portato la geometria in `nearest.ts` (gotcha **#58**; la riga 5 di `CLAUDE.md`: il compito, scritto prima, si legge contro il codice di adesso). Trovato dal pre-controllo, confrontando la riscrittura col file di `f3206c7`. ✅ **Corretta** nel commit che la scrive: nel recinto il commento di oggi |
+| **E95** | Nit — **Compito 8, Passo 9 — sulla suite intera tre righe fanno cadere più prove di quelle nominate, e una non dava il suo rosso**, la specie di **E12**, **E49** ed **E77**. Misurato il 2026-09-27, una violazione per volta sulla copia, ogni file tornato dalla copia salvata, `cmp` uguale: *«la carta scelta»* anche la prova delle frecce — Invio lascia aperta la Panoramica —; *«il pulsante della striscia»* anche la prova del cassetto nei due temi, `expected null not to be null`; *«la Panoramica aperta»* anche la Panoramica disegnata nei due temi, lo stesso messaggio di `axe`. E *«le parole delle viste»*: tolta la riga di `"compact"`, quella di `"work"` resta con la virgola, il JSON non si legge — `trailing comma at line 5 column 3` — e **dodici** file di prova non si caricano. Le altre sedici cadono come dettano. ✅ **Corretta** nel commit che la scrive: le tre righe nominano le prove in più; la violazione toglie anche la virgola, e dà il rosso scritto; l'intestazione della colonna la data della misura |
+| **E96** | ⚠️ **Compito 8, al suo pre-controllo — le sonde che l'errata gli lasciava: E38, E39, E43, E57 ed E70, e la domanda di E44 con E53.** Le cure c'erano tutte, e le sonde le tengono. Misurato con una diagnostica nel Chrome installato, 1440 × 900: il cassetto aperto dalla tastiera dà il fuoco a «Chiudi» a y 855–887, dentro il foglio a 334–900 (**E38**); il segnaposto della ricerca 315 px nei 334 della casella (**E39**); col core salutato la fascia esce, e con un altro timbro la fascia `stop` entra sulla pagina a 12 px dai lati, e la pagina non sborda — senza `overflow: clip` sborda di 50 px al primo fotogramma (**E43**, **E70**); la barra senza fondo né riga (**E57**). ✅ **Corretta** nel commit che la scrive, in `frame.browser.test.ts`: la prova della fascia prende l'altra fascia e la pagina fotogramma per fotogramma — una direzione nuova in una prova che c'è —; quella del cassetto l'apertura dalla tastiera, col fuoco dentro il foglio; una prova nuova la barra e il segnaposto; e cinque righe nel Passo 9, ciascuna rossa. **E44** ed **E53**: la Panoramica **non scorre** a 1440 × 900 con le tre viste e *«Salva questa vista»* — `scrollHeight` 900 su 900 — e le sue carte non hanno un antenato tondo: la finestra intera ha gli angoli dritti (la (d)). Scorra o no, lo scorrimento non toglie nulla al giudizio: si giudicano la miniatura nella carta, la tessera nella miniatura e il campo nel riquadro del nome, e fra loro nulla scorre. Nessuna cura |
+| **E97** | Nit — **Compito 8, Passo 2 — E76 ed E82.** La prova *«shows the view of the card chosen…»* sceglieva Lavoro **prima** di aprire la vista col nome, e non teneva che una delle tre la chiudesse — il ruolo che aveva `Frame.switchTo`, ora della Panoramica —; e usava **una** vista col nome, dove *«quella scelta»* e *«la prima»* sono la stessa carta. ✅ **Corretta** nel commit che la scrive: la prova porta **due** viste col nome, sceglie la **seconda**, poi riapre la Panoramica e sceglie Home, e la vista col nome si chiude; due righe nel Passo 9 — con `layout.view = view` al posto di `showView`, `expected 'Lettura' to be null`; con la prima della lista, `expected 'Revisione' to be 'Lettura'` |
+| **E98** | ⚠️ **Compito 8 — E81, la finestra prima del benvenuto.** ✅ **Corretta** nel commit che la scrive, la strada **A** di **E40**, decisa dal coordinatore coi cinque criteri: *«Salva questa vista»* è **spenta finché `layout.arrivals` è zero**, col perché nel commento di `save`; una prova sotto jsdom, vista rossa sul codice del compito, `expected false to be true`, verde con la cura; e le tre prove che arrivano a quella carta — il nome sotto jsdom, la Panoramica disegnata e le frecce nel browser — consegnano prima una risposta del core, `{ state: "Nothing" }`. Una riga nel Passo 9. La domanda di classe — ogni scrittura prima del benvenuto, compreso il `settle` del dock — resta del proprietario, **registrata e non presa** (**E40**) |
+| **E99** | ⚠️ **Compito 8 — E90.** ✅ **(a) Corretta**: una disposizione che non si legge la Panoramica la disegna **vuota**, e non cade tutta — `drawn` prende ciò che `schematic` lancia; la prova, vista rossa sul codice del compito, `TypeError: Cannot destructure property 'maximizedNode' of 'layout.grid' as it is undefined.`, verde con la cura. La classe, `unpack` che tiene come disposizione ogni oggetto, resta della parte 2. ✅ **(b) Corretta**, decisa dal coordinatore coi cinque criteri: `showNamed(name)` nel negozio, la gemella di `showView`, apre una vista col nome solo se la lista la tiene, e altrimenti rifiuta e non cambia nulla; la Panoramica le apre solo da lì. La regola vive dov'è lo stato, come **D13**, e una prova della Panoramica non la terrebbe: la Panoramica scrive solo nomi della lista. Una prova del negozio, vista rossa, `layout.showNamed is not a function`, e una riga nel Passo 9. **(c) Dichiarata**: `onArrow` toglie la carta di partenza **per identità** prima di `nearest`, e nessuna prova sotto jsdom preme le frecce — letto nel testo; il limite di `nearest` coi rettangoli nulli resta quello che **E90** dice. Due righe nel Passo 9 |
+| **E100** | ⚠️ **Compito 8 — E74, decisa dal proprietario il 2026-09-27 — A: l'anello del fuoco di un pannello che scorre si disegna DENTRO la scatola**, nel padding che ogni pannello ha, contro **B**, uno spazio attorno che la scheda non tagli. Misurato prima di chiedere, con una diagnostica nel Chrome installato: nella Home a 1440 × 900 Stato e Impostazioni scorrono, il Tab li raggiunge — `section.status`, `section.settings` — e stanno a 1 px dal bordo della scheda, che ha `overflow: hidden` e il raggio 21: l'anello, 2 px a 2 px fuori, restava solo in alto. ✅ **Corretta** nel commit che la scrive: nel Passo 7 una regola in `tokens/dock.css`, `.dockview-theme-harness .panel > :focus-visible`, con l'`outline-offset` a meno la distanza e lo spessore dell'anello — lo stesso anello, rovesciato dentro — e gli angoli di sotto della scheda meno il suo bordo, concentrici (risposta 4), perché un anello dritto in un angolo tondo lì si taglia; una prova nel browser che col Tab arriva al pannello che scorre e misura l'anello dentro la scheda e i suoi angoli, vista rossa, `expected 9 to be greater than or equal to 13`; due righe nel Passo 9. Il costo, detto al proprietario prima della scelta: una seconda forma dell'anello, dentro, nei soli pannelli del dock. Il richiamo datato nella riga «focus» della (a) del [disegno](../specs/2026-09-22-design-system-design.md) |
+| **E101** | ⚠️ **Compito 8, Passi 10 e 11 — lo sguardo e le celle, la specie di E35 ed E69:** il Passo 10 non diceva chi guarda, e il Passo 11 portava la riga 8 a `✅` nel commit dell'implementatore, che committa **prima** della revisione e dello sguardo; e la colonna Commit della riga 7 la voleva *«con l'hash del compito 7»*, che perderebbe la cura (**E79**). ✅ **Decisa dal coordinatore** con `anthropic-skills:decision-principles`, la forma di **E35** ed **E69**, reversibile e fuori dal merito, e **corretta** nel commit che la scrive: l'implementatore fa i Passi 1–9 e il commit del codice, **senza** celle; il Passo 10 lo fanno il proprietario e il coordinatore dopo la revisione e le sue cure, e nomina ciò che solo lì si vede — una vista con un gruppo ingrandito (**E85**: *come* si disegni la miniatura resta di questo sguardo), *«Salva questa vista»* spenta prima della risposta del core, il cassetto dalla tastiera, l'anello dentro —; nel commit della chiusura il coordinatore porta la riga 8 a `✅` col verbale e scrive la colonna Commit della riga 7, `0417c9c` con la cura `a606f33` |
 
 ---
 
@@ -9055,12 +9066,14 @@ piano; R3-20, R3-23 e R3-25 della revisione. La tavola della [Panoramica](../spe
 dà la griglia a tre colonne, la carta corrente e *«Salva questa vista»* in fondo.
 
 **Files:**
-- Create: `gui/src/stores/drawer.ts`, `gui/src/frame/Overview.vue`, `gui/src/frame/frame.browser.test.ts`
+- Create: `gui/src/stores/drawer.ts`, `gui/src/frame/Overview.vue`
 - Rewrite: `gui/src/frame/ViewBar.vue`, `gui/src/frame/Frame.vue`, `gui/src/frame/Drawer.vue`, `gui/src/panels/Strip.vue` —
   ciascuno **per intero**, col terminatore che ha oggi
-- Modify: `gui/src/stores/invoke.ts`, `gui/src/components/Confirm.vue`, `gui/src/locales/it.json`, `gui/src/tokens/dock.css`
-- Modify: `gui/src/frame/frame.test.ts`, `gui/src/a11y.test.ts`, `gui/src/locales/copy.test.ts`,
-  `gui/src/frame/dock.browser.test.ts`, `gui/src/kit/kit.browser.test.ts`, `gui/src/testing/axe.ts`
+- Modify: `gui/src/stores/invoke.ts`, `gui/src/stores/layout.ts` (**E99**), `gui/src/components/Confirm.vue`,
+  `gui/src/locales/it.json`, `gui/src/tokens/dock.css`
+- Modify: `gui/src/frame/frame.test.ts`, `gui/src/frame/frame.browser.test.ts` — nato col 6bis (**D29**, **E63**) —,
+  `gui/src/stores/stores.test.ts`, `gui/src/a11y.test.ts`, `gui/src/locales/copy.test.ts`, `gui/src/frame/dock.browser.test.ts`,
+  `gui/src/kit/kit.browser.test.ts`, `gui/src/testing/axe.ts`, `gui/src/testing/probes.ts` (**E92**)
 
 **Interfaces:**
 - Consumes: `BaseButton` — `variant="card"`, `pill`, `size="lg"`, `icon` —, `BaseDialog` — `variant="full"` e `"sheet"`,
@@ -9069,7 +9082,8 @@ dà la griglia a tre colonne, la carta corrente e *«Salva questa vista»* in fo
   `testing/probes.ts` (compito 4); il progetto `browser` e `userEvent` (compito 2); `readToken` (compito 6); in `useLayout()`
   `showView`, `openNamed`, `saved.named` e `saveNamed(name, layout, shown)`, e `nearest` con `type Direction`, e
   `schematic` (compito 7).
-- Produces: `useDrawer()` da `stores/drawer.ts`, con `open: boolean`; in `useInvoke()` il getter `asking: boolean`;
+- Produces: `useDrawer()` da `stores/drawer.ts`, con `open: boolean`; in `useInvoke()` il getter `asking: boolean`; in
+  `useLayout()` `showNamed(name: string): boolean` (**E99**); `computed(property, token)` da `testing/probes.ts` (**E92**);
   `Overview.vue` — la prop `snapshot: () => SerializedDockview` e `v-model:open` —; in `ViewBar.vue` la prop `snapshot` e
   `v-model:overview`; `contrastJudged(node: Element): Promise<{ passes: number; incomplete: number }>` da
   `testing/axe.ts`; in `it.json` le chiavi `overview.*`, e `drawer.open` che dice *«moduli»*; la classe `view-name` sul nome
@@ -9091,15 +9105,17 @@ cure di P-20 e P-21, nel Chrome installato 153 e sotto jsdom; le righe intere so
 
 ```bash
 git status --porcelain > <scratchpad>/prima.txt
-grep -rn 'F3' gui/src
+grep -rnw 'F3' gui/src
 ls gui/src/stores/drawer.ts
 grep -rn 'bar\.views' gui/src
 grep -n '"reka-ui"' gui/package.json
+(cd gui && npm run build 2>&1 | grep -E 'assets/index-.*\.js ')
 ```
 
-Atteso: `F3` **in nessun file** (P-11); `drawer.ts` **non c'è**; `bar.views` solo in `frame/ViewBar.vue`, che il compito
-riscrive — e la chiave esce da `it.json`; `reka-ui` a **2.10.4**, la versione su cui P-22 è misurato. Poi, da solo,
-`bash scripts/gate.sh` → `GATE GREEN`.
+Atteso: `F3` **in nessun file** (P-11) — con `-w`, perché `#F3EEE6` di `themes.css` è un colore (**E91**); `drawer.ts` **non
+c'è**; `bar.views` solo in `frame/ViewBar.vue`, che il compito riscrive — e la chiave esce da `it.json`; `reka-ui` a
+**2.10.4**, la versione su cui P-22 è misurato; il pezzo JavaScript, la baseline che il Passo 8 porta nel commit (**E80**):
+`693.02 kB`, compresso `211.20 kB`, a `f3206c7`. Poi, da solo, `bash scripts/gate.sh` → `GATE GREEN`.
 
 - [ ] **Passo 2: le prove, prima del codice**
 
@@ -9130,6 +9146,35 @@ export async function contrastJudged(node: Element): Promise<{ passes: number; i
   return { passes: count(results.passes), incomplete: count(results.incomplete) };
 }
 
+```
+
+In `gui/src/testing/probes.ts` (`replace_unique.py`), una sostituzione — **E92**: l'oracolo di un token, che la prova del
+dock e quella della cornice portavano parola per parola, e la pagina kit per il solo `color`, in una casa sola:
+
+*Trova*:
+
+```ts
+/** The first family an element computes -- the check "applied" of `sonda-caratteri.js`. */
+```
+
+*Sostituisci con:*
+
+```ts
+/**
+ * What a declaration of `property: var(token)` computes to here: the oracle of a token, with no copy of its value.
+ * ⛔ ONE HOUSE (E73 of the design-system plan): the dock's probes and the frame's had it word for word, and the kit
+ * page's for `color` alone.
+ */
+export function computed(property: string, token: string): string {
+  const probe = document.createElement("div");
+  probe.style.setProperty(property, `var(${token})`);
+  document.body.append(probe);
+  const value = getComputedStyle(probe).getPropertyValue(property);
+  probe.remove();
+  return value;
+}
+
+/** The first family an element computes -- the check "applied" of `sonda-caratteri.js`. */
 ```
 
 In `gui/src/kit/kit.browser.test.ts` (`replace_unique.py`), due sostituzioni — l'aiutante esce,
@@ -9185,6 +9230,43 @@ const roots = (selector: string): Element[] => [...document.querySelectorAll(sel
 
 ```
 
+E le due di **E92** — `colourOf` passa dall'oracolo di `testing/probes.ts`:
+
+*Trova:*
+
+```ts
+import { concentricRadii, firstFamily, fits, iconsCentred } from "../testing/probes";
+```
+
+*Sostituisci con:*
+
+```ts
+import { computed, concentricRadii, firstFamily, fits, iconsCentred } from "../testing/probes";
+```
+
+*Trova:*
+
+```ts
+/** A colour token as the page computes it -- `rgb(…)`, in the theme on the root -- never copied from the board. */
+function colourOf(token: string): string {
+  const probe = document.createElement("span");
+  probe.style.color = `var(${token})`;
+  document.body.append(probe);
+  const colour = getComputedStyle(probe).color;
+  probe.remove();
+  return colour;
+}
+```
+
+*Sostituisci con:*
+
+```ts
+/** A colour token as the page computes it -- `rgb(…)`, in the theme on the root -- never copied from the board. */
+function colourOf(token: string): string {
+  return computed("color", token);
+}
+```
+
 In `gui/src/frame/dock.browser.test.ts` (`replace_unique.py`) la prova delle schede sa della striscia — dal compito 8 è una
 pillola, e la prova del compito 6 diventerebbe rossa:
 
@@ -9216,6 +9298,44 @@ pillola, e la prova del compito 6 diventerebbe rossa:
         const style = getComputedStyle(group);
         const radius = strips.includes(group) ? "--radius-full" : "--radius-card";
         expect(style.borderTopLeftRadius).toBe(computed("border-top-left-radius", radius));
+```
+
+E le due di **E92** — `computed` si prende da `testing/probes.ts`:
+
+*Trova:*
+
+```ts
+import { concentricRadii } from "../testing/probes";
+```
+
+*Sostituisci con:*
+
+```ts
+import { computed, concentricRadii } from "../testing/probes";
+```
+
+*Trova:*
+
+```ts
+  return floating[0] as Element;
+}
+
+/** What a declaration of `property: var(token)` computes to here: the oracle of a role, with no copy of its value. */
+function computed(property: string, token: string): string {
+  const probe = document.createElement("div");
+  probe.style.setProperty(property, `var(${token})`);
+  document.body.append(probe);
+  const value = getComputedStyle(probe).getPropertyValue(property);
+  probe.remove();
+  return value;
+}
+```
+
+*Sostituisci con:*
+
+```ts
+  return floating[0] as Element;
+}
 ```
 
 In `gui/src/frame/frame.test.ts` (`replace_unique.py`), due sostituzioni — gli import, e in fondo la
@@ -9353,7 +9473,7 @@ describe("the frame (the (d) of the design system)", () => {
     expect(overviewOpen()).toBe(false);
   });
 
-  it("shows the view of the card chosen and closes, and opens a named view by its name", async () => {
+  it("shows the view of the card chosen and closes, opens a named view by its name, and closes it with one of the three (E76, E82)", async () => {
     const layout = useLayout();
     await frame();
     press("F3");
@@ -9363,23 +9483,37 @@ describe("the frame (the (d) of the design system)", () => {
     expect(layout.view).toBe("work");
     expect(layout.openNamed).toBeNull();
     expect(overviewOpen()).toBe(false);
-    layout.receive(packageFromTheCore({ view: "work", layouts: {}, named: [{ name: "Revisione", layout: ownersHome() }] }));
+    // ⛔ TWO NAMED VIEWS (E82): with one, "the one chosen" and "the first" are the same card.
+    const named = [
+      { name: "Revisione", layout: ownersHome() },
+      { name: "Lettura", layout: ownersHome() },
+    ];
+    layout.receive(packageFromTheCore({ view: "work", layouts: {}, named }));
     await flush();
     press("F3");
     await flush();
-    // The named view sits after the three, before «Salva questa vista», with a word that says it was saved.
-    expect(cards()).toHaveLength(5);
-    expect(cards()[3]?.textContent).toContain(i18n.global.t("overview.saved"));
-    cards()[3]?.click();
+    // The named views sit after the three, before «Salva questa vista», with a word that says they were saved.
+    expect(cards()).toHaveLength(6);
+    expect(cards()[4]?.textContent).toContain(i18n.global.t("overview.saved"));
+    cards()[4]?.click();
     await flush();
-    expect(layout.openNamed).toBe("Revisione");
-    expect(document.querySelector(".view-name")?.textContent).toContain("Revisione");
+    expect(layout.openNamed).toBe("Lettura");
+    expect(document.querySelector(".view-name")?.textContent).toContain("Lettura");
+    // ⛔ ONE OF THE THREE CLOSES THE NAMED VIEW (E76, D13): the role `Frame.switchTo` had, the overview's now.
+    press("F3");
+    await flush();
+    cards()[0]?.click();
+    await flush();
+    expect(layout.openNamed).toBeNull();
+    expect(layout.view).toBe("home");
   });
 
   it("says under the field a name that is empty or taken, and saves a new one and opens it (D4, D12)", async () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
     layout.attach(bridge);
+    // The core has answered, with nothing: before it «Salva questa vista» is off (E81).
+    layout.receive({ kind: "Layout", value: { state: "Nothing" } });
     await frame();
     press("F3");
     await flush();
@@ -9406,6 +9540,34 @@ describe("the frame (the (d) of the design system)", () => {
     expect(saves(bridge)).toBe(1);
   });
 
+  it("keeps «Salva questa vista» off until the core has answered (E81)", async () => {
+    const layout = useLayout();
+    await frame();
+    press("F3");
+    await flush();
+    const save = (): HTMLButtonElement | null => document.querySelector<HTMLButtonElement>('[data-card="save"]');
+    // ⛔ BEFORE THE ANSWER THE STORE HOLDS NO PACKAGE: a view saved now would send `layouts: {}`, and the core would keep
+    // that -- every saved layout lost in silence, the window of E40.
+    expect(save()?.disabled).toBe(true);
+    layout.receive({ kind: "Layout", value: { state: "Nothing" } });
+    await flush();
+    expect(save()?.disabled).toBe(false);
+  });
+
+  it("draws a layout it cannot read as an empty miniature, and every other as before (E90)", async () => {
+    const layout = useLayout();
+    // ⛔ `unpack` keeps any object as a layout, and `schematic` throws on one it cannot read: that card goes empty, not the
+    // whole overview.
+    const unreadable = {} as SerializedDockview;
+    layout.receive(packageFromTheCore({ view: "home", layouts: {}, named: [{ name: "Rotta", layout: unreadable }] }));
+    await frame();
+    press("F3");
+    await flush();
+    expect(cards()).toHaveLength(5);
+    expect(cards()[3]?.querySelectorAll(".tile")).toHaveLength(0);
+    expect(cards()[0]?.querySelectorAll(".tile").length).toBeGreaterThan(0);
+  });
+
   it("draws each view in miniature from its layout: a tile per group, with its module's icon, and not the strip (D14)", async () => {
     await frame();
     press("F3");
@@ -9426,6 +9588,33 @@ describe("the frame (the (d) of the design system)", () => {
   });
 });
 
+```
+
+In `gui/src/stores/stores.test.ts` (`replace_unique.py`), una sostituzione — **E99**: una vista col nome si apre solo per
+un nome che la lista tiene, accanto alla prova di `showView`:
+
+*Trova*:
+
+```ts
+  it("saves the layout on screen under a new name at once and opens it, keeps those saved before, and refuses an empty or a taken name (D4)", () => {
+```
+
+*Sostituisci con:*
+
+```ts
+  it("shows a named view only by a name the list holds, and refuses any other (E90)", () => {
+    const layout = useLayout();
+    const review = { marker: "review" } as never;
+    layout.receive(fromTheCore({ view: "home", layouts: {}, named: [{ name: "Revisione", layout: review }] }));
+    // ⛔ AN UNKNOWN NAME WOULD SEND THE NEXT MOVE NOWHERE -- the dock falls back to the view of always, and `settle` writes
+    // into a view the package does not have: the loss of E75, by another door.
+    expect(layout.showNamed("Assente")).toBe(false);
+    expect(layout.openNamed).toBeNull();
+    expect(layout.showNamed("Revisione")).toBe(true);
+    expect(layout.openNamed).toBe("Revisione");
+  });
+
+  it("saves the layout on screen under a new name at once and opens it, keeps those saved before, and refuses an empty or a taken name (D4)", () => {
 ```
 
 In `gui/src/a11y.test.ts` (`replace_unique.py`), quattro sostituzioni — la barra ha una prop e un modello, e la
@@ -9603,72 +9792,158 @@ import { THEME_CHOICES } from "../tokens/theme";
   it("has a word for every theme choice", () => {
 ```
 
-Crea `gui/src/frame/frame.browser.test.ts` (LF) — la cornice intera nel Chrome installato, montata come la monta `main.ts`
-(P-23): il controllo **19**, il cassetto dalla striscia, la Panoramica disegnata e le frecce (R3-23):
+In `gui/src/frame/frame.browser.test.ts` (`replace_unique.py`), quattro sostituzioni — il file **c'è dal 6bis**, con la
+prova della fascia e gli aiutanti `frame(theme)` e `px(token)`, e il compito lo **estende** (**D29**, **E63**): la cornice
+intera nel Chrome installato, montata come la monta `main.ts` (P-23) — le due fasce sulla pagina e la pagina che non
+sborda (**E70**, **E43**), il controllo **19**, il cassetto dalla striscia anche dalla tastiera (**E38**), la Panoramica
+disegnata, le frecce (R3-23), la barra (**E57**, **E39**) e l'anello di un pannello che scorre (**E100**); `computed` esce, e
+si prende da `testing/probes.ts` (**E92**). Gli import:
+
+*Trova*:
 
 ```ts
-import "dockview/dist/styles/dockview.css";
-import "../tokens";
+import { createPinia, setActivePinia } from "pinia";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+```
 
+*Sostituisci con:*
+
+```ts
 import { createPinia, setActivePinia } from "pinia";
 import { userEvent } from "vitest/browser";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { createApp, type App as VueApp } from "vue";
+```
 
-import App from "../App.vue";
-import { i18n } from "../i18n";
+*Trova:*
+
+```ts
 import { registerModules } from "../panels/modules";
+import { concentricRadii } from "../testing/probes";
+```
+
+*Sostituisci con:*
+
+```ts
+import { registerModules } from "../panels/modules";
+import { useConnection } from "../stores/connection";
 import { useLayout } from "../stores/layout";
 import { contrastJudged, violations } from "../testing/axe";
-import { concentricRadii, fits, iconsCentred } from "../testing/probes";
-import { readToken } from "../tokens/readToken";
+import { computed, concentricRadii, fits, iconsCentred } from "../testing/probes";
+```
 
-// ⛔ THE WHOLE FRAME IN THE INSTALLED CHROME (the (d) of the design system): the page of the SPA -- `App.vue`, whose rule
-// gives `html`, `body` and `#app` the whole window -- at the probes' 1440 x 900, with the stylesheets in the order
-// `main.ts` loads them. What only a layout engine can judge: where the strip sits, the grid of the overview under the
-// arrows, and the overview drawn.
+L'aiutante `computed` esce, e al suo posto le due porte della Panoramica:
 
-const frames: VueApp[] = [];
+*Trova:*
 
-beforeEach(() => {
-  registerModules();
-});
-
-afterEach(() => {
-  for (const frame of frames.splice(0)) frame.unmount();
-  document.body.replaceChildren();
-  delete document.documentElement.dataset.theme;
-});
-
-/**
- * The frame in one theme, once `dockview` has laid out the Home view. ⛔ MOUNTED AS `main.ts` MOUNTS IT, on `#app`
- * itself: `mount` of `@vue/test-utils` puts the app in a `div` of its own inside the element it is given, and that `div`
- * has no height -- the frame came out 116 px high, the dock 0, and the strip in the middle of the page, measured on
- * 2026-09-24 (P-23 of the plan).
- */
-async function frame(theme: "light" | "dark"): Promise<void> {
-  document.documentElement.dataset.theme = theme;
-  const pinia = createPinia();
-  setActivePinia(pinia);
-  const host = document.createElement("div");
-  host.id = "app";
-  document.body.append(host);
-  const app = createApp(App).use(pinia).use(i18n);
-  app.mount(host);
-  frames.push(app);
-  await new Promise((resolve) => setTimeout(resolve, 50));
+```ts
+/** What a declaration of `property: var(token)` computes to here: the oracle of a token, with no copy of its value. */
+function computed(property: string, token: string): string {
+  const probe = document.createElement("div");
+  probe.style.setProperty(property, `var(${token})`);
+  document.body.append(probe);
+  const value = getComputedStyle(probe).getPropertyValue(property);
+  probe.remove();
+  return value;
 }
+```
 
-/** A length token, in px, as the page computes it. */
-function px(token: string): number {
-  return Number.parseFloat(readToken(token));
-}
+*Sostituisci con:*
 
+```ts
 const overview = (): HTMLElement | null => document.querySelector('.base-dialog[data-variant="full"]');
 const cards = (): HTMLElement[] => [...document.querySelectorAll<HTMLElement>("[data-card]")];
+```
 
-for (const theme of ["light", "dark"] as const) {
-  describe(`the frame, ${theme} theme`, () => {
+La prova della fascia prende l'altra fascia e la pagina che non sborda, e dopo di lei le prove del compito:
+
+*Trova:*
+
+```ts
+    it("lays the band on the page: under the bar, 12 px from the sides and from the cards, rounded like a card (control 23, E60)", async () => {
+      await frame(theme);
+      // With no core the connection waits (§6a): the band is there, a warning with «Riprova».
+      const band = document.querySelector<HTMLElement>(".band");
+      const bar = document.querySelector<HTMLElement>(".bar");
+      expect(band).not.toBeNull();
+      expect(bar).not.toBeNull();
+      const box = (band as HTMLElement).getBoundingClientRect();
+      // Aligned with the cards: the dock's own margin, `--space-3`, on each side.
+      expect(box.left).toBeCloseTo(px("--space-3"), 1);
+      expect(window.innerWidth - box.right).toBeCloseTo(px("--space-3"), 1);
+      // Right under the bar, which leaves it its own 8 px: the band adds nothing above itself.
+      expect(box.top).toBeCloseTo((bar as HTMLElement).getBoundingClientRect().bottom, 1);
+      // `--space-3` above the highest card: the dock has none on top (answer 20).
+      const cards = [...document.querySelectorAll(".dv-groupview")]
+        .map((group) => group.getBoundingClientRect())
+        .filter((card) => card.width > 0);
+      expect(cards.length).toBeGreaterThan(0);
+      expect(Math.min(...cards.map((card) => card.top)) - box.bottom).toBeCloseTo(px("--space-3"), 1);
+      // Rounded like a card, and «Riprova» concentric in its corners at half a pixel (E61).
+      expect(getComputedStyle(band as HTMLElement).borderTopLeftRadius).toBe(computed("border-top-left-radius", "--radius-card"));
+      const radii = concentricRadii([band as HTMLElement]);
+      expect(radii.near).toBeGreaterThan(0);
+      expect(radii.bad).toEqual([]);
+    });
+  });
+}
+```
+
+*Sostituisci con:*
+
+```ts
+    it("lays both bands on the page -- under the bar, 12 px from the sides and from the cards, rounded like a card -- and the page never spills while one comes in (control 23, E60, E70, E43)", async () => {
+      await frame(theme);
+      const bar = document.querySelector<HTMLElement>(".bar");
+      expect(bar).not.toBeNull();
+      const onThePage = (band: HTMLElement): void => {
+        const box = band.getBoundingClientRect();
+        // Aligned with the cards: the dock's own margin, `--space-3`, on each side.
+        expect(box.left).toBeCloseTo(px("--space-3"), 1);
+        expect(window.innerWidth - box.right).toBeCloseTo(px("--space-3"), 1);
+        // Right under the bar, which leaves it its own 8 px: the band adds nothing above itself.
+        expect(box.top).toBeCloseTo((bar as HTMLElement).getBoundingClientRect().bottom, 1);
+        // `--space-3` above the highest card: the dock has none on top (answer 20).
+        const cards = [...document.querySelectorAll(".dv-groupview")]
+          .map((group) => group.getBoundingClientRect())
+          .filter((card) => card.width > 0);
+        expect(cards.length).toBeGreaterThan(0);
+        expect(Math.min(...cards.map((card) => card.top)) - box.bottom).toBeCloseTo(px("--space-3"), 1);
+        // Rounded like a card.
+        expect(getComputedStyle(band).borderTopLeftRadius).toBe(computed("border-top-left-radius", "--radius-card"));
+      };
+      // With no core the connection waits (§6a): the band is there, a warning with «Riprova».
+      const waiting = document.querySelector<HTMLElement>(".band");
+      expect(waiting).not.toBeNull();
+      onThePage(waiting as HTMLElement);
+      // «Riprova» concentric in its corners at half a pixel (E61).
+      const radii = concentricRadii([waiting as HTMLElement]);
+      expect(radii.near).toBeGreaterThan(0);
+      expect(radii.bad).toEqual([]);
+      // ⛔ THE BAND THAT STOPS THE WINDOW IS ON THE PAGE TOO (E70), AND THE PAGE NEVER SPILLS WHILE IT COMES IN (E43): the
+      // core welcomed, the band leaves; another stamp brings it back. `dockview` resizes one frame late, and for that
+      // frame the grid spilled out of the dock and the page showed its scrollbars -- read on `scrollHeight`, which the
+      // hidden scrollbars do not hide: 50 px on the first frame without the dock's `overflow: clip`, measured on
+      // 2026-09-27.
+      const connection = useConnection();
+      connection.receive({ kind: "Accepted", value: "AsSystemAccount" });
+      await expect.poll(() => document.querySelector(".band")).toBeNull();
+      const frames = async (count: number): Promise<number[]> => {
+        const spill: number[] = [];
+        for (let step = 0; step < count; step += 1) {
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+          const page = document.documentElement;
+          spill.push(page.scrollHeight - page.clientHeight + page.scrollWidth - page.clientWidth);
+        }
+        return spill;
+      };
+      await frames(6);
+      connection.receive({ kind: "StaleBuild", value: "81985529216486895" });
+      expect(await frames(8)).toEqual([0, 0, 0, 0, 0, 0, 0, 0]);
+      const stop = document.querySelector<HTMLElement>(".band");
+      expect(stop?.getAttribute("data-tone")).toBe("stop");
+      onThePage(stop as HTMLElement);
+    });
+
     it("floats the strip as a pill 12 px from the sides and 24 from the bottom, and keeps every card off the page's corners (control 19)", async () => {
       await frame(theme);
       const strips = [...document.querySelectorAll(".dv-groupview")].filter((group) => group.querySelector(".strip") !== null);
@@ -9705,7 +9980,7 @@ for (const theme of ["light", "dark"] as const) {
       expect(near).toEqual([]);
     });
 
-    it("opens the drawer from the strip's pill, and gives the focus back to it when the drawer closes", async () => {
+    it("opens the drawer from the strip's pill, gives the focus back to it when the drawer closes, and from the keyboard opens it with the focus in sight", async () => {
       await frame(theme);
       const button = document.querySelector<HTMLElement>(".strip .base-button");
       expect(button).not.toBeNull();
@@ -9716,10 +9991,22 @@ for (const theme of ["light", "dark"] as const) {
       // ⛔ THE BUTTON IS IN ANOTHER VUE APP, AND NO `DialogTrigger`: the focus comes back all the same, measured on
       // 2026-09-24 with `reka-ui` 2.10.4 (P-22 of the plan) -- this probe is what keeps it true across an update.
       await expect.poll(() => document.activeElement).toBe(button);
+      // ⛔ FROM THE KEYBOARD, THE FOCUS IN SIGHT (E38): `reka-ui` gives the first control the focus with `preventScroll`
+      // -- "Chiudi", below a list longer than the sheet -- and the sheet keeps its actions stuck to its bottom edge.
+      await userEvent.keyboard("{Enter}");
+      await expect.poll(() => document.querySelector('.base-dialog[data-variant="sheet"]')).not.toBeNull();
+      const sheet = document.querySelector('.base-dialog[data-variant="sheet"]') as HTMLElement;
+      const focused = document.activeElement as HTMLElement;
+      expect(sheet.contains(focused)).toBe(true);
+      const seen = focused.getBoundingClientRect();
+      expect(seen.top).toBeGreaterThanOrEqual(sheet.getBoundingClientRect().top);
+      expect(seen.bottom).toBeLessThanOrEqual(Math.min(sheet.getBoundingClientRect().bottom, window.innerHeight));
     });
 
     it("draws the overview with its radii concentric, nothing cut or sticking out, the icons centred, and no axe violation", async () => {
       await frame(theme);
+      // ⛔ THE CORE HAS ANSWERED (E81): before it, «Salva questa vista» is off.
+      useLayout().receive({ kind: "Layout", value: { state: "Nothing" } });
       await userEvent.keyboard("{F3}");
       await expect.poll(overview).not.toBeNull();
       // And with the name of a new view asked, the field and its two buttons in the place of «Salva questa vista».
@@ -9753,6 +10040,8 @@ for (const theme of ["light", "dark"] as const) {
 describe("the overview's grid, under the keys (R3-23 of the review)", () => {
   it("moves by geometry with the arrows, enters a view with Enter, and gives the focus back to the view's name", async () => {
     await frame("light");
+    // ⛔ THE CORE HAS ANSWERED (E81): before it, «Salva questa vista» is off.
+    useLayout().receive({ kind: "Layout", value: { state: "Nothing" } });
     await userEvent.keyboard("{F3}");
     await expect.poll(overview).not.toBeNull();
     // Three columns: Home, Lavoro, Compatta above, «Salva questa vista» alone below, under Home. The focus opens on the
@@ -9778,22 +10067,75 @@ describe("the overview's grid, under the keys (R3-23 of the review)", () => {
     await expect.poll(() => document.activeElement?.classList.contains("view-name")).toBe(true);
   });
 });
+
+describe("the bar, and the focus in a panel that scrolls", () => {
+  it("draws the bar as part of the page, and the search's whole placeholder in its field (E57, E39)", async () => {
+    await frame("light");
+    const bar = document.querySelector(".bar") as HTMLElement;
+    // ⛔ NO SURFACE AND NO LINE UNDER IT (E57): the bar is part of the page, as the board's `.m-bar` is.
+    expect(getComputedStyle(bar).backgroundColor).toBe("rgba(0, 0, 0, 0)");
+    expect(getComputedStyle(bar).borderBottomStyle).toBe("none");
+    // ⛔ THE BOX SAYS WHO FILLS IT (E39, decision 16 of the north star): the whole placeholder fits the field, measured
+    // in the field's own font -- 315 px in 334 on 2026-09-27; in the 320 px of task 5 it was cut.
+    const input = document.querySelector(".search input") as HTMLInputElement;
+    const style = getComputedStyle(input);
+    const pen = document.createElement("canvas").getContext("2d") as CanvasRenderingContext2D;
+    pen.font = style.font;
+    expect(input.placeholder.length).toBeGreaterThan(0);
+    const room = input.clientWidth - Number.parseFloat(style.paddingLeft) - Number.parseFloat(style.paddingRight);
+    expect(pen.measureText(input.placeholder).width).toBeLessThanOrEqual(room);
+  });
+
+  it("draws the focus ring of a panel that scrolls inside it, clear of its card, and its corners below follow the card's (E74)", async () => {
+    await frame("light");
+    // ⛔ CHROME PUTS A BOX THAT SCROLLS IN THE TAB ORDER, and in Home at 1440 x 900 Stato scrolls: the Tab reaches it.
+    let panel: HTMLElement | null = null;
+    for (let step = 0; step < 30 && panel === null; step += 1) {
+      await userEvent.keyboard("{Tab}");
+      const focused = document.activeElement;
+      if (focused instanceof HTMLElement && focused.closest(".panel") !== null && focused.scrollHeight > focused.clientHeight) panel = focused;
+    }
+    // ⛔ NON-VACUITY: the Tab reached a panel that scrolls, and its ring is drawn.
+    expect(panel).not.toBeNull();
+    const box = panel as HTMLElement;
+    const style = getComputedStyle(box);
+    expect(style.outlineStyle).toBe("solid");
+    const card = box.closest(".dv-groupview") as HTMLElement;
+    const edge = Number.parseFloat(getComputedStyle(card).borderTopWidth);
+    const inner = card.getBoundingClientRect();
+    // How far the ring reaches out of the box -- its offset and its width; below zero it is inside. The card clips what
+    // passes its border: on the three sides the panel touches, the ring stays within.
+    const reach = Number.parseFloat(style.outlineOffset) + Number.parseFloat(style.outlineWidth);
+    const ring = box.getBoundingClientRect();
+    expect(ring.left - reach).toBeGreaterThanOrEqual(inner.left + edge);
+    expect(ring.right + reach).toBeLessThanOrEqual(inner.right - edge);
+    expect(ring.bottom + reach).toBeLessThanOrEqual(inner.bottom - edge);
+    // ⛔ AND THE CORNERS BELOW ARE THE CARD'S LESS ITS BORDER (answer 4): a square ring in a round corner is cut there.
+    const corner = Number.parseFloat(getComputedStyle(card).borderBottomLeftRadius) - edge;
+    expect(Number.parseFloat(style.borderBottomLeftRadius)).toBeCloseTo(corner, 1);
+    expect(Number.parseFloat(style.borderBottomRightRadius)).toBeCloseTo(corner, 1);
+  });
+});
 ```
 
 - [ ] **Passo 3: lancia le prove, e guardale fallire**
 
 ```bash
-(cd gui && npx vitest run --project jsdom src/frame/frame.test.ts src/a11y.test.ts src/locales/copy.test.ts)
+(cd gui && npx vitest run --project jsdom src/frame/frame.test.ts src/stores/stores.test.ts src/a11y.test.ts src/locales/copy.test.ts)
 (cd gui && npx vitest run --project browser src/frame/frame.browser.test.ts src/frame/dock.browser.test.ts src/kit/kit.browser.test.ts)
 ```
 
-Atteso: **rosso**, e per le ragioni giuste — misurato il 2026-09-24. Sotto jsdom `Failed to resolve import
+Atteso: **rosso**, e per le ragioni giuste — misurato il 2026-09-24, e rifatto il 2026-09-27 dal pre-controllo (**E93**). Sotto jsdom `Failed to resolve import
 "../stores/drawer"` in `frame.test.ts` e `Failed to resolve import "./stores/drawer"` in `a11y.test.ts`; `copy.test.ts`
-**verde**, perché le tre viste hanno già le loro parole: la sua prova nuova è una guardia, e il suo rosso è al passo 9. Nel
-browser **nove rosse su trentasette**, le ventisette della misura, le quattro di **E25** e le sei del 6bis (**E64**): il dock, `expected '21px' to be '9999px'` nei due temi — la striscia è ancora una
-scheda, e dal 6bis la scheda è 21 —; la cornice, `expected 21 to be greater than or equal to 25` — il raggio di una scheda, non di una pillola — e
-`expected null not to be null` per il pulsante della striscia e per la Panoramica, che F3 non apre, nei due temi; e la
-prova delle frecce, `expected null not to be null`. Verdi le ventidue della pagina kit, le due della fascia e le altre del dock — i conti del 6bis **dedotti** (**E64**).
+**verde**, perché le tre viste hanno già le loro parole: la sua prova nuova è una guardia, e il suo rosso è al passo 9;
+`stores.test.ts` rossa la sola prova di **E99**, `layout.showNamed is not a function`. Nel browser **dieci rosse su
+quarantanove** (**E93**): il dock, `expected '21px' to be '9999px'` nei due temi — la striscia è ancora una scheda, e dal 6bis
+la scheda è 21 —; la cornice, `expected 21 to be greater than or equal to 25` — il raggio di una scheda, non di una pillola —
+e `expected null not to be null` per il pulsante della striscia e per la Panoramica, che F3 non apre, nei due temi; la prova
+delle frecce, `expected null not to be null`; e l'anello del pannello che scorre, `expected 9 to be greater than or equal to
+13` — disegnato fuori, e la scheda lo taglia (**E100**). Verdi le ventidue della pagina kit, le sedici del dock meno le due
+della pillola, la prova delle fasce nei due temi — le cure di **E70** ed **E43** ci sono dal 6bis e dal compito 5 — e quella
+della barra, che il compito 6 ha già curato (**E57**, **E39**).
 
 - [ ] **Passo 4: il cassetto da un negozio, e la domanda della conferma in un posto solo**
 
@@ -10009,6 +10351,46 @@ della Panoramica:
   },
 ```
 
+In `gui/src/stores/layout.ts` (`replace_unique.py`), due sostituzioni — **E99**: `showNamed`, la gemella di `showView`,
+che rifiuta un nome che la lista non tiene; la Panoramica apre una vista col nome solo da lì:
+
+*Trova*:
+
+```ts
+  /**
+   * The layout on screen saved under a name, and opened ("Salva questa vista", the (d)).
+```
+
+*Sostituisci con:*
+
+```ts
+  /**
+   * A named view shown (the (d)). ⛔ ONLY BY A NAME THE LIST HOLDS (E90 of the design-system plan): with an unknown name
+   * the dock falls back to the view of always, and `settle` writes the next move into a view the package does not have
+   * -- the loss of E75, by another door. Refused, and nothing changes: the twin of `showView`.
+   */
+  function showNamed(name: string): boolean {
+    if (!(saved.value?.named ?? []).some((entry) => entry.name === name)) return false;
+    openNamed.value = name;
+    return true;
+  }
+
+  /**
+   * The layout on screen saved under a name, and opened ("Salva questa vista", the (d)).
+```
+
+*Trova:*
+
+```ts
+attach, receive, settle, showView, saveNamed, chooseTheme };
+```
+
+*Sostituisci con:*
+
+```ts
+attach, receive, settle, showView, showNamed, saveNamed, chooseTheme };
+```
+
 Crea `gui/src/frame/Overview.vue` (LF) — la (d), le decisioni 18 e 19, **D4**, **D12**, **D14**, **D17** e **D18**:
 
 ```vue
@@ -10063,9 +10445,18 @@ interface Card {
 
 /** The miniature of a layout (answer 19): the schema of `schematic`, with a gap of `--space-0-5` around every tile.
  * ⛔ THE STRIP IS NOT DRAWN (D14 of the plan): it is in every view, the same, with no icon -- and the board's miniatures
- * leave it out. A module type that is gone is drawn without an icon: it is there, and the miniature says so. */
+ * leave it out. A module type that is gone is drawn without an icon: it is there, and the miniature says so.
+ * ⛔ A LAYOUT IT CANNOT READ IS DRAWN EMPTY (E90 of the plan): `unpack` keeps any object as a layout, and `schematic`
+ * throws on one it cannot read -- the dock only when that view is shown, while the cards draw every view at once, and one
+ * would take the whole overview down. */
 function drawn(saved: SerializedDockview): Drawn[] {
-  return schematic(saved)
+  let tiles: ReturnType<typeof schematic>;
+  try {
+    tiles = schematic(saved);
+  } catch {
+    return [];
+  }
+  return tiles
     .filter((tile) => !tile.views.includes("strip"))
     .map((tile) => {
       const style = {
@@ -10098,7 +10489,7 @@ const cards = computed<Card[]>(() => [
     saved: true,
     current: layout.openNamed === entry.name,
     show: () => {
-      layout.openNamed = entry.name;
+      layout.showNamed(entry.name);
     },
   })),
 ]);
@@ -10153,7 +10544,9 @@ function cancel(): void {
 }
 
 /** «Salva questa vista»: the layout on screen under a name, and opened. ⛔ THE NAMES OF THE THREE ARE THE FRAME'S WORDS
- * (D12 of the plan): the store reads no locale, so it is handed them. */
+ * (D12 of the plan): the store reads no locale, so it is handed them. ⛔ OFF UNTIL THE CORE HAS ANSWERED (E81): before
+ * it the store holds no package, and a view saved then would send `layouts: {}` -- every saved layout lost in silence,
+ * the window E40 closed for the theme. */
 function save(): void {
   const result = layout.saveNamed(name.value, props.snapshot(), THREE.map((view) => t(`views.${view}`)));
   if (result === "saved") {
@@ -10208,6 +10601,7 @@ function save(): void {
         v-else
         variant="card"
         data-card="save"
+        :disabled="layout.arrivals === 0"
         :tabindex="roving === cards.length ? 0 : -1"
         @focus="roving = cards.length"
         @click="startNaming"
@@ -10380,7 +10774,7 @@ function onKey(event: KeyboardEvent): void {
     return;
   }
   // G20, move 6 of SP-8: the active tile moves in the four directions from the keyboard. The
-  // mapping and the geometry live in `moveActive.ts`; this is only the wire.
+  // mapping lives in `moveActive.ts` and the geometry in `nearest.ts`; this is only the wire.
   const direction = directionOf(event);
   if (direction === null || api === null) return;
   event.preventDefault();
@@ -10497,7 +10891,7 @@ const drawer = useDrawer();
 </style>
 ```
 
-In `gui/src/tokens/dock.css` (`replace_unique.py`), una sostituzione:
+In `gui/src/tokens/dock.css` (`replace_unique.py`), una sostituzione — la pillola, e l'anello del fuoco di un pannello che scorre, disegnato dentro (**E100**, A del proprietario del 2026-09-27):
 
 *Trova*:
 
@@ -10517,6 +10911,16 @@ In `gui/src/tokens/dock.css` (`replace_unique.py`), una sostituzione:
   border-radius: var(--radius-full);
 }
 
+/* ⛔ THE RING OF A PANEL THAT SCROLLS IS DRAWN INSIDE IT (E74, the owner's A of 2026-09-27): Chrome puts a box that scrolls
+   in the Tab order, and a panel's root fills its card, 1 px from the edge -- the card clips, and the ring drawn outside
+   kept only its top line. Inside, in the padding every panel has: the ring of `base.css` mirrored, its gap and its width
+   within the edge; and the corners below are the card's less its border (answer 4), or a square ring is cut there. */
+.dockview-theme-harness .panel > :focus-visible {
+  outline-offset: calc(-1 * (var(--focus-width) + var(--focus-offset)));
+  border-bottom-left-radius: calc(var(--radius-card) - var(--border-width));
+  border-bottom-right-radius: calc(var(--radius-card) - var(--border-width));
+}
+
 /* The mark of the visible tab (the (c)): the icon of its label in `--color-mark`, the hidden tabs' in the tab's own colour.
 ```
 
@@ -10525,8 +10929,9 @@ In `gui/src/tokens/dock.css` (`replace_unique.py`), una sostituzione:
 (cd gui && npx vitest run --project browser src/frame/frame.browser.test.ts src/frame/dock.browser.test.ts src/kit/kit.browser.test.ts)
 ```
 
-Atteso: **verde** — sotto jsdom le sei prove nuove della cornice, le due della Panoramica e del cassetto aperti e quella
-delle parole delle viste, con le altre dei tre file; nel browser **trentasette su trentasette**, con le quattro di **E25** e le sei del 6bis — **dedotto** (**E64**).
+Atteso: **verde** — sotto jsdom `Tests  61 passed (61)` nei quattro file: le otto prove nuove della cornice, le due della
+Panoramica e del cassetto aperti, quella delle parole delle viste e quella di `showNamed`, con le altre; nel browser `Tests
+49 passed (49)` — misurati il 2026-09-27 (**E93**).
 
 - [ ] **Passo 8: tutte le prove, il *build*, il linter, e il pezzo JavaScript**
 
@@ -10536,28 +10941,30 @@ delle parole delle viste, con le altre dei tre file; nel browser **trentasette s
 ```
 
 Atteso: **verde** su tutto; i file di prova **gli stessi** del compito 7 — `frame.browser.test.ts` c'è dal 6bis, e il compito lo estende (**D29**, **E64**) —, e le
-prove più alte di **sedici** — nove sotto jsdom e sette nel browser. ⛔ E la suite intera **cinque volte**, ciascuna col suo rapporto JSON — `npx vitest run
+prove più alte di **ventuno** — dodici sotto jsdom e nove nel browser: `Tests  234 passed | 1 skipped (235)`, misurato il
+2026-09-27 (**E93**). ⛔ E la suite intera **cinque volte**, ciascuna col suo rapporto JSON — `npx vitest run
 --reporter=json --outputFile=<scratchpad>/corsa-N.json` —: una caduta è una voce d'errata, non una corsa da ripetere
-finché passa (P-19, P-20, P-21). Il pezzo JavaScript va nel messaggio del commit: sulla cartella di prova, il
-2026-09-24, `dist/assets/index-….js` a **696,60 kB**, 212,50 compressi, contro i 663,26 kB, 201,23 compressi, del `main` senza il design system — il log del cancello d'apertura, `grep -n 'kB'` — la cifra è per il proprietario, che ha N-2 (R3-25).
+finché passa (P-19, P-20, P-21). Il pezzo JavaScript va nel messaggio del commit, accanto alla baseline del Passo 1: sulla copia del
+pre-controllo, il 2026-09-27, `dist/assets/index-….js` a `698.14 kB`, compresso `212.98 kB`, contro `693.02 kB` e `211.20 kB`
+(**E80**, **E91**) — la cifra è per il proprietario, che ha N-2 (R3-25).
 
 - [ ] **Passo 9: le due direzioni**
 
 Una violazione alla volta, poi indietro con la **copia salvata** e `cmp` (vincolo 11): i file nuovi sono nati qui, e gli
 altri il compito li ha già cambiati (A-1).
 
-| La prova | La violazione messa a mano | Atteso, misurato il 2026-09-24 |
+| La prova | La violazione messa a mano | Atteso, misurato il 2026-09-24 e rifatto il 2026-09-27 sulla suite intera (**E95**) |
 |---|---|---|
 | `frame.test.ts`, la carta corrente | in `Overview.vue` `current: false,` per le tre viste | rosso: `expected [ null, null, null, null ] to deeply equal [ 'page', null, null, null ]` |
 | `frame.test.ts`, F3 sotto la conferma (D15) | in `Frame.vue` `if (!drawer.open) overview.value = …`, senza `!invoke.asking` | rosso: `expected true to be false` |
 | `frame.test.ts`, F3 sotto il cassetto (D16) | in `Frame.vue` `if (!invoke.asking) overview.value = …`, senza `!drawer.open` | rosso: `expected true to be false` |
-| `frame.test.ts`, la carta scelta | in `choose` tolta la riga `open.value = false;` | rosso: `expected true to be false` — la Panoramica resta aperta |
+| `frame.test.ts`, la carta scelta | in `choose` tolta la riga `open.value = false;` | rosso: `expected true to be false` — la Panoramica resta aperta; e la prova delle frecce, `expected <div …> to be null` (**E95**) |
 | `frame.test.ts`, il rifiuto detto (D4) | in `save` tolta la riga `refusal.value = result;` | rosso: `expected 'AnnullaSalva' to contain 'Scrivi un nome.'` |
 | `frame.test.ts`, i nomi delle tre (D12) | in `save` `props.snapshot(), []);` al posto dei nomi | rosso: `a name that is taken keeps the overview open: expected false to be true` — *«home»* salvata |
 | `frame.test.ts`, la miniatura (D14) | in `drawn` tolta la riga del `.filter` sulla striscia | rosso: `expected [ 'activity', 'costs', …(5) ] to deeply equal [ 'activity', 'costs', …(4) ]` |
-| `frame.test.ts`, il pulsante della striscia | in `Strip.vue` tolto ` @click="drawer.open = true"` | rosso: `expected false to be true` |
-| `a11y.test.ts`, la Panoramica aperta | in `Overview.vue` tolta la riga `<BaseLabel>{{ card.name }}</BaseLabel>`: carte senza nome | rosso: `expected [ Array(1) ] to deeply equal []` |
-| `copy.test.ts`, le parole delle viste | in `it.json` tolta la riga di `"compact"` | rosso: `compact: expected [ 'home', 'work' ] to include 'compact'` |
+| `frame.test.ts`, il pulsante della striscia | in `Strip.vue` tolto ` @click="drawer.open = true"` | rosso: `expected false to be true`; e nel browser la prova del cassetto nei due temi, `expected null not to be null` (**E95**) |
+| `a11y.test.ts`, la Panoramica aperta | in `Overview.vue` tolta la riga `<BaseLabel>{{ card.name }}</BaseLabel>`: carte senza nome | rosso: `expected [ Array(1) ] to deeply equal []`; e nel browser la Panoramica disegnata nei due temi, lo stesso messaggio (**E95**) |
+| `copy.test.ts`, le parole delle viste | in `it.json` tolta la riga di `"compact"`, **con la virgola** di `"work"` — senza, il JSON non si legge e dodici file non si caricano, `trailing comma` (**E95**) | rosso: `compact: expected [ 'home', 'work' ] to include 'compact'` |
 | `frame.browser.test.ts` e `dock.browser.test.ts`, la pillola | in `dock.css` tolta la regola `:has(.strip)` | rosso, sei prove nei due temi: `expected 21 to be greater than or equal to 25`, `expected '21px' to be '9999px'` — la scheda del 6bis, **E64** — e i raggi del dock, `expected [ …(2) ] to deeply equal []` — il pulsante a pillola in una scheda |
 | `frame.browser.test.ts`, i 24 px dal fondo | in `Frame.vue` il margine di `.dock` a `0 var(--space-3) var(--space-3)` | rosso, nei due temi: `expected 12 to be close to 24, received difference is 12` |
 | `frame.browser.test.ts`, gli angoli della pagina | in `ViewBar.vue` il padding di `.bar` a `var(--space-2) 0` | rosso, nei due temi: `expected [ 'base-button view-name' ] to deeply equal []` |
@@ -10568,24 +10975,46 @@ altri il compito li ha già cambiati (A-1).
 | `frame.browser.test.ts`, il contrasto | in `Overview.vue`, prima di `.caption {`, la regola `.caption :deep(.base-label) { color: var(--color-border); }` | rosso, nei due temi: `expected [ Array(1) ] to deeply equal []` |
 | `frame.browser.test.ts`, le frecce (decisione 19) | in `Overview.vue` tolto ` @keydown="onArrow"` | rosso: `expected <button …(8)>…(2)</button> to be <button …(7)>…(2)</button>` — il fuoco resta su Home |
 | `frame.browser.test.ts`, il giro del Tab (D17) | in `Overview.vue` `:tabindex="0"` su ogni carta delle viste | rosso: `expected [ +0, +0, +0, -1 ] to deeply equal [ +0, -1, -1, -1 ]` |
+| `frame.test.ts`, una delle tre chiude la vista col nome (**E97**) | in `Overview.vue` `show: () => { layout.view = view; },` al posto di `showView` | rosso: `expected 'Lettura' to be null` |
+| `frame.test.ts`, la vista col nome scelta (**E97**) | in `Overview.vue` `layout.showNamed((layout.saved?.named ?? [])[0]?.name ?? entry.name);` | rosso: `expected 'Revisione' to be 'Lettura'` |
+| `frame.test.ts`, «Salva questa vista» spenta (**E98**) | in `Overview.vue` tolta la riga `:disabled="layout.arrivals === 0"` | rosso: `expected false to be true` |
+| `frame.test.ts`, la miniatura che non si legge (**E99**) | in `drawn` il `try`/`catch` tolto: `tiles = schematic(saved);` | rosso: `TypeError: Cannot destructure property 'maximizedNode' of 'layout.grid' as it is undefined.` |
+| `stores.test.ts`, un nome che la lista non tiene (**E99**) | in `layout.ts` tolta la riga del `return false` di `showNamed` | rosso: `expected true to be false` |
+| `frame.browser.test.ts`, l'anello dentro (**E100**) | in `dock.css` tolta la riga `outline-offset` della regola `.panel > :focus-visible` | rosso: `expected 9 to be greater than or equal to 13` |
+| `frame.browser.test.ts`, gli angoli dell'anello (**E100**) | in `dock.css` tolte le due righe `border-bottom-*-radius` della stessa regola | rosso: `expected +0 to be close to 20, received difference is 20` |
+| `frame.browser.test.ts`, il cassetto dalla tastiera (**E96**, **E38**) | in `BaseDialog.vue` tolta la riga `position: sticky;` delle azioni del foglio | rosso, nei due temi: `expected 1025 to be less than or equal to 900` — «Chiudi» col fuoco, sotto il fondo del foglio |
+| `frame.browser.test.ts`, il segnaposto intero (**E96**, **E39**) | in `ViewBar.vue` `max-width: 320px;` al posto di `24rem` | rosso: `expected 314.8876953125 to be less than or equal to 270` |
+| `frame.browser.test.ts`, la barra senza fondo (**E96**, **E57**) | in `ViewBar.vue`, dopo il `padding` di `.bar`, `background: var(--color-bg-raised);` | rosso: `expected 'rgb(251, 248, 243)' to be 'rgba(0, 0, 0, 0)'` |
+| `frame.browser.test.ts`, la pagina che non sborda (**E96**, **E43**) | in `Frame.vue` tolta la riga `overflow: clip;` di `.dock` | rosso, nei due temi: `expected [ 50, +0, +0, +0, +0, +0, +0, +0 ] to deeply equal [ +0, +0, +0, +0, +0, +0, +0, +0 ]` — lo sbordo del primo fotogramma |
+| `frame.browser.test.ts`, la fascia `stop` sulla pagina (**E96**, **E70**) | in `Band.vue` tolto `on-page` dal ramo `stale` | rosso, nei due temi: `expected '8px' to be '21px'`; e sotto jsdom la prova del 6bis, *«stops the window…»*, `expected undefined to be defined` |
 
 Alla fine `git status --porcelain | diff <scratchpad>/prima.txt -` rende soltanto i file del compito.
 
 - [ ] **Passo 10: guardarlo, nei due temi**
 
+⛔ **Un passo per il proprietario col coordinatore, non per l'implementatore** (**E101**, la forma di **E35** ed **E69**): si fa
+dopo la revisione e le sue cure, sul codice che resta, e l'implementatore lo **salta**; il revisore guarda la SPA per conto
+suo, com'è la regola 5 di *«Come si esegue un compito»*.
+
 `(cd gui && npm run dev)`, e nel browser, a finestra piena, nel tema chiaro e nello scuro — la scelta in Impostazioni: la
-barra col **nome della vista** e l'icona, la ricerca spenta e il chip a destra; **F3** e il clic sul nome aprono la
-Panoramica, con le **miniature** delle tre viste — i moduli dove stanno, con le loro icone —, la vista corrente in
-**bordeaux** e *«Salva questa vista»* sotto; le frecce che girano la griglia, Invio che entra, Esc che chiude e rende il
-fuoco al nome; il nome di una vista nuova, rifiutato vuoto e rifiutato *«home»*, poi salvato; e in fondo la **striscia a
-pillola**, a 12 px dai lati e a 24 dal fondo, col pulsante *«moduli»* che apre il cassetto. Un difetto che si vede e che
-nessuna prova ha colto è una voce d'errata (la regola 5 di *«Come si esegue un compito»*).
+barra col **nome della vista** e l'icona, parte della pagina, la ricerca spenta col segnaposto intero e il chip a destra;
+**F3** e il clic sul nome aprono la Panoramica, con le **miniature** delle tre viste — i moduli dove stanno, con le loro
+icone — e, ingrandito un gruppo con la sua presa, la miniatura che lo disegna solo, sul quadrato intero (**E85**): *come* si
+disegni una miniatura lo decide questo sguardo; la vista corrente in **bordeaux** e *«Salva questa vista»* sotto, spenta
+finché il core finto non ha risposto — `harnessFake.deliverAll()` nella console (**E98**); le frecce che girano la griglia,
+Invio che entra, Esc che chiude e rende il fuoco al nome; il nome di una vista nuova, rifiutato vuoto e rifiutato *«home»*,
+poi salvato; in fondo la **striscia a pillola**, a 12 px dai lati e a 24 dal fondo, col pulsante *«moduli»* che apre il
+cassetto, anche dalla tastiera; e col Tab, nella Home, il fuoco su Stato, che scorre, con l'anello **dentro** la scheda
+(**E100**). Un difetto che si vede e che nessuna prova ha colto è una voce d'errata (la regola 5 di *«Come si esegue un
+compito»*).
 
-- [ ] **Passo 11: il cancello, il commit, la posizione**
+- [ ] **Passo 11: il cancello, il commit**
 
-La riga **8** della tabella della posizione — **Stato** `✅ <data>`, e nella riga **7** la colonna **Commit** con l'hash del
-compito 7 (R1-16) —; `bash scripts/gate.sh` da solo, `bash scripts/check-docs.sh`, il commit — `design-system(compito 8): la
-cornice …`, col pezzo JavaScript misurato — coi fine-riga rimisurati, e `git push`.
+`bash scripts/gate.sh` da solo, `bash scripts/check-docs.sh`, il commit — `design-system(compito 8): la cornice …`, col pezzo
+JavaScript misurato accanto alla baseline del Passo 1 — coi fine-riga rimisurati, e `git push`. ⛔ **Senza le celle della
+posizione** (**E101**): le scrive il coordinatore nel commit della chiusura, dopo il Passo 10 approvato — la riga **8** a
+`✅ <data>` col verbale dello sguardo, e nella riga **7** la colonna **Commit**, `0417c9c`, **con la cura `a606f33`**
+(**E79**, R1-16).
 
 ---
 
@@ -11218,68 +11647,114 @@ compito 1 — o in una voce d'errata. Un nome senza casa è una voce d'errata nu
 
 ---
 
-## Come si riprende — l'esecuzione del compito 7, 2026-09-27
+## Come si riprende — il pre-controllo del compito 8, 2026-09-27
 
-✅ **Il compito 7 è eseguito e curato.** Il dispaccio col sì del proprietario sulla banda detta prima, 0,8–1,05 milioni di
-token: l'implementatore ha consegnato `0417c9c`, **uguale al testo del piano** — `compare_task7.py fa1ae0e 0417c9c`, dieci file
-`OK` e del piano la sola riga 7 —, con ogni rosso e ogni verde dei Passi 1–8 come il pre-controllo li aveva misurati; il
-revisore l'ha detto **conforme**, con quattro minori e cinque nit, tutti del dettato, e il coordinatore li ha curati senza
-ri-revisione, come per i compiti 3–6bis: `a606f33`, **E82**…**E90**. Il testo curato del piano, applicato a `fa1ae0e` con
-`plan_ops.py`, rende i dieci file dell'albero byte per byte, e i passi tornano: il Passo 2 rosso com'era scritto, poi 8, 3, 20
-e 15. Il costo misurato, ~0,73 milioni — l'implementatore ~307k token in 15 minuti, il revisore ~419k in ~31 —, **sotto** la
-banda detta. Il compito 7 non ha uno sguardo del proprietario: la regola 5 di *«Come si esegue un compito»* non lo nomina.
-La riga 7 della posizione è a `✅`; nella cartella del dispaccio il prompt spedito al posto del modello, il rapporto, il
-prompt del revisore e la revisione. La consegna precedente — il pre-controllo del compito 7 — sta parola per parola in
+✅ **Il pre-controllo del compito 8 è fatto: undici voci, E91…E101**, scritte nell'errata e applicate al testo. **E100** è del
+proprietario — **A**, l'anello del fuoco dentro, scelto il 2026-09-27 —; le altre le ha decise il coordinatore coi cinque
+criteri, fuori dal merito approvato. Il compito rifatto dal testo del piano su un `git worktree` di `f3206c7` nello
+scratchpad, macchina `Jays`: com'era scritto, i difetti di **E91**, **E93**…**E95** e il rifiuto di **E63**; poi le sonde e
+le cure che l'errata gli lasciava, ciascuna vista rossa prima, **E96**…**E101**; e il testo corretto, rigenerato dalla copia
+e applicato con `plan_ops.py` a una copia pulita di `f3206c7` — trentanove operazioni, nessun rifiuto —, rende i **venti**
+file della copia di lavoro byte per byte. Su quella copia: al Passo 3 i rossi scritti; al Passo 7 `Tests  61 passed (61)` e
+`Tests  49 passed (49)`; al Passo 8 `Tests  234 passed | 1 skipped (235)`, *build* e linter puliti, il pezzo `698.14 kB`,
+compresso `212.98 kB`, e cinque corse su cinque; le **trentadue** righe del Passo 9 rosse ciascuna col suo messaggio, sulla
+suite intera, ogni file tornato uguale. Zero CR in ogni file, tutti `i/lf w/lf`, i due nuovi LF. La riga 8 della posizione
+resta a `⬜`, pre-controllata. La consegna precedente — l'esecuzione del compito 7 — sta parola per parola in
 [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
 
 ⛔ **Da sapere subito.**
 
-1. **E85 ha cambiato ciò che lo schema disegna**, decisa dal coordinatore coi cinque criteri, come **E30**: un gruppo
-   **ingrandito** si disegna **solo**, sul quadrato intero — ciò che la vista apre. Come si **disegni** la miniatura resta
-   dello sguardo del compito 8.
-2. **E90 va al pre-controllo del compito 8**, con **E76** ed **E81**: una disposizione malformata rompe tutta la Panoramica;
-   `openNamed` si scrive senza guardia; `nearest` con rettangoli nulli rende la scheda di partenza.
-3. **La colonna Commit della riga 7 la scrive il compito 8**, com'è il suo Passo 11 (**E79**): `0417c9c`, **con la cura
-   `a606f33`**.
-4. **E74 e l'assunzione della barra restano del proprietario**: le due domande del punto 3 qui sotto.
-5. **In `%TEMP%` restano cartelle di prova di sessioni passate** — `pc2`, `pc4`, `pc4b`, `pc4c`, `pc5`, `pc5b`, `pc5c`, `pc6`,
-   `pc6b`, `pc6c`, `rv4`, `rv5`, `rv6`, ciascuna col suo `node_modules` —, che nessuna consegna nomina: `ls -d
-   /c/Users/Jays/AppData/Local/Temp/pc* /c/Users/Jays/AppData/Local/Temp/rv*` le elenca, e toglierle è del proprietario.
+1. **Lo sguardo del Passo 10 è del proprietario col coordinatore** (**E101**): l'implementatore fa i Passi 1–9 e il commit del
+   codice, **senza** celle; la chiusura scrive la riga 8 e la colonna Commit della riga 7, `0417c9c` con la cura `a606f33`.
+2. **Il compito tocca anche due file di compiti chiusi**: `stores/layout.ts` del 7, con `showNamed` (**E99**), e
+   `testing/probes.ts` del 4, con `computed` (**E92**); e porta la regola dell'anello in `tokens/dock.css` (**E100**).
+3. **La domanda di classe di E40** — ogni scrittura prima del benvenuto, compreso il `settle` del dock — resta del
+   proprietario, **registrata e non presa** (**E98**).
+4. **In `%TEMP%` restano le cartelle di prova di sessioni passate** — `pc2`…`pc6c`, `rv4`, `rv5`, `rv6` —: toglierle è del
+   proprietario; `ls -d /c/Users/Jays/AppData/Local/Temp/pc* /c/Users/Jays/AppData/Local/Temp/rv*` le elenca.
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
-| **i commit** | `git log --oneline fa1ae0e..HEAD`: tre — `0417c9c` il compito, `a606f33` le cure, e quello che scrive questa riga: la riga 7 della posizione col verbale, la fonte di **E85** nella tabella del compito 9, questa sezione e la precedente in archivio, i quattro file del dispaccio. Nessun codice cambia dopo `a606f33`: `git diff --stat a606f33..HEAD -- gui/` non rende nulla |
-| **cancello** | `GATE GREEN` all'apertura su `fa1ae0e`, sulle cure e prima del commit che scrive questa riga: jsdom 157 prove passate e una saltata, browser 56, il pezzo `693.02 kB`, `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
-| **la CI** | `fa1ae0e` e `a606f33` verdi su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
-| **la posizione** | le righe dalla 1 alla 7 a `✅`; l'8 e la 9 a `⬜` |
-| **lo scratchpad** | sulla macchina `Jays`, **non tracciato**, in `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\e4b4f474-4c3b-4180-b8de-ae411307e17a\scratchpad\`: in `tools/` gli attrezzi delle cure — `cure_task7.py`, `violations_cure7.py` con le ventiquattro mutazioni, `plan_cure7.py` —; in `cure/` e `logs/` le corse; in `task7/` e `review7/` i file dell'implementatore e del revisore. Non servono a riprendere: il piano basta |
-| **server e cartelle di prova** | nessun server acceso; nessun `git worktree` — `git worktree list` rende la sola cartella del repository —; il clone della revisione, `%TEMP%\rv7`, tolto dal coordinatore |
+| **i commit** | `git log --oneline f3206c7..HEAD`: uno, quello che scrive questa riga — l'errata, il compito 8 corretto, il richiamo di **E74** nella (a) del disegno, questa sezione e la precedente in archivio, i tre file del dispaccio. Nessun codice cambia: `git diff --stat f3206c7..HEAD -- gui/ crates/` non rende nulla |
+| **cancello** | `GATE GREEN` all'apertura su `f3206c7` — jsdom 157 prove passate e una saltata, browser 56, il pezzo `693.02 kB`, `found 0 vulnerabilities` — e prima del commit che scrive questa riga. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `f3206c7` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | le righe dalla 1 alla 7 a `✅`; l'8, pre-controllata, e la 9 a `⬜` |
+| **lo scratchpad** | sulla macchina `Jays`, **non tracciato**: in `tools/` gli attrezzi del pre-controllo — `fix8.py`, che rigenera il testo del compito dalla copia, `docs8.py`, `w8tests.py`, `w8tests2.py`, `w8cures.py`, `violations8.py` con `rows8b.py` —; in `logs/` le corse. Non servono a riprendere: il piano basta |
+| **server e cartelle di prova** | nessun server acceso; i due `git worktree` del pre-controllo tolti — `git worktree list` rende la sola cartella del repository |
 
-**Che cosa ha fatto questa sessione.** La ripresa coi comandi, la CI di `fa1ae0e` e il cancello d'apertura; il brief, il
-prompt e la banda dei costi, col sì del proprietario; l'implementatore; il prompt del revisore, coi suoi comandi lanciati
-prima; il revisore; le cure, con le mutazioni sulla suite intera, le quattordici righe di prima del Passo 8 rifatte
-sull'albero curato, e il testo del piano curato rifatto dal testo su un clone; la chiusura.
+**Che cosa ha fatto questa sessione.** La ripresa coi comandi, la CI di `f3206c7` e il cancello d'apertura; il compito rifatto
+dal testo com'era — i rossi, i verdi, le cinque corse, le venti righe del Passo 9 sulla suite intera —; una diagnostica nel
+Chrome installato per le voci che l'errata gli lasciava; la domanda di **E74** al proprietario, **A**; le sonde prima delle
+cure, viste rosse, poi le cure; le tredici righe nuove del Passo 9; il testo corretto rigenerato dalla copia e rifatto su una
+copia pulita; il dispaccio, con `compare_task8.py` provato nelle due direzioni; la chiusura.
 
-📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura del
-sotto-progetto.
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — le raccoglie la chiusura del sotto-progetto.
 
 | | Che cosa | Che cosa se ne fa |
 |---|---|---|
-| 1 | **`git diff <commit>` dà per CANCELLATO un file nuovo che sta sul disco ma non nell'indice**: il confronto dell'`apply` di `plan_ops.py` col commit, scritto com'era nel prompt del revisore del 6bis, avrebbe dato un rosso falso sui file che il compito crea — misurato su un repository usa-e-getta | `git add -A`, poi `git diff --cached --stat <commit>`, com'è ora nel prompt del revisore del 7 |
-| 2 | **il consumatore da fuori trova ciò che le mutazioni non trovano**: **E85** e le tre cose di **E90** sono uscite usando le interfacce come le userà il compito 8, non mutando il codice del 7 — la domanda 3 del pre-controllo, dal lato della revisione | il prompt di ogni revisore che consegna interfacce a un compito dopo chiede quel consumatore |
-| 3 | **un rosso si legge prima di crederci**: la prova di **E85**, la prima volta, cadeva perché i pannelli veri leggono i negozi, e senza la Pinia `fromJSON` torna indietro — *«dockview: failed to deserialize layout»* — e non per l'asserzione | una prova che monta i pannelli veri imposta la Pinia, come `frame.test.ts` |
-| 4 | **una direzione nuova sta meglio in una prova che c'è, quando ci entra**: le cure di **E82**, **E83**, **E84** ed **E88** non cambiano né i conti né i rossi del Passo 2, e la tabella del Passo 8 resta vera, rifatta sull'albero curato | prima di aggiungere una prova, chiedersi se la direzione sta in una che c'è |
-| 5 | **un compito senza sguardo nel browser costa meno della banda dei compiti con lo sguardo**: ~0,73 milioni contro gli 0,82–0,94 dei compiti 4, 6 e 6bis, pur col consumatore da fuori | la banda di un compito senza sguardo si abbassa |
+| 1 | **una sonda `grep` su un nome corto prende anche un colore**: `F3` sta in `#F3EEE6` dal compito 1 | una sonda che cerca un nome cerca la **parola**, `grep -w`, e il suo Atteso si rimisura |
+| 2 | **una violazione che toglie una riga di JSON ne rompe il formato**: la virgola della riga prima resta, e cadono dodici file, non una prova | la violazione su un file di dati si prova da sola, prima di scriverne l'Atteso |
+| 3 | **i conti dedotti per un compito lontano ignorano le cure dei compiti in mezzo**: **E64** contava le prove del 6bis e non le dieci del dock nate dalle cure del compito 6 | un conto dedotto si rimisura al pre-controllo del compito che lo porta |
+| 4 | **il testo corretto si rigenera dalla copia che passa, invece di riscriverlo a mano**: `fix8.py` prende i file dalla copia e le ancore da `f3206c7`, e verifica che le sostituzioni ricostruiscano la copia prima di scriverle | un pre-controllo con molte aggiunte parte da lì |
+
+📌 **La ricetta del compito 8**, per rifarlo o confrontarlo dal testo del piano, vale per il piano del commit che scrive
+questa riga — le righe prima di questa sezione non cambiano chiudendo una sessione. `compare_task8.py <base> <target>` la
+legge: `W` un file intero, creato o riscritto, `R` il *Trova* e il *Sostituisci* di una sostituzione.
+
+```text
+# Passo 2
+R gui/src/testing/axe.ts 9127 9134
+R gui/src/testing/probes.ts 9156 9162
+R gui/src/kit/kit.browser.test.ts 9185 9198
+R gui/src/kit/kit.browser.test.ts 9210 9228
+R gui/src/kit/kit.browser.test.ts 9237 9243
+R gui/src/kit/kit.browser.test.ts 9249 9263
+R gui/src/frame/dock.browser.test.ts 9275 9288
+R gui/src/frame/dock.browser.test.ts 9307 9313
+R gui/src/frame/dock.browser.test.ts 9319 9336
+R gui/src/frame/frame.test.ts 9346 9365
+R gui/src/frame/frame.test.ts 9389 9398
+R gui/src/stores/stores.test.ts 9598 9604
+R gui/src/a11y.test.ts 9625 9632
+R gui/src/a11y.test.ts 9640 9649
+R gui/src/a11y.test.ts 9660 9667
+R gui/src/a11y.test.ts 9674 9699
+R gui/src/locales/copy.test.ts 9746 9753
+R gui/src/locales/copy.test.ts 9761 9768
+R gui/src/locales/copy.test.ts 9776 9783
+R gui/src/frame/frame.browser.test.ts 9804 9811
+R gui/src/frame/frame.browser.test.ts 9819 9826
+R gui/src/frame/frame.browser.test.ts 9838 9852
+R gui/src/frame/frame.browser.test.ts 9861 9893
+# Passo 4
+W gui/src/stores/drawer.ts 10144
+R gui/src/stores/invoke.ts 10165 10171
+R gui/src/stores/invoke.ts 10177 10184
+R gui/src/stores/invoke.ts 10200 10206
+R gui/src/components/Confirm.vue 10214 10237
+R gui/src/components/Confirm.vue 10254 10260
+W gui/src/frame/Drawer.vue 10266
+# Passo 5
+R gui/src/locales/it.json 10310 10318
+R gui/src/locales/it.json 10325 10335
+R gui/src/stores/layout.ts 10359 10366
+R gui/src/stores/layout.ts 10384 10390
+W gui/src/frame/Overview.vue 10396
+# Passo 6
+W gui/src/frame/ViewBar.vue 10678
+W gui/src/frame/Frame.vue 10745
+# Passo 7
+W gui/src/panels/Strip.vue 10836
+R gui/src/tokens/dock.css 10898 10905
+```
 
 **Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
 
 1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
-2. **Il pre-controllo del compito 8**, contro il codice di **adesso**, con le cure del 7 — lo schema che disegna un gruppo
-   ingrandito solo (**E85**), le prove delle viste col nome che ne portano due (**E82**) —; con le sonde che l'errata gli
-   assegna, **E38**, **E39**, **E43**, **E53** ed **E57**; la domanda di **E44** sulla Panoramica; **E63**, i conti dedotti di
-   **E64**, la strada più larga di **E70** ed **E73**; la prova della Panoramica di **E76**; la finestra prima del benvenuto di
-   **E81**; le tre cose di **E90**; la colonna Commit della riga 7 con la cura; e la sonda di **E74**, se il proprietario ne
-   avrà deciso la forma. A quello del **9**, la Definizione di «fatto» con le righe 22 e 23.
-3. ⏳ **Due domande per il proprietario**, una per volta e quando vuole: la forma della cura di **E74**; e se l'assunzione della
-   barra debba avere un compito che la misuri.
+2. **L'esecuzione del compito 8**: il brief da `_extract_brief_8.py`, il prompt dal modello `dispatch-task-8.md`, col sì del
+   proprietario sulla banda dei costi detta prima — un compito **con** lo sguardo, e più grande del 7: la base è la banda dei
+   compiti 4, 6 e 6bis, 0,82–0,94 milioni —; l'implementatore, la revisione con `compare_task8.py`, le cure; poi il Passo 10
+   col proprietario, e la chiusura con le celle.
+3. ⏳ **Una domanda per il proprietario**, quando vuole: se l'assunzione della barra di scorrimento debba avere un compito che
+   la misuri. A quello del **9**, la Definizione di «fatto» con le righe 22 e 23.

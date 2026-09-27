@@ -1,8 +1,11 @@
+import { readToken } from "../tokens/readToken";
+
 /**
- * The probes of the design-system boards, as functions over the real DOM (design system, section (f)). They were
- * scripts pasted into a console on 2026-09-23 -- `sonda-raggi.js`, `sonda-icone.js`, `sonda-caratteri.js`, next to the
- * approved boards -- and each was proven in both directions there. Here they take their ROOTS as a parameter (trap 4),
- * and each returns how much it looked at, so that a caller can refuse a green that looked at nothing (trap 1).
+ * The probes of the design-system boards, and the oracles they share, as functions over the real DOM (design system,
+ * section (f)). The probes were scripts pasted into a console on 2026-09-23 -- `sonda-raggi.js`, `sonda-icone.js`,
+ * `sonda-caratteri.js`, next to the approved boards -- and each was proven in both directions there. Here they take their
+ * ROOTS as a parameter (trap 4), and a probe returns how much it looked at, so that a caller can refuse a green that
+ * looked at nothing (trap 1); an oracle returns a value.
  *
  * ⛔ THEY NEED A LAYOUT ENGINE: under jsdom every rectangle is zero, so they run in the browser project alone.
  */
@@ -161,8 +164,13 @@ export function iconsCentred(roots: Element[]): { icons: number; centred: number
  * What a declaration of `property: var(token)` computes to here: the oracle of a token, with no copy of its value.
  * ⛔ ONE HOUSE (E73 of the design-system plan): the dock's probes and the frame's had it word for word, and the kit
  * page's for `color` alone.
+ * ⛔ A TOKEN THE PAGE DOES NOT DEFINE IS AN ERROR (E108), the rule of `readToken`: a misspelt one computed the property's
+ * initial value -- `0px`, `rgba(0, 0, 0, 0)`, the very value a probe of "nothing drawn" waits for -- and a green that
+ * looked at nothing. ⚠️ THE NAME IS VUE'S TOO: a file that wants both imports one under an alias, and without one it
+ * fails at load (`Identifier 'computed' has already been declared`).
  */
 export function computed(property: string, token: string): string {
+  readToken(token);
   const probe = document.createElement("div");
   probe.style.setProperty(property, `var(${token})`);
   document.body.append(probe);

@@ -79,6 +79,12 @@ function iconOnly(): boolean {
   color: var(--color-text-disabled);
   cursor: default;
 }
+/* ⛔ OFF INSIDE TOO (E105 of the plan): a `BaseLabel` writes its own colour on its element, and the mark's on its icon, so
+   a button that was off still showed its words and icon lit -- they take the button's colour for off (the kind of E19). */
+.base-button:disabled :deep(.base-label),
+.base-button:disabled :deep(.base-icon) {
+  color: inherit;
+}
 
 .base-button[data-variant="primary"] {
   background: var(--color-bg-accent);

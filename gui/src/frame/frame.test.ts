@@ -14,7 +14,7 @@ import { useConnection } from "../stores/connection";
 import { useCore } from "../stores/core";
 import { useDrawer } from "../stores/drawer";
 import { useInvoke } from "../stores/invoke";
-import { pack_, useLayout, type LayoutPack } from "../stores/layout";
+import { pack_, unpack, useLayout, type LayoutPack } from "../stores/layout";
 import { shownTheme } from "../tokens/theme";
 import { createFakeBridge, type FakeBridge } from "../transport/fakeBridge";
 
@@ -246,6 +246,44 @@ describe("the dock", () => {
     expect(showing(api)).toEqual(Object.keys(VIEWS.home.panels ?? {}).sort());
     expect(saves(bridge)).toBe(0);
   });
+
+  it("saves a group maximized and a group restored, and nothing for showing a view left or opened maximized (E104)", async () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    const api = createDock(host());
+    api.layout(1600, 1000);
+    await flush();
+    /** Whether the last package sent opens Home with a group maximized: `dockview-core` 8.3.1 writes `grid.maximizedNode`,
+     * which its public type does not declare (E85 of the plan). */
+    const homeMaximized = (): boolean => {
+      const last = bridge.sent.filter((message) => message.kind === "SaveLayout").at(-1);
+      const pack = last?.kind === "SaveLayout" ? unpack({ state: "Package", bytes: last.value }) : null;
+      return (pack?.layouts.home?.grid as { maximizedNode?: unknown } | undefined)?.maximizedNode !== undefined;
+    };
+    api.getPanel("status")?.group.api.setActive();
+    await flush();
+    const before = saves(bridge);
+    // ⛔ A MAXIMIZE IS A MOVE, AND NOT AN `onDidLayoutChange` (E104 of the plan): `dockview-core` 8.3.1 saved it only
+    // through the change of the active group it makes -- and here there is none, Stato is active already.
+    api.getPanel("status")?.group.api.maximize();
+    await flush();
+    expect(saves(bridge)).toBe(before + 1);
+    expect(homeMaximized()).toBe(true);
+    // ⛔ SHOWING STAYS NOT SAVING (decision 11): leaving a view with a group maximized, and coming back to it, fire the
+    // same event inside `fromJSON` -- and Home opens as it was left.
+    layout.showView("work");
+    await flush();
+    layout.showView("home");
+    await flush();
+    expect(saves(bridge)).toBe(before + 1);
+    expect(api.hasMaximizedGroup()).toBe(true);
+    // ⛔ AND THE RESTORE IS A MOVE TOO: before, it never reached the package, and Home came back maximized.
+    api.getPanel("status")?.group.api.exitMaximized();
+    await flush();
+    expect(saves(bridge)).toBe(before + 2);
+    expect(homeMaximized()).toBe(false);
+  });
 });
 
 describe("the band", () => {
@@ -309,8 +347,11 @@ function cards(): HTMLElement[] {
   return [...document.querySelectorAll<HTMLElement>("[data-card]")];
 }
 
-function press(key: string): void {
-  window.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }));
+/** A key pressed on the window, where the frame listens: the event says whether a listener took it from the browser. */
+function press(key: string): KeyboardEvent {
+  const event = new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true });
+  window.dispatchEvent(event);
+  return event;
 }
 
 /** Writes in the field of a new view's name, as a keyboard does: the value, and the `input` event `v-model` listens to. */
@@ -350,7 +391,8 @@ describe("the frame (the (d) of the design system)", () => {
 
   it("opens and closes the overview with F3, and keeps quiet while the confirmation or the drawer is open", async () => {
     await frame();
-    press("F3");
+    // ⛔ F3 IS OURS (P-11): its default, the browser's "find next", is taken away.
+    expect(press("F3").defaultPrevented).toBe(true);
     await flush();
     expect(overviewOpen()).toBe(true);
     press("F3");
@@ -398,9 +440,11 @@ describe("the frame (the (d) of the design system)", () => {
     await flush();
     expect(layout.openNamed).toBe("Lettura");
     expect(document.querySelector(".view-name")?.textContent).toContain("Lettura");
-    // ⛔ ONE OF THE THREE CLOSES THE NAMED VIEW (E76, D13): the role `Frame.switchTo` had, the overview's now.
     press("F3");
     await flush();
+    // ⛔ ONE CARD IN BORDEAUX (the (d)): the named view on screen, and not Lavoro too -- the view of always under it.
+    expect(cards().map((card) => card.getAttribute("aria-current"))).toEqual([null, null, null, null, "page", null]);
+    // ⛔ ONE OF THE THREE CLOSES THE NAMED VIEW (E76, D13): the role `Frame.switchTo` had, the overview's now.
     cards()[0]?.click();
     await flush();
     expect(layout.openNamed).toBeNull();
@@ -418,6 +462,8 @@ describe("the frame (the (d) of the design system)", () => {
     await flush();
     document.querySelector<HTMLElement>('[data-card="save"]')?.click();
     await flush();
+    // ⛔ THE FIELD SAYS TO THE EYE WHAT IT WANTS (E106): the board draws no visible label, and the placeholder speaks.
+    expect(document.querySelector(".naming input")?.getAttribute("placeholder")).toBe(i18n.global.t("overview.name"));
     const confirm = (): void => document.querySelectorAll<HTMLElement>(".naming .base-button")[1]?.click();
     confirm();
     await flush();
@@ -474,6 +520,19 @@ describe("the frame (the (d) of the design system)", () => {
     const icons = [...(cards()[0]?.querySelectorAll(".tile") ?? [])].map((tile) => tile.querySelector("svg")?.getAttribute("data-icon"));
     // ⛔ FROM THE LAYOUT, NOT A PICTURE (answer 19): Home ships one panel per group, and the strip is one of them.
     expect(icons.sort()).toEqual(Object.keys(VIEWS.home.panels ?? {}).filter((id) => id !== "strip").sort());
+    // ⛔ AND EVERY VIEW THAT SHIPS SAYS THE TRUTH ABOUT ITS STRIP (E103): the strip's row is the strip's own height, and
+    // the tiles reach down to it, as on screen -- a view written before `dockview` applied that height drew Compatta's
+    // knowledge base in half the miniature.
+    const percent = (value: string): number => Number(/^calc\(([^%]+)%/.exec(value)?.[1]);
+    for (const [index, view] of (["home", "work", "compact"] as const).entries()) {
+      const shipped = VIEWS[view];
+      const strip = (shipped.panels.strip?.maximumHeight ?? 0) / shipped.grid.height;
+      const tiles = [...(cards()[index]?.querySelectorAll<HTMLElement>(".tile") ?? [])];
+      expect(strip, view).toBeGreaterThan(0);
+      expect(tiles.length, view).toBeGreaterThan(0);
+      const reach = Math.max(...tiles.map((tile) => percent(tile.style.top) + percent(tile.style.height)));
+      expect(reach, view).toBeGreaterThanOrEqual(100 * (1 - strip) - 1e-6);
+    }
   });
 
   it("opens the drawer from the strip's button", async () => {
@@ -484,5 +543,12 @@ describe("the frame (the (d) of the design system)", () => {
     await flush();
     expect(useDrawer().open).toBe(true);
     expect(document.querySelector('.base-dialog[data-variant="sheet"]')).not.toBeNull();
+    // ⛔ AND «CHIUDI» CLOSES IT THROUGH THE STORE (R3-20): the sheet's own button, not only Esc.
+    const close = document.querySelector<HTMLElement>('.base-dialog[data-variant="sheet"] .base-button');
+    expect(close?.textContent).toContain(i18n.global.t("drawer.close"));
+    close?.click();
+    await flush();
+    expect(useDrawer().open).toBe(false);
+    expect(document.querySelector('.base-dialog[data-variant="sheet"]')).toBeNull();
   });
 });

@@ -1,6 +1,6 @@
 import { afterEach, expect, it } from "vitest";
 
-import { concentricRadii } from "./probes";
+import { computed, concentricRadii } from "./probes";
 
 // ⛔ THE RADIUS PROBE ON BOXES DRAWN BY HAND (E30 and E33 of the design-system plan): the kit page gives every piece four
 // equal corners and puts it IN its corner, so two things would stay unproven there -- that each corner is read with its
@@ -104,4 +104,16 @@ it("does not judge what reaches the corner through a box that scrolls, and judge
   // The same piece in the same place, once the box holds more than it shows: where it lands is the scroll's.
   box("filler", "position:absolute;left:0;top:0;width:1px;height:400px", scroller);
   expect(concentricRadii([root])).toEqual({ near: 0, bad: [] });
+});
+
+// ⛔ THE ORACLE OF A TOKEN ANSWERS ONLY FOR A TOKEN THE PAGE DEFINES (E108 of the design-system plan), as `readToken` does:
+// a misspelt one computed the property's initial value -- a plausible oracle, and a green that looked at nothing.
+it("refuses a token the page does not define, and computes one it does (E108)", () => {
+  expect(() => computed("color", "--color-txet")).toThrow(/not defined/);
+  document.documentElement.style.setProperty("--probe-colour", "rgb(1, 2, 3)");
+  try {
+    expect(computed("color", "--probe-colour")).toBe("rgb(1, 2, 3)");
+  } finally {
+    document.documentElement.style.removeProperty("--probe-colour");
+  }
 });

@@ -54,6 +54,10 @@ function tile(api: DockviewApi, id: string, where?: Parameters<DockviewApi["addP
 }
 
 function write(name: string, api: DockviewApi): void {
+  // ⛔ LAID OUT AGAIN BEFORE IT IS WRITTEN (E103 of the design-system plan): `dockview` applies a panel's limits -- the
+  // strip's 56 px -- when it lays the grid out, not when the panel is added. Written at once, Compatta kept the strip at
+  // half the grid, and its miniature drew the knowledge base in half the square, while the screen gave it all but 56 px.
+  api.layout(api.width, api.height, true);
   mkdirSync(OUT, { recursive: true });
   writeFileSync(join(OUT, `${name}.json`), `${JSON.stringify(api.toJSON(), null, 2)}\n`, "utf8");
 }

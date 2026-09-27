@@ -149,8 +149,8 @@ function cancel(): void {
 
 /** «Salva questa vista»: the layout on screen under a name, and opened. ⛔ THE NAMES OF THE THREE ARE THE FRAME'S WORDS
  * (D12 of the plan): the store reads no locale, so it is handed them. ⛔ OFF UNTIL THE CORE HAS ANSWERED (E81): before
- * it the store holds no package, and a view saved then would send `layouts: {}` -- every saved layout lost in silence,
- * the window E40 closed for the theme. */
+ * it the store holds no package of the core's, and a view saved then would send one without the core's layouts -- every
+ * saved layout lost in silence, the window E40 closed for the theme. */
 function save(): void {
   const result = layout.saveNamed(name.value, props.snapshot(), THREE.map((view) => t(`views.${view}`)));
   if (result === "saved") {
@@ -194,6 +194,7 @@ function save(): void {
           v-model="name"
           icon="saveView"
           :label="$t('overview.name')"
+          :placeholder="$t('overview.name')"
           :error="refusal === 'empty' ? $t('overview.empty') : refusal === 'taken' ? $t('overview.taken') : undefined"
         />
         <span class="actions">

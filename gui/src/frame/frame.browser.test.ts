@@ -17,7 +17,7 @@ import { readToken } from "../tokens/readToken";
 
 // ⛔ THE WHOLE FRAME IN THE INSTALLED CHROME (the (d) of the design system): the page of the SPA -- `App.vue`, whose rule
 // gives `html`, `body` and `#app` the whole window -- at the probes' 1440 x 900, with the stylesheets in the order
-// `main.ts` loads them. Born with task 6bis for the band on the page (E60); task 8 adds the strip and the overview.
+// `main.ts` loads them. Born with task 6bis for the band on the page (E60); task 8 extends it.
 
 const frames: VueApp[] = [];
 
@@ -174,10 +174,19 @@ for (const theme of ["light", "dark"] as const) {
 
     it("draws the overview with its radii concentric, nothing cut or sticking out, the icons centred, and no axe violation", async () => {
       await frame(theme);
-      // ⛔ THE CORE HAS ANSWERED (E81): before it, «Salva questa vista» is off.
-      useLayout().receive({ kind: "Layout", value: { state: "Nothing" } });
       await userEvent.keyboard("{F3}");
       await expect.poll(overview).not.toBeNull();
+      // ⛔ OFF, AND IT LOOKS OFF (E105): until the core answers «Salva questa vista» is off (E81), and its words and its icon
+      // take the button's colour for off -- the colour `BaseLabel` writes on its own element won over it.
+      const save = document.querySelector('[data-card="save"]') as HTMLButtonElement;
+      const words = save.querySelector(".base-label") as Element;
+      expect(save.disabled).toBe(true);
+      expect(getComputedStyle(words).color).toBe(computed("color", "--color-text-disabled"));
+      expect(getComputedStyle(save.querySelector(".base-icon") as Element).color).toBe(computed("color", "--color-text-disabled"));
+      // ⛔ THE CORE HAS ANSWERED (E81): «Salva questa vista» is on, and its words are the label's own again.
+      useLayout().receive({ kind: "Layout", value: { state: "Nothing" } });
+      await expect.poll(() => save.disabled).toBe(false);
+      expect(getComputedStyle(words).color).toBe(computed("color", "--color-text-muted"));
       // And with the name of a new view asked, the field and its two buttons in the place of «Salva questa vista».
       for (const naming of [false, true]) {
         if (naming) {
@@ -221,6 +230,17 @@ describe("the overview's grid, under the keys (R3-23 of the review)", () => {
     // ⛔ DOWN GOES TO THE ROW BELOW, NOT TO THE NEXT CARD: `RovingFocusGroup` would have gone right (decision 19).
     await userEvent.keyboard("{ArrowDown}");
     expect(document.activeElement).toBe(cards()[3]);
+    // One card in the tab order, the one the arrows reached -- «Salva questa vista» too (D17).
+    expect(cards().map((card) => card.tabIndex)).toEqual([-1, -1, -1, 0]);
+    // ⛔ THE NAME OF A NEW VIEW (the (d)): Enter opens the field with the focus in it; there the arrows move the caret and
+    // not the focus; «Annulla» closes it, and the focus is back on the card.
+    await userEvent.keyboard("{Enter}");
+    await expect.poll(() => document.activeElement?.matches(".naming input")).toBe(true);
+    await userEvent.keyboard("{ArrowRight}");
+    expect(document.activeElement?.matches(".naming input")).toBe(true);
+    await userEvent.click(document.querySelector(".naming .base-button") as HTMLElement);
+    await expect.poll(() => document.querySelector(".naming")).toBeNull();
+    await expect.poll(() => document.activeElement?.getAttribute("data-card")).toBe("save");
     // Up again: three cards are as far, and the nearest centre wins -- Home, the column of the card below (R3-18).
     await userEvent.keyboard("{ArrowUp}");
     expect(document.activeElement).toBe(cards()[0]);
@@ -234,6 +254,18 @@ describe("the overview's grid, under the keys (R3-23 of the review)", () => {
     await expect.poll(() => useLayout().view).toBe("work");
     await expect.poll(overview).toBeNull();
     await expect.poll(() => document.activeElement?.classList.contains("view-name")).toBe(true);
+    // ⛔ EVERY OPENING STARTS FROM THE VIEW ON SCREEN (D17), not from the card the arrows left: down to «Salva questa
+    // vista», out with Esc, and F3 opens on Lavoro again.
+    await userEvent.keyboard("{F3}");
+    await expect.poll(overview).not.toBeNull();
+    await expect.poll(() => document.activeElement).toBe(cards()[1]);
+    await userEvent.keyboard("{ArrowDown}");
+    expect(document.activeElement).toBe(cards()[3]);
+    await userEvent.keyboard("{Escape}");
+    await expect.poll(overview).toBeNull();
+    await userEvent.keyboard("{F3}");
+    await expect.poll(overview).not.toBeNull();
+    await expect.poll(() => document.activeElement).toBe(cards()[1]);
   });
 });
 

@@ -6,8 +6,8 @@ import axe from "axe-core";
  *
  * ⛔ `color-contrast` IS OFF UNLESS ASKED, AND NOT IGNORED: under jsdom axe files it under `incomplete` every time --
  * there is no layout to read a background from (measured on 2026-09-15, P-86 of part 2) -- so a green from it would
- * prove nothing there. `tokens/contrast.test.ts` holds the families of the pairs; the probes of the kit page, in the
- * real browser, turn it ON with `contrast: true` (task 4).
+ * prove nothing there. `tokens/contrast.test.ts` holds the families of the pairs; the probes in the real browser turn it
+ * ON with `contrast: true`, since task 4.
  */
 export async function violations(node: Element, options: { contrast?: boolean } = {}): Promise<string[]> {
   const results = await axe.run(node, { rules: { "color-contrast": { enabled: options.contrast === true } } });

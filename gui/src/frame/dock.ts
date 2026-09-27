@@ -66,9 +66,9 @@ function same(a: SerializedDockview, b: SerializedDockview): boolean {
  * the dock is up is not left in the store. Before D89 it was: `apply` ran once, before `Hello`, and
  * the saved layout never appeared at start-up -- it compiled and passed every probe.
  *
- * ⛔ SHOWING RESETS THE BASELINE: the buffered `onDidLayoutChange` that follows a `fromJSON`
- * compares equal and does not settle, so LOOKING at a view is not SAVING it -- decision 11, the
- * shipped views stay in `gui/` until the owner changes one.
+ * ⛔ SHOWING RESETS THE BASELINE: the buffered `onDidLayoutChange` that follows a `fromJSON`, and
+ * a maximize deferred like it (E104), compare equal and do not settle, so LOOKING at a view is not
+ * SAVING it -- decision 11, the shipped views stay in `gui/` until the owner changes one.
  *
  * ⚠️ THE ACTIVE PANEL IS LAYOUT (D81): `activeGroup` is in `toJSON()`, and `dockview` fires
  * `onDidLayoutChange` on `onDidActiveChange` too (measured on the 8.2.0 in SP-8's `node_modules`,
@@ -114,21 +114,27 @@ export function createDock(host: HTMLElement): DockviewApi {
     last = show();
   });
 
-  api.onDidLayoutChange(() => {
+  /** What is on screen, saved only if it moved since the last save or the last showing. */
+  function settleIfMoved(): void {
     const now = api.toJSON();
     if (same(last, now)) return;
     last = now;
     layout.settle(now);
-  });
+  }
 
-  window.addEventListener("beforeunload", () => {
-    // Decision 12: and when the window closes. ⛔ ONLY IF SOMETHING CHANGED SINCE THE LAST SETTLE
-    // (D81): before, an untouched gui copied the shipped Home into the archive at its first close.
-    const now = api.toJSON();
-    if (same(last, now)) return;
-    last = now;
-    layout.settle(now);
-  });
+  api.onDidLayoutChange(settleIfMoved);
+
+  // ⛔ A MAXIMIZE IS A MOVE, AND NOT AN `onDidLayoutChange` (E104 of the design-system plan): in `dockview-core` 8.3.1
+  // `maximizeGroup` saved only through the change of the active group it makes, when it makes one, and
+  // `exitMaximizedGroup` never -- a group restored stayed maximized in the package. ⛔ DEFERRED TO A MICROTASK, AS
+  // `dockview` DEFERS `onDidLayoutChange`, SO THAT SHOWING STAYS NOT SAVING: `fromJSON` fires this event inside `apply` --
+  // restoring the group of the view it leaves, maximizing the one of the view it opens -- before `show` resets the
+  // baseline; heard at once, it saved the view left under the name of the view opened (measured on 2026-09-27).
+  api.onDidMaximizedGroupChange(() => queueMicrotask(settleIfMoved));
+
+  // Decision 12: and when the window closes. ⛔ ONLY IF SOMETHING CHANGED SINCE THE LAST SETTLE
+  // (D81): before, an untouched gui copied the shipped Home into the archive at its first close.
+  window.addEventListener("beforeunload", settleIfMoved);
 
   window.addEventListener("resize", () => api.layout(host.clientWidth, host.clientHeight));
   return api;

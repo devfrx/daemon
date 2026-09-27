@@ -12,8 +12,9 @@ import Kit from "./Kit.vue";
 
 // ⛔ THE KIT PAGE IN THE INSTALLED CHROME (design system, section (f)): the probes of the boards, on the real pieces.
 
-const ROOTS = ".kit-card, .kit-frame, .kit-strip";
-const BOXES = ".kit-card, .kit-frame, .kit-strip, .base-button, .base-list-row, .base-text-field > .frame, .option, .base-dialog";
+const ROOTS = ".kit-card, .kit-frame, .kit-strip, .base-notice";
+const BOXES =
+  ".kit-card, .kit-frame, .kit-strip, .base-button, .base-list-row, .base-text-field > .frame, .option, .base-dialog, .base-notice";
 
 /** The kits the probes mounted: every one unmounted after its probe, red or green. */
 const kits: { unmount(): void }[] = [];
@@ -75,6 +76,11 @@ for (const theme of ["light", "dark"] as const) {
       const list = document.querySelector(".kit-card:has(> .base-list)");
       expect(list).not.toBeNull();
       expect(concentricRadii([list as Element]).near).toBeGreaterThan(0);
+      // ⛔ AND THE ONE CASE THAT JUDGES A MESSAGE'S ACTION (E60, E61): «Riprova», on the page, in the two right corners of
+      // the message that holds it.
+      const onPage = document.querySelector(".base-notice[data-on-page]");
+      expect(onPage).not.toBeNull();
+      expect(concentricRadii([onPage as Element]).near).toBeGreaterThan(0);
     });
 
     it("cuts no text, and lets nothing stick out of its box", async () => {
@@ -151,6 +157,50 @@ for (const theme of ["light", "dark"] as const) {
       expect((frame as HTMLElement).matches(":hover")).toBe(true);
       expect(getComputedStyle(frame as HTMLElement).borderTopColor).toBe(stop);
       await userEvent.unhover(frame as HTMLElement);
+    });
+
+    it("dresses each tone of a message in its roles (control 23, E60)", async () => {
+      await kit(theme);
+      // The neutral tone is the accent's (N2 of E60); the three others are the states' own.
+      const ROLE = { info: "accent", ok: "ok", warn: "warn", stop: "stop" } as const;
+      const notices = [...document.querySelectorAll<HTMLElement>(".kit-card .base-notice")];
+      // ⛔ NON-VACUITY: the card of the messages shows the four tones.
+      expect(notices.map((notice) => notice.dataset.tone).sort()).toEqual(["info", "ok", "stop", "warn"]);
+      for (const notice of notices) {
+        const role = ROLE[notice.dataset.tone as keyof typeof ROLE];
+        const icon = notice.querySelector("svg.base-icon");
+        expect(icon).not.toBeNull();
+        const style = getComputedStyle(notice);
+        expect([style.backgroundColor, style.borderTopColor, getComputedStyle(icon as Element).color]).toEqual([
+          colourOf(`--color-bg-${role}-subtle`),
+          colourOf(`--color-border-${role}`),
+          colourOf(`--color-text-${role}`),
+        ]);
+        // ⛔ AND THE WORDS IN THE TEXT'S OWN ROLES, WHATEVER THE TONE (the board's `.msg b` and `.msg span`; E65 of the
+        // plan): without them the title takes the tone's colour from the root, which the icon draws with.
+        expect(getComputedStyle(notice.querySelector(".title") as Element).color).toBe(colourOf("--color-text"));
+        for (const description of notice.querySelectorAll(".description")) {
+          expect(getComputedStyle(description).color).toBe(colourOf("--color-text-muted"));
+        }
+      }
+      // ⛔ NON-VACUITY: a description was judged -- the refusal's, in the card of the messages.
+      expect(document.querySelectorAll(".kit-card .base-notice .description").length).toBeGreaterThan(0);
+    });
+
+    it("sets a message's title and icon on the line of its action (the owner, 2026-09-27: the 2 px of E60)", async () => {
+      await kit(theme);
+      const notice = document.querySelector<HTMLElement>(".base-notice[data-action]");
+      expect(notice).not.toBeNull();
+      const centre = (selector: string): number => {
+        const found = (notice as HTMLElement).querySelector(selector);
+        expect(found).not.toBeNull();
+        const box = (found as Element).getBoundingClientRect();
+        return (box.top + box.bottom) / 2;
+      };
+      const action = centre("button");
+      // ⛔ AT THE TOP, AS THE BOARD'S `.msg` WAS, THE TITLE SAT 2 PX ABOVE: the action is 24 high, the title's line 20.
+      expect(Math.abs(centre(".title") - action)).toBeLessThanOrEqual(0.5);
+      expect(Math.abs(centre("svg.base-icon") - action)).toBeLessThanOrEqual(0.5);
     });
   });
 }

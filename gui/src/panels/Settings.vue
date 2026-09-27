@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
+import BaseNotice from "../components/BaseNotice.vue";
 import BaseRadioGroup from "../components/BaseRadioGroup.vue";
 import BaseStatus from "../components/BaseStatus.vue";
 import { useCore } from "../stores/core";
@@ -60,7 +61,7 @@ function chooseTheme(choice: string): void {
         @update:model-value="choosePolicy"
       />
       <BaseStatus>
-        <p v-if="invoke.inFlight !== null">{{ $t("settings.inFlight") }}</p>
+        <BaseNotice v-if="invoke.inFlight !== null" class="in-flight" tone="info" :title="$t('settings.inFlight')" />
       </BaseStatus>
     </div>
     <!-- Off until the core's welcome (E40): before it the package is not ours to write, and a choice would save one without
@@ -89,7 +90,8 @@ function chooseTheme(choice: string): void {
 p {
   margin: 0;
 }
-.policy p {
+/* The space is the message's, never the region's (E42). */
+.in-flight {
   margin-top: var(--space-2);
 }
 .who {

@@ -4,12 +4,15 @@ import {
   Archive,
   BookmarkPlus,
   Box,
+  CircleCheck,
+  CircleX,
   Coins,
   Cpu,
   Eye,
   FolderTree,
   Gauge,
   GitCompare,
+  Info,
   Layers,
   LayoutGrid,
   ListChecks,
@@ -23,6 +26,7 @@ import {
   Settings,
   ShieldCheck,
   SquareTerminal,
+  TriangleAlert,
   type IconNode,
 } from "lucide";
 
@@ -42,10 +46,16 @@ export const ICONS = {
   saveView: BookmarkPlus,
   float: AppWindow,
   fullPage: Maximize2,
+  // the tones of a message, BY THE TONE'S NAME (decision 28 of the design): the three drawings of the board's `.msg`,
+  // and `info` for the neutral tone -- `BaseNotice` draws them (E60).
+  info: Info,
+  ok: CircleCheck,
+  warn: TriangleAlert,
+  stop: CircleX,
   // one per module type of `panels/registry.ts`, BY THE SAME NAME: the big grab and the overview draw them. The
   // boards gave Stato, Permessi, Passi and Attività; the rest are the plan's choice, one line each (D6) -- Chat too:
-  // on the boards `message-square` marks the status messages, and they would need another drawing if they entered
-  // the kit (R2-15 of the review).
+  // on the boards `message-square` marked the status messages, which entered the kit with the drawings of their
+  // tones, above (R2-15 of the review, E60).
   chat: MessageSquare,
   status: Gauge,
   permissions: ShieldCheck,

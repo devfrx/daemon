@@ -1,7 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { createDockview, type DockviewApi, type SerializedDockview } from "dockview-core";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 
 import { i18n } from "../i18n";
@@ -224,16 +224,35 @@ describe("the dock", () => {
 });
 
 describe("the band", () => {
-  it("is there while waiting, and gone once connected", async () => {
+  it("is a warning with «Riprova» while waiting, «Riprova» retries, and it is gone once connected (control 23)", async () => {
     const Band = (await import("./Band.vue")).default;
     const connection = useConnection();
+    const retry = vi.spyOn(connection, "retry");
     const wrapper = mount(Band, { global: { plugins: [i18n] } });
-    expect(wrapper.text()).toContain(i18n.global.t("band.waiting"));
+    const notice = wrapper.get(".base-notice");
+    expect(notice.attributes("data-tone")).toBe("warn");
+    expect(notice.get(".title").text()).toBe(i18n.global.t("band.waiting"));
+    await notice.get("button").trigger("click");
+    expect(retry).toHaveBeenCalledOnce();
     connection.receive({ kind: "Accepted", value: "AsSystemAccount" });
     await wrapper.vm.$nextTick();
     // ⛔ THE SECOND DIRECTION, and it is the one that is forgotten: a band that never goes away
     // would pass the first assertion and be a permanent warning over a working app.
     expect(wrapper.text()).toBe("");
+  });
+
+  it("stops the window when the core speaks another protocol: no action, and the stamp the core expects (E60)", async () => {
+    const Band = (await import("./Band.vue")).default;
+    const connection = useConnection();
+    const wrapper = mount(Band, { global: { plugins: [i18n] } });
+    connection.receive({ kind: "StaleBuild", value: "81985529216486895" });
+    await nextTick();
+    const notice = wrapper.get(".base-notice");
+    expect(notice.attributes("data-tone")).toBe("stop");
+    expect(notice.get(".title").text()).toBe(i18n.global.t("band.stale"));
+    expect(notice.get(".description").text()).toBe(i18n.global.t("band.expected", { stamp: "81985529216486895" }));
+    // ⛔ NOTHING TO RETRY: the core stopped listening to this build.
+    expect(notice.find("button").exists()).toBe(false);
   });
 
   it("keeps its status region while connected, and the words enter that same region (M-3 of E187)", async () => {

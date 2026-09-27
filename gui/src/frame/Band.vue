@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BaseButton from "../components/BaseButton.vue";
+import BaseNotice from "../components/BaseNotice.vue";
 import BaseStatus from "../components/BaseStatus.vue";
 import { useConnection } from "../stores/connection";
 
@@ -8,35 +9,33 @@ import { useConnection } from "../stores/connection";
 // and "slow" are one state here, because the gui does the same thing in both -- offer `retry`.
 // ⛔ THE REGION IS ALWAYS THERE AND THE BAND ENTERS IT (M-3 of E187, closed by `BaseStatus`): a status region born with
 // its text is the one many screen readers never announce.
+// ⛔ A MESSAGE ON THE PAGE (E60 of the design-system plan): `BaseNotice` with the card's radius, aligned with the cards --
+// `--space-3` from the sides and above them, the dock having none on top (answer 20) -- and under the bar, which leaves it
+// its own 8 px. The space is the message's, never the region's, which stays zero high when empty (E42). Waiting is a
+// warning with «Riprova»; another stamp STOPS the window -- nothing to retry, and the bar's chip is `--color-text-stop`.
 const connection = useConnection();
 </script>
 
 <template>
   <BaseStatus>
-    <div v-if="connection.phase !== 'connected'" class="band">
-      <span v-if="connection.phase === 'stale'">
-        {{ $t("band.stale") }}
-        <template v-if="connection.expected !== null">
-          {{ $t("band.expected", { stamp: connection.expected }) }}
-        </template>
-      </span>
-      <template v-else>
-        <span>{{ $t("band.waiting") }}</span>
+    <BaseNotice
+      v-if="connection.phase === 'stale'"
+      class="band"
+      tone="stop"
+      :title="$t('band.stale')"
+      :description="connection.expected !== null ? $t('band.expected', { stamp: connection.expected }) : undefined"
+      on-page
+    />
+    <BaseNotice v-else-if="connection.phase !== 'connected'" class="band" tone="warn" :title="$t('band.waiting')" on-page>
+      <template #action>
         <BaseButton size="sm" @click="connection.retry()">{{ $t("band.retry") }}</BaseButton>
       </template>
-    </div>
+    </BaseNotice>
   </BaseStatus>
 </template>
 
 <style scoped>
-/* The warning message of the (a): the subtle tint, the warning's text, a border of decoration -- the words carry it. */
 .band {
-  display: flex;
-  gap: var(--space-3);
-  align-items: center;
-  padding: var(--space-2) var(--space-3);
-  background: var(--color-bg-warn-subtle);
-  border-bottom: var(--border-width) solid var(--color-border-warn);
-  color: var(--color-text-warn);
+  margin: 0 var(--space-3) var(--space-3);
 }
 </style>

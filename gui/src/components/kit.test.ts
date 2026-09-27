@@ -10,6 +10,7 @@ import BaseDialog from "./BaseDialog.vue";
 import BaseIcon from "./BaseIcon.vue";
 import BaseLabel from "./BaseLabel.vue";
 import BaseList from "./BaseList.vue";
+import BaseNotice from "./BaseNotice.vue";
 import BaseRadioGroup from "./BaseRadioGroup.vue";
 import BaseStatus from "./BaseStatus.vue";
 import BaseTextField from "./BaseTextField.vue";
@@ -106,6 +107,47 @@ describe("BaseStatus -- M-3 of E187, closed by construction", () => {
     // ⛔ THE SAME ELEMENT, NOW WITH WORDS: a region born with its text is the case many readers do not announce.
     expect(wrapper.get('[role="status"]').element).toBe(region.element);
     expect(region.text()).toBe("Il core non ha risposto.");
+  });
+});
+
+describe("BaseNotice -- the message of the kit (E60 of the plan, control 23)", () => {
+  const tones = ["info", "ok", "warn", "stop"] as const;
+
+  it("draws the icon of its tone, by the tone's name, in each of the four (decision 28 of the design)", () => {
+    for (const tone of tones) {
+      const notice = mount(BaseNotice, { props: { tone, title: "Il core non ha risposto." } });
+      expect(notice.attributes("data-tone")).toBe(tone);
+      expect(notice.get("svg").attributes("data-icon")).toBe(tone);
+    }
+  });
+
+  it("says its title always, its description only when it has one, and has no button of its own (decision 29)", () => {
+    const bare = mount(BaseNotice, { props: { tone: "info", title: "Richiesta inviata: in attesa del core." } });
+    expect(bare.get(".title").text()).toBe("Richiesta inviata: in attesa del core.");
+    // ⛔ NO EMPTY BOX, AND NO CLOSING BY HAND: without a description there is no line for it, and nothing to click.
+    expect(bare.find(".description").exists()).toBe(false);
+    expect(bare.find("button").exists()).toBe(false);
+    const told = mount(BaseNotice, {
+      props: { tone: "stop", title: "Ultima richiesta di VRAM: rifiutata", description: "chiesti 4096 MiB, tetto 1024" },
+    });
+    expect(told.get(".description").text()).toBe("chiesti 4096 MiB, tetto 1024");
+  });
+
+  it("carries the action it is given, and only then centres its row (the owner, 2026-09-27: the 2 px of E60)", () => {
+    const bare = mount(BaseNotice, { props: { tone: "warn", title: "Il core non ha risposto." } });
+    expect(bare.attributes("data-action")).toBeUndefined();
+    const acting = mount(BaseNotice, {
+      props: { tone: "warn", title: "Il core non ha risposto.", onPage: true },
+      slots: { action: () => h(BaseButton, { size: "sm" }, () => "Riprova") },
+    });
+    expect(acting.attributes("data-action")).toBeDefined();
+    expect(acting.get("button").text()).toBe("Riprova");
+  });
+
+  it("takes the card's radius on the page, and only when asked (the (b) of the design)", () => {
+    expect(mount(BaseNotice, { props: { tone: "ok", title: "Concessa" } }).attributes("data-on-page")).toBeUndefined();
+    const onPage = mount(BaseNotice, { props: { tone: "warn", title: "Il core non ha risposto.", onPage: true } });
+    expect(onPage.attributes("data-on-page")).toBeDefined();
   });
 });
 
@@ -241,7 +283,8 @@ describe("BaseDialog", () => {
   });
 });
 
-describe("the eight pieces, under axe", () => {
+// ⛔ NO COUNT IN THE TITLE (trap 23 of the design): it said "the eight pieces", and E60 made them nine.
+describe("the pieces of the kit, under axe", () => {
   // ⛔ ONE PROBE PER PIECE (the (b), "un test con axe per ciascuno"), each in the state a user meets.
   const pieces: [string, () => ReturnType<typeof h>][] = [
     ["BaseButton", () => h(BaseButton, null, () => "Consenti")],
@@ -250,6 +293,9 @@ describe("the eight pieces, under axe", () => {
     ["BaseLabel", () => h(BaseLabel, { icon: "status", as: "h3" }, () => "Stato")],
     ["BaseList", () => h(List, { items: ["uno"], keyOf: (item: string) => item }, { item: ({ item }: { item: string }) => item })],
     ["BaseStatus", () => h(BaseStatus, null, () => "Richiesta inviata.")],
+    ["BaseNotice", () => h(BaseNotice, { tone: "stop", title: "Ultima richiesta di VRAM: rifiutata", description: "chiesti 4096 MiB, tetto 1024" })],
+    ["BaseNotice, on the page with its action", () =>
+      h(BaseNotice, { tone: "warn", title: "Il core non ha risposto.", onPage: true }, { action: () => h(BaseButton, { size: "sm" }, () => "Riprova") })],
     ["BaseTextField", () => h(BaseTextField, { label: "Cerca", icon: "search", modelValue: "" })],
     ["BaseRadioGroup", () => h(BaseRadioGroup, { modelValue: "system", options: [{ value: "system", label: "Sistema" }, { value: "dark", label: "Scuro" }], legend: "Tema" })],
   ];

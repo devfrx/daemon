@@ -71,7 +71,7 @@ describe("Stato", () => {
     wire();
     const wrapper = mount(Status, { global: { plugins: [i18n] } });
     expect(wrapper.text()).toContain(t("status.unknown"));
-    expect(wrapper.find(".event").exists()).toBe(false);
+    expect(wrapper.find(".base-notice").exists()).toBe(false);
   });
 
   it("shows the two degradation flags, the policy with its budget, and G16 from the value in Accepted", async () => {
@@ -90,15 +90,24 @@ describe("Stato", () => {
     expect(text).not.toContain(t("status.unknown"));
   });
 
-  it("shows one event row only once a Verdict has arrived, with Refused told apart", async () => {
-    const { bridge } = wire();
+  it("shows the last Verdict as a message in its tone once one has arrived, Refused with its detail (control 23, E60)", async () => {
+    const { bridge, core } = wire();
     const wrapper = mount(Status, { global: { plugins: [i18n] } });
     bridge.deliver("Verdict");
     await nextTick();
-    const event = wrapper.find(".event");
-    expect(event.exists()).toBe(true);
-    expect(event.text()).toContain(t("status.verdict.Refused"));
-    expect(event.text()).toContain(t("status.refusedDetail", { asked: "4096", ceiling: "1024" }));
+    const notice = () => wrapper.get(".base-notice");
+    expect(notice().attributes("data-tone")).toBe("stop");
+    expect(notice().get(".title").text()).toBe(t("status.verdict.Refused"));
+    expect(notice().get(".description").text()).toBe(t("status.refusedDetail", { asked: "4096", ceiling: "1024" }));
+    core.receive({ kind: "Verdict", value: { verdict: "Granted" } });
+    await nextTick();
+    expect(notice().attributes("data-tone")).toBe("ok");
+    expect(notice().get(".title").text()).toBe(t("status.verdict.Granted"));
+    expect(notice().find(".description").exists()).toBe(false);
+    core.receive({ kind: "Verdict", value: { verdict: "Queued" } });
+    await nextTick();
+    expect(notice().attributes("data-tone")).toBe("info");
+    expect(notice().get(".title").text()).toBe(t("status.verdict.Queued"));
   });
 
   it("keeps the event's status region before a Verdict, and the row enters that same region (M-3 of E187)", async () => {
@@ -170,7 +179,10 @@ describe("Impostazioni", () => {
     await local?.trigger("click");
     expect(bridge.sent).toEqual([{ kind: "Invoke", value: { function: "vram-policy", argument: "local" } }]);
     expect(invoke.inFlight).not.toBeNull();
-    expect(wrapper.text()).toContain(t("settings.inFlight"));
+    // A message in the neutral tone (E60): the call is news, not a warning.
+    const notice = wrapper.get(".base-notice");
+    expect(notice.attributes("data-tone")).toBe("info");
+    expect(notice.get(".title").text()).toBe(t("settings.inFlight"));
   });
 
   it("keeps its status region before an Invoke, and the words enter that same region (M-3 of E187)", async () => {

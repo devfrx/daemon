@@ -31,6 +31,11 @@ function describe(element: Element): string {
  * dialog's sheet, which scrolls, has its top corners placed by its padding at 0.
  */
 export function concentricRadii(roots: Element[]): { near: number; bad: string[] } {
+  // ⛔ HALF A PIXEL OF SLACK (E61 of the design-system plan): a slack is chosen tighter than the smallest defect the rule
+  // wants to see, and that defect is the pixel of a border -- 1.5 kept green a card's radius 1 px inside the card's
+  // edge, on the kit page and in the dock's floating group. The same half pixel decides "in the corner": two distances
+  // further apart cannot share a centre, and the rule off the corner judges them (D25).
+  const SLACK = 0.5;
   const CORNERS = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"] as const;
   type Corner = (typeof CORNERS)[number];
   const radius = (element: Element, corner: Corner): number =>
@@ -78,8 +83,8 @@ export function concentricRadii(roots: Element[]): { near: number; bad: string[]
         const reach = Math.max(outer, inner) + 2;
         if (!(dx < reach && dy < reach)) continue;
         near += 1;
-        const inTheCorner = Math.abs(dx - dy) <= 1.5;
-        const ok = inTheCorner ? Math.abs(inner - (outer - dx)) <= 1.5 : inner <= outer - Math.min(dx, dy) + 1.5;
+        const inTheCorner = Math.abs(dx - dy) <= SLACK;
+        const ok = inTheCorner ? Math.abs(inner - (outer - dx)) <= SLACK : inner <= outer - Math.min(dx, dy) + SLACK;
         if (!ok) {
           bad.push(`${describe(element)} in ${describe(ancestor)}, ${name}: radius ${inner.toFixed(1)}, outer ${outer.toFixed(1)}, distance ${dx.toFixed(1)}/${dy.toFixed(1)}`);
         }

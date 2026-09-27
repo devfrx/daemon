@@ -6,6 +6,7 @@ import BaseDialog from "../components/BaseDialog.vue";
 import BaseIcon from "../components/BaseIcon.vue";
 import BaseLabel from "../components/BaseLabel.vue";
 import BaseList from "../components/BaseList.vue";
+import BaseNotice from "../components/BaseNotice.vue";
 import BaseRadioGroup from "../components/BaseRadioGroup.vue";
 import BaseStatus from "../components/BaseStatus.vue";
 import BaseTextField from "../components/BaseTextField.vue";
@@ -112,6 +113,15 @@ const rows = [
       </section>
 
       <section class="kit-card">
+        <BaseLabel icon="info" as="h2">Messaggi</BaseLabel>
+        <BaseNotice tone="info" title="Richiesta inviata: in attesa del core." />
+        <BaseNotice tone="ok" title="Ultima richiesta di VRAM: concessa" />
+        <BaseNotice tone="warn" title="Il core non ha risposto." />
+        <BaseNotice tone="stop" title="Ultima richiesta di VRAM: rifiutata" description="chiesti 4096 MiB, tetto 1024" />
+        <p class="kit-note">Quattro toni, ciascuno con la sua icona; il testo sotto il titolo quando c'è; nessuno si chiude a mano.</p>
+      </section>
+
+      <section class="kit-card">
         <BaseLabel icon="float" as="h2">Finestra</BaseLabel>
         <BaseDialog title="Serve un permesso" description="Vale per questa tripla e per questa sessione.">
           <template #trigger>
@@ -123,6 +133,14 @@ const rows = [
           </template>
         </BaseDialog>
         <p class="kit-note">Esc chiude, il fuoco resta dentro e torna al pulsante.</p>
+      </section>
+
+      <section class="kit-section kit-wide">
+        <BaseLabel icon="warn" as="h2">Messaggio sulla pagina</BaseLabel>
+        <!-- ⛔ ON THE PAGE AND NOT IN A CARD (trap 22 of the design): an action in a card would sit 13 px from a corner of 8. -->
+        <BaseNotice tone="warn" title="Il core non ha risposto." on-page>
+          <template #action><BaseButton size="sm">Riprova</BaseButton></template>
+        </BaseNotice>
       </section>
 
       <section class="kit-section kit-wide">
@@ -211,12 +229,15 @@ h1 {
 .kit-wide {
   grid-column: 1 / -1;
 }
-/* A frame of 32 with 12 of margin around cards of 20: answer 4, and the `calc` of the tokens. */
+/* A frame of 34 with 12 of margin and its own border around cards of 21: answer 4, and the `calc` of the tokens. ⛔ THE
+   BORDER IS TRANSPARENT AND IT COUNTS (E61): the distance runs from outer edge to outer edge, so every surface of ours
+   that holds something rounded carries its 1 px border, drawn or not. */
 .kit-frame {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-3);
   padding: var(--space-3);
+  border: var(--border-width) solid transparent;
   border-radius: var(--radius-frame);
   background: var(--color-bg-fill);
 }

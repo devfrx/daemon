@@ -93,11 +93,13 @@ SOFTWARE.
   --space-12: 48px;
   --space-16: 64px;
 
-  /* radii: OUTER = INNER + DISTANCE, by construction (answer 4) */
+  /* radii: OUTER = INNER + DISTANCE, by construction (answer 4). The distance runs from outer edge to outer edge, so
+     the border of the one that holds counts: every surface of ours that holds something rounded has its 1 px border,
+     drawn or transparent (E61) */
   --radius-inline: 6px;
   --radius-control: 8px;
-  --radius-card: calc(var(--radius-control) + var(--space-3));   /* 20 */
-  --radius-frame: calc(var(--radius-card) + var(--space-3));     /* 32 */
+  --radius-card: calc(var(--radius-control) + var(--space-3) + var(--border-width));   /* 21 */
+  --radius-frame: calc(var(--radius-card) + var(--space-3) + var(--border-width));     /* 34 */
   --radius-full: 9999px;
 
   /* sizes: nothing clickable under 24 x 24 (WCAG 2.5.8) */
@@ -112,6 +114,9 @@ SOFTWARE.
   --border-width: 1px;
   --focus-width: 2px;        /* WCAG 2.4.13: a 2 px perimeter */
   --focus-offset: 2px;
+
+  /* the scroll bar, thin: a 6 px thumb inside a 2 px transparent border (E59) */
+  --size-scrollbar: 10px;
 
   /* motion: Carbon's productive durations and curves */
   --duration-fast: 110ms;
@@ -153,6 +158,64 @@ body {
 ::selection {
   background: var(--color-bg-selection);
   color: var(--color-text);
+}
+
+/* E59: ONE rule for every box that scrolls -- ours, dockview's, reka-ui's, and those to come. Chromium's
+   pseudo-elements, because the standard `scrollbar-width` and `scrollbar-color` say only colour and thickness, and the
+   arrows stay. Where a box sets one of the two, the pseudo-elements turn off there (MDN): dockview's
+   `.dv-tabs-container` has `scrollbar-width: thin`. Away from the ends on each axis -- `margin-block` alone leaves the
+   horizontal bar at the sides -- and the corner between the two bars transparent, where Chromium draws it light. The
+   thumb shows only with the pointer over the box or the focus inside it, and lights up under the pointer. */
+::-webkit-scrollbar {
+  width: var(--size-scrollbar);
+  height: var(--size-scrollbar);
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-track:vertical {
+  margin-block: var(--space-3);
+}
+
+::-webkit-scrollbar-track:horizontal {
+  margin-inline: var(--space-3);
+}
+
+::-webkit-scrollbar-thumb {
+  border: var(--space-0-5) solid transparent;
+  border-radius: var(--radius-full);
+  background-clip: padding-box;
+  background-color: transparent;
+}
+
+:hover::-webkit-scrollbar-thumb,
+:focus-within::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-strong);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-muted);
+}
+
+/* the trigger: Chromium restyles a custom scroll bar only when the scroller's OWN style changes, and a rule on the
+   pseudo-element alone does not change it -- measured in Chrome 154 and Chromium 152. A registered property that does
+   not inherit, so that nothing below the box restyles with it. */
+@property --scrollbar-trigger {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+:hover,
+:focus-within {
+  --scrollbar-trigger: 1;
 }
 
 /* ===== proposta/themes.css ===== */
@@ -270,7 +333,7 @@ body {
 html{background:#0d0b0b}
 body{margin:0;padding:var(--space-8) var(--space-6);font:var(--font-body)}
 .board{max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:var(--space-8)}
-.sheet{background:var(--color-bg);color:var(--color-text);border-radius:calc(var(--radius-card) + var(--space-6));padding:var(--space-6)}
+.sheet{background:var(--color-bg);color:var(--color-text);border:var(--border-width) solid transparent;border-radius:calc(var(--radius-card) + var(--space-6) + var(--border-width));padding:var(--space-6)}
 h1{font:var(--font-heading);margin:0 0 var(--space-2)}
 h2{font:var(--font-title);margin:0 0 var(--space-3)}
 .lab{font:var(--font-label);letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--color-text-muted);display:flex;align-items:center;gap:var(--space-2);margin:0 0 var(--space-3)}
@@ -318,6 +381,7 @@ table.roles tr.g td{border-top:none;padding-top:var(--space-3)}
 .btn.quiet:hover,.btn.quiet.is-hover{background:var(--color-bg-fill-hover);color:var(--color-text)}
 .btn.quiet:active,.btn.quiet.is-active{background:var(--color-bg-fill-active);color:var(--color-text)}
 .btn.quiet.is-disabled{color:var(--color-text-disabled);background:transparent}
+.btn.sm{height:var(--size-control-sm);padding:0 var(--space-2)}
 .field{display:flex;align-items:center;gap:var(--space-2);height:var(--size-control-md);padding:0 var(--space-3);border-radius:var(--radius-control);border:var(--border-width) solid var(--color-border-strong);background:var(--color-bg);color:var(--color-text-muted);font:var(--font-body)}
 .field svg{width:var(--size-icon-md);height:var(--size-icon-md);flex:none}
 .field.is-hover{border-color:var(--color-text-muted)}
@@ -340,6 +404,10 @@ table.roles tr.g td{border-top:none;padding-top:var(--space-3)}
 .msg svg{width:var(--size-icon-lg);height:var(--size-icon-lg);flex:none}
 .msg b{display:block;font:var(--font-body-strong);color:var(--color-text)}
 .msg span{font:var(--font-caption);color:var(--color-text-muted)}
+.msg>div{flex:1;min-width:0}
+.msg:has(>.btn){align-items:center}
+.msg.on-page{border-radius:var(--radius-card)}
+.msg.info{background:var(--color-bg-accent-subtle);border-color:var(--color-border-accent)}.msg.info svg{color:var(--color-text-accent)}
 .msg.ok{background:var(--color-bg-ok-subtle);border-color:var(--color-border-ok)}.msg.ok svg{color:var(--color-text-ok)}
 .msg.warn{background:var(--color-bg-warn-subtle);border-color:var(--color-border-warn)}.msg.warn svg{color:var(--color-text-warn)}
 .msg.stop{background:var(--color-bg-stop-subtle);border-color:var(--color-border-stop)}.msg.stop svg{color:var(--color-text-stop)}
@@ -357,7 +425,7 @@ table.roles tr.g td{border-top:none;padding-top:var(--space-3)}
 .spaces div{display:flex;align-items:center;gap:var(--space-3);font:var(--font-caption);color:var(--color-text-muted)}
 .spaces i{display:block;height:10px;background:var(--color-mark);border-radius:2px}
 .nest-frame{display:inline-block;border-radius:var(--radius-frame);padding:var(--space-3);background:var(--color-bg-fill);border:var(--border-width) solid var(--color-border)}
-.nest-card{border-radius:var(--radius-card);padding:var(--space-3);background:var(--color-bg-surface)}
+.nest-card{border-radius:var(--radius-card);padding:var(--space-3);background:var(--color-bg-surface);border:var(--border-width) solid var(--color-border-card)}
 .nest-ctl{border-radius:var(--radius-control);height:var(--size-control-md);width:220px;background:var(--color-bg-accent);color:var(--color-text-on-accent);display:flex;align-items:center;justify-content:center;font:var(--font-body-strong)}
 .sizes{display:flex;gap:var(--space-6);align-items:flex-end;flex-wrap:wrap}
 .sizes figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:var(--space-1)}
@@ -369,6 +437,10 @@ table.roles tr.g td{border-top:none;padding-top:var(--space-3)}
 .motion div:hover i{transform:translateX(160px)}
 .rules{margin:0;padding-left:var(--space-6)}
 .rules li{margin:0 0 var(--space-2)}
+.card.sc{display:flex;flex-direction:column;height:240px;padding:0;overflow:hidden}
+.sc h2{padding:var(--space-3) var(--space-3) 0}
+.sc-body{flex:1;min-height:0;overflow:auto;padding:0 var(--space-3) var(--space-3)}
+.sc-body pre{font:var(--font-mono);color:var(--color-text-muted);margin:var(--space-3) 0 0}
 
 </style>
 </head>
@@ -380,7 +452,7 @@ table.roles tr.g td{border-top:none;padding-top:var(--space-3)}
   <div class="lab"><svg class="i" data-icon="list" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 5h.01" /> <path d="M3 12h.01" /> <path d="M3 19h.01" /> <path d="M8 5h13" /> <path d="M8 12h13" /> <path d="M8 19h13" /> </svg>Che cosa cambia rispetto alla tavola approvata</div>
   <ul class="changes">
     <li><b>Grandezza vera.</b> La tavola era in miniatura: testo a 11, etichette a 9. Qui testo 14, etichette 11, numeri grandi 32. Material e IBM Carbon non scendono sotto 11–12.</li>
-    <li><b>Spazi sulla griglia da 4.</b> Schede e cornice con 12 di margine: i raggi diventano 20 e 32 (erano 18 e 28). La regola «fuori = dentro + distanza» resta, scritta nei token.</li>
+    <li><b>Spazi sulla griglia da 4.</b> Schede e cornice con 12 di margine e il loro bordo: i raggi diventano 21 e 34 (erano 18 e 28). La regola «fuori = dentro + distanza» resta, scritta nei token, con la distanza da bordo esterno a bordo esterno.</li>
     <li><b>Focus e segni nel tema scuro:</b> <code>#BF5567</code> invece di <code>#B0475A</code>. Ora almeno 3,4 : 1 anche sui controlli (prima 3,0).</li>
     <li><b>Nel tema chiaro</b> il testo secondario e i testi di stato sono un filo più scuri: restano leggibili anche sulle righe «sopra» e «premuto».</li>
     <li><b>Quattro grigi quasi uguali unificati</b>, differenza invisibile (≤ 1,8 su 100).</li>
@@ -400,6 +472,7 @@ table.roles tr.g td{border-top:none;padding-top:var(--space-3)}
 
 <div class="sheet col" data-theme="dark">
   <div class="lab"><svg class="i" data-icon="layout-grid" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="7" height="7" x="3" y="3" rx="1" /> <rect width="7" height="7" x="14" y="3" rx="1" /> <rect width="7" height="7" x="14" y="14" rx="1" /> <rect width="7" height="7" x="3" y="14" rx="1" /> </svg>Livello 2 — tema scuro</div>
+  <div class="msg warn on-page"><svg class="i" data-icon="triangle-alert" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /> <path d="M12 9v4" /> <path d="M12 17h.01" /> </svg><div><b>Il core non ha risposto.</b></div><button class="btn sm" type="button">Riprova</button></div>
   <div class="card"><h2>I ruoli</h2><table class="roles"><tr class="g"><td colspan="4"><span class="lab" style="margin:0">Fondi</span></td></tr>
 <tr><td><span class="chip" style="background:var(--color-bg)"></span></td><td><code>--color-bg</code></td><td class="c">#151112</td><td class="c">tono 5</td></tr>
 <tr><td><span class="chip" style="background:var(--color-bg-surface)"></span></td><td><code>--color-bg-surface</code></td><td class="c">#1B1718</td><td class="c">tono 8</td></tr>
@@ -476,6 +549,7 @@ table.roles tr.g td{border-top:none;padding-top:var(--space-3)}
       <div class="row is-disabled">Archiviato <em>—</em></div>
     </div>
     <div class="msgs" style="margin-top:var(--space-4)">
+      <div class="msg info"><svg class="i" data-icon="info" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="M12 16v-4" /> <path d="M12 8h.01" /> </svg><div><b>Richiesta inviata</b><span>In attesa del core.</span></div></div>
       <div class="msg ok"><svg class="i" data-icon="circle-check" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m16 9-5.5 5.5L8 12" /> </svg><div><b>Tutto a posto</b><span>Il core risponde e il giornale è integro.</span></div></div>
       <div class="msg warn"><svg class="i" data-icon="triangle-alert" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /> <path d="M12 9v4" /> <path d="M12 17h.01" /> </svg><div><b>VRAM quasi piena</b><span>Resta 1,2 GB: un modello locale aspetterà.</span></div></div>
       <div class="msg stop"><svg class="i" data-icon="circle-x" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m15 9-6 6" /> <path d="m9 9 6 6" /> </svg><div><b>Il core non risponde</b><span>La GUI riprova da sola; puoi anche riprovare ora.</span></div></div>
@@ -500,10 +574,25 @@ table.roles tr.g td{border-top:none;padding-top:var(--space-3)}
         <div class="acts"><span class="btn quiet">Annulla</span><span class="btn pri">Conferma</span></div></div>
     </div>
   </div>
+  <div class="card sc"><h2>Una scheda che scorre — passa sopra, o Tab dentro</h2>
+    <div class="sc-body" tabindex="0" role="region" aria-label="Una scheda che scorre"><div class="rows">
+      <div class="row">Sintesi della riunione <em>09:12</em></div>
+      <div class="row">Report dei costi <em>10:40</em></div>
+      <div class="row">Indice della KB <em>12:48</em></div>
+      <div class="row">Esportazione mesh <em>14:05</em></div>
+      <div class="row">Trascrizione della nota vocale <em>14:31</em></div>
+      <div class="row">Confronto dei preventivi <em>15:02</em></div>
+      <div class="row">Revisione del diff <em>15:47</em></div>
+      <div class="row">Anteprima del viewer 3D <em>16:20</em></div>
+      <div class="row">Riepilogo della settimana <em>17:05</em></div>
+      <div class="row">Pulizia degli artefatti <em>17:40</em></div>
+    </div><pre>2026-09-27 12:48:03  core  giornale  passo 42  intento scritto, esito atteso  ·  una riga di registro non va a capo, e la scatola scorre anche di lato</pre></div>
+  </div>
 </div>
 
 <div class="sheet col" data-theme="light">
   <div class="lab"><svg class="i" data-icon="layout-grid" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <rect width="7" height="7" x="3" y="3" rx="1" /> <rect width="7" height="7" x="14" y="3" rx="1" /> <rect width="7" height="7" x="14" y="14" rx="1" /> <rect width="7" height="7" x="3" y="14" rx="1" /> </svg>Livello 2 — tema chiaro</div>
+  <div class="msg warn on-page"><svg class="i" data-icon="triangle-alert" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /> <path d="M12 9v4" /> <path d="M12 17h.01" /> </svg><div><b>Il core non ha risposto.</b></div><button class="btn sm" type="button">Riprova</button></div>
   <div class="card"><h2>I ruoli</h2><table class="roles"><tr class="g"><td colspan="4"><span class="lab" style="margin:0">Fondi</span></td></tr>
 <tr><td><span class="chip" style="background:var(--color-bg)"></span></td><td><code>--color-bg</code></td><td class="c">#F3EEE6</td><td class="c">tono 94</td></tr>
 <tr><td><span class="chip" style="background:var(--color-bg-surface)"></span></td><td><code>--color-bg-surface</code></td><td class="c">#FBF8F3</td><td class="c">tono 98</td></tr>
@@ -580,6 +669,7 @@ table.roles tr.g td{border-top:none;padding-top:var(--space-3)}
       <div class="row is-disabled">Archiviato <em>—</em></div>
     </div>
     <div class="msgs" style="margin-top:var(--space-4)">
+      <div class="msg info"><svg class="i" data-icon="info" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="M12 16v-4" /> <path d="M12 8h.01" /> </svg><div><b>Richiesta inviata</b><span>In attesa del core.</span></div></div>
       <div class="msg ok"><svg class="i" data-icon="circle-check" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m16 9-5.5 5.5L8 12" /> </svg><div><b>Tutto a posto</b><span>Il core risponde e il giornale è integro.</span></div></div>
       <div class="msg warn"><svg class="i" data-icon="triangle-alert" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /> <path d="M12 9v4" /> <path d="M12 17h.01" /> </svg><div><b>VRAM quasi piena</b><span>Resta 1,2 GB: un modello locale aspetterà.</span></div></div>
       <div class="msg stop"><svg class="i" data-icon="circle-x" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="m15 9-6 6" /> <path d="m9 9 6 6" /> </svg><div><b>Il core non risponde</b><span>La GUI riprova da sola; puoi anche riprovare ora.</span></div></div>
@@ -604,6 +694,20 @@ table.roles tr.g td{border-top:none;padding-top:var(--space-3)}
         <div class="acts"><span class="btn quiet">Annulla</span><span class="btn pri">Conferma</span></div></div>
     </div>
   </div>
+  <div class="card sc"><h2>Una scheda che scorre — passa sopra, o Tab dentro</h2>
+    <div class="sc-body" tabindex="0" role="region" aria-label="Una scheda che scorre"><div class="rows">
+      <div class="row">Sintesi della riunione <em>09:12</em></div>
+      <div class="row">Report dei costi <em>10:40</em></div>
+      <div class="row">Indice della KB <em>12:48</em></div>
+      <div class="row">Esportazione mesh <em>14:05</em></div>
+      <div class="row">Trascrizione della nota vocale <em>14:31</em></div>
+      <div class="row">Confronto dei preventivi <em>15:02</em></div>
+      <div class="row">Revisione del diff <em>15:47</em></div>
+      <div class="row">Anteprima del viewer 3D <em>16:20</em></div>
+      <div class="row">Riepilogo della settimana <em>17:05</em></div>
+      <div class="row">Pulizia degli artefatti <em>17:40</em></div>
+    </div><pre>2026-09-27 12:48:03  core  giornale  passo 42  intento scritto, esito atteso  ·  una riga di registro non va a capo, e la scatola scorre anche di lato</pre></div>
+  </div>
 </div>
 </div>
 <div class="sheet col" data-theme="dark">
@@ -614,7 +718,7 @@ table.roles tr.g td{border-top:none;padding-top:var(--space-3)}
     </div></div>
     <div class="card"><h2>Raggi concentrici</h2>
       <div class="nest-frame"><div class="nest-card"><div class="nest-ctl">controllo 8</div></div></div>
-      <p class="cap">cornice 32 = scheda 20 + 12 · scheda 20 = controllo 8 + 12 · in linea 6 · pillola tonda</p></div>
+      <p class="cap">cornice 34 = scheda 21 + 12 + 1 · scheda 21 = controllo 8 + 12 + 1 · in linea 6 · pillola tonda</p></div>
     <div class="card"><h2>Misure</h2><div class="sizes">
       <figure><div class="box" style="width:24px;height:24px"></div><figcaption>24 · minimo</figcaption></figure>
       <figure><div class="box" style="width:32px;height:32px"></div><figcaption>32 · controllo</figcaption></figure>

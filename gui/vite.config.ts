@@ -109,7 +109,10 @@ export default defineConfig({
             screenshotFailures: false,
             // ⛔ THE INSTALLED CHROME (decision 22 of the design): nothing is downloaded, and a machine without
             // it goes red at this step with Playwright's own message -- the prerequisite, declared.
-            provider: playwright({ launchOptions: { channel: "chrome" } }),
+            // ⛔ WITH ITS SCROLL BARS (control 22, E59): headless, Playwright launches Chrome with `--hide-scrollbars`, and a
+            // bar is then 0 px thick, with our rule and without it. Shown, it is 15 without the rule and `--size-scrollbar`
+            // with it -- and no other probe moved, measured on 2026-09-27 (D26 of the design-system plan).
+            provider: playwright({ launchOptions: { channel: "chrome", ignoreDefaultArgs: ["--hide-scrollbars"] } }),
             instances: [{ browser: "chromium" }],
             // The width the approved boards were probed at; the default is a phone's, 414 x 896.
             viewport: { width: 1440, height: 900 },

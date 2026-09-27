@@ -60,7 +60,7 @@ const open = defineModel<boolean | undefined>("open", { default: undefined });
   box-shadow: var(--shadow-overlay);
   color: var(--color-text);
 }
-/* The radii follow the rule of answer 4: a card of 20 with 12 of margin around controls of 8.
+/* The radii follow the rule of answer 4: a card of 21, 12 of margin and its 1 px border, around controls of 8 (E61).
    ⚠️ The width here and the sheet's `max-height` below are the PLAN's choice, written by hand: the board has no token
    for a window's size -- its `.dlg` is 74% of its frame -- and a token is the board's to add (R2-18 of the review). */
 .base-dialog[data-variant="center"] {

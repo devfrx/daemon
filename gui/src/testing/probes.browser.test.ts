@@ -42,7 +42,7 @@ it("never compares a straight corner -- a sheet's r r 0 0 (answer 20, E30)", () 
 
 it("off the corner, refuses a piece rounder than the outer radius minus the smaller distance (E33)", () => {
   const root = outer();
-  // 17/13 from the bottom-left corner: at most 20 - 13, with the probe's 1.5 px of slack.
+  // 17/13 from the bottom-left corner: at most 20 - 13, with the probe's half pixel of slack (E61).
   box("piece", "position:absolute;left:17px;bottom:13px;width:120px;height:40px;border-radius:16px", root);
   expect(concentricRadii([root])).toEqual({
     near: 1,
@@ -52,16 +52,31 @@ it("off the corner, refuses a piece rounder than the outer radius minus the smal
 
 it("off the corner, lets a smaller radius be (E33)", () => {
   const root = outer();
-  box("piece", "position:absolute;left:17px;bottom:13px;width:120px;height:40px;border-radius:8px", root);
+  // At most 20 - 13, and the bound itself passes. It was 8 here, green only by the old slack of 1.5 (E61).
+  box("piece", "position:absolute;left:17px;bottom:13px;width:120px;height:40px;border-radius:7px", root);
   expect(concentricRadii([root])).toEqual({ near: 1, bad: [] });
 });
 
 it("reads the radius a corner is DRAWN with: a short bar's r r 0 0 keeps it (E46)", () => {
   const root = outer();
-  // 24 px tall, `20px 20px 0 0`, 1/1 inside the top corners: each side's two radii fit in the side, so CSS draws 20,
-  // and the outer corner wants 19 -- in the probe's slack. Halving each corner on its own read 12.
-  box("bar", "position:absolute;left:1px;right:1px;top:1px;height:24px;border-radius:20px 20px 0 0", root);
+  // 24 px tall, `19px 19px 0 0`, 1/1 inside the top corners: each side's two radii fit in the side, so CSS draws 19,
+  // which is what the outer corner wants. Halving each corner on its own read 12.
+  box("bar", "position:absolute;left:1px;right:1px;top:1px;height:24px;border-radius:19px 19px 0 0", root);
   expect(concentricRadii([root])).toEqual({ near: 2, bad: [] });
+});
+
+it("sees the pixel of a border: the same bar at the outer radius is one pixel too round (E61)", () => {
+  const root = outer();
+  // What the dock's floating title bar was: the card's radius, 1 px inside the card's edge. The old slack of 1.5 kept it
+  // green; half a pixel is under the smallest defect the rule wants to see.
+  box("bar", "position:absolute;left:1px;right:1px;top:1px;height:24px;border-radius:20px 20px 0 0", root);
+  expect(concentricRadii([root])).toEqual({
+    near: 2,
+    bad: [
+      "bar in outer, top-left: radius 20.0, outer 20.0, distance 1.0/1.0",
+      "bar in outer, top-right: radius 20.0, outer 20.0, distance 1.0/1.0",
+    ],
+  });
 });
 
 it("still shrinks the radii where CSS does: the same bar with four corners (E46)", () => {

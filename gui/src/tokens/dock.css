@@ -135,13 +135,15 @@
   --dv-inactivegroup-hiddenpanel-tab-background-color: var(--color-bg-raised);
   border-radius: var(--radius-card);
 }
+/* ⛔ ONE BORDER INSIDE THE CONTAINER'S EDGE, SO THE CARD'S RADIUS LESS THE BORDER (E61): the title bar and the group sit
+   right inside the container's 1 px border, as the drop zone inside a card's (E55). */
 .dockview-theme-harness .dv-resize-container > .dv-floating-titlebar {
-  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  border-radius: calc(var(--radius-card) - var(--border-width)) calc(var(--radius-card) - var(--border-width)) 0 0;
 }
 /* Inside a floating container the group is not a second card: the container is. */
 .dockview-theme-harness .dv-resize-container .dv-groupview {
   border: 0;
-  border-radius: 0 0 var(--radius-card) var(--radius-card);
+  border-radius: 0 0 calc(var(--radius-card) - var(--border-width)) calc(var(--radius-card) - var(--border-width));
   box-shadow: none;
 }
 /* ⛔ AND THE RENDER OVERLAY, THE SAME CYCLE (E51): `.dv-render-overlay { --dv-overlay-z-index: var(--dv-overlay-z-index,

@@ -33,11 +33,13 @@
   --space-12: 48px;
   --space-16: 64px;
 
-  /* radii: OUTER = INNER + DISTANCE, by construction (answer 4) */
+  /* radii: OUTER = INNER + DISTANCE, by construction (answer 4). The distance runs from outer edge to outer edge, so
+     the border of the one that holds counts: every surface of ours that holds something rounded has its 1 px border,
+     drawn or transparent (E61) */
   --radius-inline: 6px;
   --radius-control: 8px;
-  --radius-card: calc(var(--radius-control) + var(--space-3));   /* 20 */
-  --radius-frame: calc(var(--radius-card) + var(--space-3));     /* 32 */
+  --radius-card: calc(var(--radius-control) + var(--space-3) + var(--border-width));   /* 21 */
+  --radius-frame: calc(var(--radius-card) + var(--space-3) + var(--border-width));     /* 34 */
   --radius-full: 9999px;
 
   /* sizes: nothing clickable under 24 x 24 (WCAG 2.5.8) */
@@ -52,6 +54,9 @@
   --border-width: 1px;
   --focus-width: 2px;        /* WCAG 2.4.13: a 2 px perimeter */
   --focus-offset: 2px;
+
+  /* the scroll bar, thin: a 6 px thumb inside a 2 px transparent border (E59) */
+  --size-scrollbar: 10px;
 
   /* motion: Carbon's productive durations and curves */
   --duration-fast: 110ms;
@@ -93,4 +98,62 @@ body {
 ::selection {
   background: var(--color-bg-selection);
   color: var(--color-text);
+}
+
+/* E59: ONE rule for every box that scrolls -- ours, dockview's, reka-ui's, and those to come. Chromium's
+   pseudo-elements, because the standard `scrollbar-width` and `scrollbar-color` say only colour and thickness, and the
+   arrows stay. Where a box sets one of the two, the pseudo-elements turn off there (MDN): dockview's
+   `.dv-tabs-container` has `scrollbar-width: thin`. Away from the ends on each axis -- `margin-block` alone leaves the
+   horizontal bar at the sides -- and the corner between the two bars transparent, where Chromium draws it light. The
+   thumb shows only with the pointer over the box or the focus inside it, and lights up under the pointer. */
+::-webkit-scrollbar {
+  width: var(--size-scrollbar);
+  height: var(--size-scrollbar);
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-track:vertical {
+  margin-block: var(--space-3);
+}
+
+::-webkit-scrollbar-track:horizontal {
+  margin-inline: var(--space-3);
+}
+
+::-webkit-scrollbar-thumb {
+  border: var(--space-0-5) solid transparent;
+  border-radius: var(--radius-full);
+  background-clip: padding-box;
+  background-color: transparent;
+}
+
+:hover::-webkit-scrollbar-thumb,
+:focus-within::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-strong);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-muted);
+}
+
+/* the trigger: Chromium restyles a custom scroll bar only when the scroller's OWN style changes, and a rule on the
+   pseudo-element alone does not change it -- measured in Chrome 154 and Chromium 152. A registered property that does
+   not inherit, so that nothing below the box restyles with it. */
+@property --scrollbar-trigger {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+:hover,
+:focus-within {
+  --scrollbar-trigger: 1;
 }

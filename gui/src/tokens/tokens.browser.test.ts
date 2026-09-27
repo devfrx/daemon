@@ -129,4 +129,34 @@ describe("the tokens, in a real browser (design system, sections (a) and (f))", 
     // ⛔ THE SECOND DIRECTION: a token the page does not define is an error, not "" -- a `gap` of NaN is what "" became.
     expect(() => readToken("--space-that-is-not")).toThrow(/is not defined here/);
   });
+
+  it("draw every scroll bar `--size-scrollbar` thick, and light its trigger under the pointer and with the focus inside (control 22, E59)", async () => {
+    const box = document.createElement("div");
+    box.style.cssText = "width:200px;height:100px;overflow:auto";
+    box.tabIndex = 0;
+    const content = document.createElement("div");
+    content.style.cssText = "width:400px;height:400px";
+    box.append(content);
+    document.body.append(box);
+    // ⛔ NON-VACUITY: the box scrolls both ways, so there are two bars to measure.
+    expect(box.scrollHeight).toBeGreaterThan(box.clientHeight);
+    expect(box.scrollWidth).toBeGreaterThan(box.clientWidth);
+    // ⛔ THE THICKNESS THE ENGINE DRAWS, against the token: 0 while the project hid the bars (trap 25 of the design), 15
+    // without our rule -- Chrome's own -- measured on 2026-09-27.
+    const thick = Number.parseFloat(readToken("--size-scrollbar"));
+    expect({ vertical: box.offsetWidth - box.clientWidth, horizontal: box.offsetHeight - box.clientHeight }).toEqual({
+      vertical: thick,
+      horizontal: thick,
+    });
+    // ⛔ THE TRIGGER (E59): Chromium redraws a custom bar only when the box's OWN style changes, so the rule sets a
+    // registered property on it. The thumb that lights up is the owner's to see; this reads that the box's style moves.
+    const trigger = (): string => getComputedStyle(box).getPropertyValue("--scrollbar-trigger").trim();
+    expect(trigger()).toBe("0");
+    await userEvent.hover(box);
+    expect(trigger()).toBe("1");
+    await userEvent.unhover(box);
+    expect(trigger()).toBe("0");
+    box.focus();
+    expect(trigger()).toBe("1");
+  });
 });

@@ -1781,3 +1781,71 @@ del sotto-progetto.
    archivio.
 6. Poi il pre-controllo del compito 7, e così compito per compito fino al 9. Al **pre-controllo del compito 8** le sonde che
    l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed **E57** — e la domanda di **E44** sulla Panoramica.
+
+## Lo sguardo del proprietario sulle tre voci, del 2026-09-27
+
+Tolto dal piano il 2026-09-27, quando la sessione dopo ha mostrato al proprietario le tre voci su una copia della tavola dei
+token e ha scritto la consegna *«Come si riprende — lo sguardo del proprietario sulle tre voci, approvate»*. Il testo com'era,
+dal commit `46c3a8f`, parola per parola; i rimandi sono riscritti per questa cartella.
+
+## Come si riprende — il disegno delle tre voci, scritto, 2026-09-27
+
+✅ **Il disegno delle tre voci del Passo 8 è scritto.** **E61** ed **E59** dalla sessione di prima, **E60** da questa: nel
+[disegno](../superpowers/specs/2026-09-22-design-system-design.md) e, per le fonti e le misure, in [`riferimenti.md`](../riferimenti.md).
+La tavola dei token **non** è toccata, e il codice nemmeno. La consegna precedente — il disegno a metà — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+⛔ **Da sapere subito: la tavola non cambia da sola nel blocco di `base.css`.** `gui/src/tokens/board.test.ts` vuole
+`gui/src/tokens/base.css` e `themes.css` uguali **byte per byte** ai due blocchi della
+[tavola](../superpowers/specs/2026-09-22-design-system-tavole/token.html): i raggi di E61, e la regola e il token di E59, li porta nella tavola
+il **piano della cura**, insieme alla copia. Fuori dai due blocchi, la parte *«the board itself»* — dove andranno il campione del
+tono `info` e il messaggio sulla pagina di E60 — la prova non la confronta. Quindi lo **sguardo del proprietario** sulle tre voci
+si fa su una **copia della tavola nello scratchpad**.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **i commit** | `git log --oneline abf4f33..HEAD`: uno, quello che scrive questa riga — il disegno di E60, la sua misura in `riferimenti.md`, il richiamo in E60, la riga 6 della posizione, questa sezione e la precedente in archivio. Nessun codice cambia: `git diff --stat abf4f33..HEAD -- . ':!docs'` non rende nulla |
+| **cancello** | `GATE GREEN` all'apertura su `abf4f33` e prima del commit che scrive questa riga, sullo stesso codice: jsdom 137 prove e una saltata, browser 48, il pezzo `690.61 kB`, `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo**, e col server di sviluppo spento |
+| **la CI** | `abf4f33` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | la riga 6 a `⏳`: il disegno delle tre voci scritto; restano lo sguardo del proprietario e la cura |
+| **le pagine di prova** | sulla macchina `Jays`, **non tracciate**, e nessuna nuova: quelle di E59 ed E60 del 2026-09-26 stanno nella cartella che elenca la consegna in archivio del Passo 8 ripreso — la fascia approvata è `fascia-al-suo-posto-v3.html` —, quelle di E61 ed E59 del 2026-09-27 dove dice la consegna qui sopra, ora in archivio. Le regole approvate stanno nelle voci e nel disegno, e bastano a rifarle |
+| **i server** | nessuno acceso. ⚠️ All'apertura girava ancora il compagno visivo della sessione di prima — `node server.cjs`, contro il *«nessun server resta acceso»* della sua consegna —: spento da questa |
+| **solo su `Jays`** | `.claude/launch.json`, esclusa da git: si può tenere o cancellare |
+| **dall'altra macchina** | si riprende da `origin`: le voci, il disegno, `riferimenti.md` e questa sezione bastano |
+
+**Che cosa ha fatto questa sessione.** Nessun dispaccio: il disegno di **E60** — nella (b) il pezzo, nella (d) la fascia, il
+controllo 23 e le trappole 21–24. Il proprietario ha lasciato al coordinatore, coi criteri di `decision-principles`, **il nome**
+del pezzo e **l'approvazione** delle sezioni: il pezzo è **`BaseNotice`** — nel codice della GUI *message* è già il messaggio del
+filo —, e le scelte sono le decisioni 28 e 29 del disegno. In più, dai criteri e dalla misura: l'azione **solo sulla pagina**, che
+la regola dei raggi vuole; e il contrasto del messaggio rimisurato da `themes.css`, che **diverge** da quello scritto in E60 — le
+coppie passano tutte.
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura
+del sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **un nome si prova contro il codice prima di proporlo**: *message* era già il messaggio del filo — `IpcMessage`, e `message.kind` in quattro negozi —, e l'ha detto un `grep` sugli identificatori, non la voce che lo proponeva | prima di dare un nome, lo si cerca fra gli identificatori di `gui/src` |
+| 2 | **una regola approvata in un posto vale in tutti quelli dove il pezzo va**: la fascia concentrica per costruzione vuol dire che in una scheda un'azione non lo sarebbe — e la pagina kit, che mostra ogni stato, l'avrebbe fatta rossa | di un pezzo nuovo si provano i raggi dove andrà, non solo dove è stato guardato |
+| 3 | **una cifra copiata diventa falsa quando il disegno cresce**: gli *«otto pezzi»* vivono nella testa del piano e nel compito 9 | a ogni pezzo nuovo, `grep -n 'otto pezzi'` sul piano; la cifra si toglie (gotcha #68) |
+| 4 | **una misura scritta senza il metodo non si riproduce**: il *«testo fra 11,6 e 16,8»* di E60 non tornava, e il testo sotto il titolo non c'era | una misura si scrive col comando accanto, in `riferimenti.md`, e si rifà prima di citarla |
+| 5 | **una consegna può mentire anche su un processo**: *«nessun server resta acceso»*, e il compagno visivo girava | alla ripresa, la riga di comando dei processi `node` prima di lanciare il cancello |
+
+**Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. **Lo sguardo del proprietario sulle tre voci insieme**, su una **copia della tavola nello scratchpad**: i valori di E61 — la
+   scheda 21, la cornice 34, la scheda e il foglio della dimostrazione col loro bordo —; la regola di E59 col token
+   `--size-scrollbar`; e nella parte *«the board itself»* il messaggio `info` accanto agli altri tre toni e un messaggio **sulla
+   pagina** con «Riprova», com'è la fascia della (d). Verificata prima con la sonda a mezzo pixel nei due temi — la decisione 5
+   del disegno —, su una pagina di misura servita a parte con `python -m http.server <porta> --bind 127.0.0.1`; mostrata col
+   compagno visivo di `superpowers:brainstorming`, come le pagine di prova delle voci.
+3. **Il piano della cura**, poi il suo pre-controllo e l'esecuzione: la tavola e la sua copia, `tokens/dock.css`, la sonda,
+   `BaseNotice` con le quattro icone e i tre usi, e le trappole 21–24 del disegno. Se sia un compito nuovo o il Passo 8 del
+   compito 6 lo decide chi scrive il piano, col proprietario.
+4. Il secondo sguardo del proprietario sul dock; approvato, la riga 6 a `✅` col verbale del Passo 8, e questa sezione in
+   archivio.
+5. Poi il pre-controllo del compito 7, e così compito per compito fino al 9. Al **pre-controllo del compito 8** le sonde che
+   l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed **E57** — e la domanda di **E44** sulla Panoramica; a quello del
+   **9**, le cifre degli *«otto pezzi»*, la trappola 23 del disegno.

@@ -2345,3 +2345,119 @@ sotto-progetto.
    avrà deciso la forma. A quello del **9**, la Definizione di «fatto» con le righe 22 e 23.
 3. ⏳ **Due domande per il proprietario**, una per volta e quando vuole: la forma della cura di **E74**; e se l'assunzione della
    barra debba avere un compito che la misuri.
+
+## L'esecuzione del compito 8, del 2026-09-27
+
+Tolto dal piano il 2026-09-27, quando la stessa giornata ha eseguito il compito 8 — il dispaccio, la revisione, le cure del curatore e di X4, lo sguardo del proprietario — e ha scritto la consegna *«Come si riprende — l'esecuzione del compito 8»*. Il testo com'era, dal commit `7f04cdf`, parola per parola; i rimandi sono riscritti per questa cartella.
+
+## Come si riprende — il pre-controllo del compito 8, 2026-09-27
+
+✅ **Il pre-controllo del compito 8 è fatto: undici voci, E91…E101**, scritte nell'errata e applicate al testo. **E100** è del
+proprietario — **A**, l'anello del fuoco dentro, scelto il 2026-09-27 —; le altre le ha decise il coordinatore coi cinque
+criteri, fuori dal merito approvato. Il compito rifatto dal testo del piano su un `git worktree` di `f3206c7` nello
+scratchpad, macchina `Jays`: com'era scritto, i difetti di **E91**, **E93**…**E95** e il rifiuto di **E63**; poi le sonde e
+le cure che l'errata gli lasciava, ciascuna vista rossa prima, **E96**…**E101**; e il testo corretto, rigenerato dalla copia
+e applicato con `plan_ops.py` a una copia pulita di `f3206c7` — trentanove operazioni, nessun rifiuto —, rende i **venti**
+file della copia di lavoro byte per byte. Su quella copia: al Passo 3 i rossi scritti; al Passo 7 `Tests  61 passed (61)` e
+`Tests  49 passed (49)`; al Passo 8 `Tests  234 passed | 1 skipped (235)`, *build* e linter puliti, il pezzo `698.14 kB`,
+compresso `212.98 kB`, e cinque corse su cinque; le **trentadue** righe del Passo 9 rosse ciascuna col suo messaggio, sulla
+suite intera, ogni file tornato uguale. Zero CR in ogni file, tutti `i/lf w/lf`, i due nuovi LF. La riga 8 della posizione
+resta a `⬜`, pre-controllata. La consegna precedente — l'esecuzione del compito 7 — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+⛔ **Da sapere subito.**
+
+1. **Lo sguardo del Passo 10 è del proprietario col coordinatore** (**E101**): l'implementatore fa i Passi 1–9 e il commit del
+   codice, **senza** celle; la chiusura scrive la riga 8 e la colonna Commit della riga 7, `0417c9c` con la cura `a606f33`.
+2. **Il compito tocca anche due file di compiti chiusi**: `stores/layout.ts` del 7, con `showNamed` (**E99**), e
+   `testing/probes.ts` del 4, con `computed` (**E92**); e porta la regola dell'anello in `tokens/dock.css` (**E100**).
+3. **La domanda di classe di E40** — ogni scrittura prima del benvenuto, compreso il `settle` del dock — resta del
+   proprietario, **registrata e non presa** (**E98**).
+4. **In `%TEMP%` restano le cartelle di prova di sessioni passate** — `pc2`…`pc6c`, `rv4`, `rv5`, `rv6` —: toglierle è del
+   proprietario; `ls -d /c/Users/Jays/AppData/Local/Temp/pc* /c/Users/Jays/AppData/Local/Temp/rv*` le elenca.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **i commit** | `git log --oneline f3206c7..HEAD`: uno, quello che scrive questa riga — l'errata, il compito 8 corretto, il richiamo di **E74** nella (a) del disegno, questa sezione e la precedente in archivio, i tre file del dispaccio. Nessun codice cambia: `git diff --stat f3206c7..HEAD -- gui/ crates/` non rende nulla |
+| **cancello** | `GATE GREEN` all'apertura su `f3206c7` — jsdom 157 prove passate e una saltata, browser 56, il pezzo `693.02 kB`, `found 0 vulnerabilities` — e prima del commit che scrive questa riga. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `f3206c7` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | le righe dalla 1 alla 7 a `✅`; l'8, pre-controllata, e la 9 a `⬜` |
+| **lo scratchpad** | sulla macchina `Jays`, **non tracciato**: in `tools/` gli attrezzi del pre-controllo — `fix8.py`, che rigenera il testo del compito dalla copia, `docs8.py`, `w8tests.py`, `w8tests2.py`, `w8cures.py`, `violations8.py` con `rows8b.py` —; in `logs/` le corse. Non servono a riprendere: il piano basta |
+| **server e cartelle di prova** | nessun server acceso; i due `git worktree` del pre-controllo tolti — `git worktree list` rende la sola cartella del repository |
+
+**Che cosa ha fatto questa sessione.** La ripresa coi comandi, la CI di `f3206c7` e il cancello d'apertura; il compito rifatto
+dal testo com'era — i rossi, i verdi, le cinque corse, le venti righe del Passo 9 sulla suite intera —; una diagnostica nel
+Chrome installato per le voci che l'errata gli lasciava; la domanda di **E74** al proprietario, **A**; le sonde prima delle
+cure, viste rosse, poi le cure; le tredici righe nuove del Passo 9; il testo corretto rigenerato dalla copia e rifatto su una
+copia pulita; il dispaccio, con `compare_task8.py` provato nelle due direzioni; la chiusura.
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — le raccoglie la chiusura del sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **una sonda `grep` su un nome corto prende anche un colore**: `F3` sta in `#F3EEE6` dal compito 1 | una sonda che cerca un nome cerca la **parola**, `grep -w`, e il suo Atteso si rimisura |
+| 2 | **una violazione che toglie una riga di JSON ne rompe il formato**: la virgola della riga prima resta, e cadono dodici file, non una prova | la violazione su un file di dati si prova da sola, prima di scriverne l'Atteso |
+| 3 | **i conti dedotti per un compito lontano ignorano le cure dei compiti in mezzo**: **E64** contava le prove del 6bis e non le dieci del dock nate dalle cure del compito 6 | un conto dedotto si rimisura al pre-controllo del compito che lo porta |
+| 4 | **il testo corretto si rigenera dalla copia che passa, invece di riscriverlo a mano**: `fix8.py` prende i file dalla copia e le ancore da `f3206c7`, e verifica che le sostituzioni ricostruiscano la copia prima di scriverle | un pre-controllo con molte aggiunte parte da lì |
+
+📌 **La ricetta del compito 8**, per rifarlo o confrontarlo dal testo del piano, vale per il piano del commit che scrive
+questa riga — le righe prima di questa sezione non cambiano chiudendo una sessione. `compare_task8.py <base> <target>` la
+legge: `W` un file intero, creato o riscritto, `R` il *Trova* e il *Sostituisci* di una sostituzione.
+
+```text
+# Passo 2
+R gui/src/testing/axe.ts 9127 9134
+R gui/src/testing/probes.ts 9156 9162
+R gui/src/kit/kit.browser.test.ts 9185 9198
+R gui/src/kit/kit.browser.test.ts 9210 9228
+R gui/src/kit/kit.browser.test.ts 9237 9243
+R gui/src/kit/kit.browser.test.ts 9249 9263
+R gui/src/frame/dock.browser.test.ts 9275 9288
+R gui/src/frame/dock.browser.test.ts 9307 9313
+R gui/src/frame/dock.browser.test.ts 9319 9336
+R gui/src/frame/frame.test.ts 9346 9365
+R gui/src/frame/frame.test.ts 9389 9398
+R gui/src/stores/stores.test.ts 9598 9604
+R gui/src/a11y.test.ts 9625 9632
+R gui/src/a11y.test.ts 9640 9649
+R gui/src/a11y.test.ts 9660 9667
+R gui/src/a11y.test.ts 9674 9699
+R gui/src/locales/copy.test.ts 9746 9753
+R gui/src/locales/copy.test.ts 9761 9768
+R gui/src/locales/copy.test.ts 9776 9783
+R gui/src/frame/frame.browser.test.ts 9804 9811
+R gui/src/frame/frame.browser.test.ts 9819 9826
+R gui/src/frame/frame.browser.test.ts 9838 9852
+R gui/src/frame/frame.browser.test.ts 9861 9893
+# Passo 4
+W gui/src/stores/drawer.ts 10144
+R gui/src/stores/invoke.ts 10165 10171
+R gui/src/stores/invoke.ts 10177 10184
+R gui/src/stores/invoke.ts 10200 10206
+R gui/src/components/Confirm.vue 10214 10237
+R gui/src/components/Confirm.vue 10254 10260
+W gui/src/frame/Drawer.vue 10266
+# Passo 5
+R gui/src/locales/it.json 10310 10318
+R gui/src/locales/it.json 10325 10335
+R gui/src/stores/layout.ts 10359 10366
+R gui/src/stores/layout.ts 10384 10390
+W gui/src/frame/Overview.vue 10396
+# Passo 6
+W gui/src/frame/ViewBar.vue 10678
+W gui/src/frame/Frame.vue 10745
+# Passo 7
+W gui/src/panels/Strip.vue 10836
+R gui/src/tokens/dock.css 10898 10905
+```
+
+**Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. **L'esecuzione del compito 8**: il brief da `_extract_brief_8.py`, il prompt dal modello `dispatch-task-8.md`, col sì del
+   proprietario sulla banda dei costi detta prima — un compito **con** lo sguardo, e più grande del 7: la base è la banda dei
+   compiti 4, 6 e 6bis, 0,82–0,94 milioni —; l'implementatore, la revisione con `compare_task8.py`, le cure; poi il Passo 10
+   col proprietario, e la chiusura con le celle.
+3. ⏳ **Una domanda per il proprietario**, quando vuole: se l'assunzione della barra di scorrimento debba avere un compito che
+   la misuri. A quello del **9**, la Definizione di «fatto» con le righe 22 e 23.

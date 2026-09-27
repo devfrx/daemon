@@ -1927,3 +1927,63 @@ sotto-progetto.
 5. Poi il pre-controllo del compito 7, e così compito per compito fino al 9. Al **pre-controllo del compito 8** le sonde che
    l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed **E57** — e la domanda di **E44** sulla Panoramica; a quello del
    **9**, le cifre degli *«otto pezzi»*, la trappola 23 del disegno.
+
+## Il pre-controllo del compito 6bis, del 2026-09-27
+
+Tolto dal piano il 2026-09-27, quando la sessione dopo ha fatto il pre-controllo del compito 6bis — **E64**…**E69** — e la consegna *«Come si riprende — il pre-controllo del compito 6bis»*. Il testo com'era, dal commit `dc77fc8`, parola per parola; i rimandi sono riscritti per questa cartella.
+
+## Come si riprende — il piano della cura, scritto: il compito 6bis, 2026-09-27
+
+✅ **Il piano della cura è scritto: il compito 6bis**, fra il 6 e il 7. Il proprietario ha risposto alle due domande della
+consegna di prima, in chat: la cura è **un compito nuovo** (A), e con un'azione la riga del messaggio sta **al centro** (B),
+guardando una pagina di confronto — **E62**, **D27**. Il codice del compito è **provato**: scritto una volta sola, applicato passo
+per passo a un `git worktree` di `950bba1` nello scratchpad, ogni rosso e ogni verde misurato, e il testo del compito riletto a
+macchina contro quel codice — applicato a una copia pulita rende i diciotto file byte per byte. La consegna precedente — lo
+sguardo del proprietario sulle tre voci — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+⛔ **Da sapere subito.**
+
+1. **La tavola e il codice del repository NON sono toccati**: li cambia l'esecuzione del 6bis. Il compito porta tutto — lo script
+   della tavola, `cure_board.py`, e ogni riga di codice —, quindi dall'altra macchina basta il piano.
+2. **Il codice del 6bis è stato provato su `950bba1`.** Se prima dell'esecuzione un commit tocca `gui/`, il pre-controllo lo
+   rilegge contro il codice di allora (`CLAUDE.md`, domanda 5): `git log --oneline 950bba1..HEAD -- gui/`.
+3. **La conferma col mouse vero dell'innesco della barra** non è ancora registrata: è il punto 1 del Passo 16 del 6bis.
+4. **`frame.browser.test.ts` lo crea il 6bis, e il compito 8 lo estende** — **E63**, per il pre-controllo dell'8.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **i commit** | `git log --oneline 950bba1..HEAD`: uno, quello che scrive questa riga — il compito 6bis, la sua riga nella posizione, i richiami in E59–E61, **E62** ed **E63**, **D25**…**D29**, le cifre degli *«otto pezzi»* tolte dalla testa, dal compito 9 e dalla Definizione di «fatto», le righe 22 e 23 della Definizione, il richiamo nella (b) del disegno, questa sezione e la precedente in archivio. Nessun codice cambia: `git diff --stat 950bba1..HEAD -- . ':!docs'` non rende nulla |
+| **cancello** | `GATE GREEN` all'apertura su `950bba1` e prima del commit che scrive questa riga: jsdom 137 prove e una saltata, browser 48, il pezzo `690.61 kB`, `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `950bba1` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | la riga 6 a `⏳`, che si chiude con lo sguardo del 6bis; la riga 6bis a `⬜`, scritta |
+| **lo scratchpad** | sulla macchina `Jays`, **non tracciato**, in `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\610b1550-3878-4544-84a7-eebbb678426d\scratchpad\`: in `cura/` l'attrezzo che ha provato e reso il compito — `cura_ops.py` coi passi, `cura_tool.py`, `roundtrip.py`, `directions.py` con le quindici violazioni —; in `cured/` i diciotto file curati; in `look/due-px.html` la pagina della seconda domanda. Non servono a riprendere: il piano basta |
+| **server e cartelle di prova** | nessun server acceso, e il `git worktree` di prova tolto: `git worktree list` rende la sola cartella del repository |
+
+**Che cosa ha fatto questa sessione.** Nessun dispaccio, nessun codice nel repository. Le due domande, una per volta; la geometria
+dei 2 px misurata prima di mostrarla, e una pagina di confronto **verificata** — la prima versione misurava un «Riprova» sbagliato,
+detto al proprietario —; le misure che il compito detta: le barre mostrate al progetto browser, i rossi della sonda a mezzo pixel
+coi token di oggi e con quelli nuovi, la tavola dello script uguale alla copia approvata; poi il compito, provato e reso.
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura del
+sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **il codice di un compito si scrive una volta e si prova due volte**: applicato a un `git worktree`, poi il **testo reso** riapplicato a una copia pulita e confrontato byte per byte | il 6bis è nato così; lo stesso attrezzo può servire ai pre-controlli |
+| 2 | **nella tavola `.msg span` veste ogni `span` di un messaggio**: una sonda che avvolge un'etichetta in uno `span` misura un altro pulsante | una pagina di prova usa il markup approvato, e lo verifica |
+| 3 | **`ignoreDefaultArgs` passa attraverso il provider di Vitest**, e mostrare le barre non muove nessun'altra prova | **D26** |
+| 4 | **a mezzo pixel, coi token di oggi, anche il pulsante nell'angolo della finestra di `BaseDialog` era storto di un pixel** — nessuno l'aveva visto | la riga 1 della tabella del 6bis |
+| 5 | **in questa Git Bash `rev` non c'è**, e un `awk` in linea perde i backslash (la trappola già nota) | i controlli da uno script Python |
+
+**Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. **Il pre-controllo del compito 6bis**: l'errata per intero, poi il compito, con le quattro domande e le quattro regole di
+   `CLAUDE.md`. Le misure del compito sono del 2026-09-27 su `950bba1`: si rimisurano (vincolo 10).
+3. L'esecuzione del 6bis, un subagente fresco con la revisione dopo — la banda dei costi detta prima del sì —, e lo **sguardo del
+   proprietario** del Passo 16, nel suo Chrome col mouse vero; approvato, le righe 6 e 6bis a `✅` e questa sezione in archivio.
+4. Poi il pre-controllo del compito 7, e così compito per compito fino al 9. Al **pre-controllo del compito 8** le sonde che
+   l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed **E57** —, la domanda di **E44** sulla Panoramica ed **E63**; a
+   quello del **9**, la Definizione di «fatto» con le righe 22 e 23.

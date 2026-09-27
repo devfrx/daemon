@@ -2113,3 +2113,69 @@ R gui/src/panels/Status.vue 7918 7928
 3. Poi il pre-controllo del compito 7, e così compito per compito fino al 9. Al **pre-controllo del compito 8** le sonde che
    l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed **E57** —, la domanda di **E44** sulla Panoramica, **E63** e i
    conti dedotti di **E64**; a quello del **9**, la Definizione di «fatto» con le righe 22 e 23.
+
+## Il pre-controllo del compito 7, del 2026-09-27
+
+Tolto dal piano il 2026-09-27, quando la sessione dopo ha fatto il pre-controllo del compito 7 — il compito rifatto dal testo su una copia, le sette voci **E75**…**E81**, il dispaccio — e ha scritto la consegna *«Come si riprende — il pre-controllo del compito 7»*. Il testo com'era, dal commit `1c168a1`, parola per parola; i rimandi sono riscritti per questa cartella.
+
+## Come si riprende — l'esecuzione del compito 6bis, 2026-09-27
+
+✅ **Il compito 6bis è eseguito, curato e approvato, e con lui si chiude il compito 6.** Il dispaccio col sì del proprietario
+sulla banda detta prima, 0,9–1,2 milioni di token: l'implementatore ha consegnato `da7a522`, **uguale al testo del piano** —
+`compare_task6bis.py 9579ca0 da7a522`, venti percorsi `OK` —, con ogni rosso e ogni verde dei Passi 1–15 come il pre-controllo li
+aveva misurati; il revisore l'ha detto **conforme**, con due minori e due nit, tutti del dettato, e il coordinatore li ha curati
+senza ri-revisione, come per i compiti 3–6 (`5105ad0`, **E70**–**E73**). Il Passo 16 col proprietario, nel suo Chrome col mouse
+vero: approvato, A — *«quello che mi hai chiesto funziona»* —, **a condizione** che la chiusura segua
+`anthropic-skills:decision-principles`. Le righe 6 e 6bis della posizione sono a `✅`; nella cartella del dispaccio il prompt
+spedito, il rapporto, il prompt del revisore, la revisione e `plan_ops.py`. La consegna precedente — il pre-controllo del compito
+6bis — sta parola per parola in [`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+⛔ **Da sapere subito.**
+
+1. **E74 è aperta, e aspetta il proprietario**: l'anello del fuoco della scatola di Stato, tagliato dalla scheda — di prima del
+   6bis. La forma della cura è aspetto; la sonda la può portare il compito 8.
+2. **L'assunzione della barra resta**: la preferenza di Windows che tiene sempre visibili le barre, e i colori forzati. Lo
+   sguardo del Passo 16 ha confermato il cursore col mouse vero, e le due condizioni non le ha provate; nessun compito del piano
+   le misura — il richiamo sta nella riga dell'assunzione del disegno.
+3. **Il compito 7 si rilegge contro il codice di adesso** (`CLAUDE.md`, domanda 5): il 6bis ha cambiato diciannove file, e i
+   conti che **E64** ha scritto nel compito 7 sono **dedotti**.
+4. **La memoria libera di questa macchina era 6 GB su 31,2** durante l'esecuzione e la revisione: nessuna prova è caduta, ma si
+   rimisura prima del prossimo dispaccio.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **i commit** | `git log --oneline 9579ca0..HEAD`: tre — `da7a522`, il compito dell'implementatore; `5105ad0`, le cure della revisione; e quello che scrive questa riga: le righe 6 e 6bis della posizione, **E74**, il richiamo nel disegno, le copie del dispaccio e `plan_ops.py`, questa sezione e la precedente in archivio |
+| **cancello** | `GATE GREEN` a `5105ad0` e prima del commit che scrive questa riga: jsdom 144 prove passate e una saltata, browser 56, il pezzo `691.82 kB`, `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `5105ad0` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | le righe dalla 1 alla 6bis a `✅`; la 7, l'8 e la 9 a `⬜` |
+| **lo scratchpad** | sulla macchina `Jays`, **non tracciato**, in `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\2f940fbc-999d-4486-9faf-6d913c767183\scratchpad\`: in `task6bis/` i log dell'implementatore, in `review6bis/` quelli del revisore con le schermate dello sguardo, in `cure/` gli script delle cure. Non servono a riprendere: il piano e la cartella del dispaccio bastano |
+| **server e cartelle di prova** | nessun server acceso; il clone del revisore, `%TEMP%\rv6bis`, tolto; in `.claude/launch.json` la sola configurazione `gui-dev` |
+
+**Che cosa ha fatto questa sessione.** La ripresa coi comandi; il dispaccio dell'implementatore; il prompt del revisore, scritto
+dal modello del compito 6 — il 6bis non ne aveva uno —, con `plan_ops.py` per rifare i rossi dei passi; le cure, misurate nelle
+due direzioni; il Passo 16 col proprietario; la chiusura. I costi: l'implementatore ~411k token in ~19 minuti, il revisore ~525k
+in ~39, ~0,94 milioni in tutto, dentro la banda detta.
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura del
+sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **un costo «nessuno» misurato sulle prove che esistono è cieco al caso di confine**: **D25** fu misurata su coppie tutte a distanze uguali, e il pezzo a un pixel dalla diagonale non c'era — **E71** | il costo di una decisione si misura costruendo il caso di confine |
+| 2 | **i rossi dei passi si rifanno dal testo del piano**: `plan_ops.py apply <radice> --upto N` su un clone della base, e per un passo che esegue uno script le sue uscite dal commit, dopo che il confronto le ha dette uguali al dettato | la revisione del 6bis è il modello; lo strumento sta nella cartella del dispaccio |
+| 3 | **un difetto di prima, portato allo sguardo, che lo sguardo non commenta, non è approvato**: si scrive aperto, o si dispone col merito che c'è già — **E74**, e il bordo di «Riprova» che la (a) esenta | la chiusura scrive ciò che il proprietario ha detto, non ciò che non ha detto |
+| 4 | **6 GB liberi su 31,2 non hanno reso instabile la suite**: il revisore ha girato le prove e il cancello con 5,9–6,1 GB liberi, e nessuna prova è caduta | un dato per P-20 e P-21; la memoria si misura comunque prima di un dispaccio |
+
+**Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. **Il pre-controllo del compito 7**, contro il codice di adesso: il compito rifatto dal testo del piano con `plan_ops.py` su una
+   copia, ogni Atteso rimisurato — i conti che **E64** ha dedotto —, e il compito 8 applicato sopra, perché i suoi *Trova* e i
+   suoi Atteso passano per il 7.
+3. Poi l'esecuzione del 7; poi il pre-controllo dell'8, con le sonde che l'errata gli assegna — **E38**, **E39**, **E43**,
+   **E53** ed **E57** —, la domanda di **E44** sulla Panoramica, **E63**, i conti dedotti di **E64**, la strada più larga di
+   **E70**, **E73**, e la sonda di **E74** se il proprietario ne avrà deciso la forma; a quello del **9**, la Definizione di
+   «fatto» con le righe 22 e 23.
+4. ⏳ **Due domande per il proprietario**, una per volta e quando vuole: la forma della cura di **E74**; e se l'assunzione della
+   barra debba avere un compito che la misuri.

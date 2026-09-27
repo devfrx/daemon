@@ -131,7 +131,7 @@ esegue** prima del proprio pre-controllo.
 | **5** | **il kit al lavoro**: i pezzi di base nei pannelli e nella cornice — la finestra di conferma, il cassetto, la fascia, Stato, Permessi, Passi, Impostazioni con la scelta del tema, il segnaposto, la barra; le due regole del linter su `panels/` e `frame/`; **M-3** chiusa per costruzione, e l'Assistente vocale a mano | `545f500`, con le cure `7e25d03` e `9e6657b` | ✅ 2026-09-26 — il Passo 8 col proprietario, nel suo Chrome con l'Assistente vocale: alle domande dei punti 3, 4 e 5 — *«senti …?»* — la risposta *«di quello che hai chiesto … funziona tutto»*, e il punto 1 non riportato a parte; e *«a parte il piccolo problema citato poco fa»*, il lampo delle barre di scorrimento con la fascia, curato da **E43** |
 | **6** | **il dock vestito**: il tema `dockview-theme-harness`, `dock.css` con ogni variabile del tema di riferimento, i gruppi come schede, `readToken`, `--z-floating`, la presa grande coi pezzi di base; `themeAbyss` esce | `c1102fc`, con la cura `ca83dac` | ✅ 2026-09-27 — il Passo 8 col proprietario, nel suo Chrome: il 2026-09-26 quattro foto — la zona d'arrivo ad angoli dritti, due sfondi, la barra con un fondo suo, il nucleo vestito da scheda —, curate (**E55**–**E58**); ripreso lo stesso giorno, tre voci **non approvate** — la barra di scorrimento, i messaggi con la fascia, il bordo nel raggio (**E59**–**E61**) —, disegnate e approvate il 2026-09-27 e curate dal compito **6bis**; lo sguardo del 6bis le ha approvate, e con lui si chiude questa riga |
 | **6bis** | **la cura delle tre voci del Passo 8 del 6**: nella tavola il bordo nei raggi, la barra di scorrimento col suo innesco e il messaggio, e la copia; la sonda a mezzo pixel; le barre mostrate al progetto browser; `BaseNotice` con le icone dei toni, nella pagina kit, nella fascia sulla pagina, in Impostazioni e in Stato; `frame.browser.test.ts` | `da7a522`, con la cura `5105ad0` | ✅ 2026-09-27 — rivisto **conforme**: 0 critici, 0 importanti, 2 minori e 2 nit, tutti del dettato e curati (**E70**–**E73**). Il Passo 16 col proprietario, nel suo Chrome col mouse vero — la fascia prima e dopo la consegna, i messaggi, la barra col cursore che compare sotto il puntatore, i raggi —: *«quello che mi hai chiesto funziona»*, A, a condizione che la chiusura segua `anthropic-skills:decision-principles`; il frammento del contrasto sulla SPA a 1440 × 900, misurato dal coordinatore, 5,39 nel chiaro e 5,4 nello scuro. Due difetti di prima, trovati dalla revisione e detti prima dello sguardo, che non li ha commentati: il bordo di «Riprova» sulla fascia, 1,22 e 1,00, è il bordo di decoro che la (a) esenta (**E5**), e resta; l'anello del fuoco tagliato è **E74**, aperta |
-| **7** | **le viste col nome, sotto**: `named` e `openNamed` nel pacchetto, il negozio e il dock che le mostrano e le salvano; l'aiutante della geometria estratto da `moveActive.ts`; lo schema di una disposizione, per le miniature | — | ⬜ |
+| **7** | **le viste col nome, sotto**: `named` e `openNamed` nel pacchetto, il negozio e il dock che le mostrano e le salvano; l'aiutante della geometria estratto da `moveActive.ts`; lo schema di una disposizione, per le miniature | — | ⬜ — pre-controllato il 2026-09-27: sette voci, **E75**…**E81**, scritte nell'errata; sei applicate al testo, e **E81** al pre-controllo del compito 8: viene l'esecuzione |
 | **8** | **la cornice**: la barra col nome della vista, la **Panoramica** su `BaseDialog` con le miniature e *«Salva questa vista»* — F3, frecce, Invio, Esc —, la **striscia** a pillola coi «moduli»; le prove nel browser della Panoramica e della striscia | — | ⬜ |
 | **9** | **la chiusura**: la riga «Accessibilità» di tracciabilità, la riga 14 della roadmap con *«Perché quest'ordine»*, `README.md`, la §12 e la §6 del compendio, `porta-di-qualita.md` con C-S0-1 (P-29), `riferimenti.md`; i richiami nel disegno e nella stella polare (P-28); la **Definizione di «fatto»**, eseguita, con le uscite del giorno | — | ⬜ |
 
@@ -241,6 +241,13 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | **E72** | Nit — **Compito 6bis, Passo 12 — il titolo di una prova di Stato nominava la forma di prima:** *«says the core has not spoken, and shows no event row, before anything arrives»* in `modules.test.ts`, mentre la prova cerca ora il messaggio, `.base-notice` — la trappola 21 del disegno: le prove si riscrivono sul pezzo —; non falso alla lettera, perché il messaggio porta la classe `event`. Trovata dalla revisione del 6bis (N-1). ✅ **Curata** nel commit che scrive questa riga: *«… and shows no message, before anything arrives»*; il *Trova* e il *Sostituisci* della prima sostituzione di `modules.test.ts` nel Passo 12 prendono anche il titolo. Nessun esito cambia: `Tests  31 passed (31)` coi due file jsdom del Passo 12 |
 | **E73** | Nit — **Compito 8, al suo pre-controllo — due cose che `frame.browser.test.ts` porta dal 6bis:** **(a)** l'aiutante `computed(property, token)` è identico, riga per riga, a quello di `dock.browser.test.ts`, e `colourOf` di `kit.browser.test.ts` è lo stesso oracolo per `color`: la ragione di **D29**, *«un secondo modo di fare la stessa cosa»*, vale anche per un aiutante; **(b)** il suo `afterEach` smonta l'app, ma `Frame.vue` non dispone il dock — il suo `onUnmounted` toglie solo l'ascoltatore della tastiera —, mentre `dock.browser.test.ts` dispone ogni dock e dice perché: `dockview-core` 8.3.1 tiene i gruppi galleggianti della pagina in una lista di modulo. Oggi innocuo, perché in quel file nessun gruppo galleggia — **dedotto** leggendo il codice, non misurato. Trovate dalla revisione del 6bis (N-2), e rilette dal coordinatore sul codice. ⏳ **Al pre-controllo del compito 8**, che estende il file e ne riusa gli aiutanti (**E63**): portarli in `gui/src/testing/` o dichiarare la copia, e disporre il dock se il compito vi stacca un gruppo |
 | **E74** | ⚠️ **Di prima del 6bis — l'anello del fuoco di una scatola che scorre lo taglia la sua scheda:** nella Home a 1440 × 900 la scatola di Stato scorre, e Chrome la mette nella sequenza del Tab — uno *scroller* senza nulla di focalizzabile dentro —; col Tab ci si arriva, e `:focus-visible` disegna il contorno `solid 2px` a `2px` di distanza, ma la scheda ne taglia i lati e il fondo, e resta la sola riga in alto, dopo la linguetta. La riga «focus» della (a) del disegno lo vuole *«visibile (2.4.7) e non nascosto (2.4.11)»*. Trovato dalla revisione del 6bis (P-1) e misurato **uguale** a `9579ca0`, nei due temi: non è del 6bis; la schermata riguardata dal coordinatore. Detto al proprietario prima dello sguardo del Passo 16, che non l'ha commentato: lo sguardo non l'ha approvato. ⏳ **Aperta**: la forma della cura è aspetto — il contorno **dentro** la scatola che scorre, o uno spazio attorno che la scheda non tagli — e la decide il proprietario (controllo 15); la sonda nel browser la può portare il compito 8, che monta la cornice intera |
+| **E75** | ⚠️ **Compito 7, Passo 5 — dopo un pacchetto che non si legge, la vista col nome restava aperta, e la mossa dopo non andava da nessuna parte:** `receive` rimetteva `openNamed` solo dentro `if (saved.value !== null)`. Quando il core risponde `Nothing` o `Unavailable` — o con un pacchetto che `unpack` rifiuta — `saved` diventa `null` e il nome resta: il dock mostra la vista di sempre, perché `apply` ricade su `VIEWS[view]`; il negozio dice ancora «Revisione», e la barra del compito 8 ne mostrerebbe il nome; e il `settle` dopo scrive nella vista col nome, che il pacchetto non ha più, quindi la mossa non va in `layouts` né in `named` — persa in silenzio. È la strada di una scrittura che non attecchisce al primo avvio — il core risponde con ciò che tiene (decisione 13), cioè niente — o di un archivio che non risponde. Misurato il 2026-09-27 dal pre-controllo sulla copia, un `git worktree` di `1c168a1` nello scratchpad, macchina `Jays`, col compito rifatto dal testo del piano, con una prova usa-e-getta: dopo `Unavailable`, e dopo `Nothing`, `openNamed` resta `'Revisione'`, e la mossa spedisce `{"layouts":{},"view":"home","openNamed":"Revisione","named":[]}`; con la cura, `null` e `{"layouts":{"home":{…}},"view":"home"}`. ✅ **Corretta** nel commit che la scrive, decisa coi cinque criteri — la radice è lo stato del negozio, non il dock, che ricade già —: in `receive` il nome si rilegge dal pacchetto **sempre**, `openNamed.value = saved.value?.openNamed ?? null;`, e la riga di `view` resta quella di oggi; nel Passo 2 una sesta prova del negozio, *«closes the named view when the core holds no package it can read…»*, rossa sul codice dettato prima, `expected 'Revisione' to be null`; gli Atteso dei Passi 2 e 5, e una riga nel Passo 8 |
+| **E76** | Nit — **Compito 7, la riga 3 della tabella in testa e D13 — *«nessuna prova monta `Frame.vue`»* è falso dal 6bis:** `frame.browser.test.ts` monta `App.vue`, e con lei la cornice; il `grep -rln 'Frame.vue'` del Passo 1 resta vuoto perché il file importa `App.vue`. Nessuna prova però preme la barra: con `layout.view = view;` al posto di `layout.showView(view);` la suite intera resta verde, `Tests  212 passed \| 1 skipped (213)` — misurato il 2026-09-27 dal pre-controllo sulla copia, col testo corretto. Lo stesso vale per `aria-current` in `ViewBar.vue`, che guarda il solo `layout.view` — dedotto leggendo il codice, non misurato. ✅ **Dichiarata, non curata**, decisa coi cinque criteri: fra il compito 7 e l'8 nessuna vista col nome si apre dall'interfaccia, e il compito 8 riscrive `Frame.vue` e `ViewBar.vue` per intero — la riga vive un compito solo, e una sonda nel browser per lei sarebbe sfoggio. ✅ **Corretta** nel commit che la scrive: la riga 3 della tabella del compito 7, e il richiamo datato in **D13**. ⏳ **Al pre-controllo del compito 8**: la sua prova *«shows the view of the card chosen and closes…»* sceglie Lavoro **prima** di aprire la vista col nome, e non tiene che scegliere una delle tre chiuda la vista col nome — nella Panoramica, il ruolo che qui ha `Frame.switchTo` |
+| **E77** | Nit — **Compito 7, Passo 8 — tre righe facevano cadere più prove di quelle che l'Atteso nomina**, la specie di **E12** ed **E49**. Misurato il 2026-09-27 dal pre-controllo sulla copia, ogni violazione sulla suite intera, i due progetti: *«ciò che sta oltre»* anche *«splits its own group on that side when nothing lies there»* di `keys.test.ts`, `expected 'moved' to be 'split'` — dal Passo 3 `moveActive` passa da `nearest` —, quattro prove; *«il nome aperto che arriva»* anche la prova del dock di `frame.test.ts`, `expected [ 'activity', 'costs', …(5) ] to deeply equal [ 'status' ]`, tre — quattro con la prova di **E75** —; *«`showView`»* anche il dock, `expected [ 'status' ] to deeply equal [ 'activity', 'costs', …(5) ]`, due. Le altre undici righe cadono come dettano, e ogni file è tornato uguale dalla copia salvata. Nessun codice cambia. ✅ **Corretta** nel commit che la scrive: le tre righe nominano le prove in più, e l'intestazione della colonna la data della misura |
+| **E78** | Nit — **Compito 7, Passo 6 — la testa di `createDock` in `gui/src/frame/dock.ts`, che il compito rende falsa** (gotcha **#58**): *«in the two ways the store changes under it: the bar writes `layout.view`, and the core sends a package…»* — col compito i modi sono tre, con la vista col nome che si apre o si chiude, e il `watch` subito sotto lo dice; e dal compito 8 non è più la barra a scegliere la vista, ma la Panoramica. Nessun compito toccava la frase: sulla copia coi compiti 7 e 8 applicati, `grep -n 'two ways' gui/src/frame/dock.ts` rende la riga. La specie di **E17**, **E22**, **E28**, **E36**, **E50** ed **E66**. Trovata dal pre-controllo il 2026-09-27. ✅ **Corretta** nel commit che la scrive: una terza sostituzione nel Passo 6, *«in the three ways … one of the three views is shown (`showView`), a named view opens or closes (`openNamed` …)»*, che non nomina chi mostra la vista e resta vera dopo l'8; le prove e il linter non cambiano, misurato sulla copia |
+| **E79** | Nit — **Compito 7, Passo 9 — la colonna Commit della riga 6 c'è già:** l'ha scritta la chiusura del 6bis, `1c168a1` — `c1102fc` con la cura `ca83dac` —, insieme a quella della riga 6bis, perché il 6bis non toccava le celle (**E69**); e il Passo 9 la faceva scrivere con *«l'hash del compito 6»* (R1-16). È la quarta domanda del pre-controllo — una parte del passo è già eseguita —, e riscriverla col solo hash perderebbe la cura. Trovata dal pre-controllo il 2026-09-27. ✅ **Corretta** nel commit che la scrive: il Passo 9 dice che la riga 6 porta già la colonna, e che non si tocca; quella della riga 7 la scrive il compito 8, com'è il suo Passo 11 |
+| **E80** | Nit — **Compito 7 — il pezzo JavaScript non lo misurava:** la riga **N-2 di E187** delle voci aperte nominava *«il compito 1, il 5, il 6 e l'8»*, e il compito 7 cambia la SPA — `layout.ts`, `dock.ts`, `Frame.vue`, `moveActive.ts` con `nearest.ts` —: misurato il 2026-09-27 dal pre-controllo sulla copia, da `691.82 kB`, compresso `210.77 kB`, a `693.02 kB`, `211.20 kB`. Anche il 6bis lo misura, e la riga non lo diceva. ✅ **Corretta** nel commit che la scrive: la baseline nel Passo 1, la riga nel commit dai Passi 7 e 9, e nella riga di N-2 la regola — ogni compito che cambia la SPA —, coi compiti che la seguono |
+| **E81** | ⚠️ **Compito 8, al suo pre-controllo — *«Salva questa vista»* prima del benvenuto del core perde le disposizioni salvate:** su un negozio che non ha ancora ricevuto il pacchetto, `saveNamed` costruisce il suo da `layouts: {}`, e il core custodisce quello — le tre disposizioni, il tema e le altre viste col nome, persi in silenzio. È la finestra di **E40**, che il compito 5 ha chiuso per il tema spegnendone il gruppo finché `layout.arrivals` è zero; la Panoramica del compito 8 non guarda `arrivals` — sul testo del compito `grep -c arrivals` rende 0 —, e F3 la apre quando non c'è una conferma né il cassetto, anche prima del benvenuto — dedotto dal testo del suo `Frame.vue`. Misurato il 2026-09-27 dal pre-controllo del compito 7 sulla copia, con una prova usa-e-getta: con `arrivals` a 0, `saveNamed` rende `"saved"` e spedisce `{"layouts":{},"view":"home","openNamed":"Revisione","named":[…]}`. ⏳ **Al pre-controllo del compito 8**: la scheda *«Salva questa vista»* spenta finché `layout.arrivals` è zero, come il gruppo del tema (**E40**, strada A), con una prova vista rossa; la domanda di classe — ogni scrittura prima del benvenuto, compreso il `settle` del dock — resta del proprietario, **registrata e non presa** (**E40**) |
 
 ---
 
@@ -302,7 +309,7 @@ che il disegno lasciava al piano; ciascuna si ribalta con una riga.
 | **D10** | **il bordo della zona d'arrivo è `--dv-drag-over-border` in `dock.css`**, e il tema TypeScript non porta `dndOverlayBorder` | le due vie erano aperte (R3-22); `updateTheme` di 8.3.1 lascia la variabile al foglio quando il campo manca, e un colore scritto in TypeScript sarebbe una seconda casa. Costo: il bordo non lo vede nessuna prova automatica; si guarda al passo 8 del compito, trascinando una linguetta |
 | **D11** | **la faccia della presa grande è un `.vue`**, `frame/BigTabFace.vue`, che `BigTab.ts` monta come `VueContent` monta un pannello | una funzione `h()` dentro `BigTab.ts` avrebbe fatto lo stesso, ma fuori dalla vista del linter dei template — la trappola 5 in un'altra forma; col `.vue` le regole di `harness/panels-and-frame` e di `no-raw-text` la leggono. Costo: un'app Vue per linguetta, smontata in `dispose` e provata |
 | **D12** | **`saveNamed` riceve da chi la chiama i nomi che la cornice mostra per le tre viste, e due nomi sono lo stesso nome a meno degli spazi intorno e delle maiuscole** | nessun negozio legge le parole di `it.json`, e farlo ne farebbe il primo; «Home» e «home», affiancate nella Panoramica, si leggerebbero come una vista sola. ✅ **Scelto dal proprietario il 2026-09-23 — A**, il confronto senza le maiuscole e gli spazi intorno, contro B, il confronto esatto. Costo: un parametro in più, che la Panoramica del compito 8 passa; e «Revisione» e «revisione» non possono essere due viste |
-| **D13** | **`showView(view)` nel negozio: aprire una delle tre viste chiude quella col nome** | la regola vive dov'è lo stato, e una prova del negozio la raggiunge: nessuna prova monta `Frame.vue`. Costo: `Frame.switchTo` chiama `showView` invece di scrivere `view`; le prove che scrivono `view` restano valide, perché lì nessuna vista col nome è aperta |
+| **D13** | **`showView(view)` nel negozio: aprire una delle tre viste chiude quella col nome** | la regola vive dov'è lo stato, e una prova del negozio la raggiunge: nessuna prova monta `Frame.vue`. Costo: `Frame.switchTo` chiama `showView` invece di scrivere `view`; le prove che scrivono `view` restano valide, perché lì nessuna vista col nome è aperta. ⚠️ **RICHIAMO DEL 2026-09-27, dal pre-controllo del compito 7 (E76):** dal 6bis `frame.browser.test.ts` monta la cornice, attraverso `App.vue`; la regola resta nel negozio, e la riga di `Frame.switchTo` non la tiene nessuna prova — misurato, e dichiarato: il compito 8 riscrive `Frame.vue` |
 | **D14** | **la miniatura non disegna la striscia** | sta in ogni vista, uguale, senza un'icona in `ICONS`, e le miniature della tavola della Panoramica non la disegnano: il *«come si disegna»* che il *«Come si riprende»* lasciava alla tavola o al compito. Costo: in fondo a ogni miniatura resta una fascia vuota, alta quanto la riga della striscia |
 | **D15** | **la domanda della conferma vive nel negozio, `useInvoke().asking`**, e `Confirm.vue` la legge da lì | la leggono in due — la finestra e F3 della cornice — e due copie della regola di D59 divergerebbero (gotcha #68). Costo: un getter in più nel negozio |
 | **D16** | **F3 tace anche mentre il cassetto è aperto**, non solo sotto la conferma | la ragione del *«Come si riprende»* — una finestra modale sopra un'altra ne copre la domanda — vale per il cassetto allo stesso modo. Costo: col cassetto aperto F3 non fa niente, ed Esc lo chiude |
@@ -328,7 +335,7 @@ Rilette il 2026-09-23 coi due comandi della §6 del compendio e con la tabella d
 | Voce | Di chi | Che cosa ne fa questo piano |
 |---|---|---|
 | **X-2** e **X-4** dell'[audit](../../audit-2026-08-27.md) | del proprietario | niente: non toccano la GUI |
-| **N-2 di E187**, l'avviso di `vite` sui pezzi sopra i 500 kB | del proprietario | il compito 1, il 5, il 6 e l'8 **misurano** il pezzo JavaScript dopo il *build* — `npm run build 2>&1 \| grep -E 'assets/index-.*\.js '` — e lo scrivono nel commit; il 3 no, perché la SPA non importa ancora il kit (R2-13). ⚠️ La (e) dice che il design system non lo peggiora, ed è una deduzione: la revisione l'ha misurato **crescere al compito 5**, quando i pezzi di base entrano nei pannelli (R3-25), e la cifra si porta al proprietario |
+| **N-2 di E187**, l'avviso di `vite` sui pezzi sopra i 500 kB | del proprietario | ogni compito che cambia la SPA **misura** il pezzo JavaScript dopo il *build* — `npm run build 2>&1 \| grep -E 'assets/index-.*\.js '` — e lo scrive nel commit: l'1, il 5, il 6, il 6bis, il 7 (**E80**) e l'8; il 3 no, perché la SPA non importa ancora il kit (R2-13). ⚠️ La (e) dice che il design system non lo peggiora, ed è una deduzione: la revisione l'ha misurato **crescere al compito 5**, quando i pezzi di base entrano nei pannelli (R3-25), e la cifra si porta al proprietario |
 | la **memoria della macchina `zagor`** all'avvio della suite coi compiti 1–7: 24 processi di prova, circa uno per core, e il Chrome delle prove — la memoria disponibile scende da 3–5 GB a 68–150 MB, e Windows scrive su disco; con `--maxWorkers=8` resta sopra 2,7 GB, a parità di tempo, misurato il 2026-09-24 (P-21) | del proprietario | niente: non è la causa né di P-20 né di P-21, e limitare i processi cambia il cancello su ogni macchina |
 | **E228**, progress e notifiche | del proprietario | niente: i token ci sono già, `--z-toast` e i colori di stato |
 | il **terzo carattere** per il codice | del proprietario | niente: il monospazio resta quello del sistema (decisione 16 del disegno) |
@@ -8069,7 +8076,7 @@ Panoramica; il controllo **18**, e dal **17** l'aiutante della geometria provato
 |---|---|---|
 | 1 | l'albero di una disposizione salvata: la radice stende i figli lungo `grid.orientation`, ogni ramo sotto sull'altro asse, e la `size` di un nodo è la sua estensione lungo l'asse del genitore — nella Home spedita la radice `HORIZONTAL` ha un figlio solo, e sotto di lui l'area dei pannelli e la striscia si dividono l'altezza | `schematic` segue la regola; la prova la tiene su una disposizione scritta a mano e sulle tre viste spedite |
 | 2 | nessun altro file importa `Direction` | il tipo passa in `nearest.ts` |
-| 3 | nessun negozio legge le parole di `it.json`, e nessuna prova monta `Frame.vue` | `saveNamed` riceve i nomi mostrati da chi la chiama (D12); la regola *«una delle tre chiude la vista col nome»* vive nel negozio, in `showView`, dove una prova la raggiunge (D13) |
+| 3 | nessun negozio legge le parole di `it.json`; e nessuna prova **jsdom** monta `Frame.vue` — ⚠️ dal 6bis la monta `frame.browser.test.ts`, attraverso `App.vue`, e nessuna prova ne preme la barra (**E76**) | `saveNamed` riceve i nomi mostrati da chi la chiama (D12); la regola *«una delle tre chiude la vista col nome»* vive nel negozio, in `showView`, dove una prova la raggiunge (D13). ⚠️ **La riga di `Frame.vue` che la chiama non la tiene nessuna prova**, misurato, ed è dichiarato (**E76**): il compito 8 riscrive `Frame.vue` e `ViewBar.vue` |
 | 4 | la prova della tastiera del compito 5 cadeva una volta su dieci corse della suite intera (**P-19**) | è corretta nel compito 5; qui la si ritrova verde a ogni corsa |
 
 - [ ] **Passo 1: rimisura il punto di partenza**
@@ -8079,10 +8086,12 @@ git status --porcelain > <scratchpad>/prima.txt
 grep -rnw 'Direction' gui/src --include=*.ts --include=*.vue
 grep -rln 'i18n' gui/src/stores
 grep -rln 'Frame.vue' gui/src --include=*.test.ts
+(cd gui && npm run build 2>&1 | grep -E 'assets/index-.*\.js ')
 ```
 
 Atteso: `Direction` nel solo `frame/moveActive.ts` — ⚠️ `-w`, la parola intera: senza, il comando prende anche `flexDirection`
-in `testing/probes.ts`, misurato —; gli ultimi due comandi **non rendono nulla**. Poi, da solo, `bash scripts/gate.sh` →
+in `testing/probes.ts`, misurato —; i due `grep -rln` **non rendono nulla**; e la riga del pezzo JavaScript è la baseline del
+compito (**E80**) — `691.82 kB`, compresso `210.77 kB`, il 2026-09-27 a `1c168a1`. Poi, da solo, `bash scripts/gate.sh` →
 `GATE GREEN`.
 
 - [ ] **Passo 2: le prove, prima del codice**
@@ -8313,6 +8322,21 @@ describe("the named views in the package (design system, section (d))", () => {
     expect(layout.saveNamed("REVISIONE", { marker: "another" } as never, shown)).toBe("taken");
     expect(bridge.sent).toHaveLength(1);
   });
+
+  it("closes the named view when the core holds no package it can read, and the next move goes into the three (E75)", () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    expect(layout.saveNamed("Revisione", { marker: "on screen" } as never, ["Home", "Lavoro", "Compatta"])).toBe("saved");
+    // ⛔ A WRITE THAT DID NOT STICK (decision 13): the core answers with what it holds -- here, nothing. The dock shows
+    // the view of always, and a name left open would send the next move nowhere: not into `layouts`, and not into
+    // `named`, which no longer holds it.
+    layout.receive({ kind: "Layout", value: { state: "Nothing" } });
+    expect(layout.openNamed).toBeNull();
+    const moved = { marker: "home, moved" } as never;
+    layout.settle(moved);
+    expect(sentPack(bridge, 1)).toEqual({ view: "home", layouts: { home: moved } });
+  });
 });
 ```
 
@@ -8355,11 +8379,12 @@ In `gui/src/frame/frame.test.ts`, *Trova* — la fine del `describe("the dock", 
 ```
 
 Atteso: **rosso**, e per le ragioni giuste — misurato il 2026-09-23: `Failed to resolve import "./nearest"` e `Failed to
-resolve import "./schematic"`; le cinque prove nuove del negozio, `expected undefined to deeply equal [ { name: 'Revisione',
+resolve import "./schematic"`; le **sei** prove nuove del negozio, `expected undefined to deeply equal [ { name: 'Revisione',
 …(1) } ]`, `expected { view: 'home', layouts: { home: {} } } to deeply equal { view: 'home', …(2) }`, `expected { view:
-'home', …(1) } to deeply equal { view: 'home', …(3) }`, `TypeError: layout.showView is not a function` e `TypeError:
+'home', …(1) } to deeply equal { view: 'home', …(3) }`, `TypeError: layout.showView is not a function` e, due volte — la seconda è la prova di **E75** —, `TypeError:
 layout.saveNamed is not a function`; e il dock, `expected [ 'activity', 'costs', …(5) ] to deeply equal [ 'status' ]` — la
-Home spedita al posto della vista col nome. Verdi tutte le prove che c'erano.
+Home spedita al posto della vista col nome. Verdi tutte le prove che c'erano. ✅ **Rimisurato il 2026-09-27** dal pre-controllo,
+sulla copia a `1c168a1` col testo corretto: `Tests  7 failed | 28 passed (35)`, coi messaggi di qui sopra.
 
 - [ ] **Passo 3: la geometria comune — `nearest`, e `moveActive` che la usa**
 
@@ -8657,11 +8682,11 @@ export const useLayout = defineStore("layout", () => {
     // another build wrote -- replaces what we hold, and the dock shows it (D89).
     if (message.value.state === "Package" && sent !== null && sameBytes(message.value.bytes, sent)) return;
     saved.value = unpack(message.value);
-    if (saved.value !== null) {
-      view.value = saved.value.view;
-      // ⛔ AND THE NAMED VIEW THAT IS OPEN (R3-19 of the design-system review), or none.
-      openNamed.value = saved.value.openNamed ?? null;
-    }
+    if (saved.value !== null) view.value = saved.value.view;
+    // ⛔ AND THE NAMED VIEW THAT IS OPEN (R3-19 of the design-system review), or none -- ALSO WHEN NOTHING
+    // READABLE ARRIVED (E75 of the design-system plan): the dock then shows the view of always, and a name left
+    // open would send the next move nowhere.
+    openNamed.value = saved.value?.openNamed ?? null;
     arrivals.value += 1;
   }
 
@@ -8778,11 +8803,33 @@ export function unpack(state: LayoutState): LayoutPack | null {
 (cd gui && npx vitest run --project jsdom src/stores/stores.test.ts)
 ```
 
-Atteso: **verde**, le prove di oggi e le cinque nuove.
+Atteso: **verde**, le prove di oggi e le **sei** nuove — `Tests  20 passed (20)`, rimisurato il 2026-09-27.
 
 - [ ] **Passo 6: il dock guarda anche la vista col nome, e la barra passa da `showView`**
 
-In `gui/src/frame/dock.ts` (`replace_unique.py`), due sostituzioni. *Trova*:
+In `gui/src/frame/dock.ts` (`replace_unique.py`), tre sostituzioni. *Trova* — la testa di `createDock`, che il compito
+rende falsa (**E78**):
+
+```ts
+ * ⛔ THE DOCK FOLLOWS THE STORE (D89), in the two ways the store changes under it: the bar writes
+ * `layout.view`, and the core sends a package that is NOT the echo of our own save -- the welcome
+ * after `Hello`, or the OLD package after a write that did not stick (decision 13). Both are shown
+ * here and nowhere else: `Frame.vue` does not call `apply`, and a `Layout` that arrives after the
+ * dock is up is not left in the store. Before D89 it was: `apply` ran once, before `Hello`, and
+```
+
+*Sostituisci con:*
+
+```ts
+ * ⛔ THE DOCK FOLLOWS THE STORE (D89), in the three ways the store changes under it: one of the
+ * three views is shown (`showView`), a named view opens or closes (`openNamed`, the (d) of the
+ * design system), and the core sends a package that is NOT the echo of our own save -- the welcome
+ * after `Hello`, or the OLD package after a write that did not stick (decision 13). All three are
+ * shown here and nowhere else: `Frame.vue` does not call `apply`, and a `Layout` that arrives after
+ * the dock is up is not left in the store. Before D89 it was: `apply` ran once, before `Hello`, and
+```
+
+*Trova:*
 
 ```ts
   function show(view: ViewName): SerializedDockview {
@@ -8862,23 +8909,28 @@ Atteso: **verde** — la prova nuova del dock, e quelle di D80, D81 e D89 com'er
 Atteso: **verde** su tutto; i file di prova più alti di quelli del compito **6bis** di **due** (**E64**), `nearest.test.ts` e
 `schematic.test.ts`. ⛔ E la suite intera **più volte** — cinque corse di `npm test` — perché la prova della tastiera del
 compito 5 cadeva una volta su dieci (P-19): una sua caduta qui è una voce d'errata, non una corsa da ripetere finché passa.
+E la riga del pezzo JavaScript, `npm run build 2>&1 | grep -E 'assets/index-.*\.js '`, va nel commit accanto a quella del
+Passo 1 (**E80**): il compito cambia la SPA. ✅ **Rimisurato il 2026-09-27** dal pre-controllo, sulla copia col testo
+corretto: cinque corse su cinque `Test Files  27 passed | 1 skipped (28)` e `Tests  212 passed | 1 skipped (213)`; *build*
+e linter puliti; il pezzo `693.02 kB`, compresso `211.20 kB`.
 
 - [ ] **Passo 8: le due direzioni**
 
 Una violazione alla volta, poi indietro con la **copia salvata** e `cmp` (vincolo 11): `layout.ts` il compito l'ha
 riscritto, e `nearest.ts` e `schematic.ts` sono nati qui (A-1).
 
-| La prova | La violazione messa a mano | Atteso, misurato il 2026-09-23 |
+| La prova | La violazione messa a mano | Atteso, misurato il 2026-09-23 e rimisurato il 2026-09-27 (**E77**) |
 |---|---|---|
 | `nearest.test.ts`, lo spareggio | in `nearest.ts` tolto `\|\| across(a.rect) - across(b.rect)` dal `sort` | rosso, due prove: `r1c2 up: expected 'r0c0' to be 'r0c2'` e `expected 'r1c0' to be 'r1c1'` — il difetto di R3-18 |
-| `nearest.test.ts`, ciò che sta oltre | in `nearest.ts` tolta la riga `.filter(({ rect }) => beyond(rect))` | rosso, tre prove: `r0c1 right: expected 'r0c0' to be 'r0c2'`, `expected 'r0c1' to be 'r1c1'`, `expected { name: 'r1c0', …(1) } to be undefined` |
+| `nearest.test.ts`, ciò che sta oltre | in `nearest.ts` tolta la riga `.filter(({ rect }) => beyond(rect))` | rosso, **quattro** prove: `r0c1 right: expected 'r0c0' to be 'r0c2'`, `expected 'r0c1' to be 'r1c1'`, `expected { name: 'r1c0', …(1) } to be undefined`; e in `keys.test.ts` *«splits its own group on that side when nothing lies there»*, `expected 'moved' to be 'split'` — dal Passo 3 `moveActive` passa da `nearest` (**E77**) |
 | `schematic.test.ts`, l'alternanza | in `schematic.ts` `const next = orientation;` | rosso, due prove: `expected [ …(3) ] to deeply equal [ …(3) ]` e `home: the strip: expected false to be true` |
 | `schematic.test.ts`, i galleggianti | in `schematic.ts`, dopo la chiamata a `place`, una riga che aggiunge a `tiles` ogni `layout.floatingGroups` | rosso: `expected [ …(4) ] to deeply equal [ …(3) ]` |
 | `stores.test.ts`, i doppioni | in `layout.ts` tolta la riga `if (read.some((kept) => sameName(kept.name, name))) continue;` | rosso: `expected { view: 'home', …(2) } to deeply equal { view: 'home', …(2) }` — due viste sotto un nome |
 | `stores.test.ts`, il nome aperto che non c'è | in `unpack`, `if (typeof open === "string") pack.openNamed = open;` | rosso: `expected { view: 'home', …(3) } to deeply equal { view: 'home', …(2) }` |
 | `stores.test.ts`, la mossa nella vista col nome | in `settle`, `if (true) {` al posto di `if (open === undefined) {` | rosso: `expected { view: 'home', …(3) } to deeply equal { view: 'home', …(3) }` — `layouts.home` sovrascritta, R3-19 |
-| `stores.test.ts`, il nome aperto che arriva | in `receive` tolta la riga di `openNamed` | rosso, due prove: `expected null to be 'Revisione'`, e la mossa che finisce nelle tre |
-| `stores.test.ts`, `showView` | in `showView` tolta la riga `openNamed.value = null;` | rosso: `expected 'Revisione' to be null` |
+| `stores.test.ts`, il nome aperto che arriva | in `receive` tolta la riga di `openNamed` | rosso, **quattro** prove: `expected null to be 'Revisione'`; la mossa che finisce nelle tre, `expected { view: 'home', …(2) } to deeply equal { view: 'home', …(3) }`; la prova di **E75**, `expected 'Revisione' to be null`; e in `frame.test.ts` il dock, `expected [ 'activity', 'costs', …(5) ] to deeply equal [ 'status' ]` (**E77**) |
+| `stores.test.ts`, ciò che arriva illeggibile | in `receive`, `if (saved.value !== null) openNamed.value = saved.value.openNamed ?? null;` al posto della riga di `openNamed` — la forma di prima di **E75** | rosso: `expected 'Revisione' to be null` — il nome resta aperto su una vista che il pacchetto non ha più |
+| `stores.test.ts`, `showView` | in `showView` tolta la riga `openNamed.value = null;` | rosso, **due** prove: `expected 'Revisione' to be null`; e in `frame.test.ts` il dock, `expected [ 'status' ] to deeply equal [ 'activity', 'costs', …(5) ]` (**E77**) |
 | `stores.test.ts`, i nomi delle tre viste | in `saveNamed` tolto `...shown,` da `taken` | rosso: `expected 'saved' to be 'taken'` |
 | `stores.test.ts`, le maiuscole | in `sameName` `return a === b;` | rosso, due prove: i doppioni e `expected 'saved' to be 'taken'` |
 | `stores.test.ts`, lo schermo | in `onScreen` le due righe dell'`if` sostituite da `if (openNamed.value !== null) pack.openNamed = openNamed.value;` | rosso: `expected { view: 'compact', layouts: {}, …(2) } to deeply equal { view: 'compact', …(2) }` — il nome chiuso restava nel pacchetto |
@@ -8889,9 +8941,10 @@ Alla fine `git status --porcelain | diff <scratchpad>/prima.txt -` rende soltant
 
 - [ ] **Passo 9: il cancello, il commit, la posizione**
 
-La riga **7** della tabella della posizione — **Stato** `✅ <data>`, e nella riga **6** la colonna **Commit** con l'hash del
-compito 6 (R1-16) —; `bash scripts/gate.sh` da solo, `bash scripts/check-docs.sh`, il commit — `design-system(compito 7): le
-viste col nome, sotto …` — coi fine-riga rimisurati, e `git push`.
+La riga **7** della tabella della posizione — **Stato** `✅ <data>`; la riga **6** porta già la colonna **Commit**, scritta
+dalla chiusura del 6bis con quella della riga **6bis**, e non si tocca (**E79**) —; `bash scripts/gate.sh` da solo, `bash
+scripts/check-docs.sh`, il commit — `design-system(compito 7): le viste col nome, sotto …`, con le due righe del pezzo
+JavaScript (**E80**) — coi fine-riga rimisurati, e `git push`.
 
 ---
 ## Compito 8: la cornice — la barra col nome della vista, la Panoramica, la striscia a pillola
@@ -11064,64 +11117,94 @@ compito 1 — o in una voce d'errata. Un nome senza casa è una voce d'errata nu
 
 ---
 
-## Come si riprende — l'esecuzione del compito 6bis, 2026-09-27
+## Come si riprende — il pre-controllo del compito 7, 2026-09-27
 
-✅ **Il compito 6bis è eseguito, curato e approvato, e con lui si chiude il compito 6.** Il dispaccio col sì del proprietario
-sulla banda detta prima, 0,9–1,2 milioni di token: l'implementatore ha consegnato `da7a522`, **uguale al testo del piano** —
-`compare_task6bis.py 9579ca0 da7a522`, venti percorsi `OK` —, con ogni rosso e ogni verde dei Passi 1–15 come il pre-controllo li
-aveva misurati; il revisore l'ha detto **conforme**, con due minori e due nit, tutti del dettato, e il coordinatore li ha curati
-senza ri-revisione, come per i compiti 3–6 (`5105ad0`, **E70**–**E73**). Il Passo 16 col proprietario, nel suo Chrome col mouse
-vero: approvato, A — *«quello che mi hai chiesto funziona»* —, **a condizione** che la chiusura segua
-`anthropic-skills:decision-principles`. Le righe 6 e 6bis della posizione sono a `✅`; nella cartella del dispaccio il prompt
-spedito, il rapporto, il prompt del revisore, la revisione e `plan_ops.py`. La consegna precedente — il pre-controllo del compito
-6bis — sta parola per parola in [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
+✅ **Il pre-controllo del compito 7 è fatto: sette voci, E75…E81**, scritte nell'errata; sei applicate al testo — tutte fuori dal
+merito approvato, e decise dal coordinatore coi cinque criteri —, e **E81** consegnata al pre-controllo del compito 8. Il
+compito rifatto per intero dal testo del piano su un `git worktree` di `1c168a1` nello scratchpad, macchina `Jays`, con
+`plan_ops.py`: ogni Atteso dei Passi 1–7 **tornato**; le quattordici violazioni del Passo 8 lanciate sulla suite intera, undici
+col rosso dettato e tre con prove in più (**E77**), e ogni file tornato dalla copia salvata; cinque corse della suite, 211 prove
+passate ciascuna; e sopra, il compito 8, col solo rifiuto di **E63**. Poi il testo **corretto** rifatto su una copia pulita: gli
+Atteso come li scrive, le quindici righe della tabella nuova rosse coi loro messaggi, la riga di `Frame.vue` che nessuna prova
+tiene (**E76**) verde, cinque corse con 212 prove ciascuna; e sopra, di nuovo il compito 8, col solo rifiuto di **E63**. Nella
+cartella del dispaccio il modello `dispatch-task-7.md`, `_extract_brief_7.py` e `compare_task7.py`, con la ricetta qui sotto,
+provato su due commit di prova. La consegna precedente — l'esecuzione del compito 6bis — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
 
 ⛔ **Da sapere subito.**
 
-1. **E74 è aperta, e aspetta il proprietario**: l'anello del fuoco della scatola di Stato, tagliato dalla scheda — di prima del
-   6bis. La forma della cura è aspetto; la sonda la può portare il compito 8.
-2. **L'assunzione della barra resta**: la preferenza di Windows che tiene sempre visibili le barre, e i colori forzati. Lo
-   sguardo del Passo 16 ha confermato il cursore col mouse vero, e le due condizioni non le ha provate; nessun compito del piano
-   le misura — il richiamo sta nella riga dell'assunzione del disegno.
-3. **Il compito 7 si rilegge contro il codice di adesso** (`CLAUDE.md`, domanda 5): il 6bis ha cambiato diciannove file, e i
-   conti che **E64** ha scritto nel compito 7 sono **dedotti**.
-4. **La memoria libera di questa macchina era 6 GB su 31,2** durante l'esecuzione e la revisione: nessuna prova è caduta, ma si
-   rimisura prima del prossimo dispaccio.
+1. **Il codice del repository non è toccato**: lo cambia l'esecuzione. Il compito è provato su `1c168a1`; se prima del dispaccio
+   un commit tocca `gui/`, il compito si rilegge contro il codice di allora: `git log --oneline 1c168a1..HEAD -- gui/`.
+2. **E75 cambia il codice dettato**: in `receive` il nome della vista col nome si rilegge sempre dal pacchetto, e il Passo 2
+   porta una sesta prova del negozio.
+3. **E76 ed E81 vanno al pre-controllo del compito 8**: la sua prova della Panoramica non tiene che una delle tre chiuda la
+   vista col nome, e *«Salva questa vista»* prima del benvenuto perde le disposizioni salvate.
+4. **E74 e l'assunzione della barra restano del proprietario**: le due domande del punto 4 qui sotto.
+5. **La memoria libera di questa macchina era 5,5 GB su 31,2** all'apertura, e nessuna prova è caduta: si rimisura prima del
+   dispaccio.
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
-| **i commit** | `git log --oneline 9579ca0..HEAD`: tre — `da7a522`, il compito dell'implementatore; `5105ad0`, le cure della revisione; e quello che scrive questa riga: le righe 6 e 6bis della posizione, **E74**, il richiamo nel disegno, le copie del dispaccio e `plan_ops.py`, questa sezione e la precedente in archivio |
-| **cancello** | `GATE GREEN` a `5105ad0` e prima del commit che scrive questa riga: jsdom 144 prove passate e una saltata, browser 56, il pezzo `691.82 kB`, `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
-| **la CI** | `5105ad0` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
-| **la posizione** | le righe dalla 1 alla 6bis a `✅`; la 7, l'8 e la 9 a `⬜` |
-| **lo scratchpad** | sulla macchina `Jays`, **non tracciato**, in `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\2f940fbc-999d-4486-9faf-6d913c767183\scratchpad\`: in `task6bis/` i log dell'implementatore, in `review6bis/` quelli del revisore con le schermate dello sguardo, in `cure/` gli script delle cure. Non servono a riprendere: il piano e la cartella del dispaccio bastano |
-| **server e cartelle di prova** | nessun server acceso; il clone del revisore, `%TEMP%\rv6bis`, tolto; in `.claude/launch.json` la sola configurazione `gui-dev` |
+| **i commit** | `git log --oneline 1c168a1..HEAD`: uno, quello che scrive questa riga — le voci **E75**…**E81** e le correzioni nel compito 7, in **D13**, nella riga **N-2** e nella riga 7 della posizione; nella cartella del dispaccio i tre file del compito 7; questa sezione, e la precedente in archivio. Nessun codice cambia: `git diff --stat 1c168a1..HEAD -- . ':!docs'` non rende nulla |
+| **cancello** | `GATE GREEN` all'apertura su `1c168a1` e prima del commit che scrive questa riga: jsdom 144 prove passate e una saltata, browser 56, il pezzo `691.82 kB`, `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `1c168a1` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | le righe dalla 1 alla 6bis a `✅`; la 7 a `⬜`, pre-controllata; l'8 e la 9 a `⬜` |
+| **lo scratchpad** | sulla macchina `Jays`, **non tracciato**, in `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\8822e34d-7a9d-4041-88e7-8d91a2a47eb9\scratchpad\`: in `tools/` gli attrezzi — `plan_ops.py`, `violations7.py` con le sedici violazioni, i due script delle correzioni —; in `logs/` le corse. Non servono a riprendere: il piano basta |
+| **server e cartelle di prova** | nessun server acceso; i due `git worktree` di prova tolti — `git worktree list` rende la sola cartella del repository —; `.claude/launch.json` com'era |
 
-**Che cosa ha fatto questa sessione.** La ripresa coi comandi; il dispaccio dell'implementatore; il prompt del revisore, scritto
-dal modello del compito 6 — il 6bis non ne aveva uno —, con `plan_ops.py` per rifare i rossi dei passi; le cure, misurate nelle
-due direzioni; il Passo 16 col proprietario; la chiusura. I costi: l'implementatore ~411k token in ~19 minuti, il revisore ~525k
-in ~39, ~0,94 milioni in tutto, dentro la banda detta.
+**Che cosa ha fatto questa sessione.** Nessun dispaccio, nessun codice nel repository. La ripresa coi comandi e il cancello
+d'apertura; il compito rifatto dal testo e rimisurato passo per passo; le violazioni sulla suite intera, più una per la riga
+che nessuna prova tiene; due prove usa-e-getta, per **E75** e per **E81**; il compito 8 applicato sopra, due volte; i commenti
+che il compito rende falsi, cercati sulla copia coi compiti 7 e 8; le sette voci; il testo corretto rifatto; il dispaccio, e il
+confronto provato su due commit di prova.
 
 📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura del
 sotto-progetto.
 
 | | Che cosa | Che cosa se ne fa |
 |---|---|---|
-| 1 | **un costo «nessuno» misurato sulle prove che esistono è cieco al caso di confine**: **D25** fu misurata su coppie tutte a distanze uguali, e il pezzo a un pixel dalla diagonale non c'era — **E71** | il costo di una decisione si misura costruendo il caso di confine |
-| 2 | **i rossi dei passi si rifanno dal testo del piano**: `plan_ops.py apply <radice> --upto N` su un clone della base, e per un passo che esegue uno script le sue uscite dal commit, dopo che il confronto le ha dette uguali al dettato | la revisione del 6bis è il modello; lo strumento sta nella cartella del dispaccio |
-| 3 | **un difetto di prima, portato allo sguardo, che lo sguardo non commenta, non è approvato**: si scrive aperto, o si dispone col merito che c'è già — **E74**, e il bordo di «Riprova» che la (a) esenta | la chiusura scrive ciò che il proprietario ha detto, non ciò che non ha detto |
-| 4 | **6 GB liberi su 31,2 non hanno reso instabile la suite**: il revisore ha girato le prove e il cancello con 5,9–6,1 GB liberi, e nessuna prova è caduta | un dato per P-20 e P-21; la memoria si misura comunque prima di un dispaccio |
+| 1 | **uno stato derivato si riscrive anche quando la sua fonte sparisce**: `openNamed` si rileggeva dal pacchetto solo se il pacchetto c'era, e un `Nothing` lo lasciava a un nome che nessuno teneva più — **E75** | ogni stato derivato si prova anche sul ramo in cui la fonte è `null` |
+| 2 | **una violazione si lancia sulla suite intera, non sul solo file che l'Atteso nomina**: tre righe su quattordici facevano cadere prove di altri file — **E77** —, e la suite intera costa sei secondi | `violations7.py` lancia `npx vitest run` intero, i due progetti |
+| 3 | **un fatto che la scrittura del piano ha misurato può smentirlo un compito inserito dopo**: *«nessuna prova monta `Frame.vue`»* era vero il 2026-09-23, e il 6bis l'ha reso falso — **E76**, la riga 5 di `CLAUDE.md` | le righe *«Che cosa la scrittura di questo compito ha misurato»* si rimisurano tutte, non solo i comandi del Passo 1 |
+| 4 | **uno strumento che muta un file lo rimette a posto anche quando fallisce**: `violations7.py` scriveva il log prima di rimettere la copia, in una cartella che non c'era — creata in tempo, a corsa avviata | il ripristino di una violazione va in un `finally` |
+
+📌 **La ricetta del compito 7**, per rifarlo o confrontarlo dal testo del piano, vale per il piano del commit che scrive
+questa riga — le righe prima di questa sezione non cambiano chiudendo una sessione. `compare_task7.py <base> <target>` la
+legge: `W` un file intero, creato o riscritto, `R` il *Trova* e il *Sostituisci* di una sostituzione.
+
+```text
+# Passo 2
+W gui/src/frame/nearest.test.ts 8101
+W gui/src/frame/schematic.test.ts 8148
+R gui/src/stores/stores.test.ts 8205 8211
+R gui/src/stores/stores.test.ts 8217 8227
+R gui/src/frame/frame.test.ts 8345 8354
+# Passo 3
+W gui/src/frame/nearest.ts 8393
+R gui/src/frame/moveActive.ts 8438 8447
+R gui/src/frame/moveActive.ts 8457 8483
+# Passo 4
+W gui/src/frame/schematic.ts 8507
+# Passo 5
+W gui/src/stores/layout.ts 8576
+# Passo 6
+R gui/src/frame/dock.ts 8813 8823
+R gui/src/frame/dock.ts 8834 8848
+R gui/src/frame/dock.ts 8863 8872
+R gui/src/frame/Frame.vue 8884 8891
+```
 
 **Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
 
 1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
-2. **Il pre-controllo del compito 7**, contro il codice di adesso: il compito rifatto dal testo del piano con `plan_ops.py` su una
-   copia, ogni Atteso rimisurato — i conti che **E64** ha dedotto —, e il compito 8 applicato sopra, perché i suoi *Trova* e i
-   suoi Atteso passano per il 7.
-3. Poi l'esecuzione del 7; poi il pre-controllo dell'8, con le sonde che l'errata gli assegna — **E38**, **E39**, **E43**,
-   **E53** ed **E57** —, la domanda di **E44** sulla Panoramica, **E63**, i conti dedotti di **E64**, la strada più larga di
-   **E70**, **E73**, e la sonda di **E74** se il proprietario ne avrà deciso la forma; a quello del **9**, la Definizione di
-   «fatto» con le righe 22 e 23.
+2. **L'esecuzione del compito 7**: il prompt dal modello `dispatch-task-7.md`, il brief da `_extract_brief_7.py`, la banda dei
+   costi detta prima del sì; un subagente fresco, la revisione — che confronta il commit col testo con `compare_task7.py` e
+   rifà i rossi dei passi con `plan_ops.py` —, le cure; la chiusura, e questa sezione in archivio. Il compito 7 non ha uno
+   sguardo del proprietario: la regola 5 di *«Come si esegue un compito»* non lo nomina.
+3. Poi il pre-controllo del compito 8, con le sonde che l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed
+   **E57** —, la domanda di **E44** sulla Panoramica, **E63**, i conti dedotti di **E64**, la strada più larga di **E70**,
+   **E73**, la prova della Panoramica di **E76**, la finestra prima del benvenuto di **E81**, e la sonda di **E74** se il
+   proprietario ne avrà deciso la forma; a quello del **9**, la Definizione di «fatto» con le righe 22 e 23.
 4. ⏳ **Due domande per il proprietario**, una per volta e quando vuole: la forma della cura di **E74**; e se l'assunzione della
    barra debba avere un compito che la misuri.

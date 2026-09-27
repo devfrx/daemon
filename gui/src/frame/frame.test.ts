@@ -476,6 +476,17 @@ describe("the frame (the (d) of the design system)", () => {
     expect(overviewOpen(), "a name that is taken keeps the overview open").toBe(true);
     expect(document.querySelector(".naming")?.textContent).toContain(i18n.global.t("overview.taken"));
     expect(saves(bridge)).toBe(0);
+    // ⛔ EVERY OPENING STARTS WITH NO NAME HALF WRITTEN (X4 of E107): closed with F3 on a refused name, the overview opens
+    // again with no field, and the field opens empty, with no refusal under it.
+    press("F3");
+    await flush();
+    press("F3");
+    await flush();
+    expect(document.querySelector(".naming")).toBeNull();
+    document.querySelector<HTMLElement>('[data-card="save"]')?.click();
+    await flush();
+    expect(document.querySelector<HTMLInputElement>(".naming input")?.value).toBe("");
+    expect(document.querySelector(".naming")?.textContent).not.toContain(i18n.global.t("overview.taken"));
     write("Revisione");
     confirm();
     await flush();

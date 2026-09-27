@@ -18,7 +18,7 @@ del **sotto-progetto 14** nella roadmap con la sua riga in *«Perché quest'ordi
 `themes.css`, le scale `--ref-*` e i ruoli `--color-*` dei due temi — copiati **byte per byte** dalla
 [tavola dei token](../specs/2026-09-22-design-system-tavole/token.html), e un test che li tiene uguali. Il tema si posa come
 attributo `data-theme` sulla radice; la scelta vive nel pacchetto della disposizione, che il core custodisce senza aprirlo.
-Il kit sono **otto pezzi di base** in `gui/src/components/`, sopra `reka-ui` dove serve tastiera e ARIA, con le icone di
+Il kit sono i **pezzi di base** in `gui/src/components/`, sopra `reka-ui` dove serve tastiera e ARIA, con le icone di
 `lucide` dietro **una** porta; le regole stanno nel linter che c'è già; le sonde delle tavole diventano test nel **browser
 vero**, Chrome installato, dentro il cancello.
 
@@ -129,7 +129,8 @@ esegue** prima del proprio pre-controllo.
 | **3** | **il kit**: `lucide`; `BaseIcon` con `icons.ts`, `BaseButton`, `BaseLabel`, `BaseList`, `BaseStatus`, `BaseTextField`, `BaseRadioGroup`, `BaseDialog`; un test con `axe` ciascuno; il linter che legge anche i `.ts`, e le due regole sui pezzi di base | `c7b7bcd`, con la cura `9d2ffb0` | ✅ 2026-09-25 |
 | **4** | **la pagina kit**: `gui/kit.html` e `gui/src/kit/`, **fuori** dal pacchetto e provata sull'uscita del *build*; le prove nel browser sulla pagina kit, nei due temi — raggi concentrici, testo tagliato e niente che sborda, icone disegnate e centrate, `axe` col contrasto | `841dc54`, con la cura `8d098d0` | ✅ 2026-09-25 |
 | **5** | **il kit al lavoro**: i pezzi di base nei pannelli e nella cornice — la finestra di conferma, il cassetto, la fascia, Stato, Permessi, Passi, Impostazioni con la scelta del tema, il segnaposto, la barra; le due regole del linter su `panels/` e `frame/`; **M-3** chiusa per costruzione, e l'Assistente vocale a mano | `545f500`, con le cure `7e25d03` e `9e6657b` | ✅ 2026-09-26 — il Passo 8 col proprietario, nel suo Chrome con l'Assistente vocale: alle domande dei punti 3, 4 e 5 — *«senti …?»* — la risposta *«di quello che hai chiesto … funziona tutto»*, e il punto 1 non riportato a parte; e *«a parte il piccolo problema citato poco fa»*, il lampo delle barre di scorrimento con la fascia, curato da **E43** |
-| **6** | **il dock vestito**: il tema `dockview-theme-harness`, `dock.css` con ogni variabile del tema di riferimento, i gruppi come schede, `readToken`, `--z-floating`, la presa grande coi pezzi di base; `themeAbyss` esce | — | ⏳ 2026-09-26 — il compito in `c1102fc`, curato in `ca83dac` (**E49**–**E58**); il Passo 8 **non approvato**: ripreso col proprietario, tre voci decise e **da curare**, **E59**–**E61** — la barra di scorrimento, i messaggi con la fascia, il bordo nel raggio; il loro disegno è scritto, il 2026-09-27 — **E61**, **E59** ed **E60** —, e il proprietario le ha **approvate**, A, guardandole insieme su una copia della tavola lo stesso giorno, con l'innesco della barra che la verifica ha trovato: resta la cura |
+| **6** | **il dock vestito**: il tema `dockview-theme-harness`, `dock.css` con ogni variabile del tema di riferimento, i gruppi come schede, `readToken`, `--z-floating`, la presa grande coi pezzi di base; `themeAbyss` esce | — | ⏳ 2026-09-26 — il compito in `c1102fc`, curato in `ca83dac` (**E49**–**E58**); il Passo 8 **non approvato**: ripreso col proprietario, tre voci decise e **da curare**, **E59**–**E61** — la barra di scorrimento, i messaggi con la fascia, il bordo nel raggio; il loro disegno è scritto, il 2026-09-27 — **E61**, **E59** ed **E60** —, e il proprietario le ha **approvate**, A, guardandole insieme su una copia della tavola lo stesso giorno, con l'innesco della barra che la verifica ha trovato: resta la cura, che è il **compito 6bis**, scritto il 2026-09-27 (**E62**): la riga si chiude col suo sguardo |
+| **6bis** | **la cura delle tre voci del Passo 8 del 6**: nella tavola il bordo nei raggi, la barra di scorrimento col suo innesco e il messaggio, e la copia; la sonda a mezzo pixel; le barre mostrate al progetto browser; `BaseNotice` con le icone dei toni, nella pagina kit, nella fascia sulla pagina, in Impostazioni e in Stato; `frame.browser.test.ts` | — | ⬜ — scritto il 2026-09-27, col codice provato su una cartella di prova (**E62**); viene il pre-controllo |
 | **7** | **le viste col nome, sotto**: `named` e `openNamed` nel pacchetto, il negozio e il dock che le mostrano e le salvano; l'aiutante della geometria estratto da `moveActive.ts`; lo schema di una disposizione, per le miniature | — | ⬜ |
 | **8** | **la cornice**: la barra col nome della vista, la **Panoramica** su `BaseDialog` con le miniature e *«Salva questa vista»* — F3, frecce, Invio, Esc —, la **striscia** a pillola coi «moduli»; le prove nel browser della Panoramica e della striscia | — | ⬜ |
 | **9** | **la chiusura**: la riga «Accessibilità» di tracciabilità, la riga 14 della roadmap con *«Perché quest'ordine»*, `README.md`, la §12 e la §6 del compendio, `porta-di-qualita.md` con C-S0-1 (P-29), `riferimenti.md`; i richiami nel disegno e nella stella polare (P-28); la **Definizione di «fatto»**, eseguita, con le uscite del giorno | — | ⬜ |
@@ -224,9 +225,11 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | **E56** | ⚠️ **Compito 6, Passo 8 — due sfondi, e nel chiaro le schede sprofondavano:** il proprietario, il 2026-09-26. `.dv-dockview { background-color: var(--dv-group-view-background-color) }` in `dockview.css` 8.3.1, e il nostro tema dà a quella variabile la superficie delle schede: la griglia intera si dipingeva del loro colore, sotto e intorno fino al margine di `.dock`, contro la (c), *«sul fondo `--color-bg`»* — misurato risalendo gli strati: l'unico dipinto è `dv-grid-view dv-dockview`, `rgb(251, 248, 243)` nel chiaro e `rgb(27, 23, 24)` nello scuro. ✅ **Corretta** nel commit che la scrive: nel tema la griglia trasparente; in `dock.browser.test.ts` la prova *«paints nothing between the cards…»*, che risale da ogni scheda all'ospite, rossa senza la regola nei due temi, `expected [ Array(1) ] to deeply equal []`; una riga nel Passo 7 |
 | **E57** | ⚠️ **Compito 6, Passo 8 — la barra aveva un fondo suo e una riga sotto:** il proprietario, il 2026-09-26: *«eviterei di colorarla diversamente dallo sfondo (anche il border bottom) e renderla un tutt'uno con esso»*. È ciò che la tavola disegna — `.m-bar`, né fondo né bordo —: il fondo `--color-bg-raised` col bordo veniva dalla parte 2, e i compiti 5 e 8 lo portavano avanti. ✅ **Corretta** nel commit che la scrive: `frame/ViewBar.vue` senza le due righe, col perché nel commento, al Passo 4; il recinto di `ViewBar.vue` del compito 8 allineato; il richiamo in *«La barra»* del disegno. ⚠️ **La sonda al pre-controllo del compito 8**, che monta la cornice intera nel browser (`frame.browser.test.ts`), come per **E43** |
 | **E58** | ⚠️ **Compito 6, Passo 8 — il nucleo era vestito da scheda:** il proprietario, il 2026-09-26: *«la scheda del grafo … deve fare eccezione, ed essere un tutt'uno con lo sfondo»*. È la stella polare — *«il nucleo al centro … intorno le tessere»* — e la tavola, `.m-core` fra le schede `.m-mod`. ✅ **Corretta** nel commit che la scrive, sullo schema della striscia del compito 8 (*«Found by what it holds»*): la radice del nucleo porta `.nucleus` — oggi quella di `Placeholder.vue`, per il modulo che lo interpreta —, e il tema toglie al suo gruppo fondo, bordo e ombra con `:has(.nucleus)`; in `dock.browser.test.ts` la prova *«draws the nucleus on the page…»*, e la prova delle schede lo salta; rossa senza la regola nei due temi e, senza il segno, `expected [] to have a length of 1 but got +0`; due righe nel Passo 7. La prova di `modules.test.ts` riconosceva il segnaposto dal testo `class="placeholder"`, e con la seconda classe cadeva: legge ora la classe come parola. Il richiamo nella (c) del disegno |
-| **E59** | ⚠️ **Compito 6, Passo 8 — la barra di scorrimento è quella di Windows, e nessuna tavola la disegna:** il proprietario, il 2026-09-26, sul pannello Impostazioni: *«va creato un componente ui universale anche per la scroll bar personalizzata, é orrenda cosí»*. È l'aspetto che **E48** gli lasciava: l'arco della scheda ne taglia il binario. Nessuna delle quattro tavole approvate disegna una barra — `grep -c -i scrollbar` rende 0 su ciascuna —: un buco del disegno, non una divergenza. Nel codice nessuna regola nostra; le scatole che scorrono le elenca `grep -rn -E 'overflow(-[xy])?: auto' gui/src --include='*.vue' --include='*.css'`, e `dockview` 8.3.1 veste da sé le sole barre delle linguette. ✅ **Decisa dal proprietario il 2026-09-26 — A**: una regola sola nella tavola dei token, ricopiata in `base.css` accanto a `:focus-visible` e `::selection`, che vale per ogni scatola che scorre — la nostra, quelle di `dockview` e di `reka-ui`, e quelle che arriveranno —; contro **B**, un pezzo `BaseScrollArea` sopra `ScrollArea` di `reka-ui` 2.10.4, universale solo dove lo si avvolge, che per ciò che non è nostro avrebbe chiesto anche la A. ✅ **E l'aspetto, la C**, scelto guardando quattro varianti vive nel suo Chrome, nei due temi, dentro una scheda come Impostazioni: coi pseudo-elementi `::-webkit-scrollbar`, larga 10 px col cursore a 6 — un bordo trasparente di 2 px e `background-clip: padding-box` —, arrotondato a `--radius-full`, binario trasparente, **senza frecce** (`::-webkit-scrollbar-button`), staccata dalle estremità di `--space-3` (il `margin-block` del binario), col colore `--color-border-strong` e `--color-text-muted` sotto il puntatore; il cursore **si vede solo col puntatore sopra la scatola o col fuoco dentro** (`:hover` e `:focus-within` della scatola). Scartate la A delle varianti, le sole proprietà standard `scrollbar-width: thin` e `scrollbar-color` — misurato nel pannello del browser dell'app: le frecce restano, piccole —, e la B, la stessa C sempre visibile. Le fonti, lette il 2026-09-26: *Scrollbar styling* di Chrome for Developers, aggiornata il 2024-01-17 — le proprietà standard da Chrome 121, solo colore e spessore: niente raggio, margini o frecce —; e `::-webkit-scrollbar` su MDN, aggiornata il 2026-08-27 — **non standard**, e spenta dove `scrollbar-color` o `scrollbar-width` valgono altro che `auto`, con `scrollbar-color` ereditata. ⚠️ **I costi, dichiarati:** pseudo-elementi non standard, ma di Chromium, cioè di Electron e del Chrome delle prove; la preferenza di Windows che tiene sempre visibili le barre non la vediamo — dedotto, da misurare —, e così il comportamento sotto i colori forzati; una scatola che imposta `scrollbar-width` o `scrollbar-color` resta fuori dalla regola — `.dv-tabs-container` di `dockview` ha `scrollbar-width: thin`. ⏳ **La cura non è scritta:** il richiamo datato nella (a) del disegno, la regola nella tavola dei token e le fonti in [`riferimenti.md`](../../riferimenti.md), poi il piano con la prova vista rossa — la larghezza misurata, `offsetWidth − clientWidth`, a 10 — e lo sguardo del proprietario. ⚠️ **RICHIAMO DEL 2026-09-27, al disegno delle tre voci:** la parte del **disegno** è scritta — la riga della barra nella (a), il controllo 22 e l'assunzione del [disegno](../specs/2026-09-22-design-system-design.md), e le fonti con due misure in [`riferimenti.md`](../../riferimenti.md) —, con tre precisioni che l'aspetto approvato vuole e la voce non diceva: il distacco **per asse** — col solo `margin-block` l'orizzontale arriva agli angoli, misurato in Chromium 152 —; l'**angolo** fra le due barre trasparente — Chromium lo disegna chiaro, misurato —; e un token per lo spessore, `--size-scrollbar`, che la prova legge invece di ricopiare il numero. ⏳ **Resta:** la regola nella tavola e la sua copia, il piano con la prova vista rossa, lo sguardo del proprietario. ⚠️ **RICHIAMO DEL 2026-09-27, allo sguardo del proprietario:** le tre voci **approvate — A**, in chat — guardandole insieme su una copia della tavola dei token nello scratchpad. Verificandola prima di mostrarla, **la C com'è scritta non si accende col puntatore**: Chromium ridisegna una barra personalizzata solo quando cambia lo stile della scatola stessa, e una regola sul solo pseudo-elemento non lo cambia — misurato nel Chrome 154 installato e nel Chromium 152 del pannello dell'app, con varianti ferme dal caricamento: col fuoco il cursore compare, perché il contorno cambia la scatola; col puntatore no; e compare se al passaggio la scatola cambia anche una sola variabile. La cura, decisa dal coordinatore come scelta tecnica contenuta e mostrata al proprietario con la pagina e col confronto senza: l'**innesco**, una proprietà registrata che **non si eredita**, `--scrollbar-trigger`, a 1 su `:hover` e `:focus-within`. ⚠️ Il puntatore delle prove era simulato: la conferma col mouse vero non è registrata, e la dà il secondo sguardo sul dock. ⛔ **E il controllo 22, com'è scritto, misura il niente:** senza finestra Playwright lancia Chrome con `--hide-scrollbars`, e `gui/vite.config.ts` lo lancia così — lo spessore vale 0 con la regola e senza, 10 togliendo il solo flag. Le misure e i metodi in [`riferimenti.md`](../../riferimenti.md). ⏳ **Resta:** la cura |
-| **E60** | ⚠️ **Compito 6, Passo 8 — la fascia non segue la tavola, e i messaggi non hanno un pezzo:** il proprietario, il 2026-09-26, su *«Il core non ha risposto. Riprova»*: *«va reso coerente col sistema e oltre a spaziarlo correttamente dal resto come si deve, si migliora lo stile con icone … e approfitterei per renderlo universale per tutti warning, messaggi normali di sistema, errori o qualsiasi altra cosa»*. **Non è un gusto nuovo:** la tavola dei token, *«Gli stati»*, disegna già il messaggio `.msg` in tre toni — `ok`, `warn` e `stop`, con `circle-check`, `triangle-alert` e `circle-x` a `--size-icon-lg` —, un titolo `--font-body-strong` col testo `--font-caption` sotto, fondo e bordo del tono, `--radius-control` e `--space-3` dentro; e il suo esempio è il nostro, *«Il core non risponde»*. `frame/Band.vue` è una striscia da bordo a bordo con la sola riga sotto, senza icona né titolo: una **divergenza dalla tavola approvata**, come **E57** ed **E58** (la lezione 5 della consegna dell'esecuzione del compito 6, in archivio). E lo spazio: il dock ha 0 in alto (risposta 20), e con la fascia in mezzo le schede la toccano. ⚠️ **Già deciso, e detto prima della domanda:** la (b) del disegno, *«Fuori, finché non tornano due volte: i messaggi e le notifiche»* — le righe di Impostazioni e di Stato vi erano contate come regioni (`BaseStatus`), non come messaggi —; e **E228**, le notifiche dei lavori lunghi, resta del proprietario. ✅ **Decisa dal proprietario il 2026-09-26 — A**: un pezzo di base per i messaggi, **adesso** — `BaseMessage`, il nome da confermare nel disegno: il `.msg` della tavola coi tre toni più uno **neutro**, l'icona del tono dalla mappa, titolo, testo e un'azione facoltativa —; lo usano la fascia, la riga *«Richiesta inviata»* di Impostazioni e quella del verdetto di Stato; la (b) cambia col richiamo datato. Contro **B**, la fascia come nella tavola dentro `frame/`, con la (b) com'è. Il consiglio del coordinatore era la A: la tavola ha già deciso l'asse che varia, il tono. ✅ **Il tono neutro: N2**, deciso guardandolo nei due temi — fondo `--color-bg-accent-subtle`, bordo `--color-border-accent`, icona `info` a `--color-text-accent` —, contro **N1**, fondo `--color-bg-raised`, bordo `--color-border` e icona `--color-text-muted`, che il coordinatore consigliava: la tavola vuole *«un solo accento forte, usato poco»*, e nello scuro il bordeaux di N2 si avvicina al rosso di `stop`. Misurato sulla pagina di prova, nel pannello del browser dell'app: il testo sul fondo del messaggio fra 11,6 e 16,8 in ogni tono, le icone fra 5,4 e 8,0. ✅ **La fascia**, approvata guardandola: lo stesso pezzo **sulla pagina**, col raggio della scheda (`--radius-card`, con **E61**), a `--space-3` dai lati e sopra le schede, sotto la barra che le lascia i suoi 8 px; «Riprova» dentro, a `--space-3` più il bordo, con `--radius-control`: concentrico per costruzione. Un messaggio **in una scheda** ha `--radius-control`. ✅ **I toni**, con le parole di oggi (**E39**): *«Il core non ha risposto.»* `warn`, con «Riprova»; *«Il core parla una versione diversa del protocollo…»* **`stop`** — oggi `warn` —, col *«Timbro atteso»* come testo; *«Richiesta inviata: in attesa del core.»* e il verdetto `Queued` neutri; `Granted` `ok`; `Refused` `stop`, col dettaglio come testo. ⏳ **La cura non è scritta:** i richiami datati nella (b) e nella (d), il tono neutro nella tavola dei token, poi il piano e lo sguardo del proprietario. ⚠️ **RICHIAMO DEL 2026-09-27, al disegno delle tre voci:** la parte del **disegno** è scritta — nella (b) il pezzo, **`BaseNotice`** e non `BaseMessage`, col nome deciso dal coordinatore su delega del proprietario: nel codice della GUI *message* è già il messaggio del filo (decisione 28 del [disegno](../specs/2026-09-22-design-system-design.md), col tono neutro `info` e le icone col nome del tono); la sua forma — `title` e `description` come `BaseDialog`, l'azione in uno slot, nessuna chiusura a mano (decisione 29); i toni con le chiavi di oggi; e l'azione **solo sulla pagina**, che la regola dei raggi vuole: in una scheda starebbe a 13 px da un angolo di 8. Nella (d) la fascia; il controllo 23; le trappole 21–24, fra cui le cifre degli *«otto pezzi»* che la testa del piano e il compito 9 portano. E la **misura del contrasto**, rifatta da `themes.css`, **diverge** da quella scritta qui sopra: il testo sotto il titolo non stava nella gamma, e il 16,8 non si riproduce; tutte le coppie passano, e `contrast.test.ts` le giudica già — i numeri e il comando in [`riferimenti.md`](../../riferimenti.md), *«Il messaggio — E60»*. ⏳ **Resta:** il tono neutro e il messaggio sulla pagina nella tavola, col piano della cura; lo sguardo del proprietario sulle tre voci; il piano. ⚠️ **RICHIAMO DEL 2026-09-27, allo sguardo del proprietario — approvata, A:** sulla copia della tavola il tono `info` primo in «Gli stati», coi ruoli dell'accento, e in cima a ciascun tema il messaggio sulla pagina con «Riprova», allineato alle schede e col loro raggio. Misurato: «Riprova» sta **nell'angolo**, a 13 px dai due lati, perché il pulsante, alto 24, dà l'altezza alla riga — concentrico esatto —; e per la stessa ragione il titolo sta **2 px più in alto** del testo di «Riprova», com'era nella v3 approvata: detto al proprietario, che non l'ha commentato; lo decide il piano della cura, con lui. Il contrasto rilanciato col comando di [`riferimenti.md`](../../riferimenti.md): gli stessi numeri. ⏳ **Resta:** la cura |
-| **E61** | ⚠️ **Compito 6, Passo 8 — i raggi non contano il bordo:** il proprietario, il 2026-09-26, sul messaggio dentro la scheda della pagina di prova di **E60**: *«non sono concentrici»*. **Misurato:** il messaggio sta a 12 px di margine più **1 di bordo** della scheda, 13 dal bordo esterno, con `--radius-control`, 8: il concentrico è 20 − 13 = 7. `--radius-card: calc(var(--radius-control) + var(--space-3))` conta il solo margine, e la regola dei raggi del disegno vuole *«la distanza vera»*. **Non è della sola pagina di prova**, misurato il 2026-09-26 sul server di sviluppo a 1440 × 900, con la geometria di `concentricRadii`: nella pagina kit le righe di `BaseList` nelle schede, `r 8.0 outer 20.0 dist 13.0 -> off 1.0`; nella SPA, col gruppo di Stato staccato, `.dv-floating-titlebar` e `.dv-groupview` in `.dv-resize-container`, `r 20.0 outer 20.0 dist 1.0 -> off 1.0`. E la tavola stessa lo porta: `.card` di `token.html` ha il bordo, `--space-3` dentro e `--radius-card`. ⛔ **La sonda non l'ha mai visto:** `concentricRadii` accetta `Math.abs(inner - (outer - dx)) <= 1.5`, e un pixel passa verde. ✅ **Decisa dal proprietario il 2026-09-26 — A, il bordo entra nel raggio:** nella tavola dei token `--radius-card: calc(var(--radius-control) + var(--space-3) + var(--border-width))`, 21, ricopiato in `base.css`, e `--radius-frame` segue, 33; ciò che sta subito dentro il bordo prende `calc(var(--radius-card) - var(--border-width))`, come la zona d'arrivo di **E55** — la barra del titolo e il gruppo del contenitore galleggiante, in `tokens/dock.css` —; e la sonda scende a **mezzo pixel**, rossa prima sulla pagina kit e sul gruppo staccato coi token di oggi, verde dopo. Contro **B**, il bordo tolto dal margine — 11 px in ogni scatola col bordo che tiene qualcosa nell'angolo —: la stessa correzione in dieci posti. Il costo: due valori approvati cambiano di 1 px, e ogni superficie col raggio della scheda porta il suo bordo da 1 px, trasparente nel chiaro, com'è già. Misurato sulla pagina di prova con la A: venti coppie di angoli giudicate a mezzo pixel, nessuna storta, nei due temi; e il proprietario, guardando la scheda ingrandita coi cerchi dei raggi disegnati sopra: *«perfetto»*. ⚠️ **Un errore del coordinatore, detto al proprietario:** la prima misura della pagina di prova escludeva la cornice finta attorno alla fetta di pagina — angoli da 8 px, e dentro le schede a 13 con raggio 21 — e fu riportata come *«ogni coppia esatta»*; ora la fetta ha gli angoli dritti. ⏳ **La cura non è scritta:** il richiamo datato nella regola dei raggi del disegno e nella (f), il valore nella tavola, la sonda, e le cure che il suo rosso nomina. ⚠️ **RICHIAMO DEL 2026-09-27, al disegno delle tre voci — la cornice conta il suo bordo, A del proprietario del 2026-09-26:** qui sopra sta *«`--radius-frame` segue, 33»*, con la formula di oggi, che non conta il bordo **della cornice**. Misurato nel browser sulla tavola dei token: nella dimostrazione *«Raggi concentrici»* `.nest-frame` ha il bordo e `.nest-card` no — oggi la scheda sta a 13 px dal bordo esterno della cornice da 32, che ne vorrebbe 33; coi token di questa voce le coppie storte sarebbero **due**, la cornice 33 contro 34 e la scheda 21 contro 20; ciascuna delle due strade qui sotto le rende esatte tutte e due. Decisa **A**: `--radius-frame: calc(var(--radius-card) + var(--space-3) + var(--border-width))`, 34, e ogni superficie nostra arrotondata che contiene qualcosa di arrotondato porta il suo bordo da 1 px, disegnato o trasparente — `.kit-frame` della pagina kit uno trasparente, e resta com'è; la scheda della dimostrazione quello delle schede —; contro **B**, le cornici senza bordo, 33, con la convenzione scritta nella (a) e la dimostrazione senza il bordo che la tavola disegna. ✅ **E la curva resta il quarto di cerchio**, il 2026-09-27: alla domanda del proprietario sulla concentricità lo squircle è stato guardato su una pagina di prova e scartato — *«Vicoli ciechi e scelte scartate»* del [disegno](../specs/2026-09-22-design-system-design.md). ⚠️ **RICHIAMO DEL 2026-09-27, alla chiusura della sessione:** la parte del **disegno** è scritta, in `06dc5d5` — i richiami nel linguaggio visivo, nella (a) e nella (f), e lo squircle fra le scelte scartate. ⏳ **Resta:** i valori nella tavola — la scheda 21, la cornice 34, la scheda della dimostrazione e il foglio col loro bordo — e la loro copia, la sonda a mezzo pixel, e le cure che il suo rosso nomina. ⚠️ **RICHIAMO DEL 2026-09-27, allo sguardo del proprietario — approvata, A:** sulla copia della tavola la scheda 21, la cornice 34, il foglio 46 col suo bordo trasparente, e la scheda della dimostrazione col bordo delle schede. La sonda a mezzo pixel, portata da `concentricRadii`: sulla copia **nessuna** coppia storta su 28; sulla tavola di oggi **10 su 24** — la finestra di dialogo, lo stage, la dimostrazione — e **nessuna** con lo scarto di oggi, 1,5. ⚠️ **Sullo schermo a 175 % un bordo da 1 px si disegna 0,57 px**: le distanze misurate valgono 12,57 dove la regola ne conta 13, e mezzo pixel separa una coppia esatta, a 0,43, da una storta di un pixel, a 0,57 — a densità 1, quella delle prove, 0 contro 1. ⚠️ E la **prosa** della tavola porta le cifre vecchie — *«i raggi diventano 20 e 32»*, *«cornice 32 = scheda 20 + 12»* —: le riscrive la cura. ⏳ **Resta:** la cura |
+| **E59** | ⚠️ **Compito 6, Passo 8 — la barra di scorrimento è quella di Windows, e nessuna tavola la disegna:** il proprietario, il 2026-09-26, sul pannello Impostazioni: *«va creato un componente ui universale anche per la scroll bar personalizzata, é orrenda cosí»*. È l'aspetto che **E48** gli lasciava: l'arco della scheda ne taglia il binario. Nessuna delle quattro tavole approvate disegna una barra — `grep -c -i scrollbar` rende 0 su ciascuna —: un buco del disegno, non una divergenza. Nel codice nessuna regola nostra; le scatole che scorrono le elenca `grep -rn -E 'overflow(-[xy])?: auto' gui/src --include='*.vue' --include='*.css'`, e `dockview` 8.3.1 veste da sé le sole barre delle linguette. ✅ **Decisa dal proprietario il 2026-09-26 — A**: una regola sola nella tavola dei token, ricopiata in `base.css` accanto a `:focus-visible` e `::selection`, che vale per ogni scatola che scorre — la nostra, quelle di `dockview` e di `reka-ui`, e quelle che arriveranno —; contro **B**, un pezzo `BaseScrollArea` sopra `ScrollArea` di `reka-ui` 2.10.4, universale solo dove lo si avvolge, che per ciò che non è nostro avrebbe chiesto anche la A. ✅ **E l'aspetto, la C**, scelto guardando quattro varianti vive nel suo Chrome, nei due temi, dentro una scheda come Impostazioni: coi pseudo-elementi `::-webkit-scrollbar`, larga 10 px col cursore a 6 — un bordo trasparente di 2 px e `background-clip: padding-box` —, arrotondato a `--radius-full`, binario trasparente, **senza frecce** (`::-webkit-scrollbar-button`), staccata dalle estremità di `--space-3` (il `margin-block` del binario), col colore `--color-border-strong` e `--color-text-muted` sotto il puntatore; il cursore **si vede solo col puntatore sopra la scatola o col fuoco dentro** (`:hover` e `:focus-within` della scatola). Scartate la A delle varianti, le sole proprietà standard `scrollbar-width: thin` e `scrollbar-color` — misurato nel pannello del browser dell'app: le frecce restano, piccole —, e la B, la stessa C sempre visibile. Le fonti, lette il 2026-09-26: *Scrollbar styling* di Chrome for Developers, aggiornata il 2024-01-17 — le proprietà standard da Chrome 121, solo colore e spessore: niente raggio, margini o frecce —; e `::-webkit-scrollbar` su MDN, aggiornata il 2026-08-27 — **non standard**, e spenta dove `scrollbar-color` o `scrollbar-width` valgono altro che `auto`, con `scrollbar-color` ereditata. ⚠️ **I costi, dichiarati:** pseudo-elementi non standard, ma di Chromium, cioè di Electron e del Chrome delle prove; la preferenza di Windows che tiene sempre visibili le barre non la vediamo — dedotto, da misurare —, e così il comportamento sotto i colori forzati; una scatola che imposta `scrollbar-width` o `scrollbar-color` resta fuori dalla regola — `.dv-tabs-container` di `dockview` ha `scrollbar-width: thin`. ⏳ **La cura non è scritta:** il richiamo datato nella (a) del disegno, la regola nella tavola dei token e le fonti in [`riferimenti.md`](../../riferimenti.md), poi il piano con la prova vista rossa — la larghezza misurata, `offsetWidth − clientWidth`, a 10 — e lo sguardo del proprietario. ⚠️ **RICHIAMO DEL 2026-09-27, al disegno delle tre voci:** la parte del **disegno** è scritta — la riga della barra nella (a), il controllo 22 e l'assunzione del [disegno](../specs/2026-09-22-design-system-design.md), e le fonti con due misure in [`riferimenti.md`](../../riferimenti.md) —, con tre precisioni che l'aspetto approvato vuole e la voce non diceva: il distacco **per asse** — col solo `margin-block` l'orizzontale arriva agli angoli, misurato in Chromium 152 —; l'**angolo** fra le due barre trasparente — Chromium lo disegna chiaro, misurato —; e un token per lo spessore, `--size-scrollbar`, che la prova legge invece di ricopiare il numero. ⏳ **Resta:** la regola nella tavola e la sua copia, il piano con la prova vista rossa, lo sguardo del proprietario. ⚠️ **RICHIAMO DEL 2026-09-27, allo sguardo del proprietario:** le tre voci **approvate — A**, in chat — guardandole insieme su una copia della tavola dei token nello scratchpad. Verificandola prima di mostrarla, **la C com'è scritta non si accende col puntatore**: Chromium ridisegna una barra personalizzata solo quando cambia lo stile della scatola stessa, e una regola sul solo pseudo-elemento non lo cambia — misurato nel Chrome 154 installato e nel Chromium 152 del pannello dell'app, con varianti ferme dal caricamento: col fuoco il cursore compare, perché il contorno cambia la scatola; col puntatore no; e compare se al passaggio la scatola cambia anche una sola variabile. La cura, decisa dal coordinatore come scelta tecnica contenuta e mostrata al proprietario con la pagina e col confronto senza: l'**innesco**, una proprietà registrata che **non si eredita**, `--scrollbar-trigger`, a 1 su `:hover` e `:focus-within`. ⚠️ Il puntatore delle prove era simulato: la conferma col mouse vero non è registrata, e la dà il secondo sguardo sul dock. ⛔ **E il controllo 22, com'è scritto, misura il niente:** senza finestra Playwright lancia Chrome con `--hide-scrollbars`, e `gui/vite.config.ts` lo lancia così — lo spessore vale 0 con la regola e senza, 10 togliendo il solo flag. Le misure e i metodi in [`riferimenti.md`](../../riferimenti.md). ⏳ **Resta:** la cura ⚠️ **RICHIAMO DEL 2026-09-27, al piano della cura:** la cura è il **compito 6bis**, scritto, col codice provato su una cartella di prova (**E62**). |
+| **E60** | ⚠️ **Compito 6, Passo 8 — la fascia non segue la tavola, e i messaggi non hanno un pezzo:** il proprietario, il 2026-09-26, su *«Il core non ha risposto. Riprova»*: *«va reso coerente col sistema e oltre a spaziarlo correttamente dal resto come si deve, si migliora lo stile con icone … e approfitterei per renderlo universale per tutti warning, messaggi normali di sistema, errori o qualsiasi altra cosa»*. **Non è un gusto nuovo:** la tavola dei token, *«Gli stati»*, disegna già il messaggio `.msg` in tre toni — `ok`, `warn` e `stop`, con `circle-check`, `triangle-alert` e `circle-x` a `--size-icon-lg` —, un titolo `--font-body-strong` col testo `--font-caption` sotto, fondo e bordo del tono, `--radius-control` e `--space-3` dentro; e il suo esempio è il nostro, *«Il core non risponde»*. `frame/Band.vue` è una striscia da bordo a bordo con la sola riga sotto, senza icona né titolo: una **divergenza dalla tavola approvata**, come **E57** ed **E58** (la lezione 5 della consegna dell'esecuzione del compito 6, in archivio). E lo spazio: il dock ha 0 in alto (risposta 20), e con la fascia in mezzo le schede la toccano. ⚠️ **Già deciso, e detto prima della domanda:** la (b) del disegno, *«Fuori, finché non tornano due volte: i messaggi e le notifiche»* — le righe di Impostazioni e di Stato vi erano contate come regioni (`BaseStatus`), non come messaggi —; e **E228**, le notifiche dei lavori lunghi, resta del proprietario. ✅ **Decisa dal proprietario il 2026-09-26 — A**: un pezzo di base per i messaggi, **adesso** — `BaseMessage`, il nome da confermare nel disegno: il `.msg` della tavola coi tre toni più uno **neutro**, l'icona del tono dalla mappa, titolo, testo e un'azione facoltativa —; lo usano la fascia, la riga *«Richiesta inviata»* di Impostazioni e quella del verdetto di Stato; la (b) cambia col richiamo datato. Contro **B**, la fascia come nella tavola dentro `frame/`, con la (b) com'è. Il consiglio del coordinatore era la A: la tavola ha già deciso l'asse che varia, il tono. ✅ **Il tono neutro: N2**, deciso guardandolo nei due temi — fondo `--color-bg-accent-subtle`, bordo `--color-border-accent`, icona `info` a `--color-text-accent` —, contro **N1**, fondo `--color-bg-raised`, bordo `--color-border` e icona `--color-text-muted`, che il coordinatore consigliava: la tavola vuole *«un solo accento forte, usato poco»*, e nello scuro il bordeaux di N2 si avvicina al rosso di `stop`. Misurato sulla pagina di prova, nel pannello del browser dell'app: il testo sul fondo del messaggio fra 11,6 e 16,8 in ogni tono, le icone fra 5,4 e 8,0. ✅ **La fascia**, approvata guardandola: lo stesso pezzo **sulla pagina**, col raggio della scheda (`--radius-card`, con **E61**), a `--space-3` dai lati e sopra le schede, sotto la barra che le lascia i suoi 8 px; «Riprova» dentro, a `--space-3` più il bordo, con `--radius-control`: concentrico per costruzione. Un messaggio **in una scheda** ha `--radius-control`. ✅ **I toni**, con le parole di oggi (**E39**): *«Il core non ha risposto.»* `warn`, con «Riprova»; *«Il core parla una versione diversa del protocollo…»* **`stop`** — oggi `warn` —, col *«Timbro atteso»* come testo; *«Richiesta inviata: in attesa del core.»* e il verdetto `Queued` neutri; `Granted` `ok`; `Refused` `stop`, col dettaglio come testo. ⏳ **La cura non è scritta:** i richiami datati nella (b) e nella (d), il tono neutro nella tavola dei token, poi il piano e lo sguardo del proprietario. ⚠️ **RICHIAMO DEL 2026-09-27, al disegno delle tre voci:** la parte del **disegno** è scritta — nella (b) il pezzo, **`BaseNotice`** e non `BaseMessage`, col nome deciso dal coordinatore su delega del proprietario: nel codice della GUI *message* è già il messaggio del filo (decisione 28 del [disegno](../specs/2026-09-22-design-system-design.md), col tono neutro `info` e le icone col nome del tono); la sua forma — `title` e `description` come `BaseDialog`, l'azione in uno slot, nessuna chiusura a mano (decisione 29); i toni con le chiavi di oggi; e l'azione **solo sulla pagina**, che la regola dei raggi vuole: in una scheda starebbe a 13 px da un angolo di 8. Nella (d) la fascia; il controllo 23; le trappole 21–24, fra cui le cifre degli *«otto pezzi»* che la testa del piano e il compito 9 portano. E la **misura del contrasto**, rifatta da `themes.css`, **diverge** da quella scritta qui sopra: il testo sotto il titolo non stava nella gamma, e il 16,8 non si riproduce; tutte le coppie passano, e `contrast.test.ts` le giudica già — i numeri e il comando in [`riferimenti.md`](../../riferimenti.md), *«Il messaggio — E60»*. ⏳ **Resta:** il tono neutro e il messaggio sulla pagina nella tavola, col piano della cura; lo sguardo del proprietario sulle tre voci; il piano. ⚠️ **RICHIAMO DEL 2026-09-27, allo sguardo del proprietario — approvata, A:** sulla copia della tavola il tono `info` primo in «Gli stati», coi ruoli dell'accento, e in cima a ciascun tema il messaggio sulla pagina con «Riprova», allineato alle schede e col loro raggio. Misurato: «Riprova» sta **nell'angolo**, a 13 px dai due lati, perché il pulsante, alto 24, dà l'altezza alla riga — concentrico esatto —; e per la stessa ragione il titolo sta **2 px più in alto** del testo di «Riprova», com'era nella v3 approvata: detto al proprietario, che non l'ha commentato; lo decide il piano della cura, con lui. Il contrasto rilanciato col comando di [`riferimenti.md`](../../riferimenti.md): gli stessi numeri. ⏳ **Resta:** la cura ⚠️ **RICHIAMO DEL 2026-09-27, al piano della cura:** la cura è il **compito 6bis**, scritto, col codice provato su una cartella di prova (**E62**). E i **2 px** del titolo sopra «Riprova»: **B** del proprietario, con un'azione la riga sta al centro (**D27**). |
+| **E61** | ⚠️ **Compito 6, Passo 8 — i raggi non contano il bordo:** il proprietario, il 2026-09-26, sul messaggio dentro la scheda della pagina di prova di **E60**: *«non sono concentrici»*. **Misurato:** il messaggio sta a 12 px di margine più **1 di bordo** della scheda, 13 dal bordo esterno, con `--radius-control`, 8: il concentrico è 20 − 13 = 7. `--radius-card: calc(var(--radius-control) + var(--space-3))` conta il solo margine, e la regola dei raggi del disegno vuole *«la distanza vera»*. **Non è della sola pagina di prova**, misurato il 2026-09-26 sul server di sviluppo a 1440 × 900, con la geometria di `concentricRadii`: nella pagina kit le righe di `BaseList` nelle schede, `r 8.0 outer 20.0 dist 13.0 -> off 1.0`; nella SPA, col gruppo di Stato staccato, `.dv-floating-titlebar` e `.dv-groupview` in `.dv-resize-container`, `r 20.0 outer 20.0 dist 1.0 -> off 1.0`. E la tavola stessa lo porta: `.card` di `token.html` ha il bordo, `--space-3` dentro e `--radius-card`. ⛔ **La sonda non l'ha mai visto:** `concentricRadii` accetta `Math.abs(inner - (outer - dx)) <= 1.5`, e un pixel passa verde. ✅ **Decisa dal proprietario il 2026-09-26 — A, il bordo entra nel raggio:** nella tavola dei token `--radius-card: calc(var(--radius-control) + var(--space-3) + var(--border-width))`, 21, ricopiato in `base.css`, e `--radius-frame` segue, 33; ciò che sta subito dentro il bordo prende `calc(var(--radius-card) - var(--border-width))`, come la zona d'arrivo di **E55** — la barra del titolo e il gruppo del contenitore galleggiante, in `tokens/dock.css` —; e la sonda scende a **mezzo pixel**, rossa prima sulla pagina kit e sul gruppo staccato coi token di oggi, verde dopo. Contro **B**, il bordo tolto dal margine — 11 px in ogni scatola col bordo che tiene qualcosa nell'angolo —: la stessa correzione in dieci posti. Il costo: due valori approvati cambiano di 1 px, e ogni superficie col raggio della scheda porta il suo bordo da 1 px, trasparente nel chiaro, com'è già. Misurato sulla pagina di prova con la A: venti coppie di angoli giudicate a mezzo pixel, nessuna storta, nei due temi; e il proprietario, guardando la scheda ingrandita coi cerchi dei raggi disegnati sopra: *«perfetto»*. ⚠️ **Un errore del coordinatore, detto al proprietario:** la prima misura della pagina di prova escludeva la cornice finta attorno alla fetta di pagina — angoli da 8 px, e dentro le schede a 13 con raggio 21 — e fu riportata come *«ogni coppia esatta»*; ora la fetta ha gli angoli dritti. ⏳ **La cura non è scritta:** il richiamo datato nella regola dei raggi del disegno e nella (f), il valore nella tavola, la sonda, e le cure che il suo rosso nomina. ⚠️ **RICHIAMO DEL 2026-09-27, al disegno delle tre voci — la cornice conta il suo bordo, A del proprietario del 2026-09-26:** qui sopra sta *«`--radius-frame` segue, 33»*, con la formula di oggi, che non conta il bordo **della cornice**. Misurato nel browser sulla tavola dei token: nella dimostrazione *«Raggi concentrici»* `.nest-frame` ha il bordo e `.nest-card` no — oggi la scheda sta a 13 px dal bordo esterno della cornice da 32, che ne vorrebbe 33; coi token di questa voce le coppie storte sarebbero **due**, la cornice 33 contro 34 e la scheda 21 contro 20; ciascuna delle due strade qui sotto le rende esatte tutte e due. Decisa **A**: `--radius-frame: calc(var(--radius-card) + var(--space-3) + var(--border-width))`, 34, e ogni superficie nostra arrotondata che contiene qualcosa di arrotondato porta il suo bordo da 1 px, disegnato o trasparente — `.kit-frame` della pagina kit uno trasparente, e resta com'è; la scheda della dimostrazione quello delle schede —; contro **B**, le cornici senza bordo, 33, con la convenzione scritta nella (a) e la dimostrazione senza il bordo che la tavola disegna. ✅ **E la curva resta il quarto di cerchio**, il 2026-09-27: alla domanda del proprietario sulla concentricità lo squircle è stato guardato su una pagina di prova e scartato — *«Vicoli ciechi e scelte scartate»* del [disegno](../specs/2026-09-22-design-system-design.md). ⚠️ **RICHIAMO DEL 2026-09-27, alla chiusura della sessione:** la parte del **disegno** è scritta, in `06dc5d5` — i richiami nel linguaggio visivo, nella (a) e nella (f), e lo squircle fra le scelte scartate. ⏳ **Resta:** i valori nella tavola — la scheda 21, la cornice 34, la scheda della dimostrazione e il foglio col loro bordo — e la loro copia, la sonda a mezzo pixel, e le cure che il suo rosso nomina. ⚠️ **RICHIAMO DEL 2026-09-27, allo sguardo del proprietario — approvata, A:** sulla copia della tavola la scheda 21, la cornice 34, il foglio 46 col suo bordo trasparente, e la scheda della dimostrazione col bordo delle schede. La sonda a mezzo pixel, portata da `concentricRadii`: sulla copia **nessuna** coppia storta su 28; sulla tavola di oggi **10 su 24** — la finestra di dialogo, lo stage, la dimostrazione — e **nessuna** con lo scarto di oggi, 1,5. ⚠️ **Sullo schermo a 175 % un bordo da 1 px si disegna 0,57 px**: le distanze misurate valgono 12,57 dove la regola ne conta 13, e mezzo pixel separa una coppia esatta, a 0,43, da una storta di un pixel, a 0,57 — a densità 1, quella delle prove, 0 contro 1. ⚠️ E la **prosa** della tavola porta le cifre vecchie — *«i raggi diventano 20 e 32»*, *«cornice 32 = scheda 20 + 12»* —: le riscrive la cura. ⏳ **Resta:** la cura ⚠️ **RICHIAMO DEL 2026-09-27, al piano della cura:** la cura è il **compito 6bis**, scritto, col codice provato su una cartella di prova (**E62**). |
+| **E62** | ⚠️ **Compito 6, Passo 8 — la cura di E59–E61 è il compito 6bis, e con un'azione la riga del messaggio sta al centro:** il proprietario, il 2026-09-27, alle due domande della consegna. **A**, un compito nuovo fra il 6 e il 7, contro **B**, la cura dentro il Passo 8 del 6: la cura tocca il perimetro di cinque compiti — la tavola e i token del 1, il kit del 3, la pagina kit del 4, la cornice e i pannelli del 5, il dock del 6 — con la taglia di un compito, mentre le cure del 6 (`ca83dac`) erano 153 righe dentro il dock. E **B**, con un'azione la riga al centro, contro **A**, com'era la v3, guardando una pagina di confronto nei due temi: in alto titolo e icona stavano 2 px sopra il testo di «Riprova», a densità 1 e a 1,75 (**D27**). ✅ **Scritto** nel commit che scrive questa voce: il compito 6bis, col codice **provato** su una cartella di prova — un `git worktree` di `950bba1` nello scratchpad —, ogni rosso e ogni verde dei suoi passi misurato, le quindici violazioni del Passo 15 comprese, e il testo del compito riletto a macchina contro quel codice: applicato a una copia pulita, rende i diciotto file byte per byte. ⚠️ **Trovato scrivendolo:** a mezzo pixel coi token di oggi è storto di un pixel anche il pulsante nell'angolo della finestra di `BaseDialog`, che nessuno aveva visto — i token nuovi lo curano —; e due prove della sonda si reggevano sullo scarto di 1,5. La riga 6 della posizione resta `⏳` e si chiude con lo sguardo del 6bis |
+| **E63** | ⚠️ **Compito 8 — `frame.browser.test.ts` lo crea il compito 6bis, e il compito 8 lo ESTENDE** (**D29**): il suo Passo 2 dice *«Crea»* e porta l'intestazione, gli import, `frame(theme)` e `px(token)`, che dal 6bis ci sono già, con la prova della fascia; restano da aggiungere gli import che mancano e le sue prove. ⏳ **Al pre-controllo del compito 8**, che si rilegge contro il codice di allora (`CLAUDE.md`, domanda 5) |
 
 ---
 
@@ -300,6 +303,11 @@ che il disegno lasciava al piano; ciascuna si ribalta con una riga.
 | **D22** | **una riga sola nella §12 del compendio, per il disegno e il piano insieme** | è la forma delle righe dei gesti e della knowledge base; le quattro righe della parte 2 erano quattro file con quattro modi di leggerli. Costo: una riga più lunga |
 | **D23** | **la suite, nella Definizione di «fatto», sono cinque corse coi rapporti JSON**, lette da `dod_suite.py`, che stampa i conti file per file ed esce 1 su una caduta o su un rapporto vuoto | è la regola di P-19, P-20 e P-21 — una caduta è una voce d'errata, non una corsa da ripetere finché passa —, e un rapporto dà i conti di ogni file senza avviare `vitest` una volta per file. Costo: cinque corse della suite, e un aiutante che il piano porta nel proprio testo |
 | **D24** | **se il giudizio del proprietario sull'aspetto del dock (controllo 15) non è scritto da nessuna parte al compito 9, il coordinatore glielo chiede prima del commit** | il compito 6 lo vuole *«alla prima prova»*, e ciò che non gli piace è una voce d'errata: un controllo che è *«il proprietario giudica»* non si chiude per silenzio. Costo: una domanda in più alla chiusura |
+| **D25** | **uno scarto solo, `SLACK`, di mezzo pixel, per il raggio e per *«nell'angolo»*** — il compito 6bis, 2026-09-27 | **E61** vuole mezzo pixel sul raggio e lascia al piano la soglia dell'angolo: due distanze più lontane di mezzo pixel non possono avere lo stesso centro, e il giudizio fuori dall'angolo le prende; misurato, abbassarla non cambia nessun verdetto delle prove. Costo: nessuno — una costante al posto di tre cifre |
+| **D26** | **le barre di scorrimento mostrate a TUTTO il progetto browser**, con `ignoreDefaultArgs: ["--hide-scrollbars"]`, e non un progetto o un'istanza a parte per il controllo 22 | le prove girano come la SPA si vede — Electron le barre le mostra —, e misurato il 2026-09-27 nessun'altra prova cambia; un progetto in più sarebbe un altro verde da tenere non vuoto (**E10**). Costo: una barra che comparisse dove prima non c'era sposterebbe di 10 px ciò che una prova misura — e la prova lo direbbe |
+| **D27** | **con un'azione la riga del messaggio è al centro**: `data-action` su `BaseNotice`, e nella tavola `.msg:has(>.btn){align-items:center}` al posto di `.msg>.btn{align-self:center}` della copia approvata | la risposta **B** del proprietario del 2026-09-27, guardando la pagina di confronto (**E62**). Senza azione la riga resta in alto, con l'icona accanto al titolo. Costo: un messaggio con testo **e** azione — oggi nessuno — avrebbe l'icona a metà delle due righe |
+| **D28** | **le forme di `BaseNotice` che la (b) non nomina**: il prop `onPage`, sull'elemento `data-on-page`, come `pill` di `BaseButton`; il colore del tono sull'elemento, che l'icona disegna con `currentColor`; e nel browser i ruoli giudicati col colore **calcolato** di un token — `colourOf` della pagina kit —, non con `readToken`, che rende il testo del token e non un colore | la forma più corta coerente coi pezzi che ci sono. Costo se sbagliato: un rinomino, o una prova che legge in un altro modo |
+| **D29** | **`frame.browser.test.ts` nasce col 6bis**, con gli aiutanti del compito 8 — `frame(theme)` e `px(token)` —, e il compito 8 lo **estende** | il controllo 23 vuole la fascia misurata fra la barra e le schede, cioè la cornice intera, e un secondo file con lo stesso montaggio sarebbe un secondo modo di fare la stessa cosa. Costo: il compito 8 cambia da *«Crea»* ad *«aggiungi»* — **E63** |
 
 ## Le voci aperte che questo piano SA, e non chiude
 
@@ -6405,6 +6413,1571 @@ compito 5 (R1-16) —; `bash scripts/gate.sh` da solo, `bash scripts/check-docs.
 dock vestito …`, con le due righe del pezzo JavaScript — coi fine-riga rimisurati, e `git push`.
 
 ---
+
+## Compito 6bis: la cura delle tre voci del Passo 8 — il bordo nei raggi, la barra di scorrimento, i messaggi
+
+**Da:** **E59**, **E60** ed **E61** dell'errata, coi loro richiami; la (a), la (b) — *«`BaseNotice`»* —, la (d) — *«La fascia»* —
+e la (f) del disegno, coi richiami del 2026-09-27; i controlli **22** e **23**; le trappole **21**–**28**; le due risposte del
+proprietario del 2026-09-27, alla scrittura di questo compito — la cura è un **compito nuovo**, A, e con un'azione la riga del
+messaggio sta **al centro**, B —; **D25**…**D29**; **E62** e **E63**.
+
+⛔ **È il Passo 8 del compito 6 che continua**: il proprietario non l'ha approvato, e le tre voci che ha deciso le cura questo
+compito. La riga **6** della posizione si chiude **con lo sguardo di questo compito** (Passo 16), non prima.
+
+**Files:**
+- Create: `gui/src/components/BaseNotice.vue`, `gui/src/frame/frame.browser.test.ts` (**E63**: il compito 8 lo estende)
+- Rewrite: `gui/src/frame/Band.vue`, **per intero**, col terminatore che ha oggi
+- Modify: `docs/superpowers/specs/2026-09-22-design-system-tavole/token.html` — da `cure_board.py` —, e `gui/src/tokens/base.css`
+  — dalla tavola, con `extract_tokens.py`; `gui/src/testing/probes.ts` e `gui/src/testing/probes.browser.test.ts`;
+  `gui/vite.config.ts`; `gui/src/tokens/tokens.browser.test.ts`; `gui/src/tokens/dock.css`; `gui/src/components/icons.ts` e
+  `gui/src/components/kit.test.ts`; `gui/src/kit/Kit.vue` e `gui/src/kit/kit.browser.test.ts`; `gui/src/panels/Settings.vue`,
+  `gui/src/panels/Status.vue`, `gui/src/panels/modules.test.ts` e `gui/src/frame/frame.test.ts`
+
+**Interfaces:**
+- Consumes: `readToken` (compito 6); `concentricRadii` e `fits` di `testing/probes.ts` (compiti 4 e 6); `BaseIcon`,
+  `BaseButton`, `BaseStatus` e la mappa `ICONS` (compito 3); la pagina kit e le sue prove (compito 4); la fascia, Impostazioni e
+  Stato sui pezzi di base (compito 5); il tema del dock (compito 6); `extract_tokens.py` (compito 1, qui per intero).
+- Produces: `BaseNotice.vue` — props `tone: "info" | "ok" | "warn" | "stop"`, `title: string`, `description?: string`,
+  `onPage?: boolean`; lo slot `action`; sull'elemento `data-tone`, `data-on-page` e `data-action`, e le classi `.title` e
+  `.description`. In `ICONS` le voci `info`, `ok`, `warn` e `stop`. I token `--size-scrollbar` e `--scrollbar-trigger`, e i
+  raggi `--radius-card` 21 e `--radius-frame` 34. In `concentricRadii` uno scarto di **mezzo pixel**. Il progetto browser coi
+  bordi delle barre **mostrati**. `frame.browser.test.ts` con gli aiutanti `frame(theme)`, `px(token)` e `computed(property,
+  token)`, che il compito 8 riusa.
+
+⚠️ **Che cosa la scrittura di questo compito ha misurato**, il 2026-09-27 nel Chrome installato 154 e sotto jsdom, su una
+cartella di prova — un `git worktree` di `950bba1` nello scratchpad, col codice di questo compito applicato passo per passo:
+
+| | Il fatto | Che cosa ne fa il compito |
+|---|---|---|
+| 1 | coi token di oggi e la sonda a mezzo pixel le coppie storte sono **tre**: le righe di `BaseList` nelle schede della pagina kit (8 a 13 px da 20), **il pulsante nell'angolo della finestra di `BaseDialog`** (lo stesso pixel, e nessuno l'aveva visto) e la barra del titolo e il gruppo del contenitore staccato del dock (20 a 1 px da 20) | il Passo 3 le fa vedere rosse; i token nuovi curano le prime due, e il Passo 7 la terza |
+| 2 | coi token nuovi le coppie storte sono di nuovo due: la cornice della pagina kit — 34, senza bordo, attorno a carte da 21 a 12 px — e il dock | il Passo 7: il bordo trasparente di `.kit-frame`, e la barra e il gruppo a `--radius-card` meno il bordo |
+| 3 | due prove della sonda **si reggevano sullo scarto di 1,5**: *«off the corner, lets a smaller radius be»* — un raggio di 8 dove il limite è 7 — e *«reads the radius a corner is DRAWN with»* — una barra da 20 a 1 px dentro un angolo da 20 | il Passo 2: 7 e 19, e una prova nuova per il pixel del bordo, rossa a 1,5 |
+| 4 | abbassare a mezzo pixel **anche** la soglia di *«nell'angolo»* non cambia nessun verdetto delle prove | **D25**: una costante sola, `SLACK` |
+| 5 | `ignoreDefaultArgs: ["--hide-scrollbars"]` nelle `launchOptions` di `playwright()` **arriva** al Chrome delle prove: lo spessore di una barra è 0 con le barre nascoste, 15 senza la regola, 10 con la regola; e **nessun'altra prova cambia** mostrandole | **D26**: le barre mostrate a tutto il progetto |
+| 6 | lo script della tavola rende la **copia approvata** del 2026-09-27 — `diff` contro `look/tavola-tre-voci-innesco.html` dello scratchpad della macchina `Jays` —, tranne il titolo, il foglio che presentava le tre voci e la riga che la seconda risposta cambia: `.msg:has(>.btn){align-items:center}` al posto di `.msg>.btn{align-self:center}` | la tavola del repository porta ciò che il proprietario ha guardato, e la sua scelta del 2026-09-27 |
+| 7 | col messaggio in alto, com'era la v3, titolo e icona stanno **2 px** sopra il centro di «Riprova», a densità 1 e a 1,75 — lo stesso carattere, 600 14/20, in una riga da 24; con la riga al centro, **0** | **D27**; la prova del Passo 10 |
+| 8 | la suite coi Passi 2–13: `Test Files  25 passed \| 1 skipped (26)`, `Tests  200 passed \| 1 skipped (201)` — erano 24 e 185; il pezzo JavaScript `691.82 kB`, compresso `210.77 kB` — era `690.61 kB` e `210.41 kB`; *build* e linter puliti | le attese del Passo 14 |
+
+- [ ] **Passo 1: rimisura il punto di partenza**
+
+```bash
+git status --porcelain > <scratchpad>/prima.txt
+grep -n -e 'radius-card:' -e 'radius-frame:' gui/src/tokens/base.css
+grep -c -i 'scrollbar' gui/src/tokens/base.css docs/superpowers/specs/2026-09-22-design-system-tavole/token.html
+grep -n 'launchOptions' gui/vite.config.ts
+grep -c '1.5' gui/src/testing/probes.ts
+ls gui/src/components/BaseNotice.vue gui/src/frame/frame.browser.test.ts
+(cd gui && npm run build 2>&1 | grep -E 'assets/index-.*\.js ')
+```
+
+Atteso: i due raggi `/* 20 */` e `/* 32 */`, senza `--border-width`; **0** e **0** per la barra; `launchOptions: { channel:
+"chrome" }` e basta; **2** righe con `1.5` in `probes.ts`, le due soglie; `No such file or directory` per i due file nuovi — la
+quarta domanda del pre-controllo —; il pezzo JavaScript, la baseline del compito: `690.61 kB` il 2026-09-27. Poi, da solo, `bash
+scripts/gate.sh` → `GATE GREEN`. ⚠️ Se il compito 7 o l'8 sono già eseguiti, `frame.browser.test.ts` esiste: il compito si
+rilegge contro il codice di allora (**E63**).
+
+- [ ] **Passo 2: la sonda — le sue prove, a mezzo pixel (E61)**
+
+In `gui/src/testing/probes.browser.test.ts` (`replace_unique.py`), tre sostituzioni.
+*Trova* — il commento della prova fuori dall'angolo:
+
+```ts
+it("off the corner, refuses a piece rounder than the outer radius minus the smaller distance (E33)", () => {
+  const root = outer();
+  // 17/13 from the bottom-left corner: at most 20 - 13, with the probe's 1.5 px of slack.
+```
+
+*Sostituisci con:*
+
+```ts
+it("off the corner, refuses a piece rounder than the outer radius minus the smaller distance (E33)", () => {
+  const root = outer();
+  // 17/13 from the bottom-left corner: at most 20 - 13, with the probe's half pixel of slack (E61).
+```
+
+*Trova* — il raggio più piccolo, che era 8 dentro un limite di 7:
+
+```ts
+it("off the corner, lets a smaller radius be (E33)", () => {
+  const root = outer();
+  box("piece", "position:absolute;left:17px;bottom:13px;width:120px;height:40px;border-radius:8px", root);
+```
+
+*Sostituisci con:*
+
+```ts
+it("off the corner, lets a smaller radius be (E33)", () => {
+  const root = outer();
+  // At most 20 - 13, and the bound itself passes. It was 8 here, green only by the old slack of 1.5 (E61).
+  box("piece", "position:absolute;left:17px;bottom:13px;width:120px;height:40px;border-radius:7px", root);
+```
+
+*Trova* — la barra corta, e il pixel del bordo:
+
+```ts
+it("reads the radius a corner is DRAWN with: a short bar's r r 0 0 keeps it (E46)", () => {
+  const root = outer();
+  // 24 px tall, `20px 20px 0 0`, 1/1 inside the top corners: each side's two radii fit in the side, so CSS draws 20,
+  // and the outer corner wants 19 -- in the probe's slack. Halving each corner on its own read 12.
+  box("bar", "position:absolute;left:1px;right:1px;top:1px;height:24px;border-radius:20px 20px 0 0", root);
+  expect(concentricRadii([root])).toEqual({ near: 2, bad: [] });
+});
+```
+
+*Sostituisci con:*
+
+```ts
+it("reads the radius a corner is DRAWN with: a short bar's r r 0 0 keeps it (E46)", () => {
+  const root = outer();
+  // 24 px tall, `19px 19px 0 0`, 1/1 inside the top corners: each side's two radii fit in the side, so CSS draws 19,
+  // which is what the outer corner wants. Halving each corner on its own read 12.
+  box("bar", "position:absolute;left:1px;right:1px;top:1px;height:24px;border-radius:19px 19px 0 0", root);
+  expect(concentricRadii([root])).toEqual({ near: 2, bad: [] });
+});
+
+it("sees the pixel of a border: the same bar at the outer radius is one pixel too round (E61)", () => {
+  const root = outer();
+  // What the dock's floating title bar was: the card's radius, 1 px inside the card's edge. The old slack of 1.5 kept it
+  // green; half a pixel is under the smallest defect the rule wants to see.
+  box("bar", "position:absolute;left:1px;right:1px;top:1px;height:24px;border-radius:20px 20px 0 0", root);
+  expect(concentricRadii([root])).toEqual({
+    near: 2,
+    bad: [
+      "bar in outer, top-left: radius 20.0, outer 20.0, distance 1.0/1.0",
+      "bar in outer, top-right: radius 20.0, outer 20.0, distance 1.0/1.0",
+    ],
+  });
+});
+```
+
+```bash
+(cd gui && npx vitest run --project browser src/testing/probes.browser.test.ts)
+```
+
+Atteso: **rossa** la sola prova nuova, `expected { near: 2, bad: [] } to deeply equal { near: 2, bad: [ …(2) ] }`: con lo scarto
+di 1,5 il pixel del bordo passa; `Tests  1 failed | 7 passed (8)`.
+
+- [ ] **Passo 3: la sonda a mezzo pixel**
+
+In `gui/src/testing/probes.ts` (`replace_unique.py`), due sostituzioni.
+*Trova* — la testa di `concentricRadii`:
+
+```ts
+export function concentricRadii(roots: Element[]): { near: number; bad: string[] } {
+  const CORNERS = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"] as const;
+```
+
+*Sostituisci con:*
+
+```ts
+export function concentricRadii(roots: Element[]): { near: number; bad: string[] } {
+  // ⛔ HALF A PIXEL OF SLACK (E61 of the design-system plan): a slack is chosen tighter than the smallest defect the rule
+  // wants to see, and that defect is the pixel of a border -- 1.5 kept green a card's radius 1 px inside the card's
+  // edge, on the kit page and in the dock's floating group. The same half pixel decides "in the corner": two distances
+  // further apart cannot share a centre, and the rule off the corner judges them (D25).
+  const SLACK = 0.5;
+  const CORNERS = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"] as const;
+```
+
+*Trova* — le tre soglie:
+
+```ts
+        const inTheCorner = Math.abs(dx - dy) <= 1.5;
+        const ok = inTheCorner ? Math.abs(inner - (outer - dx)) <= 1.5 : inner <= outer - Math.min(dx, dy) + 1.5;
+```
+
+*Sostituisci con:*
+
+```ts
+        const inTheCorner = Math.abs(dx - dy) <= SLACK;
+        const ok = inTheCorner ? Math.abs(inner - (outer - dx)) <= SLACK : inner <= outer - Math.min(dx, dy) + SLACK;
+```
+
+```bash
+(cd gui && npx vitest run --project browser src/testing/probes.browser.test.ts src/kit/kit.browser.test.ts src/frame/dock.browser.test.ts)
+```
+
+Atteso: le prove della sonda **verdi**; **rosse**, nei due temi, le tre coppie che i token di oggi storcono di un pixel (la riga 1
+della tabella qui sopra) — nella pagina kit *«keeps every radius concentric»*, le voci `base-list-row in kit-card, bottom-left:
+radius 8.0, outer 20.0, distance 13.0/13.0` e il suo `bottom-right`, e *«opens its window with the radii concentric»*, la voce
+`base-button in base-dialog, bottom-right: radius 8.0, outer 20.0, distance 13.0/13.0`; nel dock *«keeps every radius of its own
+concentric, a floating group's too»*, quattro voci, `dv-floating-titlebar in dv-resize-container, top-left: radius 20.0, outer
+20.0, distance 1.0/1.0` coi suoi tre compagni — `Tests  6 failed | 36 passed (42)`. È il rosso che **E61** chiedeva di vedere prima
+della cura.
+
+- [ ] **Passo 4: la barra — la prova (E59, controllo 22)**
+
+In `gui/src/tokens/tokens.browser.test.ts` (`replace_unique.py`), una sostituzione.
+*Trova* — la fine del file:
+
+```ts
+    // ⛔ THE SECOND DIRECTION: a token the page does not define is an error, not "" -- a `gap` of NaN is what "" became.
+    expect(() => readToken("--space-that-is-not")).toThrow(/is not defined here/);
+  });
+});
+```
+
+*Sostituisci con:*
+
+```ts
+    // ⛔ THE SECOND DIRECTION: a token the page does not define is an error, not "" -- a `gap` of NaN is what "" became.
+    expect(() => readToken("--space-that-is-not")).toThrow(/is not defined here/);
+  });
+
+  it("draw every scroll bar `--size-scrollbar` thick, and light its trigger under the pointer and with the focus inside (control 22, E59)", async () => {
+    const box = document.createElement("div");
+    box.style.cssText = "width:200px;height:100px;overflow:auto";
+    box.tabIndex = 0;
+    const content = document.createElement("div");
+    content.style.cssText = "width:400px;height:400px";
+    box.append(content);
+    document.body.append(box);
+    // ⛔ NON-VACUITY: the box scrolls both ways, so there are two bars to measure.
+    expect(box.scrollHeight).toBeGreaterThan(box.clientHeight);
+    expect(box.scrollWidth).toBeGreaterThan(box.clientWidth);
+    // ⛔ THE THICKNESS THE ENGINE DRAWS, against the token: 0 while the project hid the bars (trap 25 of the design), 15
+    // without our rule -- Chrome's own -- measured on 2026-09-27.
+    const thick = Number.parseFloat(readToken("--size-scrollbar"));
+    expect({ vertical: box.offsetWidth - box.clientWidth, horizontal: box.offsetHeight - box.clientHeight }).toEqual({
+      vertical: thick,
+      horizontal: thick,
+    });
+    // ⛔ THE TRIGGER (E59): Chromium redraws a custom bar only when the box's OWN style changes, so the rule sets a
+    // registered property on it. The thumb that lights up is the owner's to see; this reads that the box's style moves.
+    const trigger = (): string => getComputedStyle(box).getPropertyValue("--scrollbar-trigger").trim();
+    expect(trigger()).toBe("0");
+    await userEvent.hover(box);
+    expect(trigger()).toBe("1");
+    await userEvent.unhover(box);
+    expect(trigger()).toBe("0");
+    box.focus();
+    expect(trigger()).toBe("1");
+  });
+});
+```
+
+```bash
+(cd gui && npx vitest run --project browser src/tokens/tokens.browser.test.ts)
+```
+
+Atteso: **rossa**, `Error: the token --size-scrollbar is not defined here: are the token sheets loaded?`.
+
+- [ ] **Passo 5: la tavola, poi la sua copia (E59, E60, E61)**
+
+⛔ **La tavola prima, la copia dopo** (vincolo 2): `board.test.ts` vuole `base.css` e `themes.css` uguali byte per byte ai blocchi
+della tavola. Ciò che lo script scrive è la copia che il proprietario ha approvato il 2026-09-27 — la tabella di *«Come si
+riprende»* della chiusura di quel giorno, in archivio —, con la riga al centro della sua seconda risposta; la riga 6 della tabella
+qui in testa dice come è stato verificato.
+
+Scrivi `cure_board.py` nello **scratchpad**, non nel repository:
+
+```python
+"""cure_board.py -- the three items of step 8 of task 6 in the approved token board (design system, task 6bis).
+
+Usage: python cure_board.py <repository root>
+
+E61, the border in the radii; E59, the scroll bar with its trigger; E60, the neutral tone and the message on the page,
+its row centred when it has an action. What the owner approved on 2026-09-27 on a copy of the board -- in the
+scratchpad of the machine `Jays`, not tracked -- and the second question of the cure, the same day. Every hunk is
+refused unless its anchor is there exactly as many times as said; the board keeps its line endings.
+"""
+import io
+import os
+import sys
+
+root = sys.argv[1]
+path = os.path.join(root, "docs", "superpowers", "specs", "2026-09-22-design-system-tavole", "token.html")
+raw = io.open(path, encoding="utf-8", newline="").read()
+crlf = "\r\n" in raw
+board = raw.replace("\r\n", "\n")
+
+
+def once(old, new, times=1):
+    global board
+    n = board.count(old)
+    if n != times:
+        sys.exit(f"refused: {n} occurrences, not {times}, of {old[:70]!r}")
+    board = board.replace(old, new)
+
+
+def after_lines(test, insert, times):
+    global board
+    lines = board.split("\n")
+    hits = [i for i, line in enumerate(lines) if test(line)]
+    if len(hits) != times:
+        sys.exit(f"refused: {len(hits)} anchor lines, not {times}, for {insert[:50]!r}")
+    for i in reversed(hits):
+        lines[i + 1:i + 1] = insert.split("\n")
+    board = "\n".join(lines)
+
+
+SCROLLBAR = """/* E59: ONE rule for every box that scrolls -- ours, dockview's, reka-ui's, and those to come. Chromium's
+   pseudo-elements, because the standard `scrollbar-width` and `scrollbar-color` say only colour and thickness, and the
+   arrows stay. Where a box sets one of the two, the pseudo-elements turn off there (MDN): dockview's
+   `.dv-tabs-container` has `scrollbar-width: thin`. Away from the ends on each axis -- `margin-block` alone leaves the
+   horizontal bar at the sides -- and the corner between the two bars transparent, where Chromium draws it light. The
+   thumb shows only with the pointer over the box or the focus inside it, and lights up under the pointer. */
+::-webkit-scrollbar {
+  width: var(--size-scrollbar);
+  height: var(--size-scrollbar);
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-track:vertical {
+  margin-block: var(--space-3);
+}
+
+::-webkit-scrollbar-track:horizontal {
+  margin-inline: var(--space-3);
+}
+
+::-webkit-scrollbar-thumb {
+  border: var(--space-0-5) solid transparent;
+  border-radius: var(--radius-full);
+  background-clip: padding-box;
+  background-color: transparent;
+}
+
+:hover::-webkit-scrollbar-thumb,
+:focus-within::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-strong);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-muted);
+}
+
+/* the trigger: Chromium restyles a custom scroll bar only when the scroller's OWN style changes, and a rule on the
+   pseudo-element alone does not change it -- measured in Chrome 154 and Chromium 152. A registered property that does
+   not inherit, so that nothing below the box restyles with it. */
+@property --scrollbar-trigger {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+:hover,
+:focus-within {
+  --scrollbar-trigger: 1;
+}
+
+"""
+
+ON_PAGE = ('  <div class="msg warn on-page"><svg class="i" data-icon="triangle-alert" aria-hidden="true" '
+           'xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+           'stroke-linecap="round" stroke-linejoin="round" > <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 '
+           '21h16a2 2 0 0 0 1.73-3" /> <path d="M12 9v4" /> <path d="M12 17h.01" /> </svg><div><b>Il core non ha '
+           'risposto.</b></div><button class="btn sm" type="button">Riprova</button></div>')
+
+INFO = ('      <div class="msg info"><svg class="i" data-icon="info" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" '
+        'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" '
+        'stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="M12 16v-4" /> <path d="M12 8h.01" /> '
+        '</svg><div><b>Richiesta inviata</b><span>In attesa del core.</span></div></div>')
+
+ACTS_END = ('        <div class="acts"><span class="btn quiet">Annulla</span><span class="btn pri">Conferma</span></div></div>\n'
+            '    </div>\n'
+            '  </div>\n')
+
+SCROLLING_CARD = """  <div class="card sc"><h2>Una scheda che scorre — passa sopra, o Tab dentro</h2>
+    <div class="sc-body" tabindex="0" role="region" aria-label="Una scheda che scorre"><div class="rows">
+      <div class="row">Sintesi della riunione <em>09:12</em></div>
+      <div class="row">Report dei costi <em>10:40</em></div>
+      <div class="row">Indice della KB <em>12:48</em></div>
+      <div class="row">Esportazione mesh <em>14:05</em></div>
+      <div class="row">Trascrizione della nota vocale <em>14:31</em></div>
+      <div class="row">Confronto dei preventivi <em>15:02</em></div>
+      <div class="row">Revisione del diff <em>15:47</em></div>
+      <div class="row">Anteprima del viewer 3D <em>16:20</em></div>
+      <div class="row">Riepilogo della settimana <em>17:05</em></div>
+      <div class="row">Pulizia degli artefatti <em>17:40</em></div>
+    </div><pre>2026-09-27 12:48:03  core  giornale  passo 42  intento scritto, esito atteso  ·  una riga di registro non va a capo, e la scatola scorre anche di lato</pre></div>
+  </div>
+"""
+
+# ---- the block of base.css: E61, the border in the radii; E59, the scroll bar
+once("  /* radii: OUTER = INNER + DISTANCE, by construction (answer 4) */\n",
+     "  /* radii: OUTER = INNER + DISTANCE, by construction (answer 4). The distance runs from outer edge to outer edge, so\n"
+     "     the border of the one that holds counts: every surface of ours that holds something rounded has its 1 px border,\n"
+     "     drawn or transparent (E61) */\n")
+once("  --radius-card: calc(var(--radius-control) + var(--space-3));   /* 20 */\n"
+     "  --radius-frame: calc(var(--radius-card) + var(--space-3));     /* 32 */\n",
+     "  --radius-card: calc(var(--radius-control) + var(--space-3) + var(--border-width));   /* 21 */\n"
+     "  --radius-frame: calc(var(--radius-card) + var(--space-3) + var(--border-width));     /* 34 */\n")
+once("  --focus-offset: 2px;\n\n",
+     "  --focus-offset: 2px;\n\n"
+     "  /* the scroll bar, thin: a 6 px thumb inside a 2 px transparent border (E59) */\n"
+     "  --size-scrollbar: 10px;\n\n")
+once("::selection {\n  background: var(--color-bg-selection);\n  color: var(--color-text);\n}\n\n",
+     "::selection {\n  background: var(--color-bg-selection);\n  color: var(--color-text);\n}\n\n" + SCROLLBAR)
+
+# ---- the board's own rules: the sheet and the demonstration with their border (E61); the message (E60); the card that
+# scrolls (E59). With an action the message's row is centred: the owner's B of 2026-09-27, the 2 px of E60.
+once(".sheet{background:var(--color-bg);color:var(--color-text);border-radius:calc(var(--radius-card) + var(--space-6));"
+     "padding:var(--space-6)}\n",
+     ".sheet{background:var(--color-bg);color:var(--color-text);border:var(--border-width) solid transparent;"
+     "border-radius:calc(var(--radius-card) + var(--space-6) + var(--border-width));padding:var(--space-6)}\n")
+once(".btn.quiet.is-disabled{color:var(--color-text-disabled);background:transparent}\n",
+     ".btn.quiet.is-disabled{color:var(--color-text-disabled);background:transparent}\n"
+     ".btn.sm{height:var(--size-control-sm);padding:0 var(--space-2)}\n")
+once(".msg span{font:var(--font-caption);color:var(--color-text-muted)}\n",
+     ".msg span{font:var(--font-caption);color:var(--color-text-muted)}\n"
+     ".msg>div{flex:1;min-width:0}\n"
+     ".msg:has(>.btn){align-items:center}\n"
+     ".msg.on-page{border-radius:var(--radius-card)}\n"
+     ".msg.info{background:var(--color-bg-accent-subtle);border-color:var(--color-border-accent)}"
+     ".msg.info svg{color:var(--color-text-accent)}\n")
+once(".nest-card{border-radius:var(--radius-card);padding:var(--space-3);background:var(--color-bg-surface)}\n",
+     ".nest-card{border-radius:var(--radius-card);padding:var(--space-3);background:var(--color-bg-surface);"
+     "border:var(--border-width) solid var(--color-border-card)}\n")
+once(".rules li{margin:0 0 var(--space-2)}\n",
+     ".rules li{margin:0 0 var(--space-2)}\n"
+     ".card.sc{display:flex;flex-direction:column;height:240px;padding:0;overflow:hidden}\n"
+     ".sc h2{padding:var(--space-3) var(--space-3) 0}\n"
+     ".sc-body{flex:1;min-height:0;overflow:auto;padding:0 var(--space-3) var(--space-3)}\n"
+     ".sc-body pre{font:var(--font-mono);color:var(--color-text-muted);margin:var(--space-3) 0 0}\n")
+
+# ---- the words: the radii of the prose (trap 27 of the design), and what each theme shows
+once("Schede e cornice con 12 di margine: i raggi diventano 20 e 32 (erano 18 e 28). La regola «fuori = dentro + "
+     "distanza» resta, scritta nei token.</li>",
+     "Schede e cornice con 12 di margine e il loro bordo: i raggi diventano 21 e 34 (erano 18 e 28). La regola «fuori = "
+     "dentro + distanza» resta, scritta nei token, con la distanza da bordo esterno a bordo esterno.</li>")
+once("cornice 32 = scheda 20 + 12 · scheda 20 = controllo 8 + 12 · in linea 6 · pillola tonda",
+     "cornice 34 = scheda 21 + 12 + 1 · scheda 21 = controllo 8 + 12 + 1 · in linea 6 · pillola tonda")
+# at the top of each theme, under its label: the message on the page with «Riprova», as the band
+after_lines(lambda line: line.startswith('  <div class="lab">') and 'data-icon="layout-grid"' in line, ON_PAGE, 2)
+# first in "Gli stati" of each theme: the neutral tone
+after_lines(lambda line: line == '    <div class="msgs" style="margin-top:var(--space-4)">', INFO, 2)
+# at the end of each theme, after the card of the elevation: a card that scrolls both ways
+once(ACTS_END, ACTS_END + SCROLLING_CARD, 2)
+
+out = board.replace("\n", "\r\n") if crlf else board
+tmp = path + ".tmp"
+with io.open(tmp, "w", encoding="utf-8", newline="") as f:
+    f.write(out)
+os.replace(tmp, path)
+print(f"ok: {path} ({'CRLF' if crlf else 'LF'})")
+```
+
+```bash
+python <scratchpad>/cure_board.py "$(git rev-parse --show-toplevel)"
+```
+
+Poi `extract_tokens.py`, lo stesso del Passo 9 del compito 1, riportato qui per intero:
+
+```python
+"""extract_tokens.py -- cut base.css and themes.css out of the approved token board (design system, task 1).
+
+Usage: python extract_tokens.py <repository root>
+
+Writes gui/src/tokens/base.css and gui/src/tokens/themes.css, LF: each is the text between two markers of
+docs/superpowers/specs/2026-09-22-design-system-tavole/token.html, with the leading blank lines and the
+trailing whitespace removed and one LF at the end -- the very cut board.test.ts makes.
+"""
+import io
+import os
+import sys
+
+root = sys.argv[1]
+board_path = os.path.join(root, "docs", "superpowers", "specs", "2026-09-22-design-system-tavole", "token.html")
+board = io.open(board_path, encoding="utf-8", newline="").read().replace("\r\n", "\n")
+MARKS = [
+    "/* ===== proposta/base.css ===== */",
+    "/* ===== proposta/themes.css ===== */",
+    "/* ===== the board itself, only tokens ===== */",
+]
+for mark in MARKS:
+    if board.count(mark) != 1:
+        sys.exit(f"refused: {mark!r} is in the board {board.count(mark)} times")
+
+
+def cut(start, end):
+    text = board[board.index(start) + len(start):board.index(end)]
+    return text.lstrip("\n").rstrip() + "\n"
+
+
+for name, (start, end) in {"base.css": MARKS[0:2], "themes.css": MARKS[1:3]}.items():
+    out = os.path.join(root, "gui", "src", "tokens", name)
+    with io.open(out, "w", encoding="utf-8", newline="") as f:
+        f.write(cut(start, end))
+    print(f"ok: {out} ({len(cut(start, end))} characters)")
+```
+
+```bash
+python <scratchpad>/extract_tokens.py "$(git rev-parse --show-toplevel)"
+```
+
+```bash
+(cd gui && npx vitest run --project jsdom src/tokens/)
+(cd gui && npx vitest run --project browser src/tokens/tokens.browser.test.ts src/kit/kit.browser.test.ts src/frame/dock.browser.test.ts)
+grep -c 'scrollbar' gui/src/tokens/base.css
+git diff --stat -- gui/src/tokens/themes.css
+```
+
+Atteso: sotto jsdom **verde**, `Tests  17 passed (17)` — `board.test.ts` e il contrasto: i ruoli non cambiano; nel browser
+**rosse** tre cose — la barra, `expected { vertical: +0, horizontal: +0 } to deeply equal { vertical: 10, horizontal: 10 }`,
+perché il progetto nasconde le barre (trappola 25); nella pagina kit la cornice, `base-button in kit-frame, top-left: radius 21.0,
+outer 34.0, distance 12.0/12.0` coi suoi tre compagni; il dock com'era al Passo 3, a 21 — e **verdi** le righe di `BaseList` e la
+finestra, curate dai token. `scrollbar` più volte in `base.css`; `themes.css` **non** cambia.
+
+- [ ] **Passo 6: le barre mostrate al progetto browser (D26)**
+
+In `gui/vite.config.ts` (`replace_unique.py`), una sostituzione.
+*Trova*:
+
+```ts
+            // ⛔ THE INSTALLED CHROME (decision 22 of the design): nothing is downloaded, and a machine without
+            // it goes red at this step with Playwright's own message -- the prerequisite, declared.
+            provider: playwright({ launchOptions: { channel: "chrome" } }),
+```
+
+*Sostituisci con:*
+
+```ts
+            // ⛔ THE INSTALLED CHROME (decision 22 of the design): nothing is downloaded, and a machine without
+            // it goes red at this step with Playwright's own message -- the prerequisite, declared.
+            // ⛔ WITH ITS SCROLL BARS (control 22, E59): headless, Playwright launches Chrome with `--hide-scrollbars`, and a
+            // bar is then 0 px thick, with our rule and without it. Shown, it is 15 without the rule and `--size-scrollbar`
+            // with it -- and no other probe moved, measured on 2026-09-27 (D26 of the design-system plan).
+            provider: playwright({ launchOptions: { channel: "chrome", ignoreDefaultArgs: ["--hide-scrollbars"] } }),
+```
+
+```bash
+(cd gui && npx vitest run --project browser src/tokens/tokens.browser.test.ts)
+```
+
+Atteso: **verde**, `Tests  7 passed (7)` — lo spessore a 10, l'innesco a `0`, a `1` col puntatore sopra, di nuovo a `0` quando se
+ne va, e a `1` col fuoco dentro.
+
+- [ ] **Passo 7: ciò che sta subito dentro un bordo (E61)**
+
+In `gui/src/tokens/dock.css` (`replace_unique.py`), una sostituzione.
+*Trova*:
+
+```css
+.dockview-theme-harness .dv-resize-container > .dv-floating-titlebar {
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+}
+/* Inside a floating container the group is not a second card: the container is. */
+.dockview-theme-harness .dv-resize-container .dv-groupview {
+  border: 0;
+  border-radius: 0 0 var(--radius-card) var(--radius-card);
+```
+
+*Sostituisci con:*
+
+```css
+/* ⛔ ONE BORDER INSIDE THE CONTAINER'S EDGE, SO THE CARD'S RADIUS LESS THE BORDER (E61): the title bar and the group sit
+   right inside the container's 1 px border, as the drop zone inside a card's (E55). */
+.dockview-theme-harness .dv-resize-container > .dv-floating-titlebar {
+  border-radius: calc(var(--radius-card) - var(--border-width)) calc(var(--radius-card) - var(--border-width)) 0 0;
+}
+/* Inside a floating container the group is not a second card: the container is. */
+.dockview-theme-harness .dv-resize-container .dv-groupview {
+  border: 0;
+  border-radius: 0 0 calc(var(--radius-card) - var(--border-width)) calc(var(--radius-card) - var(--border-width));
+```
+
+In `gui/src/kit/Kit.vue` (`replace_unique.py`), una sostituzione.
+*Trova*:
+
+```vue
+/* A frame of 32 with 12 of margin around cards of 20: answer 4, and the `calc` of the tokens. */
+.kit-frame {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-frame);
+```
+
+*Sostituisci con:*
+
+```vue
+/* A frame of 34 with 12 of margin and its own border around cards of 21: answer 4, and the `calc` of the tokens. ⛔ THE
+   BORDER IS TRANSPARENT AND IT COUNTS (E61): the distance runs from outer edge to outer edge, so every surface of ours
+   that holds something rounded carries its 1 px border, drawn or not. */
+.kit-frame {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius-frame);
+```
+
+```bash
+(cd gui && npx vitest run --project browser src/kit/kit.browser.test.ts src/frame/dock.browser.test.ts src/testing/probes.browser.test.ts)
+```
+
+Atteso: **verde**, `Tests  42 passed (42)`.
+
+- [ ] **Passo 8: `BaseNotice` — le prove (E60, controllo 23)**
+
+In `gui/src/components/kit.test.ts` (`replace_unique.py`), quattro sostituzioni.
+*Trova* — gli import:
+
+```ts
+import BaseList from "./BaseList.vue";
+```
+
+*Sostituisci con:*
+
+```ts
+import BaseList from "./BaseList.vue";
+import BaseNotice from "./BaseNotice.vue";
+```
+
+*Trova* — prima di `BaseList and BaseLabel`:
+
+```ts
+describe("BaseList and BaseLabel", () => {
+```
+
+*Sostituisci con:*
+
+```ts
+describe("BaseNotice -- the message of the kit (E60 of the plan, control 23)", () => {
+  const tones = ["info", "ok", "warn", "stop"] as const;
+
+  it("draws the icon of its tone, by the tone's name, in each of the four (decision 28 of the design)", () => {
+    for (const tone of tones) {
+      const notice = mount(BaseNotice, { props: { tone, title: "Il core non ha risposto." } });
+      expect(notice.attributes("data-tone")).toBe(tone);
+      expect(notice.get("svg").attributes("data-icon")).toBe(tone);
+    }
+  });
+
+  it("says its title always, its description only when it has one, and has no button of its own (decision 29)", () => {
+    const bare = mount(BaseNotice, { props: { tone: "info", title: "Richiesta inviata: in attesa del core." } });
+    expect(bare.get(".title").text()).toBe("Richiesta inviata: in attesa del core.");
+    // ⛔ NO EMPTY BOX, AND NO CLOSING BY HAND: without a description there is no line for it, and nothing to click.
+    expect(bare.find(".description").exists()).toBe(false);
+    expect(bare.find("button").exists()).toBe(false);
+    const told = mount(BaseNotice, {
+      props: { tone: "stop", title: "Ultima richiesta di VRAM: rifiutata", description: "chiesti 4096 MiB, tetto 1024" },
+    });
+    expect(told.get(".description").text()).toBe("chiesti 4096 MiB, tetto 1024");
+  });
+
+  it("carries the action it is given, and only then centres its row (the owner, 2026-09-27: the 2 px of E60)", () => {
+    const bare = mount(BaseNotice, { props: { tone: "warn", title: "Il core non ha risposto." } });
+    expect(bare.attributes("data-action")).toBeUndefined();
+    const acting = mount(BaseNotice, {
+      props: { tone: "warn", title: "Il core non ha risposto.", onPage: true },
+      slots: { action: () => h(BaseButton, { size: "sm" }, () => "Riprova") },
+    });
+    expect(acting.attributes("data-action")).toBeDefined();
+    expect(acting.get("button").text()).toBe("Riprova");
+  });
+
+  it("takes the card's radius on the page, and only when asked (the (b) of the design)", () => {
+    expect(mount(BaseNotice, { props: { tone: "ok", title: "Concessa" } }).attributes("data-on-page")).toBeUndefined();
+    const onPage = mount(BaseNotice, { props: { tone: "warn", title: "Il core non ha risposto.", onPage: true } });
+    expect(onPage.attributes("data-on-page")).toBeDefined();
+  });
+});
+
+describe("BaseList and BaseLabel", () => {
+```
+
+*Trova* — la lista dei pezzi sotto `axe`:
+
+```ts
+    ["BaseStatus", () => h(BaseStatus, null, () => "Richiesta inviata.")],
+```
+
+*Sostituisci con:*
+
+```ts
+    ["BaseStatus", () => h(BaseStatus, null, () => "Richiesta inviata.")],
+    ["BaseNotice", () => h(BaseNotice, { tone: "stop", title: "Ultima richiesta di VRAM: rifiutata", description: "chiesti 4096 MiB, tetto 1024" })],
+    ["BaseNotice, on the page with its action", () =>
+      h(BaseNotice, { tone: "warn", title: "Il core non ha risposto.", onPage: true }, { action: () => h(BaseButton, { size: "sm" }, () => "Riprova") })],
+```
+
+*Trova* — il titolo che contava i pezzi:
+
+```ts
+describe("the eight pieces, under axe", () => {
+```
+
+*Sostituisci con:*
+
+```ts
+// ⛔ NO COUNT IN THE TITLE (trap 23 of the design): it said "the eight pieces", and E60 made them nine.
+describe("the pieces of the kit, under axe", () => {
+```
+
+```bash
+(cd gui && npx vitest run --project jsdom src/components/kit.test.ts)
+```
+
+Atteso: **rosso**, `Error: Failed to resolve import "./BaseNotice.vue" from "src/components/kit.test.ts". Does the file exist?`.
+
+- [ ] **Passo 9: le icone dei toni, e il pezzo**
+
+In `gui/src/components/icons.ts` (`replace_unique.py`), quattro sostituzioni.
+*Trova* — gli import, il primo:
+
+```ts
+  Box,
+  Coins,
+```
+
+*Sostituisci con:*
+
+```ts
+  Box,
+  CircleCheck,
+  CircleX,
+  Coins,
+```
+
+*Trova* — il secondo:
+
+```ts
+  GitCompare,
+  Layers,
+```
+
+*Sostituisci con:*
+
+```ts
+  GitCompare,
+  Info,
+  Layers,
+```
+
+*Trova* — il terzo:
+
+```ts
+  SquareTerminal,
+  type IconNode,
+```
+
+*Sostituisci con:*
+
+```ts
+  SquareTerminal,
+  TriangleAlert,
+  type IconNode,
+```
+
+*Trova* — la mappa, e il commento di `chat` (trappola 24 del disegno):
+
+```ts
+  fullPage: Maximize2,
+  // one per module type of `panels/registry.ts`, BY THE SAME NAME: the big grab and the overview draw them. The
+  // boards gave Stato, Permessi, Passi and Attività; the rest are the plan's choice, one line each (D6) -- Chat too:
+  // on the boards `message-square` marks the status messages, and they would need another drawing if they entered
+  // the kit (R2-15 of the review).
+  chat: MessageSquare,
+```
+
+*Sostituisci con:*
+
+```ts
+  fullPage: Maximize2,
+  // the tones of a message, BY THE TONE'S NAME (decision 28 of the design): the three drawings of the board's `.msg`,
+  // and `info` for the neutral tone -- `BaseNotice` draws them (E60).
+  info: Info,
+  ok: CircleCheck,
+  warn: TriangleAlert,
+  stop: CircleX,
+  // one per module type of `panels/registry.ts`, BY THE SAME NAME: the big grab and the overview draw them. The
+  // boards gave Stato, Permessi, Passi and Attività; the rest are the plan's choice, one line each (D6) -- Chat too:
+  // on the boards `message-square` marked the status messages, which entered the kit with the drawings of their
+  // tones, above (R2-15 of the review, E60).
+  chat: MessageSquare,
+```
+
+Crea `gui/src/components/BaseNotice.vue` (LF):
+
+```vue
+<script setup lang="ts">
+import BaseIcon from "./BaseIcon.vue";
+
+/**
+ * The message of the kit (design system, section (b); E60 of its plan): the token board's `.msg` made a piece, for every
+ * message of the system -- a tone among four with its icon, a title always, a description and an action when there are.
+ * `title` and `description` are props, as in `BaseDialog`, and the action is a slot (decision 29 of the design).
+ *
+ * ⛔ NO WORDS INSIDE, AND NO CLOSING BY HAND (decision 29): it follows a state and goes when the state does -- a message
+ * closed by hand hides a state that is still there, and one that closes itself is a notification, E228, the owner's.
+ * ⛔ THE RADIUS IS THE CALLER'S TO SAY: in a card `--radius-control`, as the board's `.msg`; `onPage`, the card's -- the
+ * band. The action lives on the page only: there it sits `--space-3` plus the border from the edge with
+ * `--radius-control`, concentric by construction (E61); in a card it would sit 13 px from a corner of 8.
+ * ⛔ WITH AN ACTION THE ROW IS CENTRED (the owner, 2026-09-27): the action is `--size-control-sm` high and the title's
+ * line 20, and at the top the title and its icon sat 2 px above the action's words.
+ * It enters a `BaseStatus` and takes no role of its own: the region is always there (M-3 of E187), and the space around
+ * the message is the caller's class on it, never the region's (E42).
+ */
+withDefaults(defineProps<{ tone: "info" | "ok" | "warn" | "stop"; title: string; description?: string; onPage?: boolean }>(), {
+  description: undefined,
+  onPage: false,
+});
+</script>
+
+<template>
+  <div class="base-notice" :data-tone="tone" :data-on-page="onPage || undefined" :data-action="$slots.action ? '' : undefined">
+    <BaseIcon :name="tone" size="lg" />
+    <div class="words">
+      <p class="title">{{ title }}</p>
+      <p v-if="description !== undefined" class="description">{{ description }}</p>
+    </div>
+    <slot name="action" />
+  </div>
+</template>
+
+<style scoped>
+/* The board's `.msg` (the (a), "Gli stati"): the tone's subtle ground and border, the icon in the tone's text colour --
+   the root's colour, which `BaseIcon` draws with --, the title in the text's own and the description muted under it. */
+.base-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border-width) solid;
+  border-radius: var(--radius-control);
+}
+.base-notice[data-action] {
+  align-items: center;
+}
+.base-notice[data-on-page] {
+  border-radius: var(--radius-card);
+}
+.words {
+  flex: 1;
+  min-width: 0;
+}
+.title {
+  margin: 0;
+  font: var(--font-body-strong);
+  color: var(--color-text);
+}
+.description {
+  margin: 0;
+  font: var(--font-caption);
+  color: var(--color-text-muted);
+}
+
+/* The neutral tone is the accent's (N2 of E60): `info` in the code, because `neutral` is the warm grey's scale. */
+.base-notice[data-tone="info"] {
+  background: var(--color-bg-accent-subtle);
+  border-color: var(--color-border-accent);
+  color: var(--color-text-accent);
+}
+.base-notice[data-tone="ok"] {
+  background: var(--color-bg-ok-subtle);
+  border-color: var(--color-border-ok);
+  color: var(--color-text-ok);
+}
+.base-notice[data-tone="warn"] {
+  background: var(--color-bg-warn-subtle);
+  border-color: var(--color-border-warn);
+  color: var(--color-text-warn);
+}
+.base-notice[data-tone="stop"] {
+  background: var(--color-bg-stop-subtle);
+  border-color: var(--color-border-stop);
+  color: var(--color-text-stop);
+}
+</style>
+```
+
+```bash
+(cd gui && npx vitest run --project jsdom src/components/kit.test.ts)
+```
+
+Atteso: **verde**, `Tests  31 passed (31)` — le quattro prove del pezzo, i due pezzi nuovi sotto `axe`, e la mappa: ogni voce
+disegna un'icona, le quattro nuove comprese.
+
+- [ ] **Passo 10: la pagina kit — le prove**
+
+In `gui/src/kit/kit.browser.test.ts` (`replace_unique.py`), tre sostituzioni.
+*Trova* — le radici e le scatole:
+
+```ts
+const ROOTS = ".kit-card, .kit-frame, .kit-strip";
+const BOXES = ".kit-card, .kit-frame, .kit-strip, .base-button, .base-list-row, .base-text-field > .frame, .option, .base-dialog";
+```
+
+*Sostituisci con:*
+
+```ts
+const ROOTS = ".kit-card, .kit-frame, .kit-strip, .base-notice";
+const BOXES =
+  ".kit-card, .kit-frame, .kit-strip, .base-button, .base-list-row, .base-text-field > .frame, .option, .base-dialog, .base-notice";
+```
+
+*Trova* — la guardia dei raggi:
+
+```ts
+      const list = document.querySelector(".kit-card:has(> .base-list)");
+      expect(list).not.toBeNull();
+      expect(concentricRadii([list as Element]).near).toBeGreaterThan(0);
+    });
+```
+
+*Sostituisci con:*
+
+```ts
+      const list = document.querySelector(".kit-card:has(> .base-list)");
+      expect(list).not.toBeNull();
+      expect(concentricRadii([list as Element]).near).toBeGreaterThan(0);
+      // ⛔ AND THE ONE CASE THAT JUDGES A MESSAGE'S ACTION (E60, E61): «Riprova», on the page, in the two right corners of
+      // the message that holds it.
+      const onPage = document.querySelector(".base-notice[data-on-page]");
+      expect(onPage).not.toBeNull();
+      expect(concentricRadii([onPage as Element]).near).toBeGreaterThan(0);
+    });
+```
+
+*Trova* — la fine del file:
+
+```ts
+      expect(getComputedStyle(frame as HTMLElement).borderTopColor).toBe(stop);
+      await userEvent.unhover(frame as HTMLElement);
+    });
+  });
+}
+```
+
+*Sostituisci con:*
+
+```ts
+      expect(getComputedStyle(frame as HTMLElement).borderTopColor).toBe(stop);
+      await userEvent.unhover(frame as HTMLElement);
+    });
+
+    it("dresses each tone of a message in its roles (control 23, E60)", async () => {
+      await kit(theme);
+      // The neutral tone is the accent's (N2 of E60); the three others are the states' own.
+      const ROLE = { info: "accent", ok: "ok", warn: "warn", stop: "stop" } as const;
+      const notices = [...document.querySelectorAll<HTMLElement>(".kit-card .base-notice")];
+      // ⛔ NON-VACUITY: the card of the messages shows the four tones.
+      expect(notices.map((notice) => notice.dataset.tone).sort()).toEqual(["info", "ok", "stop", "warn"]);
+      for (const notice of notices) {
+        const role = ROLE[notice.dataset.tone as keyof typeof ROLE];
+        const icon = notice.querySelector("svg.base-icon");
+        expect(icon).not.toBeNull();
+        const style = getComputedStyle(notice);
+        expect([style.backgroundColor, style.borderTopColor, getComputedStyle(icon as Element).color]).toEqual([
+          colourOf(`--color-bg-${role}-subtle`),
+          colourOf(`--color-border-${role}`),
+          colourOf(`--color-text-${role}`),
+        ]);
+      }
+    });
+
+    it("sets a message's title and icon on the line of its action (the owner, 2026-09-27: the 2 px of E60)", async () => {
+      await kit(theme);
+      const notice = document.querySelector<HTMLElement>(".base-notice[data-action]");
+      expect(notice).not.toBeNull();
+      const centre = (selector: string): number => {
+        const found = (notice as HTMLElement).querySelector(selector);
+        expect(found).not.toBeNull();
+        const box = (found as Element).getBoundingClientRect();
+        return (box.top + box.bottom) / 2;
+      };
+      const action = centre("button");
+      // ⛔ AT THE TOP, AS THE BOARD'S `.msg` WAS, THE TITLE SAT 2 PX ABOVE: the action is 24 high, the title's line 20.
+      expect(Math.abs(centre(".title") - action)).toBeLessThanOrEqual(0.5);
+      expect(Math.abs(centre("svg.base-icon") - action)).toBeLessThanOrEqual(0.5);
+    });
+  });
+}
+```
+
+```bash
+(cd gui && npx vitest run --project browser src/kit/kit.browser.test.ts)
+```
+
+Atteso: **rosse**, nei due temi, tre prove — *«keeps every radius concentric»*, `expected null not to be null`: non c'è un
+messaggio sulla pagina; *«dresses each tone of a message in its roles»*, `expected [] to deeply equal [ 'info', 'ok', 'stop',
+'warn' ]`; *«sets a message's title and icon on the line of its action»*, `expected null not to be null` — `Tests  6 failed | 16
+passed (22)`.
+
+- [ ] **Passo 11: la pagina kit — i messaggi**
+
+In `gui/src/kit/Kit.vue` (`replace_unique.py`), tre sostituzioni.
+*Trova* — gli import:
+
+```vue
+import BaseList from "../components/BaseList.vue";
+```
+
+*Sostituisci con:*
+
+```vue
+import BaseList from "../components/BaseList.vue";
+import BaseNotice from "../components/BaseNotice.vue";
+```
+
+*Trova* — dopo la scheda di Stato:
+
+```vue
+        <p class="kit-note">La regione c'è sempre, anche vuota: le parole ci entrano.</p>
+      </section>
+```
+
+*Sostituisci con:*
+
+```vue
+        <p class="kit-note">La regione c'è sempre, anche vuota: le parole ci entrano.</p>
+      </section>
+
+      <section class="kit-card">
+        <BaseLabel icon="info" as="h2">Messaggi</BaseLabel>
+        <BaseNotice tone="info" title="Richiesta inviata: in attesa del core." />
+        <BaseNotice tone="ok" title="Ultima richiesta di VRAM: concessa" />
+        <BaseNotice tone="warn" title="Il core non ha risposto." />
+        <BaseNotice tone="stop" title="Ultima richiesta di VRAM: rifiutata" description="chiesti 4096 MiB, tetto 1024" />
+        <p class="kit-note">Quattro toni, ciascuno con la sua icona; il testo sotto il titolo quando c'è; nessuno si chiude a mano.</p>
+      </section>
+```
+
+*Trova* — prima delle carte:
+
+```vue
+      <section class="kit-section kit-wide">
+        <BaseLabel icon="views" as="h2">Carte</BaseLabel>
+```
+
+*Sostituisci con:*
+
+```vue
+      <section class="kit-section kit-wide">
+        <BaseLabel icon="warn" as="h2">Messaggio sulla pagina</BaseLabel>
+        <!-- ⛔ ON THE PAGE AND NOT IN A CARD (trap 22 of the design): an action in a card would sit 13 px from a corner of 8. -->
+        <BaseNotice tone="warn" title="Il core non ha risposto." on-page>
+          <template #action><BaseButton size="sm">Riprova</BaseButton></template>
+        </BaseNotice>
+      </section>
+
+      <section class="kit-section kit-wide">
+        <BaseLabel icon="views" as="h2">Carte</BaseLabel>
+```
+
+```bash
+(cd gui && npx vitest run --project browser src/kit/kit.browser.test.ts)
+```
+
+Atteso: **verde**, `Tests  22 passed (22)` — i raggi con «Riprova» nei due angoli di destra del messaggio sulla pagina, i
+ruoli dei quattro toni, la riga al centro, il testo che non si taglia e `axe` col contrasto.
+
+- [ ] **Passo 12: i tre usi — le prove**
+
+In `gui/src/frame/frame.test.ts` (`replace_unique.py`), tre sostituzioni.
+*Trova* — gli import di `vitest`:
+
+```ts
+import { beforeEach, describe, expect, it } from "vitest";
+```
+
+*Sostituisci con:*
+
+```ts
+import { beforeEach, describe, expect, it, vi } from "vitest";
+```
+
+*Trova* — la prima prova della fascia:
+
+```ts
+describe("the band", () => {
+  it("is there while waiting, and gone once connected", async () => {
+    const Band = (await import("./Band.vue")).default;
+    const connection = useConnection();
+    const wrapper = mount(Band, { global: { plugins: [i18n] } });
+    expect(wrapper.text()).toContain(i18n.global.t("band.waiting"));
+    connection.receive({ kind: "Accepted", value: "AsSystemAccount" });
+```
+
+*Sostituisci con:*
+
+```ts
+describe("the band", () => {
+  it("is a warning with «Riprova» while waiting, «Riprova» retries, and it is gone once connected (control 23)", async () => {
+    const Band = (await import("./Band.vue")).default;
+    const connection = useConnection();
+    const retry = vi.spyOn(connection, "retry");
+    const wrapper = mount(Band, { global: { plugins: [i18n] } });
+    const notice = wrapper.get(".base-notice");
+    expect(notice.attributes("data-tone")).toBe("warn");
+    expect(notice.get(".title").text()).toBe(i18n.global.t("band.waiting"));
+    await notice.get("button").trigger("click");
+    expect(retry).toHaveBeenCalledOnce();
+    connection.receive({ kind: "Accepted", value: "AsSystemAccount" });
+```
+
+*Trova* — prima della prova della regione:
+
+```ts
+  it("keeps its status region while connected, and the words enter that same region (M-3 of E187)", async () => {
+    const Band = (await import("./Band.vue")).default;
+```
+
+*Sostituisci con:*
+
+```ts
+  it("stops the window when the core speaks another protocol: no action, and the stamp the core expects (E60)", async () => {
+    const Band = (await import("./Band.vue")).default;
+    const connection = useConnection();
+    const wrapper = mount(Band, { global: { plugins: [i18n] } });
+    connection.receive({ kind: "StaleBuild", value: "81985529216486895" });
+    await nextTick();
+    const notice = wrapper.get(".base-notice");
+    expect(notice.attributes("data-tone")).toBe("stop");
+    expect(notice.get(".title").text()).toBe(i18n.global.t("band.stale"));
+    expect(notice.get(".description").text()).toBe(i18n.global.t("band.expected", { stamp: "81985529216486895" }));
+    // ⛔ NOTHING TO RETRY: the core stopped listening to this build.
+    expect(notice.find("button").exists()).toBe(false);
+  });
+
+  it("keeps its status region while connected, and the words enter that same region (M-3 of E187)", async () => {
+    const Band = (await import("./Band.vue")).default;
+```
+
+In `gui/src/panels/modules.test.ts` (`replace_unique.py`), tre sostituzioni.
+*Trova* — Stato, prima di ogni verdetto:
+
+```ts
+    expect(wrapper.find(".event").exists()).toBe(false);
+```
+
+*Sostituisci con:*
+
+```ts
+    expect(wrapper.find(".base-notice").exists()).toBe(false);
+```
+
+*Trova* — Stato, il verdetto nei suoi toni:
+
+```ts
+  it("shows one event row only once a Verdict has arrived, with Refused told apart", async () => {
+    const { bridge } = wire();
+    const wrapper = mount(Status, { global: { plugins: [i18n] } });
+    bridge.deliver("Verdict");
+    await nextTick();
+    const event = wrapper.find(".event");
+    expect(event.exists()).toBe(true);
+    expect(event.text()).toContain(t("status.verdict.Refused"));
+    expect(event.text()).toContain(t("status.refusedDetail", { asked: "4096", ceiling: "1024" }));
+  });
+```
+
+*Sostituisci con:*
+
+```ts
+  it("shows the last Verdict as a message in its tone once one has arrived, Refused with its detail (control 23, E60)", async () => {
+    const { bridge, core } = wire();
+    const wrapper = mount(Status, { global: { plugins: [i18n] } });
+    bridge.deliver("Verdict");
+    await nextTick();
+    const notice = () => wrapper.get(".base-notice");
+    expect(notice().attributes("data-tone")).toBe("stop");
+    expect(notice().get(".title").text()).toBe(t("status.verdict.Refused"));
+    expect(notice().get(".description").text()).toBe(t("status.refusedDetail", { asked: "4096", ceiling: "1024" }));
+    core.receive({ kind: "Verdict", value: { verdict: "Granted" } });
+    await nextTick();
+    expect(notice().attributes("data-tone")).toBe("ok");
+    expect(notice().get(".title").text()).toBe(t("status.verdict.Granted"));
+    expect(notice().find(".description").exists()).toBe(false);
+    core.receive({ kind: "Verdict", value: { verdict: "Queued" } });
+    await nextTick();
+    expect(notice().attributes("data-tone")).toBe("info");
+    expect(notice().get(".title").text()).toBe(t("status.verdict.Queued"));
+  });
+```
+
+*Trova* — Impostazioni, la richiesta in volo:
+
+```ts
+    expect(bridge.sent).toEqual([{ kind: "Invoke", value: { function: "vram-policy", argument: "local" } }]);
+    expect(invoke.inFlight).not.toBeNull();
+    expect(wrapper.text()).toContain(t("settings.inFlight"));
+  });
+```
+
+*Sostituisci con:*
+
+```ts
+    expect(bridge.sent).toEqual([{ kind: "Invoke", value: { function: "vram-policy", argument: "local" } }]);
+    expect(invoke.inFlight).not.toBeNull();
+    // A message in the neutral tone (E60): the call is news, not a warning.
+    const notice = wrapper.get(".base-notice");
+    expect(notice.attributes("data-tone")).toBe("info");
+    expect(notice.get(".title").text()).toBe(t("settings.inFlight"));
+  });
+```
+
+Crea `gui/src/frame/frame.browser.test.ts` (LF):
+
+```ts
+import "dockview/dist/styles/dockview.css";
+import "../tokens";
+
+import { createPinia, setActivePinia } from "pinia";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { createApp, type App as VueApp } from "vue";
+
+import App from "../App.vue";
+import { i18n } from "../i18n";
+import { registerModules } from "../panels/modules";
+import { concentricRadii } from "../testing/probes";
+import { readToken } from "../tokens/readToken";
+
+// ⛔ THE WHOLE FRAME IN THE INSTALLED CHROME (the (d) of the design system): the page of the SPA -- `App.vue`, whose rule
+// gives `html`, `body` and `#app` the whole window -- at the probes' 1440 x 900, with the stylesheets in the order
+// `main.ts` loads them. Born with task 6bis for the band on the page (E60); task 8 adds the strip and the overview.
+
+const frames: VueApp[] = [];
+
+beforeEach(() => {
+  registerModules();
+});
+
+afterEach(() => {
+  for (const frame of frames.splice(0)) frame.unmount();
+  document.body.replaceChildren();
+  delete document.documentElement.dataset.theme;
+});
+
+/**
+ * The frame in one theme, once `dockview` has laid out the Home view. ⛔ MOUNTED AS `main.ts` MOUNTS IT, on `#app`
+ * itself: `mount` of `@vue/test-utils` puts the app in a `div` of its own inside the element it is given, and that `div`
+ * has no height -- the frame came out 116 px high, the dock 0, and the strip in the middle of the page, measured on
+ * 2026-09-24 (P-23 of the plan).
+ */
+async function frame(theme: "light" | "dark"): Promise<void> {
+  document.documentElement.dataset.theme = theme;
+  const pinia = createPinia();
+  setActivePinia(pinia);
+  const host = document.createElement("div");
+  host.id = "app";
+  document.body.append(host);
+  const app = createApp(App).use(pinia).use(i18n);
+  app.mount(host);
+  frames.push(app);
+  await new Promise((resolve) => setTimeout(resolve, 50));
+}
+
+/** A length token, in px, as the page computes it. */
+function px(token: string): number {
+  return Number.parseFloat(readToken(token));
+}
+
+/** What a declaration of `property: var(token)` computes to here: the oracle of a token, with no copy of its value. */
+function computed(property: string, token: string): string {
+  const probe = document.createElement("div");
+  probe.style.setProperty(property, `var(${token})`);
+  document.body.append(probe);
+  const value = getComputedStyle(probe).getPropertyValue(property);
+  probe.remove();
+  return value;
+}
+
+for (const theme of ["light", "dark"] as const) {
+  describe(`the frame, ${theme} theme`, () => {
+    it("lays the band on the page: under the bar, 12 px from the sides and from the cards, rounded like a card (control 23, E60)", async () => {
+      await frame(theme);
+      // With no core the connection waits (§6a): the band is there, a warning with «Riprova».
+      const band = document.querySelector<HTMLElement>(".band");
+      const bar = document.querySelector<HTMLElement>(".bar");
+      expect(band).not.toBeNull();
+      expect(bar).not.toBeNull();
+      const box = (band as HTMLElement).getBoundingClientRect();
+      // Aligned with the cards: the dock's own margin, `--space-3`, on each side.
+      expect(box.left).toBeCloseTo(px("--space-3"), 1);
+      expect(window.innerWidth - box.right).toBeCloseTo(px("--space-3"), 1);
+      // Right under the bar, which leaves it its own 8 px: the band adds nothing above itself.
+      expect(box.top).toBeCloseTo((bar as HTMLElement).getBoundingClientRect().bottom, 1);
+      // `--space-3` above the highest card: the dock has none on top (answer 20).
+      const cards = [...document.querySelectorAll(".dv-groupview")]
+        .map((group) => group.getBoundingClientRect())
+        .filter((card) => card.width > 0);
+      expect(cards.length).toBeGreaterThan(0);
+      expect(Math.min(...cards.map((card) => card.top)) - box.bottom).toBeCloseTo(px("--space-3"), 1);
+      // Rounded like a card, and «Riprova» concentric in its corners at half a pixel (E61).
+      expect(getComputedStyle(band as HTMLElement).borderTopLeftRadius).toBe(computed("border-top-left-radius", "--radius-card"));
+      const radii = concentricRadii([band as HTMLElement]);
+      expect(radii.near).toBeGreaterThan(0);
+      expect(radii.bad).toEqual([]);
+    });
+  });
+}
+```
+
+```bash
+(cd gui && npx vitest run --project jsdom src/frame/frame.test.ts src/panels/modules.test.ts)
+(cd gui && npx vitest run --project browser src/frame/frame.browser.test.ts)
+```
+
+Atteso: sotto jsdom **rosse** quattro prove, `Unable to get .base-notice within: …` — le due della fascia, quella del verdetto e
+quella della richiesta in volo —, `Tests  4 failed | 27 passed (31)`; nel browser **rosse** le due della fascia, `expected +0 to
+be close to 12, received difference is 12, but expected 0.05`: oggi la fascia va da bordo a bordo.
+
+- [ ] **Passo 13: i tre usi — il pezzo sulla pagina e nelle schede**
+
+Riscrivi `gui/src/frame/Band.vue` **per intero**, col terminatore che ha oggi:
+
+```vue
+<script setup lang="ts">
+import BaseButton from "../components/BaseButton.vue";
+import BaseNotice from "../components/BaseNotice.vue";
+import BaseStatus from "../components/BaseStatus.vue";
+import { useConnection } from "../stores/connection";
+
+// ⛔ THE BAND APPEARS ONLY WHEN THE CORE IS MISSING OR THE STAMP IS WRONG (§6a), and it is NOT a panel (D50): a panel that
+// came and went would rewrite the saved layout on every disconnection. ⛔ AND THERE IS NO THRESHOLD (D48): "not running"
+// and "slow" are one state here, because the gui does the same thing in both -- offer `retry`.
+// ⛔ THE REGION IS ALWAYS THERE AND THE BAND ENTERS IT (M-3 of E187, closed by `BaseStatus`): a status region born with
+// its text is the one many screen readers never announce.
+// ⛔ A MESSAGE ON THE PAGE (E60 of the design-system plan): `BaseNotice` with the card's radius, aligned with the cards --
+// `--space-3` from the sides and above them, the dock having none on top (answer 20) -- and under the bar, which leaves it
+// its own 8 px. The space is the message's, never the region's, which stays zero high when empty (E42). Waiting is a
+// warning with «Riprova»; another stamp STOPS the window -- nothing to retry, and the bar's chip is `--color-text-stop`.
+const connection = useConnection();
+</script>
+
+<template>
+  <BaseStatus>
+    <BaseNotice
+      v-if="connection.phase === 'stale'"
+      class="band"
+      tone="stop"
+      :title="$t('band.stale')"
+      :description="connection.expected !== null ? $t('band.expected', { stamp: connection.expected }) : undefined"
+      on-page
+    />
+    <BaseNotice v-else-if="connection.phase !== 'connected'" class="band" tone="warn" :title="$t('band.waiting')" on-page>
+      <template #action>
+        <BaseButton size="sm" @click="connection.retry()">{{ $t("band.retry") }}</BaseButton>
+      </template>
+    </BaseNotice>
+  </BaseStatus>
+</template>
+
+<style scoped>
+.band {
+  margin: 0 var(--space-3) var(--space-3);
+}
+</style>
+```
+
+In `gui/src/panels/Settings.vue` (`replace_unique.py`), tre sostituzioni.
+*Trova* — gli import:
+
+```vue
+import BaseRadioGroup from "../components/BaseRadioGroup.vue";
+```
+
+*Sostituisci con:*
+
+```vue
+import BaseNotice from "../components/BaseNotice.vue";
+import BaseRadioGroup from "../components/BaseRadioGroup.vue";
+```
+
+*Trova* — la riga della richiesta in volo:
+
+```vue
+        <p v-if="invoke.inFlight !== null">{{ $t("settings.inFlight") }}</p>
+```
+
+*Sostituisci con:*
+
+```vue
+        <BaseNotice v-if="invoke.inFlight !== null" class="in-flight" tone="info" :title="$t('settings.inFlight')" />
+```
+
+*Trova* — lo spazio sopra il messaggio:
+
+```vue
+.policy p {
+  margin-top: var(--space-2);
+}
+```
+
+*Sostituisci con:*
+
+```vue
+/* The space is the message's, never the region's (E42). */
+.in-flight {
+  margin-top: var(--space-2);
+}
+```
+
+In `gui/src/panels/Status.vue` (`replace_unique.py`), tre sostituzioni.
+*Trova* — lo script:
+
+```vue
+import BaseStatus from "../components/BaseStatus.vue";
+import { useConnection } from "../stores/connection";
+import { useCore } from "../stores/core";
+
+// The Stato table of §1 of the north star, rows 1-4 -- what sub-project 2 builds. Stato SHOWS and
+// does not command: the policy change is a registry function and lives in Impostazioni.
+const connection = useConnection();
+const core = useCore();
+```
+
+*Sostituisci con:*
+
+```vue
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+
+import BaseNotice from "../components/BaseNotice.vue";
+import BaseStatus from "../components/BaseStatus.vue";
+import { useConnection } from "../stores/connection";
+import { useCore } from "../stores/core";
+
+// The Stato table of §1 of the north star, rows 1-4 -- what sub-project 2 builds. Stato SHOWS and
+// does not command: the policy change is a registry function and lives in Impostazioni.
+const { t } = useI18n();
+const connection = useConnection();
+const core = useCore();
+
+/** The tone of each verdict (E60 of the design-system plan): queued is news, granted is good, refused stops the call. */
+const TONE = { Queued: "info", Granted: "ok", Refused: "stop" } as const;
+
+/** The last verdict as a message: its tone, its words, and the detail of a refusal. */
+const verdict = computed(() => {
+  const last = core.lastVerdict;
+  if (last === null) return null;
+  return {
+    tone: TONE[last.verdict],
+    title: t(`status.verdict.${last.verdict}`),
+    description: last.verdict === "Refused" ? t("status.refusedDetail", { asked: last.asked, ceiling: last.ceiling }) : undefined,
+  };
+});
+```
+
+*Trova* — la riga del verdetto:
+
+```vue
+    <!-- ONE EVENT ROW FOR THE LAST Verdict, AND ONLY WHEN ONE HAS ARRIVED (§6a): no empty box -- and the row ENTERS a region
+         that is always there (M-3 of E187, `BaseStatus`). -->
+    <BaseStatus>
+      <p v-if="core.lastVerdict !== null" class="event">
+        {{ $t(`status.verdict.${core.lastVerdict.verdict}`) }}
+        <template v-if="core.lastVerdict.verdict === 'Refused'">{{ $t("status.refusedDetail", { asked: core.lastVerdict.asked, ceiling: core.lastVerdict.ceiling }) }}</template>
+      </p>
+    </BaseStatus>
+```
+
+*Sostituisci con:*
+
+```vue
+    <!-- ONE MESSAGE FOR THE LAST Verdict, AND ONLY WHEN ONE HAS ARRIVED (§6a): no empty box -- and the message ENTERS a
+         region that is always there (M-3 of E187, `BaseStatus`), in the verdict's tone (E60). -->
+    <BaseStatus>
+      <BaseNotice v-if="verdict !== null" class="event" :tone="verdict.tone" :title="verdict.title" :description="verdict.description" />
+    </BaseStatus>
+```
+
+*Trova* — lo spazio sopra il messaggio:
+
+```vue
+.event {
+  margin-top: var(--space-3);
+  border-top: var(--border-width) solid var(--color-border);
+  padding-top: var(--space-2);
+}
+```
+
+*Sostituisci con:*
+
+```vue
+/* The space is the message's, never the region's (E42); the line above the old row went with it -- the message has a
+   border of its own. */
+.event {
+  margin-top: var(--space-3);
+}
+```
+
+```bash
+(cd gui && npx vitest run --project jsdom src/frame/frame.test.ts src/panels/modules.test.ts)
+(cd gui && npx vitest run --project browser src/frame/frame.browser.test.ts)
+```
+
+Atteso: **verde**, `Tests  31 passed (31)` e `Tests  2 passed (2)`. ⛔ Le prove della regione — *«keeps its status region…»*, in
+tutti e tre gli usi — restano **com'erano** e verdi: la regione è la stessa prima e dopo (M-3).
+
+- [ ] **Passo 14: tutte le prove, il *build*, il linter**
+
+```bash
+(cd gui && npm test && npm run build && npm run lint)
+```
+
+Atteso: **verde** su tutto; `Test Files  25 passed | 1 skipped (26)` e `Tests  200 passed | 1 skipped (201)`, il 2026-09-27 sulla
+cartella di prova — i file uno in più, `frame.browser.test.ts`. La riga del pezzo JavaScript, `npm run build 2>&1 | grep -E
+'assets/index-.*\.js '`, va nel commit accanto a quella del Passo 1: `691.82 kB`, compresso `210.77 kB` (**N-2**, la cifra per il
+proprietario).
+
+- [ ] **Passo 15: le due direzioni**
+
+Una violazione alla volta, poi indietro con la **copia salvata** e `cmp` (vincolo 11): `BaseNotice.vue` e `frame.browser.test.ts`
+sono nati qui, e ogni altro file il compito l'ha cambiato — `git checkout` non conosce i primi e toglierebbe ai secondi il lavoro
+del compito (A-1). Ciascuna si prova col file che la deve cogliere, da solo; misurate il 2026-09-27 sulla cartella di prova:
+
+| La prova | La violazione messa a mano | Atteso |
+|---|---|---|
+| `probes.browser.test.ts`, il pixel del bordo | in `probes.ts` `const SLACK = 1.5;` | rosso: `expected { near: 2, bad: [] } to deeply equal { near: 2, bad: [ …(2) ] }` |
+| `tokens.browser.test.ts`, lo spessore | in `base.css` tolta la regola `::-webkit-scrollbar { … }` — e `board.test.ts` rosso anche lui, che è giusto | rosso: `expected { vertical: 15, horizontal: 15 } to deeply equal { vertical: 10, horizontal: 10 }` — lo spessore di Chrome |
+| `tokens.browser.test.ts`, l'innesco | in `base.css` tolta la regola `:hover, :focus-within { --scrollbar-trigger: 1; }` | rosso: `expected '0' to be '1'` |
+| `tokens.browser.test.ts`, le barre mostrate | in `vite.config.ts` tolto `, ignoreDefaultArgs: ["--hide-scrollbars"]` | rosso: `expected { vertical: +0, horizontal: +0 } to deeply equal { vertical: 10, horizontal: 10 }` |
+| `dock.browser.test.ts`, la barra del titolo staccata | in `dock.css` il suo raggio di nuovo `var(--radius-card) var(--radius-card) 0 0` | rosso, nei due temi: `dv-floating-titlebar in dv-resize-container, top-left: radius 21.0, outer 21.0, distance 1.0/1.0` e il suo `top-right` |
+| `kit.browser.test.ts`, la cornice | in `Kit.vue` tolto il bordo trasparente di `.kit-frame` | rosso, nei due temi: `base-button in kit-frame, top-left: radius 21.0, outer 34.0, distance 12.0/12.0` coi suoi tre compagni |
+| `kit.browser.test.ts`, la riga al centro | in `BaseNotice.vue` tolta la regola `.base-notice[data-action]` | rosso, nei due temi: `expected 2 to be less than or equal to 0.5` — i 2 px |
+| `kit.browser.test.ts`, i ruoli del tono | in `BaseNotice.vue` il selettore `[data-tone="info"]` → `[data-tone="info-not"]` | rosso, nei due temi: nel chiaro `expected [ 'rgba(0, 0, 0, 0)', …(2) ] to deeply equal [ 'rgb(239, 225, 221)', …(2) ]` |
+| `kit.test.ts`, l'icona col nome del tono | in `BaseNotice.vue` `name="info"` al posto di `:name="tone"` | rosso: `expected 'info' to be 'ok'` |
+| `frame.browser.test.ts`, il raggio sulla pagina | in `BaseNotice.vue` tolta la regola `.base-notice[data-on-page]` | rosso, nei due temi: `expected '8px' to be '21px'` |
+| `frame.browser.test.ts`, lo spazio della fascia | in `Band.vue` la regola `.band` vuota | rosso, nei due temi: `expected +0 to be close to 12, received difference is 12, but expected 0.05` |
+| `frame.test.ts`, «Riprova» che riprova | in `Band.vue` tolto ` @click="connection.retry()"` | rosso: `expected "wrappedAction" to be called once, but got 0 times` |
+| `frame.test.ts`, il timbro diverso | in `Band.vue` il `tone="stop"` → `tone="warn"` | rosso: `expected 'warn' to be 'stop'` |
+| `modules.test.ts`, il rifiuto | in `Status.vue` `Refused: "warn"` | rosso: `expected 'warn' to be 'stop'` |
+| `modules.test.ts`, la richiesta in volo | in `Settings.vue` `tone="warn"` | rosso: `expected 'warn' to be 'info'` |
+
+Alla fine, dalla radice del repository, `git status --porcelain | diff <scratchpad>/prima.txt -` rende soltanto i file del
+compito: nessun file nato dai rossi (R2-3).
+
+- [ ] **Passo 16: guardarlo — il secondo sguardo del proprietario, nel suo Chrome col mouse vero**
+
+`(cd gui && npm run dev)`, la SPA nel browser del proprietario a 1440 × 900, e nella console `harnessFake.deliverAll()`; poi la
+pagina kit, `/kit.html`, e la tavola, servita con `python -m http.server` da un'altra porta — mai `file://`. Nei due temi:
+
+1. **la barra (E59)** — Stato e Impostazioni nella Home, e la scheda che scorre in fondo alla tavola: sottile, senza frecce,
+   staccata dalle estremità, l'angolo trasparente; il cursore che **compare col puntatore sopra** — la conferma col mouse vero
+   che la sessione del 2026-09-27 non ha registrato — e col fuoco dentro, e che si accende sotto il puntatore;
+2. **i raggi (E61)** — le schede, il gruppo staccato con «Stacca la tessera», la zona d'arrivo trascinando una linguetta, la
+   finestra della pagina kit;
+3. **i messaggi (E60)** — la fascia **a core spento**, sulla pagina, con «Riprova» concentrico e la riga al centro; il timbro
+   diverso in `stop`; *«Richiesta inviata: in attesa del core.»* scegliendo l'altra policy in Impostazioni; il verdetto in Stato.
+
+Poi il frammento del contrasto del Passo 8 del compito 6, sulla SPA e nei due temi: il primo di `worst` **sopra 4,5**. ⛔ L'aspetto
+lo **giudica il proprietario** (controllo 15): ciò che non gli piace è una voce d'errata col suo *«perché»*, non un ritocco di chi
+esegue. Se lo squircle torna in mente, è la condizione scritta in *«Vicoli ciechi e scelte scartate»* del disegno.
+
+- [ ] **Passo 17: il cancello, il commit, la posizione**
+
+Approvato lo sguardo: la riga **6bis** della tabella della posizione a `✅ <data>`, e la riga **6** a `✅ <data>` col verbale del
+Passo 8 — le quattro foto del 2026-09-26, le tre voci, lo sguardo di questo compito —; la riga **6** della colonna **Commit** con
+gli hash del compito 6 e delle sue cure. `bash scripts/gate.sh` da solo, `bash scripts/check-docs.sh`, il commit —
+`design-system(compito 6bis): la cura delle tre voci del Passo 8 …`, con le due righe del pezzo JavaScript — coi fine-riga
+rimisurati, e `git push`. ⚠️ Nella stessa passata: in *«Verificato, dedotto, assunto»* del disegno, l'assunzione della barra
+sotto la preferenza di Windows e i colori forzati, con ciò che lo sguardo ha visto — o resta assunta, e lo dice.
+
+---
 ## Compito 7: le viste col nome, sotto — il pacchetto, il negozio, il dock, la geometria comune, lo schema
 
 **Da:** la (d) del disegno, *«Le viste salvate col nome»* e le righe *«le miniature»* e *«le frecce nella griglia»* della
@@ -8976,7 +10549,7 @@ Sonda: `grep -c 'il sotto-progetto 14 |' docs/README.md` → **1**.
 Dopo la riga che comincia con `| ⛔ **come si è ESEGUITO il sotto-progetto 2**`, **intera, presa dal file**, la riga (**D22**):
 
 ```markdown
-| ⛔ **il DESIGN SYSTEM**, il sotto-progetto 14 — i token a due livelli e i due temi, il kit degli otto pezzi di base con la pagina kit, il dock vestito, la cornice con la Panoramica e le viste col nome, le sonde che diventano prove nel browser vero, e per ogni artefatto il controllo che lo esercita; e come si è **eseguito**, con la Definizione di «fatto» coi comandi | il [disegno](superpowers/specs/2026-09-22-design-system-design.md) — ⚠️ **non è una spec** · il [piano](superpowers/plans/2026-09-23-design-system.md), con l'errata in testa e la tabella della posizione — ⚠️ **a compiti, mai intero** |
+| ⛔ **il DESIGN SYSTEM**, il sotto-progetto 14 — i token a due livelli e i due temi, il kit dei pezzi di base con la pagina kit, il dock vestito, la cornice con la Panoramica e le viste col nome, le sonde che diventano prove nel browser vero, e per ogni artefatto il controllo che lo esercita; e come si è **eseguito**, con la Definizione di «fatto» coi comandi | il [disegno](superpowers/specs/2026-09-22-design-system-design.md) — ⚠️ **non è una spec** · il [piano](superpowers/plans/2026-09-23-design-system.md), con l'errata in testa e la tabella della posizione — ⚠️ **a compiti, mai intero** |
 ```
 
 ```bash
@@ -9376,7 +10949,7 @@ grep -c 'data-theme' gui/src/tokens/theme.ts                                    
 # 8, 9, 16 -- il movimento ridotto, i caratteri, readToken: tokens.browser.test.ts nel blocco 2
 # 10 -- la mappa delle icone, e lucide da un posto solo
 grep -rlE "from ['\"]lucide" gui/src                                                    # gui/src/components/icons.ts, e nient'altro
-# 11 -- gli otto pezzi di base: kit.test.ts e kit.browser.test.ts nel blocco 2
+# 11 -- i pezzi di base: kit.test.ts e kit.browser.test.ts nel blocco 2
 ls gui/src/components/Base*.vue | wc -l                                                 # 8
 # 12 -- le regole del kit nel linter, coi loro messaggi
 grep -c 'message: "' gui/eslint.config.js                                               # 6: i tre messaggi del compito 3 e i tre del 5 -- il 2026-09-24 erano 0
@@ -9394,6 +10967,10 @@ grep -rl 'F3' gui/src/frame | wc -l                                             
 for f in $(git ls-files 'gui/src/*.browser.test.ts'); do printf '%s ' "$f"; grep -cE 'NON-VACUITY|toBeGreaterThan\(0' "$f"; done   # sei file, ciascuno almeno 1
 # 21 -- la riga «Accessibilità»
 grep -c '^| Accessibilità | 🔶 |' docs/tracciabilita.md                                 # 1
+# 22 -- la barra di scorrimento: tokens.browser.test.ts nel blocco 2, con le barre mostrate al progetto browser (D26)
+grep -c 'ignoreDefaultArgs' gui/vite.config.ts                                          # 1
+# 23 -- BaseNotice: kit.test.ts, kit.browser.test.ts, frame.test.ts, modules.test.ts, frame.browser.test.ts nel blocco 2
+grep -l 'BaseNotice' gui/src/frame/Band.vue gui/src/panels/Settings.vue gui/src/panels/Status.vue | wc -l   # 3
 ```
 
 ⚠️ **Il 20 non si prova con un `grep`:** un commento o una guardia trovati dicono che la guardia **è scritta**, non che morda. Che
@@ -9431,76 +11008,58 @@ compito 1 — o in una voce d'errata. Un nome senza casa è una voce d'errata nu
 
 ---
 
-## Come si riprende — lo sguardo del proprietario sulle tre voci, approvate, 2026-09-27
+## Come si riprende — il piano della cura, scritto: il compito 6bis, 2026-09-27
 
-✅ **Il proprietario ha approvato le tre voci del Passo 8 — A, in chat, il 2026-09-27** — guardandole insieme su una copia della
-tavola dei token nello scratchpad: **E61**, il bordo nei raggi; **E59**, la barra, con l'**innesco** che la verifica ha trovato
-necessario; **E60**, il tono `info` e il messaggio sulla pagina con «Riprova». La tavola nel repository **non** è toccata, e il
-codice nemmeno. La consegna precedente — il disegno delle tre voci, scritto — sta parola per parola in
+✅ **Il piano della cura è scritto: il compito 6bis**, fra il 6 e il 7. Il proprietario ha risposto alle due domande della
+consegna di prima, in chat: la cura è **un compito nuovo** (A), e con un'azione la riga del messaggio sta **al centro** (B),
+guardando una pagina di confronto — **E62**, **D27**. Il codice del compito è **provato**: scritto una volta sola, applicato passo
+per passo a un `git worktree` di `950bba1` nello scratchpad, ogni rosso e ogni verde misurato, e il testo del compito riletto a
+macchina contro quel codice — applicato a una copia pulita rende i diciotto file byte per byte. La consegna precedente — lo
+sguardo del proprietario sulle tre voci — sta parola per parola in
 [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
 
 ⛔ **Da sapere subito.**
 
-1. **La tavola non cambia da sola nel blocco di `base.css`**: `gui/src/tokens/board.test.ts` vuole `gui/src/tokens/base.css` e
-   `themes.css` uguali **byte per byte** ai due blocchi della [tavola](../specs/2026-09-22-design-system-tavole/token.html).
-   Ciò che il proprietario ha approvato sulla copia lo scrive nella tavola **il piano della cura**, insieme alla copia. La copia
-   stava nello scratchpad della macchina `Jays`, non tracciata: ciò che cambiava è nella tabella qui sotto, e basta a rifarla.
-2. **Il controllo 22 del [disegno](../specs/2026-09-22-design-system-design.md), com'è scritto, misura il niente**: senza finestra
-   Playwright lancia Chrome con `--hide-scrollbars`, e `gui/vite.config.ts` lo lancia così — lo spessore vale 0 con la regola e
-   senza. Il piano della cura sceglie come mostrare le barre al progetto browser.
-3. **La conferma col mouse vero dell'innesco non è registrata**: le prove muovevano un puntatore simulato, il compagno visivo e il
-   server di misura sono caduti col processo della sessione dopo la consegna della pagina, e il proprietario ha risposto **A**
-   senza commentare il passaggio. La dà il secondo sguardo sul dock.
-
-**Che cosa la copia cambiava nella tavola** — il piano della cura lo scrive nella tavola e nella sua copia:
-
-| Dove | Che cosa |
-|---|---|
-| blocco di `base.css`, i raggi (E61) | `--radius-card: calc(var(--radius-control) + var(--space-3) + var(--border-width))`, 21; `--radius-frame: calc(var(--radius-card) + var(--space-3) + var(--border-width))`, 34; il commento sopra dice la distanza da bordo esterno a bordo esterno |
-| blocco di `base.css`, la barra (E59) | `--size-scrollbar: 10px`; accanto a `::selection`, otto regole: `::-webkit-scrollbar` a `--size-scrollbar`; `::-webkit-scrollbar-button` nascosto; binario e angolo trasparenti; `::-webkit-scrollbar-track:vertical` con `margin-block` e `:horizontal` con `margin-inline`, a `--space-3`; il cursore trasparente, col bordo trasparente di `--space-0-5`, `--radius-full` e `background-clip: padding-box`; su `:hover` e `:focus-within` della scatola `--color-border-strong`; sotto il puntatore `--color-text-muted`. E l'**innesco**: `@property --scrollbar-trigger` — `syntax: "<number>"`, `inherits: false`, `initial-value: 0` — e `:hover, :focus-within { --scrollbar-trigger: 1; }` |
-| la tavola, i fogli e la dimostrazione (E61) | `.sheet` col bordo trasparente e `calc(var(--radius-card) + var(--space-6) + var(--border-width))`, 46; `.nest-card` col bordo `--color-border-card`; la prosa coi numeri nuovi — nel primo foglio *«i raggi diventano 21 e 34»*, e la didascalia *«cornice 34 = scheda 21 + 12 + 1 · scheda 21 = controllo 8 + 12 + 1»* |
-| la tavola, il messaggio (E60) | `.msg.info` coi ruoli dell'accento, primo in «Gli stati», con *«Richiesta inviata»* e *«In attesa del core.»*; `.msg>div` a `flex: 1`, `.msg>.btn` centrato in verticale, `.msg.on-page` a `--radius-card`, `.btn.sm` a `--size-control-sm`; in cima a ciascun tema un `.msg.warn.on-page` col triangolo, *«Il core non ha risposto.»* e un `button.btn.sm` con «Riprova» |
-| la tavola, una scheda che scorre (E59) | in fondo a ciascun tema `.card.sc`, alta 240, senza padding e con `overflow: hidden`, e dentro `.sc-body`, che scorre nei due sensi — dieci righe `.row` e una riga di registro in `pre` —, con `tabindex="0"` e `role="region"` |
+1. **La tavola e il codice del repository NON sono toccati**: li cambia l'esecuzione del 6bis. Il compito porta tutto — lo script
+   della tavola, `cure_board.py`, e ogni riga di codice —, quindi dall'altra macchina basta il piano.
+2. **Il codice del 6bis è stato provato su `950bba1`.** Se prima dell'esecuzione un commit tocca `gui/`, il pre-controllo lo
+   rilegge contro il codice di allora (`CLAUDE.md`, domanda 5): `git log --oneline 950bba1..HEAD -- gui/`.
+3. **La conferma col mouse vero dell'innesco della barra** non è ancora registrata: è il punto 1 del Passo 16 del 6bis.
+4. **`frame.browser.test.ts` lo crea il 6bis, e il compito 8 lo estende** — **E63**, per il pre-controllo dell'8.
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
-| **i commit** | `git log --oneline 46c3a8f..HEAD`: uno, quello che scrive questa riga — i richiami in E59, E60 ed E61, la riga 6 della posizione, i richiami nel disegno con quattro trappole nuove, le misure in `riferimenti.md`, questa sezione e la precedente in archivio. Nessun codice cambia: `git diff --stat 46c3a8f..HEAD -- . ':!docs'` non rende nulla |
-| **cancello** | `GATE GREEN` all'apertura su `46c3a8f` e prima del commit che scrive questa riga, sullo stesso codice: jsdom 137 prove e una saltata, browser 48, il pezzo `690.61 kB`, `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
-| **la CI** | `46c3a8f` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
-| **la posizione** | la riga 6 a `⏳`: le tre voci approvate; resta la cura |
-| **le pagine di prova** | sulla macchina `Jays`, **non tracciate**, in `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\124a6295-f4ab-4dbc-a291-d89bf5d03eb5\scratchpad\`: la copia della tavola, `look/tavola-tre-voci.html`, e con l'innesco `look/tavola-tre-voci-innesco.html`; le varianti della barra, `look/varianti-barra.html`; gli script di Playwright; e `make_look.py`, che genera la copia dalla tavola. La tabella qui sopra basta a rifarle |
-| **i server** | nessuno acceso: il compagno visivo e `http.server` sono caduti col processo della sessione, e la riga di comando dei processi `node` e `python` lo conferma |
-| **dall'altra macchina** | si riprende da `origin`: le voci, il disegno, `riferimenti.md` e questa sezione bastano |
+| **i commit** | `git log --oneline 950bba1..HEAD`: uno, quello che scrive questa riga — il compito 6bis, la sua riga nella posizione, i richiami in E59–E61, **E62** ed **E63**, **D25**…**D29**, le cifre degli *«otto pezzi»* tolte dalla testa, dal compito 9 e dalla Definizione di «fatto», le righe 22 e 23 della Definizione, il richiamo nella (b) del disegno, questa sezione e la precedente in archivio. Nessun codice cambia: `git diff --stat 950bba1..HEAD -- . ':!docs'` non rende nulla |
+| **cancello** | `GATE GREEN` all'apertura su `950bba1` e prima del commit che scrive questa riga: jsdom 137 prove e una saltata, browser 48, il pezzo `690.61 kB`, `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `950bba1` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | la riga 6 a `⏳`, che si chiude con lo sguardo del 6bis; la riga 6bis a `⬜`, scritta |
+| **lo scratchpad** | sulla macchina `Jays`, **non tracciato**, in `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\610b1550-3878-4544-84a7-eebbb678426d\scratchpad\`: in `cura/` l'attrezzo che ha provato e reso il compito — `cura_ops.py` coi passi, `cura_tool.py`, `roundtrip.py`, `directions.py` con le quindici violazioni —; in `cured/` i diciotto file curati; in `look/due-px.html` la pagina della seconda domanda. Non servono a riprendere: il piano basta |
+| **server e cartelle di prova** | nessun server acceso, e il `git worktree` di prova tolto: `git worktree list` rende la sola cartella del repository |
 
-**Che cosa ha fatto questa sessione.** Nessun dispaccio, nessun codice. La copia della tavola con le tre voci, verificata prima di
-mostrarla — la decisione 5 del disegno —: i raggi a mezzo pixel, il testo tagliato e ciò che sborda, lo spessore della barra, la
-fascia allineata alle schede, i ruoli del tono `info`, il contrasto; nelle due direzioni dove si poteva. La verifica ha trovato che
-la C col puntatore non si accende, e il coordinatore ha deciso l'innesco come scelta tecnica contenuta, mostrata al proprietario
-con la pagina e col confronto senza. Il proprietario: **A**.
+**Che cosa ha fatto questa sessione.** Nessun dispaccio, nessun codice nel repository. Le due domande, una per volta; la geometria
+dei 2 px misurata prima di mostrarla, e una pagina di confronto **verificata** — la prima versione misurava un «Riprova» sbagliato,
+detto al proprietario —; le misure che il compito detta: le barre mostrate al progetto browser, i rossi della sonda a mezzo pixel
+coi token di oggi e con quelli nuovi, la tavola dello script uguale alla copia approvata; poi il compito, provato e reso.
 
 📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura del
 sotto-progetto.
 
 | | Che cosa | Che cosa se ne fa |
 |---|---|---|
-| 1 | **Chromium ridisegna una barra personalizzata solo quando cambia lo stile della scatola stessa**: `:hover::-webkit-scrollbar-thumb` da solo non riaccende il cursore | l'innesco nella regola, e chi prova una barra lo sa |
-| 2 | **una prova che cambia gli stili a pagina caricata mente sulla barra**: la prima lettura — *«il ritaglio tondo nasconde la barra»* — era falsa, e l'hanno smentita le varianti ferme dal caricamento | le varianti di una barra si scrivono ferme, e si confrontano a pagina ricaricata |
-| 3 | **Playwright senza finestra nasconde le barre**, `--hide-scrollbars`, e lo spessore misurato vale 0 | il controllo 22 le mostra, o misura il niente |
-| 4 | **il pannello del browser dell'app, nascosto, ha la finestra a 0 × 0; visibile, sta a densità 1,75**, e un bordo da 1 px vi si disegna 0,57 | le misure di layout col pannello visibile, e lo scarto di mezzo pixel si legge sapendolo |
-| 5 | **la prosa di una tavola porta cifre come il codice**: *«20 e 32»*, *«cornice 32 = scheda 20 + 12»* | la cura le cerca col `grep`, come le cifre degli *«otto pezzi»* |
+| 1 | **il codice di un compito si scrive una volta e si prova due volte**: applicato a un `git worktree`, poi il **testo reso** riapplicato a una copia pulita e confrontato byte per byte | il 6bis è nato così; lo stesso attrezzo può servire ai pre-controlli |
+| 2 | **nella tavola `.msg span` veste ogni `span` di un messaggio**: una sonda che avvolge un'etichetta in uno `span` misura un altro pulsante | una pagina di prova usa il markup approvato, e lo verifica |
+| 3 | **`ignoreDefaultArgs` passa attraverso il provider di Vitest**, e mostrare le barre non muove nessun'altra prova | **D26** |
+| 4 | **a mezzo pixel, coi token di oggi, anche il pulsante nell'angolo della finestra di `BaseDialog` era storto di un pixel** — nessuno l'aveva visto | la riga 1 della tabella del 6bis |
+| 5 | **in questa Git Bash `rev` non c'è**, e un `awk` in linea perde i backslash (la trappola già nota) | i controlli da uno script Python |
 
 **Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
 
 1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
-2. **Il piano della cura**, con `superpowers:writing-plans`: la tavola e la sua copia, dalla tabella qui sopra; `tokens/dock.css` —
-   ciò che sta subito dentro il bordo prende `calc(var(--radius-card) - var(--border-width))` (E61) —; la sonda a mezzo pixel, e
-   se scenda anche la soglia di *«nell'angolo»*; il controllo 22 con le barre mostrate; `BaseNotice` con le quattro icone e i tre
-   usi; le trappole 21–28 del disegno. E col proprietario, una domanda per volta: se sia un compito nuovo o il Passo 8 del
-   compito 6, e i **2 px** del titolo della fascia sopra «Riprova» (E60).
-3. Il pre-controllo del piano della cura e la sua esecuzione.
-4. Il secondo sguardo del proprietario sul dock, nel suo Chrome col mouse vero, la barra che si accende al passaggio compresa;
-   approvato, la riga 6 a `✅` col verbale del Passo 8, e questa sezione in archivio.
-5. Poi il pre-controllo del compito 7, e così compito per compito fino al 9. Al **pre-controllo del compito 8** le sonde che
-   l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed **E57** — e la domanda di **E44** sulla Panoramica; a quello del
-   **9**, le cifre degli *«otto pezzi»*, la trappola 23 del disegno.
+2. **Il pre-controllo del compito 6bis**: l'errata per intero, poi il compito, con le quattro domande e le quattro regole di
+   `CLAUDE.md`. Le misure del compito sono del 2026-09-27 su `950bba1`: si rimisurano (vincolo 10).
+3. L'esecuzione del 6bis, un subagente fresco con la revisione dopo — la banda dei costi detta prima del sì —, e lo **sguardo del
+   proprietario** del Passo 16, nel suo Chrome col mouse vero; approvato, le righe 6 e 6bis a `✅` e questa sezione in archivio.
+4. Poi il pre-controllo del compito 7, e così compito per compito fino al 9. Al **pre-controllo del compito 8** le sonde che
+   l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed **E57** —, la domanda di **E44** sulla Panoramica ed **E63**; a
+   quello del **9**, la Definizione di «fatto» con le righe 22 e 23.

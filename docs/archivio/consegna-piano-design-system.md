@@ -1849,3 +1849,81 @@ del sotto-progetto.
 5. Poi il pre-controllo del compito 7, e così compito per compito fino al 9. Al **pre-controllo del compito 8** le sonde che
    l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed **E57** — e la domanda di **E44** sulla Panoramica; a quello del
    **9**, le cifre degli *«otto pezzi»*, la trappola 23 del disegno.
+
+## Il piano della cura, scritto, del 2026-09-27
+
+Tolto dal piano il 2026-09-27, quando la sessione dopo ha scritto il piano della cura — il compito 6bis — e la consegna *«Come si riprende — il piano della cura, scritto: il compito 6bis»*. Il testo com'era, dal commit `950bba1`, parola per parola; i rimandi sono riscritti per questa cartella.
+
+## Come si riprende — lo sguardo del proprietario sulle tre voci, approvate, 2026-09-27
+
+✅ **Il proprietario ha approvato le tre voci del Passo 8 — A, in chat, il 2026-09-27** — guardandole insieme su una copia della
+tavola dei token nello scratchpad: **E61**, il bordo nei raggi; **E59**, la barra, con l'**innesco** che la verifica ha trovato
+necessario; **E60**, il tono `info` e il messaggio sulla pagina con «Riprova». La tavola nel repository **non** è toccata, e il
+codice nemmeno. La consegna precedente — il disegno delle tre voci, scritto — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+⛔ **Da sapere subito.**
+
+1. **La tavola non cambia da sola nel blocco di `base.css`**: `gui/src/tokens/board.test.ts` vuole `gui/src/tokens/base.css` e
+   `themes.css` uguali **byte per byte** ai due blocchi della [tavola](../superpowers/specs/2026-09-22-design-system-tavole/token.html).
+   Ciò che il proprietario ha approvato sulla copia lo scrive nella tavola **il piano della cura**, insieme alla copia. La copia
+   stava nello scratchpad della macchina `Jays`, non tracciata: ciò che cambiava è nella tabella qui sotto, e basta a rifarla.
+2. **Il controllo 22 del [disegno](../superpowers/specs/2026-09-22-design-system-design.md), com'è scritto, misura il niente**: senza finestra
+   Playwright lancia Chrome con `--hide-scrollbars`, e `gui/vite.config.ts` lo lancia così — lo spessore vale 0 con la regola e
+   senza. Il piano della cura sceglie come mostrare le barre al progetto browser.
+3. **La conferma col mouse vero dell'innesco non è registrata**: le prove muovevano un puntatore simulato, il compagno visivo e il
+   server di misura sono caduti col processo della sessione dopo la consegna della pagina, e il proprietario ha risposto **A**
+   senza commentare il passaggio. La dà il secondo sguardo sul dock.
+
+**Che cosa la copia cambiava nella tavola** — il piano della cura lo scrive nella tavola e nella sua copia:
+
+| Dove | Che cosa |
+|---|---|
+| blocco di `base.css`, i raggi (E61) | `--radius-card: calc(var(--radius-control) + var(--space-3) + var(--border-width))`, 21; `--radius-frame: calc(var(--radius-card) + var(--space-3) + var(--border-width))`, 34; il commento sopra dice la distanza da bordo esterno a bordo esterno |
+| blocco di `base.css`, la barra (E59) | `--size-scrollbar: 10px`; accanto a `::selection`, otto regole: `::-webkit-scrollbar` a `--size-scrollbar`; `::-webkit-scrollbar-button` nascosto; binario e angolo trasparenti; `::-webkit-scrollbar-track:vertical` con `margin-block` e `:horizontal` con `margin-inline`, a `--space-3`; il cursore trasparente, col bordo trasparente di `--space-0-5`, `--radius-full` e `background-clip: padding-box`; su `:hover` e `:focus-within` della scatola `--color-border-strong`; sotto il puntatore `--color-text-muted`. E l'**innesco**: `@property --scrollbar-trigger` — `syntax: "<number>"`, `inherits: false`, `initial-value: 0` — e `:hover, :focus-within { --scrollbar-trigger: 1; }` |
+| la tavola, i fogli e la dimostrazione (E61) | `.sheet` col bordo trasparente e `calc(var(--radius-card) + var(--space-6) + var(--border-width))`, 46; `.nest-card` col bordo `--color-border-card`; la prosa coi numeri nuovi — nel primo foglio *«i raggi diventano 21 e 34»*, e la didascalia *«cornice 34 = scheda 21 + 12 + 1 · scheda 21 = controllo 8 + 12 + 1»* |
+| la tavola, il messaggio (E60) | `.msg.info` coi ruoli dell'accento, primo in «Gli stati», con *«Richiesta inviata»* e *«In attesa del core.»*; `.msg>div` a `flex: 1`, `.msg>.btn` centrato in verticale, `.msg.on-page` a `--radius-card`, `.btn.sm` a `--size-control-sm`; in cima a ciascun tema un `.msg.warn.on-page` col triangolo, *«Il core non ha risposto.»* e un `button.btn.sm` con «Riprova» |
+| la tavola, una scheda che scorre (E59) | in fondo a ciascun tema `.card.sc`, alta 240, senza padding e con `overflow: hidden`, e dentro `.sc-body`, che scorre nei due sensi — dieci righe `.row` e una riga di registro in `pre` —, con `tabindex="0"` e `role="region"` |
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **i commit** | `git log --oneline 46c3a8f..HEAD`: uno, quello che scrive questa riga — i richiami in E59, E60 ed E61, la riga 6 della posizione, i richiami nel disegno con quattro trappole nuove, le misure in `riferimenti.md`, questa sezione e la precedente in archivio. Nessun codice cambia: `git diff --stat 46c3a8f..HEAD -- . ':!docs'` non rende nulla |
+| **cancello** | `GATE GREEN` all'apertura su `46c3a8f` e prima del commit che scrive questa riga, sullo stesso codice: jsdom 137 prove e una saltata, browser 48, il pezzo `690.61 kB`, `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `46c3a8f` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | la riga 6 a `⏳`: le tre voci approvate; resta la cura |
+| **le pagine di prova** | sulla macchina `Jays`, **non tracciate**, in `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\124a6295-f4ab-4dbc-a291-d89bf5d03eb5\scratchpad\`: la copia della tavola, `look/tavola-tre-voci.html`, e con l'innesco `look/tavola-tre-voci-innesco.html`; le varianti della barra, `look/varianti-barra.html`; gli script di Playwright; e `make_look.py`, che genera la copia dalla tavola. La tabella qui sopra basta a rifarle |
+| **i server** | nessuno acceso: il compagno visivo e `http.server` sono caduti col processo della sessione, e la riga di comando dei processi `node` e `python` lo conferma |
+| **dall'altra macchina** | si riprende da `origin`: le voci, il disegno, `riferimenti.md` e questa sezione bastano |
+
+**Che cosa ha fatto questa sessione.** Nessun dispaccio, nessun codice. La copia della tavola con le tre voci, verificata prima di
+mostrarla — la decisione 5 del disegno —: i raggi a mezzo pixel, il testo tagliato e ciò che sborda, lo spessore della barra, la
+fascia allineata alle schede, i ruoli del tono `info`, il contrasto; nelle due direzioni dove si poteva. La verifica ha trovato che
+la C col puntatore non si accende, e il coordinatore ha deciso l'innesco come scelta tecnica contenuta, mostrata al proprietario
+con la pagina e col confronto senza. Il proprietario: **A**.
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura del
+sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **Chromium ridisegna una barra personalizzata solo quando cambia lo stile della scatola stessa**: `:hover::-webkit-scrollbar-thumb` da solo non riaccende il cursore | l'innesco nella regola, e chi prova una barra lo sa |
+| 2 | **una prova che cambia gli stili a pagina caricata mente sulla barra**: la prima lettura — *«il ritaglio tondo nasconde la barra»* — era falsa, e l'hanno smentita le varianti ferme dal caricamento | le varianti di una barra si scrivono ferme, e si confrontano a pagina ricaricata |
+| 3 | **Playwright senza finestra nasconde le barre**, `--hide-scrollbars`, e lo spessore misurato vale 0 | il controllo 22 le mostra, o misura il niente |
+| 4 | **il pannello del browser dell'app, nascosto, ha la finestra a 0 × 0; visibile, sta a densità 1,75**, e un bordo da 1 px vi si disegna 0,57 | le misure di layout col pannello visibile, e lo scarto di mezzo pixel si legge sapendolo |
+| 5 | **la prosa di una tavola porta cifre come il codice**: *«20 e 32»*, *«cornice 32 = scheda 20 + 12»* | la cura le cerca col `grep`, come le cifre degli *«otto pezzi»* |
+
+**Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. **Il piano della cura**, con `superpowers:writing-plans`: la tavola e la sua copia, dalla tabella qui sopra; `tokens/dock.css` —
+   ciò che sta subito dentro il bordo prende `calc(var(--radius-card) - var(--border-width))` (E61) —; la sonda a mezzo pixel, e
+   se scenda anche la soglia di *«nell'angolo»*; il controllo 22 con le barre mostrate; `BaseNotice` con le quattro icone e i tre
+   usi; le trappole 21–28 del disegno. E col proprietario, una domanda per volta: se sia un compito nuovo o il Passo 8 del
+   compito 6, e i **2 px** del titolo della fascia sopra «Riprova» (E60).
+3. Il pre-controllo del piano della cura e la sua esecuzione.
+4. Il secondo sguardo del proprietario sul dock, nel suo Chrome col mouse vero, la barra che si accende al passaggio compresa;
+   approvato, la riga 6 a `✅` col verbale del Passo 8, e questa sezione in archivio.
+5. Poi il pre-controllo del compito 7, e così compito per compito fino al 9. Al **pre-controllo del compito 8** le sonde che
+   l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed **E57** — e la domanda di **E44** sulla Panoramica; a quello del
+   **9**, le cifre degli *«otto pezzi»*, la trappola 23 del disegno.

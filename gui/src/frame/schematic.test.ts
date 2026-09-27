@@ -1,9 +1,16 @@
-import type { SerializedDockview } from "dockview-core";
-import { describe, expect, it } from "vitest";
+import { createDockview, type SerializedDockview } from "dockview-core";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it } from "vitest";
 
+import { componentFor } from "../panels/registry";
 import { VIEWS } from "../panels/views";
 
 import { schematic } from "./schematic";
+
+// The probe of E85 mounts the real panels, and they read the stores.
+beforeEach(() => {
+  setActivePinia(createPinia());
+});
 
 /** A leaf of the serialized grid: one group with its panels. */
 function leaf(size: number, ...views: string[]) {
@@ -45,8 +52,34 @@ describe("schematic (answer 19 of the design system)", () => {
       for (const tile of tiles) {
         expect(tile.x >= 0 && tile.y >= 0 && tile.x + tile.width <= 1 + 1e-9 && tile.y + tile.height <= 1 + 1e-9, `${name}: ${tile.views}`).toBe(true);
       }
+      // ⛔ THE AREAS ADDING UP DO NOT RULE OUT AN OVERLAP (E84 of the plan): an overlap and a gap of the same size add up
+      // too. No two tiles overlap, the sum is the square and every tile is inside it -- so the tiles cover it.
+      tiles.forEach((a, index) => {
+        for (const b of tiles.slice(index + 1)) {
+          const across = Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x);
+          const down = Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y);
+          expect(Math.max(0, across) * Math.max(0, down), `${name}: ${a.views} over ${b.views}`).toBeLessThan(1e-9);
+        }
+      });
       const strip = tiles.find((tile) => tile.views.includes("strip"));
       expect(strip && strip.x === 0 && Math.abs(strip.width - 1) < 1e-9 && Math.abs(strip.y + strip.height - 1) < 1e-9, `${name}: the strip`).toBe(true);
     }
+  });
+
+  it("draws a maximized group alone, on the whole square: the layout opens with it (E85 of the plan)", () => {
+    const host = document.createElement("div");
+    document.body.append(host);
+    const api = createDockview(host, { createComponent: ({ name }) => componentFor(name)() });
+    api.layout(1600, 1000);
+    api.fromJSON(VIEWS.home);
+    // The group the big grab maximizes: a real `toJSON()`, not a node written by hand -- the shape is dockview's.
+    const group = api.getPanel("status")?.group;
+    group?.api.maximize();
+    const saved = api.toJSON();
+    // ⛔ NON-VACUITY: dockview wrote the group maximized.
+    expect((saved.grid as { maximizedNode?: unknown }).maximizedNode).toBeDefined();
+    expect(schematic(saved)).toEqual([
+      { x: 0, y: 0, width: 1, height: 1, views: group?.panels.map((panel) => panel.id), active: group?.activePanel?.id },
+    ]);
   });
 });

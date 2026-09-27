@@ -225,11 +225,12 @@ describe("the named views in the package (design system, section (d))", () => {
     const text = JSON.stringify({
       view: "home",
       layouts: { home: {}, mine: {} },
-      named: [{ name: "Revisione", layout: {} }, { name: "", layout: {} }, { name: "Senza" }, { layout: {} }, { name: " revisione ", layout: { second: true } }],
+      named: [{ name: "Revisione", layout: {} }, { name: "", layout: {} }, { name: "Senza" }, { layout: {} }, null, { name: "Nulla", layout: null }, { name: " revisione ", layout: { second: true } }],
       openNamed: "Sparita",
     });
     // ⛔ A NAME ALREADY READ IS A SECOND VIEW UNDER IT (D4): the first stays. An open name the list does not hold is
-    // read as absent, and the view of always opens.
+    // read as absent, and the view of always opens. And an entry that is `null`, or holds a `null` layout, is dropped
+    // (E88 of the plan): without its guard the first throws inside `unpack`'s `try`, and the whole package is lost.
     expect(unpack({ state: "Package", bytes: [...new TextEncoder().encode(text)] })).toEqual({
       view: "home",
       layouts: { home: {} },
@@ -237,19 +238,22 @@ describe("the named views in the package (design system, section (d))", () => {
     });
   });
 
-  it("writes a move in an open named view into THAT view, and leaves the three as they were (R3-19)", () => {
+  it("writes a move in an open named view into THAT view, and leaves the three and the other named views as they were (R3-19)", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
     layout.attach(bridge);
     const home = { marker: "home, as the owner left it" } as never;
-    layout.receive(fromTheCore({ view: "home", layouts: { home }, named: [{ name: "Revisione", layout: { marker: "before" } as never }], openNamed: "Revisione" }));
+    // ⛔ TWO NAMED VIEWS, THE OPEN ONE SECOND (E82 of the plan): with one alone, "that view" reads the same as "every
+    // named view" or "the first", and a move written into the wrong one loses it in silence (D4).
+    const other = { marker: "another named view" } as never;
+    layout.receive(fromTheCore({ view: "home", layouts: { home }, named: [{ name: "Altra", layout: other }, { name: "Revisione", layout: { marker: "before" } as never }], openNamed: "Revisione" }));
     const moved = { marker: "the review, one panel moved" } as never;
     layout.settle(moved);
     // ⛔ `layouts.home` AS IT WAS: before R3-19 a settle wrote `layouts[view]` whatever was on screen.
-    expect(sentPack(bridge, 0)).toEqual({ view: "home", layouts: { home }, named: [{ name: "Revisione", layout: moved }], openNamed: "Revisione" });
+    expect(sentPack(bridge, 0)).toEqual({ view: "home", layouts: { home }, named: [{ name: "Altra", layout: other }, { name: "Revisione", layout: moved }], openNamed: "Revisione" });
     layout.chooseTheme("light");
     // And a theme chosen meanwhile keeps the named view open.
-    expect(sentPack(bridge, 1)).toEqual({ view: "home", layouts: { home }, named: [{ name: "Revisione", layout: moved }], openNamed: "Revisione", theme: "light" });
+    expect(sentPack(bridge, 1)).toEqual({ view: "home", layouts: { home }, named: [{ name: "Altra", layout: other }, { name: "Revisione", layout: moved }], openNamed: "Revisione", theme: "light" });
   });
 
   it("shows one of the three by closing the named view, saves nothing for showing, and settles into the three after", () => {
@@ -268,10 +272,13 @@ describe("the named views in the package (design system, section (d))", () => {
     expect(sentPack(bridge, 0)).toEqual({ view: "compact", layouts: { compact }, named: [{ name: "Revisione", layout: review }] });
   });
 
-  it("saves the layout on screen under a new name at once and opens it, and refuses an empty or a taken name (D4)", () => {
+  it("saves the layout on screen under a new name at once and opens it, keeps those saved before, and refuses an empty or a taken name (D4)", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
     layout.attach(bridge);
+    // ⛔ A NAMED VIEW SAVED BEFORE (E82 of the plan): the new name joins the list, and the one before stays.
+    const before = { marker: "saved before" } as never;
+    layout.receive(fromTheCore({ view: "home", layouts: {}, named: [{ name: "Prima", layout: before }] }));
     // The names the frame shows for the three views: the words are the locale's, and the store reads none.
     const shown = ["Home", "Lavoro", "Compatta"];
     const now = { marker: "on screen" } as never;
@@ -280,24 +287,30 @@ describe("the named views in the package (design system, section (d))", () => {
     expect(bridge.sent).toEqual([]);
     expect(layout.saveNamed(" Revisione ", now, shown)).toBe("saved");
     expect(layout.openNamed).toBe("Revisione");
-    expect(sentPack(bridge, 0)).toEqual({ view: "home", layouts: {}, named: [{ name: "Revisione", layout: now }], openNamed: "Revisione" });
+    expect(sentPack(bridge, 0)).toEqual({ view: "home", layouts: {}, named: [{ name: "Prima", layout: before }, { name: "Revisione", layout: now }], openNamed: "Revisione" });
     // ⛔ NOT OVERWRITTEN: the same name again, in another case, is refused and nothing more is sent.
     expect(layout.saveNamed("REVISIONE", { marker: "another" } as never, shown)).toBe("taken");
     expect(bridge.sent).toHaveLength(1);
   });
 
-  it("closes the named view when the core holds no package it can read, and the next move goes into the three (E75)", () => {
-    const bridge = createFakeBridge();
-    const layout = useLayout();
-    layout.attach(bridge);
-    expect(layout.saveNamed("Revisione", { marker: "on screen" } as never, ["Home", "Lavoro", "Compatta"])).toBe("saved");
-    // ⛔ A WRITE THAT DID NOT STICK (decision 13): the core answers with what it holds -- here, nothing. The dock shows
-    // the view of always, and a name left open would send the next move nowhere: not into `layouts`, and not into
-    // `named`, which no longer holds it.
-    layout.receive({ kind: "Layout", value: { state: "Nothing" } });
-    expect(layout.openNamed).toBeNull();
-    const moved = { marker: "home, moved" } as never;
-    layout.settle(moved);
-    expect(sentPack(bridge, 1)).toEqual({ view: "home", layouts: { home: moved } });
+  it("closes the named view when the core answers without it -- an old package, or none it can read -- and the next move goes into the three (E75)", () => {
+    // ⛔ A WRITE THAT DID NOT STICK (decision 13): the core answers with what it holds, the same before and after the
+    // save -- a package without the name, the case the rule is for (E83 of the plan), or nothing, where E75 was found.
+    const answers: IpcMessage[] = [fromTheCore({ view: "home", layouts: {} }), { kind: "Layout", value: { state: "Nothing" } }];
+    for (const held of answers) {
+      setActivePinia(createPinia());
+      const bridge = createFakeBridge();
+      const layout = useLayout();
+      layout.attach(bridge);
+      layout.receive(held);
+      expect(layout.saveNamed("Revisione", { marker: "on screen" } as never, ["Home", "Lavoro", "Compatta"])).toBe("saved");
+      // The dock shows the view of always, and a name left open would send the next move nowhere: not into
+      // `layouts`, and not into `named`, which no longer holds it.
+      layout.receive(held);
+      expect(layout.openNamed).toBeNull();
+      const moved = { marker: "home, moved" } as never;
+      layout.settle(moved);
+      expect(sentPack(bridge, 1)).toEqual({ view: "home", layouts: { home: moved } });
+    }
   });
 });

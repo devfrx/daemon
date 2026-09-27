@@ -248,6 +248,15 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | **E79** | Nit — **Compito 7, Passo 9 — la colonna Commit della riga 6 c'è già:** l'ha scritta la chiusura del 6bis, `1c168a1` — `c1102fc` con la cura `ca83dac` —, insieme a quella della riga 6bis, perché il 6bis non toccava le celle (**E69**); e il Passo 9 la faceva scrivere con *«l'hash del compito 6»* (R1-16). È la quarta domanda del pre-controllo — una parte del passo è già eseguita —, e riscriverla col solo hash perderebbe la cura. Trovata dal pre-controllo il 2026-09-27. ✅ **Corretta** nel commit che la scrive: il Passo 9 dice che la riga 6 porta già la colonna, e che non si tocca; quella della riga 7 la scrive il compito 8, com'è il suo Passo 11 |
 | **E80** | Nit — **Compito 7 — il pezzo JavaScript non lo misurava:** la riga **N-2 di E187** delle voci aperte nominava *«il compito 1, il 5, il 6 e l'8»*, e il compito 7 cambia la SPA — `layout.ts`, `dock.ts`, `Frame.vue`, `moveActive.ts` con `nearest.ts` —: misurato il 2026-09-27 dal pre-controllo sulla copia, da `691.82 kB`, compresso `210.77 kB`, a `693.02 kB`, `211.20 kB`. Anche il 6bis lo misura, e la riga non lo diceva. ✅ **Corretta** nel commit che la scrive: la baseline nel Passo 1, la riga nel commit dai Passi 7 e 9, e nella riga di N-2 la regola — ogni compito che cambia la SPA —, coi compiti che la seguono |
 | **E81** | ⚠️ **Compito 8, al suo pre-controllo — *«Salva questa vista»* prima del benvenuto del core perde le disposizioni salvate:** su un negozio che non ha ancora ricevuto il pacchetto, `saveNamed` costruisce il suo da `layouts: {}`, e il core custodisce quello — le tre disposizioni, il tema e le altre viste col nome, persi in silenzio. È la finestra di **E40**, che il compito 5 ha chiuso per il tema spegnendone il gruppo finché `layout.arrivals` è zero; la Panoramica del compito 8 non guarda `arrivals` — sul testo del compito `grep -c arrivals` rende 0 —, e F3 la apre quando non c'è una conferma né il cassetto, anche prima del benvenuto — dedotto dal testo del suo `Frame.vue`. Misurato il 2026-09-27 dal pre-controllo del compito 7 sulla copia, con una prova usa-e-getta: con `arrivals` a 0, `saveNamed` rende `"saved"` e spedisce `{"layouts":{},"view":"home","openNamed":"Revisione","named":[…]}`. ⏳ **Al pre-controllo del compito 8**: la scheda *«Salva questa vista»* spenta finché `layout.arrivals` è zero, come il gruppo del tema (**E40**, strada A), con una prova vista rossa; la domanda di classe — ogni scrittura prima del benvenuto, compreso il `settle` del dock — resta del proprietario, **registrata e non presa** (**E40**) |
+| **E82** | ⚠️ **Compito 7, Passo 2 — le prove delle viste col nome ne usavano UNA sola, e tre righe che scelgono QUALE non le teneva nessuna:** con una vista col nome sola, *«quella»* non si distingue da *«tutte»* né da *«la prima»*, e ciascuna delle tre righe perderebbe una vista in silenzio, la perdita che **D4** vuole evitare. Misurato dalla revisione del compito 7 (M-1) nel suo clone a `0417c9c`, la suite intera verde, `Tests  212 passed \| 1 skipped (213)`, sotto ciascuna mutazione: in `settle` la mossa scritta in **ogni** vista col nome; in `saveNamed` la lista ridotta alla nuova; in `apply` la **prima** della lista, qualunque sia il nome. La specie di **E29**. ✅ **Curata** nel commit che scrive questa riga dentro le prove che c'erano, così i conti e i rossi del Passo 2 non cambiano: nella prova della mossa due viste col nome, l'aperta **seconda**; in quella di `saveNamed` una vista salvata prima, che resta; nella prova del dock due viste, aperta la seconda. Misurata dal coordinatore il 2026-09-27, macchina `Jays`, ogni mutazione da sola sulla suite intera, e il file tornato dalla copia, `cmp` uguale: verdi sul codice; rossa una prova ciascuna — la mossa in tutte e la mossa nella prima `expected { view: 'home', …(3) } to deeply equal { view: 'home', …(3) }`, la lista ridotta `expected { view: 'home', layouts: {}, …(2) } to deeply equal { view: 'home', layouts: {}, …(2) }`, il dock sulla prima `expected [ 'costs' ] to deeply equal [ 'status' ]`. Quattro righe nel Passo 8 |
+| **E83** | Minore — **Compito 7, Passo 2 — la cura di E75 era tenuta sul solo ramo `null`:** il caso che la regola nomina per primo, la decisione 13, è il pacchetto **vecchio**, leggibile e senza il nome, e la prova di **E75** consegnava `Nothing`. Misurato dalla revisione (M-2): con `openNamed.value = saved.value === null ? null : (saved.value.openNamed ?? openNamed.value);` — il nome tenuto quando il pacchetto tace — la suite intera resta verde, e la mossa dopo finisce nel nulla, com'era **E75**. ✅ **Curata** nel commit che scrive questa riga: la prova di **E75** rifà la scrittura che non attecchisce con le due risposte del core, il pacchetto senza il nome e nessun pacchetto, e il titolo lo dice. Misurata dal coordinatore: verde sul codice; rossa con quella mutazione, `expected 'Revisione' to be null`, e rossa ancora con la riga *«ciò che arriva illeggibile»* del Passo 8, lo stesso messaggio. Una riga nel Passo 8 |
+| **E84** | Minore — **Compito 7, Passo 2 — *«tiles each view that ships without a gap or an overlap»* non guardava le sovrapposizioni:** la somma delle aree e i bordi non escludono una sovrapposizione con un buco della stessa area. Misurato dalla revisione (M-3): in `schematic.ts` l'origine del ramo orizzontale dimenticata, `x: offset * box.width`, lascia verde la suite intera, e in Lavoro `steps` e `sensors` finiscono sopra `scope`. ✅ **Curata** nel commit che scrive questa riga col testo della revisione: nella stessa prova, per ogni coppia di tessere l'area dell'intersezione sotto `1e-9`, col perché nel commento. Misurata dal coordinatore: verde sul codice; rossa con la mutazione, `work: scope over steps: expected 0.07846999999999998 to be less than 1e-9`. Una riga nel Passo 8 |
+| **E85** | ⚠️ **Compito 7, Passo 4 — lo schema non vedeva un gruppo INGRANDITO, e la miniatura diceva il falso:** la presa grande ha *ingrandisci* (`BigTab.ts`), e `dockview-core` 8.3.1 scrive la griglia com'è senza l'ingrandimento, più `grid.maximizedNode`, gli indici dalla radice fino a quel gruppo — `serialize()` in `main.esm.mjs`, letto dal coordinatore il 2026-09-27 —, che il tipo pubblico `SerializedDockview` non dichiara; `fromJSON` riapre la disposizione col gruppo ingrandito. Misurato dalla revisione (M-4) sotto jsdom: dopo `maximize()` il pacchetto porta il nodo, e `schematic` rendeva sette tessere dove la vista si apre con una. La risposta 19 vuole miniature che *«dicono sempre il vero»*, e **D5** pensava ai galleggianti. Due strade: **A**, lo schema segue gli indici e disegna quel gruppo solo, sul quadrato intero; **B**, dichiararlo come i galleggianti, cioè scrivere nel codice il contrario della risposta 19. ✅ **Presa la A**, decisa dal coordinatore coi cinque criteri, come **E30**: realizza il merito approvato in poche righe, e come si **disegni** la miniatura resta dello sguardo del compito 8. ✅ **Curata** nel commit che scrive questa riga: in `schematic.ts` il percorso di `maximizedNode`, vuoto quando non c'è — nessun ramo nuovo —, col perché nel commento e un limite dichiarato: un nodo nascosto con `setVisible` si scrive `visible: false` con la misura che aveva, e nessun sorgente lo chiama (`grep -rn 'setVisible(' gui/src` vuoto); in `schematic.test.ts` una terza prova da un `toJSON()` vero dopo `maximize()`, con la Pinia attiva: i pannelli veri leggono i negozi, e senza di lei `fromJSON` fallisce e torna indietro — la prima corsa rossa della prova lo era per **questa** ragione, e l'ha rifatta —; e il richiamo in **D5**. Misurata dal coordinatore: rossa sullo `schematic.ts` del compito, `expected [ { x: +0, y: +0, …(4) }, …(6) ] to deeply equal [ { x: +0, y: +0, width: 1, …(3) } ]`, verde con la cura; la suite intera `Tests  213 passed \| 1 skipped (214)`. L'Atteso del Passo 4 dice tre prove; una riga nel Passo 8 |
+| **E86** | Nit — **Compito 7, Passo 6 — un commento di `gui/src/frame/Frame.vue` che il compito rende falso** (gotcha **#58**): *«The mapping and the geometry live in `moveActive.ts`; this is only the wire.»* — dal Passo 3 la geometria vive in `nearest.ts`. La specie di **E78**. Trovata dalla revisione (N-1). ✅ **Curata** nel commit che scrive questa riga: una seconda sostituzione in `Frame.vue` nel Passo 6; nessuna prova cambia |
+| **E87** | Nit — **Compito 7, Passo 3 — due commenti davano per presente il chiamante del compito 8:** in `moveActive.ts` *«shared with the overview's grid since the design system»* e in `nearest.ts` *«and of the arrows in the overview's grid»*, mentre `nearest` lo chiama il solo `moveActive.ts` fino al compito 8. La specie di **E22 (b)**. Trovata dalla revisione (N-2). ✅ **Curata** nel commit che scrive questa riga: *«from task 8»* nei due commenti, nei recinti del Passo 3 |
+| **E88** | Nit — **Compito 7, Passo 2 — le guardie di `readNamed` su una voce `null` e su una disposizione `null` non le teneva nessuna prova:** tolta la prima, una voce `null` fa lanciare la destrutturazione dentro il `try` di `unpack`, che rende `null` — **tutto** il pacchetto perso, disposizioni e tema —; tolta la seconda, resta una vista col nome senza disposizione. Misurato dalla revisione (N-3): la suite verde sotto ciascuna. ✅ **Curata** nel commit che scrive questa riga: nella lista di *«drops what it cannot read…»* anche `null` e `{ name: "Nulla", layout: null }`, col perché nel commento. Misurata dal coordinatore: verde sul codice; rossa senza la prima guardia, `expected null to deeply equal { view: 'home', …(2) }`, e senza la seconda, `expected { view: 'home', …(2) } to deeply equal { view: 'home', …(2) }`. Due righe nel Passo 8 |
+| **E89** | Nit — **Compito 7 — due rami difensivi senza sonda:** in `schematic.ts` la divisione in parti uguali quando le misure di un ramo sommano a zero — nessuna disposizione vera le ha a zero —, e in `apply` il ritorno alla vista di sempre per un nome che il pacchetto non ha — dopo **E75** la strada c'è solo scrivendo in `openNamed` un nome che la lista non ha, e il compito 8 scrive solo nomi della lista. Misurato dalla revisione (N-4): verde senza l'uno o l'altro. ✅ **Dichiarati, non sondati**, decisi coi cinque criteri come **E76**: una prova terrebbe un caso che nessuno produce. Due righe dopo la tabella del Passo 8; la porta di `openNamed` è di **E90** |
+| **E90** | ⚠️ **Compito 8, al suo pre-controllo — tre cose che la revisione del compito 7 ha trovato usando da fuori le interfacce che il compito 8 consuma:** **(a)** una disposizione malformata rompe **tutta** la Panoramica: `unpack` tiene come disposizione ogni oggetto, `schematic({})` lancia `TypeError: Cannot read properties of undefined (reading 'root')` — e, dopo **E85**, così fa un `maximizedNode` i cui indici non portano a una foglia —, e il `computed` delle schede chiama `schematic` su ogni vista insieme; il dock lancia già sulla stessa, `root must be of type branch`, ma solo quando la mostra: la classe è della parte 2; **(b)** `openNamed` si scrive senza guardia: con un nome che la lista non ha il dock ricade sulla vista di sempre, e il `settle` dopo perde la mossa in silenzio — la malattia di **E75** da un'altra porta; **(c)** `nearest` esclude la scheda di partenza per geometria, non per identità: con rettangoli nulli, come sotto jsdom, rende la scheda stessa, e il titolo *«never the card it starts from»* vale per rettangoli più larghi di un pixel. **(a)** misurato dal consumatore della revisione; **(b)** e **(c)** **dedotti** dal testo del compito 8 — che scrive solo nomi della lista, e il cui `onArrow` toglie `from` dai candidati come `moveActive` —, non misurati sul suo codice, che non esiste ancora. ⏳ **Al pre-controllo del compito 8**: per **(a)** una miniatura che non si legge disegnata vuota, con la sua prova; per **(b)** una prova che lo tenga, o un `showNamed(name)` che rifiuti un nome ignoto, simmetrico a `showView`; per **(c)** le sue prove sotto jsdom |
 
 ---
 
@@ -301,7 +310,7 @@ che il disegno lasciava al piano; ciascuna si ribalta con una riga.
 | **D2** | la scelta del tema è un campo **`theme`** del pacchetto, e chi la applica è un `watchTheme` in `gui/src/tokens/theme.ts` | la risposta 16. Il tema **mostrato** — `light` o `dark` — sta in un `ref` di quel modulo, che il dock legge per il suo `colorScheme`. Costo: uno stato di modulo, uno solo |
 | **D3** | le **viste col nome** sono due campi facoltativi del pacchetto, `named` e `openNamed`; `view` resta un `ViewName` | un pacchetto scritto prima si apre come prima, e uno scritto dopo si apre in una build vecchia sulla vista di sempre: cambiare il tipo di `view` avrebbe rotto la seconda direzione. Costo: due campi da leggere insieme |
 | **D4** | due nomi uguali per una vista col nome **non** si accettano: il campo lo dice sotto, in rosso | lo stato d'errore del campo è nella tavola dei token, `.field.is-error`; sovrascrivere in silenzio perderebbe una vista. Costo: rinominare e cancellare una vista col nome non ci sono — non li chiede la (d) |
-| **D5** | le **miniature** sono uno schema calcolato dall'albero della disposizione salvata — rettangoli in frazioni e l'icona del modulo visibile — e i gruppi galleggianti non ci sono | la risposta 19 vuole lo schema, non un `dockview` per miniatura; un gruppo galleggiante non ha un posto nella griglia. Costo: una miniatura non mostra ciò che galleggia |
+| **D5** | le **miniature** sono uno schema calcolato dall'albero della disposizione salvata — rettangoli in frazioni e l'icona del modulo visibile — e i gruppi galleggianti non ci sono | la risposta 19 vuole lo schema, non un `dockview` per miniatura; un gruppo galleggiante non ha un posto nella griglia. Costo: una miniatura non mostra ciò che galleggia. ⚠️ **Richiamo del 2026-09-27 (E85):** un gruppo **ingrandito** si disegna **solo**, sul quadrato intero — è ciò che la disposizione apre |
 | **D6** | le **icone dei moduli** che le tavole non mostrano le sceglie il piano, una riga ciascuna nella mappa — la **Chat** compresa | le tavole danno Stato, Permessi, Passi, Attività, i moduli, la ricerca, le viste; la Chat no, e `message-square`, che il piano le dà, sulle tavole segna i «Messaggi di stato» (R2-15 della revisione); la presa grande vuole l'icona di **ogni** tipo di modulo. Costo: una riga per cambiarne una |
 | **D7** | la pagina kit mostra i due temi **uno alla volta**, con la scelta in cima, e non affiancati | un dialogo di `reka-ui` va in un portale sul `body` e prenderebbe il tema della radice, non quello della colonna. Costo: per confrontarli si cambia la scelta |
 | **D8** | le parole della pagina kit sono **esemplari** scritti nel file, con un blocco del linter che lo dice, limitato a `src/kit/` | è una pagina di sviluppo fuori dal pacchetto: le sue parole in `it.json` finirebbero nel pacchetto per niente. Costo: una eccezione in più, in un posto solo |
@@ -8068,7 +8077,8 @@ Panoramica; il controllo **18**, e dal **17** l'aiutante della geometria provato
   - `nearest<T extends { rect: Box }>(from: Box, candidates: readonly T[], direction: Direction): T | undefined`, con `type
     Box` e `type Direction`, da `frame/nearest.ts`;
   - `schematic(layout: SerializedDockview): Tile[]`, con `interface Tile { x; y; width; height; views: string[]; active?:
-    string }` in frazioni del quadrato unitario, da `frame/schematic.ts`.
+    string }` in frazioni del quadrato unitario, da `frame/schematic.ts`; un gruppo ingrandito solo, sul quadrato
+    intero (**E85**).
 
 ⚠️ **Che cosa la scrittura di questo compito ha misurato**, il 2026-09-23 sulla cartella di prova coi compiti 1–6 applicati:
 
@@ -8146,12 +8156,19 @@ describe("nearest (decision 19 of the design system)", () => {
 Crea `gui/src/frame/schematic.test.ts` (LF):
 
 ```ts
-import type { SerializedDockview } from "dockview-core";
-import { describe, expect, it } from "vitest";
+import { createDockview, type SerializedDockview } from "dockview-core";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it } from "vitest";
 
+import { componentFor } from "../panels/registry";
 import { VIEWS } from "../panels/views";
 
 import { schematic } from "./schematic";
+
+// The probe of E85 mounts the real panels, and they read the stores.
+beforeEach(() => {
+  setActivePinia(createPinia());
+});
 
 /** A leaf of the serialized grid: one group with its panels. */
 function leaf(size: number, ...views: string[]) {
@@ -8193,9 +8210,35 @@ describe("schematic (answer 19 of the design system)", () => {
       for (const tile of tiles) {
         expect(tile.x >= 0 && tile.y >= 0 && tile.x + tile.width <= 1 + 1e-9 && tile.y + tile.height <= 1 + 1e-9, `${name}: ${tile.views}`).toBe(true);
       }
+      // ⛔ THE AREAS ADDING UP DO NOT RULE OUT AN OVERLAP (E84 of the plan): an overlap and a gap of the same size add up
+      // too. No two tiles overlap, the sum is the square and every tile is inside it -- so the tiles cover it.
+      tiles.forEach((a, index) => {
+        for (const b of tiles.slice(index + 1)) {
+          const across = Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x);
+          const down = Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y);
+          expect(Math.max(0, across) * Math.max(0, down), `${name}: ${a.views} over ${b.views}`).toBeLessThan(1e-9);
+        }
+      });
       const strip = tiles.find((tile) => tile.views.includes("strip"));
       expect(strip && strip.x === 0 && Math.abs(strip.width - 1) < 1e-9 && Math.abs(strip.y + strip.height - 1) < 1e-9, `${name}: the strip`).toBe(true);
     }
+  });
+
+  it("draws a maximized group alone, on the whole square: the layout opens with it (E85 of the plan)", () => {
+    const host = document.createElement("div");
+    document.body.append(host);
+    const api = createDockview(host, { createComponent: ({ name }) => componentFor(name)() });
+    api.layout(1600, 1000);
+    api.fromJSON(VIEWS.home);
+    // The group the big grab maximizes: a real `toJSON()`, not a node written by hand -- the shape is dockview's.
+    const group = api.getPanel("status")?.group;
+    group?.api.maximize();
+    const saved = api.toJSON();
+    // ⛔ NON-VACUITY: dockview wrote the group maximized.
+    expect((saved.grid as { maximizedNode?: unknown }).maximizedNode).toBeDefined();
+    expect(schematic(saved)).toEqual([
+      { x: 0, y: 0, width: 1, height: 1, views: group?.panels.map((panel) => panel.id), active: group?.activePanel?.id },
+    ]);
   });
 });
 ```
@@ -8262,11 +8305,12 @@ describe("the named views in the package (design system, section (d))", () => {
     const text = JSON.stringify({
       view: "home",
       layouts: { home: {}, mine: {} },
-      named: [{ name: "Revisione", layout: {} }, { name: "", layout: {} }, { name: "Senza" }, { layout: {} }, { name: " revisione ", layout: { second: true } }],
+      named: [{ name: "Revisione", layout: {} }, { name: "", layout: {} }, { name: "Senza" }, { layout: {} }, null, { name: "Nulla", layout: null }, { name: " revisione ", layout: { second: true } }],
       openNamed: "Sparita",
     });
     // ⛔ A NAME ALREADY READ IS A SECOND VIEW UNDER IT (D4): the first stays. An open name the list does not hold is
-    // read as absent, and the view of always opens.
+    // read as absent, and the view of always opens. And an entry that is `null`, or holds a `null` layout, is dropped
+    // (E88 of the plan): without its guard the first throws inside `unpack`'s `try`, and the whole package is lost.
     expect(unpack({ state: "Package", bytes: [...new TextEncoder().encode(text)] })).toEqual({
       view: "home",
       layouts: { home: {} },
@@ -8274,19 +8318,22 @@ describe("the named views in the package (design system, section (d))", () => {
     });
   });
 
-  it("writes a move in an open named view into THAT view, and leaves the three as they were (R3-19)", () => {
+  it("writes a move in an open named view into THAT view, and leaves the three and the other named views as they were (R3-19)", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
     layout.attach(bridge);
     const home = { marker: "home, as the owner left it" } as never;
-    layout.receive(fromTheCore({ view: "home", layouts: { home }, named: [{ name: "Revisione", layout: { marker: "before" } as never }], openNamed: "Revisione" }));
+    // ⛔ TWO NAMED VIEWS, THE OPEN ONE SECOND (E82 of the plan): with one alone, "that view" reads the same as "every
+    // named view" or "the first", and a move written into the wrong one loses it in silence (D4).
+    const other = { marker: "another named view" } as never;
+    layout.receive(fromTheCore({ view: "home", layouts: { home }, named: [{ name: "Altra", layout: other }, { name: "Revisione", layout: { marker: "before" } as never }], openNamed: "Revisione" }));
     const moved = { marker: "the review, one panel moved" } as never;
     layout.settle(moved);
     // ⛔ `layouts.home` AS IT WAS: before R3-19 a settle wrote `layouts[view]` whatever was on screen.
-    expect(sentPack(bridge, 0)).toEqual({ view: "home", layouts: { home }, named: [{ name: "Revisione", layout: moved }], openNamed: "Revisione" });
+    expect(sentPack(bridge, 0)).toEqual({ view: "home", layouts: { home }, named: [{ name: "Altra", layout: other }, { name: "Revisione", layout: moved }], openNamed: "Revisione" });
     layout.chooseTheme("light");
     // And a theme chosen meanwhile keeps the named view open.
-    expect(sentPack(bridge, 1)).toEqual({ view: "home", layouts: { home }, named: [{ name: "Revisione", layout: moved }], openNamed: "Revisione", theme: "light" });
+    expect(sentPack(bridge, 1)).toEqual({ view: "home", layouts: { home }, named: [{ name: "Altra", layout: other }, { name: "Revisione", layout: moved }], openNamed: "Revisione", theme: "light" });
   });
 
   it("shows one of the three by closing the named view, saves nothing for showing, and settles into the three after", () => {
@@ -8305,10 +8352,13 @@ describe("the named views in the package (design system, section (d))", () => {
     expect(sentPack(bridge, 0)).toEqual({ view: "compact", layouts: { compact }, named: [{ name: "Revisione", layout: review }] });
   });
 
-  it("saves the layout on screen under a new name at once and opens it, and refuses an empty or a taken name (D4)", () => {
+  it("saves the layout on screen under a new name at once and opens it, keeps those saved before, and refuses an empty or a taken name (D4)", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
     layout.attach(bridge);
+    // ⛔ A NAMED VIEW SAVED BEFORE (E82 of the plan): the new name joins the list, and the one before stays.
+    const before = { marker: "saved before" } as never;
+    layout.receive(fromTheCore({ view: "home", layouts: {}, named: [{ name: "Prima", layout: before }] }));
     // The names the frame shows for the three views: the words are the locale's, and the store reads none.
     const shown = ["Home", "Lavoro", "Compatta"];
     const now = { marker: "on screen" } as never;
@@ -8317,25 +8367,31 @@ describe("the named views in the package (design system, section (d))", () => {
     expect(bridge.sent).toEqual([]);
     expect(layout.saveNamed(" Revisione ", now, shown)).toBe("saved");
     expect(layout.openNamed).toBe("Revisione");
-    expect(sentPack(bridge, 0)).toEqual({ view: "home", layouts: {}, named: [{ name: "Revisione", layout: now }], openNamed: "Revisione" });
+    expect(sentPack(bridge, 0)).toEqual({ view: "home", layouts: {}, named: [{ name: "Prima", layout: before }, { name: "Revisione", layout: now }], openNamed: "Revisione" });
     // ⛔ NOT OVERWRITTEN: the same name again, in another case, is refused and nothing more is sent.
     expect(layout.saveNamed("REVISIONE", { marker: "another" } as never, shown)).toBe("taken");
     expect(bridge.sent).toHaveLength(1);
   });
 
-  it("closes the named view when the core holds no package it can read, and the next move goes into the three (E75)", () => {
-    const bridge = createFakeBridge();
-    const layout = useLayout();
-    layout.attach(bridge);
-    expect(layout.saveNamed("Revisione", { marker: "on screen" } as never, ["Home", "Lavoro", "Compatta"])).toBe("saved");
-    // ⛔ A WRITE THAT DID NOT STICK (decision 13): the core answers with what it holds -- here, nothing. The dock shows
-    // the view of always, and a name left open would send the next move nowhere: not into `layouts`, and not into
-    // `named`, which no longer holds it.
-    layout.receive({ kind: "Layout", value: { state: "Nothing" } });
-    expect(layout.openNamed).toBeNull();
-    const moved = { marker: "home, moved" } as never;
-    layout.settle(moved);
-    expect(sentPack(bridge, 1)).toEqual({ view: "home", layouts: { home: moved } });
+  it("closes the named view when the core answers without it -- an old package, or none it can read -- and the next move goes into the three (E75)", () => {
+    // ⛔ A WRITE THAT DID NOT STICK (decision 13): the core answers with what it holds, the same before and after the
+    // save -- a package without the name, the case the rule is for (E83 of the plan), or nothing, where E75 was found.
+    const answers: IpcMessage[] = [fromTheCore({ view: "home", layouts: {} }), { kind: "Layout", value: { state: "Nothing" } }];
+    for (const held of answers) {
+      setActivePinia(createPinia());
+      const bridge = createFakeBridge();
+      const layout = useLayout();
+      layout.attach(bridge);
+      layout.receive(held);
+      expect(layout.saveNamed("Revisione", { marker: "on screen" } as never, ["Home", "Lavoro", "Compatta"])).toBe("saved");
+      // The dock shows the view of always, and a name left open would send the next move nowhere: not into
+      // `layouts`, and not into `named`, which no longer holds it.
+      layout.receive(held);
+      expect(layout.openNamed).toBeNull();
+      const moved = { marker: "home, moved" } as never;
+      layout.settle(moved);
+      expect(sentPack(bridge, 1)).toEqual({ view: "home", layouts: { home: moved } });
+    }
   });
 });
 ```
@@ -8362,7 +8418,11 @@ In `gui/src/frame/frame.test.ts`, *Trova* — la fine del `describe("the dock", 
     layout.attach(bridge);
     const api = createDock(host());
     api.layout(1600, 1000);
-    layout.receive(packageFromTheCore({ view: "home", layouts: {}, named: [{ name: "Revisione", layout: ownersHome() }], openNamed: "Revisione" }));
+    // ⛔ TWO NAMED VIEWS, THE OPEN ONE SECOND (E82 of the plan): with one alone, "the one open" reads the same as
+    // "the first".
+    const first = grid();
+    first.addPanel({ id: "costs", component: "costs", title: "costs", params: placeholderParams("costs") });
+    layout.receive(packageFromTheCore({ view: "home", layouts: {}, named: [{ name: "Prima", layout: first.toJSON() }, { name: "Revisione", layout: ownersHome() }], openNamed: "Revisione" }));
     await flush();
     expect(showing(api)).toEqual(["status"]);
     layout.showView("home");
@@ -8402,8 +8462,9 @@ export interface Box {
 export type Direction = "left" | "right" | "up" | "down";
 
 /**
- * The candidate nearest to `from` in a direction: the geometry of move 6 of SP-8, the tiles moved with the keyboard, and
- * of the arrows in the overview's grid (decision 19 of the design system) -- its second occurrence, so it lives here once.
+ * The candidate nearest to `from` in a direction: the geometry of move 6 of SP-8, the tiles moved with the keyboard, and,
+ * from task 8, of the arrows in the overview's grid (decision 19 of the design system) -- its second occurrence, so it
+ * lives here once.
  * Only what lies BEYOND `from` in that direction counts, and the nearest is the smallest gap on that axis.
  *
  * ⛔ A TIE IS BROKEN ON THE OTHER AXIS, by the centre nearest to `from`'s (R3-18 of the design-system review): in a grid
@@ -8482,7 +8543,7 @@ export function moveActive(api: DockviewApi, direction: Direction): Moved {
 
 ```ts
  * instead, and the browser is where the reviewer sees the real thing (rule 5 of the head).
- * The geometry itself is `nearest`, shared with the overview's grid since the design system.
+ * The geometry itself is `nearest`, shared with the overview's grid from task 8 of the design system.
  */
 export function moveActive(api: DockviewApi, direction: Direction): Moved {
   const panel = api.activePanel;
@@ -8533,6 +8594,11 @@ interface GridNode {
  * each branch below along the other axis -- how `dockview-core` 8.3.1 reads the tree back (`_deserializeNode` hands
  * `orthogonal(orientation)` to the children). A node's `size` is its extent along its parent's axis.
  * ⛔ THE FLOATING GROUPS ARE NOT DRAWN (D5 of the plan): they have no place in the grid.
+ * ⛔ A MAXIMIZED GROUP IS DRAWN ALONE, ON THE WHOLE SQUARE (E85 of the plan): `dockview-core` 8.3.1 writes the grid as it
+ * is with nothing maximized, plus `grid.maximizedNode` -- the indices from the root down to that group, which the public
+ * type `SerializedDockview` does not declare -- and `fromJSON` opens the layout with the group maximized: what opens is
+ * what is drawn. ⚠️ A node hidden with `setVisible` is written with `visible: false` and the size it had: nothing here
+ * hides one, and the miniature would draw it.
  */
 export function schematic(layout: SerializedDockview): Tile[] {
   const tiles: Tile[] = [];
@@ -8558,7 +8624,12 @@ export function schematic(layout: SerializedDockview): Tile[] {
       offset += share;
     }
   };
-  place(layout.grid.root as unknown as GridNode, { x: 0, y: 0, width: 1, height: 1 }, layout.grid.orientation);
+  const { maximizedNode } = layout.grid as { maximizedNode?: { location: number[] } };
+  const shown = (maximizedNode?.location ?? []).reduce<GridNode>(
+    (node, index) => (node.data as GridNode[])[index] as GridNode,
+    layout.grid.root as unknown as GridNode,
+  );
+  place(shown, { x: 0, y: 0, width: 1, height: 1 }, layout.grid.orientation);
   return tiles;
 }
 ```
@@ -8567,7 +8638,7 @@ export function schematic(layout: SerializedDockview): Tile[] {
 (cd gui && npx vitest run --project jsdom src/frame/schematic.test.ts)
 ```
 
-Atteso: **verde**, due prove.
+Atteso: **verde**, tre prove — la terza, del gruppo ingrandito, è della cura della revisione (**E85**).
 
 - [ ] **Passo 5: il negozio — le viste col nome, `showView`, `saveNamed`**
 
@@ -8879,7 +8950,7 @@ export function apply(api: DockviewApi, view: ViewName, pack: LayoutPack | null,
   api.fromJSON(chosen ?? pack?.layouts[view] ?? VIEWS[view]);
 ```
 
-In `gui/src/frame/Frame.vue`, *Trova*:
+In `gui/src/frame/Frame.vue` (`replace_unique.py`), due sostituzioni. *Trova*:
 
 ```ts
   // the same path -- and none of them saves a view for merely showing it (decision 11).
@@ -8892,6 +8963,20 @@ In `gui/src/frame/Frame.vue`, *Trova*:
   // the same path -- and none of them saves a view for merely showing it (decision 11). Through
   // `showView` since the design system: one of the three closes the named view (the (d)).
   layout.showView(view);
+```
+
+*Trova* — il commento della tastiera, che il Passo 3 rende falso (**E86**):
+
+```ts
+// G20, move 6 of SP-8: the active tile moves in the four directions from the keyboard. The
+// mapping and the geometry live in `moveActive.ts`; this is only the wire.
+```
+
+*Sostituisci con:*
+
+```ts
+// G20, move 6 of SP-8: the active tile moves in the four directions from the keyboard. The
+// mapping lives in `moveActive.ts` and the geometry in `nearest.ts`; this is only the wire.
 ```
 
 ```bash
@@ -8912,7 +8997,9 @@ compito 5 cadeva una volta su dieci (P-19): una sua caduta qui è una voce d'err
 E la riga del pezzo JavaScript, `npm run build 2>&1 | grep -E 'assets/index-.*\.js '`, va nel commit accanto a quella del
 Passo 1 (**E80**): il compito cambia la SPA. ✅ **Rimisurato il 2026-09-27** dal pre-controllo, sulla copia col testo
 corretto: cinque corse su cinque `Test Files  27 passed | 1 skipped (28)` e `Tests  212 passed | 1 skipped (213)`; *build*
-e linter puliti; il pezzo `693.02 kB`, compresso `211.20 kB`.
+e linter puliti; il pezzo `693.02 kB`, compresso `211.20 kB`. ⚠️ **Richiamo del 2026-09-27, dalle cure della revisione
+(E82–E88):** la prova del gruppo ingrandito è nuova, e le altre direzioni stanno in prove che c'erano — `Test Files  27
+passed | 1 skipped (28)` e `Tests  213 passed | 1 skipped (214)`; il pezzo resta `693.02 kB`, compresso `211.20 kB`.
 
 - [ ] **Passo 8: le due direzioni**
 
@@ -8936,6 +9023,19 @@ riscritto, e `nearest.ts` e `schematic.ts` sono nati qui (A-1).
 | `stores.test.ts`, lo schermo | in `onScreen` le due righe dell'`if` sostituite da `if (openNamed.value !== null) pack.openNamed = openNamed.value;` | rosso: `expected { view: 'compact', layouts: {}, …(2) } to deeply equal { view: 'compact', …(2) }` — il nome chiuso restava nel pacchetto |
 | `frame.test.ts`, il dock che guarda | in `dock.ts` tolto `() => layout.openNamed,` dal `watch` | rosso: `expected [ 'status' ] to deeply equal [ 'activity', 'costs', …(5) ]` |
 | `frame.test.ts`, `apply` | in `apply` `const chosen = undefined;` | rosso: `expected [ 'activity', 'costs', …(5) ] to deeply equal [ 'status' ]` |
+| `stores.test.ts`, la mossa nelle altre viste col nome | in `settle`, `.map((entry) => ({ name: entry.name, layout }))` al posto del `.map` che sceglie per nome | rosso: `expected { view: 'home', …(3) } to deeply equal { view: 'home', …(3) }` — la mossa scritta in **ogni** vista col nome (**E82**) |
+| `stores.test.ts`, la mossa nella prima | in `settle`, `.map((entry, index) => (index === 0 ? { name: open, layout } : entry))` | rosso, lo stesso messaggio: l'aperta è la **seconda** (**E82**) |
+| `stores.test.ts`, le viste col nome di prima | in `saveNamed`, `named: [{ name: wanted, layout }]` | rosso: `expected { view: 'home', layouts: {}, …(2) } to deeply equal { view: 'home', layouts: {}, …(2) }` — la vista salvata prima, persa (**E82**) |
+| `stores.test.ts`, il pacchetto vecchio | in `receive`, `openNamed.value = saved.value === null ? null : (saved.value.openNamed ?? openNamed.value);` al posto della riga di `openNamed` | rosso: `expected 'Revisione' to be null` — il nome tenuto dopo un pacchetto che non lo ha (**E83**) |
+| `stores.test.ts`, la voce nulla | in `readNamed` tolta la riga `if (typeof entry !== "object" \|\| entry === null) continue;` | rosso: `expected null to deeply equal { view: 'home', …(2) }` — il pacchetto perso intero (**E88**) |
+| `stores.test.ts`, la disposizione nulla | in `readNamed` tolto `\|\| layout === null` | rosso: `expected { view: 'home', …(2) } to deeply equal { view: 'home', …(2) }` (**E88**) |
+| `schematic.test.ts`, le sovrapposizioni | in `schematic.ts` `x: offset * box.width` al posto di `x: box.x + offset * box.width` | rosso: `work: scope over steps: expected 0.07846999999999998 to be less than 1e-9` (**E84**) |
+| `schematic.test.ts`, il gruppo ingrandito | in `schematic.ts` `([] as number[])` al posto di `(maximizedNode?.location ?? [])` | rosso: `expected [ { x: +0, y: +0, …(4) }, …(6) ] to deeply equal [ { x: +0, y: +0, width: 1, …(3) } ]` (**E85**) |
+| `frame.test.ts`, quale vista col nome | in `apply` `pack?.named?.[0]?.layout` al posto della ricerca per nome | rosso: `expected [ 'costs' ] to deeply equal [ 'status' ]` — il dock mostra la prima (**E82**) |
+
+⚠️ **Due rami difensivi restano senza sonda, dichiarati (E89):** in `schematic.ts` la divisione in parti uguali quando
+le misure di un ramo sommano a zero, e in `apply` il ritorno alla vista di sempre per un nome che il pacchetto non ha —
+tolto l'uno o l'altro, la suite intera resta verde, misurato dalla revisione del compito.
 
 Alla fine `git status --porcelain | diff <scratchpad>/prima.txt -` rende soltanto i file del compito.
 

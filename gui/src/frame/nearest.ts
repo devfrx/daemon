@@ -9,8 +9,9 @@ export interface Box {
 export type Direction = "left" | "right" | "up" | "down";
 
 /**
- * The candidate nearest to `from` in a direction: the geometry of move 6 of SP-8, the tiles moved with the keyboard, and
- * of the arrows in the overview's grid (decision 19 of the design system) -- its second occurrence, so it lives here once.
+ * The candidate nearest to `from` in a direction: the geometry of move 6 of SP-8, the tiles moved with the keyboard, and,
+ * from task 8, of the arrows in the overview's grid (decision 19 of the design system) -- its second occurrence, so it
+ * lives here once.
  * Only what lies BEYOND `from` in that direction counts, and the nearest is the smallest gap on that axis.
  *
  * ⛔ A TIE IS BROKEN ON THE OTHER AXIS, by the centre nearest to `from`'s (R3-18 of the design-system review): in a grid

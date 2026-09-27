@@ -15,7 +15,7 @@ export type Moved = "moved" | "split" | "none";
  * ⚠️ UNDER jsdom EVERY RECT IS ZERO (task 13, step 3), so in a jsdom probe every other group
  * counts as "beyond" in every direction: the probe of `keys.test.ts` hands rectangles of its own
  * instead, and the browser is where the reviewer sees the real thing (rule 5 of the head).
- * The geometry itself is `nearest`, shared with the overview's grid since the design system.
+ * The geometry itself is `nearest`, shared with the overview's grid from task 8 of the design system.
  */
 export function moveActive(api: DockviewApi, direction: Direction): Moved {
   const panel = api.activePanel;

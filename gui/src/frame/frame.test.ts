@@ -228,7 +228,11 @@ describe("the dock", () => {
     layout.attach(bridge);
     const api = createDock(host());
     api.layout(1600, 1000);
-    layout.receive(packageFromTheCore({ view: "home", layouts: {}, named: [{ name: "Revisione", layout: ownersHome() }], openNamed: "Revisione" }));
+    // ⛔ TWO NAMED VIEWS, THE OPEN ONE SECOND (E82 of the plan): with one alone, "the one open" reads the same as
+    // "the first".
+    const first = grid();
+    first.addPanel({ id: "costs", component: "costs", title: "costs", params: placeholderParams("costs") });
+    layout.receive(packageFromTheCore({ view: "home", layouts: {}, named: [{ name: "Prima", layout: first.toJSON() }, { name: "Revisione", layout: ownersHome() }], openNamed: "Revisione" }));
     await flush();
     expect(showing(api)).toEqual(["status"]);
     layout.showView("home");

@@ -14,7 +14,7 @@ const layout = useLayout();
 let api: ReturnType<typeof createDock> | null = null;
 
 // G20, move 6 of SP-8: the active tile moves in the four directions from the keyboard. The
-// mapping and the geometry live in `moveActive.ts`; this is only the wire.
+// mapping lives in `moveActive.ts` and the geometry in `nearest.ts`; this is only the wire.
 function onKey(event: KeyboardEvent): void {
   const direction = directionOf(event);
   if (direction === null || api === null) return;

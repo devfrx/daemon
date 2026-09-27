@@ -5,6 +5,7 @@ import { nextTick, type Component } from "vue";
 
 import Confirm from "./components/Confirm.vue";
 import Band from "./frame/Band.vue";
+import Drawer from "./frame/Drawer.vue";
 import ViewBar from "./frame/ViewBar.vue";
 import { i18n } from "./i18n";
 import Chat from "./panels/Chat.vue";
@@ -15,8 +16,10 @@ import Settings from "./panels/Settings.vue";
 import Status from "./panels/Status.vue";
 import Steps from "./panels/Steps.vue";
 import Strip from "./panels/Strip.vue";
+import { VIEWS } from "./panels/views";
 import { useConnection } from "./stores/connection";
 import { useCore } from "./stores/core";
+import { useDrawer } from "./stores/drawer";
 import { useInvoke } from "./stores/invoke";
 import { useStream } from "./stores/stream";
 import { violations } from "./testing/axe";
@@ -36,8 +39,8 @@ function welcome(): void {
   bridge.deliverAll();
 }
 
-async function mounted(component: Component): Promise<{ element: Element; unmount: () => void }> {
-  const wrapper = mount(component, { global: { plugins: [i18n] }, attachTo: document.body });
+async function mounted(component: Component, props: Record<string, unknown> = {}): Promise<{ element: Element; unmount: () => void }> {
+  const wrapper = mount(component, { global: { plugins: [i18n] }, attachTo: document.body, props });
   await nextTick();
   // One frame, where there is one: the Chat renders the streaming block on the animation frame.
   await new Promise<void>((resolve) => {
@@ -63,24 +66,43 @@ describe("the probe itself", () => {
 });
 
 describe("the SPA, with the welcome delivered", () => {
-  const modules: [string, Component][] = [
+  // The bar holds the overview's trigger, which saves the layout on screen: a snapshot of Home stands for the dock.
+  const bar = { snapshot: () => VIEWS.home, overview: false };
+  const modules: [string, Component, Record<string, unknown>?][] = [
     ["Stato", Status],
     ["Permessi", Permissions],
     ["Passi", Steps],
     ["Impostazioni", Settings],
     ["Chat", Chat],
     ["la striscia", Strip],
-    ["la barra", ViewBar],
+    ["la barra", ViewBar, bar],
   ];
 
-  for (const [name, component] of modules) {
+  for (const [name, component, props] of modules) {
     it(`${name} has no violation`, async () => {
       welcome();
-      const { element, unmount } = await mounted(component);
+      const { element, unmount } = await mounted(component, props);
       expect(await violations(element)).toEqual([]);
       unmount();
     });
   }
+
+  it("the overview, open, has no violation", async () => {
+    welcome();
+    const { unmount } = await mounted(ViewBar, { ...bar, overview: true });
+    expect(document.querySelector('.base-dialog[data-variant="full"]')).not.toBeNull();
+    // The portal renders into `body`, so the whole document is the node under probe.
+    expect(await violations(document.body)).toEqual([]);
+    unmount();
+  });
+
+  it("the drawer, open, has no violation", async () => {
+    useDrawer().open = true;
+    const { unmount } = await mounted(Drawer);
+    expect(document.querySelector('.base-dialog[data-variant="sheet"]')).not.toBeNull();
+    expect(await violations(document.body)).toEqual([]);
+    unmount();
+  });
 
   it("the band, while waiting, has no violation", async () => {
     const { element, unmount } = await mounted(Band);

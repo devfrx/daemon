@@ -7,7 +7,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { userEvent } from "vitest/browser";
 
 import { registerModules } from "../panels/modules";
-import { concentricRadii } from "../testing/probes";
+import { computed, concentricRadii } from "../testing/probes";
 import { readToken } from "../tokens/readToken";
 
 import { createDock } from "./dock";
@@ -54,26 +54,20 @@ async function floatStatus(host: HTMLElement, api: DockviewApi): Promise<Element
   return floating[0] as Element;
 }
 
-/** What a declaration of `property: var(token)` computes to here: the oracle of a role, with no copy of its value. */
-function computed(property: string, token: string): string {
-  const probe = document.createElement("div");
-  probe.style.setProperty(property, `var(${token})`);
-  document.body.append(probe);
-  const value = getComputedStyle(probe).getPropertyValue(property);
-  probe.remove();
-  return value;
-}
-
 for (const theme of ["light", "dark"] as const) {
   describe(`the dressed dock, ${theme} theme`, () => {
-    it("draws every group as a card, `--space-3` from its neighbours", async () => {
+    it("draws every group as a card, and the strip as a pill, `--space-3` from its neighbours", async () => {
       const { host } = await dock(theme);
       const groups = [...host.querySelectorAll(".dv-groupview")];
       // ⛔ NON-VACUITY: the Home view has groups side by side and one above the other.
       expect(groups.length).toBeGreaterThan(2);
+      // ⛔ THE STRIP IS THE ONE PILL (the (d), task 8 of the plan): its group holds `Strip.vue`, and every other is a card.
+      const strips = groups.filter((group) => group.querySelector(".strip") !== null);
+      expect(strips).toHaveLength(1);
       for (const group of groups) {
         const style = getComputedStyle(group);
-        expect(style.borderTopLeftRadius).toBe(computed("border-top-left-radius", "--radius-card"));
+        const radius = strips.includes(group) ? "--radius-full" : "--radius-card";
+        expect(style.borderTopLeftRadius).toBe(computed("border-top-left-radius", radius));
         // ⛔ THE NUCLEUS IS NOT A CARD (E58): the page shows through it, and its test is its own, below.
         if (group.querySelector(".nucleus") !== null) continue;
         expect(style.backgroundColor).toBe(computed("background-color", "--color-bg-surface"));

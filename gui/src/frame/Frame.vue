@@ -1,21 +1,35 @@
 <script setup lang="ts">
+import type { SerializedDockview } from "dockview-core";
 import { onMounted, onUnmounted, ref } from "vue";
 
 import Confirm from "../components/Confirm.vue";
-import { useLayout, type ViewName } from "../stores/layout";
+import { useDrawer } from "../stores/drawer";
+import { useInvoke } from "../stores/invoke";
 
 import Band from "./Band.vue";
+import Drawer from "./Drawer.vue";
 import ViewBar from "./ViewBar.vue";
 import { createDock } from "./dock";
 import { directionOf, moveActive } from "./moveActive";
 
 const host = ref<HTMLElement | null>(null);
-const layout = useLayout();
+const drawer = useDrawer();
+const invoke = useInvoke();
+/** The overview of the views: opened from the view's name in the bar, or with F3 here. */
+const overview = ref(false);
 let api: ReturnType<typeof createDock> | null = null;
 
-// G20, move 6 of SP-8: the active tile moves in the four directions from the keyboard. The
-// mapping lives in `moveActive.ts` and the geometry in `nearest.ts`; this is only the wire.
 function onKey(event: KeyboardEvent): void {
+  // ⛔ F3 OPENS AND CLOSES THE OVERVIEW (the (d) of the design system), AND IS QUIET WHILE ANOTHER WINDOW IS OPEN -- the
+  // confirmation or the drawer: a second modal window over the first would hide its question under the views. F3 is free
+  // in `gui/src` (P-11 of the plan); its default, the browser's "find next", is not ours to keep.
+  if (event.key === "F3") {
+    event.preventDefault();
+    if (!invoke.asking && !drawer.open) overview.value = !overview.value;
+    return;
+  }
+  // G20, move 6 of SP-8: the active tile moves in the four directions from the keyboard. The
+  // mapping lives in `moveActive.ts` and the geometry in `nearest.ts`; this is only the wire.
   const direction = directionOf(event);
   if (direction === null || api === null) return;
   event.preventDefault();
@@ -31,20 +45,19 @@ onUnmounted(() => {
   window.removeEventListener("keydown", onKey);
 });
 
-function switchTo(view: ViewName): void {
-  // ⛔ ONE LINE, AND THE DOCK FOLLOWS (D89, task 13): the open view lives in the store and
-  // `createDock` watches it, so the bar, the keyboard above and a package from the core all take
-  // the same path -- and none of them saves a view for merely showing it (decision 11). Through
-  // `showView` since the design system: one of the three closes the named view (the (d)).
-  layout.showView(view);
+/** The layout on screen, for «Salva questa vista»: the dock's own serialisation -- what `settle` saves. */
+function snapshot(): SerializedDockview {
+  if (api === null) throw new Error("the dock is not mounted");
+  return api.toJSON();
 }
 </script>
 
 <template>
   <div class="frame">
-    <ViewBar @switch="switchTo" />
+    <ViewBar v-model:overview="overview" :snapshot="snapshot" />
     <Band />
     <Confirm />
+    <Drawer />
     <div ref="host" class="dock"></div>
   </div>
 </template>

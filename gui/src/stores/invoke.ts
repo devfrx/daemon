@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 import type { Call, IpcMessage, Triple } from "../schema/messages";
 import type { Bridge } from "../transport/bridge";
@@ -23,6 +23,15 @@ export const useInvoke = defineStore("invoke", () => {
   const inFlight = ref<Call | null>(null);
   const approved = ref<Triple[]>([]);
   let wire: Bridge | null = null;
+
+  /**
+   * ⛔ THE CORE ASKED, AND ABOUT A CALL OF OURS (D59): the one condition under which the confirmation window is open. A
+   * `PermissionRequired` following no `Invoke` is a shape the core never produces -- the registry only ever answers one --
+   * and a window that opened on it would offer a "yes" with nothing to send; the Permessi panel shows such a request.
+   * ⛔ HERE AND NOT IN `Confirm.vue` since the design system: the frame reads it too, to keep F3 quiet while the question
+   * is open -- two readers of one rule, one house (gotcha #68).
+   */
+  const asking = computed(() => core.pending !== null && inFlight.value !== null);
 
   function attach(bridge: Bridge): void {
     wire = bridge;
@@ -69,5 +78,5 @@ export const useInvoke = defineStore("invoke", () => {
     if (message.kind === "Policy") inFlight.value = null;
   }
 
-  return { inFlight, approved, attach, send, approve, refuse, receive };
+  return { inFlight, approved, asking, attach, send, approve, refuse, receive };
 });

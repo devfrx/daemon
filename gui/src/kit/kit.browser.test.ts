@@ -1,12 +1,11 @@
 import { mount } from "@vue/test-utils";
-import axe from "axe-core";
 import { userEvent } from "vitest/browser";
 import { afterEach, describe, expect, it } from "vitest";
 import { nextTick } from "vue";
 
 import "../tokens";
-import { violations } from "../testing/axe";
-import { concentricRadii, firstFamily, fits, iconsCentred } from "../testing/probes";
+import { contrastJudged, violations } from "../testing/axe";
+import { computed, concentricRadii, firstFamily, fits, iconsCentred } from "../testing/probes";
 
 import Kit from "./Kit.vue";
 
@@ -37,25 +36,9 @@ async function kit(theme: "light" | "dark") {
 
 const roots = (selector: string): Element[] => [...document.querySelectorAll(selector)];
 
-/**
- * ⛔ THE NON-VACUITY OF `axe` (R3-7 of the review): an empty list of violations says something only if the contrast was
- * JUDGED -- nodes among the passes, none left incomplete. Under jsdom axe files every contrast as incomplete; here, in
- * the browser, it must not.
- */
-async function contrastJudged(node: Element): Promise<{ passes: number; incomplete: number }> {
-  const results = await axe.run(node, { runOnly: ["color-contrast"] });
-  const count = (list: axe.Result[]): number => list.find((rule) => rule.id === "color-contrast")?.nodes.length ?? 0;
-  return { passes: count(results.passes), incomplete: count(results.incomplete) };
-}
-
 /** A colour token as the page computes it -- `rgb(…)`, in the theme on the root -- never copied from the board. */
 function colourOf(token: string): string {
-  const probe = document.createElement("span");
-  probe.style.color = `var(${token})`;
-  document.body.append(probe);
-  const colour = getComputedStyle(probe).color;
-  probe.remove();
-  return colour;
+  return computed("color", token);
 }
 
 for (const theme of ["light", "dark"] as const) {

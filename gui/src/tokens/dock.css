@@ -109,6 +109,23 @@
   border-radius: calc(var(--radius-card) - var(--border-width));
 }
 
+/* ⛔ THE STRIP IS A PILL, NOT A CARD (the (d) of the design system, answer 20): its group -- the last row of every view,
+   12 px from the sides and 24 from the bottom -- takes the full radius, and the pill button inside it keeps the rule of
+   answer 4. Found by what it holds, because a group carries no name of its own: `.strip` is the root of `Strip.vue`. */
+.dockview-theme-harness .dv-groupview:has(.strip) {
+  border-radius: var(--radius-full);
+}
+
+/* ⛔ THE RING OF A PANEL THAT SCROLLS IS DRAWN INSIDE IT (E74, the owner's A of 2026-09-27): Chrome puts a box that scrolls
+   in the Tab order, and a panel's root fills its card, 1 px from the edge -- the card clips, and the ring drawn outside
+   kept only its top line. Inside, in the padding every panel has: the ring of `base.css` mirrored, its gap and its width
+   within the edge; and the corners below are the card's less its border (answer 4), or a square ring is cut there. */
+.dockview-theme-harness .panel > :focus-visible {
+  outline-offset: calc(-1 * (var(--focus-width) + var(--focus-offset)));
+  border-bottom-left-radius: calc(var(--radius-card) - var(--border-width));
+  border-bottom-right-radius: calc(var(--radius-card) - var(--border-width));
+}
+
 /* The mark of the visible tab (the (c)): the icon of its label in `--color-mark`, the hidden tabs' in the tab's own colour.
    ⛔ Over `BaseLabel`'s scoped colour, which is muted everywhere else: here the tab's colour, above, decides. */
 .dockview-theme-harness .dv-tab .base-label {

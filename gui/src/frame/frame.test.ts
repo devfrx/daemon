@@ -1,19 +1,24 @@
 import { mount } from "@vue/test-utils";
 import { createDockview, type DockviewApi, type SerializedDockview } from "dockview-core";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 
 import { i18n } from "../i18n";
+import { VRAM_POLICY } from "../panels/functions";
 import { PANEL_TYPES, componentFor, isModule, placeholderParams } from "../panels/registry";
 import { VIEWS } from "../panels/views";
 import Placeholder from "../panels/Placeholder.vue";
 import type { IpcMessage } from "../schema/messages";
 import { useConnection } from "../stores/connection";
+import { useCore } from "../stores/core";
+import { useDrawer } from "../stores/drawer";
+import { useInvoke } from "../stores/invoke";
 import { pack_, useLayout, type LayoutPack } from "../stores/layout";
 import { shownTheme } from "../tokens/theme";
 import { createFakeBridge, type FakeBridge } from "../transport/fakeBridge";
 
+import Frame from "./Frame.vue";
 import { createDock, harnessTheme } from "./dock";
 
 beforeEach(() => {
@@ -291,5 +296,193 @@ describe("the band", () => {
     // ⛔ THE SAME ELEMENT, NOW WITH WORDS: a region born with its text is the case many readers do not announce.
     expect(wrapper.get('[role="status"]').element).toBe(region.element);
     expect(region.text()).toContain(i18n.global.t("band.stale"));
+  });
+});
+
+/** The overview is open: the whole-window variant of `BaseDialog`, rendered in its portal on `body`. */
+function overviewOpen(): boolean {
+  return document.querySelector('.base-dialog[data-variant="full"]') !== null;
+}
+
+/** The overview's cards, views first and «Salva questa vista» last. */
+function cards(): HTMLElement[] {
+  return [...document.querySelectorAll<HTMLElement>("[data-card]")];
+}
+
+function press(key: string): void {
+  window.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }));
+}
+
+/** Writes in the field of a new view's name, as a keyboard does: the value, and the `input` event `v-model` listens to. */
+function write(text: string): void {
+  const field = document.querySelector<HTMLInputElement>(".naming input");
+  if (field === null) throw new Error("no field for the name");
+  field.value = text;
+  field.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+/** ⛔ THE WHOLE FRAME, WITH ITS DOCK (the (d) of the design system): the bar, the windows, the strip inside the grid. The
+ * frames are UNMOUNTED after each probe -- a frame listens on `window`, and one left mounted would answer the next F3. */
+describe("the frame (the (d) of the design system)", () => {
+  const frames: { unmount: () => void }[] = [];
+
+  afterEach(() => {
+    for (const frame of frames.splice(0)) frame.unmount();
+    document.body.replaceChildren();
+  });
+
+  async function frame(): Promise<void> {
+    frames.push(mount(Frame, { attachTo: document.body, global: { plugins: [i18n] } }));
+    await flush();
+  }
+
+  it("names the view on screen in the bar, and opens the overview from the name", async () => {
+    await frame();
+    const name = document.querySelector<HTMLElement>(".view-name");
+    expect(name?.textContent).toContain(i18n.global.t("views.home"));
+    name?.click();
+    await flush();
+    expect(overviewOpen()).toBe(true);
+    // The three views and «Salva questa vista»; the view on screen is the current card, in bordeaux.
+    expect(cards().map((card) => card.getAttribute("data-card"))).toEqual(["view", "view", "view", "save"]);
+    expect(cards().map((card) => card.getAttribute("aria-current"))).toEqual(["page", null, null, null]);
+  });
+
+  it("opens and closes the overview with F3, and keeps quiet while the confirmation or the drawer is open", async () => {
+    await frame();
+    press("F3");
+    await flush();
+    expect(overviewOpen()).toBe(true);
+    press("F3");
+    await flush();
+    expect(overviewOpen()).toBe(false);
+    // ⛔ THE SECOND DIRECTION: a window that asks something is not covered by the views.
+    useDrawer().open = true;
+    await flush();
+    press("F3");
+    await flush();
+    expect(overviewOpen()).toBe(false);
+    useDrawer().open = false;
+    useInvoke().send({ function: VRAM_POLICY.name, argument: VRAM_POLICY.argument.local });
+    useCore().receive({ kind: "PermissionRequired", value: { tool: "registry", resource: "arbiter", operation: "Write" } });
+    await flush();
+    expect(useInvoke().asking).toBe(true);
+    press("F3");
+    await flush();
+    expect(overviewOpen()).toBe(false);
+  });
+
+  it("shows the view of the card chosen and closes, opens a named view by its name, and closes it with one of the three (E76, E82)", async () => {
+    const layout = useLayout();
+    await frame();
+    press("F3");
+    await flush();
+    cards()[1]?.click();
+    await flush();
+    expect(layout.view).toBe("work");
+    expect(layout.openNamed).toBeNull();
+    expect(overviewOpen()).toBe(false);
+    // ⛔ TWO NAMED VIEWS (E82): with one, "the one chosen" and "the first" are the same card.
+    const named = [
+      { name: "Revisione", layout: ownersHome() },
+      { name: "Lettura", layout: ownersHome() },
+    ];
+    layout.receive(packageFromTheCore({ view: "work", layouts: {}, named }));
+    await flush();
+    press("F3");
+    await flush();
+    // The named views sit after the three, before «Salva questa vista», with a word that says they were saved.
+    expect(cards()).toHaveLength(6);
+    expect(cards()[4]?.textContent).toContain(i18n.global.t("overview.saved"));
+    cards()[4]?.click();
+    await flush();
+    expect(layout.openNamed).toBe("Lettura");
+    expect(document.querySelector(".view-name")?.textContent).toContain("Lettura");
+    // ⛔ ONE OF THE THREE CLOSES THE NAMED VIEW (E76, D13): the role `Frame.switchTo` had, the overview's now.
+    press("F3");
+    await flush();
+    cards()[0]?.click();
+    await flush();
+    expect(layout.openNamed).toBeNull();
+    expect(layout.view).toBe("home");
+  });
+
+  it("says under the field a name that is empty or taken, and saves a new one and opens it (D4, D12)", async () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    // The core has answered, with nothing: before it «Salva questa vista» is off (E81).
+    layout.receive({ kind: "Layout", value: { state: "Nothing" } });
+    await frame();
+    press("F3");
+    await flush();
+    document.querySelector<HTMLElement>('[data-card="save"]')?.click();
+    await flush();
+    const confirm = (): void => document.querySelectorAll<HTMLElement>(".naming .base-button")[1]?.click();
+    confirm();
+    await flush();
+    expect(document.querySelector(".naming")?.textContent).toContain(i18n.global.t("overview.empty"));
+    expect(document.querySelector(".naming input")?.getAttribute("aria-invalid")).toBe("true");
+    // ⛔ THE THREE VIEWS' NAMES ARE THE FRAME'S WORDS (D12): «Home» is taken in any case, spaces around or not.
+    write("  home ");
+    confirm();
+    await flush();
+    expect(overviewOpen(), "a name that is taken keeps the overview open").toBe(true);
+    expect(document.querySelector(".naming")?.textContent).toContain(i18n.global.t("overview.taken"));
+    expect(saves(bridge)).toBe(0);
+    write("Revisione");
+    confirm();
+    await flush();
+    expect(overviewOpen()).toBe(false);
+    expect(layout.openNamed).toBe("Revisione");
+    expect(layout.saved?.named?.map((entry) => entry.name)).toEqual(["Revisione"]);
+    expect(saves(bridge)).toBe(1);
+  });
+
+  it("keeps «Salva questa vista» off until the core has answered (E81)", async () => {
+    const layout = useLayout();
+    await frame();
+    press("F3");
+    await flush();
+    const save = (): HTMLButtonElement | null => document.querySelector<HTMLButtonElement>('[data-card="save"]');
+    // ⛔ BEFORE THE ANSWER THE STORE HOLDS NO PACKAGE: a view saved now would send `layouts: {}`, and the core would keep
+    // that -- every saved layout lost in silence, the window of E40.
+    expect(save()?.disabled).toBe(true);
+    layout.receive({ kind: "Layout", value: { state: "Nothing" } });
+    await flush();
+    expect(save()?.disabled).toBe(false);
+  });
+
+  it("draws a layout it cannot read as an empty miniature, and every other as before (E90)", async () => {
+    const layout = useLayout();
+    // ⛔ `unpack` keeps any object as a layout, and `schematic` throws on one it cannot read: that card goes empty, not the
+    // whole overview.
+    const unreadable = {} as SerializedDockview;
+    layout.receive(packageFromTheCore({ view: "home", layouts: {}, named: [{ name: "Rotta", layout: unreadable }] }));
+    await frame();
+    press("F3");
+    await flush();
+    expect(cards()).toHaveLength(5);
+    expect(cards()[3]?.querySelectorAll(".tile")).toHaveLength(0);
+    expect(cards()[0]?.querySelectorAll(".tile").length).toBeGreaterThan(0);
+  });
+
+  it("draws each view in miniature from its layout: a tile per group, with its module's icon, and not the strip (D14)", async () => {
+    await frame();
+    press("F3");
+    await flush();
+    const icons = [...(cards()[0]?.querySelectorAll(".tile") ?? [])].map((tile) => tile.querySelector("svg")?.getAttribute("data-icon"));
+    // ⛔ FROM THE LAYOUT, NOT A PICTURE (answer 19): Home ships one panel per group, and the strip is one of them.
+    expect(icons.sort()).toEqual(Object.keys(VIEWS.home.panels ?? {}).filter((id) => id !== "strip").sort());
+  });
+
+  it("opens the drawer from the strip's button", async () => {
+    await frame();
+    const button = document.querySelector<HTMLElement>(".strip .base-button");
+    expect(button?.textContent).toContain(i18n.global.t("drawer.open"));
+    button?.click();
+    await flush();
+    expect(useDrawer().open).toBe(true);
+    expect(document.querySelector('.base-dialog[data-variant="sheet"]')).not.toBeNull();
   });
 });

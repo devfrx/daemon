@@ -272,6 +272,18 @@ describe("the named views in the package (design system, section (d))", () => {
     expect(sentPack(bridge, 0)).toEqual({ view: "compact", layouts: { compact }, named: [{ name: "Revisione", layout: review }] });
   });
 
+  it("shows a named view only by a name the list holds, and refuses any other (E90)", () => {
+    const layout = useLayout();
+    const review = { marker: "review" } as never;
+    layout.receive(fromTheCore({ view: "home", layouts: {}, named: [{ name: "Revisione", layout: review }] }));
+    // ⛔ AN UNKNOWN NAME WOULD SEND THE NEXT MOVE NOWHERE -- the dock falls back to the view of always, and `settle` writes
+    // into a view the package does not have: the loss of E75, by another door.
+    expect(layout.showNamed("Assente")).toBe(false);
+    expect(layout.openNamed).toBeNull();
+    expect(layout.showNamed("Revisione")).toBe(true);
+    expect(layout.openNamed).toBe("Revisione");
+  });
+
   it("saves the layout on screen under a new name at once and opens it, keeps those saved before, and refuses an empty or a taken name (D4)", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();

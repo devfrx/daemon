@@ -157,6 +157,20 @@ export function iconsCentred(roots: Element[]): { icons: number; centred: number
   return { icons, centred, problems };
 }
 
+/**
+ * What a declaration of `property: var(token)` computes to here: the oracle of a token, with no copy of its value.
+ * ⛔ ONE HOUSE (E73 of the design-system plan): the dock's probes and the frame's had it word for word, and the kit
+ * page's for `color` alone.
+ */
+export function computed(property: string, token: string): string {
+  const probe = document.createElement("div");
+  probe.style.setProperty(property, `var(${token})`);
+  document.body.append(probe);
+  const value = getComputedStyle(probe).getPropertyValue(property);
+  probe.remove();
+  return value;
+}
+
 /** The first family an element computes -- the check "applied" of `sonda-caratteri.js`. */
 export function firstFamily(element: Element): string {
   return (getComputedStyle(element).fontFamily.split(",")[0] ?? "").trim().replace(/^["']|["']$/g, "");

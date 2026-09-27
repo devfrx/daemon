@@ -9,6 +9,7 @@ import { describe, expect, it } from "vitest";
 // the base pieces: from 0.5 to 5.2 s on 2026-09-24, and red twice for it. Here the file pays the load and each probe
 // takes milliseconds: a guard that can go red for being slow guards nothing.
 import { PANEL_TYPES } from "../panels/registry";
+import { VIEWS } from "../panels/views";
 import { THEME_CHOICES } from "../tokens/theme";
 
 import it_ from "./it.json";
@@ -22,8 +23,9 @@ const GUI = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
  * first one -- bare words in a template -- with `@intlify/vue-i18n/no-raw-text` at `error`
  * (D65). It could NOT replace this one: the SPA BUILDS these keys, `modules.${type.module}` in
  * the drawer and `modules.${parameters.api.id}` in `BigTab.ts` -- and, from the design system on,
- * `settings.theme.${choice}` in `Settings.vue` -- and `no-missing-keys` is blind to a built key
- * -- measured on 2026-09-15, both directions in one file (P-105).
+ * `settings.theme.${choice}` in `Settings.vue` and `views.${view}` in the overview -- and
+ * `no-missing-keys` is blind to a built key -- measured on 2026-09-15, both directions in one file
+ * (P-105).
  *
  * ⚠️ NOT RENAMED: `src/frame/keys.test.ts` already exists (task 14), and two files of that name
  * in two folders is exactly the confusion this repository pays for when re-reading.
@@ -45,6 +47,13 @@ describe("the strings", () => {
   it("has a name for every module type", () => {
     const modules = (it_ as { modules?: Record<string, string> }).modules ?? {};
     for (const type of PANEL_TYPES) expect(Object.keys(modules), type.module).toContain(type.module);
+  });
+
+  it("has a name for every view that ships (the overview and the bar build `views.${view}`)", () => {
+    const names = (it_ as { views?: Record<string, string> }).views ?? {};
+    // ⛔ NON-VACUITY: no views would leave nothing to check.
+    expect(Object.keys(VIEWS).length).toBeGreaterThan(0);
+    for (const view of Object.keys(VIEWS)) expect(Object.keys(names), view).toContain(view);
   });
 
   it("has a word for every theme choice", () => {

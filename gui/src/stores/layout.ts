@@ -148,6 +148,17 @@ export const useLayout = defineStore("layout", () => {
   }
 
   /**
+   * A named view shown (the (d)). ⛔ ONLY BY A NAME THE LIST HOLDS (E90 of the design-system plan): with an unknown name
+   * the dock falls back to the view of always, and `settle` writes the next move into a view the package does not have
+   * -- the loss of E75, by another door. Refused, and nothing changes: the twin of `showView`.
+   */
+  function showNamed(name: string): boolean {
+    if (!(saved.value?.named ?? []).some((entry) => entry.name === name)) return false;
+    openNamed.value = name;
+    return true;
+  }
+
+  /**
    * The layout on screen saved under a name, and opened ("Salva questa vista", the (d)). ⛔ SAVED AT ONCE, like a theme:
    * it is a decision. ⛔ A NAME ALREADY TAKEN IS REFUSED, NOT OVERWRITTEN (D4): overwriting would lose a view in silence.
    * Taken are the named views' names and `shown` -- the names the frame shows for the three views, which are the locale's
@@ -179,7 +190,7 @@ export const useLayout = defineStore("layout", () => {
     wire?.send({ kind: "SaveLayout", value: bytes });
   }
 
-  return { state, view, openNamed, saved, arrivals, theme, attach, receive, settle, showView, saveNamed, chooseTheme };
+  return { state, view, openNamed, saved, arrivals, theme, attach, receive, settle, showView, showNamed, saveNamed, chooseTheme };
 });
 
 /** The package as bytes: UTF-8 of the JSON. ⚠️ Exported for the probes, which must be able to

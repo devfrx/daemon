@@ -25,7 +25,6 @@
     "models": "Modelli locali"
   },
   "bar": {
-    "views": "Viste",
     "search": "Cerca",
     "searchHint": "la ricerca sugli artefatti arriva col sotto-progetto 6",
     "core": "Core",
@@ -49,10 +48,21 @@
     "quiet": "nessuna richiesta"
   },
   "drawer": {
-    "open": "+ moduli",
+    "open": "moduli",
     "title": "I moduli",
     "close": "Chiudi",
     "who": "arriva col sotto-progetto {number}"
+  },
+  "overview": {
+    "title": "Le viste",
+    "hint": "F3 apre e chiude. Le frecce scelgono una vista, Invio la apre, Esc chiude.",
+    "saved": "salvata",
+    "save": "Salva questa vista",
+    "name": "Nome della vista",
+    "confirm": "Salva",
+    "cancel": "Annulla",
+    "empty": "Scrivi un nome.",
+    "taken": "C'è già una vista con questo nome."
   },
   "placeholder": {
     "nucleus": "niente ancora",

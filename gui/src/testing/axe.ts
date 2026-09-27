@@ -13,3 +13,15 @@ export async function violations(node: Element, options: { contrast?: boolean } 
   const results = await axe.run(node, { rules: { "color-contrast": { enabled: options.contrast === true } } });
   return results.violations.map((violation) => `${violation.id}: ${violation.nodes.map((n) => n.target.join(" ")).join(", ")}`);
 }
+
+/**
+ * ⛔ THE NON-VACUITY OF `axe` (R3-7 of the review): an empty list of violations says something only if the contrast was
+ * JUDGED -- nodes among the passes, none left incomplete. Under jsdom axe files every contrast as incomplete; in the
+ * browser it must not. Its second user came with the design system's task 8 -- the frame, after the kit page -- so it
+ * lives here once.
+ */
+export async function contrastJudged(node: Element): Promise<{ passes: number; incomplete: number }> {
+  const results = await axe.run(node, { runOnly: ["color-contrast"] });
+  const count = (list: axe.Result[]): number => list.find((rule) => rule.id === "color-contrast")?.nodes.length ?? 0;
+  return { passes: count(results.passes), incomplete: count(results.incomplete) };
+}

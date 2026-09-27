@@ -594,7 +594,7 @@ delle immagini della CI: nella sezione *«Il design system della GUI — le font
 | il dock vestito dà l'aspetto della Home approvata | il proprietario, alla prima prova del piano |
 | l'Assistente vocale annuncia una `BaseStatus` che si riempie | il passo a mano del piano, decisione 21 |
 | sull'altra macchina c'è Chrome | la prima corsa là |
-| la barra di scorrimento regge con la preferenza di Windows che tiene **sempre visibili** le barre — il cursore resta nascosto finché il puntatore non entra — e sotto i **colori forzati** (E59) | il piano della cura, e lo sguardo del proprietario |
+| la barra di scorrimento regge con la preferenza di Windows che tiene **sempre visibili** le barre — il cursore resta nascosto finché il puntatore non entra — e sotto i **colori forzati** (E59) | il piano della cura, e lo sguardo del proprietario — ⚠️ **richiamo del 2026-09-27, alla chiusura del compito 6bis:** lo sguardo del Passo 16, nel Chrome del proprietario col mouse vero, ha visto il cursore comparire sotto il puntatore — la conferma che il puntatore simulato delle prove non dà —; le due condizioni della riga non le ha provate, e l'assunzione **resta**, senza un compito del piano che la misuri |
 
 ## Cosa questo disegno ha misurato, e che non era scritto da nessuna parte
 

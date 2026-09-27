@@ -1987,3 +1987,129 @@ sotto-progetto.
 4. Poi il pre-controllo del compito 7, e così compito per compito fino al 9. Al **pre-controllo del compito 8** le sonde che
    l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed **E57** —, la domanda di **E44** sulla Panoramica ed **E63**; a
    quello del **9**, la Definizione di «fatto» con le righe 22 e 23.
+
+## L'esecuzione del compito 6bis, del 2026-09-27
+
+Tolto dal piano il 2026-09-27, quando la sessione dopo ha eseguito il compito 6bis — il dispaccio, la revisione, le cure **E70**…**E73**, lo sguardo del proprietario — e ha scritto la consegna *«Come si riprende — l'esecuzione del compito 6bis»*. Il testo com'era, dal commit `5105ad0`, parola per parola; i rimandi sono riscritti per questa cartella.
+
+## Come si riprende — il pre-controllo del compito 6bis, 2026-09-27
+
+✅ **Il pre-controllo del compito 6bis è fatto: sei difetti, E64…E69**, scritti nell'errata e applicati al testo — tutti fuori
+dal merito approvato, e decisi dal coordinatore coi cinque criteri. Il compito rifatto per intero dal testo del piano su un
+`git worktree` di `dc77fc8` nello scratchpad, macchina `Jays`, con `plan_ops.py`, che estrae dal testo i *Trova*, i *Crea* e i
+*Riscrivi* e li applica in fila: ogni Atteso dei Passi 1–15 **tornato**; le quindici violazioni rosse col messaggio dettato, e
+ogni file tornato dalla copia salvata; i diciotto file **uguali byte per byte** a quelli della sessione che ha scritto il
+compito; la tavola dello script uguale alla copia approvata, tranne le tre differenze che la riga 6 della tabella in testa al
+compito dice; cinque corse della suite intera, 200 prove passate ciascuna. Poi il testo **corretto** rifatto su una copia
+pulita: diciannove file, gli Atteso uguali, la riga nuova del Passo 15 rossa; e sopra, i compiti 7 e 8, col solo rifiuto di
+**E63**. Nella cartella del dispaccio il modello `dispatch-task-6bis.md`, `_extract_brief_6bis.py` e `compare_task6bis.py`, con
+la ricetta qui sotto. La consegna precedente — il piano della cura, scritto — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+⛔ **Da sapere subito.**
+
+1. **Il codice del repository non è toccato**: lo cambia l'esecuzione. Il codice del 6bis è provato su `dc77fc8`; se prima del
+   dispaccio un commit tocca `gui/`, il compito si rilegge contro il codice di allora: `git log --oneline dc77fc8..HEAD -- gui/`.
+2. **E69 cambia la forma del 6bis**: il commit del codice non porta le celle della posizione; il Passo 16 lo fanno il
+   proprietario e il coordinatore **dopo** la revisione e le sue cure — la fascia a core spento **prima** di
+   `harnessFake.deliverAll()` —; approvato, la chiusura scrive le righe 6 e 6bis e l'assunzione della barra nel disegno.
+3. **E64 ha toccato i testi dei compiti 7, 8 e 9**: l'ancora degli import dell'8 è **misurata**; i conti del 6bis negli Atteso
+   dell'8 sono **dedotti**, e li misura il suo pre-controllo, con **E63**.
+4. **La conferma col mouse vero dell'innesco della barra** resta al Passo 16.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **i commit** | `git log --oneline dc77fc8..HEAD`: uno, quello che scrive questa riga — le voci **E64**…**E69** e le correzioni nei compiti 6bis, 7, 8 e 9, nella Definizione di «fatto» e in *«Come si esegue»*; la riga 6bis della posizione; il richiamo nella riga 23 della tabella del prodotto del disegno; nella cartella del dispaccio i tre file del 6bis; questa sezione, e la precedente in archivio. Nessun codice cambia: `git diff --stat dc77fc8..HEAD -- . ':!docs'` non rende nulla |
+| **cancello** | `GATE GREEN` all'apertura su `dc77fc8` e prima del commit che scrive questa riga: jsdom 137 prove e una saltata, browser 48, il pezzo `690.61 kB`, `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `dc77fc8` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | la riga 6 a `⏳`; la riga 6bis a `⬜`, pre-controllata |
+| **lo scratchpad** | sulla macchina `Jays`, **non tracciato**, in `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\e61d46fe-75ff-4dc5-b7b7-f729c9a85112\scratchpad\`: in `tools/` gli attrezzi — `plan_ops.py`, che applica un compito dal testo del piano, `violations.py` con le quindici violazioni, `recipe.py` che scrive la ricetta —; in `post6bis/` i diciotto file del testo di prima; in `logs/` le corse. Non servono a riprendere: il piano basta |
+| **server e cartelle di prova** | nessun server acceso; i due `git worktree` di prova e il clone del confronto tolti — `git worktree list` rende la sola cartella del repository —; e tolte da `.claude/launch.json` le due configurazioni della copia |
+
+**Che cosa ha fatto questa sessione.** Nessun dispaccio, nessun codice nel repository. La ripresa coi comandi; il compito
+rifatto dal testo e rimisurato passo per passo; i compiti 7 e 8 applicati sopra il 6bis, che nessuno aveva fatto; i commenti e
+le cifre che il 6bis rende falsi, cercati sulla copia; la SPA e la pagina kit aperte nel pannello del browser dell'app, a
+1440 × 900, nei due stati della fascia e coi messaggi dei due pannelli; le sei voci; il testo corretto rifatto; il dispaccio, e
+il confronto provato su un clone.
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura del
+sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **un compito inserito fra due già scritti si prova anche sotto quelli dopo**: i loro *Trova* si applicano sopra, e i loro Atteso si ricontano — **E63** aveva visto il solo file che conosceva | `plan_ops.py`, un compito sopra l'altro, al pre-controllo di un compito inserito |
+| 2 | **una cifra in un'attesa non la trova un `grep` sulle parole**: la trappola 23 cercava *«otto pezzi»*, e `# 8` è passato | la cifra si toglie, e si scrivono i nomi (gotcha #68) |
+| 3 | **uno sguardo del proprietario non sta nel passo del commit di un subagente** — **E69**, la specie di **E35** | un compito che finisce con uno sguardo si scrive in due commit |
+| 4 | **il pannello del browser dell'app, con la finestra dell'app coperta, non disegna**: lo schermo scade, e `zoom` su una regione rende lo schermo intero; `javascript_exec` risponde | le misure col DOM, lo schermo solo per guardare |
+| 5 | **`harnessFake.deliverAll()` consegna anche `StaleBuild`**: dopo, la fascia del core che non ha risposto non c'è più | la fascia a core spento si guarda prima della consegna |
+
+📌 **La ricetta del compito 6bis**, per rifarlo o confrontarlo dal testo del piano, vale per il piano del commit che scrive
+questa riga — le righe prima di questa sezione non cambiano chiudendo una sessione. `compare_task6bis.py <base> <target>` la
+legge: `W` un file intero, `R` il *Trova* e il *Sostituisci* di una sostituzione, `S` i due script del Passo 5.
+
+```text
+# Passo 2
+R gui/src/testing/probes.browser.test.ts 6490 6498
+R gui/src/testing/probes.browser.test.ts 6506 6514
+R gui/src/testing/probes.browser.test.ts 6523 6535
+# Passo 3
+R gui/src/testing/probes.ts 6571 6578
+R gui/src/testing/probes.ts 6590 6597
+# Passo 4
+R gui/src/tokens/tokens.browser.test.ts 6619 6628
+# Passo 5 -- the board from cure_board.py, then base.css and themes.css from extract_tokens.py
+S 6680 6881
+# Passo 6
+R gui/vite.config.ts 6941 6949
+# Passo 7
+R gui/src/tokens/dock.css 6970 6982
+R gui/src/kit/Kit.vue 6997 7009
+R gui/src/components/BaseDialog.vue 7026 7032
+# Passo 8
+R gui/src/components/kit.test.ts 7047 7053
+R gui/src/components/kit.test.ts 7060 7066
+R gui/src/components/kit.test.ts 7113 7119
+R gui/src/components/kit.test.ts 7128 7134
+# Passo 9
+R gui/src/components/icons.ts 7150 7157
+R gui/src/components/icons.ts 7166 7173
+R gui/src/components/icons.ts 7181 7188
+R gui/src/components/icons.ts 7196 7207
+W gui/src/components/BaseNotice.vue 7224
+# Passo 10
+R gui/src/kit/kit.browser.test.ts 7328 7335
+R gui/src/kit/kit.browser.test.ts 7343 7352
+R gui/src/kit/kit.browser.test.ts 7366 7376
+# Passo 11
+R gui/src/kit/Kit.vue 7442 7448
+R gui/src/kit/Kit.vue 7455 7462
+R gui/src/kit/Kit.vue 7478 7485
+# Passo 12
+R gui/src/frame/frame.test.ts 7510 7516
+R gui/src/frame/frame.test.ts 7522 7534
+R gui/src/frame/frame.test.ts 7551 7558
+R gui/src/panels/modules.test.ts 7580 7586
+R gui/src/panels/modules.test.ts 7592 7607
+R gui/src/panels/modules.test.ts 7631 7640
+W gui/src/frame/frame.browser.test.ts 7652
+# Passo 13
+W gui/src/frame/Band.vue 7760
+R gui/src/panels/Settings.vue 7807 7813
+R gui/src/panels/Settings.vue 7820 7826
+R gui/src/panels/Settings.vue 7832 7840
+R gui/src/panels/Status.vue 7850 7863
+R gui/src/panels/Status.vue 7895 7908
+R gui/src/panels/Status.vue 7918 7928
+```
+
+**Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. **L'esecuzione del 6bis**: il prompt dal modello `dispatch-task-6bis.md`, il brief da `_extract_brief_6bis.py`, la banda dei
+   costi detta prima del sì; un subagente fresco, la revisione — che apre la SPA e la pagina kit nei due temi (**E68**) e
+   confronta il commit col testo con `compare_task6bis.py` —, le cure; poi il **Passo 16 col proprietario**, nel suo Chrome col
+   mouse vero; approvato, la chiusura: le righe 6 e 6bis a `✅`, il disegno, e questa sezione in archivio.
+3. Poi il pre-controllo del compito 7, e così compito per compito fino al 9. Al **pre-controllo del compito 8** le sonde che
+   l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed **E57** —, la domanda di **E44** sulla Panoramica, **E63** e i
+   conti dedotti di **E64**; a quello del **9**, la Definizione di «fatto» con le righe 22 e 23.

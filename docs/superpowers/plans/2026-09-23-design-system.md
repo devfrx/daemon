@@ -129,8 +129,8 @@ esegue** prima del proprio pre-controllo.
 | **3** | **il kit**: `lucide`; `BaseIcon` con `icons.ts`, `BaseButton`, `BaseLabel`, `BaseList`, `BaseStatus`, `BaseTextField`, `BaseRadioGroup`, `BaseDialog`; un test con `axe` ciascuno; il linter che legge anche i `.ts`, e le due regole sui pezzi di base | `c7b7bcd`, con la cura `9d2ffb0` | ✅ 2026-09-25 |
 | **4** | **la pagina kit**: `gui/kit.html` e `gui/src/kit/`, **fuori** dal pacchetto e provata sull'uscita del *build*; le prove nel browser sulla pagina kit, nei due temi — raggi concentrici, testo tagliato e niente che sborda, icone disegnate e centrate, `axe` col contrasto | `841dc54`, con la cura `8d098d0` | ✅ 2026-09-25 |
 | **5** | **il kit al lavoro**: i pezzi di base nei pannelli e nella cornice — la finestra di conferma, il cassetto, la fascia, Stato, Permessi, Passi, Impostazioni con la scelta del tema, il segnaposto, la barra; le due regole del linter su `panels/` e `frame/`; **M-3** chiusa per costruzione, e l'Assistente vocale a mano | `545f500`, con le cure `7e25d03` e `9e6657b` | ✅ 2026-09-26 — il Passo 8 col proprietario, nel suo Chrome con l'Assistente vocale: alle domande dei punti 3, 4 e 5 — *«senti …?»* — la risposta *«di quello che hai chiesto … funziona tutto»*, e il punto 1 non riportato a parte; e *«a parte il piccolo problema citato poco fa»*, il lampo delle barre di scorrimento con la fascia, curato da **E43** |
-| **6** | **il dock vestito**: il tema `dockview-theme-harness`, `dock.css` con ogni variabile del tema di riferimento, i gruppi come schede, `readToken`, `--z-floating`, la presa grande coi pezzi di base; `themeAbyss` esce | — | ⏳ 2026-09-26 — il compito in `c1102fc`, curato in `ca83dac` (**E49**–**E58**); il Passo 8 **non approvato**: ripreso col proprietario, tre voci decise e **da curare**, **E59**–**E61** — la barra di scorrimento, i messaggi con la fascia, il bordo nel raggio; il loro disegno è scritto, il 2026-09-27 — **E61**, **E59** ed **E60** —, e il proprietario le ha **approvate**, A, guardandole insieme su una copia della tavola lo stesso giorno, con l'innesco della barra che la verifica ha trovato: resta la cura, che è il **compito 6bis**, scritto il 2026-09-27 (**E62**): la riga si chiude col suo sguardo |
-| **6bis** | **la cura delle tre voci del Passo 8 del 6**: nella tavola il bordo nei raggi, la barra di scorrimento col suo innesco e il messaggio, e la copia; la sonda a mezzo pixel; le barre mostrate al progetto browser; `BaseNotice` con le icone dei toni, nella pagina kit, nella fascia sulla pagina, in Impostazioni e in Stato; `frame.browser.test.ts` | — | ⬜ — scritto il 2026-09-27, col codice provato su una cartella di prova (**E62**); pre-controllato lo stesso giorno, sei difetti, **E64**…**E69**, scritti nell'errata e applicati al testo: viene l'esecuzione |
+| **6** | **il dock vestito**: il tema `dockview-theme-harness`, `dock.css` con ogni variabile del tema di riferimento, i gruppi come schede, `readToken`, `--z-floating`, la presa grande coi pezzi di base; `themeAbyss` esce | `c1102fc`, con la cura `ca83dac` | ✅ 2026-09-27 — il Passo 8 col proprietario, nel suo Chrome: il 2026-09-26 quattro foto — la zona d'arrivo ad angoli dritti, due sfondi, la barra con un fondo suo, il nucleo vestito da scheda —, curate (**E55**–**E58**); ripreso lo stesso giorno, tre voci **non approvate** — la barra di scorrimento, i messaggi con la fascia, il bordo nel raggio (**E59**–**E61**) —, disegnate e approvate il 2026-09-27 e curate dal compito **6bis**; lo sguardo del 6bis le ha approvate, e con lui si chiude questa riga |
+| **6bis** | **la cura delle tre voci del Passo 8 del 6**: nella tavola il bordo nei raggi, la barra di scorrimento col suo innesco e il messaggio, e la copia; la sonda a mezzo pixel; le barre mostrate al progetto browser; `BaseNotice` con le icone dei toni, nella pagina kit, nella fascia sulla pagina, in Impostazioni e in Stato; `frame.browser.test.ts` | `da7a522`, con la cura `5105ad0` | ✅ 2026-09-27 — rivisto **conforme**: 0 critici, 0 importanti, 2 minori e 2 nit, tutti del dettato e curati (**E70**–**E73**). Il Passo 16 col proprietario, nel suo Chrome col mouse vero — la fascia prima e dopo la consegna, i messaggi, la barra col cursore che compare sotto il puntatore, i raggi —: *«quello che mi hai chiesto funziona»*, A, a condizione che la chiusura segua `anthropic-skills:decision-principles`; il frammento del contrasto sulla SPA a 1440 × 900, misurato dal coordinatore, 5,39 nel chiaro e 5,4 nello scuro. Due difetti di prima, trovati dalla revisione e detti prima dello sguardo, che non li ha commentati: il bordo di «Riprova» sulla fascia, 1,22 e 1,00, è il bordo di decoro che la (a) esenta (**E5**), e resta; l'anello del fuoco tagliato è **E74**, aperta |
 | **7** | **le viste col nome, sotto**: `named` e `openNamed` nel pacchetto, il negozio e il dock che le mostrano e le salvano; l'aiutante della geometria estratto da `moveActive.ts`; lo schema di una disposizione, per le miniature | — | ⬜ |
 | **8** | **la cornice**: la barra col nome della vista, la **Panoramica** su `BaseDialog` con le miniature e *«Salva questa vista»* — F3, frecce, Invio, Esc —, la **striscia** a pillola coi «moduli»; le prove nel browser della Panoramica e della striscia | — | ⬜ |
 | **9** | **la chiusura**: la riga «Accessibilità» di tracciabilità, la riga 14 della roadmap con *«Perché quest'ordine»*, `README.md`, la §12 e la §6 del compendio, `porta-di-qualita.md` con C-S0-1 (P-29), `riferimenti.md`; i richiami nel disegno e nella stella polare (P-28); la **Definizione di «fatto»**, eseguita, con le uscite del giorno | — | ⬜ |
@@ -240,6 +240,7 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | **E71** | Minore — **D25 diceva *«Costo: nessuno»*, e un costo c'è:** nell'angolo il giudizio è a due lati, `Math.abs(inner - (outer - dx)) <= SLACK`, fuori dall'angolo a uno, il solo troppo tondo; con la soglia di *«nell'angolo»* a mezzo pixel un pezzo a **un** pixel dalla diagonale passa alla regola a un lato, e lì un raggio troppo piccolo non cade più. Misurato dalla revisione del 6bis (M-2) nel suo clone, con una prova usa-e-getta: un pezzo a 13/14 dall'angolo in basso a sinistra di un angolo di 20, raggio 4 — il concentrico sarebbe 7 —, accettato dalla sonda del commit, `{"near":1,"bad":[]}`, e rifiutato con la sola soglia dell'angolo a 1,5. **Latente**: le coppie che le prove incontrano — pagina kit, finestra, dock, gruppo staccato, fascia — sono 25 per tema, tutte con le due distanze uguali e scarto 0,00, e con la soglia dell'angolo a 1,5 le 56 prove del browser restano verdi. ✅ **Corretta** nel commit che scrive questa riga: la colonna del costo di **D25** lo dichiara; la regola e il codice non cambiano. Scartate, dal coordinatore coi cinque criteri, due costanti — la soglia dell'angolo di nuovo a 1,5 e lo scarto del raggio a 0,5 —: il giudizio a due lati misura il raggio contro `outer - dx` soltanto, e a mezzo pixel rifiuterebbe anche il raggio concentrico sull'altro asse, `outer - dy` — **dedotto** dalla formula, non misurato —; tenerlo chiederebbe una regola nuova per un caso che oggi non c'è. Scartata anche una prova che fissi il verdetto nuovo, come la revisione: terrebbe un'indulgenza, non una regola |
 | **E72** | Nit — **Compito 6bis, Passo 12 — il titolo di una prova di Stato nominava la forma di prima:** *«says the core has not spoken, and shows no event row, before anything arrives»* in `modules.test.ts`, mentre la prova cerca ora il messaggio, `.base-notice` — la trappola 21 del disegno: le prove si riscrivono sul pezzo —; non falso alla lettera, perché il messaggio porta la classe `event`. Trovata dalla revisione del 6bis (N-1). ✅ **Curata** nel commit che scrive questa riga: *«… and shows no message, before anything arrives»*; il *Trova* e il *Sostituisci* della prima sostituzione di `modules.test.ts` nel Passo 12 prendono anche il titolo. Nessun esito cambia: `Tests  31 passed (31)` coi due file jsdom del Passo 12 |
 | **E73** | Nit — **Compito 8, al suo pre-controllo — due cose che `frame.browser.test.ts` porta dal 6bis:** **(a)** l'aiutante `computed(property, token)` è identico, riga per riga, a quello di `dock.browser.test.ts`, e `colourOf` di `kit.browser.test.ts` è lo stesso oracolo per `color`: la ragione di **D29**, *«un secondo modo di fare la stessa cosa»*, vale anche per un aiutante; **(b)** il suo `afterEach` smonta l'app, ma `Frame.vue` non dispone il dock — il suo `onUnmounted` toglie solo l'ascoltatore della tastiera —, mentre `dock.browser.test.ts` dispone ogni dock e dice perché: `dockview-core` 8.3.1 tiene i gruppi galleggianti della pagina in una lista di modulo. Oggi innocuo, perché in quel file nessun gruppo galleggia — **dedotto** leggendo il codice, non misurato. Trovate dalla revisione del 6bis (N-2), e rilette dal coordinatore sul codice. ⏳ **Al pre-controllo del compito 8**, che estende il file e ne riusa gli aiutanti (**E63**): portarli in `gui/src/testing/` o dichiarare la copia, e disporre il dock se il compito vi stacca un gruppo |
+| **E74** | ⚠️ **Di prima del 6bis — l'anello del fuoco di una scatola che scorre lo taglia la sua scheda:** nella Home a 1440 × 900 la scatola di Stato scorre, e Chrome la mette nella sequenza del Tab — uno *scroller* senza nulla di focalizzabile dentro —; col Tab ci si arriva, e `:focus-visible` disegna il contorno `solid 2px` a `2px` di distanza, ma la scheda ne taglia i lati e il fondo, e resta la sola riga in alto, dopo la linguetta. La riga «focus» della (a) del disegno lo vuole *«visibile (2.4.7) e non nascosto (2.4.11)»*. Trovato dalla revisione del 6bis (P-1) e misurato **uguale** a `9579ca0`, nei due temi: non è del 6bis; la schermata riguardata dal coordinatore. Detto al proprietario prima dello sguardo del Passo 16, che non l'ha commentato: lo sguardo non l'ha approvato. ⏳ **Aperta**: la forma della cura è aspetto — il contorno **dentro** la scatola che scorre, o uno spazio attorno che la scheda non tagli — e la decide il proprietario (controllo 15); la sonda nel browser la può portare il compito 8, che monta la cornice intera |
 
 ---
 
@@ -11063,124 +11064,64 @@ compito 1 — o in una voce d'errata. Un nome senza casa è una voce d'errata nu
 
 ---
 
-## Come si riprende — il pre-controllo del compito 6bis, 2026-09-27
+## Come si riprende — l'esecuzione del compito 6bis, 2026-09-27
 
-✅ **Il pre-controllo del compito 6bis è fatto: sei difetti, E64…E69**, scritti nell'errata e applicati al testo — tutti fuori
-dal merito approvato, e decisi dal coordinatore coi cinque criteri. Il compito rifatto per intero dal testo del piano su un
-`git worktree` di `dc77fc8` nello scratchpad, macchina `Jays`, con `plan_ops.py`, che estrae dal testo i *Trova*, i *Crea* e i
-*Riscrivi* e li applica in fila: ogni Atteso dei Passi 1–15 **tornato**; le quindici violazioni rosse col messaggio dettato, e
-ogni file tornato dalla copia salvata; i diciotto file **uguali byte per byte** a quelli della sessione che ha scritto il
-compito; la tavola dello script uguale alla copia approvata, tranne le tre differenze che la riga 6 della tabella in testa al
-compito dice; cinque corse della suite intera, 200 prove passate ciascuna. Poi il testo **corretto** rifatto su una copia
-pulita: diciannove file, gli Atteso uguali, la riga nuova del Passo 15 rossa; e sopra, i compiti 7 e 8, col solo rifiuto di
-**E63**. Nella cartella del dispaccio il modello `dispatch-task-6bis.md`, `_extract_brief_6bis.py` e `compare_task6bis.py`, con
-la ricetta qui sotto. La consegna precedente — il piano della cura, scritto — sta parola per parola in
-[`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
+✅ **Il compito 6bis è eseguito, curato e approvato, e con lui si chiude il compito 6.** Il dispaccio col sì del proprietario
+sulla banda detta prima, 0,9–1,2 milioni di token: l'implementatore ha consegnato `da7a522`, **uguale al testo del piano** —
+`compare_task6bis.py 9579ca0 da7a522`, venti percorsi `OK` —, con ogni rosso e ogni verde dei Passi 1–15 come il pre-controllo li
+aveva misurati; il revisore l'ha detto **conforme**, con due minori e due nit, tutti del dettato, e il coordinatore li ha curati
+senza ri-revisione, come per i compiti 3–6 (`5105ad0`, **E70**–**E73**). Il Passo 16 col proprietario, nel suo Chrome col mouse
+vero: approvato, A — *«quello che mi hai chiesto funziona»* —, **a condizione** che la chiusura segua
+`anthropic-skills:decision-principles`. Le righe 6 e 6bis della posizione sono a `✅`; nella cartella del dispaccio il prompt
+spedito, il rapporto, il prompt del revisore, la revisione e `plan_ops.py`. La consegna precedente — il pre-controllo del compito
+6bis — sta parola per parola in [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
 
 ⛔ **Da sapere subito.**
 
-1. **Il codice del repository non è toccato**: lo cambia l'esecuzione. Il codice del 6bis è provato su `dc77fc8`; se prima del
-   dispaccio un commit tocca `gui/`, il compito si rilegge contro il codice di allora: `git log --oneline dc77fc8..HEAD -- gui/`.
-2. **E69 cambia la forma del 6bis**: il commit del codice non porta le celle della posizione; il Passo 16 lo fanno il
-   proprietario e il coordinatore **dopo** la revisione e le sue cure — la fascia a core spento **prima** di
-   `harnessFake.deliverAll()` —; approvato, la chiusura scrive le righe 6 e 6bis e l'assunzione della barra nel disegno.
-3. **E64 ha toccato i testi dei compiti 7, 8 e 9**: l'ancora degli import dell'8 è **misurata**; i conti del 6bis negli Atteso
-   dell'8 sono **dedotti**, e li misura il suo pre-controllo, con **E63**.
-4. **La conferma col mouse vero dell'innesco della barra** resta al Passo 16.
+1. **E74 è aperta, e aspetta il proprietario**: l'anello del fuoco della scatola di Stato, tagliato dalla scheda — di prima del
+   6bis. La forma della cura è aspetto; la sonda la può portare il compito 8.
+2. **L'assunzione della barra resta**: la preferenza di Windows che tiene sempre visibili le barre, e i colori forzati. Lo
+   sguardo del Passo 16 ha confermato il cursore col mouse vero, e le due condizioni non le ha provate; nessun compito del piano
+   le misura — il richiamo sta nella riga dell'assunzione del disegno.
+3. **Il compito 7 si rilegge contro il codice di adesso** (`CLAUDE.md`, domanda 5): il 6bis ha cambiato diciannove file, e i
+   conti che **E64** ha scritto nel compito 7 sono **dedotti**.
+4. **La memoria libera di questa macchina era 6 GB su 31,2** durante l'esecuzione e la revisione: nessuna prova è caduta, ma si
+   rimisura prima del prossimo dispaccio.
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
-| **i commit** | `git log --oneline dc77fc8..HEAD`: uno, quello che scrive questa riga — le voci **E64**…**E69** e le correzioni nei compiti 6bis, 7, 8 e 9, nella Definizione di «fatto» e in *«Come si esegue»*; la riga 6bis della posizione; il richiamo nella riga 23 della tabella del prodotto del disegno; nella cartella del dispaccio i tre file del 6bis; questa sezione, e la precedente in archivio. Nessun codice cambia: `git diff --stat dc77fc8..HEAD -- . ':!docs'` non rende nulla |
-| **cancello** | `GATE GREEN` all'apertura su `dc77fc8` e prima del commit che scrive questa riga: jsdom 137 prove e una saltata, browser 48, il pezzo `690.61 kB`, `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
-| **la CI** | `dc77fc8` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
-| **la posizione** | la riga 6 a `⏳`; la riga 6bis a `⬜`, pre-controllata |
-| **lo scratchpad** | sulla macchina `Jays`, **non tracciato**, in `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\e61d46fe-75ff-4dc5-b7b7-f729c9a85112\scratchpad\`: in `tools/` gli attrezzi — `plan_ops.py`, che applica un compito dal testo del piano, `violations.py` con le quindici violazioni, `recipe.py` che scrive la ricetta —; in `post6bis/` i diciotto file del testo di prima; in `logs/` le corse. Non servono a riprendere: il piano basta |
-| **server e cartelle di prova** | nessun server acceso; i due `git worktree` di prova e il clone del confronto tolti — `git worktree list` rende la sola cartella del repository —; e tolte da `.claude/launch.json` le due configurazioni della copia |
+| **i commit** | `git log --oneline 9579ca0..HEAD`: tre — `da7a522`, il compito dell'implementatore; `5105ad0`, le cure della revisione; e quello che scrive questa riga: le righe 6 e 6bis della posizione, **E74**, il richiamo nel disegno, le copie del dispaccio e `plan_ops.py`, questa sezione e la precedente in archivio |
+| **cancello** | `GATE GREEN` a `5105ad0` e prima del commit che scrive questa riga: jsdom 144 prove passate e una saltata, browser 56, il pezzo `691.82 kB`, `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `5105ad0` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | le righe dalla 1 alla 6bis a `✅`; la 7, l'8 e la 9 a `⬜` |
+| **lo scratchpad** | sulla macchina `Jays`, **non tracciato**, in `C:\Users\Jays\AppData\Local\Temp\claude\E--ALL-DEV-MY-REPOS-daemon\2f940fbc-999d-4486-9faf-6d913c767183\scratchpad\`: in `task6bis/` i log dell'implementatore, in `review6bis/` quelli del revisore con le schermate dello sguardo, in `cure/` gli script delle cure. Non servono a riprendere: il piano e la cartella del dispaccio bastano |
+| **server e cartelle di prova** | nessun server acceso; il clone del revisore, `%TEMP%\rv6bis`, tolto; in `.claude/launch.json` la sola configurazione `gui-dev` |
 
-**Che cosa ha fatto questa sessione.** Nessun dispaccio, nessun codice nel repository. La ripresa coi comandi; il compito
-rifatto dal testo e rimisurato passo per passo; i compiti 7 e 8 applicati sopra il 6bis, che nessuno aveva fatto; i commenti e
-le cifre che il 6bis rende falsi, cercati sulla copia; la SPA e la pagina kit aperte nel pannello del browser dell'app, a
-1440 × 900, nei due stati della fascia e coi messaggi dei due pannelli; le sei voci; il testo corretto rifatto; il dispaccio, e
-il confronto provato su un clone.
+**Che cosa ha fatto questa sessione.** La ripresa coi comandi; il dispaccio dell'implementatore; il prompt del revisore, scritto
+dal modello del compito 6 — il 6bis non ne aveva uno —, con `plan_ops.py` per rifare i rossi dei passi; le cure, misurate nelle
+due direzioni; il Passo 16 col proprietario; la chiusura. I costi: l'implementatore ~411k token in ~19 minuti, il revisore ~525k
+in ~39, ~0,94 milioni in tutto, dentro la banda detta.
 
 📌 **Ciò che questa sessione ha imparato, e che non era scritto** — nessuna voce è ancora un gotcha: le raccoglie la chiusura del
 sotto-progetto.
 
 | | Che cosa | Che cosa se ne fa |
 |---|---|---|
-| 1 | **un compito inserito fra due già scritti si prova anche sotto quelli dopo**: i loro *Trova* si applicano sopra, e i loro Atteso si ricontano — **E63** aveva visto il solo file che conosceva | `plan_ops.py`, un compito sopra l'altro, al pre-controllo di un compito inserito |
-| 2 | **una cifra in un'attesa non la trova un `grep` sulle parole**: la trappola 23 cercava *«otto pezzi»*, e `# 8` è passato | la cifra si toglie, e si scrivono i nomi (gotcha #68) |
-| 3 | **uno sguardo del proprietario non sta nel passo del commit di un subagente** — **E69**, la specie di **E35** | un compito che finisce con uno sguardo si scrive in due commit |
-| 4 | **il pannello del browser dell'app, con la finestra dell'app coperta, non disegna**: lo schermo scade, e `zoom` su una regione rende lo schermo intero; `javascript_exec` risponde | le misure col DOM, lo schermo solo per guardare |
-| 5 | **`harnessFake.deliverAll()` consegna anche `StaleBuild`**: dopo, la fascia del core che non ha risposto non c'è più | la fascia a core spento si guarda prima della consegna |
-
-📌 **La ricetta del compito 6bis**, per rifarlo o confrontarlo dal testo del piano, vale per il piano del commit che scrive
-questa riga — le righe prima di questa sezione non cambiano chiudendo una sessione. `compare_task6bis.py <base> <target>` la
-legge: `W` un file intero, `R` il *Trova* e il *Sostituisci* di una sostituzione, `S` i due script del Passo 5.
-
-```text
-# Passo 2
-R gui/src/testing/probes.browser.test.ts 6490 6498
-R gui/src/testing/probes.browser.test.ts 6506 6514
-R gui/src/testing/probes.browser.test.ts 6523 6535
-# Passo 3
-R gui/src/testing/probes.ts 6571 6578
-R gui/src/testing/probes.ts 6590 6597
-# Passo 4
-R gui/src/tokens/tokens.browser.test.ts 6619 6628
-# Passo 5 -- the board from cure_board.py, then base.css and themes.css from extract_tokens.py
-S 6680 6881
-# Passo 6
-R gui/vite.config.ts 6941 6949
-# Passo 7
-R gui/src/tokens/dock.css 6970 6982
-R gui/src/kit/Kit.vue 6997 7009
-R gui/src/components/BaseDialog.vue 7026 7032
-# Passo 8
-R gui/src/components/kit.test.ts 7047 7053
-R gui/src/components/kit.test.ts 7060 7066
-R gui/src/components/kit.test.ts 7113 7119
-R gui/src/components/kit.test.ts 7128 7134
-# Passo 9
-R gui/src/components/icons.ts 7150 7157
-R gui/src/components/icons.ts 7166 7173
-R gui/src/components/icons.ts 7181 7188
-R gui/src/components/icons.ts 7196 7207
-W gui/src/components/BaseNotice.vue 7224
-# Passo 10
-R gui/src/kit/kit.browser.test.ts 7328 7335
-R gui/src/kit/kit.browser.test.ts 7343 7352
-R gui/src/kit/kit.browser.test.ts 7366 7376
-# Passo 11
-R gui/src/kit/Kit.vue 7442 7448
-R gui/src/kit/Kit.vue 7455 7462
-R gui/src/kit/Kit.vue 7478 7485
-# Passo 12
-R gui/src/frame/frame.test.ts 7510 7516
-R gui/src/frame/frame.test.ts 7522 7534
-R gui/src/frame/frame.test.ts 7551 7558
-R gui/src/panels/modules.test.ts 7580 7586
-R gui/src/panels/modules.test.ts 7592 7607
-R gui/src/panels/modules.test.ts 7631 7640
-W gui/src/frame/frame.browser.test.ts 7652
-# Passo 13
-W gui/src/frame/Band.vue 7760
-R gui/src/panels/Settings.vue 7807 7813
-R gui/src/panels/Settings.vue 7820 7826
-R gui/src/panels/Settings.vue 7832 7840
-R gui/src/panels/Status.vue 7850 7863
-R gui/src/panels/Status.vue 7895 7908
-R gui/src/panels/Status.vue 7918 7928
-```
+| 1 | **un costo «nessuno» misurato sulle prove che esistono è cieco al caso di confine**: **D25** fu misurata su coppie tutte a distanze uguali, e il pezzo a un pixel dalla diagonale non c'era — **E71** | il costo di una decisione si misura costruendo il caso di confine |
+| 2 | **i rossi dei passi si rifanno dal testo del piano**: `plan_ops.py apply <radice> --upto N` su un clone della base, e per un passo che esegue uno script le sue uscite dal commit, dopo che il confronto le ha dette uguali al dettato | la revisione del 6bis è il modello; lo strumento sta nella cartella del dispaccio |
+| 3 | **un difetto di prima, portato allo sguardo, che lo sguardo non commenta, non è approvato**: si scrive aperto, o si dispone col merito che c'è già — **E74**, e il bordo di «Riprova» che la (a) esenta | la chiusura scrive ciò che il proprietario ha detto, non ciò che non ha detto |
+| 4 | **6 GB liberi su 31,2 non hanno reso instabile la suite**: il revisore ha girato le prove e il cancello con 5,9–6,1 GB liberi, e nessuna prova è caduta | un dato per P-20 e P-21; la memoria si misura comunque prima di un dispaccio |
 
 **Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
 
 1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
-2. **L'esecuzione del 6bis**: il prompt dal modello `dispatch-task-6bis.md`, il brief da `_extract_brief_6bis.py`, la banda dei
-   costi detta prima del sì; un subagente fresco, la revisione — che apre la SPA e la pagina kit nei due temi (**E68**) e
-   confronta il commit col testo con `compare_task6bis.py` —, le cure; poi il **Passo 16 col proprietario**, nel suo Chrome col
-   mouse vero; approvato, la chiusura: le righe 6 e 6bis a `✅`, il disegno, e questa sezione in archivio.
-3. Poi il pre-controllo del compito 7, e così compito per compito fino al 9. Al **pre-controllo del compito 8** le sonde che
-   l'errata gli assegna — **E38**, **E39**, **E43**, **E53** ed **E57** —, la domanda di **E44** sulla Panoramica, **E63** e i
-   conti dedotti di **E64**; a quello del **9**, la Definizione di «fatto» con le righe 22 e 23.
+2. **Il pre-controllo del compito 7**, contro il codice di adesso: il compito rifatto dal testo del piano con `plan_ops.py` su una
+   copia, ogni Atteso rimisurato — i conti che **E64** ha dedotto —, e il compito 8 applicato sopra, perché i suoi *Trova* e i
+   suoi Atteso passano per il 7.
+3. Poi l'esecuzione del 7; poi il pre-controllo dell'8, con le sonde che l'errata gli assegna — **E38**, **E39**, **E43**,
+   **E53** ed **E57** —, la domanda di **E44** sulla Panoramica, **E63**, i conti dedotti di **E64**, la strada più larga di
+   **E70**, **E73**, e la sonda di **E74** se il proprietario ne avrà deciso la forma; a quello del **9**, la Definizione di
+   «fatto» con le righe 22 e 23.
+4. ⏳ **Due domande per il proprietario**, una per volta e quando vuole: la forma della cura di **E74**; e se l'assunzione della
+   barra debba avere un compito che la misuri.

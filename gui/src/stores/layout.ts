@@ -25,12 +25,44 @@ export interface LayoutPack {
    * the field existed opens as `system`, and the core keeps the bytes without opening them -- the kernel
    * does not change. */
   theme?: ThemeChoice;
+  /** The views the owner saved under a name (the (d); §2 of the north star). ⛔ OPTIONAL, AND A LIST OF THEIR
+   * OWN, not keys of `layouts` (D3 of the design-system plan): `view` stays one of the three, so a package
+   * written by this build opens in an older one on the view of always. */
+  named?: NamedView[];
+  /** The named view that is open, by name; absent while one of the three is. */
+  openNamed?: string;
+}
+
+export interface NamedView {
+  name: string;
+  layout: SerializedDockview;
 }
 
 const VIEWS: readonly ViewName[] = ["home", "work", "compact"];
 
 function isViewName(value: unknown): value is ViewName {
   return typeof value === "string" && (VIEWS as readonly string[]).includes(value);
+}
+
+/** Two names are the same name when they differ only in the spaces around them or in case: side by side in the overview
+ * they would read as one (D12 of the design-system plan, chosen by the owner on 2026-09-23). */
+function sameName(a: string, b: string): boolean {
+  return a.trim().toLocaleLowerCase("it") === b.trim().toLocaleLowerCase("it");
+}
+
+/** The named views of a package. ⛔ AN ENTRY WITHOUT A NAME OR A LAYOUT IS DROPPED, AND SO IS A SECOND ENTRY UNDER A NAME
+ * ALREADY READ -- the first stays: two views never share a name (D4). */
+function readNamed(value: unknown): NamedView[] {
+  if (!Array.isArray(value)) return [];
+  const read: NamedView[] = [];
+  for (const entry of value) {
+    if (typeof entry !== "object" || entry === null) continue;
+    const { name, layout } = entry as { name?: unknown; layout?: unknown };
+    if (typeof name !== "string" || name.trim() === "" || typeof layout !== "object" || layout === null) continue;
+    if (read.some((kept) => sameName(kept.name, name))) continue;
+    read.push({ name, layout: layout as SerializedDockview });
+  }
+  return read;
 }
 
 function sameBytes(a: readonly number[], b: readonly number[]): boolean {
@@ -50,6 +82,8 @@ function sameBytes(a: readonly number[], b: readonly number[]): boolean {
 export const useLayout = defineStore("layout", () => {
   const state = ref<LayoutState>({ state: "Nothing" });
   const view = ref<ViewName>("home");
+  /** The named view on screen, or `null` while one of the three is: the dock watches it as it watches `view`. */
+  const openNamed = ref<string | null>(null);
   /** The package we hold: the last one the core sent, or our own last save while its echo is in
    * flight. What `apply` reads. */
   const saved = ref<LayoutPack | null>(null);
@@ -73,22 +107,60 @@ export const useLayout = defineStore("layout", () => {
     if (message.value.state === "Package" && sent !== null && sameBytes(message.value.bytes, sent)) return;
     saved.value = unpack(message.value);
     if (saved.value !== null) view.value = saved.value.view;
+    // ⛔ AND THE NAMED VIEW THAT IS OPEN (R3-19 of the design-system review), or none -- ALSO WHEN NOTHING
+    // READABLE ARRIVED (E75 of the design-system plan): the dock then shows the view of always, and a name left
+    // open would send the next move nowhere.
+    openNamed.value = saved.value?.openNamed ?? null;
     arrivals.value += 1;
+  }
+
+  /** The package we hold, with what is on screen: the view of always, and the named view if one is open. */
+  function onScreen(): LayoutPack {
+    const pack: LayoutPack = { ...(saved.value ?? { layouts: {} }), view: view.value };
+    if (openNamed.value === null) delete pack.openNamed;
+    else pack.openNamed = openNamed.value;
+    return pack;
   }
 
   /** ⛔ AUTOMATIC, NOT A BUTTON (decision 12): when the layout settles, and when the window
    * closes. The cadence is the gui's -- it is presentation, not a kernel decision.
    *
    * ⛔ AND IT MERGES (D80): the open view's entry is replaced and the other views keep theirs. A
-   * `settle` that replaced the whole package lost every view but the open one. */
+   * `settle` that replaced the whole package lost every view but the open one. The rest of the package
+   * -- the theme, the named views -- is kept whole. */
   function settle(layout: SerializedDockview): void {
-    // ⛔ THE REST OF THE PACKAGE IS KEPT: a settle that rebuilt it from `view` and `layouts` alone would drop
-    // the theme -- and, from task 7, the named views -- at the first move of a panel.
-    keep({
-      ...(saved.value ?? {}),
-      view: view.value,
-      layouts: { ...(saved.value?.layouts ?? {}), [view.value]: layout },
-    });
+    const pack = onScreen();
+    const open = pack.openNamed;
+    if (open === undefined) {
+      keep({ ...pack, layouts: { ...pack.layouts, [view.value]: layout } });
+      return;
+    }
+    // ⛔ A MOVE IN A NAMED VIEW GOES TO THAT VIEW (R3-19): writing `layouts[view]` here would overwrite the view of
+    // always -- Home or Lavoro -- with the named one, without an error.
+    keep({ ...pack, named: (pack.named ?? []).map((entry) => (entry.name === open ? { name: open, layout } : entry)) });
+  }
+
+  /** One of the three views on screen, which closes the named one. ⛔ SHOWING IS NOT SAVING (decision 11): the choice
+   * reaches the package at the next settle. */
+  function showView(next: ViewName): void {
+    openNamed.value = null;
+    view.value = next;
+  }
+
+  /**
+   * The layout on screen saved under a name, and opened ("Salva questa vista", the (d)). ⛔ SAVED AT ONCE, like a theme:
+   * it is a decision. ⛔ A NAME ALREADY TAKEN IS REFUSED, NOT OVERWRITTEN (D4): overwriting would lose a view in silence.
+   * Taken are the named views' names and `shown` -- the names the frame shows for the three views, which are the locale's
+   * words, and a store reads none.
+   */
+  function saveNamed(name: string, layout: SerializedDockview, shown: readonly string[]): "saved" | "empty" | "taken" {
+    const wanted = name.trim();
+    if (wanted === "") return "empty";
+    const taken = [...shown, ...(saved.value?.named ?? []).map((entry) => entry.name)];
+    if (taken.some((other) => sameName(other, wanted))) return "taken";
+    openNamed.value = wanted;
+    keep({ ...onScreen(), named: [...(saved.value?.named ?? []), { name: wanted, layout }] });
+    return "saved";
   }
 
   /** The theme of the package, and `system` when it has none (answer 16). */
@@ -97,7 +169,7 @@ export const useLayout = defineStore("layout", () => {
   /** ⛔ SAVED AT ONCE, NOT AT THE NEXT SETTLE: a choice made in Impostazioni is a decision, not a movement of
    * panels, and closing the window right after it must not lose it. */
   function chooseTheme(choice: ThemeChoice): void {
-    keep({ layouts: {}, ...(saved.value ?? {}), view: view.value, theme: choice });
+    keep({ ...onScreen(), theme: choice });
   }
 
   function keep(pack: LayoutPack): void {
@@ -107,7 +179,7 @@ export const useLayout = defineStore("layout", () => {
     wire?.send({ kind: "SaveLayout", value: bytes });
   }
 
-  return { state, view, saved, arrivals, theme, attach, receive, settle, chooseTheme };
+  return { state, view, openNamed, saved, arrivals, theme, attach, receive, settle, showView, saveNamed, chooseTheme };
 });
 
 /** The package as bytes: UTF-8 of the JSON. ⚠️ Exported for the probes, which must be able to
@@ -132,10 +204,17 @@ export function unpack(state: LayoutState): LayoutPack | null {
       const layout = held[name];
       if (typeof layout === "object" && layout !== null) layouts[name] = layout as SerializedDockview;
     }
+    const pack: LayoutPack = { view: candidate.view, layouts };
     // ⛔ A CHOICE THIS BUILD DOES NOT KNOW IS READ AS ABSENT, and the package still opens: the layouts in it are
     // worth more than a word we cannot read.
     const theme = (candidate as { theme?: unknown }).theme;
-    return isThemeChoice(theme) ? { view: candidate.view, layouts, theme } : { view: candidate.view, layouts };
+    if (isThemeChoice(theme)) pack.theme = theme;
+    const named = readNamed((candidate as { named?: unknown }).named);
+    if (named.length > 0) pack.named = named;
+    // ⛔ AN OPEN NAME THE LIST DOES NOT HOLD IS READ AS ABSENT, and the view of always opens.
+    const open = (candidate as { openNamed?: unknown }).openNamed;
+    if (typeof open === "string" && named.some((entry) => entry.name === open)) pack.openNamed = open;
+    return pack;
   } catch {
     // ⛔ A PACKAGE THAT DOES NOT PARSE IS NOT AN ERROR TO SHOW: it is an old build's layout, and
     // the answer is the committed views. Row 8 of §2 asks the gui to cope, not to complain.

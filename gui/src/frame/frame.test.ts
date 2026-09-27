@@ -221,6 +221,22 @@ describe("the dock", () => {
     expect(harnessTheme()).toMatchObject({ name: "harness", className: "dockview-theme-harness" });
     expect(harnessTheme().gap).toBeGreaterThan(0);
   });
+
+  it("shows the named view that is open, and the view of always once it closes -- saving neither (the (d))", async () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    const api = createDock(host());
+    api.layout(1600, 1000);
+    layout.receive(packageFromTheCore({ view: "home", layouts: {}, named: [{ name: "Revisione", layout: ownersHome() }], openNamed: "Revisione" }));
+    await flush();
+    expect(showing(api)).toEqual(["status"]);
+    layout.showView("home");
+    await flush();
+    // ⛔ THE SHIPPED HOME, NOT THE REVIEW UNDER ITS NAME: the dock watches `openNamed` as it watches `view`.
+    expect(showing(api)).toEqual(Object.keys(VIEWS.home.panels ?? {}).sort());
+    expect(saves(bridge)).toBe(0);
+  });
 });
 
 describe("the band", () => {

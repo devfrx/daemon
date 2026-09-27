@@ -34,8 +34,9 @@ onUnmounted(() => {
 function switchTo(view: ViewName): void {
   // ⛔ ONE LINE, AND THE DOCK FOLLOWS (D89, task 13): the open view lives in the store and
   // `createDock` watches it, so the bar, the keyboard above and a package from the core all take
-  // the same path -- and none of them saves a view for merely showing it (decision 11).
-  layout.view = view;
+  // the same path -- and none of them saves a view for merely showing it (decision 11). Through
+  // `showView` since the design system: one of the three closes the named view (the (d)).
+  layout.showView(view);
 }
 </script>
 

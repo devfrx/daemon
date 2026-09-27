@@ -58,11 +58,12 @@ function same(a: SerializedDockview, b: SerializedDockview): boolean {
 }
 
 /**
- * ⛔ THE DOCK FOLLOWS THE STORE (D89), in the two ways the store changes under it: the bar writes
- * `layout.view`, and the core sends a package that is NOT the echo of our own save -- the welcome
- * after `Hello`, or the OLD package after a write that did not stick (decision 13). Both are shown
- * here and nowhere else: `Frame.vue` does not call `apply`, and a `Layout` that arrives after the
- * dock is up is not left in the store. Before D89 it was: `apply` ran once, before `Hello`, and
+ * ⛔ THE DOCK FOLLOWS THE STORE (D89), in the three ways the store changes under it: one of the
+ * three views is shown (`showView`), a named view opens or closes (`openNamed`, the (d) of the
+ * design system), and the core sends a package that is NOT the echo of our own save -- the welcome
+ * after `Hello`, or the OLD package after a write that did not stick (decision 13). All three are
+ * shown here and nowhere else: `Frame.vue` does not call `apply`, and a `Layout` that arrives after
+ * the dock is up is not left in the store. Before D89 it was: `apply` ran once, before `Hello`, and
  * the saved layout never appeared at start-up -- it compiled and passed every probe.
  *
  * ⛔ SHOWING RESETS THE BASELINE: the buffered `onDidLayoutChange` that follows a `fromJSON`
@@ -102,14 +103,15 @@ export function createDock(host: HTMLElement): DockviewApi {
   // The theme follows the one on screen (the (c)): `updateOptions` hands it to `updateTheme` again.
   watch(shownTheme, () => api.updateOptions({ theme: harnessTheme() }));
 
-  function show(view: ViewName): SerializedDockview {
-    apply(api, view, layout.saved);
+  function show(): SerializedDockview {
+    apply(api, layout.view, layout.saved, layout.openNamed);
     return api.toJSON();
   }
 
-  let last = show(layout.view);
-  watch([() => layout.view, () => layout.arrivals], () => {
-    last = show(layout.view);
+  // ⛔ AND THE NAMED VIEW THAT IS OPEN (the (d)): opening one, or closing it for one of the three, shows it here too.
+  let last = show();
+  watch([() => layout.view, () => layout.openNamed, () => layout.arrivals], () => {
+    last = show();
   });
 
   api.onDidLayoutChange(() => {
@@ -137,9 +139,12 @@ export function createDock(host: HTMLElement): DockviewApi {
  * and 8 of §2 of the north star -- the gui copes rather than complains. ⛔ BY NAME (D80): the
  * package holds one layout PER VIEW, and a view it does not hold falls back to the shipped one.
  * Before D80 the one saved layout was applied under every tab.
+ * ⛔ A NAMED VIEW WINS WHILE IT IS OPEN (the (d) of the design system), and a name the package no
+ * longer holds falls back to the view of always.
  */
-export function apply(api: DockviewApi, view: ViewName, pack: LayoutPack | null): void {
-  api.fromJSON(pack?.layouts[view] ?? VIEWS[view]);
+export function apply(api: DockviewApi, view: ViewName, pack: LayoutPack | null, named: string | null = null): void {
+  const chosen = named === null ? undefined : pack?.named?.find((entry) => entry.name === named)?.layout;
+  api.fromJSON(chosen ?? pack?.layouts[view] ?? VIEWS[view]);
   for (const panel of api.panels) {
     // ⛔ ONLY WHAT NOBODY BUILT (R6-17): the strip is a piece of the frame, carries no `params`, and
     // is not a module type -- without this line it got `{ missing: true }` at every `apply`, and

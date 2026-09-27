@@ -1,6 +1,7 @@
 import type { DockviewApi, Position } from "dockview-core";
 
-export type Direction = "left" | "right" | "up" | "down";
+import { nearest, type Direction } from "./nearest";
+
 export type Moved = "moved" | "split" | "none";
 
 /**
@@ -14,26 +15,15 @@ export type Moved = "moved" | "split" | "none";
  * ⚠️ UNDER jsdom EVERY RECT IS ZERO (task 13, step 3), so in a jsdom probe every other group
  * counts as "beyond" in every direction: the probe of `keys.test.ts` hands rectangles of its own
  * instead, and the browser is where the reviewer sees the real thing (rule 5 of the head).
+ * The geometry itself is `nearest`, shared with the overview's grid since the design system.
  */
 export function moveActive(api: DockviewApi, direction: Direction): Moved {
   const panel = api.activePanel;
   if (panel === undefined) return "none";
-  const from = panel.group.element.getBoundingClientRect();
-  const beyond = (rect: DOMRect): boolean =>
-    direction === "left" ? rect.right <= from.left + 1
-    : direction === "right" ? rect.left >= from.right - 1
-    : direction === "up" ? rect.bottom <= from.top + 1
-    : rect.top >= from.bottom - 1;
-  const gap = (rect: DOMRect): number =>
-    direction === "left" ? from.left - rect.right
-    : direction === "right" ? rect.left - from.right
-    : direction === "up" ? from.top - rect.bottom
-    : rect.top - from.bottom;
-  const target = api.groups
+  const candidates = api.groups
     .filter((group) => group !== panel.group && !group.locked)
-    .map((group) => ({ group, rect: group.element.getBoundingClientRect() }))
-    .filter(({ rect }) => beyond(rect))
-    .sort((a, b) => gap(a.rect) - gap(b.rect))[0];
+    .map((group) => ({ group, rect: group.element.getBoundingClientRect() }));
+  const target = nearest(panel.group.element.getBoundingClientRect(), candidates, direction);
   if (target !== undefined) {
     panel.api.moveTo({ group: target.group, position: "center" });
     return "moved";

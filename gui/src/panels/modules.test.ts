@@ -67,7 +67,7 @@ describe("the registry, with the modules plugged in", () => {
 });
 
 describe("Stato", () => {
-  it("says the core has not spoken, and shows no event row, before anything arrives", () => {
+  it("says the core has not spoken, and shows no message, before anything arrives", () => {
     wire();
     const wrapper = mount(Status, { global: { plugins: [i18n] } });
     expect(wrapper.text()).toContain(t("status.unknown"));

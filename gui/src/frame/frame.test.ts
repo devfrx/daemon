@@ -249,6 +249,10 @@ describe("the band", () => {
     await nextTick();
     const notice = wrapper.get(".base-notice");
     expect(notice.attributes("data-tone")).toBe("stop");
+    // ON THE PAGE, LIKE THE WAITING BAND (E70 of the design-system plan): the browser measures the waiting one's place
+    // only, so this one's class and mark are held here.
+    expect(notice.classes()).toContain("band");
+    expect(notice.attributes("data-on-page")).toBeDefined();
     expect(notice.get(".title").text()).toBe(i18n.global.t("band.stale"));
     expect(notice.get(".description").text()).toBe(i18n.global.t("band.expected", { stamp: "81985529216486895" }));
     // ⛔ NOTHING TO RETRY: the core stopped listening to this build.

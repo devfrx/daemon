@@ -5,6 +5,11 @@ knowledge base, al percorso del suo futuro disegno — il precedente è la conse
 [modelli decisionali](2026-09-28-modelli-decisionali-design.md). Si aggiorna a **ogni risposta** del proprietario, nella
 tabella *«Le risposte del proprietario»*, e si committa ogni volta: una sessione che muore non fa ripresentare niente.
 
+✅ **Il 2026-09-28 il proprietario ha risposto a D1 col proprio documento**, con la guida ARMS allegata: è riportato
+**parola per parola** nella sezione *«Il documento del proprietario»*, e la forma della knowledge base ora è **quella**. Le
+sezioni dopo lo confrontano con ciò che esiste: che cosa cambia del 2026-09-04, quali buchi chiude, dove urta decisioni già
+prese, e i casi limite nuovi.
+
 ⚠️ **Non è un disegno, e da solo non cambia niente.** Il disegno approvato resta il
 [disegno della knowledge base](2026-09-04-knowledge-base-design.md) del 2026-09-04. Ciò che questa revisione deciderà di diverso
 andrà là come **richiamo datato**, negli ADR come **rimando**, in roadmap e in tracciabilità come righe riscritte: mai in
@@ -18,6 +23,122 @@ silenzio — `CLAUDE.md`, *«Uno schema è una verifica, e corregge ciò che esi
 > e ciò alla quale non abbiamo pensato.
 
 Con `anthropic-skills:decision-principles` invocata nella stessa richiesta.
+
+## Il documento del proprietario, parola per parola — 2026-09-28
+
+Mandato in chat al posto della risposta a D1, col riferimento al PDF della guida ARMS. ⛔ **È la sua proposta, e le sue
+parole non si ritoccano:** le frasi affermative sono sue decisioni; i punti *«Proposta»* della sezione finale sono le sue
+decisioni aperte, col suo consiglio.
+
+> # Knowledge base locale navigabile dall'agente
+>
+> ## Presupposti
+>
+> La knowledge base è una directory qualsiasi del filesystem locale, che il programma riceve come percorso di root nella configurazione a runtime. Non deve essere dedicata al programma: può essere la cartella in cui tengo già tutto quello che ho sul PC.
+>
+> L'unica fonte di verità è il filesystem. Il programma è una finestra su quella directory: tutto ciò che costruisce sopra (grafo in UI, indici, router) è stato derivato e si può ricostruire in qualsiasi momento dal contenuto reale.
+>
+> La directory viene modificata da due attori indipendenti. Io posso aggiungere, spostare, rinominare e cancellare file e cartelle dall'esterno, con qualsiasi strumento. L'agente crea, modifica e naviga file e cartelle dall'interno. Il programma quindi non può assumere di essere l'unico a scrivere, e deve riallineare lo stato derivato con quello reale in due momenti:
+>
+> - mentre è in esecuzione, con un watcher del filesystem;
+> - all'avvio, con una scansione di riconciliazione per le modifiche fatte mentre era chiuso.
+>
+> Il watcher da solo non basta: a programma chiuso non vede nulla, e anche in esecuzione può perdere eventi.
+>
+> Non serve uno storico delle modifiche. La KB è locale, non è condivisa né sincronizzata con cloud o altre macchine, e ogni installazione ha la sua: niente versioning, audit log o sync. Serve però rilevare le modifiche, per tenere coerente lo stato derivato.
+>
+> ## Struttura di navigazione: due livelli
+>
+> **Livello strutturale.** È l'indice completo della directory: albero, metadati e testo per la ricerca. Si genera con una scansione, senza modello e quindi senza token. È sempre esaustivo e sempre riallineato. Alimenta il grafo in UI, la ricerca da UI e la ricerca dell'agente.
+>
+> **Livello semantico.** Un router master descrive le aree di lavoro e punta ciascuna al proprio indice d'area. Ogni indice d'area elenca i file chiave di quell'area, una riga ciascuno. È parziale per scelta: sono puntatori, non un inventario, e ogni indice sta sotto una pagina. Le aree sono aree di lavoro, non cartelle: un'area può coprire più cartelle, e una cartella può non appartenere a nessuna area. L'idea viene dalla sezione Memory della guida ARMS: a un agente serve una mappa, non cartelle ordinate.
+>
+> ## Setup
+>
+> Il setup funziona su qualsiasi macchina a partire dal solo percorso di root. È idempotente: rilanciarlo su una KB già inizializzata non duplica e non corrompe nulla. Usa solo percorsi relativi alla root e non fa assunzioni su sistema operativo o struttura preesistente. Ha due fasi:
+>
+> 1. **Scansione.** Genera il livello strutturale in automatico.
+> 2. **Setup semantico guidato.** L'agente mi chiede in un'unica volta:
+>    - quali sono le mie aree principali di lavoro;
+>    - quali file o cartelle uso più spesso;
+>    - cosa è privato e deve restare fuori.
+>
+>    Poi definisce le aree (vedi decisioni aperte, punto 2) e scrive il router master e gli indici d'area.
+>
+> ## Agente
+>
+> L'agente può leggere, cercare, creare e modificare file e cartelle. Per la cancellazione vedi le decisioni aperte.
+>
+> A una richiesta come "dove mi ero appuntato X" risponde così:
+>
+> 1. Legge il router master e sceglie l'area pertinente.
+> 2. Legge l'indice di quell'area. Se X è un file chiave, lo trova al primo passaggio.
+> 3. Se non lo è, cerca nel livello strutturale limitandosi alle cartelle di quell'area.
+> 4. La ricerca su tutta la KB è l'ultimo ripiego.
+>
+> Il costo in token dipende quindi dal percorso fatto, non dalla dimensione della KB.
+>
+> Quando l'agente crea, sposta o modifica file, aggiorna i router interessati nello stesso turno.
+>
+> ## Coerenza dei router
+>
+> Un puntatore vecchio è peggio di nessun puntatore. Siccome io modifico la KB anche dall'esterno, la coerenza non può dipendere solo dalla disciplina dell'agente. Il riconciliatore corregge i router in modo meccanico, senza modello:
+>
+> - rimuove la voce di un file cancellato;
+> - aggiorna il percorso di un file spostato, che riconosce dallo stesso hash.
+>
+> Un file nuovo aggiunto dall'esterno entra subito nel livello strutturale. Entra nei router solo se io o l'agente lo promuoviamo a file chiave.
+>
+> ## UI
+>
+> Dalla UI posso fare tutto senza passare dall'agente:
+>
+> - navigare la KB come grafo zoomabile o come griglia, raggruppati per cartella e per area;
+> - cercare mentre digito, con filtri per tipo e per cartella;
+> - cliccando un file, vederne l'anteprima e il percorso completo, con un pulsante per copiarlo;
+> - creare, rinominare, spostare, modificare e cancellare file e cartelle.
+>
+> La vista si aggiorna da sola quando la KB cambia, anche dall'esterno.
+>
+> ## Vincoli
+>
+> **Esclusioni e privacy.** Alla root c'è un file di regole di esclusione, in stile `.gitignore`. Copre il rumore (`.git`, `node_modules`, binari, media pesanti) e ciò che è privato. Le esclusioni valgono sia per l'indicizzazione sia per ciò che l'agente può leggere, perché leggere un file significa mandarne il contenuto al modello.
+>
+> **Confinamento.** L'agente scrive solo dentro la root: percorsi normalizzati, niente `..`, niente symlink che puntano fuori.
+>
+> **Scritture concorrenti.** Prima di scrivere, l'agente verifica che il file non sia cambiato dall'ultima lettura; se è cambiato, si ferma. Senza versioning, una modifica sovrascritta è persa.
+>
+> ## Decisioni aperte
+>
+> 1. **Dove vivono indici e router.** Le opzioni sono tre:
+>    - dentro ogni cartella: leggibili a mano, ma invasivi su una cartella non dedicata;
+>    - in un'unica cartella nascosta `.<nomeapp>/` alla root, che contiene sia l'indice strutturale sia i router;
+>    - nella directory dati dell'applicazione, fuori dalla KB: nessun impatto sulla cartella, ma gli indici non la seguono se la sposto.
+>
+>    Proposta: la cartella nascosta. Segue la cartella se la sposto, è invisibile di default ed è una sola cosa da ignorare o cancellare. I router restano modificabili dalla UI.
+>
+> 2. **Chi decide le aree.** Le opzioni sono due:
+>    - aree uguali alle cartelle di primo livello: deterministico e senza costo, ma contraddice l'idea della mappa e su una cartella disordinata produce aree inutili;
+>    - aree proposte dall'agente a partire dalla scansione e confermate da me: costa token una volta sola e riflette come lavoro davvero.
+>
+>    Proposta: la seconda.
+>
+> 3. **Cancellazione da parte dell'agente.** Il sistema deve gestire le cancellazioni comunque, perché posso cancellare dall'esterno. La domanda è solo se l'agente possa farlo. Proposta: sì, ma morbida (spostamento nel cestino di sistema) e con conferma. La cartella non è dedicata e non c'è versioning per recuperare.
+>
+> 4. **Collegamenti nel grafo.** Il contenimento in cartella e l'appartenenza a un'area si ricavano da soli. Resta da decidere se servono anche archi per i link espliciti tra file, come i link markdown.
+
+## La fonte del documento: la guida ARMS
+
+Il proprietario la indica come origine del livello semantico. È una **guida di pratica** di RoboNuggets, non una norma né
+una documentazione di prodotto: vale come **origine dell'idea**, non come prova. La provenienza sta in
+[`riferimenti.md`](../../riferimenti.md), nella sezione datata di questa revisione.
+
+| | |
+|---|---|
+| il file | `C:\Users\zagor\Desktop\ARMS-Agentic-OS-Guide.pdf`, sul Desktop del proprietario e **fuori** dal repository; il testo si estrae con `pdftotext -layout`, che su questa macchina viene con Git per Windows |
+| la sezione | *Memory*, pagine 6 e 7: tre livelli — una cartella, poi i **router** (un router master che nomina le aree e punta ciascuna al suo indice; un indice per area coi file chiave, una riga l'uno, sotto una pagina), poi un *visual second brain* — e il criterio di fatto: una sessione nuova trova il file giusto **al primo salto** |
+| che cosa il documento aggiunge alla guida | i **due attori** e il riallineamento — sorvegliante più scansione all'avvio —; il **livello strutturale** senza modello; il riconciliatore **meccanico**; le **esclusioni** valide anche per ciò che l'agente legge; il confinamento; il controllo prima di scrivere. La guida rifà l'indice rilanciando uno script a mano |
+| la data | il file porta la data del 2026-09-04, il giorno del primo brainstorming della knowledge base — `ls -la` sul file — mentre il disegno di quel giorno dichiara *«nessuna fonte esterna»* (§6.3) |
 
 ## Le regole di questo lavoro
 
@@ -96,23 +217,100 @@ colonna *13?* dice se il buco tocca ciò che il 13 costruisce: quelli con ✅ si
 | **K22** | **la knowledge base cresce**: il router centrale, caricato **sempre** al piano 0, cresce coi gruppi; la rete della Home con migliaia di nodi | assunto nella §6.5 del disegno | — | il 6, misurando |
 | **K23** | **chi paga la porta `filesystem` vera**: design/09 dice il 5, ma il 6 può arrivare prima | V | — | questa revisione, in roadmap |
 
+## Il documento contro ciò che esiste
+
+Ogni punto del documento del proprietario, letto contro il disegno del 2026-09-04, gli ADR e il codice. **Cambia** vuol dire
+che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scriverà il disegno.
+
+| Punto del documento | Contro che cosa | Esito |
+|---|---|---|
+| la knowledge base è **una cartella qualsiasi**, e la root arriva dalla configurazione | la risposta 1 del 2026-09-04, *«un archivio unico»*; ADR-0034, i parametri li legge il daemon e li consegna | **cambia** la risposta 1: non più un archivio dedicato. Coerente con ADR-0034: la root è un parametro che il daemon consegna |
+| **due attori**: il proprietario da fuori, con qualsiasi strumento, e l'agente da dentro | la risposta 3, *«solo il nostro assistente»* | **cambia** la risposta 3. Chiude K7 |
+| il **sorvegliante** più la **scansione all'avvio** | i trigger del 13 (ADR-0009); K8 e K9 | chiude K8 e K9 nel principio; al 13 resta un requisito: il meccanismo deve saper dire *«ho perso eventi, riscansiona»* |
+| **niente storico**, versioning, audit o sync; una knowledge base per installazione | ADR-0007, il giornale delle azioni; ADR-0024, la copia prima che l'agente tocchi un file | ⚠️ **da conciliare — D2**. Chiude K5: niente sync |
+| indici **e router** «derivati, ricostruibili» | ADR-0022, gli indici fuori dal backup perché ricostruibili | ⚠️ vale per l'indice strutturale, **non per i router**, che portano le scelte del proprietario — K32 |
+| il **livello strutturale**: l'indice completo, testo compreso, senza modello | il disegno del 2026-09-04: l'indice della mappa (§4.2), e la ricerca per somiglianza come **seconda metà** del 6 (§4.4) | **allarga**: una ricerca testuale senza GPU nasce con la prima metà; la seconda resta per la somiglianza |
+| il **livello semantico**: router master → indici d'area → file chiave; le aree non sono cartelle | la risposta 1 e la §4.1: router → gruppi → foglie, e *«un gruppo è una voce di router, non una cartella»* | **uguale** nella sostanza: l'«area» è il «gruppo» del 2026-09-04 |
+| l'agente cerca anche nel **livello strutturale**, prima nell'area e poi dappertutto | la risposta 4 e la §4.1: *«l'agente naviga la mappa, mai le cartelle»*, e gli orfani per l'agente *«non esistono»* | **cambia** le risposte 4 e 10: un file fuori dai router si trova lo stesso, con un costo in più |
+| il **riconciliatore** corregge i router da solo, senza modello | la §1.4 del 2026-09-04: un sensore trova il puntatore rotto, l'anello **propone**, il proprietario approva | **cambia** per i due casi meccanici — cancellato, spostato con lo stesso hash — e resta deterministico, quindi fuori dal divieto di ADR-0020. Chiude K18 nel principio; apre K24 e K25 |
+| un file nuovo entra nei router solo se **promosso** | la §4.1: gli orfani mostrati nel pannello | coerente |
+| la **UI**: grafo o griglia per cartella e per area, ricerca, anteprima, e tutte le CRUD **senza passare dall'agente** | la §4.3 del 2026-09-04; ADR-0038, un registro e molti invocatori | **allarga** il pannello. «Senza l'agente» vuol dire senza il **modello**: il click invoca la stessa funzione del registro, e il core la esegue, la giornala e ne controlla il permesso |
+| le **esclusioni** in stile `.gitignore` alla root, per l'indice **e** per ciò che l'agente legge | la decisione 13 del 2026-09-04, *«privato ma non segreto»*, aperta; K11 e K21 | chiude la 13 nel principio; apre K26 e K27 |
+| il **confinamento**: l'agente scrive solo dentro la root, niente `..` né collegamenti simbolici fuori | ADR-0024, l'ambito; K13 e K14 | chiude K14; K13 a metà, perché dice *scrive* e non *legge* — K28 |
+| le **scritture concorrenti**: prima di scrivere si controlla che il file non sia cambiato | K10 | chiude K10 |
+| il **setup** in due fasi, idempotente, coi soli percorsi relativi | la guida ARMS, il livello dei router | nuovo: è la capacità, il 6 |
+| la decisione aperta 1: **dove vivono** indici e router | ADR-0022; K30, K31, K32 | **D4** |
+| la decisione aperta 2: le **aree** proposte dall'agente e confermate dal proprietario | la risposta 10 del 2026-09-04 | coerente: la sua proposta si accoglie com'è |
+| la decisione aperta 3: la **cancellazione** dell'agente, morbida e con conferma | ADR-0024, la copia prima; ADR-0016, le scritture che chiedono | coerente, e la copia del kernel è una rete in più: la sua proposta si accoglie com'è |
+| la decisione aperta 4: i **link markdown** come archi del grafo | la §4.2 del 2026-09-04, le frecce della mappa | **D8** |
+
+## Lo stato dei buchi dopo il documento
+
+| # | Stato |
+|---|---|
+| K1 | **aperto**: dove vivono la configurazione che porta la root e gli altri dati del programma — con D4 |
+| K2 | **chiuso**: la root arriva dalla configurazione |
+| K3 | **chiuso per la knowledge base**: le repo possono stare dentro la root, e il rumore lo toglie il file delle esclusioni; resta il confine, K28 |
+| K4 | **chiuso**: i file delle run stanno dentro la root, perché l'agente scrive solo lì; resta la visibilità dei file pesanti, K27 |
+| K5 | **chiuso**: una knowledge base per installazione, niente sync |
+| K6 | **a metà**: chi scrive da fuori è coperto dai due attori; restano i file «solo online», K34 |
+| K7 | **chiuso**: due attori, e il riallineamento |
+| K8 · K9 | **chiusi nel principio**: il sorvegliante più la scansione; al 13 resta l'evento «riscansiona» |
+| K10 | **chiuso**: il controllo prima di scrivere |
+| K11 | **a metà**: il privato si esclude; un segreto in una nota **non** esclusa resta — il sensore sulle scritture, al 6 |
+| K12 | **aperto**, registrato: al 4 |
+| K13 | **a metà**: lo scrivere è confinato, il leggere no — K28 |
+| K14 | **chiuso**: niente collegamenti simbolici fuori |
+| K15 | **aperto**: D9 |
+| K16 | **aperto**: D10 |
+| K17 | **a metà**: la cancellazione dell'agente è morbida; «dimentica davvero» resta registrato |
+| K18 | **chiuso nel principio**: l'hash; i suoi casi limite sono K24 e K25 |
+| K19 | **a metà**: i percorsi relativi alla root; maiuscole e nomi riservati restano, alla porta vera |
+| K20 | **chiuso**: dentro la root i file li porta il proprietario da fuori, e l'agente fuori non arriva |
+| K21 | **a metà**: i file pesanti fuori dall'indice; la copia costa solo sui file che l'agente tocca; il limite di ADR-0024 resta da fissare |
+| K22 | **a metà**: il costo in token dipende dal percorso, non dalla dimensione; il grafo coi molti nodi resta al 6 |
+| K23 | **aperto**, registrato |
+
+### I casi limite nuovi, aperti dal documento
+
+| # | Il caso | Specie | 13? | Chi lo chiude, proposto |
+|---|---|---|---|---|
+| **K24** | **spostato e modificato insieme** — o salvato da un editor come file nuovo: l'hash cambia, il riconciliatore vede «cancellato» più «nuovo», toglie la voce, e un file chiave esce dalla mappa senza che nessuno lo sappia | D | — | **D6** |
+| **K25** | **due file identici**: lo stesso hash in due posti, e lo spostamento diventa ambiguo | D | — | **D6** |
+| **K26** | **chi scrive il file delle esclusioni**: se l'agente può toglierne una riga, un file malevolo che l'agente ha letto può convincerlo a scoprire il privato e poi leggerlo — *«un'istruzione trovata nei dati non è mai un'autorizzazione»*, ADR-0014 | D | — | **D5** |
+| **K27** | **escluso non vuol dire invisibile**: i «media pesanti» esclusi sparirebbero dal grafo, mentre la rete della Home deve mostrare anche gli asset 3D — decisione 1 della stella polare | V + D | — | **D5** |
+| **K28** | **la root è il confine di tutto l'assistente, o solo della knowledge base?** Il coding lavora su repo: dentro la root, o anche fuori con ambiti suoi (ADR-0024) e permessi suoi (ADR-0016)? E il documento confina lo **scrivere**, non il **leggere** | D | ✅ gli ambiti che il piano 0 usa come chiave | **D3** |
+| **K29** | **una root enorme** — «tutto quello che ho sul PC»: la prima scansione è lunga, e le build nelle repo inondano il sorvegliante. Serve una scansione incrementale — dimensione e data, l'hash solo se cambiano — e lo stato *«indicizzazione in corso»* dichiarato prima, come vuole ADR-0019 | D | ✅ l'evento «riscansiona» | registrato: il 6, e il 13 per l'evento |
+| **K30** | **su Windows il punto nel nome non nasconde una cartella**: `.git` è nascosta perché git le mette l'attributo H, `.github` e `.superpowers` no. La cartella `.<nomeapp>/` va marcata nascosta dal modulo di piattaforma | V: `cmd //c "attrib .git"` e `cmd //c "attrib .github"` nella radice di questo repository | — | **D4** |
+| **K31** | **il backup**: se la root è il PC intero, il programma non può salvarla tutta, mentre ADR-0022 metteva la cartella della knowledge base nel suo backup. Il programma salva ciò che è **suo** — i router —, e il resto è dei backup del proprietario | V + D | — | **D4**, poi l'11 |
+| **K32** | **i router non si ricostruiscono**: portano le scelte del proprietario — le aree, i file chiave, la riga di descrizione. Rifarli è rifare il setup guidato, coi suoi token e le sue domande | D | — | **D4** |
+| **K33** | **l'agente che scrive senza chiedere**: col preset di default di ADR-0016 ogni scrittura chiede conferma, mentre il documento vuole i router aggiornati nello stesso turno | V: ADR-0016, punto 2 | — | **D7** |
+| **K34** | **i file «solo online» di OneDrive** dentro la root: leggerli scarica il file, o fallisce senza rete | F | — | registrato: il 6, alla fonte |
+
 ## Le domande, una per volta
 
-L'ordine va dalla forma ai dettagli: le prime tre dicono **dove**, le altre **chi e quando**. Ogni domanda si pone **sola**,
-col contesto, A/B, i cinque criteri e il consiglio; la risposta va nella tabella *«Le risposte del proprietario»*, e si committa.
+Ogni domanda si pone **sola**, col contesto, A/B, i cinque criteri e il consiglio; la risposta va nella tabella *«Le risposte
+del proprietario»*, e si committa. ⚠️ **L'elenco è stato rifatto il 2026-09-28** dopo il documento del proprietario, che
+risponde a D1 e a buona parte delle domande di prima; l'elenco di prima sta nel commit `e714720`.
 
 | # | Domanda | Chiude |
 |---|---|---|
-| **D1** | la forma: **tre posti** — i dati del programma, la knowledge base, le repo dove stanno — o **un posto solo** con tutto dentro? | K3, K4, K13, e metà di K1 e K2 |
-| **D2** | **una macchina o più**: se la knowledge base deve seguire il proprietario, e come | K5, K6 |
-| **D3** | **dove**, in concreto, stanno i dati del programma e la cartella della knowledge base, su Windows e poi su Linux | K1, K2, K6 |
-| **D4** | **i cambi che il programma non vede** — a programma spento, fatti da altri, eventi persi: il confronto delle impronte all'avvio, e quando il sorvegliante perde il filo | K7, K8, K9 |
-| **D5** | **i file-guida delle repo**: mai iniettati da soli; guida solo se importati e approvati | K15, con AUD-004 |
-| **D6** | **la proiezione quando il modello cambia** per un fallback | K16 |
-| **D7** | **due scritture sullo stesso file**: la regola della versione letta | K10 |
-| — | il resto — K11, K12, K14, K17–K23 — si **registra** col suo chiusore, senza domanda, salvo che il proprietario la chieda | |
+| **D1** | la forma: tre posti o uno solo | ⛔ **respinta**: la risposta è il documento del proprietario |
+| **D2** | **lo storico**: il giornale e la copia valgono solo per le azioni dell'agente? | la riga *«niente storico»* del confronto |
+| **D3** | **il confine**: la root vale per tutto l'assistente, anche per leggere? | K28, K13 |
+| **D4** | **dove vivono** indici e router — la decisione aperta 1 del proprietario — e i dati del programma | K1, K30, K31, K32 |
+| **D5** | **le esclusioni**: quante specie, e chi scrive il file delle regole | K26, K27 |
+| **D6** | **il file chiave che il riconciliatore non ritrova** | K24, K25 |
+| **D7** | **l'agente che scrive senza chiedere** | K33 |
+| **D8** | **i link markdown come archi** — la decisione aperta 4 del proprietario | — |
+| **D9** | **i file-guida delle repo**: mai iniettati da soli; guida solo se importati e approvati | K15, con AUD-004 |
+| **D10** | **la proiezione quando il modello cambia** per un fallback | K16 |
+| — | registrati col chiusore, senza domanda salvo che il proprietario la chieda: K11, K12, K17, K19, K21, K22, K23, K29, K34 | |
 
 ### D1, posta il 2026-09-28
+
+⛔ **Respinta dal proprietario lo stesso giorno**, con la risposta nel suo documento. Resta qui com'era posta, perché la
+tabella delle risposte la nomina.
 
 **Che cos'è, a parole semplici.** Oggi non è deciso dove stanno i file. Il programma scrive i suoi dati nella cartella da cui
 parte, e le repo dei progetti non sono mai state discusse. Il 4 settembre la risposta 1 diceva *«Progetti, note, tutto
@@ -143,11 +341,45 @@ strumenti — git, un editor, Claude Code —, come fa su questo repository.
 
 **Il consiglio: A.** È l'unica forma in cui la decisione 3 resta vera, e riusa ciò che è già deciso invece di aggiungere regole.
 
+### D2, posta il 2026-09-28
+
+**Che cos'è, a parole semplici.** Il documento dice *«non serve uno storico»*. Oggi il kernel ne tiene già uno, ma **solo di
+ciò che fa l'agente**: prima di ogni azione ne scrive l'intenzione e dopo l'esito, nel giornale (ADR-0007) — è ciò che fa
+ripartire il programma dopo un crash, costruito dal sotto-progetto 1 —; e prima che l'agente cambi un file dentro un ambito,
+ne tiene una **copia** (ADR-0024). I cambi del proprietario da fuori non li traccia nessuno.
+
+| | **A — giornale e copia restano, solo per l'agente** | **B — niente copia nella knowledge base** |
+|---|---|---|
+| com'è | nessuno storico dei cambi del proprietario, nessun versioning, nessun sync; per le azioni dell'agente il giornale e la copia già decisi, e un suo errore si annulla | come A, ma l'agente cambia e cancella i file senza copia |
+| costo | lo spazio delle copie dei soli file che l'agente tocca — non della root, anche se la root è il PC intero —, potate con la logica di ADR-0018 | un ADR nuovo che superi ADR-0024 per questo caso; un errore dell'agente che sovrascrive o cancella è perso |
+| che cosa si rifà dopo | niente | rimettere la copia vorrebbe dire costruire il pezzo che oggi è già deciso |
+
+⛔ **Il giornale resta in ogni caso**: senza, il programma non riparte dopo un crash, e ADR-0007 sta fra le decisioni che la
+§7 del compendio dice non rilitigabili senza un ADR nuovo. La domanda riguarda solo la **copia**.
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | ADR-0007 e ADR-0024 letti; il giornale esiste nel codice, `FileJournal` in `crates/platform/src/journal.rs` | toglie una difesa decisa |
+| coerenza | nessun ADR cambia; la rete che il documento chiede per la cancellazione copre ogni modifica dell'agente | un ambito senza copia, diverso da tutti gli altri |
+| debito | nessuno | un buco che si scopre al primo errore dell'agente |
+| stato dell'arte | non serve: sono decisioni del repository | idem |
+| proporzione | la copia costa solo dove l'agente scrive | risparmia poco spazio |
+| di chi è | **del proprietario** | idem |
+
+**Verificato, dedotto, assunto.** **Verificati**: ADR-0007 e ADR-0024, e il giornale nel codice. **Dedotto**: che *«niente
+storico»* nel documento parli dei cambi del proprietario e non delle azioni dell'agente — per questo è una domanda e non una
+correzione.
+
+**Il consiglio: A.** *«Niente storico»* resta vero per i file del proprietario; per l'agente c'è l'annulla.
+
 ## Le risposte del proprietario
 
 | # | Risposta | Data |
 |---|---|---|
-| D1 | ⏳ posta, in attesa | 2026-09-28 |
+| D1 | ⛔ **respinta**: il proprietario risponde col suo documento, riportato nella sezione *«Il documento del proprietario»*; le sue decisioni aperte 2 e 3 si accolgono come le propone | 2026-09-28 |
+| D2 | ⏳ posta, in attesa | 2026-09-28 |
 
 ## Come si riprende — scritto all'apertura del brainstorming, il 2026-09-28
 
@@ -159,6 +391,7 @@ strumenti — git, un editor, Claude Code —, come fa su questo repository.
 | codice di prodotto | **non toccato**: `git diff --stat f830cb9..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
 | cancello | `bash scripts/gate.sh` → `GATE GREEN` e `bash scripts/check-docs.sh` → `OK`, all'apertura sull'albero di `f830cb9` e di nuovo prima del commit di questo file: si rilanciano, non si citano |
 | il puntatore | la §6 del compendio: la revisione **prima** del 13 e dei modelli decisionali |
+| la guida ARMS | **non** è nel repository: il riassunto sta nella sezione *«La fonte del documento»*, la provenienza in [`riferimenti.md`](../../riferimenti.md) |
 
 **Il compito della sessione che riprende:**
 

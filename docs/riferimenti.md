@@ -2902,6 +2902,16 @@ alla fonte prima di entrare in un disegno.
 | Convai Innovations, la scheda del modello Laya, `https://huggingface.co/convaiinnovations/laya` | 2026-09-28 | i tre punti di Laya, le domande, la taratura, i limiti dichiarati |
 | Rizzo AI Academy, il README di rizzo-flow, `https://github.com/Rizzo-AI-Academy/rizzo-flow` | 2026-09-28 | la passata unica sulle lettere di risposta, i modelli, la memoria misurata, i limiti dichiarati |
 
+## La revisione della knowledge base — la fonte del proprietario, 2026-09-28
+
+La fonte che il proprietario ha indicato col suo documento per la [revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md):
+il merito lì, qui la provenienza. ⚠️ **È una guida di pratica, non una norma né una documentazione di prodotto**: dice come
+un autore organizza il lavoro con un agente, e vale come **origine dell'idea**, non come prova.
+
+| Fonte | Letta | Per |
+|---|---|---|
+| RoboNuggets, *Build your Agentic OS — the ARMS setup*, PDF fornito dal proprietario, `C:\Users\zagor\Desktop\ARMS-Agentic-OS-Guide.pdf`, fuori dal repository; testo estratto con `pdftotext -layout` | 2026-09-28 | la sezione *Memory*, pagine 6 e 7: la cartella, i router — un router master che nomina le aree e punta ciascuna al suo indice, un indice per area coi file chiave su una riga — e il *visual second brain*; il criterio «al primo salto» |
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

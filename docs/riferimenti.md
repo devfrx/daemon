@@ -2849,7 +2849,8 @@ script stavano nello scratchpad.
 ## Il design system della GUI — il piano e la sua esecuzione, 2026-09-28
 
 Le fonti che la **scrittura** del [piano](superpowers/plans/2026-09-23-design-system.md) e la sua **revisione** hanno letto, il
-2026-09-23 e il 2026-09-24, e le misure della sua **esecuzione**, coi comandi. Il fatto intero sta nella riga del piano che la
+2026-09-23 e il 2026-09-24, quelle che le voci d'errata dell'**esecuzione** hanno letto fino al 2026-09-27, e le misure
+dell'esecuzione, coi comandi. Il fatto intero sta nella riga del piano che la
 tabella nomina: qui la provenienza, lì il merito — una casa ciascuno.
 
 ### Le fonti

@@ -277,6 +277,16 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | **E108** | Minore — **Compito 8, Passo 2 — l'oracolo `computed` rispondeva per un token che la pagina non ha:** `computed("color", "--color-txet")` rendeva il colore del `body`, `computed("border-top-left-radius", "--radius-crad")` `0px`, `computed("background-color", "--color-bg-srface")` `rgba(0, 0, 0, 0)` — proprio ciò che una prova *«non dipinge nulla»* attende —, e **E92** l'ha portato da aiutante locale a interfaccia di tre file. Trovata dalla revisione del compito 8 (M-4). ✅ **Decisa dal coordinatore**: `computed` chiama prima `readToken(token)`, che lancia sul token che manca — la regola di `readToken` (**E73**) —, col perché nel commento. ⚠️ **Il nome resta `computed`**, dichiarato: lo scontro con quello di Vue fallisce forte, al caricamento (`Identifier 'computed' has already been declared`), e si risolve con un alias dove capita; rinominarlo toccherebbe tre file di prova per un caso che nessun file ha oggi. ✅ **Curata** nel commit che scrive questa riga: una prova nuova in `probes.browser.test.ts`, un token inesistente lancia e uno definito si calcola; rossa sul codice di prima, `expected [Function] to throw an error`, verde con la guardia, e di nuovo rossa senza. Nel testo la guardia sta dentro la sostituzione di `probes.ts` del Passo 2, con l'import in testa, e la prova nuova nel Passo 2: nella sequenza del piano la prova nasce verde, e il suo rosso è questo. Misurato il 2026-09-27, macchina `Jays`. Una riga nel Passo 9 |
 | **E109** | Nit — **Compito 8, Passi 2 e 5 — quattro commenti che il compito lasciava a metà** (gotcha **#58**): la testa di `testing/probes.ts` diceva che ogni funzione viene da una tavola e rende quanto ha guardato, e `computed` no; `testing/axe.ts` nominava le sole sonde della pagina kit fra chi accende il contrasto, e dal compito 8 lo accende anche la prova della Panoramica; `frame.browser.test.ts` diceva che il compito 8 aggiunge la striscia e la Panoramica, e aggiunge anche la barra, il cassetto dalla tastiera, la fascia `stop` e l'anello; `Overview.vue` diceva che prima della risposta il negozio non tiene un pacchetto, e un `settle` del dock prima del benvenuto ne costruisce uno (**E40**). Trovata dalla revisione del compito 8 (N-1). ✅ **Curata** nel commit che scrive questa riga: le quattro frasi senza conto né elenco chiuso, come la revisione propone — *«the probes, and the oracles they share»*, *«the probes in the real browser turn it ON»*, *«task 8 extends it»*, *«no package of the core's»* —; nessuna prova cambia |
 | **E110** | Nit, d'aspetto — **Compito 8, Passo 10 — «Salva questa vista» non è la carta della tavola:** da sola sulla sua riga è una carta piena alta 42 px con le parole in alto a sinistra, e accanto a una vista col nome si allunga all'altezza di una carta con la miniatura, vuota; la tavola della Panoramica la disegna al centro, tratteggiata, alta almeno 108 px (`.ov-card.add`). È la variante `card` del kit (**P-9**), non un errore del compito. Vista dalla revisione del compito 8 (N-2), nelle schermate dei due temi. ✅ **Decisa dal coordinatore: nessuna cura** — la forma la giudica il proprietario al Passo 10 (controllo 15); se vuole la tavola, la misura che la revisione proporrebbe è `align-self: start` sulla carta e il tratteggio al centro, da misurare ✅ **RICHIAMO DEL 2026-09-27 — il Passo 10:** detta al proprietario prima dello sguardo, che non l'ha commentata: la carta resta la variante `card` del kit |
+| **E111** | Nit — **Definizione di «fatto», blocco 3, riga *«6, 18»* — il `grep` contava anche i tre *cast* di `unpack`:** `grep -cE '(theme\|named\|openNamed)\?:' gui/src/stores/layout.ts` attendeva **3**, i campi facoltativi di `LayoutPack` (**D2**, **D3**), e rende **6**: prende anche `{ theme?: unknown }`, `{ named?: unknown }` e `{ openNamed?: unknown }` dentro `unpack`, il primo dal compito 1 e gli altri due dal 7. Misurato il 2026-09-28 dal pre-controllo del compito 9 su `f35d3c2`, macchina `zagor`, eseguendo la Definizione blocco per blocco sull'albero. ✅ **Corretta** nel commit che la scrive: il comando guarda le sole dichiarazioni del tipo, `grep -cE '^  (theme\|named\|openNamed)\?: '` → **3**, misurato |
+| **E112** | ⚠️ **Definizione di «fatto», blocco 4 — il perimetro non conosceva la cartella del dispaccio:** la regola voleva ogni nome di `git diff --name-only "$B"..HEAD` *«in una lista Files dei compiti 1–9, o in una voce d'errata»*, e dei **141** nomi a `f35d3c2` **58** non stanno in nessuna delle due: sono i prompt, gli script, i rapporti e le revisioni di `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`, la cartella tracciata della regola 8 di *«Come si esegue un compito»*, voluta dal proprietario il 2026-09-24; gli altri **83** hanno ciascuno il proprio percorso in una lista *Files*. Misurato il 2026-09-28 dal pre-controllo del compito 9, con uno script che cerca ogni nome fra i percorsi delle liste *Files* e dell'errata. Chi esegue avrebbe aperto una voce per cinquantotto nomi che una casa ce l'hanno. ✅ **Corretta** nel commit che la scrive: il blocco 4 nomina la terza casa, la cartella del dispaccio, nel commento del comando e nel ⚠️ sotto |
+| **E113** | Nit — **Compito 9, Passo 10 — la riga N-2 di E187 della (e) riceveva i numeri e non la divergenza:** la (e) dice che il design system *«non la peggiora»*, dedotto dalle icone e dai caratteri, e il pezzo JavaScript va da `663.26 kB` a `698.20 kB` — il valore di prima dal Passo 8, quello di dopo dal cancello d'apertura a `f35d3c2` —; il piano lo sa, nelle voci che sa e non chiude (R3-25 della revisione). Il testo dettato scriveva solo i due numeri, e `CLAUDE.md` vuole che dove una misura diverge da ciò che era scritto **si registri la divergenza**, invece di allinearsi. Trovata dal pre-controllo il 2026-09-28. ✅ **Corretta** nel commit che la scrive: il testo del Passo 10 dice che la deduzione non regge |
+| **E114** | Nit — **Compito 9, Passo 10 — il richiamo della stella polare diceva meno di ciò che i compiti 2 e 4 hanno fatto a `scripts/gate-gui.sh`:** *«il commento del passo delle prove e la pagina kit fuori dal pacchetto»*, mentre il compito 2 ha diviso `npm test` in due corse, un progetto alla volta (**E10**), e la cura del 4 vuota `dist/` prima del *build* (**E31**) — `git diff d10d9a5..HEAD -- scripts/gate-gui.sh`, letto il 2026-09-28. **E10** corresse la riga `gui: probes` del Passo 7, non questa: la riga 5 delle regole di `CLAUDE.md`, un compito scritto prima si legge contro il codice di adesso. ✅ **Corretta** nel commit che la scrive: il richiamo nomina le due corse ed **E31**; la sua sonda non cambia |
+| **E115** | Nit — **Compito 9, Passo 12 — la colonna Commit della riga 8 c'è già:** l'ha scritta la chiusura del compito 8, `f35d3c2` — `ac56b11`, con le cure `77c4062` e `7f04cdf` (**E101**) —, e il passo la faceva scrivere *«con l'hash del compito 8»*: riscriverla perderebbe le cure. La specie di **E79**, la quarta domanda del pre-controllo. Trovata il 2026-09-28. ✅ **Corretta** nel commit che la scrive: il passo dice che la riga 8 porta già la colonna, e che non si tocca |
+| **E116** | ⚠️ **Compito 9, Passo 9 — le consegne promettono alla chiusura ciò che il passo non leggeva:** ogni tabella *«Ciò che questa sessione ha imparato, e che non era scritto»* delle consegne di questo piano dice *«le raccoglie la chiusura del sotto-progetto»* — misurato il 2026-09-28, ventuno sezioni in `docs/archivio/consegna-piano-design-system.md` e una nel *«Come si riprende»* del piano, **102** righe e ~31 kB —, e il Passo 9 rileggeva la sola errata. La promessa nasce con `b66aee8`, la chiusura del compito 1, dopo la scrittura di questo compito: il contratto è cresciuto sotto il piano, la riga 5 delle regole di `CLAUDE.md`. E *«Manutenzione della documentazione»* di `CLAUDE.md` vuole, alla chiusura di un sotto-progetto, anche *«questo file se cambia il modo di lavorare»*, che il compito non nominava. ✅ **Decisa dal coordinatore** con `anthropic-skills:decision-principles` — reversibile, solo documenti, la regola del passo e quella di `CLAUDE.md` — e **corretta** nel commit che la scrive: il Passo 9 rilegge l'errata **e** quelle tabelle, che un comando elenca; una voce che è una trappola per chi viene dopo diventa un gotcha, con la regola di prima; una che cambierebbe il **modo di lavorare** va nel *«Come si riprende»* della chiusura come **proposta al proprietario**, perché `CLAUDE.md` è suo; le altre restano verbali delle loro consegne. Scartato lasciar cadere la promessa: le consegne direbbero il falso, e nessuno lo saprebbe. Il costo: una lettura di ~31 kB in più per chi esegue |
+| **E117** | Nit — **Compito 9, Passi 6 e 12 — nessuna sonda diceva che un testo archiviato è parola per parola:** le sonde del Passo 6 contano il titolo nell'archivio e il puntatore nel compendio, e `check-docs.sh` controlla che un rimando porti a un file che c'è: un rimando riscritto male ci passa. Misurato il 2026-09-28 dal pre-controllo, col compito rifatto da uno script del coordinatore su un `git worktree` di `f35d3c2`: la sua prima riscrittura **perdeva la `)` di chiusura** di ogni rimando, e `check-docs.sh` usciva `OK — no inconsistencies.` sull'archivio sbagliato. ✅ **Corretta** nel commit che la scrive: `word_for_word.py`, un aiutante dello scratchpad dettato nel Passo 6, toglie la destinazione di ogni rimando, `](…)` → `]()`, dalle due parti, e cerca i testi di prima nell'archivio, in ordine — provato il 2026-09-28 in tre direzioni: **0** sull'archivio giusto, **1** con una `)` persa, **1** coi due testi in ordine rovesciato; e lo stesso aiutante nel Passo 12, per la consegna che va in archivio |
+| **E118** | ⚠️ **L'assunzione della barra di scorrimento, misurata al pre-controllo del compito 9 — la A del proprietario, il 2026-09-28:** la riga del [disegno](../specs/2026-09-22-design-system-design.md), *«la barra di scorrimento regge con la preferenza di Windows che tiene sempre visibili le barre … e sotto i colori forzati»*, era rimasta senza un compito che la misurasse (la chiusura del 6bis). **I colori forzati**, emulati nel Chrome installato, 154.0.8037.58, con `commands.emulateMedia({ forcedColors: "active" })`, in una prova usa-e-getta del progetto `browser` su un `git worktree` di `f35d3c2` nello `%TEMP%`, macchina `zagor`, nei due temi, su una scatola che scorre nei due versi: la barra resta di **10** px, `offsetWidth − clientWidth` e `offsetHeight − clientHeight`, come senza emulazione; e il cursore si disegna coi colori di sistema, un contorno, **visibile anche senza il puntatore** — le foto della scatola a riposo e sotto il puntatore, nello scratchpad. Regge: sotto l'alto contrasto il cursore non si nasconde. **La preferenza di Windows**, *«Mostra sempre le barre di scorrimento»*, accesa dal proprietario, nel suo Chrome, su una pagina di prova coi token servita da Vite sulla copia: *«su 5199 non le vedo finche non passo il mouse, sul file aperto dalla dir invece le vedo sempre»* — aperta come file la pagina non carica `/src/tokens/index.ts`, dedotto, e mostra le barre di Chrome. La preferenza **non arriva** alla pagina: con la nostra regola il cursore resta nascosto finché il puntatore non entra. È il costo della **C**, dichiarato in **E59** e ora misurato; la cura sarebbe la **B**, la barra sempre visibile, scartata dal proprietario il 2026-09-26 — **registrata, non presa**. ⚠️ Nessuna prova del cancello tiene la barra sotto i colori forzati: la misura è di questo giorno, **registrata, non presa**. Il richiamo datato nella riga dell'assunzione del disegno, nel commit che scrive questa voce; la misura in una riga del Passo 8 del compito 9 |
+| **E119** | Nit — **Compito 9, Passi 4, 7 e 10 — *«prima del `\|` finale»* non diceva dove va lo spazio:** ogni testo che il compito appende a una cella comincia con uno spazio, e la riga finisce con ` \|`; messo davanti alla sola barra lascia due spazi prima e nessuno dopo. La forma delle celle del repository è ` <testo> \|` — quella di `append_cell.py` nelle voci d'errata, e dei richiami nella riga della stella polare che il Passo 10 tocca. Trovata il 2026-09-28 dal pre-controllo, scrivendo `compare_task9.py`, che ricostruisce le righe dal testo del piano. ✅ **Corretta** nel commit che la scrive: le cinque frasi dicono *«prima di ` \|` che chiude la riga»* |
+| **E120** | ⚠️ **Compito 9, Passi 11–13 — chi scrive il piano, la specie di E35, E69 ed E101:** i Passi 11 e 12 scrivono il piano — le uscite della Definizione di «fatto», la testa *«IL PIANO È ESEGUITO»*, la riga 9 a `✅`, il *«Come si riprende»* con la chiusura, e la consegna di prima in archivio — nel commit dell'implementatore, che committa **prima** della revisione; e la chiusura della sessione riscrive lo stesso *«Come si riprende»*: due scrittori per una sezione, e fra i due commit il piano direbbe eseguito un compito non ancora rivisto. E il Passo 13 finiva con `git push`, che nel contratto del dispaccio è del coordinatore. Trovata dal pre-controllo il 2026-09-28, scrivendo il dispaccio. ✅ **Decisa dal coordinatore** con `anthropic-skills:decision-principles`, la forma di **E101**, reversibile e fuori dal merito, e **corretta** nel commit che la scrive: l'implementatore fa i Passi 1–10, **esegue** la Definizione di «fatto» e ne riporta le uscite nel **rapporto**, e fa il commit del Passo 13 **senza** il piano né l'archivio delle consegne; i Passi 11 e 12 li fa il coordinatore nella chiusura, dopo la revisione e le sue cure, sull'albero che resta — le uscite si rilanciano lì —; il push è suo. `compare_task9.py` lo tiene: senza `--closure` un commit che tocca il piano o quell'archivio è `UNEXPECTED` |
 
 ---
 
@@ -11503,8 +11513,10 @@ i suoi Passi 1–11, e le voci **E216**…**E224** della sua errata, che sono ci
 - Modify: `docs/superpowers/specs/2026-09-07-direzione-gui-design.md` — la riga *«codice e spec non toccati»* della tabella dello
   stato, col richiamo (P-28)
 - Modify: `docs/superpowers/plans/2026-09-23-design-system.md` — la Definizione di «fatto» con le uscite del giorno, la testa
-  *«A che punto è»*, le righe **8** e **9** della posizione, *«Come si riprende»*
-- Modify: `docs/archivio/consegna-piano-design-system.md` — la chiusura precedente di questo piano, parola per parola
+  *«A che punto è»*, la riga **9** della posizione — la **8** porta già la colonna Commit (**E115**) —, *«Come si riprende»*:
+  ⛔ **nella chiusura, dal coordinatore** (**E120**)
+- Modify: `docs/archivio/consegna-piano-design-system.md` — la chiusura precedente di questo piano, parola per parola:
+  ⛔ **nella chiusura, dal coordinatore** (**E120**)
 - ⛔ **NON si tocca il codice** — `crates/`, `gui/`, `scripts/`, `.github/` —, nessun ADR, la §5 del compendio, la spec del
   sotto-progetto 1, e **nessun piano eseguito**: né `E187` né `E235` del piano della parte 2, che sono verbali — se un verbale
   che afferma il falso vada corretto è la voce **X-4** dell'audit, del proprietario
@@ -11513,7 +11525,7 @@ i suoi Passi 1–11, e le voci **E216**…**E224** della sua errata, che sono ci
 - Read: la **§12** e la **§13** del compendio; il riquadro in testa a `tracciabilita.md`; la sezione *«IL PASSO WEB E LE SONDE
   DELLA PARTE 2»* di `porta-di-qualita.md`, che è il modello della sezione nuova; la (e), la (f) e la tabella dei controlli del
   disegno; l'**errata** di questo piano per intero; le celle **Stato** della tabella della posizione — la **5** porta il verbale
-  dell'Assistente vocale
+  dell'Assistente vocale; le tabelle *«Ciò che questa sessione ha imparato»* delle consegne (**E116**)
 - ⛔ **NON si leggono** i compiti 1–8 per intero: di ciascuno servono il passo del cancello e le prove che nomina, che la
   Definizione di «fatto» qui sotto già raccoglie
 
@@ -11634,7 +11646,7 @@ Sonde: `grep -c '^| 14 | \*\*Design system\*\*' docs/roadmap.md` → **1**; `gre
 La riga del disegno nella tabella «Specifiche», riscritta nel commit che ha scritto questo compito (**D19**), riceve il numero
 e l'esecuzione. *Trova* la riga che comincia con `| [Design system — il disegno]`, **intera, presa dal file** — e nella
 seconda colonna `il design system della GUI` diventa `il design system della GUI, il sotto-progetto 14`; in coda alla terza,
-prima del `|` finale:
+prima di ` |` che chiude la riga:
 
 ```markdown
  ✅ **RICHIAMO DEL <data>:** il piano è **eseguito** — la Definizione di «fatto» del [piano](superpowers/plans/2026-09-23-design-system.md), coi comandi
@@ -11714,6 +11726,57 @@ I link si riscrivono in Python, uno per uno e contati: `](superpowers/` → `](.
 → **1**, con la data vera; `grep -c 'IN DUE TEMPI' docs/COMPENDIO.md` → **0**; `grep -c '^⏭️ \*\*IL PROSSIMO PASSO: IL
 SOTTO-PROGETTO 13' docs/COMPENDIO.md` → **1**; e il margine, di nuovo, coi due comandi del Passo 5.
 
+⛔ **E parola per parola** (**E117**): una riscrittura che perde la `)` di un rimando passa ogni sonda qui sopra, e anche
+`check-docs.sh`. L'aiutante vive nello scratchpad, come `replace_unique.py`:
+
+```python
+"""word_for_word.py -- is a text archived word for word, but for its link targets? (design system, task 9: E117)
+
+Usage: python word_for_word.py <archive.md> <original.txt> [<original.txt> ...]
+
+Each <original.txt> holds a text as it was (UTF-8, any line ending). The link TARGETS are stripped on both sides,
+`](...)` -> `]()`, and every original must be found in the archive, in the order given: a rewrite that changed
+anything but a target -- a lost `)`, a word, a line -- is not found. Exits 1 when one is not. The paths come in as
+ARGUMENTS, so Git Bash turns `/c/...` into `C:/...` for Python (P-30).
+"""
+import io
+import re
+import sys
+
+if len(sys.argv) < 3:
+    sys.exit("usage: python word_for_word.py <archive.md> <original.txt> [<original.txt> ...]")
+
+
+def read(path):
+    return io.open(path, encoding="utf-8", newline="").read().replace("\r\n", "\n")
+
+
+def strip(text):
+    return re.sub(r"\]\([^)]*\)", "]()", text)
+
+
+archive = strip(read(sys.argv[1]))
+at = 0
+for path in sys.argv[2:]:
+    original = strip(read(path).strip("\n"))
+    if not original:
+        sys.exit(f"{path}: empty -- an empty original is found everywhere, and proves nothing")
+    found = archive.find(original, at)
+    if found < 0:
+        print(f"NOT FOUND: {path} -- the archived text differs from it")
+        sys.exit(1)
+    at = found + len(original)
+    print(f"word for word: {path}")
+sys.exit(0)
+```
+
+```bash
+python <scratchpad>/word_for_word.py docs/archivio/stato-storico.md <scratchpad>/old-h.txt <scratchpad>/old-6.txt; echo $?
+```
+
+Atteso: `word for word` per i due file, e **0**. Provato il 2026-09-28 dal pre-controllo in tre direzioni: **0** sull'archivio
+giusto, **1** con la `)` di un rimando persa, **1** coi due file in ordine rovesciato.
+
 - [ ] **Passo 7: `porta-di-qualita.md` — UNA sezione nuova, e la tabella dei passi a nove righe**
 
 **Uno — la sezione**, sul modello di *«IL PASSO WEB E LE SONDE DELLA PARTE 2»*: si inserisce **prima** della riga
@@ -11763,7 +11826,7 @@ e `| 7 |` della tabella che segue `**Un comando solo:**`, **prese dal file**, di
 
 ⚠️ La terza colonna delle righe che c'erano si **copia dal file**, non da qui, se è cambiata dopo la scrittura di questo passo.
 Poi la riga `⚠️ **[C-S0-1]**` sotto la tabella esce, con **una** delle due righe vuote che la circondano; e nella tabella
-*«Le contraddizioni registrate, e non risolte»*, in coda alla terza colonna della riga **C-S0-1**, prima del `|` finale:
+*«Le contraddizioni registrate, e non risolte»*, in coda alla terza colonna della riga **C-S0-1**, prima di ` |` che chiude la riga:
 
 ```markdown
  ✅ **Corretta il <data>** dal compito 9 del [piano del design system](superpowers/plans/2026-09-23-design-system.md), dove scrive il browser: la tabella ha i nove passi (P-29, D21)
@@ -11827,6 +11890,7 @@ tabella nomina: qui la provenienza, lì il merito — una casa ciascuno.
 |---|---|---|---|
 | il pezzo JavaScript della SPA, prima e dopo | `(cd gui && npm run build 2>&1 \| grep -E 'assets/index-.*\.js ')`, sul `main` di `B` — il blocco 1 della Definizione di «fatto» — e su `HEAD` | <i due valori del giorno> | N-2 di E187, del proprietario (R3-25) |
 | la suite, file per file, in cinque corse | la Definizione di «fatto» del piano, blocco 2 | lì, con la data | la stabilità, dopo P-19, P-20 e P-21 |
+| la barra di scorrimento sotto i colori forzati, e con la preferenza di Windows che tiene sempre visibili le barre | una prova usa-e-getta del progetto `browser` con `commands.emulateMedia({ forcedColors })`, nei due temi, e una pagina di prova coi token davanti al proprietario — **E118** del piano | 2026-09-28, al pre-controllo del compito 9: 10 px e il cursore visibile a riposo sotto i colori forzati; la preferenza di Windows non arriva alla pagina | l'assunzione della barra nel disegno |
 ```
 
 ⚠️ **Prima di scriverla, ogni riga si rilegge contro la riga del piano che nomina** — la P, la R del registro —: la fonte e la data
@@ -11838,15 +11902,21 @@ poi `git worktree remove` —, mai con un `checkout` sull'albero di lavoro.
 
 - [ ] **Passo 9: `HANDOFF.md` — soltanto un gotcha nuovo, se c'è**
 
-Si rilegge l'**errata** di questo piano: una voce che è una trappola **per chi viene dopo**, fuori da questo piano — non un
-difetto del suo testo —, diventa una riga nella sezione *«I gotcha»* di `docs/HANDOFF.md`, la sua **unica** casa, nella forma
-delle righe vicine, e la riga *«Aggiornato il»* in testa al file segue (finding AUD-039). ⛔ **Se non ce n'è nessuna, il file non si
-tocca**, e il commit lo dice. Il comando della §9 del compendio, prima e dopo: il numero sale di quante righe si sono scritte.
+Si rileggono l'**errata** di questo piano **e** ogni tabella *«Ciò che questa sessione ha imparato, e che non era scritto»*
+delle consegne, che promettono *«le raccoglie la chiusura del sotto-progetto»* (**E116**) — le elenca
+`grep -n '^📌 \*\*Ciò che questa sessione ha imparato' docs/archivio/consegna-piano-design-system.md docs/superpowers/plans/2026-09-23-design-system.md`,
+ancorato all'inizio della riga: la frase sta anche in questo passo e in **E116**.
+Una voce che è una trappola **per chi viene dopo**, fuori da questo piano — non un difetto del suo testo —, diventa una riga
+nella sezione *«I gotcha»* di `docs/HANDOFF.md`, la sua **unica** casa, nella forma delle righe vicine, e la riga *«Aggiornato
+il»* in testa al file segue (finding AUD-039). Una voce che cambierebbe il **modo di lavorare** non si scrive: va nel *«Come si
+riprende»* del Passo 12 come **proposta al proprietario**, perché `CLAUDE.md` è suo (*«Manutenzione della documentazione»*); le
+altre restano verbali delle loro consegne. ⛔ **Se non ce n'è nessuna, il file non si tocca**, e il commit lo dice. Il comando
+della §9 del compendio, prima e dopo: il numero sale di quante righe si sono scritte.
 
 - [ ] **Passo 10: il disegno e la stella polare — gli esiti e i richiami (P-28)**
 
 Nel [disegno](../specs/2026-09-22-design-system-design.md), la tabella della (e): in coda alla colonna *«Chi la chiude»* di tre
-righe, prima del `|` finale, l'esito — **letto**, non dedotto; la quarta, **E228**, resta del proprietario e non si tocca.
+righe, prima di ` |` che chiude la riga, l'esito — **letto**, non dedotto; la quarta, **E228**, resta del proprietario e non si tocca.
 
 La riga **N-2 di E235** — l'esito lo dà il Passo 2:
 
@@ -11870,21 +11940,21 @@ e se uno non si è sentito, con la voce d'errata che il passo 8 del compito 5 ha
 La riga **N-2 di E187** — i due valori li dà il Passo 8:
 
 ```markdown
- 📌 **Misurato il <data>**: il pezzo JavaScript da <prima> a <dopo> kB — [`riferimenti.md`](../../riferimenti.md), la sezione del piano; resta del proprietario
+ 📌 **Misurato il <data>**: il pezzo JavaScript da <prima> a <dopo> kB — la deduzione qui a fianco, *«non la peggiora»*, **non regge**, e la misura lo dice —; [`riferimenti.md`](../../riferimenti.md), la sezione del piano; resta del proprietario
 ```
 
-E nel *«Come si riprende»* del disegno, in coda alla cella della riga **codice di prodotto**, prima del `|` finale:
+E nel *«Come si riprende»* del disegno, in coda alla cella della riga **codice di prodotto**, prima di ` |` che chiude la riga:
 
 ```markdown
  ✅ **RICHIAMO DEL <data>:** toccato dal piano, i compiti 1–8 — che cosa, file per file, lo dice la Definizione di «fatto» del [piano](../plans/2026-09-23-design-system.md)
 ```
 
 Nella [stella polare](../specs/2026-09-07-direzione-gui-design.md), in coda alla cella *Atteso* della riga **codice e spec non
-toccati**, prima del `|` finale — dopo avere provato che il solo file di `scripts/` toccato dal piano è quello:
+toccati**, prima di ` |` che chiude la riga — dopo avere provato che il solo file di `scripts/` toccato dal piano è quello:
 `git diff --name-only "$B"..HEAD -- scripts/` → `scripts/gate-gui.sh`:
 
 ```markdown
- ✅ **RICHIAMO DEL <data>, compito 9 del piano del design system:** e `scripts/gate-gui.sh`, dai compiti 2 e 4 di quel [piano](../plans/2026-09-23-design-system.md) — il commento del passo delle prove e la pagina kit fuori dal pacchetto
+ ✅ **RICHIAMO DEL <data>, compito 9 del piano del design system:** e `scripts/gate-gui.sh`, dai compiti 2 e 4 di quel [piano](../plans/2026-09-23-design-system.md) — le prove in due corse, un progetto alla volta, col commento che dice perché (E10 di quel piano), e la pagina kit fuori dal pacchetto, con `dist/` vuotato prima del *build* (E31)
 ```
 
 Sonde: `grep -c 'RICHIAMO DEL <data>, compito 9 del piano del design system' docs/superpowers/specs/2026-09-07-direzione-gui-design.md`
@@ -11892,6 +11962,9 @@ Sonde: `grep -c 'RICHIAMO DEL <data>, compito 9 del piano del design system' doc
 vera al posto di `<data>`.
 
 - [ ] **Passo 11: la Definizione di «fatto» — ogni riga eseguita, e l'uscita vista accanto**
+
+⛔ **Lo scrive il coordinatore nella chiusura** (**E120**), dopo la revisione e le sue cure, sull'albero che resta:
+l'implementatore esegue i blocchi e ne riporta le uscite nel **rapporto**, e non tocca il piano.
 
 La sezione *«La Definizione di «fatto»»* qui sotto si **esegue** blocco per blocco, sull'albero di lavoro con i Passi 2–10
 applicati (**D20**). Accanto a ogni comando, al posto dell'attesa, si scrive **l'uscita vista**; il titolo diventa
@@ -11902,6 +11975,8 @@ e non si chiude il compito finché la voce non ha un esito. ⚠️ Dove l'uscita
 
 - [ ] **Passo 12: il piano — la testa, la posizione, la chiusura**
 
+⛔ **Lo fa il coordinatore nella chiusura** (**E120**): l'implementatore lo salta.
+
 **Uno.** Il capoverso di *«A che punto è QUESTO PIANO»* che comincia con `✅ **IL PIANO È SCRITTO`, **preso dal file**, diventa:
 
 ```markdown
@@ -11909,15 +11984,18 @@ e non si chiude il compito finché la voce non ha un esito. ⚠️ Dove l'uscita
 piena — e la **Definizione di «fatto»**, coi comandi e le uscite del giorno. Il passo dopo lo dice la §6 del compendio.
 ```
 
-**Due.** Nella tabella: la riga **9**, **Stato** `✅ <data>`; nella riga **8** la colonna **Commit** con l'hash del compito 8
-(R1-16); e nella riga **9** la colonna **Commit** con il comando, perché il commit che la scrive non può portare il proprio hash:
+**Due.** Nella tabella: la riga **9**, **Stato** `✅ <data>`; la riga **8** porta già la colonna **Commit** — `ac56b11`, con
+le cure `77c4062` e `7f04cdf`, scritta dalla chiusura del compito 8 (**E101**) — e **non si tocca** (**E115**); e nella riga **9** la colonna **Commit** con il comando, perché il commit che la scrive non può portare il proprio hash:
 `` `git log -1 --format=%h --grep='^design-system(compito 9):'` ``.
 
 **Tre.** *«Come si riprende»* si riscrive con la chiusura del piano — ciò che resta aperto e dove vive: le voci che il piano sa e
-non chiude, le voci d'errata senza esito, il giudizio del controllo 15 se è del proprietario, la CI del commit da leggere
-per prima —; la chiusura di prima va **parola per parola** in coda a `docs/archivio/consegna-piano-design-system.md`, nella forma
-delle sezioni che vi stanno — un'intestazione con la data, il capoverso *«Tolto dal piano il …»*, i rimandi riscritti per quella
-cartella.
+non chiude, le voci d'errata senza esito, il giudizio del controllo 15 se è del proprietario, le proposte per `CLAUDE.md` del
+Passo 9 (**E116**), la CI del commit da leggere per prima —; la chiusura di prima va **parola per parola** in coda a
+`docs/archivio/consegna-piano-design-system.md`, nella forma delle sezioni che vi stanno — un'intestazione con la data, il
+capoverso *«Tolto dal piano il …»*, i rimandi riscritti per quella cartella. ⛔ **Parola per parola lo dice `word_for_word.py`**
+del Passo 6 (**E117**), col testo di prima preso dal piano del commit precedente:
+`git show HEAD:docs/superpowers/plans/2026-09-23-design-system.md | awk '/^## Come si riprende/{s=1} s' > <scratchpad>/old-resume.txt`,
+poi `python <scratchpad>/word_for_word.py docs/archivio/consegna-piano-design-system.md <scratchpad>/old-resume.txt` → **0**.
 
 - [ ] **Passo 13: il cancello, il margine, i fine-riga, il commit**
 
@@ -11943,11 +12021,11 @@ e il confronto con lo stato di prima rende solo i file della lista.
 
 ```bash
 git add docs/
-git commit -m "design-system(compito 9): la chiusura -- il sotto-progetto 14 nei documenti, la riga Accessibilita' col richiamo, la Definizione di «fatto» con le uscite del giorno"
-git push
+git commit -m "design-system(compito 9): la chiusura -- il sotto-progetto 14 nei documenti, la riga Accessibilita' col richiamo, le case dei documenti"
 ```
 
-⛔ **Senza co-autore** (vincolo 15). ⛔ **La CI si legge**, coi due comandi di `docs/porta-di-qualita.md`, *«Leggere la CI da
+⛔ **Senza co-autore** (vincolo 15). ⛔ **Il piano e l'archivio delle consegne non stanno in questo commit**, e il push è
+del coordinatore, dopo la revisione (**E120**). ⛔ **La CI si legge**, coi due comandi di `docs/porta-di-qualita.md`, *«Leggere la CI da
 terra»*: i due job del commit — `gate (ubuntu-latest)` e `gate (windows-latest)` — vanno nel blocco 5 della Definizione di «fatto»
 alla sessione dopo, che li legge **per prima**.
 
@@ -12042,7 +12120,7 @@ ls gui/src/tokens/base.css gui/src/tokens/themes.css                            
 # 4, 5 -- nessuna scala e nessun colore a mano fuori dai token: usage.test.ts nel blocco 2
 grep -rln 'var(--ref-' gui/src | grep -v '^gui/src/tokens/' | wc -l                    # 0
 # 6, 18 -- il tema e le viste col nome, campi facoltativi del pacchetto (D2, D3): stores.test.ts nel blocco 2
-grep -cE '(theme|named|openNamed)\?:' gui/src/stores/layout.ts                          # 3
+grep -cE '^  (theme|named|openNamed)\?: ' gui/src/stores/layout.ts                      # 3: le dichiarazioni di LayoutPack, non i cast di unpack (E111)
 # 7 -- il tema sulla radice: theme.test.ts nel blocco 2
 grep -c 'data-theme' gui/src/tokens/theme.ts                                            # almeno 1
 # 8, 9, 16 -- il movimento ridotto, i caratteri, readToken: tokens.browser.test.ts nel blocco 2
@@ -12086,13 +12164,14 @@ grep -E '"(lucide|@fontsource-variable/geist|@fontsource/barlow|@vitest/browser-
 wc -c docs/COMPENDIO.md; grep -n '^ceiling=' scripts/check-docs.sh                     # il margine positivo (vincolo 13)
 git diff --name-status "$B"..HEAD -- docs/adr/ | grep -c '^A'                            # 0: nessun ADR nuovo
 ls docs/adr/*.md | wc -l; grep -c '^\*\*00' docs/COMPENDIO.md                          # uguali fra loro
-git diff --name-only "$B"..HEAD                                                          # ogni nome in una lista Files dei compiti 1–9, o in una voce d'errata
+git diff --name-only "$B"..HEAD                                                          # ogni nome in una lista Files dei compiti 1–9, in una voce d'errata, o nella cartella del dispaccio (E112)
 git status --porcelain                                                                   # niente
 ```
 
 ⚠️ **Il perimetro si legge nome per nome, non col numero** (R9a-16 ed E217 della parte 2): ogni nome che il penultimo comando
 elenca sta in una lista *Files* — per il percorso, o per la cartella che la lista nomina, come gli **undici** componenti del
-compito 1 — o in una voce d'errata. Un nome senza casa è una voce d'errata nuova.
+compito 1 —, in una voce d'errata, o nella cartella del dispaccio, `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`,
+la regola 8 di *«Come si esegue un compito»* (**E112**). Un nome senza casa è una voce d'errata nuova.
 
 **Blocco 5 — ciò che un comando non dice**, e dove si guarda:
 
@@ -12101,74 +12180,74 @@ compito 1 — o in una voce d'errata. Un nome senza casa è una voce d'errata nu
   alla domanda del compito 9 (**D24**);
 - ⛔ **M-3 col lettore di schermo vero**: il verbale nella cella Stato della riga 5 della posizione, e l'esito nella (e) del
   disegno (Passo 10 del compito 9);
+- ⛔ **l'assunzione della barra di scorrimento**, sotto i colori forzati e con la preferenza di Windows: misurata al pre-controllo
+  del compito 9 (**E118**), l'esito nella riga dell'assunzione del disegno;
 - ⛔ **la CI del commit del compito 9**: i due job, `gate (ubuntu-latest)` e `gate (windows-latest)`, letti coi due comandi di
   `docs/porta-di-qualita.md`, *«Leggere la CI da terra»* — la casa unica di quei comandi, che qui non si ricopiano;
 - ⚠️ **le voci che questo piano sa e non chiude** restano nella loro tabella, in testa al piano, col loro chiusore.
 
 ---
 
-## Come si riprende — l'esecuzione del compito 8, 2026-09-27
+## Come si riprende — il pre-controllo del compito 9, 2026-09-28
 
-✅ **Il compito 8 è eseguito, curato e guardato.** Il dispaccio col sì del proprietario sulla banda detta prima, 1,0–1,3
-milioni di token: l'implementatore, ~421 mila in ~22 minuti, ha consegnato `ac56b11`, **uguale al testo del piano** —
-`compare_task8.py bc6e94d ac56b11`, venti file `OK`, e il testo applicato dal coordinatore a una copia di `bc6e94d`, diff
-vuoto —, con ogni Atteso tornato e la candidata **E102**; il revisore, ~630 mila in ~41 minuti, l'ha detto **conforme** al
-dettato, ma guardando la SPA ha trovato **due importanti** di prima del compito — la miniatura di Compatta falsa (**E103**),
-l'ingrandimento non salvato (**E104**) —, quattro minori e due nit. Le cure: il proprietario ha scelto **A**, un
-**curatore** — un subagente sulle decisioni del coordinatore, ~545 mila in ~44 minuti, dentro la banda di 0,4–0,6 —:
-`77c4062`, **E102**…**E110**; e **X4** di **E107**, che la misura del curatore ha tolto alla dichiarazione, dal coordinatore:
-`7f04cdf`. Il testo curato del compito 8, applicato a `bc6e94d` con `plan_ops.py`, cinquanta operazioni e nessun rifiuto,
-rende `gui/src` identico all'albero. Il Passo 10 col proprietario: *«quello che mi hai chiesto funziona»*. La consegna
-precedente — il pre-controllo del compito 8 — sta parola per parola in
+✅ **Il pre-controllo del compito 9 è fatto: dieci voci, E111…E120**, scritte nell'errata e applicate al testo. **E118** è la
+domanda del proprietario — **A**, la barra di scorrimento misurata —; le altre le ha decise il coordinatore coi cinque
+criteri, fuori dal merito approvato. Il compito rifatto dal testo del piano su un `git worktree` di `f35d3c2` in
+`%TEMP%\pc9`, macchina `zagor`: i Passi 2–8 e 10 applicati da uno script, nessun rifiuto, ogni sonda dei passi come detta,
+`check-docs.sh` verde, i fine-riga conservati — CR uguali alle righe in ogni file —, nessuna tabella spezzata in più; e la
+Definizione di «fatto» eseguita sull'albero a `f35d3c2`: blocco 1 `GATE GREEN`, blocco 2 cinque corse uguali — `237 tests,
+236 passed, 0 failed`, ventotto file su ventotto —, blocchi 3 e 4 coi difetti di **E111** ed **E112**. La riga 9 della
+posizione resta a `⬜`, pre-controllata. La consegna precedente — l'esecuzione del compito 8 — sta parola per parola in
 [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
 
 ⛔ **Da sapere subito.**
 
-1. **La ricetta di `compare_task8.py` vale contro il testo di `bc6e94d`**, dove vive — lo script la legge da lì, col piano
-   di quel commit —; le cure hanno spostato le righe del compito 8. Il testo **curato** si prova con `plan_ops.py`: la riga
-   *«il testo curato»* della tabella qui sotto.
-2. **Due cose che la revisione non ha misurato**, al §6 di `task-8-review.md`, ora nella cartella del dispaccio: con la
-   Panoramica aperta, Ctrl+Alt+frecce muoverebbero il fuoco fra le carte **e** la tessera del dock sotto il velo —
-   **dedotto** dal codice: `onArrow` guarda il solo `event.key`, e `Frame.onKey` non guarda le finestre aperte —, la voce 🔶
-   che il piano sa, del proprietario; e una volta, dopo un ingrandimento ripristinato, il salvataggio di una vista col nome
-   ha lasciato il fuoco sul `body`, **non riprodotto**.
-3. **La domanda di classe di E40** — ogni scrittura prima del benvenuto, compreso il `settle` del dock — resta del
-   proprietario, **registrata e non presa** (**E98**).
-4. **In `%TEMP%` restano le cartelle di prova di sessioni passate** — `pc2`…`pc6c`, `rv4`, `rv5`, `rv6` —: toglierle è del
-   proprietario; `ls -d /c/Users/Jays/AppData/Local/Temp/pc* /c/Users/Jays/AppData/Local/Temp/rv*` le elenca. I due cloni di
-   questa sessione, `co8` e `rv8`, sono tolti.
+1. **Chi scrive il piano** (**E120**): l'implementatore fa i Passi 1–10 e il commit del Passo 13 **senza** il piano né
+   l'archivio delle consegne, ed **esegue** la Definizione di «fatto» riportandone le uscite nel rapporto; i Passi 11 e 12 —
+   le uscite nel piano, la testa, la riga 9, la chiusura del piano e la consegna in archivio — li fa il coordinatore nella
+   chiusura, dopo la revisione e le sue cure; il push è suo. Il compito **non ha uno sguardo** del proprietario.
+2. **Il Passo 9 legge anche le lezioni** (**E116**): le tabelle *«Ciò che questa sessione ha imparato»* delle consegne,
+   ~31 kB; una trappola diventa un gotcha, una regola di lavoro una **proposta al proprietario** per `CLAUDE.md`.
+3. **Il giudizio sul dock** (controllo 15, **D24**) **è scritto**: le celle 6 e 6bis della posizione portano lo sguardo del
+   proprietario, e la domanda del Passo 1 non serve.
+4. **La barra di scorrimento** (**E118**): sotto i colori forzati regge; la preferenza di Windows che tiene sempre visibili
+   le barre non arriva alla pagina — il costo della C, ora misurato —, e la B resta **registrata, non presa**.
+5. **In `%TEMP%` della macchina `Jays` restano le cartelle di prova di sessioni passate** — `pc2`…`pc6c`, `rv4`, `rv5`,
+   `rv6` —: toglierle è del proprietario; `ls -d /c/Users/Jays/AppData/Local/Temp/pc* /c/Users/Jays/AppData/Local/Temp/rv*`
+   le elenca. Su `zagor` la copia di questa sessione, `%TEMP%\pc9`, è tolta.
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
-| **i commit** | `git log --oneline bc6e94d..HEAD`: quattro — `ac56b11` il compito, `77c4062` le cure, `7f04cdf` X4, e quello che scrive questa riga, di soli documenti |
-| **cancello** | `GATE GREEN` all'apertura su `bc6e94d` — jsdom 157 prove passate e una saltata, browser 56, il pezzo `693.02 kB` —; prima di `7f04cdf` — jsdom 170 e una saltata, browser 66, il pezzo `698.20 kB`, compresso `213.00 kB`, `found 0 vulnerabilities` —; e prima del commit che scrive questa riga. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
-| **la CI** | `7f04cdf` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
-| **la posizione** | le righe dalla 1 alla 8 a `✅`; la 9 a `⬜` |
-| **il testo curato** | `python docs/superpowers/plans/2026-09-23-design-system-esecuzione/plan_ops.py docs/superpowers/plans/2026-09-23-design-system.md 8 apply <clone>` su un clone a `bc6e94d` pulito → `50 operations, 0 refused`; poi `diff -rq <clone>/gui/src gui/src` vuoto — misurato a `7f04cdf` |
-| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il prompt spedito all'implementatore al posto del modello, il suo rapporto, il prompt del revisore e la revisione, il prompt del curatore e il suo rapporto |
-| **lo scratchpad** | sulla macchina `Jays`, **non tracciato**: `task8/`, `review8/`, `cure8/`, `coord8/`, `logs/` — le corse, le schermate del revisore, gli attrezzi. Non servono a riprendere |
+| **i commit** | `git log --oneline f35d3c2..HEAD`: uno, quello che scrive questa riga — l'errata, il compito 9 corretto, il richiamo di **E118** nel disegno, questa sezione e la precedente in archivio, i tre file del dispaccio. Nessun codice cambia: `git diff --stat f35d3c2..HEAD -- gui/ crates/ scripts/` non rende nulla |
+| **cancello** | `GATE GREEN` all'apertura su `f35d3c2` — jsdom 170 prove passate e una saltata, browser 66, il pezzo `698.20 kB`, compresso `213.00 kB`, `found 0 vulnerabilities` — e prima del commit che scrive questa riga. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `f35d3c2` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | le righe dalla 1 alla 8 a `✅`; la 9, pre-controllata, a `⬜` |
+| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: `_extract_brief_9.py`, il modello `dispatch-task-9.md`, e `compare_task9.py`, che ricostruisce dal testo del piano i nove documenti dettati e li confronta col commit — provato in due direzioni su una copia |
+| **lo scratchpad** | sulla macchina `zagor`, **non tracciato**: in `.superpowers/sdd/2026-09-23-design-system/` gli attrezzi del pre-controllo — `_precheck_9_perimeter.py`, `_precheck_9_apply.py`, `_precheck_9_write.py`, `word_for_word.py` —; nello scratchpad della sessione i cinque rapporti JSON della suite, le foto della barra e i log. Non servono a riprendere: il piano basta |
 | **server e cartelle di prova** | nessun server acceso; `git worktree list` rende la sola cartella del repository |
 
-**Che cosa ha fatto questa sessione.** La ripresa coi comandi, la CI di `bc6e94d` e il cancello d'apertura; il brief
-rigenerato e il prompt dal modello; il dispaccio, e il testo del compito applicato dal coordinatore a una copia per
-confrontarlo col commit; la revisione; la scelta del proprietario sulle cure, e il curatore; la misura di X4, curata dal
-coordinatore; il push e la CI; lo sguardo del Passo 10; la chiusura.
+**Che cosa ha fatto questa sessione.** La ripresa coi comandi — trentadue commit arrivati, il fast-forward —, la CI di `f35d3c2`
+e il cancello d'apertura; la Definizione di «fatto» eseguita blocco per blocco sull'albero, le cinque corse comprese; il
+perimetro nome per nome con uno script; il compito rifatto dal testo su una copia, con ogni sonda; la domanda del
+proprietario sulla barra, **A**, e la misura: i colori forzati emulati nel Chrome installato, e la preferenza di Windows
+guardata dal proprietario su una pagina di prova; le dieci voci; il dispaccio, con `compare_task9.py` provato nelle due
+direzioni; la chiusura.
 
-📌 **Ciò che questa sessione ha imparato, e che non era scritto** — le raccoglie la chiusura del sotto-progetto.
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — le raccoglie la chiusura del sotto-progetto (**E116**).
 
 | | Che cosa | Che cosa se ne fa |
 |---|---|---|
-| 1 | **una cura con la prova in un file del compito e il rimedio fuori rende rosso il compito ripetuto dal testo**: le prove di **E103**, **E104** ed **E105** stanno in `frame.test.ts` e `frame.browser.test.ts`, i rimedi in `dock.ts`, `BaseButton.vue` e nel generatore delle viste | la cura diventa un'**operazione del compito**, nel passo dove serve, e la prova del testo curato guarda **tutto** `gui/src` |
-| 2 | **una dichiarazione è un'affermazione**: X4, dichiarata dal coordinatore sulla parola della revisione — *«ripristino che nessun caso d'uso oggi produce»* —, la misura del curatore l'ha smentita, e lui si è fermato su quella voce | una dichiarazione si misura come una cura, **prima** di scriverla |
-| 3 | **`dockview-core` 8.3.1 lancia `onDidMaximizedGroupChange` dentro `fromJSON`**: sentito subito, il salvataggio scriveva la vista lasciata sotto il nome di quella aperta | un evento di `dockview` che salva si **differisce** come `onDidLayoutChange`, o mostrare diventa salvare |
-| 4 | **il curatore costa circa metà di un compito** — ~0,55 milioni — e tiene il contesto del coordinatore sotto i 500 mila: scelto dal proprietario a ~400 mila, con la revisione che portava otto cure | quando la revisione porta molte cure, il curatore è un'opzione da dire al proprietario col suo costo |
+| 1 | **`check-docs.sh` non vede un rimando rotto dentro il testo**: una riscrittura che perde la `)` lascia un rimando che porta ancora a un file vero, e il cancello resta verde | un testo archiviato si prova **parola per parola**, con le destinazioni tolte dalle due parti (**E117**) |
+| 2 | **una promessa scritta in una consegna è un contratto per il compito che nomina**: ventidue consegne dicevano *«le raccoglie la chiusura»*, e il compito della chiusura leggeva la sola errata | il pre-controllo di un compito cerca nelle consegne ciò che gli è stato promesso, non solo nell'errata |
+| 3 | **in `awk`, `print x > 0` scrive un file che si chiama `0`**: il confronto dentro un `print` è una redirezione | un confronto si scrive fra parentesi, `print (x > 0)`, o in una condizione |
+| 4 | **la preferenza di Windows che tiene visibili le barre non arriva a una pagina con `::-webkit-scrollbar`**, e una pagina di prova aperta come file non carica i moduli di Vite, e mostra le barre di Chrome | una pagina di prova coi token si serve da Vite, mai da un file |
 
 **Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
 
 1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
-2. **Il pre-controllo del compito 9** — la chiusura del piano: le case dei documenti, la riga «Accessibilità» di
-   tracciabilità, la riga 14 della roadmap, `README.md`, la §12 e la §6 del compendio, `porta-di-qualita.md` con C-S0-1,
-   `riferimenti.md`, i richiami nel disegno e nella stella polare, e la **Definizione di «fatto»** eseguita coi comandi.
-3. ⏳ **Una domanda per il proprietario**, al pre-controllo del compito 9: se l'assunzione della barra di scorrimento debba
-   avere un compito che la misuri — la Definizione di «fatto», righe 22 e 23.
+2. **L'esecuzione del compito 9**: il brief da `_extract_brief_9.py`, il prompt dal modello `dispatch-task-9.md`, col sì del
+   proprietario sulla banda dei costi detta prima — un compito di **soli documenti**, senza sguardo, che fa girare il
+   cancello e cinque corse della suite: 🔶 dedotta dalle bande dei compiti 7 e 8, 0,6–0,9 milioni per implementatore e
+   revisore —; la revisione con `compare_task9.py`, le cure; poi la chiusura del coordinatore coi Passi 11 e 12 (**E120**),
+   e il push. Dopo, la §6 del compendio punta al sotto-progetto 13.

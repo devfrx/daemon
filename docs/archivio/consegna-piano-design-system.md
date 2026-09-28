@@ -2461,3 +2461,75 @@ R gui/src/tokens/dock.css 10898 10905
    col proprietario, e la chiusura con le celle.
 3. ⏳ **Una domanda per il proprietario**, quando vuole: se l'assunzione della barra di scorrimento debba avere un compito che
    la misuri. A quello del **9**, la Definizione di «fatto» con le righe 22 e 23.
+
+## Il pre-controllo del compito 9, del 2026-09-28
+
+Tolto dal piano il 2026-09-28, quando il pre-controllo del compito 9 ha scritto la consegna *«Come si riprende — il
+pre-controllo del compito 9»*. Il testo com'era, dal commit `f35d3c2`, parola per parola; i rimandi sono riscritti per
+questa cartella.
+
+## Come si riprende — l'esecuzione del compito 8, 2026-09-27
+
+✅ **Il compito 8 è eseguito, curato e guardato.** Il dispaccio col sì del proprietario sulla banda detta prima, 1,0–1,3
+milioni di token: l'implementatore, ~421 mila in ~22 minuti, ha consegnato `ac56b11`, **uguale al testo del piano** —
+`compare_task8.py bc6e94d ac56b11`, venti file `OK`, e il testo applicato dal coordinatore a una copia di `bc6e94d`, diff
+vuoto —, con ogni Atteso tornato e la candidata **E102**; il revisore, ~630 mila in ~41 minuti, l'ha detto **conforme** al
+dettato, ma guardando la SPA ha trovato **due importanti** di prima del compito — la miniatura di Compatta falsa (**E103**),
+l'ingrandimento non salvato (**E104**) —, quattro minori e due nit. Le cure: il proprietario ha scelto **A**, un
+**curatore** — un subagente sulle decisioni del coordinatore, ~545 mila in ~44 minuti, dentro la banda di 0,4–0,6 —:
+`77c4062`, **E102**…**E110**; e **X4** di **E107**, che la misura del curatore ha tolto alla dichiarazione, dal coordinatore:
+`7f04cdf`. Il testo curato del compito 8, applicato a `bc6e94d` con `plan_ops.py`, cinquanta operazioni e nessun rifiuto,
+rende `gui/src` identico all'albero. Il Passo 10 col proprietario: *«quello che mi hai chiesto funziona»*. La consegna
+precedente — il pre-controllo del compito 8 — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+⛔ **Da sapere subito.**
+
+1. **La ricetta di `compare_task8.py` vale contro il testo di `bc6e94d`**, dove vive — lo script la legge da lì, col piano
+   di quel commit —; le cure hanno spostato le righe del compito 8. Il testo **curato** si prova con `plan_ops.py`: la riga
+   *«il testo curato»* della tabella qui sotto.
+2. **Due cose che la revisione non ha misurato**, al §6 di `task-8-review.md`, ora nella cartella del dispaccio: con la
+   Panoramica aperta, Ctrl+Alt+frecce muoverebbero il fuoco fra le carte **e** la tessera del dock sotto il velo —
+   **dedotto** dal codice: `onArrow` guarda il solo `event.key`, e `Frame.onKey` non guarda le finestre aperte —, la voce 🔶
+   che il piano sa, del proprietario; e una volta, dopo un ingrandimento ripristinato, il salvataggio di una vista col nome
+   ha lasciato il fuoco sul `body`, **non riprodotto**.
+3. **La domanda di classe di E40** — ogni scrittura prima del benvenuto, compreso il `settle` del dock — resta del
+   proprietario, **registrata e non presa** (**E98**).
+4. **In `%TEMP%` restano le cartelle di prova di sessioni passate** — `pc2`…`pc6c`, `rv4`, `rv5`, `rv6` —: toglierle è del
+   proprietario; `ls -d /c/Users/Jays/AppData/Local/Temp/pc* /c/Users/Jays/AppData/Local/Temp/rv*` le elenca. I due cloni di
+   questa sessione, `co8` e `rv8`, sono tolti.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **i commit** | `git log --oneline bc6e94d..HEAD`: quattro — `ac56b11` il compito, `77c4062` le cure, `7f04cdf` X4, e quello che scrive questa riga, di soli documenti |
+| **cancello** | `GATE GREEN` all'apertura su `bc6e94d` — jsdom 157 prove passate e una saltata, browser 56, il pezzo `693.02 kB` —; prima di `7f04cdf` — jsdom 170 e una saltata, browser 66, il pezzo `698.20 kB`, compresso `213.00 kB`, `found 0 vulnerabilities` —; e prima del commit che scrive questa riga. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `7f04cdf` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | le righe dalla 1 alla 8 a `✅`; la 9 a `⬜` |
+| **il testo curato** | `python docs/superpowers/plans/2026-09-23-design-system-esecuzione/plan_ops.py docs/superpowers/plans/2026-09-23-design-system.md 8 apply <clone>` su un clone a `bc6e94d` pulito → `50 operations, 0 refused`; poi `diff -rq <clone>/gui/src gui/src` vuoto — misurato a `7f04cdf` |
+| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il prompt spedito all'implementatore al posto del modello, il suo rapporto, il prompt del revisore e la revisione, il prompt del curatore e il suo rapporto |
+| **lo scratchpad** | sulla macchina `Jays`, **non tracciato**: `task8/`, `review8/`, `cure8/`, `coord8/`, `logs/` — le corse, le schermate del revisore, gli attrezzi. Non servono a riprendere |
+| **server e cartelle di prova** | nessun server acceso; `git worktree list` rende la sola cartella del repository |
+
+**Che cosa ha fatto questa sessione.** La ripresa coi comandi, la CI di `bc6e94d` e il cancello d'apertura; il brief
+rigenerato e il prompt dal modello; il dispaccio, e il testo del compito applicato dal coordinatore a una copia per
+confrontarlo col commit; la revisione; la scelta del proprietario sulle cure, e il curatore; la misura di X4, curata dal
+coordinatore; il push e la CI; lo sguardo del Passo 10; la chiusura.
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — le raccoglie la chiusura del sotto-progetto.
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **una cura con la prova in un file del compito e il rimedio fuori rende rosso il compito ripetuto dal testo**: le prove di **E103**, **E104** ed **E105** stanno in `frame.test.ts` e `frame.browser.test.ts`, i rimedi in `dock.ts`, `BaseButton.vue` e nel generatore delle viste | la cura diventa un'**operazione del compito**, nel passo dove serve, e la prova del testo curato guarda **tutto** `gui/src` |
+| 2 | **una dichiarazione è un'affermazione**: X4, dichiarata dal coordinatore sulla parola della revisione — *«ripristino che nessun caso d'uso oggi produce»* —, la misura del curatore l'ha smentita, e lui si è fermato su quella voce | una dichiarazione si misura come una cura, **prima** di scriverla |
+| 3 | **`dockview-core` 8.3.1 lancia `onDidMaximizedGroupChange` dentro `fromJSON`**: sentito subito, il salvataggio scriveva la vista lasciata sotto il nome di quella aperta | un evento di `dockview` che salva si **differisce** come `onDidLayoutChange`, o mostrare diventa salvare |
+| 4 | **il curatore costa circa metà di un compito** — ~0,55 milioni — e tiene il contesto del coordinatore sotto i 500 mila: scelto dal proprietario a ~400 mila, con la revisione che portava otto cure | quando la revisione porta molte cure, il curatore è un'opzione da dire al proprietario col suo costo |
+
+**Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. **Il pre-controllo del compito 9** — la chiusura del piano: le case dei documenti, la riga «Accessibilità» di
+   tracciabilità, la riga 14 della roadmap, `README.md`, la §12 e la §6 del compendio, `porta-di-qualita.md` con C-S0-1,
+   `riferimenti.md`, i richiami nel disegno e nella stella polare, e la **Definizione di «fatto»** eseguita coi comandi.
+3. ⏳ **Una domanda per il proprietario**, al pre-controllo del compito 9: se l'assunzione della barra di scorrimento debba
+   avere un compito che la misuri — la Definizione di «fatto», righe 22 e 23.

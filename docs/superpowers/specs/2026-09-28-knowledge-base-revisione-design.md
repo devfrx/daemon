@@ -374,12 +374,51 @@ correzione.
 
 **Il consiglio: A.** *«Niente storico»* resta vero per i file del proprietario; per l'agente c'è l'annulla.
 
+### D3, posta il 2026-09-28
+
+**Che cos'è, a parole semplici.** Il documento dice che l'agente **scrive** solo dentro la root. Non dice se può **leggere**
+fuori, né se il confine vale anche per le altre capacità — il coding sulle repo, gli asset 3D, le catture.
+
+**Che cosa esiste già.** La porta `filesystem` del kernel legge e scrive **solo dentro un ambito dichiarato**, e fuori risponde
+`OutsideScope`, in modo *«fail-closed»*: `grep -n -e 'OutsideScope' -e 'inside a declared scope' crates/kernel/src/ports/filesystem.rs`.
+`declare_scope` accetta **più** percorsi, quindi più zone sono possibili. ADR-0024 dice che gli effetti **fuori** dagli ambiti
+non sono coperti e chiedono approvazione; ADR-0016 dà un permesso per percorso. ⚠️ **La domanda non riguarda i programmi che
+l'agente lancia** — un compilatore legge i suoi file di sistema —: quello è il recinto di ADR-0025, e si decide col 5.
+
+| | **A — un confine solo: la root, per tutto l'assistente, anche per leggere** | **B — la root è il confine della knowledge base; altre zone si aprono per nome** |
+|---|---|---|
+| com'è | ogni capacità legge e scrive **solo** dentro la root; una repo su cui l'agente lavora sta dentro la root | il coding può dichiarare una repo **fuori** dalla root come zona sua, con permesso e copia suoi |
+| costo | la root deve contenere tutto ciò su cui l'agente lavora; se è molto larga — l'intera cartella utente — dentro ci sono anche cose delicate come `AppData` o `.ssh`, e le esclusioni di base devono toglierle, D5 | le esclusioni stanno nella root: una zona fuori non le ha, e l'agente vi leggerebbe tutto, un `.env` compreso — oppure ogni zona vuole le sue regole, due posti da tenere allineati; e una repo fuori non compare nel grafo né nella ricerca |
+| che cosa si rifà dopo | niente: una seconda zona si può aggiungere un giorno, con una decisione sua, perché la porta ne accetta più d'una | togliere le zone esterne vorrebbe dire spostare le repo |
+
+**Una conseguenza per il 13, qualunque sia la risposta — dedotta.** Il 2026-09-04 la chiave del piano 0 era *«l'ambito»*,
+dedotto come l'ambito di ADR-0024 — decisione 15, aperta. Col documento la chiave naturale è l'**area**, e il kernel la
+riceverebbe come una chiave **opaca**, senza sapere che cosa sia: ADR-0001 gli vieta di conoscere «aree» e «router». Si
+prova nel 13, e nel disegno si scrive come correzione della decisione 15.
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | poggia sulla porta com'è: fuori dall'ambito, rifiuto | le esclusioni per zona sono dedotte, non esistono |
+| coerenza | una regola di privacy e un confine | regole in più posti |
+| debito | nessuno | due liste da tenere uguali, e repo invisibili alla ricerca |
+| stato dell'arte | non serve: sono decisioni del repository | idem |
+| proporzione | il minimo: una zona | un macchinario per un caso che il documento non chiede |
+| di chi è | **del proprietario** | idem |
+
+**Verificato, dedotto, assunto.** **Verificati**: la porta `filesystem`, ADR-0024 e ADR-0016. **Dedotti**: i costi di B, e la
+chiave opaca per il 13. **Assunto**: che le repo su cui il proprietario vuole l'agente possano stare sotto una root sola.
+
+**Il consiglio: A.** Un confine solo, e la stessa regola di privacy dappertutto dove l'agente arriva.
+
 ## Le risposte del proprietario
 
 | # | Risposta | Data |
 |---|---|---|
 | D1 | ⛔ **respinta**: il proprietario risponde col suo documento, riportato nella sezione *«Il documento del proprietario»*; le sue decisioni aperte 2 e 3 si accolgono come le propone | 2026-09-28 |
-| D2 | ⏳ posta, in attesa | 2026-09-28 |
+| D2 | ✅ **A** — la copia di ADR-0024 resta, **solo** per le azioni dell'agente, e il giornale resta; nessuno storico dei cambi del proprietario, nessun versioning, nessun sync. Nessun ADR cambia | 2026-09-28 |
+| D3 | ⏳ posta, in attesa | 2026-09-28 |
 
 ## Come si riprende — scritto all'apertura del brainstorming, il 2026-09-28
 

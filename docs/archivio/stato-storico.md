@@ -2523,3 +2523,23 @@ sta nel [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge
 «System One», parola per parola; il ⏭️ della §6 non è cambiato; i link riscritti per questa cartella.
 
 **Aggiornato il 2026-09-28**, con la **chiusura di E130** — la caduta della prova dei raggi del dock, la causa trovata e curata — e il puntatore della §6 al sotto-progetto 13; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+
+## Il puntatore «Il prossimo passo», il capoverso dei modelli decisionali e l'intestazione del compendio, com'erano — archiviati il 2026-09-28, all'avvio della revisione della knowledge base
+
+⚠️ **Veri il giorno in cui furono scritti.** Usciti dal compendio all'avvio della revisione della knowledge base, che il
+proprietario mette prima del 13 e dei modelli decisionali, parola per parola: l'intestazione, il ⏭️ della §6 dal suo inizio
+alla riga prima del ⏳, e il 🆕 dal suo inizio alla riga vuota; i link riscritti per questa cartella.
+
+**Aggiornato il 2026-09-28**, con l'**avvio di un fronte nuovo, i modelli decisionali «System One»** — un capoverso nella §6 e la consegna al percorso del suo futuro disegno —, dopo la **chiusura di E130** e il puntatore della §6 al sotto-progetto 13; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+
+⏭️ **IL PROSSIMO PASSO: IL SOTTO-PROGETTO 13** — i tre meccanismi che la knowledge base chiede al kernel, che la **decisione 16**
+mette **prima** del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta proprietà** della §3, ma questo
+**vincolo d'ordine**. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill dichiarative: è una sua decisione e non del
+piano. Il perimetro sta nel [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md), che chi
+riprende quel fronte legge **per intero**; brainstorming e disegno del 13 vengono prima del piano, in sessioni distinte.
+
+🆕 **Un fronte nuovo, aperto dal proprietario il 2026-09-28: i modelli decisionali «System One»** — Jev, Laya, rizzo-flow —
+come funzione locale da accendere a scelta. La consegna dell'avvio sta al percorso del suo
+[futuro disegno](../superpowers/specs/2026-09-28-modelli-decisionali-design.md): il brainstorming in una sessione sua, che il proprietario **non ha
+ancora collocato**. ⛔ Il posto lo vincola l'ADR-0020 — nessun modello nelle decisioni del kernel —, e il 13 resta il
+prossimo passo.

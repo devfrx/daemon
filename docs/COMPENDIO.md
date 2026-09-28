@@ -17,7 +17,7 @@
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — il
 > comando in fondo alla §12 — e l'idea è già qui.
 
-**Aggiornato il 2026-09-28**, con la **chiusura di E130** — la caduta della prova dei raggi del dock, la causa trovata e curata — e il puntatore della §6 al sotto-progetto 13; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](archivio/stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+**Aggiornato il 2026-09-28**, con l'**avvio di un fronte nuovo, i modelli decisionali «System One»** — un capoverso nella §6 e la consegna al percorso del suo futuro disegno —, dopo la **chiusura di E130** e il puntatore della §6 al sotto-progetto 13; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](archivio/stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
 
 ---
 
@@ -623,6 +623,12 @@ riprende quel fronte legge **per intero**; brainstorming e disegno del 13 vengon
 ⏳ **Aspettano il proprietario le sei proposte per `CLAUDE.md`** del compito 9 del
 [piano del design system](superpowers/plans/2026-09-23-design-system.md), nella tabella sotto il punto 3 del suo *«Come si
 riprende»*: si portano in A/B, una alla volta.
+
+🆕 **Un fronte nuovo, aperto dal proprietario il 2026-09-28: i modelli decisionali «System One»** — Jev, Laya, rizzo-flow —
+come funzione locale da accendere a scelta. La consegna dell'avvio sta al percorso del suo
+[futuro disegno](superpowers/specs/2026-09-28-modelli-decisionali-design.md): il brainstorming in una sessione sua, che il proprietario **non ha
+ancora collocato**. ⛔ Il posto lo vincola l'ADR-0020 — nessun modello nelle decisioni del kernel —, e il 13 resta il
+prossimo passo.
 
 ⚠️ La cronaca ripresa per ripresa non sta qui: vive nella stella polare e, parola per parola, negli archivi. Il margine del
 tetto di questo file lo dà il comando nella tabella dello stato della stella polare (gotcha #100).

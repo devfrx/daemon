@@ -2516,3 +2516,10 @@ meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette
 del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta proprietà** della §3, ma questo **vincolo d'ordine**. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill dichiarative: è una sua decisione e non del piano. Il perimetro
 sta nel [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md), che chi riprende quel fronte legge
 **per intero**; brainstorming e disegno del 13 vengono prima del piano, in sessioni distinte.
+
+## L'intestazione del compendio, com'era — archiviata il 2026-09-28, all'avvio dei modelli decisionali
+
+⚠️ **Vera il giorno in cui fu scritta.** Uscita dal compendio all'avvio del fronte dei modelli decisionali
+«System One», parola per parola; il ⏭️ della §6 non è cambiato; i link riscritti per questa cartella.
+
+**Aggiornato il 2026-09-28**, con la **chiusura di E130** — la caduta della prova dei raggi del dock, la causa trovata e curata — e il puntatore della §6 al sotto-progetto 13; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.

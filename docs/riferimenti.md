@@ -2890,6 +2890,18 @@ tabella nomina: qui la provenienza, lì il merito — una casa ciascuno.
 | la barra di scorrimento sotto i colori forzati, e con la preferenza di Windows che tiene sempre visibili le barre | una prova usa-e-getta del progetto `browser` con `commands.emulateMedia({ forcedColors })`, nei due temi, e una pagina di prova coi token davanti al proprietario — **E118** del piano | 2026-09-28, al pre-controllo del compito 9: 10 px e il cursore visibile a riposo sotto i colori forzati; la preferenza di Windows non arriva alla pagina | l'assunzione della barra nel disegno |
 | la caduta di **E130**, la sua causa e la cura | su una cartella di prova coi file di `b21fb53`: una sonda a lato in `floatStatus` che conta i `requestAnimationFrame` e osserva il gruppo con un `ResizeObserver`, in cinque corse intere `npx vitest run`; un `setupFiles` del progetto `browser` che ritarda ogni `requestAnimationFrame` di 80 ms, o lo trattiene, sui file del dock e della cornice; e dieci corse intere con la cura — gli attrezzi in `%TEMP%\pds\tools\e130\`, sulla macchina `zagor` | nella voce **E130** del piano, col richiamo del 2026-09-28 | la cura di E130 |
 
+## I modelli decisionali «System One» — le fonti dell'avvio, 2026-09-28
+
+Le fonti che l'avvio del [fronte dei modelli decisionali](superpowers/specs/2026-09-28-modelli-decisionali-design.md) ha letto: il merito lì, qui la
+provenienza. ⚠️ **Lette attraverso lo strumento di lettura della sessione**, che riassume la pagina: una cifra si rilegge
+alla fonte prima di entrare in un disegno.
+
+| Fonte | Letta | Per |
+|---|---|---|
+| TypeSafe AI, *Introducing System One Models & Jev*, `https://typesafe.ai/blog/introducing-system-one-models-and-jev` | 2026-09-28 | che cos'è Jev, e che gira solo come servizio in rete |
+| Convai Innovations, la scheda del modello Laya, `https://huggingface.co/convaiinnovations/laya` | 2026-09-28 | i tre punti di Laya, le domande, la taratura, i limiti dichiarati |
+| Rizzo AI Academy, il README di rizzo-flow, `https://github.com/Rizzo-AI-Academy/rizzo-flow` | 2026-09-28 | la passata unica sulle lettere di risposta, i modelli, la memoria misurata, i limiti dichiarati |
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

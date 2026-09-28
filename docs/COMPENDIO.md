@@ -17,9 +17,7 @@
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — il
 > comando in fondo alla §12 — e l'idea è già qui.
 
-**Aggiornato il 2026-09-24**, con la **compressione senza perdite** della §1, della §6 fuori dalla tabella delle voci aperte, della trappola 6 della §10, della §12, di questa testa e della §13, che ne ha ricevuto i pezzi: i testi com'erano, parola per parola, in
-[`archivio/lettura-di-apertura-storico.md`](archivio/lettura-di-apertura-storico.md) e, quelli della §6, in [`archivio/stato-storico.md`](archivio/stato-storico.md). L'ultimo contenuto di merito
-resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+**Aggiornato il 2026-09-28**, con la **chiusura del sotto-progetto 14**, il design system — una riga nella §12 e il puntatore della §6 al 13; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](archivio/stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
 
 ---
 
@@ -617,13 +615,7 @@ per parola.
 
 📌 **La compressione di [`porta-di-qualita.md`](porta-di-qualita.md) è fatta, il 2026-09-24:** il file com'era sta intero in [`archivio/porta-di-qualita-storico.md`](archivio/porta-di-qualita-storico.md). ⏳ **Resta la correzione delle contraddizioni** che la compressione ha segnato e non corretto — decisione 11 del [verbale degli sfoltimenti](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md) —, una sessione loro che il proprietario **non ha ancora collocato**: la lista sta in fondo a quel file.
 
-⏭️ **IL PROSSIMO PASSO, IN DUE TEMPI. Uno: il DESIGN SYSTEM da Agentic OS** — stile definito, kit UI, temi e token
-centralizzati, per decisione del proprietario (2026-09-21, trentasettesima chiusura del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md)).
-✅ **Il brainstorming è finito e il disegno è scritto, il 2026-09-23** —
-[`specs/2026-09-22-design-system-design.md`](superpowers/specs/2026-09-22-design-system-design.md), che si legge **per intero**;
-✅ **Riletto il 2026-09-23 — A**, la voce 1 del disegno; ✅ **il piano è scritto, il 2026-09-24** — [`plans/2026-09-23-design-system.md`](superpowers/plans/2026-09-23-design-system.md): ⏳ **il pre-controllo**, compito per compito, poi l'esecuzione — la sua sezione *«Come si riprende»* dice da dove.
-Lo stile dal compito 1 del piano del design system: `gui/src/tokens/base.css` e `themes.css`, copie della tavola dei token.
-**Due: IL SOTTO-PROGETTO 13** — i tre meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima**
+⏭️ **IL PROSSIMO PASSO: IL SOTTO-PROGETTO 13** — i tre meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima**
 del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta proprietà** della §3, ma questo **vincolo d'ordine**. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill dichiarative: è una sua decisione e non del piano. Il perimetro
 sta nel [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md), che chi riprende quel fronte legge
 **per intero**; brainstorming e disegno del 13 vengono prima del piano, in sessioni distinte.
@@ -835,6 +827,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | ⛔ **la direzione della GUI** — le viste, i moduli, la disposizione, il protocollo core ↔ GUI, e la tabella delle decisioni col loro chiusore | [`specs/2026-09-07-direzione-gui-design.md`](superpowers/specs/2026-09-07-direzione-gui-design.md) — ⚠️ **non è una spec**: è la stella polare, e si legge **per intero** da chi riprende il fronte GUI. ⚠️ **Richiamo del 2026-09-23:** nel brainstorming del design system si legge **a pezzi**, e per intero prima di scriverne il disegno — decisione del proprietario, risposta 7 della [consegna](superpowers/specs/2026-09-22-design-system-design.md) |
 | ⛔ **il perimetro della GUI minima** — che cosa il 2 costruisce e che cosa no, il filo, lo schema, il registro, il core finto, le prove e il cancello, le decisioni aperte col chiusore | [`specs/2026-09-06-sottoprogetto-2-gui-minima-design.md`](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) — ⚠️ **non è una spec**; la **§10** dice come si riprende |
 | ⛔ **come si è ESEGUITO il sotto-progetto 2** — la **parte 1**: SP-8, i due gusci misurati, ADR-0029 chiuso; la **parte 2**: il filo, la settima porta, il registro, il daemon, la SPA, il cancello web, X-1 e X-3, con l'errata in testa, la tabella della posizione e la **Definizione di «fatto»** | [parte 1](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md) · [parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md) — ⚠️ **a compiti, mai interi** |
+| ⛔ **il DESIGN SYSTEM**, il sotto-progetto 14 — i token a due livelli e i due temi, il kit dei pezzi di base con la pagina kit, il dock vestito, la cornice con la Panoramica e le viste col nome, le sonde che diventano prove nel browser vero, e per ogni artefatto il controllo che lo esercita; e come si è **eseguito**, con la Definizione di «fatto» coi comandi | il [disegno](superpowers/specs/2026-09-22-design-system-design.md) — ⚠️ **non è una spec** · il [piano](superpowers/plans/2026-09-23-design-system.md), con l'errata in testa e la tabella della posizione — ⚠️ **a compiti, mai intero** |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) |
 | gli **sfoltimenti della lettura d'apertura** — il metodo, le decisioni del proprietario, e ciò che è registrato e non preso | il [verbale del 2026-09-23](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md); le misure di ogni passata in [`riferimenti.md`](riferimenti.md), *«Sfoltimento del compendio»* |
 | il testo integrale dei **gotcha** e delle **misure**, con i numeri | [`HANDOFF.md`](HANDOFF.md) — ⚠️ **a sezioni** |

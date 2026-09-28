@@ -2477,3 +2477,24 @@ dichiarato dello sfoltimento del 2026-08-28. Ogni voce è stata censita **una pe
 esistono già, e il racconto sta in [`archivio/stato-storico.md`](stato-storico.md), parola per parola;
 qui restano gli **indici**. ⚠️ **Due voci vivevano SOLO nel racconto**, e sono le ultime due righe della tabella
 qui sotto.
+
+## Il puntatore «Il prossimo passo» e l'intestazione del compendio, com'erano — archiviati il 2026-09-28
+
+⚠️ **Vero il giorno in cui fu scritto.** Usciti dal compendio alla chiusura del sotto-progetto 14, il design system (compito 9
+del [piano](../superpowers/plans/2026-09-23-design-system.md)), parola per parola: l'intestazione, e il ⏭️ della §6 dal suo
+inizio alla riga vuota; i link riscritti per questa cartella.
+
+**Aggiornato il 2026-09-24**, con la **compressione senza perdite** della §1, della §6 fuori dalla tabella delle voci aperte, della trappola 6 della §10, della §12, di questa testa e della §13, che ne ha ricevuto i pezzi: i testi com'erano, parola per parola, in
+[`archivio/lettura-di-apertura-storico.md`](lettura-di-apertura-storico.md) e, quelli della §6, in [`archivio/stato-storico.md`](stato-storico.md). L'ultimo contenuto di merito
+resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+
+⏭️ **IL PROSSIMO PASSO, IN DUE TEMPI. Uno: il DESIGN SYSTEM da Agentic OS** — stile definito, kit UI, temi e token
+centralizzati, per decisione del proprietario (2026-09-21, trentasettesima chiusura del [piano della parte 2](../superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md)).
+✅ **Il brainstorming è finito e il disegno è scritto, il 2026-09-23** —
+[`specs/2026-09-22-design-system-design.md`](../superpowers/specs/2026-09-22-design-system-design.md), che si legge **per intero**;
+✅ **Riletto il 2026-09-23 — A**, la voce 1 del disegno; ✅ **il piano è scritto, il 2026-09-24** — [`plans/2026-09-23-design-system.md`](../superpowers/plans/2026-09-23-design-system.md): ⏳ **il pre-controllo**, compito per compito, poi l'esecuzione — la sua sezione *«Come si riprende»* dice da dove.
+Lo stile dal compito 1 del piano del design system: `gui/src/tokens/base.css` e `themes.css`, copie della tavola dei token.
+**Due: IL SOTTO-PROGETTO 13** — i tre meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima**
+del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta proprietà** della §3, ma questo **vincolo d'ordine**. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill dichiarative: è una sua decisione e non del piano. Il perimetro
+sta nel [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md), che chi riprende quel fronte legge
+**per intero**; brainstorming e disegno del 13 vengono prima del piano, in sessioni distinte.

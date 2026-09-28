@@ -73,6 +73,8 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 > ✅ **Aggiornata il 2026-09-05 con le righe della knowledge base**, dalla §5.2 del [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md) approvato e riletto dal proprietario — fuori da una chiusura di sotto-progetto, e per questo detto: il registro delle guide e i trigger hanno la sede **13**, «Registro delle guide, trigger e proiezione»; la Conoscenza è il sotto-progetto **6** in due metà, la mappa e poi la ricerca; e la cattura con un gesto ha la destinazione decisa.
 >
 > ✅ **Aggiornata il 2026-09-22 con le sedi dei pezzi della GUI costruiti dalla parte 2 del sotto-progetto 2**, dalla Definizione di «fatto» del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md) — alla chiusura del sotto-progetto, come dice la riga sotto il titolo.
+>
+> ✅ **Aggiornata il 2026-09-28 con la riga «Accessibilità»**, dal compito 9 del [piano del design system](superpowers/plans/2026-09-23-design-system.md) — alla chiusura del sotto-progetto 14, come dice la riga sotto il titolo.
 
 ---
 
@@ -250,7 +252,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Avvio automatico e daemon in background | 🔶 | ADR-0004 · implementazione → L3 |
 | Packaging e aggiornamenti | 📋 | L3 |
 | Estensibilità e plugin | ✅ | ADR-0003 |
-| Accessibilità | ✅ | `axe-core` sui pannelli montati (`gui/src/a11y.test.ts`), il contrasto AA dei token (`gui/src/tokens/contrast.test.ts`) e la tastiera (`gui/src/frame/moveActive.ts`, `gui/src/frame/keys.test.ts`), nel passo web del cancello — dal sotto-progetto 2 |
+| Accessibilità | 🔶 | nel **2** e nel **14**, il design system — ⚠️ **RICHIAMO DEL 2026-09-28:** era ✅, e la legenda dà a ✅ le fondamenta *nel kernel*, mentre queste stanno nella GUI: cambia la riga, non la legenda (N-2 di E235 del piano della parte 2; la (e) del [disegno del design system](superpowers/specs/2026-09-22-design-system-design.md)) · `axe-core` sui pannelli montati (`gui/src/a11y.test.ts`, l'aiutante in `gui/src/testing/axe.ts`) e, nel browser vero col contrasto della pagina disegnata, sulla pagina kit e sulla cornice (`gui/src/kit/kit.browser.test.ts`, `gui/src/frame/frame.browser.test.ts`); il contrasto AA dei token per famiglie, nei due temi (`gui/src/tokens/contrast.test.ts`); il movimento ridotto e l'alto contrasto (`gui/src/tokens/tokens.browser.test.ts`); le regioni `role="status"` presenti prima del loro testo (`gui/src/components/BaseStatus.vue`); la tastiera (`gui/src/frame/moveActive.ts`, `gui/src/frame/keys.test.ts`, e le frecce della Panoramica in `gui/src/frame/Overview.vue`) — nel passo web del cancello |
 | Internazionalizzazione (i18n) | 🔶 | la metà GUI nel 2: `vue-i18n` con `gui/src/locales/it.json`, e la regola `no-raw-text` di `gui/eslint.config.js` nel passo web del cancello — il meccanismo, una lingua · la metà Voce → Voce |
 | Comportamento offline | ✅ | §7 · ADR-0019 |
 | Impostazioni e profili di configurazione | 🔶 | profili §2/§3 · pannello: `gui/src/panels/Settings.vue` nel 2, col cambio di policy VRAM — la funzione `vram-policy` del registro, dai messaggi `Invoke` e `Policy` · il resto del pannello → GUI |

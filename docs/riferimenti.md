@@ -2846,6 +2846,46 @@ script stavano nello scratchpad.
 | la **fascia** sulla pagina: allineata alle schede, a 0 px, col raggio 21; «Riprova» nell'angolo, a 13 px dai due lati, perché, alto 24, dà l'altezza alla riga; e il titolo **2 px** più in alto del suo testo, con i centri a 22,57 e 24,57 px dal bordo di sopra | i rettangoli della fascia, della prima scheda, del titolo e del pulsante |
 | il **contrasto** delle coppie del messaggio: gli stessi numeri di *«Il messaggio — E60»* | il comando di quella sezione |
 
+## Il design system della GUI — il piano e la sua esecuzione, 2026-09-28
+
+Le fonti che la **scrittura** del [piano](superpowers/plans/2026-09-23-design-system.md) e la sua **revisione** hanno letto, il
+2026-09-23 e il 2026-09-24, e le misure della sua **esecuzione**, coi comandi. Il fatto intero sta nella riga del piano che la
+tabella nomina: qui la provenienza, lì il merito — una casa ciascuno.
+
+### Le fonti
+
+| Fonte | Letta | Per |
+|---|---|---|
+| `vitest-dev/vitest` alla v4.1.11, su GitHub: `docs/guide/browser/index.md`, `docs/config/browser/playwright.md`, `docs/api/browser/commands.md`, `docs/api/browser/context.md`, `docs/guide/projects.md`, `docs/config/css.md`, `docs/config/browser/headless.md`, `docs/config/browser/viewport.md` | 2026-09-23 | i due progetti, il comando `emulateMedia`, la finestra delle prove — il compito 2 |
+| `@vitest/browser-playwright/dist/index.d.ts`, nel pacchetto installato | 2026-09-23 | il tipo di `ctx.page` — il compito 2 |
+| `vitest` 4.1.11 installato: `defaults.timeout ?? 1e3` e `resolved.testTimeout ??= resolved.browser.enabled ? 15e3 : 5e3` | 2026-09-24 | l'attesa di base di `expect.poll` e il tempo di una prova nel browser — P-21 |
+| `reka-ui` 2.10.4 installato: `dist/RadioGroup/RadioGroupItem.js` e `Radio.js` | 2026-09-23 | il radio che decide chi lo controlla, e `handleFocus` — P-8, P-19 |
+| `reka-ui` 2.10.4 installato: `dist/Dialog/DialogContentModal.js` e `dist/FocusScope/FocusScope.js` | 2026-09-24 | il fuoco che torna senza un `DialogTrigger` — P-22 |
+| `dockview` 8.3.1 installato: `dist/styles/dockview.css` | 2026-09-23 | le variabili del tema di riferimento, e le due famiglie che ne restano fuori — P-6, P-15 |
+| `dockview-core` 8.3.1 installato: `dist/package/main.esm.mjs` — `updateTheme`, `AriaLevelTracker`, `aria-label` | 2026-09-23 | P-7, P-17, P-18 |
+| `@vue/test-utils` 2.5.0 installato: `mount` | 2026-09-24 | P-23 |
+| `jsdom` 30.0.1 installato: nessun `matchMedia` | 2026-09-23 | P-12 |
+| Playwright 1.63.0: il messaggio per un Chrome che manca, `Run "npx playwright install chrome"` | 2026-09-23 | il prerequisito — R2-8 del [registro della revisione](superpowers/plans/2026-09-23-design-system-revisione/ledger.md) |
+| Vite 8.3.0: `build.rolldownOptions`, con `rollupOptions` deprecato | 2026-09-23 | la prova della pagina kit fuori dal pacchetto — R3-10 |
+| `dockview-core` 8.3.1: `DockviewTheme` con undici campi | 2026-09-23 | il tema del dock — R3-22 |
+| `dockview` 8.3.1 installato: `dist/styles/dockview.css`, `color-scheme: dark` su `.dockview-theme-abyss` | 2026-09-24 | i controlli nativi scuri nel tema chiaro — E4 |
+| WCAG 2.2, tecnica G18, `https://www.w3.org/WAI/WCAG22/Techniques/general/G18`, aggiornata il 2026-08-10: la soglia `0.04045`, e `0.03928` prima del maggio 2021, *«no practical effect»* | 2026-09-24 | la luminanza di `contrast.test.ts` — E7 |
+| `vitest` 4.1.11 installato: `passWithNoTests` fra le `NonProjectOptions` dei suoi tipi, un'opzione solo globale — `grep -rn 'passWithNoTests' gui/node_modules/vitest/dist` | 2026-09-24 | un progetto vuoto dentro una corsa a due è verde, da solo è rosso — E10 |
+| `@vitest/browser` 4.1.11 installato: su *«optimized dependencies changed. reloading»* stampa *«Vite unexpectedly reloaded a test. This may cause tests to fail…»* e consiglia `optimizeDeps.include` — `grep -n 'unexpectedly reloaded' gui/node_modules/@vitest/browser/dist/index.js` | 2026-09-25 | la cache stantia del progetto `browser`, e la via scartata — E24 |
+| Vite, *Dep Optimization Options*, `https://vite.dev/config/dep-optimization-options`: `optimizeDeps.force`, *«Set to `true` to force dependency pre-bundling, ignoring previously cached optimized dependencies»*, senza marca di sperimentale; nei tipi di Vite 8.3.0 installato è `@experimental` — `grep -n -B3 'force?: boolean' gui/node_modules/vite/dist/node/index.d.ts` | 2026-09-25 | la cura di E24 |
+| `dockview-core` 8.3.1 installato: `dist/package/main.esm.mjs` — `watchElementResize` passa la misura nuova a un `requestAnimationFrame` | 2026-09-26 | il dock che si ridimensiona un fotogramma dopo, e sborda — E43 |
+| CSS Backgrounds and Borders Module Level 3, W3C Candidate Recommendation Draft dell'11 marzo 2024, §4.5 *«Overlapping Curves»*, `https://www.w3.org/TR/css-backgrounds-3/#corner-overlap`: `f = min(Li/Si)`, e se `f < 1` **tutti** i raggi si moltiplicano per `f` | 2026-09-26 | il raggio che un angolo disegna, nella sonda dei raggi — E46 |
+| Playwright 1.63.0 installato: `lib/coreBundle.js`, senza finestra aggiunge `--hide-scrollbars` — `grep -n -- '--hide-scrollbars' gui/node_modules/playwright-core/lib/coreBundle.js` | 2026-09-26 | un'occhiata senza finestra non vede le barre di scorrimento: si lancia con `ignoreDefaultArgs: ["--hide-scrollbars"]` — E43 |
+| `dockview-core` 8.3.1 installato: `dist/package/main.esm.mjs` — `serialize()` della griglia scrive `maximizedNode: { location }`, gli indici dalla radice fino al gruppo ingrandito; e `dist/cjs/dockview/dockviewComponent.d.ts`, dove `SerializedDockview` non lo dichiara | 2026-09-27 | la miniatura di un gruppo ingrandito — E85 |
+
+### Le misure dell'esecuzione
+
+| Che cosa | Il comando | Il valore, con la data | Che cosa sostiene |
+|---|---|---|---|
+| il pezzo JavaScript della SPA, prima e dopo | `(cd gui && npm run build 2>&1 \| grep -E 'assets/index-.*\.js ')`, sul `main` di `B` — il blocco 1 della Definizione di «fatto» — e su `HEAD` | prima, su `B` = `d10d9a5`: `663.26 kB`, compresso `201.23 kB` — il `gui/` di quel giorno, `git diff --quiet 2a30916 "$B" -- gui/` → 0, e il valore misurato il 2026-09-24 al Passo 1 del compito 1, nel suo rapporto (`superpowers/plans/2026-09-23-design-system-esecuzione/task-1-report.md`); dopo, su `HEAD`, il 2026-09-28: `698.20 kB`, compresso `213.00 kB` | N-2 di E187, del proprietario (R3-25) |
+| la suite, file per file, in cinque corse | la Definizione di «fatto» del piano, blocco 2 | lì, con la data | la stabilità, dopo P-19, P-20 e P-21 |
+| la barra di scorrimento sotto i colori forzati, e con la preferenza di Windows che tiene sempre visibili le barre | una prova usa-e-getta del progetto `browser` con `commands.emulateMedia({ forcedColors })`, nei due temi, e una pagina di prova coi token davanti al proprietario — **E118** del piano | 2026-09-28, al pre-controllo del compito 9: 10 px e il cursore visibile a riposo sotto i colori forzati; la preferenza di Windows non arriva alla pagina | l'assunzione della barra nel disegno |
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

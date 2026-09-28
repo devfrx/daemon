@@ -29,11 +29,11 @@ condivisa**, cioè una decisione del proprietario. Il dettaglio, con la mutazion
 | 2 | `example and compile-fail tests` | banco `compile_fail`, contro-sonde, round-trip delle voci spedite |
 | 3 | `no-OS gate` | livello 2 — `scripts/gate-no-os.sh` |
 | 4 | `allow-list on the two graphs` | livello 2 — `scripts/gate-deps.sh` |
-| 5 | `attributes of the constrained crates` | livello 2 — `scripts/gate-attributes.sh` |
-| 6 | `documentation consistency` | livello 2 — `scripts/check-docs.sh` |
-| 7 | `DST campaigns -- wall time` | il **tempo di parete** delle campagne, ristampato con `--nocapture` |
-
-⚠️ **[C-S0-1]**
+| 5 | `dependency advisories` | `cargo audit` sul `Cargo.lock` — la voce **X-3** dell'[audit](audit-2026-08-27.md) |
+| 6 | `attributes of the constrained crates` | livello 2 — `scripts/gate-attributes.sh` |
+| 7 | `gui: fake core and SPA` | il **passo web** — `scripts/gate-gui.sh`: il core finto, la SPA, le prove sotto jsdom e nel browser vero, il linter, gli avvisi; le sezioni *«IL PASSO WEB E LE SONDE DELLA PARTE 2»* e *«IL BROWSER DEI TEST E LA PAGINA KIT NEL PASSO WEB»* |
+| 8 | `documentation consistency` | livello 2 — `scripts/check-docs.sh` |
+| 9 | `DST campaigns -- wall time` | il **tempo di parete** delle campagne, ristampato con `--nocapture` |
 
 I comandi con le loro opzioni vivono in `scripts/gate.sh`, in una casa sola: qui i passi si nominano con l'**etichetta**
 che lo script stesso dà loro, che identifica senza invitare a eseguire. È la regola di `CLAUDE.md` — *un puntatore che
@@ -2457,6 +2457,34 @@ sezione.
 | la prova **capo a capo** — la SPA nel guscio col core finto | *«fuori dal cancello di oggi, dichiarato»*, nella §8 del disegno del 2: il guscio non è di questo piano |
 | la **validità dei JSON** sotto `gui/src` | il lint li legge con `jsonc-eslint-parser` e nessuna regola li giudica — un `{ "a": 1, }` in `panels/views/` lascia `EXIT=0` (P-101); le tre viste le prova la sonda della cornice del compito 13 |
 
+## ⛔ IL BROWSER DEI TEST E LA PAGINA KIT NEL PASSO WEB — 2026-09-28
+
+Dal [piano del design system](superpowers/plans/2026-09-23-design-system.md), il sotto-progetto 14, per la (f) del suo
+[disegno](superpowers/specs/2026-09-22-design-system-design.md). Due cose entrano nel passo web, `gui: fake core and SPA`, e
+**nessun passo nuovo**: i sotto-passi di `scripts/gate-gui.sh` restano quelli che `grep -n 'gui:' scripts/gate-gui.sh` elenca.
+
+| Dove | Che cosa | Da |
+|---|---|---|
+| `gui: probes` | `npm test` gira i **due progetti** di `vitest` **uno alla volta** — `npm test -- --project jsdom`, poi `npm test -- --project browser`: in una corsa sola un progetto che non trova file è verde, da solo è rosso (**E10**) —: `jsdom`, e `browser` sul **Chrome installato**, canale `chrome`, senza finestra ma **con le barre di scorrimento**, che Playwright altrimenti nasconde (**D26**) — ogni `src/**/*.browser.test.ts`, per ciò che solo un motore d'impaginazione giudica: i caratteri, il movimento ridotto, l'alto contrasto, i raggi, lo spessore della barra di scorrimento, il testo tagliato, le icone centrate, `axe` col contrasto della pagina disegnata. Ogni prova porta la guardia di non-vacuità | compito 2, e il commento sopra i due `npm test` in `scripts/gate-gui.sh`; le barre, compito 6bis (**E64**), e il commento in `gui/vite.config.ts` |
+| `gui: build` | la **pagina kit fuori dal pacchetto**: dopo `npm run build`, rosso se `dist/index.html` manca — la guardia di non-vacuità — e rosso se `dist/kit.html` c'è o un file di `dist/assets` porta `kit-card`, *«the kit page is in the package»* | compito 4 |
+
+⛔ **Un prerequisito dell'ambiente, come il bersaglio di `rustup` e `cargo audit`:** **Google Chrome** stabile, o
+`npx playwright install chrome`. Col canale `chrome` il Chromium che Playwright scarica **non** vale (R2-8 della revisione del
+piano): una macchina senza Chrome va **rossa** a `gui: probes`, col messaggio di Playwright, e non verde. Le due immagini della
+CI, `ubuntu-latest` e `windows-latest`, portano Chrome — la fonte in [`riferimenti.md`](riferimenti.md), *«Il browser dei
+test — la risposta 22»*.
+
+⚠️ **Non hanno una riga di catalogo**, come il passo web della parte 2 e per la stessa ragione (gotcha #36): la §7.4 è spec, e
+una riga nuova è decisione del proprietario — le prove si **registrano** e non si prendono. Le due direzioni di ciascuna, coi
+rossi misurati, stanno nei compiti del piano; che cosa c'è alla chiusura lo dice la sua **Definizione di «fatto»**, coi comandi.
+
+| Che cosa la porta NON controlla, di questo lavoro | Perché |
+|---|---|
+| l'**aspetto** — la SPA e la pagina kit nei due temi, il dock | si **guarda**: i passi «guardarlo» dei compiti e la regola 5 di *«Come si esegue un compito»* del piano; il dock lo giudica il proprietario (controllo 15 del disegno) |
+| il **lettore di schermo vero** sulle regioni `role="status"` | a mano, con l'Assistente vocale di Windows (decisione 21 del disegno): il verbale nella riga 5 della tabella della posizione del piano |
+| `axe` sul **dock** | trova tre difetti che vengono dalla parte 2 e da `dockview-core`, del proprietario (P-18 del piano): nessuna prova li spegne per andare verde, e nessuna li guarda |
+| la **prima pittura** della finestra del guscio | del sotto-progetto 10: il piano la registra fra le voci che sa e non chiude |
+
 ## Le contraddizioni registrate, e non risolte
 
 ⛔ **Registrate il 2026-09-24, comprimendo, e non corrette:** il proprietario ha deciso che si comprime prima e si
@@ -2466,7 +2494,7 @@ nella cronaca sono andate in archivio con lei, e lì restano vere come verbale d
 
 | Segno | Che cosa afferma questo file | Che cosa dice la prova |
 |---|---|---|
-| **C-S0-1** | la tabella dei passi di `gate.sh` ne conta **sette** | `grep -n '^run ' scripts/gate.sh` ne rende **nove**: mancano `dependency advisories` e `gui: fake core and SPA`, che la sezione del passo web nomina |
+| **C-S0-1** | la tabella dei passi di `gate.sh` ne conta **sette** | `grep -n '^run ' scripts/gate.sh` ne rende **nove**: mancano `dependency advisories` e `gui: fake core and SPA`, che la sezione del passo web nomina ✅ **Corretta il 2026-09-28** dal compito 9 del [piano del design system](superpowers/plans/2026-09-23-design-system.md), dove scrive il browser: la tabella ha i nove passi (P-29, D21) |
 | **C-S0-2** | la conformità prova **V6 solo su un archivio vuoto**, voce aperta del proprietario | il gotcha **#63** di [`HANDOFF.md`](HANDOFF.md) la dà **CHIUSA il 2026-08-17**, con un passante nei blocchi 1, 5 e 8a — la sezione «T-1 e T-2» di questo file |
 | **C-S1-1** | voce `E21`: `GrantId` riparte da zero per ogni `Arbiter`, e dare un'identità all'arbitro è del proprietario | `ArbiterId` esiste, consegnato in `Parameters`, e `release` confronta `Grant::issuer` prima dei libri (`crates/kernel/src/arbiter/mod.rs`); la riga **13** della tabella del Traguardo 5 dà `E21` ✅ **CHIUSA** (`c4cf942`) |
 | **C-S1-2** | voce `E30`: resta da disegnare il tipo esatto della risposta di `release`, e le forme scartate stanno accanto a `ReleaseError` | `pub enum Released { Now(Mib), AlreadyCollected }` e `release(…) -> Result<Released, ReleaseError>` in `crates/kernel/src/arbiter/mod.rs`, dove il doc dice che l'argomento **non** è ricopiato lì; righe **14** e **26** della tabella del Traguardo 5 ✅ **CHIUSE** |

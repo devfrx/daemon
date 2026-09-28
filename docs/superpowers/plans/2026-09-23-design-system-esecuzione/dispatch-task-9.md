@@ -1,22 +1,9 @@
-> ⚠️ **Per il coordinatore, prima di dispacciare** — questo file è il **modello**, e viaggia con git. Il prompt che parte
-> si scrive nella cartella di lavoro `.superpowers/sdd/2026-09-23-design-system/`, ignorata, **senza** questo riquadro e
-> coi campi fra `<…>` riempiti: `<repo>`, `<HEAD>` — l'ultimo commit di `main` —, `<scratchpad>`, e i valori della macchina
-> del §0 misurati, non copiati. Il brief si genera **prima**, dalla radice del repository, con
-> `python docs/superpowers/plans/2026-09-23-design-system-esecuzione/_extract_brief_9.py`, e deve dire *«piano e disegno
-> coincidono con `HEAD`»*. ⛔ **Il compito è provato su `f35d3c2`**: `git log --oneline f35d3c2..HEAD -- docs/tracciabilita.md
-> docs/roadmap.md docs/README.md docs/COMPENDIO.md docs/archivio/stato-storico.md docs/porta-di-qualita.md docs/riferimenti.md
-> docs/superpowers/specs/ gui/ scripts/` deve rendere il solo commit del pre-controllo, o il compito si rilegge contro i file di
-> allora (`CLAUDE.md`, domanda 5). Alla chiusura il prompt spedito, il rapporto, il prompt del revisore e la revisione si
-> copiano nella cartella tracciata e si committano: il punto 8 di *«Come si esegue un compito»*. Il compito 9 **non ha uno
-> sguardo**; i Passi 11 e 12 sono del coordinatore, nella chiusura (**E120**); il revisore confronta il commit col testo con
-> `compare_task9.py <HEAD> <commit dell'implementatore>`.
-
 Sei l'**implementatore del compito 9** — *la chiusura: i documenti in ogni casa, e la Definizione di «fatto» coi comandi* —
-del piano `docs/superpowers/plans/2026-09-23-design-system.md`, nel repository `<repo>` (Windows; il tool Bash è Git Bash).
+del piano `docs/superpowers/plans/2026-09-23-design-system.md`, nel repository `C:\Users\zagor\Desktop\harness` (Windows; il tool Bash è Git Bash).
 Sei un subagente fresco: tutto ciò che ti serve è qui e nel brief che questo prompt nomina. Il compito è **di soli
 documenti** — nessun codice —, e ⛔ **il piano non lo tocchi**: i Passi 11 e 12 sono del coordinatore (**E120**).
 
-**All'avvio verifichi, e se non torna ti fermi e lo riporti:** `git rev-parse --short HEAD` → `<HEAD>`;
+**All'avvio verifichi, e se non torna ti fermi e lo riporti:** `git rev-parse --short HEAD` → `13fea0d`;
 `git status --porcelain` → vuoto; `node --version` → una versione che `gui/package.json` accetta (`engines`);
 `git config --show-origin --get-all core.autocrlf` → il valore di questa macchina, nel §0; Google Chrome stabile
 installato, e la sua versione **letta dal nome della cartella** —
@@ -45,7 +32,7 @@ La cartella di lavoro è `.superpowers/sdd/2026-09-23-design-system/`, git-ignor
 
 | File | Che cos'è |
 |---|---|
-| `task-9-brief.md` | **il compito**: la testa del piano (obiettivo, architettura, pila, disegno, **strumenti** con `replace_unique.py`), i *Vincoli globali*, *A che punto è* e *Come si esegue un compito*, l'**errata** — **E111**…**E120** sono del suo pre-controllo e sono **già applicate** al suo testo —, le voci **P-26**…**P-30**, le decisioni **D19**…**D24**, **D26** e **D29**, le voci aperte che il piano sa, **il compito 9 intero** con la sua **Definizione di «fatto»**, e dal disegno la (e), la (f), la tabella dei controlli, le assunzioni e il suo *«Come si riprende»* — **copiati parola per parola**, a `HEAD` = `<HEAD>`. Leggilo **tutto**, a blocchi |
+| `task-9-brief.md` | **il compito**: la testa del piano (obiettivo, architettura, pila, disegno, **strumenti** con `replace_unique.py`), i *Vincoli globali*, *A che punto è* e *Come si esegue un compito*, l'**errata** — **E111**…**E120** sono del suo pre-controllo e sono **già applicate** al suo testo —, le voci **P-26**…**P-30**, le decisioni **D19**…**D24**, **D26** e **D29**, le voci aperte che il piano sa, **il compito 9 intero** con la sua **Definizione di «fatto»**, e dal disegno la (e), la (f), la tabella dei controlli, le assunzioni e il suo *«Come si riprende»* — **copiati parola per parola**, a `HEAD` = `13fea0d`. Leggilo **tutto**, a blocchi |
 
 Poi, **per le sole parti che il compito nomina o che modifichi**, e **prima** di scriverle: la **§6**, la **§12** e la
 **§13** del compendio; il riquadro in testa a `docs/tracciabilita.md`; la sezione *«IL PASSO WEB E LE SONDE DELLA PARTE 2»*
@@ -103,7 +90,7 @@ non una corsa da ripetere finché passa (P-19).
 `git ls-files --eol <file>` e `tr -cd '\r' < <file> | wc -c` contro `wc -l`: sono le colonne di **questa** macchina. **Dopo**,
 la **forma**: su un file CRLF i CR sono **uguali alle righe**, su un file LF sono **zero**, e la colonna `w/…` è quella di
 prima. Scrivi con Python `newline=""` (temporaneo più `os.replace`) o con `replace_unique.py`, che conserva il fine-riga del
-file che trova e che copi dagli *Strumenti* del brief **nello scratchpad** `<scratchpad>`, mai nel repository; lì vanno anche
+file che trova e che copi dagli *Strumenti* del brief **nello scratchpad** `C:\Users\zagor\AppData\Local\Temp\claude\C--Users-zagor-Desktop-harness\f919d713-f8d4-41b3-a0d4-c94463b505da\scratchpad\task9` — in Git Bash `/c/Users/zagor/AppData/Local/Temp/claude/C--Users-zagor-Desktop-harness/f919d713-f8d4-41b3-a0d4-c94463b505da/scratchpad/task9` —, mai nel repository; lì vanno anche
 `word_for_word.py` e `dod_suite.py`, i log, `prima.txt`, `old-6.txt` e `old-h.txt`. ⛔ **Mai `sed -i`.**
 
 ## 5. Ciò che da qui non si misura, e come lo fai

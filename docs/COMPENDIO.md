@@ -17,7 +17,7 @@
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — il
 > comando in fondo alla §12 — e l'idea è già qui.
 
-**Aggiornato il 2026-09-28**, con la **chiusura del sotto-progetto 14**, il design system — una riga nella §12 e il puntatore della §6 al 13; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](archivio/stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+**Aggiornato il 2026-09-28**, con la **chiusura del sotto-progetto 14**, il design system — una riga nella §12 e il puntatore della §6, alla caduta di **E130** e poi al 13; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](archivio/stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
 
 ---
 
@@ -615,7 +615,12 @@ per parola.
 
 📌 **La compressione di [`porta-di-qualita.md`](porta-di-qualita.md) è fatta, il 2026-09-24:** il file com'era sta intero in [`archivio/porta-di-qualita-storico.md`](archivio/porta-di-qualita-storico.md). ⏳ **Resta la correzione delle contraddizioni** che la compressione ha segnato e non corretto — decisione 11 del [verbale degli sfoltimenti](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md) —, una sessione loro che il proprietario **non ha ancora collocato**: la lista sta in fondo a quel file.
 
-⏭️ **IL PROSSIMO PASSO: IL SOTTO-PROGETTO 13** — i tre meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima**
+⏭️ **IL PROSSIMO PASSO, IN DUE TEMPI. Uno: la CADUTA di E130** — la prova dei raggi del dock, `keeps every radius of its own
+concentric, a floating group's too` di `gui/src/frame/dock.browser.test.ts`, è caduta **una** volta nelle cinque corse della
+Definizione di «fatto» del [piano del design system](superpowers/plans/2026-09-23-design-system.md), il 2026-09-28: la causa si
+cerca **prima** del 13, in una sessione sua, perché il cancello fa girare quella prova prima di ogni commit — decisione del
+proprietario, lo stesso giorno; il fatto e il metodo nella voce **E130** del piano. **Due: IL SOTTO-PROGETTO 13** — i tre
+meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima**
 del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta proprietà** della §3, ma questo **vincolo d'ordine**. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill dichiarative: è una sua decisione e non del piano. Il perimetro
 sta nel [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md), che chi riprende quel fronte legge
 **per intero**; brainstorming e disegno del 13 vengono prima del piano, in sessioni distinte.

@@ -128,7 +128,7 @@ parts = [
     ("Vincoli globali", block(PLAN, index_of(PLAN, lambda s: s == "## Vincoli globali"), h2)),
     ("A che punto è il piano, e come si esegue un compito",
      block(PLAN, index_of(PLAN, lambda s: s.startswith("## ▶️ A che punto è QUESTO PIANO")), h2)),
-    ("L'errata — E111…E118 sono del pre-controllo del compito 9 e sono già applicate al suo testo; E35, E69 ed E101 la "
+    ("L'errata — E111…E120 sono del pre-controllo del compito 9 e sono già applicate al suo testo; E35, E69 ed E101 la "
      "forma delle celle; E79 la colonna Commit che c'è già",
      block(PLAN, index_of(PLAN, lambda s: s.startswith("## ⚠️ L'errata di questo piano")), h2)),
     section_rows(PLAN, "## Ciò che la scrittura del piano ha trovato", [f"| **P-{n}** |" for n in P_LIST],

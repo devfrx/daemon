@@ -2533,3 +2533,72 @@ coordinatore; il push e la CI; lo sguardo del Passo 10; la chiusura.
    `riferimenti.md`, i richiami nel disegno e nella stella polare, e la **Definizione di «fatto»** eseguita coi comandi.
 3. ⏳ **Una domanda per il proprietario**, al pre-controllo del compito 9: se l'assunzione della barra di scorrimento debba
    avere un compito che la misuri — la Definizione di «fatto», righe 22 e 23.
+
+## La chiusura del compito 9 e del piano, del 2026-09-28
+
+Tolto dal piano il 2026-09-28, quando la chiusura del compito 9 ha scritto la consegna *«Come si riprende — il piano
+eseguito»*. Il testo com'era, dal commit `afcbd4b`, parola per parola; i rimandi sono riscritti per questa cartella.
+
+## Come si riprende — il pre-controllo del compito 9, 2026-09-28
+
+✅ **Il pre-controllo del compito 9 è fatto: dieci voci, E111…E120**, scritte nell'errata e applicate al testo. **E118** è la
+domanda del proprietario — **A**, la barra di scorrimento misurata —; le altre le ha decise il coordinatore coi cinque
+criteri, fuori dal merito approvato. Il compito rifatto dal testo del piano su un `git worktree` di `f35d3c2` in
+`%TEMP%\pc9`, macchina `zagor`: i Passi 2–8 e 10 applicati da uno script, nessun rifiuto, ogni sonda dei passi come detta,
+`check-docs.sh` verde, i fine-riga conservati — CR uguali alle righe in ogni file —, nessuna tabella spezzata in più; e la
+Definizione di «fatto» eseguita sull'albero a `f35d3c2`: blocco 1 `GATE GREEN`, blocco 2 cinque corse uguali — `237 tests,
+236 passed, 0 failed`, ventotto file su ventotto —, blocchi 3 e 4 coi difetti di **E111** ed **E112**. La riga 9 della
+posizione resta a `⬜`, pre-controllata. La consegna precedente — l'esecuzione del compito 8 — sta parola per parola in
+[`archivio/consegna-piano-design-system.md`](consegna-piano-design-system.md).
+
+⛔ **Da sapere subito.**
+
+1. **Chi scrive il piano** (**E120**): l'implementatore fa i Passi 1–10 e il commit del Passo 13 **senza** il piano né
+   l'archivio delle consegne, ed **esegue** la Definizione di «fatto» riportandone le uscite nel rapporto; i Passi 11 e 12 —
+   le uscite nel piano, la testa, la riga 9, la chiusura del piano e la consegna in archivio — li fa il coordinatore nella
+   chiusura, dopo la revisione e le sue cure; il push è suo. Il compito **non ha uno sguardo** del proprietario.
+2. **Il Passo 9 legge anche le lezioni** (**E116**): le tabelle *«Ciò che questa sessione ha imparato»* delle consegne,
+   ~31 kB; una trappola diventa un gotcha, una regola di lavoro una **proposta al proprietario** per `CLAUDE.md`.
+3. **Il giudizio sul dock** (controllo 15, **D24**) **è scritto**: le celle 6 e 6bis della posizione portano lo sguardo del
+   proprietario, e la domanda del Passo 1 non serve.
+4. **La barra di scorrimento** (**E118**): sotto i colori forzati regge; la preferenza di Windows che tiene sempre visibili
+   le barre non arriva alla pagina — il costo della C, ora misurato —, e la B resta **registrata, non presa**.
+5. **In `%TEMP%` della macchina `Jays` restano le cartelle di prova di sessioni passate** — `pc2`…`pc6c`, `rv4`, `rv5`,
+   `rv6` —: toglierle è del proprietario; `ls -d /c/Users/Jays/AppData/Local/Temp/pc* /c/Users/Jays/AppData/Local/Temp/rv*`
+   le elenca. Su `zagor` la copia di questa sessione, `%TEMP%\pc9`, è tolta.
+
+| | Stato alla chiusura, e il comando che lo rifà |
+|---|---|
+| **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
+| **i commit** | `git log --oneline f35d3c2..HEAD`: uno, quello che scrive questa riga — l'errata, il compito 9 corretto, il richiamo di **E118** nel disegno, questa sezione e la precedente in archivio, i tre file del dispaccio. Nessun codice cambia: `git diff --stat f35d3c2..HEAD -- gui/ crates/ scripts/` non rende nulla |
+| **cancello** | `GATE GREEN` all'apertura su `f35d3c2` — jsdom 170 prove passate e una saltata, browser 66, il pezzo `698.20 kB`, compresso `213.00 kB`, `found 0 vulnerabilities` — e prima del commit che scrive questa riga. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `f35d3c2` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../porta-di-qualita.md), *«Leggere la CI da terra»* |
+| **la posizione** | le righe dalla 1 alla 8 a `✅`; la 9, pre-controllata, a `⬜` |
+| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: `_extract_brief_9.py`, il modello `dispatch-task-9.md`, e `compare_task9.py`, che ricostruisce dal testo del piano i nove documenti dettati e li confronta col commit — provato in due direzioni su una copia |
+| **lo scratchpad** | sulla macchina `zagor`, **non tracciato**: in `.superpowers/sdd/2026-09-23-design-system/` gli attrezzi del pre-controllo — `_precheck_9_perimeter.py`, `_precheck_9_apply.py`, `_precheck_9_write.py`, `word_for_word.py` —; nello scratchpad della sessione i cinque rapporti JSON della suite, le foto della barra e i log. Non servono a riprendere: il piano basta |
+| **server e cartelle di prova** | nessun server acceso; `git worktree list` rende la sola cartella del repository |
+
+**Che cosa ha fatto questa sessione.** La ripresa coi comandi — trentadue commit arrivati, il fast-forward —, la CI di `f35d3c2`
+e il cancello d'apertura; la Definizione di «fatto» eseguita blocco per blocco sull'albero, le cinque corse comprese; il
+perimetro nome per nome con uno script; il compito rifatto dal testo su una copia, con ogni sonda; la domanda del
+proprietario sulla barra, **A**, e la misura: i colori forzati emulati nel Chrome installato, e la preferenza di Windows
+guardata dal proprietario su una pagina di prova; le dieci voci; il dispaccio, con `compare_task9.py` provato nelle due
+direzioni; la chiusura.
+
+📌 **Ciò che questa sessione ha imparato, e che non era scritto** — le raccoglie la chiusura del sotto-progetto (**E116**).
+
+| | Che cosa | Che cosa se ne fa |
+|---|---|---|
+| 1 | **`check-docs.sh` non vede un rimando rotto dentro il testo**: una riscrittura che perde la `)` lascia un rimando che porta ancora a un file vero, e il cancello resta verde | un testo archiviato si prova **parola per parola**, con le destinazioni tolte dalle due parti (**E117**) |
+| 2 | **una promessa scritta in una consegna è un contratto per il compito che nomina**: ventidue consegne dicevano *«le raccoglie la chiusura»*, e il compito della chiusura leggeva la sola errata | il pre-controllo di un compito cerca nelle consegne ciò che gli è stato promesso, non solo nell'errata |
+| 3 | **in `awk`, `print x > 0` scrive un file che si chiama `0`**: il confronto dentro un `print` è una redirezione | un confronto si scrive fra parentesi, `print (x > 0)`, o in una condizione |
+| 4 | **la preferenza di Windows che tiene visibili le barre non arriva a una pagina con `::-webkit-scrollbar`**, e una pagina di prova aperta come file non carica i moduli di Vite, e mostra le barre di Chrome | una pagina di prova coi token si serve da Vite, mai da un file |
+
+**Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
+
+1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
+2. **L'esecuzione del compito 9**: il brief da `_extract_brief_9.py`, il prompt dal modello `dispatch-task-9.md`, col sì del
+   proprietario sulla banda dei costi detta prima — un compito di **soli documenti**, senza sguardo, che fa girare il
+   cancello e cinque corse della suite: 🔶 dedotta dalle bande dei compiti 7 e 8, 0,6–0,9 milioni per implementatore e
+   revisore —; la revisione con `compare_task9.py`, le cure; poi la chiusura del coordinatore coi Passi 11 e 12 (**E120**),
+   e il push. Dopo, la §6 del compendio punta al sotto-progetto 13.

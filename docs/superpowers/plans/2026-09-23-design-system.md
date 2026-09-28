@@ -118,9 +118,8 @@ Valgono per ogni compito, senza che il compito li ripeta.
 
 ## ▶️ A che punto è QUESTO PIANO — casa unica, e si aggiorna scrivendo
 
-✅ **IL PIANO È SCRITTO il 2026-09-24**, e i due comandi coincidono: `grep -c '^## Compito' <questo file>` e le righe `| **N** |`
-della tabella qui sotto. ⏳ **Viene il pre-controllo**, compito per compito, ciascuno in una sessione sua. ⛔ **Nessun compito si
-esegue** prima del proprio pre-controllo.
+✅ **IL PIANO È ESEGUITO, il 2026-09-28.** A dirlo non è questa riga ma la tabella qui sotto — ogni riga ✅, e la colonna **Commit**
+piena — e la **Definizione di «fatto»**, coi comandi e le uscite del giorno. Il passo dopo lo dice la §6 del compendio.
 
 | # | Compito | Commit | Stato |
 |---|---|---|---|
@@ -133,7 +132,7 @@ esegue** prima del proprio pre-controllo.
 | **6bis** | **la cura delle tre voci del Passo 8 del 6**: nella tavola il bordo nei raggi, la barra di scorrimento col suo innesco e il messaggio, e la copia; la sonda a mezzo pixel; le barre mostrate al progetto browser; `BaseNotice` con le icone dei toni, nella pagina kit, nella fascia sulla pagina, in Impostazioni e in Stato; `frame.browser.test.ts` | `da7a522`, con la cura `5105ad0` | ✅ 2026-09-27 — rivisto **conforme**: 0 critici, 0 importanti, 2 minori e 2 nit, tutti del dettato e curati (**E70**–**E73**). Il Passo 16 col proprietario, nel suo Chrome col mouse vero — la fascia prima e dopo la consegna, i messaggi, la barra col cursore che compare sotto il puntatore, i raggi —: *«quello che mi hai chiesto funziona»*, A, a condizione che la chiusura segua `anthropic-skills:decision-principles`; il frammento del contrasto sulla SPA a 1440 × 900, misurato dal coordinatore, 5,39 nel chiaro e 5,4 nello scuro. Due difetti di prima, trovati dalla revisione e detti prima dello sguardo, che non li ha commentati: il bordo di «Riprova» sulla fascia, 1,22 e 1,00, è il bordo di decoro che la (a) esenta (**E5**), e resta; l'anello del fuoco tagliato è **E74**, aperta |
 | **7** | **le viste col nome, sotto**: `named` e `openNamed` nel pacchetto, il negozio e il dock che le mostrano e le salvano; l'aiutante della geometria estratto da `moveActive.ts`; lo schema di una disposizione, per le miniature | `0417c9c`, con la cura `a606f33` | ✅ 2026-09-27 — rivisto **conforme**: 0 critici, 0 importanti, 4 minori e 5 nit, tutti del dettato e curati (**E82**–**E89**), e **E90** al pre-controllo del compito 8. Nessuno sguardo del proprietario: la regola 5 non nomina il compito 7. La colonna Commit la scrive il compito 8 (**E79**): `0417c9c`, con la cura `a606f33` |
 | **8** | **la cornice**: la barra col nome della vista, la **Panoramica** su `BaseDialog` con le miniature e *«Salva questa vista»* — F3, frecce, Invio, Esc —, la **striscia** a pillola coi «moduli»; le prove nel browser della Panoramica e della striscia | `ac56b11`, con le cure `77c4062` e `7f04cdf` | ✅ 2026-09-27 — rivisto **conforme** al dettato, con **2 importanti** di prima del compito che la Panoramica rende visibili — la miniatura di Compatta falsa (**E103**), l'ingrandimento non salvato (**E104**) —, 4 minori e 2 nit, e la candidata **E102** del rapporto confermata; curati da un **curatore**, un subagente col sì del proprietario sulla banda, sulle decisioni del coordinatore (**E102**…**E110**), e **X4** di **E107** dal coordinatore, perché la dichiarazione decisa per lei la misura l'ha smentita. Il Passo 10 col proprietario, nel suo Chrome, sulla lista del passo e sulle cure — Compatta, l'ingrandimento, *«Salva questa vista»* spenta e accesa, il segnaposto del nome, l'anello dentro —: *«quello che mi hai chiesto funziona»*. Detti prima dello sguardo e non commentati, e restano come sono: la carta *«Salva questa vista»* contro la tavola (**E110**), i due anelli bordeaux della carta corrente col fuoco, la striscia che sparisce sotto un gruppo ingrandito — in `dockview` una vista ingrandita è un gruppo solo |
-| **9** | **la chiusura**: la riga «Accessibilità» di tracciabilità, la riga 14 della roadmap con *«Perché quest'ordine»*, `README.md`, la §12 e la §6 del compendio, `porta-di-qualita.md` con C-S0-1 (P-29), `riferimenti.md`; i richiami nel disegno e nella stella polare (P-28); la **Definizione di «fatto»**, eseguita, con le uscite del giorno | — | ⬜ |
+| **9** | **la chiusura**: la riga «Accessibilità» di tracciabilità, la riga 14 della roadmap con *«Perché quest'ordine»*, `README.md`, la §12 e la §6 del compendio, `porta-di-qualita.md` con C-S0-1 (P-29), `riferimenti.md`; i richiami nel disegno e nella stella polare (P-28); la **Definizione di «fatto»**, eseguita, con le uscite del giorno | `8c47715`, con la cura `afcbd4b` | ✅ 2026-09-28 — rivisto **conforme** al dettato: 0 critici, 0 importanti, 4 minori e 6 nit, curati dal coordinatore senza una seconda revisione (**E121**…**E128**); la Definizione di «fatto» rieseguita dal coordinatore nella chiusura, con una caduta alla prima delle cinque corse (**E130**), che il proprietario ha messo prima del sotto-progetto 13. Nessuno sguardo del proprietario: la regola 5 non nomina il compito 9 |
 
 ⛔ **QUALE compito venga dopo NON è scritto qui:** vive nella §6 del [`COMPENDIO.md`](../../COMPENDIO.md). Qui resta la
 **posizione** — la tabella, che chi esegue aggiorna nel commit del compito — e **come** si esegue.
@@ -295,6 +294,8 @@ chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezio
 | **E126** | Minore — **Definizione di «fatto», blocco 4, ed E112 — la sonda del perimetro dava casa a ogni file sotto `crates/`, `gui/`, `scripts/` e `.github/`:** prendeva i percorsi fra backtick di ogni riga delle liste *Files*, e un percorso che finisce con `/` era una cartella-casa, anche nella riga del compito 9 che vieta di toccare il codice. Oggi salva il solo `gui/src/panels/Chat.vue`, che una casa vera ce l'ha — il censimento del compito 1, che la lista *Files* chiama *«gli undici componenti»* —: la conclusione *«0 senza casa»* regge. Trovata dalla revisione il 2026-09-28, con la casa stampata per ogni nome. ✅ **Corretta** nel commit che la scrive: la regola del blocco 4 dice che una riga che **vieta** una cartella non ne è la casa, e un richiamo in **E112**; la chiusura rilancia il perimetro nome per nome, con la sonda corretta |
 | **E127** | Nit — **Compito 9, Passo 7 — la riga `gui: build` della sezione nuova non diceva che `dist/` si vuota prima del *build*:** `scripts/gate-gui.sh` lo fa, `rm -rf dist`, col commento *«NO OUTPUT OF A PREVIOUS BUILD»* (**E31**), e senza lo svuotamento la guardia di non-vacuità leggeva un `dist/` rimasto. La specie di **E114**: un testo scritto prima di **E31**, che ha corretto la stella polare e non questa riga. Trovata dalla revisione il 2026-09-28. ✅ **Corretta** nel commit che la scrive: la riga nel Passo 7 e in `porta-di-qualita.md` |
 | **E128** | Nit — **Compito 9, Passo 10 — la riga N-2 di E187 della (e) datava al giorno della chiusura un valore del 2026-09-24, e portava le due cifre in una seconda casa:** il pezzo di prima, `663.26 kB`, è del 2026-09-24 su `B`, e i due valori vivono col loro comando in `riferimenti.md`, dove li scrive il Passo 8 — *«vive in una casa sola»*, `CLAUDE.md`. Trovata dalla revisione il 2026-09-28. ✅ **Corretta** nel commit che la scrive: la riga dice che il pezzo **cresce**, con la data di ciascun valore, e rimanda a `riferimenti.md` per i valori e il comando; la sua testa, *«Misurato il <data>»*, resta, perché `compare_task9.py` riconosce il blocco da lì |
+| **E129** | Nit — **Compito 9, Passo 12 — la colonna Commit della riga 9 col comando:** il passo la voleva col comando `git log -1 --format=%h --grep='^design-system(compito 9):'`, *«perché il commit che la scrive non può portare il proprio hash»*; ma con **E120** la riga la scrive la chiusura, dopo il commit dell'implementatore e quello delle cure, che ci sono già, e il comando renderebbe il commit delle cure, non quello del compito. Trovata dal coordinatore il 2026-09-28, alla chiusura. ✅ **Decisa dal coordinatore** coi cinque criteri — la forma delle righe 7 e 8 (**E79**, **E101**, **E115**) — e **corretta** nel commit che la scrive: la riga 9 porta `8c47715`, con la cura `afcbd4b`, e il Passo 12 lo dice |
+| **E130** | ⚠️ **Definizione di «fatto», blocco 2 — una prova del browser è caduta una volta nelle cinque corse della chiusura:** `keeps every radius of its own concentric, a floating group's too (answer 4)` di `gui/src/frame/dock.browser.test.ts`, alla prima corsa sull'albero di `afcbd4b`, il 2026-09-28 alle 12:05 — `AssertionError: expected 3 to be greater than or equal to 4`, dall'attesa `expect(own.near).toBeGreaterThanOrEqual(4)`: tre angoli del gruppo galleggiante vicini al loro raggio invece di quattro. Le altre quattro corse verdi, `237 tests, 236 passed, 0 failed`, col Chrome `154.0.8037.58` prima e dopo; e la stessa prova verde in ogni cancello e in ogni corsa del giorno che i rapporti riportano — il pre-controllo, l'implementatore, il revisore, i due cancelli del coordinatore. La corsa caduta è la prima dopo il cancello, e Vite vi ha ricostruito le dipendenze (*«Forced re-optimization of dependencies»*): una causa di tempo è **dedotta**, non misurata. La prova è del compito 6: il compito 9 non tocca il codice. ⛔ **Aperta**, e non rilanciata finché passa (**P-19**). ✅ **Decisa dal proprietario** il 2026-09-28, **A**: la causa si cerca **prima** del sotto-progetto 13, in una sessione sua, perché il cancello fa girare questa prova prima di ogni commit; il puntatore della §6 del compendio lo dice, riscritto dalla chiusura, che l'implementatore aveva scritto al 13. Il metodo è quello di **P-21**: sonde a lato coi numeri nel messaggio, e la prova ripetuta |
 
 ---
 
@@ -390,6 +391,7 @@ Rilette il 2026-09-23 coi due comandi della §6 del compendio e con la tabella d
 | la **finestra** del guscio — `titleBarOverlay`, `setTitleBarOverlay`, gli angoli di Windows; e la **prima pittura**: i ruoli vivono solo sotto `[data-theme]`, che lo script mette dopo l'analisi del documento, quindi prima dello script la finestra non ha fondo (R1-13 della revisione, dedotto e non misurato) | del sotto-progetto **10** | niente: le regole della (d) restano scritte nel disegno per chi farà il guscio; per la prima pittura il rimedio è del guscio — il `backgroundColor` della finestra, o mostrarla a `ready-to-show` |
 | i **tre difetti di accessibilità** che `axe` trova sul dock — `nested-interactive` sulle linguette, il nome della linguetta uguale all'id del pannello, `aria-level` e `aria-label` sul contenitore galleggiante (P-18) | del proprietario | niente: vengono dalla parte 2 e da `dockview-core`, e toglierli cambia la presa grande giudicata con SP-8 — i comandi fuori dalla linguetta, un `title` in italiano dentro le viste salvate. Il compito 6 li misura e non li nasconde: nessuna prova `axe` sul dock con quelle regole spente |
 | 🔶 **con una finestra modale aperta — la conferma, il cassetto e, dal compito 8, la Panoramica — Ctrl+Alt+frecce muovono ancora le tessere del dock sotto il velo**: `onKey` di `Frame.vue` non guarda le finestre aperte, da prima del design system. Dedotto leggendo il codice il 2026-09-24, **non misurato** | del proprietario | niente: non è nella (d); la cura sarebbe una riga in `onKey`, come il silenzio di F3 (D16), con una prova che conti i `SaveLayout` |
+| ⛔ **la caduta di E130** — `keeps every radius of its own concentric, a floating group's too` di `gui/src/frame/dock.browser.test.ts`, caduta **una** volta nelle cinque corse della chiusura | del proprietario, che l'ha messa **prima** del sotto-progetto 13 | la registra in **E130**: la caccia è una sessione sua, e il puntatore sta nella §6 del compendio |
 
 ---
 ## Compito 1: i token — la tavola copiata, il tema sulla radice, i nomi nuovi
@@ -11995,8 +11997,8 @@ piena — e la **Definizione di «fatto»**, coi comandi e le uscite del giorno.
 ```
 
 **Due.** Nella tabella: la riga **9**, **Stato** `✅ <data>`; la riga **8** porta già la colonna **Commit** — `ac56b11`, con
-le cure `77c4062` e `7f04cdf`, scritta dalla chiusura del compito 8 (**E101**) — e **non si tocca** (**E115**); e nella riga **9** la colonna **Commit** con il comando, perché il commit che la scrive non può portare il proprio hash:
-`` `git log -1 --format=%h --grep='^design-system(compito 9):'` ``.
+le cure `77c4062` e `7f04cdf`, scritta dalla chiusura del compito 8 (**E101**) — e **non si tocca** (**E115**); e nella riga **9** la colonna **Commit** con gli hash, come la **8**: il commit del compito e quelli delle sue cure,
+che la chiusura trova già fatti (**E129**).
 
 **Tre.** *«Come si riprende»* si riscrive con la chiusura del piano — ciò che resta aperto e dove vive: le voci che il piano sa e
 non chiude, le voci d'errata senza esito, il giudizio del controllo 15 se è del proprietario, le proposte per `CLAUDE.md` del
@@ -12041,7 +12043,7 @@ alla sessione dopo, che li legge **per prima**.
 
 ---
 
-## La Definizione di «fatto» — i comandi, e le uscite attese
+## La Definizione di «fatto» — i comandi, con le uscite del 2026-09-28
 
 ⛔ **Comandi, non affermazioni** (D74 della parte 2; **D20** qui). Scritta il **2026-09-24**, con le **attese** che i compiti 1–8
 dettano; il Passo 11 del compito 9 la esegue sull'albero del proprio commit e scrive accanto a ogni comando **l'uscita vista**, con
@@ -12049,21 +12051,25 @@ la data. ⛔ **Un'uscita che diverge dall'attesa è una voce d'errata**, non un'
 uno prima misurava, vale lo stato **finale**, e la riga nomina chi l'ha cambiato. Un conto sta **accanto al proprio comando**
 (vincolo 10): chi rilancia confronta due uscite, non una cifra con la memoria.
 
+✅ **Eseguita il 2026-09-28** dal coordinatore, nella chiusura (**E120**), sull'albero del commit delle cure `afcbd4b`: le attese
+sono diventate le **uscite viste**, dopo la freccia accanto a ogni comando. Ogni uscita è l'attesa, fuori da **una caduta** nel blocco 2 —
+**E130** —; e le righe che l'errata corregge dicono la voce (**E111**, **E123**, **E126**).
+
 **La base.** `B` è il genitore del **primo** commit del compito 1 — i messaggi cominciano con `design-system(compito N):`
 (vincolo 15):
 
 ```bash
 B=$(git log --format=%H --grep='^design-system(compito 1):' | tail -1)^
-git rev-parse --short "$B"; git log --oneline "$B"..HEAD | wc -l    # l'hash, e i commit del piano
+git rev-parse --short "$B"; git log --oneline "$B"..HEAD | wc -l    # → `d10d9a5`, e `51` commit a `afcbd4b`
 ```
 
 **Blocco 1 — il cancello e i documenti.** Una corsa sola del cancello, e i `grep` sul suo log:
 
 ```bash
-bash scripts/gate.sh > <scratchpad>/gate-dod.log 2>&1; tail -1 <scratchpad>/gate-dod.log   # GATE GREEN.
-grep -c 'gui: fake core and SPA' <scratchpad>/gate-dod.log                                   # 1: il passo web, e dentro il browser
-grep -E 'assets/index-.*\.js ' <scratchpad>/gate-dod.log                                     # il pezzo JavaScript: la cifra per il proprietario (N-2 di E187, R3-25)
-bash scripts/check-docs.sh 2>&1 | tail -1                                                    # OK — no inconsistencies.
+bash scripts/gate.sh > <scratchpad>/gate-dod.log 2>&1; tail -1 <scratchpad>/gate-dod.log   # → GATE GREEN. -- il cancello delle cure, lanciato sullo stesso albero prima del commit `afcbd4b`
+grep -c 'gui: fake core and SPA' <scratchpad>/gate-dod.log                                   # → 1
+grep -E 'assets/index-.*\.js ' <scratchpad>/gate-dod.log                                     # → 698.20 kB, compresso 213.00 kB: la cifra per il proprietario (N-2 di E187, R3-25)
+bash scripts/check-docs.sh 2>&1 | tail -1                                                    # → OK — no inconsistencies.
 ```
 
 **Blocco 2 — la suite, file per file, in cinque corse** (**D23**). L'aiutante vive nello scratchpad, **mai** nel repository,
@@ -12120,44 +12126,87 @@ Attese: una riga per file di prova, **nessuna** con un `failed` diverso da zero 
 cinque totali **uguali** fra loro, `0 failed` e `success=True`; l'uscita **0**; e le ultime due cifre **uguali**: ogni file di
 prova del repository è girato, e nessuno fuori dal repository.
 
+✅ **Uscite, il 2026-09-28**, sull'albero di `afcbd4b`, col Chrome `154.0.8037.58` prima e dopo le corse: ⛔ **una caduta**, alla
+prima corsa — `keeps every radius of its own concentric, a floating group's too (answer 4)`, `expected 3 to be greater than or
+equal to 4` —, la voce **E130**; le altre quattro corse verdi, e ogni altra riga di file senza cadute:
+
+```text
+src/a11y.test.ts: 13 passed, 0 failed, 0 skipped
+src/components/kit.test.ts: 31 passed, 0 failed, 0 skipped
+src/components/markdown.test.ts: 5 passed, 0 failed, 0 skipped
+src/frame/bigtab.test.ts: 3 passed, 0 failed, 0 skipped
+src/frame/dock.browser.test.ts: 15 passed, 1 failed, 0 skipped
+src/frame/frame.browser.test.ts: 11 passed, 0 failed, 0 skipped
+src/frame/frame.test.ts: 24 passed, 0 failed, 0 skipped
+src/frame/keys.test.ts: 5 passed, 0 failed, 0 skipped
+src/frame/nearest.test.ts: 3 passed, 0 failed, 0 skipped
+src/frame/schematic.test.ts: 3 passed, 0 failed, 0 skipped
+src/kit/kit.browser.test.ts: 22 passed, 0 failed, 0 skipped
+src/locales/copy.test.ts: 4 passed, 0 failed, 0 skipped
+src/panels/chat.test.ts: 6 passed, 0 failed, 0 skipped
+src/panels/modules.test.ts: 17 passed, 0 failed, 0 skipped
+src/panels/settings.browser.test.ts: 1 passed, 0 failed, 0 skipped
+src/panels/views/generate-views.test.ts: 0 passed, 0 failed, 1 skipped
+src/schema/schema.test.ts: 5 passed, 0 failed, 0 skipped
+src/stores/invoke.test.ts: 4 passed, 0 failed, 0 skipped
+src/stores/stores.test.ts: 21 passed, 0 failed, 0 skipped
+src/stores/stream.test.ts: 5 passed, 0 failed, 0 skipped
+src/testing/probes.browser.test.ts: 9 passed, 0 failed, 0 skipped
+src/tokens/board.test.ts: 2 passed, 0 failed, 0 skipped
+src/tokens/contrast.test.ts: 7 passed, 0 failed, 0 skipped
+src/tokens/dock.test.ts: 2 passed, 0 failed, 0 skipped
+src/tokens/theme.test.ts: 3 passed, 0 failed, 0 skipped
+src/tokens/tokens.browser.test.ts: 7 passed, 0 failed, 0 skipped
+src/tokens/usage.test.ts: 3 passed, 0 failed, 0 skipped
+src/transport/fakeBridge.test.ts: 4 passed, 0 failed, 0 skipped
+dod-1.json: 237 tests, 235 passed, 1 failed, success=False
+dod-2.json: 237 tests, 236 passed, 0 failed, success=True
+dod-3.json: 237 tests, 236 passed, 0 failed, success=True
+dod-4.json: 237 tests, 236 passed, 0 failed, success=True
+dod-5.json: 237 tests, 236 passed, 0 failed, success=True
+exit=1
+```
+
+E le ultime due cifre, `28` e `28`: uguali.
+
 **Blocco 3 — i controlli del disegno, uno per riga** — la tabella *«Il prodotto, e il controllo che esercita ciascun
 artefatto»*. Dove il controllo è un file di prova, la sua riga del blocco 2 è la prova; qui il comando dice che l'artefatto c'è:
 
 ```bash
 # 1 -- i valori dei token, copie della tavola (D1): board.test.ts nel blocco 2
-ls gui/src/tokens/base.css gui/src/tokens/themes.css                                   # i due file
+ls gui/src/tokens/base.css gui/src/tokens/themes.css                                   # → i due file
 # 2, 3 -- il contrasto per famiglie, gli stessi ruoli nei due temi (P-1): contrast.test.ts nel blocco 2
 # 4, 5 -- nessuna scala e nessun colore a mano fuori dai token: usage.test.ts nel blocco 2
-grep -rln 'var(--ref-' gui/src | grep -v '^gui/src/tokens/' | wc -l                    # 0
+grep -rln 'var(--ref-' gui/src | grep -v '^gui/src/tokens/' | wc -l                    # → 0
 # 6, 18 -- il tema e le viste col nome, campi facoltativi del pacchetto (D2, D3): stores.test.ts nel blocco 2
-grep -cE '^  (theme|named|openNamed)\?: ' gui/src/stores/layout.ts                      # 3: le dichiarazioni di LayoutPack, non i cast di unpack (E111)
+grep -cE '^  (theme|named|openNamed)\?: ' gui/src/stores/layout.ts                      # → 3: le dichiarazioni di LayoutPack (E111)
 # 7 -- il tema sulla radice: theme.test.ts nel blocco 2
-grep -c 'data-theme' gui/src/tokens/theme.ts                                            # almeno 1
+grep -c 'data-theme' gui/src/tokens/theme.ts                                            # → 3
 # 8, 9, 16 -- il movimento ridotto, i caratteri, readToken: tokens.browser.test.ts nel blocco 2
 # 10 -- la mappa delle icone, e lucide da un posto solo
-grep -rlE "from ['\"]lucide" gui/src                                                    # gui/src/components/icons.ts, e nient'altro
+grep -rlE "from ['\"]lucide" gui/src                                                    # → gui/src/components/icons.ts, e nient'altro
 # 11 -- i pezzi di base: kit.test.ts e kit.browser.test.ts nel blocco 2
-ls gui/src/components/Base*.vue                                                         # i pezzi della tabella della (b), nome per nome: nessuno in più, nessuno in meno -- non una cifra (E64)
+ls gui/src/components/Base*.vue                                                         # → BaseButton, BaseDialog, BaseIcon, BaseLabel, BaseList, BaseNotice, BaseRadioGroup, BaseStatus, BaseTextField: la tabella della (b), nome per nome
 # 12 -- le regole del kit nel linter, coi loro messaggi
-grep -c 'message: "' gui/eslint.config.js                                               # 6: i tre messaggi del compito 3 e i tre del 5 -- il 2026-09-24 erano 0
+grep -c 'message: "' gui/eslint.config.js                                               # → 6
 # 13 -- BaseStatus: la regione vuota c'è (kit.test.ts); il lettore di schermo vero, a mano
-awk -F'|' '/^\| \*\*5\*\* \|/{print $5}' docs/superpowers/plans/2026-09-23-design-system.md   # ✅ <data>, col verbale dell'Assistente vocale
+awk -F'|' '/^\| \*\*5\*\* \|/{print $5}' docs/superpowers/plans/2026-09-23-design-system.md   # → ✅ 2026-09-26, col verbale dell'Assistente vocale
 # 14 -- la pagina kit fuori dal pacchetto
-grep -c 'the kit page is in the package' scripts/gate-gui.sh                           # 1
-(cd gui && ls dist/kit.html 2>&1; grep -rl 'kit-card' dist/assets | wc -l)             # «No such file or directory», e 0 -- dopo il build del blocco 1
+grep -c 'the kit page is in the package' scripts/gate-gui.sh                           # → 1
+(cd gui && ls dist/kit.html 2>&1; grep -rl 'kit-card' dist/assets | wc -l)             # → «No such file or directory», e 0
 # 15 -- il tema del dock: dock.test.ts e dock.browser.test.ts nel blocco 2
-grep -rn 'themeAbyss' gui/src | wc -l                                                   # 0
+grep -rn 'themeAbyss' gui/src | wc -l                                                   # → 0
 # 17 -- la Panoramica: a11y.test.ts, nearest.test.ts, frame.test.ts, frame.browser.test.ts nel blocco 2
-grep -rl 'F3' gui/src/frame | wc -l                                                      # almeno 1
+grep -rl 'F3' gui/src/frame | wc -l                                                      # → 4
 # 19 -- la striscia a pillola: frame.browser.test.ts nel blocco 2
 # 20 -- le prove del browser, ciascuna con la sua guardia
-for f in $(git ls-files 'gui/src/*.browser.test.ts'); do printf '%s ' "$f"; grep -cE 'NON-VACUITY|toBeGreaterThan\(0' "$f"; done   # sei file, ciascuno almeno 1
+for f in $(git ls-files 'gui/src/*.browser.test.ts'); do printf '%s ' "$f"; grep -cE 'NON-VACUITY|toBeGreaterThan\(0' "$f"; done   # → sei file: dock 10, frame 13, kit 16, settings 1, probes 1, tokens 5
 # 21 -- la riga «Accessibilità»
-grep -c '^| Accessibilità | 🔶 |' docs/tracciabilita.md                                 # 1
+grep -c '^| Accessibilità | 🔶 |' docs/tracciabilita.md                                 # → 1
 # 22 -- la barra di scorrimento: tokens.browser.test.ts nel blocco 2, con le barre mostrate al progetto browser (D26)
-grep -c 'ignoreDefaultArgs' gui/vite.config.ts                                          # 1
+grep -c 'ignoreDefaultArgs' gui/vite.config.ts                                          # → 1
 # 23 -- BaseNotice: kit.test.ts, kit.browser.test.ts, frame.test.ts, modules.test.ts, frame.browser.test.ts nel blocco 2
-grep -l 'BaseNotice' gui/src/frame/Band.vue gui/src/panels/Settings.vue gui/src/panels/Status.vue | wc -l   # 3
+grep -l 'BaseNotice' gui/src/frame/Band.vue gui/src/panels/Settings.vue gui/src/panels/Status.vue | wc -l   # → 3
 ```
 
 ⚠️ **Il 20 non si prova con un `grep`:** un commento o una guardia trovati dicono che la guardia **è scritta**, non che morda. Che
@@ -12168,14 +12217,14 @@ legge, e o la guardia ha un'altra forma, o manca — e allora è una voce d'erra
 **Blocco 4 — i vincoli globali e il perimetro:**
 
 ```bash
-git diff --stat "$B"..HEAD -- crates/ gui/schema/                                       # niente (vincolo 12)
-git ls-files gui/src/tokens/tokens.css                                                  # niente: esce al compito 1
-grep -E '"(lucide|@fontsource-variable/geist|@fontsource/barlow|@vitest/browser-playwright|playwright|reka-ui|vitest)"' gui/package.json   # 1.47.0, 5.3.0, 5.3.0, 4.1.11, 1.63.0, 2.10.4, 4.1.11 -- versioni esatte (vincoli 7 e 8)
-wc -c docs/COMPENDIO.md; grep -n '^ceiling=' scripts/check-docs.sh                     # il margine positivo (vincolo 13)
-git diff --name-status "$B"..HEAD -- docs/adr/ | grep -c '^A'                            # 0: nessun ADR nuovo
-ls docs/adr/*.md | wc -l; grep -c '^\*\*00' docs/COMPENDIO.md                          # uguali fra loro
-git diff --name-only "$B"..HEAD                                                          # ogni nome in una lista Files dei compiti 1–9, in una voce d'errata, o nella cartella del dispaccio (E112)
-git status --porcelain                                                                   # niente, dopo il commit del compito (E123)
+git diff --stat "$B"..HEAD -- crates/ gui/schema/                                       # → niente (vincolo 12)
+git ls-files gui/src/tokens/tokens.css                                                  # → niente
+grep -E '"(lucide|@fontsource-variable/geist|@fontsource/barlow|@vitest/browser-playwright|playwright|reka-ui|vitest)"' gui/package.json   # → 1.47.0, 5.3.0, 5.3.0, 4.1.11, 1.63.0, 2.10.4, 4.1.11: esatte (vincoli 7 e 8)
+wc -c docs/COMPENDIO.md; grep -n '^ceiling=' scripts/check-docs.sh                     # → 90239 e 100352 a `afcbd4b`: il margine positivo (vincolo 13)
+git diff --name-status "$B"..HEAD -- docs/adr/ | grep -c '^A'                            # → 0
+ls docs/adr/*.md | wc -l; grep -c '^\*\*00' docs/COMPENDIO.md                          # → 39 e 39
+git diff --name-only "$B"..HEAD                                                          # → 151 nomi, ciascuno con la sua casa: 89 in una lista Files, uno nel censimento del compito 1 (E126), 61 nella cartella del dispaccio (E112)
+git status --porcelain                                                                   # → niente, a `afcbd4b` (E123)
 ```
 
 ⚠️ **Il perimetro si legge nome per nome, non col numero** (R9a-16 ed E217 della parte 2): ogni nome che il penultimo comando
@@ -12196,68 +12245,83 @@ la regola 8 di *«Come si esegue un compito»* (**E112**). Un nome senza casa è
   `docs/porta-di-qualita.md`, *«Leggere la CI da terra»* — la casa unica di quei comandi, che qui non si ricopiano;
 - ⚠️ **le voci che questo piano sa e non chiude** restano nella loro tabella, in testa al piano, col loro chiusore.
 
+✅ **Il 2026-09-28**, dove si è guardato: il giudizio del proprietario sul dock sta nelle righe **6** e **6bis** della posizione,
+coi loro sguardi (controllo 15, **D24**), e quelli dei compiti 5 e 8 nelle loro righe; M-3 nella riga **5** e, con l'esito,
+nella (e) del disegno; la barra di scorrimento nella riga dell'assunzione del disegno (**E118**); la CI dei commit del
+compito 9 la legge per prima la sessione dopo, perché i tre commit si pushano insieme (**E124**); e **E130** sta fra le voci
+che il piano sa e non chiude.
+
 ---
 
-## Come si riprende — il pre-controllo del compito 9, 2026-09-28
+## Come si riprende — il piano eseguito, 2026-09-28
 
-✅ **Il pre-controllo del compito 9 è fatto: dieci voci, E111…E120**, scritte nell'errata e applicate al testo. **E118** è la
-domanda del proprietario — **A**, la barra di scorrimento misurata —; le altre le ha decise il coordinatore coi cinque
-criteri, fuori dal merito approvato. Il compito rifatto dal testo del piano su un `git worktree` di `f35d3c2` in
-`%TEMP%\pc9`, macchina `zagor`: i Passi 2–8 e 10 applicati da uno script, nessun rifiuto, ogni sonda dei passi come detta,
-`check-docs.sh` verde, i fine-riga conservati — CR uguali alle righe in ogni file —, nessuna tabella spezzata in più; e la
-Definizione di «fatto» eseguita sull'albero a `f35d3c2`: blocco 1 `GATE GREEN`, blocco 2 cinque corse uguali — `237 tests,
-236 passed, 0 failed`, ventotto file su ventotto —, blocchi 3 e 4 coi difetti di **E111** ed **E112**. La riga 9 della
-posizione resta a `⬜`, pre-controllata. La consegna precedente — l'esecuzione del compito 8 — sta parola per parola in
+✅ **Il piano è eseguito, il 2026-09-28**: il compito 9, l'ultimo, è eseguito, rivisto, curato e chiuso. Il dispaccio col sì
+del proprietario, **A**, sulla banda detta prima, 0,6–0,9 milioni di token; l'implementatore, ~545 mila in ~56 minuti, ha
+consegnato `8c47715`, **uguale al testo del piano** — `compare_task9.py 13fea0d 8c47715`, nove documenti `OK`, uscita 0 —,
+con tre candidate (**E121**…**E123**) e sei gotcha nuovi, dal **#134** al **#139**. Con quel costo la banda non reggeva più:
+il proprietario ha detto di nuovo **A**, sul totale ridetto, ~0,9–1,1 milioni. Il revisore, ~543 mila in ~48 minuti, l'ha
+detto **conforme** al dettato — 0 critici, 0 importanti, 4 minori e 6 nit — e ha trovato **E124**…**E128**. Le cure del
+coordinatore, `afcbd4b`: le otto voci, e i gotcha #135 e #136 (N-3, N-4), col testo curato del piano che rifà i nove
+documenti — `compare_task9.py` su un clone, fra `13fea0d` col piano curato e `8c47715` con le cure: nove `OK`, uscita 0.
+Poi la chiusura, nel commit che scrive questa riga: la Definizione di «fatto» rieseguita sull'albero di `afcbd4b`, con le
+uscite (**E120**), la sonda del perimetro corretta (**E126**) e **una caduta** alla prima delle cinque corse (**E130**); la
+testa, la riga 9 coi due hash (**E129**), il puntatore della §6 del compendio e questa sezione.
+In tutto ~1,09 milioni di token. La consegna precedente — il pre-controllo del compito 9 — sta parola per parola in
 [`archivio/consegna-piano-design-system.md`](../../archivio/consegna-piano-design-system.md).
 
 ⛔ **Da sapere subito.**
 
-1. **Chi scrive il piano** (**E120**): l'implementatore fa i Passi 1–10 e il commit del Passo 13 **senza** il piano né
-   l'archivio delle consegne, ed **esegue** la Definizione di «fatto» riportandone le uscite nel rapporto; i Passi 11 e 12 —
-   le uscite nel piano, la testa, la riga 9, la chiusura del piano e la consegna in archivio — li fa il coordinatore nella
-   chiusura, dopo la revisione e le sue cure; il push è suo. Il compito **non ha uno sguardo** del proprietario.
-2. **Il Passo 9 legge anche le lezioni** (**E116**): le tabelle *«Ciò che questa sessione ha imparato»* delle consegne,
-   ~31 kB; una trappola diventa un gotcha, una regola di lavoro una **proposta al proprietario** per `CLAUDE.md`.
-3. **Il giudizio sul dock** (controllo 15, **D24**) **è scritto**: le celle 6 e 6bis della posizione portano lo sguardo del
-   proprietario, e la domanda del Passo 1 non serve.
-4. **La barra di scorrimento** (**E118**): sotto i colori forzati regge; la preferenza di Windows che tiene sempre visibili
-   le barre non arriva alla pagina — il costo della C, ora misurato —, e la B resta **registrata, non presa**.
-5. **In `%TEMP%` della macchina `Jays` restano le cartelle di prova di sessioni passate** — `pc2`…`pc6c`, `rv4`, `rv5`,
-   `rv6` —: toglierle è del proprietario; `ls -d /c/Users/Jays/AppData/Local/Temp/pc* /c/Users/Jays/AppData/Local/Temp/rv*`
-   le elenca. Su `zagor` la copia di questa sessione, `%TEMP%\pc9`, è tolta.
+1. **La caduta di E130 è il prossimo passo**, prima del sotto-progetto 13: la prova dei raggi del dock è caduta **una** volta
+   nelle cinque corse della chiusura, e la causa non si è cercata. Il proprietario l'ha messa prima del 13, **A**, perché il
+   cancello fa girare quella prova prima di ogni commit. Il fatto e il metodo stanno in **E130**, il puntatore nella §6 del
+   compendio.
+2. **I tre commit del compito — `8c47715`, `afcbd4b` e quello che scrive questa riga — si pushano insieme** (**E124**): la
+   loro CI la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md),
+   *«Leggere la CI da terra»*.
+3. **Sei proposte per `CLAUDE.md`, dal Passo 9 (E116), aspettano il proprietario**: non sono scritte, perché `CLAUDE.md` è
+   suo. Ciascuna si porta in A/B, una alla volta: la tabella sotto questo elenco.
+4. **Il rapporto dell'implementatore resta com'è**, perché è un verbale. La revisione ne corregge due cifre (N-5): le lezioni
+   lette sono **106**, non ~96, e su `zagor` `check-docs.sh` dura ~41–56 secondi, non oltre due minuti. E ne nota alcuni
+   perché mancanti (N-6). Stanno nella cartella del dispaccio, in `task-9-review.md`.
+5. **Le voci che il piano sa e non chiude** restano nella loro tabella, *«Le voci aperte che questo piano SA, e non chiude»*,
+   col chiusore di ciascuna; e **E130** vi sta da oggi.
+6. **In `%TEMP%` della macchina `Jays` restano le cartelle di prova di sessioni passate** — `pc2`…`pc6c`, `rv4`, `rv5`,
+   `rv6` —: toglierle è del proprietario. Su `zagor` il clone del revisore, `%TEMP%\rv9`, è tolto.
+
+📌 **Le sei proposte per `CLAUDE.md`**, del punto 3, come le ha scritte l'implementatore nel suo rapporto:
+
+| | La proposta | Da quali consegne | Dove andrebbe |
+|---|---|---|---|
+| **P-A** | un passo che solo il proprietario può fare — lo sguardo, il lettore di schermo — **e le celle che ne dipendono** non stanno nel commit di un subagente: il compito si scrive in due commit | pre-controllo del 5 (2), pre-controllo del 6bis (3); **E35, E69, E101, E120** — quattro volte in questo piano | *«Prima di eseguire un compito di un piano»*, una riga dopo la 8 |
+| **P-B** | una scelta tecnica reversibile, di poche righe e fuori dal merito approvato, si decide coi cinque criteri e la voce d'errata dice il perché e la via scartata; l'A/B resta al merito | pre-controllo del 4 (4): il proprietario rifiutò l'A/B di **E24** e lo delegò; la forma di E35, E69, E101, E116, E120 | *«Come si lavora qui»*, accanto alla riga delle domande al proprietario |
+| **P-C** | il silenzio del proprietario non è un'approvazione: un difetto detto prima dello sguardo e non commentato si scrive aperto, o si dispone col merito che c'è | esecuzione del 6bis (3); E74, E110, **D24** | *«Come si lavora qui»* |
+| **P-D** | il pre-controllo rifà il compito **dal testo**, i passi in fila sulla stessa copia — un Atteso si misura sulla sequenza, non su una corsa pulita —, un compito inserito si prova sotto quelli dopo, e il confronto col dettato lo fa uno script provato in due direzioni | pre-controllo del 4 (1), piano della cura (1), pre-controllo del 6bis (1), esecuzione del 6bis (2), pre-controllo dell'8 (4), esecuzione dell'1 (1); `plan_ops.py` nella cartella del dispaccio | *«Prima di eseguire un compito di un piano»* |
+| **P-E** | una promessa scritta in una consegna è un contratto per il compito che nomina: il pre-controllo la cerca nelle consegne come nell'errata | pre-controllo del 9 (2); **E116**; allarga il gotcha #132 | la stessa sezione |
+| **P-F** | il **curatore** — un subagente sulle decisioni del coordinatore, quando la revisione porta molte cure — è un'opzione da dire al proprietario col suo costo (~0,55 milioni al compito 8) | esecuzione dell'8 (4) | la riga di `superpowers:subagent-driven-development` |
+
+E lo stato, coi comandi:
 
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | **ramo** | `main`, allineato a `origin` dopo il push: `git fetch --all --prune`, poi `git status -sb` |
-| **i commit** | `git log --oneline f35d3c2..HEAD`: uno, quello che scrive questa riga — l'errata, il compito 9 corretto, il richiamo di **E118** nel disegno, questa sezione e la precedente in archivio, i tre file del dispaccio. Nessun codice cambia: `git diff --stat f35d3c2..HEAD -- gui/ crates/ scripts/` non rende nulla |
-| **cancello** | `GATE GREEN` all'apertura su `f35d3c2` — jsdom 170 prove passate e una saltata, browser 66, il pezzo `698.20 kB`, compresso `213.00 kB`, `found 0 vulnerabilities` — e prima del commit che scrive questa riga. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
-| **la CI** | `f35d3c2` verde su `ubuntu-latest` e `windows-latest`; quella del commit che scrive questa riga la legge per prima la sessione dopo, coi comandi di [`porta-di-qualita.md`](../../porta-di-qualita.md), *«Leggere la CI da terra»* |
-| **la posizione** | le righe dalla 1 alla 8 a `✅`; la 9, pre-controllata, a `⬜` |
-| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: `_extract_brief_9.py`, il modello `dispatch-task-9.md`, e `compare_task9.py`, che ricostruisce dal testo del piano i nove documenti dettati e li confronta col commit — provato in due direzioni su una copia |
-| **lo scratchpad** | sulla macchina `zagor`, **non tracciato**: in `.superpowers/sdd/2026-09-23-design-system/` gli attrezzi del pre-controllo — `_precheck_9_perimeter.py`, `_precheck_9_apply.py`, `_precheck_9_write.py`, `word_for_word.py` —; nello scratchpad della sessione i cinque rapporti JSON della suite, le foto della barra e i log. Non servono a riprendere: il piano basta |
+| **i commit** | `git log --oneline 13fea0d..HEAD`: tre — `8c47715` dell'implementatore, `afcbd4b` delle cure, e quello che scrive questa riga. Nessun codice cambia: `git diff --stat 13fea0d..HEAD -- gui/ crates/ scripts/` non rende nulla |
+| **cancello** | `GATE GREEN` all'apertura su `13fea0d`, sulle cure prima di `afcbd4b`, e prima del commit che scrive questa riga — jsdom 170 prove passate e una saltata, browser 66, il pezzo `698.20 kB`, compresso `213.00 kB`, `found 0 vulnerabilities`. Si rilancia, non si cita: `bash scripts/gate.sh`, **da solo** |
+| **la CI** | `13fea0d` verde su `ubuntu-latest` e `windows-latest`; quella dei tre commit la legge per prima la sessione dopo |
+| **la posizione** | ogni riga a `✅`, con la colonna **Commit** piena |
+| **il dispaccio** | nella cartella tracciata `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`: il prompt spedito al posto del modello `dispatch-task-9.md`, `task-9-report.md`, `review-9-prompt.md` e `task-9-review.md` |
+| **lo scratchpad** | sulla macchina `zagor`, **non tracciato**: in `.superpowers/sdd/2026-09-23-design-system/` gli attrezzi della chiusura — `_cure9.py`, `_dod9.sh`, `_dod9_perimeter.py`, `_closure9.py` —; nello scratchpad della sessione i log dei cancelli e delle corse. Non servono a riprendere: il piano basta |
 | **server e cartelle di prova** | nessun server acceso; `git worktree list` rende la sola cartella del repository |
 
-**Che cosa ha fatto questa sessione.** La ripresa coi comandi — trentadue commit arrivati, il fast-forward —, la CI di `f35d3c2`
-e il cancello d'apertura; la Definizione di «fatto» eseguita blocco per blocco sull'albero, le cinque corse comprese; il
-perimetro nome per nome con uno script; il compito rifatto dal testo su una copia, con ogni sonda; la domanda del
-proprietario sulla barra, **A**, e la misura: i colori forzati emulati nel Chrome installato, e la preferenza di Windows
-guardata dal proprietario su una pagina di prova; le dieci voci; il dispaccio, con `compare_task9.py` provato nelle due
-direzioni; la chiusura.
+**Che cosa ha fatto questa sessione.** La ripresa coi comandi — il ramo allineato, la CI di `13fea0d`, il cancello
+d'apertura —; il dispaccio dell'implementatore e poi del revisore, ciascuno col sì del proprietario sul costo; il commit e
+la revisione verificati coi comandi; le cure, provate su un clone; la Definizione di «fatto» rieseguita, con la sonda del
+perimetro corretta e provata nelle due direzioni; la chiusura.
 
-📌 **Ciò che questa sessione ha imparato, e che non era scritto** — le raccoglie la chiusura del sotto-progetto (**E116**).
+📌 **Ciò che questa sessione ha imparato, e che non era scritto.**
 
 | | Che cosa | Che cosa se ne fa |
 |---|---|---|
-| 1 | **`check-docs.sh` non vede un rimando rotto dentro il testo**: una riscrittura che perde la `)` lascia un rimando che porta ancora a un file vero, e il cancello resta verde | un testo archiviato si prova **parola per parola**, con le destinazioni tolte dalle due parti (**E117**) |
-| 2 | **una promessa scritta in una consegna è un contratto per il compito che nomina**: ventidue consegne dicevano *«le raccoglie la chiusura»*, e il compito della chiusura leggeva la sola errata | il pre-controllo di un compito cerca nelle consegne ciò che gli è stato promesso, non solo nell'errata |
-| 3 | **in `awk`, `print x > 0` scrive un file che si chiama `0`**: il confronto dentro un `print` è una redirezione | un confronto si scrive fra parentesi, `print (x > 0)`, o in una condizione |
-| 4 | **la preferenza di Windows che tiene visibili le barre non arriva a una pagina con `::-webkit-scrollbar`**, e una pagina di prova aperta come file non carica i moduli di Vite, e mostra le barre di Chrome | una pagina di prova coi token si serve da Vite, mai da un file |
+| 1 | **un compito di soli documenti è costato quanto un compito di codice**: ~1,09 milioni, contro la banda di 0,6–0,9 dedotta dai compiti 7 e 8. L'implementatore ha fatto girare tre cancelli e cinque corse, e letto ventitré tabelle di lezioni; il revisore ha rifatto il perimetro, le lezioni, i rimandi e le due direzioni su un clone | la banda di un compito di chiusura si dice come quella di un compito di codice, e si ridice al proprietario appena il primo dispaccio la supera |
+| 2 | **una cura del testo dettato deve lasciare intatte le prime parole di ogni recinto**: `compare_task9.py` riconosce ogni blocco da lì, e una cura che le cambia rompe il confronto | la prova di una cura si fa rifacendo i documenti dal piano curato, su un clone: due commit usa-e-getta, e il confronto fra loro |
 
-**Il prossimo passo** — ciascuno nella sua sessione (`CLAUDE.md`):
-
-1. `git fetch --all --prune`, `git status -sb`; la CI del commit che scrive questa riga, per prima.
-2. **L'esecuzione del compito 9**: il brief da `_extract_brief_9.py`, il prompt dal modello `dispatch-task-9.md`, col sì del
-   proprietario sulla banda dei costi detta prima — un compito di **soli documenti**, senza sguardo, che fa girare il
-   cancello e cinque corse della suite: 🔶 dedotta dalle bande dei compiti 7 e 8, 0,6–0,9 milioni per implementatore e
-   revisore —; la revisione con `compare_task9.py`, le cure; poi la chiusura del coordinatore coi Passi 11 e 12 (**E120**),
-   e il push. Dopo, la §6 del compendio punta al sotto-progetto 13.
+**Il prossimo passo** lo dice la §6 del [compendio](../../COMPENDIO.md): questo piano è chiuso.

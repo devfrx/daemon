@@ -2498,3 +2498,21 @@ Lo stile dal compito 1 del piano del design system: `gui/src/tokens/base.css` e 
 del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta proprietà** della §3, ma questo **vincolo d'ordine**. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill dichiarative: è una sua decisione e non del piano. Il perimetro
 sta nel [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md), che chi riprende quel fronte legge
 **per intero**; brainstorming e disegno del 13 vengono prima del piano, in sessioni distinte.
+
+## Il puntatore «Il prossimo passo» e l'intestazione del compendio, com'erano — archiviati il 2026-09-28, alla chiusura di E130
+
+⚠️ **Vero il giorno in cui fu scritto.** Usciti dal compendio alla chiusura di **E130** — la caduta della prova dei raggi del
+dock, nel [piano del design system](../superpowers/plans/2026-09-23-design-system.md) —, parola per parola: l'intestazione, e il
+⏭️ della §6 dal suo inizio alla riga vuota; i link riscritti per questa cartella.
+
+**Aggiornato il 2026-09-28**, con la **chiusura del sotto-progetto 14**, il design system — una riga nella §12 e il puntatore della §6, alla caduta di **E130** e poi al 13; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+
+⏭️ **IL PROSSIMO PASSO, IN DUE TEMPI. Uno: la CADUTA di E130** — la prova dei raggi del dock, `keeps every radius of its own
+concentric, a floating group's too` di `gui/src/frame/dock.browser.test.ts`, è caduta **una** volta nelle cinque corse della
+Definizione di «fatto» del [piano del design system](../superpowers/plans/2026-09-23-design-system.md), il 2026-09-28: la causa si
+cerca **prima** del 13, in una sessione sua, perché il cancello fa girare quella prova prima di ogni commit — decisione del
+proprietario, lo stesso giorno; il fatto e il metodo nella voce **E130** del piano. **Due: IL SOTTO-PROGETTO 13** — i tre
+meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima**
+del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta proprietà** della §3, ma questo **vincolo d'ordine**. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill dichiarative: è una sua decisione e non del piano. Il perimetro
+sta nel [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md), che chi riprende quel fronte legge
+**per intero**; brainstorming e disegno del 13 vengono prima del piano, in sessioni distinte.

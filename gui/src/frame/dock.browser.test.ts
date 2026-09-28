@@ -48,10 +48,18 @@ async function floatStatus(host: HTMLElement, api: DockviewApi): Promise<Element
   const panel = api.getPanel("status");
   expect(panel).toBeDefined();
   if (panel !== undefined) api.addFloatingGroup(panel, { x: 60, y: 60, width: 460, height: 320 });
-  await new Promise((resolve) => setTimeout(resolve, 50));
   const floating = [...host.querySelectorAll(".dv-resize-container")];
   expect(floating).toHaveLength(1);
-  return floating[0] as Element;
+  const container = floating[0] as HTMLElement;
+  // ⛔ LAID OUT, NOT 50 MS LATER (E130 of the design-system plan): `dockview-core` 8.3.1 sizes a floating group from a
+  // ResizeObserver whose callback waits for an animation frame, and until then the group is 100 px wide, its minimum --
+  // three corners near instead of four. A fixed wait counted on frames that a busy suite does not always draw: the one
+  // red of five runs drew none in its 63 ms, measured on 2026-09-28. A layout that never comes stays red, as
+  // `expected 100 to be 460`.
+  await expect
+    .poll(() => container.querySelector(".dv-groupview")?.getBoundingClientRect().width)
+    .toBe(container.clientWidth);
+  return container;
 }
 
 for (const theme of ["light", "dark"] as const) {

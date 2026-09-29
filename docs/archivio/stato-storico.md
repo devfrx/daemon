@@ -2616,3 +2616,20 @@ del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta propr
 il suo perimetro si rilegge con l'esito della revisione. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill
 dichiarative: è una sua decisione e non del piano. Il perimetro sta nel [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md),
 che chi riprende quel fronte legge **per intero**; brainstorming e disegno del 13 vengono prima del piano, in sessioni distinte.
+
+## Il puntatore «Il prossimo passo» e l'intestazione del compendio, com'erano — archiviati il 2026-09-29, alla chiusura della scrittura del piano dei documenti della revisione della knowledge base
+
+⚠️ **Veri il giorno in cui furono scritti.** Usciti dal compendio parola per parola, coi link riscritti per questa cartella.
+
+**Aggiornato il 2026-09-29**, col **piano dei documenti della revisione della knowledge base** a metà — il puntatore della §6 —; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+
+⏭️ **IL PROSSIMO PASSO, IN DUE TEMPI. Uno: la REVISIONE DELLA KNOWLEDGE BASE**, chiesta dal proprietario il 2026-09-28 **prima**
+del 13 e dei modelli decisionali — dove vivono i file, chi li scrive e chi li legge, come e quando, se le repo dei progetti
+stanno dentro, e i casi limite. Il brainstorming è **chiuso il 2026-09-29**, e la sua consegna sta in
+[archivio](consegna-brainstorming-knowledge-base-revisione-intera.md). **Il disegno è chiuso** il 2026-09-29,
+riletto dal proprietario, al suo [percorso](../superpowers/specs/2026-09-28-knowledge-base-revisione-design.md). Il **piano dei documenti** è **a metà**, al suo [percorso](../superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md): il materiale verificato c'è, la prosa dei compiti no, e il suo *«Come si riprende»* dice come si finisce, in una sessione sua; poi il pre-controllo e l'esecuzione, in sessioni loro.
+**Due: IL SOTTO-PROGETTO 13** — i tre meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima**
+del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta proprietà** della §3, ma questo **vincolo d'ordine**;
+il suo perimetro si rilegge con l'esito della revisione. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill
+dichiarative: è una sua decisione e non del piano. Il perimetro sta nel [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md),
+che chi riprende quel fronte legge **per intero**; brainstorming e disegno del 13 vengono prima del piano, in sessioni distinte.

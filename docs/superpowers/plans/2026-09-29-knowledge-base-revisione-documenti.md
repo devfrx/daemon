@@ -1,132 +1,116 @@
 # Knowledge base, la revisione — i documenti: il piano
 
-> ⛔ **IN SCRITTURA, A METÀ — NON SI ESEGUE.** Il 2026-09-29 la sessione che lo scriveva si è fermata su richiesta del
-> proprietario — *«si continua nella prossima sessione»* — col **materiale verificato** e senza la **prosa dei compiti**.
-> Questo file porta il materiale parola per parola, e la consegna: *«Come si riprende»*, qui sotto. Il piano si completa
-> nella prossima sessione; il pre-controllo e l'esecuzione vengono dopo, ciascuno in una sessione sua (`CLAUDE.md`,
-> *«Una fase per sessione»*). Il disegno che il piano traduce è il
-> [disegno della revisione della knowledge base](../specs/2026-09-28-knowledge-base-revisione-design.md), chiuso e riletto
-> dal proprietario il 2026-09-29.
+> **Per chi esegue:** SOTTO-SKILL OBBLIGATORIA — `superpowers:subagent-driven-development`, un subagente fresco per
+> compito, su `model: "opus"` — `"sonnet"` per il lavoro meccanico, mai Fable —, con revisione fra uno e l'altro: la
+> modalità scelta dal proprietario (`CLAUDE.md`). I passi usano le caselle (`- [ ]`) per il tracciamento.
+> ⛔ **Una fase per sessione** (`CLAUDE.md`): il piano è **scritto il 2026-09-29**, in due sessioni — la prima si è fermata
+> a metà su richiesta del proprietario, e la sua consegna sta in
+> [archivio](../../archivio/consegna-piano-knowledge-base-revisione-documenti.md) —; il **pre-controllo** delle quattro
+> domande si fa in un'altra, **prima** di dispacciare; ogni compito si esegue in un'altra ancora. ⛔ **Non si esegue prima
+> del pre-controllo.**
 
-## Come si riprende — scritto alla chiusura della sessione del 2026-09-29, coi comandi
+**Obiettivo.** Tradurre in documenti il [disegno della revisione della knowledge base](../specs/2026-09-28-knowledge-base-revisione-design.md),
+chiuso e riletto dal proprietario il 2026-09-29: **ADR-0040** — dove vivono i dati, e che cosa salva il programma —, che
+**modifica in parte** ADR-0022, con ciò che il cancello pretende insieme a lui; i **rimandi datati** in testa a dieci ADR e
+nella riga di ADR-0039, con la loro riga nelle voci della §5 del compendio; i **richiami datati** nel disegno del
+2026-09-04, nel disegno dei gesti, nella spec del sotto-progetto 1, in design/09, in design/10 e nella stella polare della
+GUI; le righe di `roadmap.md` e di `tracciabilita.md`; e la chiusura, col disegno negli indici e il puntatore della §6
+mosso.
 
-⛔ **Da sapere subito: niente è a metà nel repository.** Nessun file è stato toccato oltre a questo, al puntatore della §6
-del compendio con la sua riga della data, e all'archivio che li tiene com'erano; nessun codice. A metà è **il piano**: il
-materiale sotto è verificato, la prosa che lo avvolge manca. ⚠️ **Il materiale non si esegue così com'è:** i blocchi sono
-stati controllati uno per uno sul repository di `0c0d0d4`, **non in sequenza**, e nessun compito è stato pre-controllato.
+**Forma.** Sei compiti in sequenza, un commit ciascuno; il numeratore vive nella tabella della posizione qui sotto. Ogni
+compito applica un **blocco** di modifiche già scritto, parola per parola, con `apply_edits.py`: prima col `--check`, che
+non scrive, poi davvero — tutto o niente. ⛔ **Nessun file di `crates/`, `gui/`, `scripts/` o dei manifesti cambia**: il
+piano scrive **solo documenti**, e lo prova il comando D. Le decisioni sono del proprietario — le risposte D1–D20 e le sei
+sezioni approvate del disegno —; il piano le traduce, e quelle che aggiunge stanno in *«Le decisioni prese scrivendo il
+piano»*, col perché.
 
-| | Stato, e il comando che lo rifà |
-|---|---|
-| ramo | `main` allineato a `origin` dopo il push di questa chiusura: `git fetch --all --prune`, `git status -sb`; nessuno stash |
-| codice di prodotto | **non toccato**: `git diff --stat 0c0d0d4..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
-| cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura di questa sessione, e prima del commit di questa chiusura; `bash scripts/check-docs.sh` → `OK`. Si rilanciano, non si citano |
-| il margine del compendio | il comando C della 6.2 del disegno — il tetto, meno i byte senza CR, meno le righe; rendeva 8 538 su `0c0d0d4` |
-| i blocchi | ciascuno si ricontrolla col suo `--check`, dalla radice del repository — il comando sotto questa tabella |
+**Strumenti.** `bash`, `awk`, `grep`, `sed -n` in lettura; **Python 3** per ogni scrittura, con gli attrezzi della sezione
+*«Gli attrezzi»* qui sotto, al posto di `replace_unique.py` dei piani di prima — D15 e D19; `git`. La porta di qualità è
+`bash scripts/gate.sh`, **da sola** (gotcha **#133**), e deve stampare `GATE GREEN` prima di ogni commit, anche di soli
+documenti: gira `check-docs.sh`, ed è quello che qui morde; `bash scripts/check-docs.sh` deve stampare `OK`. Nei comandi dei
+compiti `S` è la cartella dello scratchpad in una forma che Python capisca — su Git Bash, `S=$(cygpath -m <scratchpad>)` —,
+`D` è il giorno dell'esecuzione, `D=$(date +%F)`, e ogni comando parte dalla radice del repository; gli attrezzi si
+lanciano con `PYTHONIOENCODING=utf-8`, perché la console di una macchina Windows può essere cp1252.
+
+**Disegno:** [`specs/2026-09-28-knowledge-base-revisione-design.md`](../specs/2026-09-28-knowledge-base-revisione-design.md)
+— chi coordina lo legge **per intero** prima dei compiti; a ciascun subagente si danno le sezioni che il suo compito
+nomina, non il file. Il [disegno del 2026-09-04](../specs/2026-09-04-knowledge-base-design.md) resta il disegno approvato
+della knowledge base: questo piano ne corregge le righe superate, e **non disegna la capacità** — il compendio, §8.
+
+## Gli attrezzi — vivono nello scratchpad, mai nel repository
+
+Quattro, più il controllo delle tabelle — D15, D19 e D25. `extract.py` si copia **a mano**, col tool di scrittura, dal suo
+recinto qui sotto: non porta nessuna barra rovesciata, che il canale di un tool può cambiare in silenzio. Tutto il resto lo
+copia **lui**, parola per parola, dai recinti di questo file — gli altri tre attrezzi, `tables.awk`, il testo di ADR-0040,
+i blocchi dei compiti e il puntatore nuovo del compito 6:
 
 ```bash
-for n in 1 2 3 4 5 6; do printf 'E%s: ' $n; PYTHONIOENCODING=utf-8 python <scratchpad>/apply_edits.py --check 2026-09-30 <scratchpad>/e$n.txt 2>&1 | tail -1; done
+PYTHONIOENCODING=utf-8 python "$S/extract.py" docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md "$S"
 ```
 
-Gli attrezzi e i blocchi si estraggono da questo file nello scratchpad della sessione che riprende — l'aiutante
-`apply_edits.py`, e i blocchi come `e1.txt` … `e6.txt` —, ciascuno dal suo recinto, parola per parola. Su `0c0d0d4` i
-blocchi **1–5** rendevano `checked` — 17, 20, 59, 24 e 31 modifiche —; il **6** rifiuta due ancore, **per costruzione**:
-la riga di questo piano nella tabella dei piani di `roadmap.md` e la spunta del punto 3 della 6.6 del disegno, che non
-esistono finché questo piano non è scritto — la voce 5 del compito qui sotto.
+Atteso: diciotto righe, una per pezzo; un rifiuto non scrive niente. I tre attrezzi di scrittura sono provati il 2026-09-29
+nelle due direzioni su file di prova e su un file CRLF — CR uguali alle righe —; i sei blocchi col `--check` sul
+repository, uno per uno, e **in sequenza** con la simulazione della sessione che ha finito il piano — P-19.
 
-**Il compito della sessione che riprende — finire di scrivere il piano, con `superpowers:writing-plans`:**
+### `extract.py` — copia nello scratchpad i pezzi di questo piano, parola per parola; l'unico che si copia a mano
 
-1. La lettura d'apertura di `CLAUDE.md`; poi il disegno della revisione **per intero**, a blocchi; poi **questo file per
-   intero**. Il precedente della forma è il [piano dei documenti del 2026-09-04](2026-09-04-knowledge-base-documenti.md),
-   fino al compito 1 compreso; le convenzioni più recenti — il modello `opus`, il dispaccio che viaggia con git, i vincoli
-   globali — stanno nella testa del [piano del design system](2026-09-23-design-system.md).
-2. `bash scripts/gate.sh`, da solo; il comando C; il `--check` dei sei blocchi.
-3. **La testa del piano**, sopra questa sezione, sulla forma del precedente: *Per chi esegue*, obiettivo, forma, strumenti
-   — i tre attrezzi di sotto, al posto di `replace_unique.py` —, i vincoli globali, la tabella della posizione coi sei
-   compiti di D1, *«Come si esegue un compito»* col punto sul dispaccio che viaggia con git (D17), l'errata vuota, le
-   voci P e D qui sotto portate in *«Ciò che la scrittura del piano ha trovato»* e *«Le decisioni prese scrivendo il
-   piano»*, la mappa dei file, le voci aperte che il piano sa, e la **Definizione di «fatto»** copiata dalla 6.2 del
-   disegno, coi comandi A–E e le trappole della 6.3, più le righe che P-2 e P-3 aggiungono.
-4. **La prosa dei sei compiti**, uno per volta: *Files* e *Read*; il Passo 1 con le misure prima; il Passo che applica il
-   blocco — `--check`, poi senza — e, nel compito 1, il Passo che scrive ADR-0040 dal recinto e lancia `archive_head.py`
-   **prima** del blocco; le prove, coi comandi A–E e i fine-riga; il commit — `knowledge-base-revisione(compito N): …`,
-   senza co-autore — e il push; il criterio di chiusura. Il compito 6 vuole anche il **testo del puntatore nuovo** della
-   §6, che non è scritto: dirà che la revisione è chiusa, e che vengono il 13 — sbarrato da AUD-004, col perimetro della
-   4.2 del disegno — e il brainstorming dei modelli decisionali, **senza** collocarli l'uno rispetto all'altro, perché il
-   proprietario non l'ha fatto.
-5. **La chiusura della sessione di scrittura**: la riga di questo piano in coda alla tabella dei piani di `roadmap.md`,
-   con la cella *«⏳ **scritto il 2026-09-29**; il pre-controllo e l'esecuzione, in sessioni loro»* che il blocco 6 cerca —
-   o il blocco si riallinea alla cella scritta —, e l'*«Ultimo aggiornamento»*; nel disegno, il punto 3 della 6.6 riscritto
-   col suo inizio *«3. ✅ il **piano dei documenti** — **scritto il 2026-09-29**, in una sessione sua, al suo»*, idem; il
-   puntatore della §6 del compendio mosso al pre-controllo, con `archive_head.py --pointer` prima e `replace_pointer.py`
-   dopo; questa sezione riscritta come consegna al pre-controllo.
-6. ⛔ **Prima del commit del piano, la simulazione in sequenza**: un `git worktree` nello scratchpad sul commit del piano,
-   i sei compiti applicati in ordine — ADR-0040 scritto, `archive_head.py`, i blocchi — e `bash scripts/check-docs.sh`
-   lì dentro, che deve rendere `OK`; poi il worktree si toglie. È la prova che il `--check` a uno a uno non dà: che i blocchi
-   reggano **uno dopo l'altro**, e che il cancello sia verde dopo il compito 1, che è quello che lo tocca.
+````python
+"""extract.py -- copy the tools, the text of ADR-0040 and the blocks of this plan into files, word for word.
 
-**Ciò che la scrittura del piano ha trovato** — ciascuna misurata su `0c0d0d4`; si portano nella testa:
+Usage: PYTHONIOENCODING=utf-8 python extract.py <plan.md> <outdir>
 
-| | Trovato | Che cosa ne segue |
-|---|---|---|
-| P-1 | `docs/HANDOFF.md` porta già **un** link al disegno — nel gotcha #141, dal commit `fedca31` —, e `docs/riferimenti.md` tre, le fonti della 3.4: la 6.2 dice che prima del piano nessun file da toccare ne porta, tranne il compendio | nessun controllo cambia: per `HANDOFF.md` il controllo è la sola guardia dei totali; il comando E vi rende uno prima e dopo |
-| P-2 | **`docs/design/10-modello-dei-dati-durevoli.md`** dice ancora ciò che la revisione supera, e il disegno non lo nomina: `AMBITO` e `CHECKPOINT` «col 5» e *«l'implementazione vera col 5»* — D15 —; `CARTELLA_KB` *«in chiaro, nel backup»* — ADR-0040, e una politica che quel file dice di non ripetere —; le specie di `NODO_KB` e le frecce dell'`INDICE_MAPPA` — la riga 11 —; `GUIDA_APPROVATA` senza la fiducia di D9 | nel compito 4, blocco E4: un richiamo sotto l'intestazione della sezione, cinque etichette, tre righe della tabella — D8 |
-| P-3 | il modulo **Backup** della stella polare della GUI elenca ciò che il backup non contiene — indici, pesi, segreti — e il punto 4 di ADR-0040 vi aggiunge la root, le zone e le copie: la 5.3 nomina sette punti, questo è l'ottavo | nel compito 5, blocco E5 — D9 |
-| P-4 | ADR-0022 porta, nel rimando del 2026-08-07 in fondo, *«sotto-progetto 11 … dopo il 5, il 6 e il 9»*: la seconda risposta della 5.5 toglie il 5 | lo dice il rimando nuovo in testa ad ADR-0022, blocco E1 |
-| P-5 | la **§8.5.2** della spec del sotto-progetto 1 dice *«Servono inoltre il filesystem reale, che arriva con il sotto-progetto 5»*: la §8 non si tocca | **registrata**, col proprietario come chiusore, accanto a V36 e Q22 della 6.5 del disegno |
-| P-6 | la riga 3 e la riga 8 della sezione 2 nominano i due vicoli ciechi; le stesse frasi vivono anche nello **scartato** delle risposte 3 e 10 del disegno del 2026-09-04 | il richiamo di quelle due righe copre risposta e scartato, blocco E3 |
-| P-7 | cinque ADR — 0009, 0010, 0011, 0022, 0038 — hanno già un rimando in testa, e **nessun** ADR ne ha ancora due | il secondo va sotto il primo, una riga vuota in mezzo, prima di `## Context` — D5 |
-| P-8 | la `Date` di un ADR è il giorno in cui il file nasce: cinque su cinque — 0029, 0036, 0037, 0038, 0039 —, col `git log --diff-filter=A` | ADR-0040 porta la data dell'esecuzione del compito 1 — D2 |
-| P-9 | in `AVVIO-CHAT.md` il totale vive **dentro** il messaggio recintato, e la guardia toglie solo i code span | il richiamo che cita la frase vecchia la mette in un code span, `le 39 ADR` — blocco E1 |
-| P-10 | la riga *«Ultimo aggiornamento»* di `roadmap.md` si riallinea in ogni commit che tocca il file — P-8 del piano del 2026-09-04 | i blocchi E1, E5 ed E6 la prendono per prefisso, `>=`, e la riscrivono |
-| P-11 | il conto per stato di `tracciabilita.md` rende `47 · 54 · 76 · 0 · 1` — il comando del suo riquadro | nessuna delle undici righe cambia stato: il conto resta identico dopo il compito 5 |
-| P-12 | in un'etichetta `mermaid` il segnaposto `.<nomeapp>/` sarebbe letto come un tag HTML, e il repository scrive le etichette senza apostrofi | i diagrammi dicono *«la cartella nascosta alla root»*; i blocchi E4 non portano né parentesi angolari né apostrofi nelle etichette |
-| P-13 | le due tabelle delle voci aperte della porta di qualità, lette sulla colonna di chi le chiude: **nessuna** ha questo piano o *«il proprietario, prima»* come chiusore; la T5-34 è la riga stantia di E94, la contraddizione C-S5-3 | nessuna voce sbarra il piano |
-| P-14 | il comando della guardia dei totali rende otto righe — quattro in `HANDOFF.md`, una in `roadmap.md`, due nel compendio, una in `AVVIO-CHAT.md` — tutte a trentanove | il blocco E1 le porta a quaranta, e in `AVVIO-CHAT.md` toglie la cifra: la risposta A alla prima domanda della 6.1 |
+Each piece is the fence (four backticks and a language) that follows the ONE line of the plan starting with its
+marker, up to the next line made of exactly four backticks. Refuses, writing nothing, if a marker is absent or not
+unique, or its fence is missing. It is the only tool of this plan copied by hand, and it holds no backslash: the
+channel of a tool call can change a backslash in silence.
+"""
+import io
+import os
+import sys
 
-**Le decisioni prese scrivendo, col perché** — sono del coordinatore, e il proprietario può ribaltarle:
+NL = chr(10)
+FENCE = chr(96) * 4
+PIECES = [
+    ("### `apply_edits.py`", "apply_edits.py"),
+    ("### `archive_head.py`", "archive_head.py"),
+    ("### `replace_pointer.py`", "replace_pointer.py"),
+    ("### `tables.awk`", "tables.awk"),
+    ("Il testo di ADR-0040 —", "adr0040.md"),
+    ("Il blocco E1,", "e1.txt"),
+    ("Il blocco E2,", "e2.txt"),
+    ("Il blocco E3,", "e3.txt"),
+    ("Il blocco E4,", "e4.txt"),
+    ("Il blocco E5,", "e5.txt"),
+    ("Il blocco E6,", "e6.txt"),
+    ("Il blocco POS1,", "pos1.txt"),
+    ("Il blocco POS2,", "pos2.txt"),
+    ("Il blocco POS3,", "pos3.txt"),
+    ("Il blocco POS4,", "pos4.txt"),
+    ("Il blocco POS5,", "pos5.txt"),
+    ("Il blocco POS6,", "pos6.txt"),
+    ("Il puntatore nuovo della §6 —", "pointer6.txt"),
+]
 
-| | Decisione | Perché, e che cosa costa se è sbagliata |
-|---|---|---|
-| D1 | **sei compiti**: 1, ADR-0040 e ciò che il cancello pretende con lui — il rimando in ADR-0022, l'indice, la voce, i totali, la §13, `CLAUDE.md`, `AVVIO-CHAT.md`; 2, i rimandi in testa a dieci ADR con le loro voci; 3, il disegno del 2026-09-04 e la cattura in tutte le sue case — ADR-0039, la sua voce, il disegno dei gesti; 4, la spec, design/09 e design/10; 5, roadmap, tracciabilità e stella polare; 6, la chiusura | `check-docs.sh` è rosso finché ADR-0040 non ha voce, riga d'indice e totali, quindi nascono in un commit; un rimedio si chiude su tutte le case della frase in un commit — la cattura. Costo: compiti più grandi di quelli del 2026-09-04 |
-| D2 | ADR-0040 si chiama `0040-dove-vivono-i-dati-e-che-cosa-salva-il-programma.md`, col titolo della 3.2, e la sua `Date` è il giorno del compito 1 | P-8; la 3.2 lascia titolo e nome al piano. Costo: un rinomino |
-| D3 | la testa di ADR-0040 porta un quarto punto, *«Modifica»*, accanto a `Status`, `Date` e `Deciders`; il rimando di ADR-0022 finisce con *«Le altre righe reggono»* invece della frase sulla non-superazione | la forma *«Amends»* di `adr-tools`, letta per la 3.3, sta nella testa; la 3.3 dice *«al posto della frase»*. Costo: una riga |
-| D4 | la riga di `CLAUDE.md` nomina il terzo caso con la forma di ADR-0040 su ADR-0022 | la 3.3. Costo: una frase |
-| D5 | un secondo rimando in testa va sotto il primo, prima di `## Context` | P-7: l'ordine delle date. Costo: nessuno |
-| D6 | nel disegno del 2026-09-04 ogni richiamo va **nella cella o nel capoverso** che porta le parole superate; una riga della sezione 2 che nomina più posti ne dà uno a ciascuno; la tabella della 4.2 ne riceve uno solo, nella riga dei nodi, che nomina frecce e segnali | la sezione 2 del disegno, *«nella riga stessa»*. Costo: molti richiami corti |
-| D7 | il richiamo in testa al disegno del 2026-09-04 va subito sotto il capoverso di stato | chi apre il file deve leggerlo per primo. Costo: nessuno |
-| D8 | design/10 entra nel compito 4, e design/09 si riscrive sul precedente del 2026-09-08 — richiamo in testa alla sezione, diagramma e tabella —, col percorso della root nella configurazione, il punto 1 di ADR-0040 | P-2; la 5.4 vuole design/09 *«riallineato ad ADR-0040»*. Costo, se il proprietario lo vuole fuori: un blocco da togliere |
-| D9 | il modulo Backup entra nel compito 5 | P-3. Costo: un richiamo da togliere |
-| D10 | la riga della data del compendio si riscrive al compito 1 — per il piano in esecuzione — e al 6, e ogni volta la riga di prima va in archivio con `archive_head.py`; i compiti 2 e 3 non la toccano | il precedente del 2026-09-04: il suo compito 2 non la toccò. Costo: fra il 2 e il 6 la data può restare indietro di qualche giorno, e la riga lo dice rimandando alla tabella della posizione |
-| D11 | in `tracciabilita.md` i richiami si appendono all'ultima cella, e nessuno stato cambia; *«Backup ed export dei dati»* non si tocca | *«solo l'irriproducibile»* resta vero: dice *solo*, non *tutto*. Costo: una riga, se il proprietario la vuole |
-| D12 | nella §12 del compendio il disegno e il piano entrano nella riga della knowledge base, non in una riga loro | il tetto. Costo: una riga lunga |
-| D13 | in `README.md` il disegno entra nella tabella «Specifiche», sotto la riga del disegno del 2026-09-04 | la forma dei disegni. Costo: nessuno |
-| D14 | `riferimenti.md` non si tocca | le fonti della 3.4 ci sono già, P-1. Costo: nessuno |
-| D15 | tre attrezzi al posto di `replace_unique.py`: `apply_edits.py`, che applica un blocco tutto o niente e si prova prima col `--check`; `archive_head.py` e `replace_pointer.py`, per la testa del compendio | una novantina di modifiche puntuali: le coppie scritte a mano sarebbero state una novantina di occasioni di sbagliare, e il `--check` le ha provate tutte sul repository vero. Provati nelle due direzioni su file di prova, e su un file CRLF — CR uguali alle righe. Costo: tre attrezzi da leggere |
-| D16 | il *«Come si riprende»* del disegno resta nel disegno; questo piano ha il suo | il precedente dei disegni del 2026-09-03, del 2026-09-04 e del 2026-09-22: un disegno tiene la sua ultima chiusura. Costo: nessuno |
-| D17 | il dispaccio dell'esecuzione viaggia con git, in `docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti-esecuzione/`, creata al primo dispaccio | il punto 8 del piano del design system, richiesta del proprietario del 2026-09-24. Costo: una cartella |
-| D18 | la cella *«Dipende da»* della riga 11 della roadmap si riscrive, *«6, 9»*, col richiamo che cita *«5, 6, 9»* | la 5.1: nelle tabelle di stato la cella si riscrive. Costo: nessuno |
+plan, outdir = sys.argv[1:3]
+lines = io.open(plan, encoding="utf-8", newline="").read().splitlines()
+found = []
+for marker, name in PIECES:
+    hits = [k for k, ln in enumerate(lines) if ln.startswith(marker)]
+    if len(hits) != 1:
+        sys.exit(f"refused: {len(hits)} lines starting with [{marker}]")
+    k = hits[0]
+    start = next((m for m in range(k + 1, len(lines)) if lines[m].startswith(FENCE) and len(lines[m]) > 4), None)
+    end = None if start is None else next((m for m in range(start + 1, len(lines)) if lines[m] == FENCE), None)
+    if end is None:
+        sys.exit(f"refused: no fence after [{marker}]")
+    found.append((name, NL.join(lines[start + 1:end]) + NL))
+for name, body in found:
+    with io.open(os.path.join(outdir, name), "w", encoding="utf-8", newline="") as f:
+        f.write(body)
+    print(f"{name}: {body.count(NL)} lines")
+````
 
-**Vicoli ciechi di questa sessione:**
-
-| | Che cosa insegna |
-|---|---|
-| un rattoppo di `apply_edits.py` passato in un heredoc di Bash con dentro `\r\n` si è fermato su un'asserzione, senza scrivere niente | 📌 *Un file di attrezzi si riscrive per intero con lo strumento di scrittura, mai rattoppato da un heredoc: i backslash non sopravvivono al canale* — la memoria lo diceva |
-| la prima stesura del blocco di design/10 ancorava a una recinzione `mermaid`, e quel file ne ha **due** | 📌 *Un'ancora sulla prima riga di un blocco ricorrente non è unica: si ancora all'intestazione della sezione* |
-| `rev` non esiste nel Git Bash di questa macchina | le code di riga si stampano con Python |
-
-**Le voci aperte che il piano sa, e non chiude:** AUD-004, che sbarra il 13 e non il piano; X-2 e X-4 dell'audit; le voci
-della 4.6 e della 6.5 del disegno, ciascuna col suo chiusore; e P-5, nuova, col proprietario come chiusore.
-
----
-
-## Il materiale verificato
-
-Parola per parola com'era nello scratchpad alla chiusura, e controllato su `0c0d0d4` come dice la consegna. ⛔ **Chi
-riprende lo estrae, non lo riscrive:** ogni recinto è un file.
-
-### Gli attrezzi
-
-#### `apply_edits.py` — applica un blocco di modifiche, tutto o niente; col `--check` non scrive
+### `apply_edits.py` — applica un blocco di modifiche, tutto o niente; col `--check` non scrive
 
 ````python
 """apply_edits.py -- apply a block of edits from the plan, all or nothing, keeping each file's line endings.
@@ -298,7 +282,7 @@ if not check:
 print(f"{'checked' if check else 'applied'}: {done} edits in {len(order)} files")
 ````
 
-#### `archive_head.py` — archivia parola per parola la riga della data del compendio e, con `--pointer`, il puntatore della §6
+### `archive_head.py` — archivia parola per parola la riga della data del compendio e, con `--pointer`, il puntatore della §6
 
 ````python
 """archive_head.py -- copy the compendium's date line (and, with --pointer, the pointer of §6) word for word
@@ -374,7 +358,7 @@ os.replace(tmp, path)
 print(f"archived: {len(pieces)} piece(s) under «{heading}»; the heading starts with «{what}»")
 ````
 
-#### `replace_pointer.py` — riscrive il puntatore della §6, dopo `archive_head.py`
+### `replace_pointer.py` — riscrive il puntatore della §6, dopo `archive_head.py`
 
 ````python
 """replace_pointer.py -- replace the pointer of §6 of the compendium with the text of a file.
@@ -414,7 +398,340 @@ os.replace(tmp, path)
 print(f"replaced: lines {k + 1}-{end} with {len(new.split(chr(10)))} line(s)")
 ````
 
-### Il testo di ADR-0040 — `<data>` è il giorno del compito 1
+### `tables.awk` — le righe di tabella che non hanno le colonne della loro intestazione
+
+Il controllo delle tabelle del disegno, in un file perché porta le barre rovesciate — trappola 13. Il conto per file:
+`awk -f "$S/tables.awk" <file> | cut -d: -f1 | sort | uniq -c`. **Non** rende vuoto — tre file hanno già righe così, e
+nessuna è del piano: P-18 —; deve rendere **lo stesso** prima e dopo il compito.
+
+````awk
+FNR == 1 { t = 0; c = 0 }
+/^```/ { c = !c; next }
+c { next }
+/^\|/ { l = $0; gsub(/\\\|/, "", l); n = gsub(/\|/, "|", l); if (!t) { t = 1; h = n; s = FNR } else if (n != h) print FILENAME ":" FNR ": " n " contro " h " (riga " s ")"; next }
+{ t = 0 }
+````
+
+---
+
+## Vincoli globali
+
+Valgono per ogni compito, senza che il compito li ripeta. `<base>` è il commit in cui questo piano è nato, e lo dà un
+comando: `git log --format=%h --diff-filter=A -- docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md`.
+
+| # | Vincolo | Da |
+|---|---|---|
+| 1 | **il merito approvato non si tocca**: le risposte D1–D20 e le sei sezioni del disegno, riletto dal proprietario. Se un passo lo violerebbe — una scorciatoia, una duplicazione, un fatto che non è più vero — ci si **ferma e lo si riporta**: è l'accettazione condizionata del proprietario, e vale finché regge | disegno, *«Le regole di questo lavoro»*; `anthropic-skills:decision-principles` |
+| 2 | **nessun codice**: il comando D resta vuoto a ogni compito | disegno, sezione 4; riga 15 della Definizione di «fatto» |
+| 3 | **della spec del sotto-progetto 1 si toccano due punti soli** — la riga `filesystem` della §2.3 e la testa della §6.6 —, e la **§8 non cambia** | disegno, 4.5; vincolo globale 1 del piano della chiusura |
+| 4 | **documenti in italiano**, e un riferimento al codice dentro un documento in inglese, col **nome esatto del sorgente** | §1.0 della spec; gotcha #40 |
+| 5 | **nessuna cifra nuova in prosa** senza il comando accanto; nei documenti della lista della guardia dei conteggi — `CLAUDE.md` e `HANDOFF.md` compresi — i numeri piccoli **a parole**, e nessuna cifra seguita da «ADR» fuori da un code span | `CLAUDE.md`; trappole 1 e 8 |
+| 6 | ⛔ **i blocchi si applicano, non si riscrivono**: il `--check` prima; se un'ancora manca o non è unica il blocco è rifiutato **per intero** e nessun file è scritto — e allora ci si **ferma**: è una voce d'errata, non un rattoppo a mano | D15 |
+| 7 | **i fine-riga si conservano per file**: si misurano col `git ls-files --eol` del Passo 1 di ogni compito — la colonna `w/…` dipende dalla macchina, e un'etichetta scritta qui mentirebbe sull'altra (E72 del piano della parte 2) —; dopo il compito i CR sono **quanti prima**, e la colonna `w/…` è quella del Passo 1. Un file **nuovo** nasce LF | `CLAUDE.md`; trappola 3 |
+| 8 | **ogni conteggio si rifà col comando**: le cifre di questo piano sono istantanee del 2026-09-29, su `ff6f0e5` o sulla simulazione — P-19 | `CLAUDE.md`, gotcha #31 |
+| 9 | **gli ADR sono append-only**: un rimando va in testa, prima di `## Context`; un secondo sotto il primo — D5; per ADR-0039 il rimando entra **nella cella** della riga del perimetro negativo — P-17; **nessuna riga preesistente** di un ADR cambia, salvo quella cella | `CLAUDE.md`; disegno, 3.1 e 3.3 |
+| 10 | **il compendio resta sotto il tetto**: il comando C prima e dopo ogni compito che lo tocca; se va rosso si toglie prosa dalla §6, **non si alza il tetto** | §13 del compendio; gotcha #100; trappola 2 |
+| 11 | **nessun link a un file che non esiste ancora**, fuori da `plans/`: il link ad ADR-0040 nasce col compito 1, che crea il file; un'**ancora** (`#…`) non si scrive mai | trappole 5 e 6 della §10 del compendio; trappola 7 |
+| 12 | **si committa e si pusha a ogni compito**, senza chiedere e **senza co-autore**; `check-docs.sh` e il cancello girano **prima**, uno alla volta; il messaggio comincia con `knowledge-base-revisione(compito N): …` | `CLAUDE.md` |
+| 13 | **il numeratore dei compiti** vive nella tabella della posizione e in nessun altro punto del repository | gotcha #68 |
+| 14 | **il `grep` di Git Bash**: mai `-i` con più di un `-e` — va in crash, `Aborted`, e con lo stderr scartato sembra un niente —; ogni `grep -c` che deve rendere **0** si prova prima dove deve rendere **1**; e un `grep -c` conta le **righe**, non le occorrenze | trappole 5 e 10 |
+| 15 | **la data**: `<data>` nei blocchi è il giorno dell'esecuzione del compito, lo stesso in tutto il compito; ADR-0040 porta quello del compito 1 | D2; P-8 |
+
+---
+
+## ▶️ A che punto è QUESTO PIANO — casa unica, e si aggiorna scrivendo
+
+✅ **IL PIANO È SCRITTO, il 2026-09-29.** ⏳ **Il pre-controllo non è fatto**: lo fa una sessione sua, prima di dispacciare il
+compito 1 — il *«Come si riprende»*, in fondo.
+
+| # | Compito | Commit | Stato |
+|---|---|---|---|
+| **1** | ADR-0040, e ciò che il cancello pretende con lui | — | ⏳ |
+| **2** | i rimandi in testa a dieci ADR, e le loro voci nel compendio | — | ⏳ |
+| **3** | il disegno del 2026-09-04, e la cattura in tutte le sue case | — | ⏳ |
+| **4** | la spec del sotto-progetto 1 in due punti, design/09 e design/10 | — | ⏳ |
+| **5** | `roadmap.md`, `tracciabilita.md` e la stella polare della GUI | — | ⏳ |
+| **6** | la chiusura: gli indici, la data e il puntatore, la Definizione di «fatto» eseguita | — | ⏳ |
+
+⛔ **QUALE compito venga dopo NON è scritto qui:** vive nella §6 del [`COMPENDIO.md`](../../COMPENDIO.md). Qui resta la
+**posizione** — la tabella, che chi esegue aggiorna nel commit del compito col suo blocco POS — e **come** si esegue. I
+commit di un compito li trova `git log --oneline --grep='knowledge-base-revisione(compito N)'`.
+
+### ▶️ Come si esegue un compito di questo piano
+
+1. Si legge l'**errata** qui sotto per intero, poi il compito — tutto e nient'altro — e le sezioni del disegno che nomina.
+2. Si **rimisura** ciò che il compito dà per misurato: ogni cifra è del 2026-09-29.
+3. Se il compito dice il falso — un `--check` che rifiuta, un Atteso che non torna — **ci si ferma e si riporta**: una
+   divergenza è una voce d'errata prima di essere un rimedio.
+4. `check-docs.sh` e il cancello girano **prima** di ogni commit, uno alla volta; il commit dice ciò che il compito ha fatto.
+5. Il revisore **rilancia ogni comando** accanto a un'affermazione misurabile e li elenca; nei compiti **1**, **2** e **3**
+   rilegge ciascun rimando **contro l'ADR che lo ospita e contro i fratelli** della sua riga nella 3.1 del disegno —
+   gotcha #59 —; nel **3**, **4** e **5**, ciascun richiamo contro la riga del disegno che lo detta.
+6. Una seconda ondata di **sola prosa** la chiude il coordinatore a mano; dopo due ondate di prosa si chiude (gotcha #76).
+7. ⛔ **Le scritture in parallelo non si fanno**: un compito per volta. E più di un subagente solo dopo aver detto al
+   proprietario il costo, con la banda misurata, e avuto il sì (`CLAUDE.md`).
+8. ⛔ **Il dispaccio viaggia con git**, perché un compito si riprende anche dall'altra macchina — D17. Prompt, rapporti e
+   revisioni stanno in `docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti-esecuzione/`, tracciata e
+   creata al primo dispaccio, e il prompt di un compito vi nasce come **modello**, coi campi della macchina da riempire.
+   Nella cartella di lavoro `.superpowers/sdd/2026-09-29-knowledge-base-revisione-documenti/`, ignorata, nascono i brief e
+   scrivono implementatore e revisore; alla chiusura del compito il coordinatore copia nella cartella tracciata il prompt
+   spedito, il rapporto, il prompt del revisore e la revisione, e li committa.
+
+---
+
+## ⚠️ L'errata di questo piano — si legge PRIMA di ogni compito, non una volta sola
+
+⛔ **Nasce vuota.** La riempiono il pre-controllo e l'esecuzione: una voce per difetto trovato, col testo corretto, la data
+e chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezione dopo, perché è già dentro i compiti.
+
+| # | Voce |
+|---|---|
+| — | *(vuota alla scrittura, 2026-09-29)* |
+
+---
+
+## Ciò che la scrittura del piano ha trovato — e i compiti già portano
+
+P-1…P-14 le ha trovate la prima sessione, misurate su `0c0d0d4`; P-15…P-19 la seconda, su `ff6f0e5` e nella simulazione
+in sequenza. Il testo delle prime è quello della consegna in archivio, parola per parola.
+
+| | Trovato | Che cosa ne segue |
+|---|---|---|
+| P-1 | `docs/HANDOFF.md` porta già **un** link al disegno — nel gotcha #141, dal commit `fedca31` —, e `docs/riferimenti.md` tre, le fonti della 3.4: la 6.2 dice che prima del piano nessun file da toccare ne porta, tranne il compendio | nessun controllo cambia: per `HANDOFF.md` il controllo è la sola guardia dei totali; il comando E vi rende uno prima e dopo |
+| P-2 | **`docs/design/10-modello-dei-dati-durevoli.md`** dice ancora ciò che la revisione supera, e il disegno non lo nomina: `AMBITO` e `CHECKPOINT` «col 5» e *«l'implementazione vera col 5»* — D15 —; `CARTELLA_KB` *«in chiaro, nel backup»* — ADR-0040, e una politica che quel file dice di non ripetere —; le specie di `NODO_KB` e le frecce dell'`INDICE_MAPPA` — la riga 11 —; `GUIDA_APPROVATA` senza la fiducia di D9 | nel compito 4, blocco E4: un richiamo sotto l'intestazione della sezione, cinque etichette, tre righe della tabella — D8 |
+| P-3 | il modulo **Backup** della stella polare della GUI elenca ciò che il backup non contiene — indici, pesi, segreti — e il punto 4 di ADR-0040 vi aggiunge la root, le zone e le copie: la 5.3 nomina sette punti, questo è l'ottavo | nel compito 5, blocco E5 — D9 |
+| P-4 | ADR-0022 porta, nel rimando del 2026-08-07 in fondo, *«sotto-progetto 11 … dopo il 5, il 6 e il 9»*: la seconda risposta della 5.5 toglie il 5 | lo dice il rimando nuovo in testa ad ADR-0022, blocco E1 |
+| P-5 | la **§8.5.2** della spec del sotto-progetto 1 dice *«Servono inoltre il filesystem reale, che arriva con il sotto-progetto 5»*: la §8 non si tocca | **registrata**, col proprietario come chiusore, accanto a V36 e Q22 della 6.5 del disegno |
+| P-6 | la riga 3 e la riga 8 della sezione 2 nominano i due vicoli ciechi; le stesse frasi vivono anche nello **scartato** delle risposte 3 e 10 del disegno del 2026-09-04 | il richiamo di quelle due righe copre risposta e scartato, blocco E3 |
+| P-7 | cinque ADR — 0009, 0010, 0011, 0022, 0038 — hanno già un rimando in testa, e **nessun** ADR ne ha ancora due | il secondo va sotto il primo, una riga vuota in mezzo, prima di `## Context` — D5 |
+| P-8 | la `Date` di un ADR è il giorno in cui il file nasce: cinque su cinque — 0029, 0036, 0037, 0038, 0039 —, col `git log --diff-filter=A` | ADR-0040 porta la data dell'esecuzione del compito 1 — D2 |
+| P-9 | in `AVVIO-CHAT.md` il totale vive **dentro** il messaggio recintato, e la guardia toglie solo i code span | il richiamo che cita la frase vecchia la mette in un code span, `le 39 ADR` — blocco E1 |
+| P-10 | la riga *«Ultimo aggiornamento»* di `roadmap.md` si riallinea in ogni commit che tocca il file — P-8 del piano del 2026-09-04 | i blocchi E1, E5 ed E6 la prendono per prefisso, `>=`, e la riscrivono |
+| P-11 | il conto per stato di `tracciabilita.md` rende `47 · 54 · 76 · 0 · 1` — il comando del suo riquadro | nessuna delle undici righe cambia stato: il conto resta identico dopo il compito 5 |
+| P-12 | in un'etichetta `mermaid` il segnaposto `.<nomeapp>/` sarebbe letto come un tag HTML, e il repository scrive le etichette senza apostrofi | i diagrammi dicono *«la cartella nascosta alla root»*; i blocchi E4 non portano né parentesi angolari né apostrofi nelle etichette |
+| P-13 | le due tabelle delle voci aperte della porta di qualità, lette sulla colonna di chi le chiude: **nessuna** ha questo piano o *«il proprietario, prima»* come chiusore; la T5-34 è la riga stantia di E94, la contraddizione C-S5-3 | nessuna voce sbarra il piano |
+| P-14 | il comando della guardia dei totali rende otto righe — quattro in `HANDOFF.md`, una in `roadmap.md`, due nel compendio, una in `AVVIO-CHAT.md` — tutte a trentanove | il blocco E1 le porta a quaranta, e in `AVVIO-CHAT.md` toglie la cifra: la risposta A alla prima domanda della 6.1 |
+| P-15 | il **comando A** della 6.2 del disegno conta le **righe**, e in ADR-0039 il rimando nuovo entra nella riga che porta già quello del 2026-09-05 — la cella del perimetro negativo —: renderebbe `1` prima e dopo, misurato nella simulazione | il piano conta le **occorrenze** — il comando A della Definizione di «fatto» —, che su ADR-0039 rende `1` e poi `2`; la 6.2 del disegno riceve un richiamo datato, con la chiusura della sessione di scrittura — D24 |
+| P-16 | il segnaposto `<data>` esiste già, letterale, una volta nel disegno dei gesti e una in quello del 2026-09-04 | un `<data>` rimasto non si cerca col solo `grep -l`: si contano le occorrenze prima e dopo, e restano **uguali** — compito 3 |
+| P-17 | nella cella di ADR-0039 il testo nuovo entra **dentro** una riga, e `git diff` la dà tolta e rimessa: *«nessuna riga tolta negli ADR»* renderebbe `1` dopo il compito 3 | per la cella, la sonda del piano del 2026-09-04 (E9): una riga `-`, una `+`, e la `+` comincia con la `-` meno la sua barra finale — misurata nella simulazione |
+| P-18 | il controllo delle tabelle rende già righe fuori colonna in tre file — `HANDOFF.md`, il disegno del 2026-09-04, la stella polare —, e nessuna è del piano: il conto per file è lo stesso prima e dopo i sei compiti, nella simulazione | le prove delle tabelle confrontano il **conto per file** col Passo 1, e non pretendono il vuoto — D25 |
+| P-19 | **la simulazione in sequenza**, il 2026-09-29, su un `git worktree` a `ff6f0e5` con la chiusura della sessione di scrittura applicata, e `<data>` = `2026-09-30`: i sei blocchi `checked` e applicati in ordine — 17, 20, 59, 24, 31 e 6 modifiche —; `check-docs.sh` → `OK` dopo **ciascun** compito, anche dopo il 1, che è quello che lo tocca; il comando D vuoto; il margine del compendio sempre positivo, il più basso dopo i compiti 3–5 | la prova che il `--check` a uno a uno non dà. Si rifà quando una voce d'errata cambia un blocco, o un compito tocca un file che un altro blocco ancora |
+
+---
+
+## Le decisioni prese scrivendo il piano
+
+⛔ **Sono del coordinatore, non del disegno, e il proprietario può ribaltarle**; chi esegue le ribalta portando la misura
+che le smentisce — è ciò per cui esiste l'errata. D1…D18 le ha prese la prima sessione, e il testo è quello della
+consegna in archivio; D19…D25 la seconda.
+
+| | Decisione | Perché, e che cosa costa se è sbagliata |
+|---|---|---|
+| D1 | **sei compiti**: 1, ADR-0040 e ciò che il cancello pretende con lui — il rimando in ADR-0022, l'indice, la voce, i totali, la §13, `CLAUDE.md`, `AVVIO-CHAT.md`; 2, i rimandi in testa a dieci ADR con le loro voci; 3, il disegno del 2026-09-04 e la cattura in tutte le sue case — ADR-0039, la sua voce, il disegno dei gesti; 4, la spec, design/09 e design/10; 5, roadmap, tracciabilità e stella polare; 6, la chiusura | `check-docs.sh` è rosso finché ADR-0040 non ha voce, riga d'indice e totali, quindi nascono in un commit; un rimedio si chiude su tutte le case della frase in un commit — la cattura. Costo: compiti più grandi di quelli del 2026-09-04 |
+| D2 | ADR-0040 si chiama `0040-dove-vivono-i-dati-e-che-cosa-salva-il-programma.md`, col titolo della 3.2, e la sua `Date` è il giorno del compito 1 | P-8; la 3.2 lascia titolo e nome al piano. Costo: un rinomino |
+| D3 | la testa di ADR-0040 porta un quarto punto, *«Modifica»*, accanto a `Status`, `Date` e `Deciders`; il rimando di ADR-0022 finisce con *«Le altre righe reggono»* invece della frase sulla non-superazione | la forma *«Amends»* di `adr-tools`, letta per la 3.3, sta nella testa; la 3.3 dice *«al posto della frase»*. Costo: una riga |
+| D4 | la riga di `CLAUDE.md` nomina il terzo caso con la forma di ADR-0040 su ADR-0022 | la 3.3. Costo: una frase |
+| D5 | un secondo rimando in testa va sotto il primo, prima di `## Context` | P-7: l'ordine delle date. Costo: nessuno |
+| D6 | nel disegno del 2026-09-04 ogni richiamo va **nella cella o nel capoverso** che porta le parole superate; una riga della sezione 2 che nomina più posti ne dà uno a ciascuno; la tabella della 4.2 ne riceve uno solo, nella riga dei nodi, che nomina frecce e segnali | la sezione 2 del disegno, *«nella riga stessa»*. Costo: molti richiami corti |
+| D7 | il richiamo in testa al disegno del 2026-09-04 va subito sotto il capoverso di stato | chi apre il file deve leggerlo per primo. Costo: nessuno |
+| D8 | design/10 entra nel compito 4, e design/09 si riscrive sul precedente del 2026-09-08 — richiamo in testa alla sezione, diagramma e tabella —, col percorso della root nella configurazione, il punto 1 di ADR-0040 | P-2; la 5.4 vuole design/09 *«riallineato ad ADR-0040»*. Costo, se il proprietario lo vuole fuori: un blocco da togliere |
+| D9 | il modulo Backup entra nel compito 5 | P-3. Costo: un richiamo da togliere |
+| D10 | la riga della data del compendio si riscrive al compito 1 — per il piano in esecuzione — e al 6, e ogni volta la riga di prima va in archivio con `archive_head.py`; i compiti 2 e 3 non la toccano | il precedente del 2026-09-04: il suo compito 2 non la toccò. Costo: fra il 2 e il 6 la data può restare indietro di qualche giorno, e la riga lo dice rimandando alla tabella della posizione |
+| D11 | in `tracciabilita.md` i richiami si appendono all'ultima cella, e nessuno stato cambia; *«Backup ed export dei dati»* non si tocca | *«solo l'irriproducibile»* resta vero: dice *solo*, non *tutto*. Costo: una riga, se il proprietario la vuole |
+| D12 | nella §12 del compendio il disegno e il piano entrano nella riga della knowledge base, non in una riga loro | il tetto. Costo: una riga lunga |
+| D13 | in `README.md` il disegno entra nella tabella «Specifiche», sotto la riga del disegno del 2026-09-04 | la forma dei disegni. Costo: nessuno |
+| D14 | `riferimenti.md` non si tocca | le fonti della 3.4 ci sono già, P-1. Costo: nessuno |
+| D15 | tre attrezzi al posto di `replace_unique.py`: `apply_edits.py`, che applica un blocco tutto o niente e si prova prima col `--check`; `archive_head.py` e `replace_pointer.py`, per la testa del compendio | una novantina di modifiche puntuali: le coppie scritte a mano sarebbero state una novantina di occasioni di sbagliare, e il `--check` le ha provate tutte sul repository vero. Provati nelle due direzioni su file di prova, e su un file CRLF — CR uguali alle righe. Costo: tre attrezzi da leggere |
+| D16 | il *«Come si riprende»* del disegno resta nel disegno; questo piano ha il suo | il precedente dei disegni del 2026-09-03, del 2026-09-04 e del 2026-09-22: un disegno tiene la sua ultima chiusura. Costo: nessuno |
+| D17 | il dispaccio dell'esecuzione viaggia con git, in `docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti-esecuzione/`, creata al primo dispaccio | il punto 8 del piano del design system, richiesta del proprietario del 2026-09-24. Costo: una cartella |
+| D18 | la cella *«Dipende da»* della riga 11 della roadmap si riscrive, *«6, 9»*, col richiamo che cita *«5, 6, 9»* | la 5.1: nelle tabelle di stato la cella si riscrive. Costo: nessuno |
+| D19 | un quarto attrezzo, `extract.py`, copia dal piano nello scratchpad ogni pezzo — i tre attrezzi, `tables.awk`, il testo di ADR-0040, i blocchi, il puntatore — per **marcatore**; si copia a mano, e non porta barre rovesciate | ricopiare a mano centocinquanta righe di blocco è dove il canale di un tool muta una barra in silenzio — la trappola 13 —; il rifiuto non scrive niente. Costo: un attrezzo da leggere, e i marcatori da tenere unici |
+| D20 | i blocchi stanno **dentro** i loro compiti, gli attrezzi in una sezione della testa; la sezione *«Il materiale verificato»* si scioglie: i recinti passano parola per parola, e la consegna che li accompagnava va in archivio | un compito si legge *«tutto e nient'altro»*, e il subagente riceve il compito; i piani del 2026-09-04 e del design system tengono gli attrezzi in testa. Costo: nessuno — la simulazione ha girato sui pezzi estratti dal piano finito |
+| D21 | la posizione si aggiorna con un blocco piccolo per compito, POS1…POS6, che riscrive la riga intera; la colonna *Commit* dice quanti, a parole, e il commit lo trova `git log --grep` | un commit non conosce il proprio hash: il piano del design system lo faceva scrivere al compito dopo (E79), una complicazione senza guadagno. Costo: la descrizione del compito vive due volte, nella tabella e nel suo blocco — corta apposta |
+| D22 | il puntatore nuovo del compito 6 dice la revisione chiusa e i due fronti che vengono — il 13, sbarrato da AUD-004, col perimetro della 4.2, e il brainstorming dei modelli decisionali — **senza** metterli in ordine; il puntatore della chiusura di questa sessione cambia una frase sola, quella del piano | il proprietario non li ha collocati l'uno rispetto all'altro: il paragrafo 🆕 della §6 del compendio. Costo: nessuno |
+| D23 | la consegna della prima sessione va in `archivio/consegna-piano-knowledge-base-revisione-documenti.md`, parola per parola coi link riscritti per la cartella | `CLAUDE.md`: un documento vivo tiene una chiusura sola; il precedente è `archivio/consegna-piano-design-system.md`. Costo: un file nuovo in archivio |
+| D24 | la Definizione di «fatto» è quella della 6.2 con una colonna in più, il compito, e le righe di P-2 e P-3; il comando A conta le **occorrenze**, e la 6.2 del disegno riceve un richiamo datato che lo dice | P-15; *«il piano la copia da qui»*: due copie di un comando che divergono in silenzio sono il gotcha #68, e il richiamo le tiene legate. Costo: un richiamo nel disegno chiuso |
+| D25 | le prove delle tabelle confrontano il conto per file col Passo 1, invece di pretendere il vuoto | P-18. Costo: nessuno |
+
+---
+
+## La mappa dei file
+
+⛔ **Nessuna etichetta di fine-riga**: la forma la dice il `git ls-files --eol` del Passo 1 di ogni compito — vincolo 7.
+
+| File | Chi lo tocca | Responsabilità |
+|---|---|---|
+| `docs/adr/0040-dove-vivono-i-dati-e-che-cosa-salva-il-programma.md` | 1, lo crea | l'ADR nuovo |
+| `docs/adr/0022-layout-dei-dati-per-natura-e-backup-dichiarato.md` | 1 | il rimando «modificato da ADR-0040» |
+| `docs/adr/0009-…`, `0010-…`, `0011-…`, `0012-…`, `0014-…`, `0015-…`, `0016-…`, `0024-…`, `0025-…`, `0038-…` | 2 | il rimando in testa |
+| `docs/adr/0039-telecamera-come-sorgente-di-percezione.md` | 3 | il rimando **nella cella** del perimetro negativo |
+| `docs/COMPENDIO.md` | 1, 2, 3, 6 | la riga della data (1, 6); la voce di ADR-0040, il rimando nella voce di 0022, i totali, la §8 e la §13 (1); le righe dei rimandi (2, 3); la §12 e il puntatore (6) |
+| `docs/archivio/stato-storico.md` | 1, 6 | la riga della data (1), e la riga col puntatore (6), com'erano — le scrive `archive_head.py` |
+| `docs/README.md` | 1, 6 | la riga di ADR-0040 nell'indice (1); il disegno fra le specifiche (6) |
+| `CLAUDE.md` | 1 | la riga «ADR append-only» |
+| `docs/HANDOFF.md` | 1 | i totali |
+| `docs/AVVIO-CHAT.md` | 1 | la cifra tolta, col richiamo |
+| `docs/roadmap.md` | 1, 5, 6 | il totale e l'«Ultimo aggiornamento» (1); le righe della 5.1 (5); la riga di questo piano (6) |
+| `docs/superpowers/specs/2026-09-03-riconoscimento-gesti-design.md` | 3 | due richiami |
+| `docs/superpowers/specs/2026-09-04-knowledge-base-design.md` | 3 | il richiamo in testa, e uno per ogni posto della sezione 2 |
+| `docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` | 4 | la riga `filesystem` della §2.3, la testa della §6.6 |
+| `docs/design/09-l0-fisico.md` · `docs/design/10-modello-dei-dati-durevoli.md` | 4 | il richiamo, i diagrammi, le tabelle |
+| `docs/tracciabilita.md` | 5 | undici righe |
+| `docs/superpowers/specs/2026-09-07-direzione-gui-design.md` | 5 | i sette punti della 5.3, e il modulo Backup — P-3 |
+| `docs/superpowers/specs/2026-09-28-knowledge-base-revisione-design.md` | 6 | la spunta del punto 3 della 6.6 |
+| questo piano | ogni compito | la posizione; l'errata, se serve |
+| la cartella del dispaccio | il coordinatore | prompt, rapporti, revisioni — D17 |
+
+⛔ **Nessun altro file.** In particolare non `crates/`, `gui/`, `scripts/`, non `riferimenti.md` (D14), non la §8 della spec.
+
+---
+
+## Le voci aperte che questo piano SA, e non chiude
+
+⛔ **Lette prima di scrivere, come `CLAUDE.md` prescrive**: a sbarrare è la colonna *«Chi la chiude»* di
+[`porta-di-qualita.md`](../../porta-di-qualita.md), e **nessuna** voce ha questo piano o *«il proprietario, prima»* come
+chiusore — P-13. Si dichiarano perché chi esegue le sappia, non perché le tocchi.
+
+| Voce | Dove vive | Chi la chiude |
+|---|---|---|
+| **AUD-004** — le difese di ADR-0015 per le skill | la 6.5 del disegno; il rapporto dell'audit | il **proprietario**, con un ADR suo, **prima del 13**. ⛔ Sbarra il 13, non questo piano |
+| **X-2** e **X-4** | [`audit-2026-08-27.md`](../../audit-2026-08-27.md), le voci senza numero AUD | il proprietario |
+| K10, K35, K44, K47, K49, K51, K52, K36, K12 | la 4.6 del disegno | il 6, il 5, il 3, il 4 — la sua colonna |
+| K11, K17, K19, K21, K22, K29, K34, K38, K41, K48; il testo scelto a runtime nei record del giornale; V36, Q22 e la riga `filesystem` della §8.2.2 | la 6.5 del disegno | ciascuna col suo chiusore |
+| **P-5** — la §8.5.2 della spec del sotto-progetto 1 dice ancora *«il filesystem reale, che arriva con il sotto-progetto 5»* | la spec; P-5 qui sopra | il **proprietario**, con la §8: il vincolo 3 la lascia com'è |
+
+---
+
+## La Definizione di «fatto»
+
+È quella della **6.2** del disegno — *«il piano la copia da qui»* —, con una colonna in più, il compito che scrive
+l'artefatto, e le righe **17** e **18**, che P-2 e P-3 aggiungono (D24). La casa di **che cosa** dice ciascun artefatto
+resta la sezione del disegno nella terza colonna; qui sta **come si prova** che c'è. Ogni controllo si prova nelle due
+direzioni: prima del piano nessun file da toccare porta un link al disegno, tranne il compendio col puntatore della §6,
+`HANDOFF.md` col gotcha #141 — P-1 —, l'archivio e il disegno stesso; dopo, ciascuno ne porta.
+
+| # | Artefatto | Che cosa dice | Il controllo | Compito |
+|---|---|---|---|---|
+| 1 | il disegno del 2026-09-04: il richiamo in testa, e un richiamo per ogni riga della sezione 2 | la sezione 2 | la revisione, riga per riga contro la sezione 2; il link al disegno, comando E | 3 |
+| 2 | i rimandi in testa agli ADR della 3.1, e il richiamo nella riga di ADR-0039 | la 3.1 | ciascun ADR riletto **contro i fratelli** della sua riga — gotcha #59; il comando A prima e dopo: un rimando in più per ADR, contato per **occorrenze** — P-15; la voce di ciascuno nella §5 del compendio con la riga che rimanda, **ADR-0039 compreso** | 1, 2, 3 |
+| 3 | ADR-0040, e la sua riga nell'indice di `README.md` | la 3.2 e la 3.3 | `check-docs.sh`, rosso in tre modi finché manca qualcosa: la voce della §5 del compendio, la riga dell'indice, un totale vecchio. E, cercati: lo stato `Accepted`; la riga `Modifica:` in testa ad ADR-0040 e *«modificato da ADR-0040»* in testa ad ADR-0022; le *«Negative (accettate)»* | 1 |
+| 4 | i totali degli ADR nei documenti di stato | la 3.3 | la guardia dei conteggi; e per `AVVIO-CHAT.md` il comando B, che prima rende una riga e dopo niente: la cifra è tolta, domanda 1 della 6.1 | 1 |
+| 5 | la riga *«ADR append-only»* di `CLAUDE.md` | la 3.3 | la frase del terzo caso, `superato in parte`, cercata; nessuna cifra seguita da «ADR», perché `CLAUDE.md` è nella lista della guardia | 1 |
+| 6 | il compendio: la voce di ADR-0040; le righe dei rimandi; la riga della §13; il disegno nella §12, nella riga della knowledge base; la data in testa | la 3.3; la §12 e la data, la 6.2 | `check-docs.sh`, col tetto e l'accoppiamento della §5; il margine misurato prima di scrivere, comando C; il comando E sul compendio rende almeno due righe, il puntatore e la §12. La data: la §13 del compendio dice perché è la riga più facile da lasciare indietro | 1, 2, 3, 6 |
+| 7 | `README.md`: il disegno fra le specifiche, sulla forma della riga del disegno del 2026-09-04 | la 6.2 | il comando E su `README.md` | 6 |
+| 8 | la spec del sotto-progetto 1: il richiamo nella riga `filesystem` della §2.3, e quello in testa alla §6.6 | la 4.5 | il comando E; ⛔ la **§8 non cambia**: il blocco A della §6 del compendio rende lo stesso prima e dopo, e il testo dalla §8 in giù ha la stessa impronta | 4 |
+| 9 | `roadmap.md` | la 5.1 | ogni riga della 5.1 col rimando alla 4.2, contata col comando E; nessuna riga rinumerata; la riga 10 intatta | 5 |
+| 10 | `tracciabilita.md` | la 5.2 | il comando della 5.2 rende ancora undici righe, e ciascuna porta il link; il conto per stato del riquadro non cambia — P-11 | 5 |
+| 11 | la stella polare della GUI | la 5.3 | i sette punti, ciascuno col richiamo datato e il link | 5 |
+| 12 | design/09 | la 5.4 | i sei punti; il diagramma e la tabella dicono la stessa cosa | 4 |
+| 13 | il disegno dei gesti | la 5.8 | le due righe col richiamo; nessuna riga nuova nella sua tabella delle decisioni | 3 |
+| 14 | `HANDOFF.md` | la 6.2 | solo i totali degli ADR, alla guardia | 1 |
+| 15 | ⛔ **nessun codice** | la sezione 4 | il comando D, vuoto | ogni compito |
+| 16 | i fine-riga di ogni file toccato | — | la trappola 3 | ogni compito |
+| 17 | 🆕 design/10 — P-2 | il richiamo sotto *«Deciso e non costruito, per sotto-progetto»*, cinque etichette, tre righe della tabella | il comando E; nei diagrammi di design/09 e design/10 nessun apostrofo e nessun `nomeapp` — P-12 | 4 |
+| 18 | 🆕 la stella polare, il modulo **Backup** — P-3 | ciò che ADR-0040 toglie dal backup del programma, detto quando il backup si crea | il richiamo col link ad ADR-0040, cercato | 5 |
+
+I comandi, fuori dalla tabella per la trappola 4. **A** — i rimandi, uno in più per ADR a piano eseguito; conta le
+**occorrenze**, non le righe — P-15:
+
+```bash
+for n in 0009 0010 0011 0012 0014 0015 0016 0022 0024 0025 0038 0039; do printf '%s ' $n; grep -o 'Rimando del' docs/adr/$n-*.md | wc -l; done
+```
+
+**B** — il totale in `AVVIO-CHAT.md`, come lo legge la guardia; a piano eseguito non rende niente:
+
+```bash
+sed 's/`[^`]*`//g' docs/AVVIO-CHAT.md | grep -nE '[0-9]+ (ADR in stato|ADR|decisioni architetturali)'
+```
+
+**C** — il margine del compendio sotto il suo tetto, nella forma **CRLF**, che è quella che vincola: lo stesso numero su ogni
+clone; **D** — il codice, da `<base>`; **E** — il link al disegno, su ciascun file:
+
+```bash
+echo $(( $(sed -n 's/^ceiling=//p' scripts/check-docs.sh) - $(tr -d '\r' < docs/COMPENDIO.md | wc -c) - $(tr -cd '\n' < docs/COMPENDIO.md | wc -c) ))
+git diff --stat <base>..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml
+grep -c '2026-09-28-knowledge-base-revisione-design' <file>
+```
+
+E il comando della guardia dei totali, dalla 3.3 del disegno — la lista dei documenti è quella del passo *«ADR counts
+declared in the prose»* di `scripts/check-docs.sh`, e se cambia là vale quella:
+
+```bash
+for f in docs/HANDOFF.md docs/roadmap.md docs/README.md docs/COMPENDIO.md docs/AVVIO-CHAT.md CLAUDE.md; do sed 's/`[^`]*`//g' "$f" | grep -nE '[0-9]+ (ADR in stato|ADR|decisioni architetturali)' | sed "s|^|$f:|"; done
+```
+
+### Le trappole
+
+Le righe 1–9 sono quelle della 6.3 del disegno, misurate il 2026-09-29; le altre le ha trovate la scrittura del piano.
+
+| # | Trappola | Che cosa fare |
+|---|---|---|
+| 1 | il totale degli ADR non vive solo nel compendio e nella roadmap: la guardia legge più documenti, e oggi lo trova anche in `HANDOFF.md` e in `AVVIO-CHAT.md` | aggiunto il file di ADR-0040, `bash scripts/check-docs.sh` nomina ogni documento e ogni totale; in `AVVIO-CHAT.md` la cifra si toglie, comando B |
+| 2 | il compendio ha un tetto, e il verde non è un margine; il margine che vincola è quello in forma **CRLF** — comando C | si rimisura **prima**, e ciò che è verbale va in archivio |
+| 3 | i fine-riga sono misti fra i file di questo piano, e cambiano da una macchina all'altra | `git ls-files --eol` su ogni file prima di toccarlo — conta la colonna `i/` —; gli attrezzi scrivono con `newline=""`, su un temporaneo e `os.replace` — gotcha #82 —; il conto dei CR rifatto dopo |
+| 4 | F10: un comando con la barra verticale dentro una cella di tabella | fuori dalla tabella |
+| 5 | il `grep` 3.0 di Git Bash con `-i` e più di un `-e` **va in crash**, e bash stampa `Aborted`; con lo stderr scartato, o in fondo a una pipeline, sembra un niente | un `grep` per parola, e la controprova su un input che deve rendere uno |
+| 6 | la §4 della spec del sotto-progetto 1 non è la porta dei file | il richiamo va nella riga `filesystem` della §2.3 — domanda 2 della 6.1 |
+| 7 | ADR-0024 si chiama `…-ad-ambiti-dichiarati.md`: un link dedotto dal titolo è rotto | `ls docs/adr` prima del link |
+| 8 | `CLAUDE.md` e `HANDOFF.md` sono nella lista della guardia | nelle righe nuove, i numeri piccoli a parole |
+| 9 | il pre-controllo ha trovato un difetto in ogni compito dispacciato | ogni compito si rilegge contro i documenti di allora, non contro il disegno |
+| 10 | `grep -c` conta le **righe**: dove un testo nuovo entra in una riga che c'è già — la cella di ADR-0039, le celle del disegno del 2026-09-04 — il conto non si muove | si contano le occorrenze, con `grep -o` e `wc -l` — il comando A, P-15 |
+| 11 | dove il testo entra **dentro** una riga, `git diff` la dà tolta e rimessa | per la cella di ADR-0039, la sonda di P-17 |
+| 12 | il segnaposto `<data>` c'è già in due disegni | il conto delle occorrenze prima e dopo, uguale — P-16 |
+| 13 | le barre rovesciate non sopravvivono sempre al canale di un tool: un rattoppo di `apply_edits.py` passato in un heredoc, con le sequenze di fine-riga scritte con la barra rovesciata, si è fermato su un'asserzione; e una sonda in linea con la barra verticale protetta ha dato rossi falsi | un attrezzo o una sonda con barre rovesciate si scrive in un file, per intero, col tool di scrittura — `extract.py` ne è senza, `tables.awk` sta in un file —; nelle sonde dei compiti la barra verticale si scrive come classe di caratteri, fra parentesi quadre |
+| 14 | un'ancora sulla prima riga di un blocco ricorrente non è unica: design/10 ha **due** recinti `mermaid` | si ancora all'intestazione della sezione, come fa il blocco E4 |
+| 15 | `rev` non esiste nel Git Bash di questa macchina | le code di riga si stampano con Python |
+
+---
+
+⛔ **In ogni blocco di comandi dei compiti** la prima riga è `S=<scratchpad>; D=<data>`: `S` nella forma che Python capisce,
+`D` il giorno del compito, **lo stesso** in tutti i suoi passi — lo stato della shell non sopravvive da una chiamata
+all'altra, e un compito che passa la mezzanotte non cambia giorno a metà (vincolo 15). Gli Atteso sono le misure del
+2026-09-29 — P-19 —, e si rimisurano (vincolo 8).
+
+## Compito 1: ADR-0040, e ciò che il cancello pretende con lui
+
+**Files:**
+- Create: `docs/adr/0040-dove-vivono-i-dati-e-che-cosa-salva-il-programma.md`
+- Modify: `docs/adr/0022-layout-dei-dati-per-natura-e-backup-dichiarato.md` — il rimando in testa · `docs/README.md` — la riga dell'indice · `docs/COMPENDIO.md` — la riga della data, la voce di ADR-0040 nella §5, il rimando nella voce di 0022, i totali, la riga della §8, la riga nuova della §13 · `CLAUDE.md` — la riga *«ADR append-only»* · `docs/HANDOFF.md` — i totali · `docs/roadmap.md` — il totale e l'*«Ultimo aggiornamento»* · `docs/AVVIO-CHAT.md` — la cifra tolta, col richiamo · `docs/archivio/stato-storico.md` — la riga della data com'era, da `archive_head.py` · questo piano — la posizione
+- Read: la 3.2, la 3.3 e la 3.4 del disegno, e la domanda 1 della 6.1; P-4, P-8, P-9, P-10, P-14; D2, D3, D4, D10; ADR-0022 **per intero**, coi rimandi del 2026-09-08 e del 2026-08-07; la testa di [ADR-0001](../../adr/0001-architettura-a-kernel-con-capacita-paritarie.md), la forma del rimando
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+S=<scratchpad>; D=<data>
+F="docs/adr/0022-layout-dei-dati-per-natura-e-backup-dichiarato.md docs/README.md docs/COMPENDIO.md CLAUDE.md docs/HANDOFF.md docs/roadmap.md docs/AVVIO-CHAT.md docs/archivio/stato-storico.md"
+bash scripts/check-docs.sh
+git ls-files --eol $F
+for f in $F; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; done
+awk -f "$S/tables.awk" $F | cut -d: -f1 | sort | uniq -c
+echo $(( $(sed -n 's/^ceiling=//p' scripts/check-docs.sh) - $(tr -d '\r' < docs/COMPENDIO.md | wc -c) - $(tr -cd '\n' < docs/COMPENDIO.md | wc -c) ))
+for f in docs/HANDOFF.md docs/roadmap.md docs/README.md docs/COMPENDIO.md docs/AVVIO-CHAT.md CLAUDE.md; do sed 's/`[^`]*`//g' "$f" | grep -nE '[0-9]+ (ADR in stato|ADR|decisioni architetturali)' | sed "s|^|$f:|"; done
+ls docs/adr/0040-* 2>/dev/null | wc -l
+grep -o 'Rimando del' docs/adr/0022-*.md | wc -l
+grep -c '2026-09-28-knowledge-base-revisione-design' $F
+```
+
+Atteso: `OK`; la colonna `w/…` e i CR si **annotano**, sono l'invariante del Passo 5; le tabelle, una riga sola,
+`31 docs/HANDOFF.md` — P-18 —; il margine positivo — la simulazione dava `8384`, e il compito ne consuma circa 1,6 KB —;
+i totali, **otto** righe, tutte a trentanove — P-14 —; `0` file di ADR-0040: il compito non è già eseguito; `1` rimando in
+ADR-0022; il comando E, `1` sul compendio e su `HANDOFF.md`, `5` sull'archivio, `0` sugli altri.
+
+- [ ] **Passo 2: ADR-0040 dal suo recinto, e la riga della data in archivio — PRIMA del blocco**
+
+```bash
+S=<scratchpad>; D=<data>
+sed "s/<data>/$D/" "$S/adr0040.md" > docs/adr/0040-dove-vivono-i-dati-e-che-cosa-salva-il-programma.md
+grep -c '<data>' docs/adr/0040-*.md
+grep -n 'Date:' docs/adr/0040-*.md
+PYTHONIOENCODING=utf-8 python "$S/archive_head.py" "L'intestazione del compendio, com'era — archiviata il $D, al compito 1 del piano dei documenti della revisione della knowledge base"
+```
+
+Atteso: `0` segnaposto rimasti, e la riga `- **Date:**` col giorno; `archived: 1 piece(s) under «…»`. ⚠️ `archive_head.py` gira
+**prima** del blocco, perché il blocco riscrive la riga della data: dopo, l'archivio avrebbe quella nuova (D10). Il file
+nuovo nasce LF (vincolo 7).
+
+Il testo di ADR-0040 — `<data>` è il giorno del compito, e lo mette il `sed` qui sopra; lo copia in `adr0040.md` `extract.py`:
 
 ````markdown
 # ADR-0040: Dove vivono i dati, e che cosa salva il programma
@@ -501,9 +818,19 @@ del sistema operativo, cancellate dopo trenta giorni per default, e in nessun ba
     revisione, che è la casa unica di chi costruisce che cosa: il sotto-progetto 6, se nessuno le porta prima.
 ````
 
-### I blocchi dei sei compiti
+- [ ] **Passo 3: il blocco E1 — prima il `--check`, poi davvero; e la posizione**
 
-#### E1
+```bash
+S=<scratchpad>; D=<data>
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" --check "$D" "$S/e1.txt"
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" "$D" "$S/e1.txt"
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" "$D" "$S/pos1.txt"
+```
+
+Atteso: `checked: 17 edits in 7 files`, poi `applied: 17 edits in 7 files`, poi `applied: 1 edits in 1 files`. Un rifiuto
+non scrive niente: ci si ferma, ed è una voce d'errata (vincolo 6).
+
+Il blocco E1, in `e1.txt`:
 
 ````text
 # compito 1 -- ADR-0040 e cio' che il cancello pretende con lui (il file dell'ADR lo scrive il Passo 2, non questo blocco)
@@ -574,7 +901,103 @@ dal backup, potate come vuole ADR-0018: dopo un ripristino un passo di prima non
 +P ⚠️ **RICHIAMO DEL <data>: il messaggio diceva `le 39 ADR`, e con ADR-0040 il totale è cambiato.** Il numerale è **tolto e non riallineato** — gotcha **#31**, e la risposta A del proprietario alla prima domanda della 6.1 del [disegno della revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md): una cifra che vive in più documenti si toglie, non si ricorregge. Quanti siano lo dice `ls docs/adr/*.md`.
 ````
 
-#### E2
+Il blocco POS1, in `pos1.txt`:
+
+````text
+# la posizione del compito 1, nello stesso commit
+@@ docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md
+>= | **1** |
+== | **1** | ADR-0040, e ciò che il cancello pretende con lui | uno | ✅ <data> |
+````
+
+- [ ] **Passo 4: le prove**
+
+```bash
+S=<scratchpad>; D=<data>
+F="docs/adr/0022-layout-dei-dati-per-natura-e-backup-dichiarato.md docs/README.md docs/COMPENDIO.md CLAUDE.md docs/HANDOFF.md docs/roadmap.md docs/AVVIO-CHAT.md docs/archivio/stato-storico.md"
+bash scripts/check-docs.sh
+bash scripts/gate.sh
+git ls-files --eol $F docs/adr/0040-*.md
+for f in $F; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; done
+awk -f "$S/tables.awk" $F docs/adr/0040-*.md | cut -d: -f1 | sort | uniq -c
+echo $(( $(sed -n 's/^ceiling=//p' scripts/check-docs.sh) - $(tr -d '\r' < docs/COMPENDIO.md | wc -c) - $(tr -cd '\n' < docs/COMPENDIO.md | wc -c) ))
+for f in docs/HANDOFF.md docs/roadmap.md docs/README.md docs/COMPENDIO.md docs/AVVIO-CHAT.md CLAUDE.md; do sed 's/`[^`]*`//g' "$f" | grep -nE '[0-9]+ (ADR in stato|ADR|decisioni architetturali)' | sed "s|^|$f:|"; done
+sed 's/`[^`]*`//g' docs/AVVIO-CHAT.md | grep -nE '[0-9]+ (ADR in stato|ADR|decisioni architetturali)'
+grep -c 'Status:.. Accepted' docs/adr/0040-*.md; grep -c 'Modifica:' docs/adr/0040-*.md; grep -c 'Negative (accettate)' docs/adr/0040-*.md
+grep -c 'modificato da ADR-0040' docs/adr/0022-*.md
+grep -c 'superato in parte' CLAUDE.md docs/COMPENDIO.md
+grep -o 'Rimando del' docs/adr/0022-*.md | wc -l
+git diff -- docs/adr/ | grep -c '^-[^-]'
+git status --porcelain -- crates/ gui/ scripts/ Cargo.lock Cargo.toml
+grep -c '2026-09-28-knowledge-base-revisione-design' $F docs/adr/0040-*.md
+git diff --stat
+```
+
+Atteso: `OK` e `GATE GREEN` — ⚠️ è il compito che tocca il cancello: senza il blocco, ADR-0040 da solo fa rosso
+`check-docs.sh` in tre modi, la voce, la riga dell'indice, i totali —; la colonna `w/…` e i CR come al Passo 1, e ADR-0040
+`w/lf`; le tabelle come al Passo 1; il margine più piccolo di circa 1,6 KB, e positivo; i totali, **sette** righe, tutte a
+quaranta — `AVVIO-CHAT.md` non ne rende più —, e il comando B niente; `1`, `1`, `1`; `1`; `1` e `1`; `2` rimandi in
+ADR-0022; `0` righe tolte negli ADR; niente fuori dai documenti; il comando E, `1` in più su ADR-0022 e su `AVVIO-CHAT.md`,
+e `1` su ADR-0040; un diff che nomina gli otto file di `F` e questo piano, più ADR-0040 da aggiungere.
+
+- [ ] **Passo 5: il commit e il push**
+
+```bash
+git add docs/adr/0040-dove-vivono-i-dati-e-che-cosa-salva-il-programma.md docs/adr/0022-layout-dei-dati-per-natura-e-backup-dichiarato.md docs/README.md docs/COMPENDIO.md CLAUDE.md docs/HANDOFF.md docs/roadmap.md docs/AVVIO-CHAT.md docs/archivio/stato-storico.md docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md
+git commit -m "knowledge-base-revisione(compito 1): ADR-0040 — dove vivono i dati, e che cosa salva il programma —, che modifica in parte ADR-0022; il rimando in testa a 0022, la riga dell'indice, la voce nella §5 del compendio col rimando nella voce di 0022, i totali a quaranta e la cifra tolta da AVVIO-CHAT col richiamo, il caso nuovo nella §13 e in CLAUDE.md, la riga della data con la sua copia in archivio"
+git push
+```
+
+#### Criterio di chiusura del compito 1
+
+- [ ] ADR-0040 esiste, `Accepted`, con la riga `Modifica:` e le *Negative (accettate)*, e dice punto per punto la 3.2
+- [ ] ADR-0022 porta in testa il rimando *«modificato da ADR-0040»*, e **nessuna riga preesistente** è cambiata
+- [ ] la revisione ha riletto ADR-0040 contro la 3.2 e la 3.3, e il rimando di ADR-0022 contro ADR-0018, ADR-0023 e ADR-0024 — i fratelli della sua riga nella 3.1, gotcha #59 — e contro i due rimandi che ADR-0022 porta già
+- [ ] i totali a quaranta nei documenti della guardia; la cifra tolta da `AVVIO-CHAT.md`, col richiamo; `superato in parte` in `CLAUDE.md` e nella §13
+- [ ] `check-docs.sh` → `OK`, `GATE GREEN`, fine-riga e tabelle come al Passo 1, commit pushato, posizione aggiornata
+
+---
+
+## Compito 2: i rimandi in testa a dieci ADR, e le loro voci nel compendio
+
+**Files:**
+- Modify: `docs/adr/0009-guide-sensori-e-anelli-sono-meccanismi-di-kernel.md` · `docs/adr/0010-budget-della-proiezione-invece-di-soglia-di-riempimento.md` · `docs/adr/0011-routing-risolto-e-giornalato-per-richiesta.md` · `docs/adr/0012-equivalenza-del-fallback-e-fallimento-chiuso.md` · `docs/adr/0014-confine-dei-dati-non-fidati-nel-sistema-di-tipi.md` · `docs/adr/0015-descrizioni-degli-strumenti-fissate-all-approvazione.md` · `docs/adr/0016-permessi-granulari-e-default-dei-vincoli-sui-dati.md` · `docs/adr/0024-checkpoint-del-filesystem-ad-ambiti-dichiarati.md` · `docs/adr/0025-confinamento-a-livelli.md` · `docs/adr/0038-registro-delle-funzioni-del-programma.md` — il rimando in testa · `docs/COMPENDIO.md` — la riga di ciascuno nella sua voce della §5 · questo piano — la posizione
+- Read: la 3.1 del disegno, riga per riga, con la colonna *«Riletto contro»*; P-7; D5; la testa di ADR-0001, la forma
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+S=<scratchpad>; D=<data>
+A="docs/adr/0009-*.md docs/adr/0010-*.md docs/adr/0011-*.md docs/adr/0012-*.md docs/adr/0014-*.md docs/adr/0015-*.md docs/adr/0016-*.md docs/adr/0024-*.md docs/adr/0025-*.md docs/adr/0038-*.md"
+bash scripts/check-docs.sh
+git ls-files --eol $A docs/COMPENDIO.md
+for f in $A docs/COMPENDIO.md; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; done
+awk -f "$S/tables.awk" $A docs/COMPENDIO.md | cut -d: -f1 | sort | uniq -c
+echo $(( $(sed -n 's/^ceiling=//p' scripts/check-docs.sh) - $(tr -d '\r' < docs/COMPENDIO.md | wc -c) - $(tr -cd '\n' < docs/COMPENDIO.md | wc -c) ))
+for n in 0009 0010 0011 0012 0014 0015 0016 0022 0024 0025 0038 0039; do printf '%s ' $n; grep -o 'Rimando del' docs/adr/$n-*.md | wc -l; done
+for f in $A; do printf '%s ' "$f"; tr -d '\r' < "$f" | tr '\n' ' ' | sed 's/> //g' | grep -o 'Nessuna riga di questo ADR è superata' | wc -l; done
+grep -c '2026-09-28-knowledge-base-revisione-design' $A docs/COMPENDIO.md
+grep -c 'revisione della knowledge base' docs/COMPENDIO.md
+```
+
+Atteso: `OK`; la colonna `w/…` e i CR si annotano; le tabelle, niente; il margine positivo — la simulazione dava `6746`, e il
+compito ne consuma circa 1,9 KB —; il comando A, `1` per 0009, 0010, 0011 e 0038, `2` per 0022, `1` per 0039, `0` per gli
+altri sei; la frase *«Nessuna riga di questo ADR è superata»*, `1` per 0009, 0010 e 0038, `0` per gli altri sette —
+ADR-0011 porta un rimando che non la dice —; il comando E, `0` su ogni ADR e `1` sul compendio; `3` per *«revisione della
+knowledge base»* nel compendio.
+
+- [ ] **Passo 2: il blocco E2 — prima il `--check`, poi davvero; e la posizione**
+
+```bash
+S=<scratchpad>; D=<data>
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" --check "$D" "$S/e2.txt"
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" "$D" "$S/e2.txt"
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" "$D" "$S/pos2.txt"
+```
+
+Atteso: `checked: 20 edits in 11 files`, `applied: 20 edits in 11 files`, `applied: 1 edits in 1 files`.
+
+Il blocco E2, in `e2.txt`:
 
 ````text
 # compito 2 -- i rimandi in testa a dieci ADR, e la riga di ciascuno nella sua voce del compendio
@@ -723,7 +1146,102 @@ dal backup, potate come vuole ADR-0018: dopo un ripristino un passo di prima non
 ++ ⚠️ **Rimando del <data>, in testa all'ADR:** il riconciliatore non è un invocatore; «fuori» vuol dire verso una zona aperta — revisione della knowledge base.
 ````
 
-#### E3
+Il blocco POS2, in `pos2.txt`:
+
+````text
+# la posizione del compito 2, nello stesso commit
+@@ docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md
+>= | **2** |
+== | **2** | i rimandi in testa a dieci ADR, e le loro voci nel compendio | uno | ✅ <data> |
+````
+
+- [ ] **Passo 3: le prove**
+
+```bash
+S=<scratchpad>; D=<data>
+A="docs/adr/0009-*.md docs/adr/0010-*.md docs/adr/0011-*.md docs/adr/0012-*.md docs/adr/0014-*.md docs/adr/0015-*.md docs/adr/0016-*.md docs/adr/0024-*.md docs/adr/0025-*.md docs/adr/0038-*.md"
+bash scripts/check-docs.sh
+bash scripts/gate.sh
+git ls-files --eol $A docs/COMPENDIO.md
+for f in $A docs/COMPENDIO.md; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; done
+awk -f "$S/tables.awk" $A docs/COMPENDIO.md | cut -d: -f1 | sort | uniq -c
+echo $(( $(sed -n 's/^ceiling=//p' scripts/check-docs.sh) - $(tr -d '\r' < docs/COMPENDIO.md | wc -c) - $(tr -cd '\n' < docs/COMPENDIO.md | wc -c) ))
+for n in 0009 0010 0011 0012 0014 0015 0016 0022 0024 0025 0038 0039; do printf '%s ' $n; grep -o 'Rimando del' docs/adr/$n-*.md | wc -l; done
+for f in $A; do printf '%s ' "$f"; tr -d '\r' < "$f" | tr '\n' ' ' | sed 's/> //g' | grep -o 'Nessuna riga di questo ADR è superata' | wc -l; done
+for f in docs/adr/0009-*.md docs/adr/0010-*.md docs/adr/0011-*.md docs/adr/0038-*.md; do grep -n -e 'Rimando del' -e '^## Context' "$f" | cut -c1-40; done
+git diff -- docs/adr/ | grep -c '^-[^-]'
+git status --porcelain -- crates/ gui/ scripts/ Cargo.lock Cargo.toml
+grep -c '2026-09-28-knowledge-base-revisione-design' $A docs/COMPENDIO.md
+grep -c 'revisione della knowledge base' docs/COMPENDIO.md
+git diff --stat
+```
+
+Atteso: `OK` e `GATE GREEN`; fine-riga e tabelle come al Passo 1; il margine più piccolo di circa 1,9 KB, e positivo; il
+comando A, **uno in più** per ciascuno dei dieci — 0022 e 0039 fermi a `2` e `1` —; la frase, **uno in più** per ciascuno
+dei dieci; in 0009, 0010, 0011 e 0038 il rimando di questa data **sotto** quello di prima e sopra `## Context` — D5 —;
+`0` righe tolte; niente fuori dai documenti; il comando E, `1` su ogni ADR e ancora `1` sul compendio — le voci della §5
+rimandano **senza** link —; `13` per *«revisione della knowledge base»*; un diff che nomina i dieci ADR, il compendio e
+questo piano.
+
+- [ ] **Passo 4: il commit e il push**
+
+```bash
+git add docs/adr/0009-guide-sensori-e-anelli-sono-meccanismi-di-kernel.md docs/adr/0010-budget-della-proiezione-invece-di-soglia-di-riempimento.md docs/adr/0011-routing-risolto-e-giornalato-per-richiesta.md docs/adr/0012-equivalenza-del-fallback-e-fallimento-chiuso.md docs/adr/0014-confine-dei-dati-non-fidati-nel-sistema-di-tipi.md docs/adr/0015-descrizioni-degli-strumenti-fissate-all-approvazione.md docs/adr/0016-permessi-granulari-e-default-dei-vincoli-sui-dati.md docs/adr/0024-checkpoint-del-filesystem-ad-ambiti-dichiarati.md docs/adr/0025-confinamento-a-livelli.md docs/adr/0038-registro-delle-funzioni-del-programma.md docs/COMPENDIO.md docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md
+git commit -m "knowledge-base-revisione(compito 2): i rimandi datati in testa ad ADR-0009, 0010, 0011, 0012, 0014, 0015, 0016, 0024, 0025 e 0038 — la fiducia alla cartella, la proiezione per candidato, la sessione, la catena di riserva, i percorsi protetti, l'irripetibile, la lettura fuori da ogni zona, il riconciliatore — e la riga di ciascuno nella sua voce della §5 del compendio"
+git push
+```
+
+#### Criterio di chiusura del compito 2
+
+- [ ] i dieci ADR portano il rimando datato in testa, sotto quello di prima dove c'era, con la frase sulla non-superazione, e **nessuna riga preesistente** è cambiata
+- [ ] le dieci voci della §5 rimandano in una frase, senza link
+- [ ] la revisione ha riletto ogni rimando contro l'ADR intero **e** contro i fratelli della colonna *«Riletto contro»* della 3.1 — gotcha #59 —, e non ha trovato una riga superata
+- [ ] `check-docs.sh` → `OK`, `GATE GREEN`, fine-riga e tabelle come al Passo 1, commit pushato, posizione aggiornata
+
+---
+
+## Compito 3: il disegno del 2026-09-04, e la cattura in tutte le sue case
+
+**Files:**
+- Modify: `docs/adr/0039-telecamera-come-sorgente-di-percezione.md` — il rimando **nella cella** del perimetro negativo · `docs/COMPENDIO.md` — la riga nella voce di 0039 · `docs/superpowers/specs/2026-09-03-riconoscimento-gesti-design.md` — due richiami · `docs/superpowers/specs/2026-09-04-knowledge-base-design.md` — il richiamo in testa, e uno per ogni posto della sezione 2 · questo piano — la posizione
+- Read: la sezione 2 del disegno, **tutte** le righe 0–23 con la domanda e la risposta; la 5.8; la riga di 0039 nella 3.1; P-6, P-16, P-17; D6, D7
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+S=<scratchpad>; D=<data>
+F="docs/adr/0039-telecamera-come-sorgente-di-percezione.md docs/COMPENDIO.md docs/superpowers/specs/2026-09-03-riconoscimento-gesti-design.md docs/superpowers/specs/2026-09-04-knowledge-base-design.md"
+K=docs/superpowers/specs/2026-09-04-knowledge-base-design.md
+bash scripts/check-docs.sh
+git ls-files --eol $F
+for f in $F; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; done
+awk -f "$S/tables.awk" $F | cut -d: -f1 | sort | uniq -c
+echo $(( $(sed -n 's/^ceiling=//p' scripts/check-docs.sh) - $(tr -d '\r' < docs/COMPENDIO.md | wc -c) - $(tr -cd '\n' < docs/COMPENDIO.md | wc -c) ))
+grep -o 'Rimando del' docs/adr/0039-*.md | wc -l; grep -c 'Rimando del' docs/adr/0039-*.md
+grep -c 'Richiamo del' $K
+for f in $F; do printf '%s ' "$f"; grep -o '<data>' "$f" | wc -l; done
+grep -c '2026-09-28-knowledge-base-revisione-design' $F
+grep -n 'router che segue' docs/adr/0039-*.md | cut -c1-60
+grep -n 'in un gruppo' docs/superpowers/specs/2026-09-03-riconoscimento-gesti-design.md | cut -c1-60
+```
+
+Atteso: `OK`; la colonna `w/…` e i CR si annotano; le tabelle, `2` righe nel disegno del 2026-09-04 — P-18 —; il margine
+positivo — la simulazione dava `4841` —; ADR-0039, `1` occorrenza su `1` riga; `0` richiami nel disegno del 2026-09-04;
+`<data>`, `0` `0` `1` `1` — P-16 —; il comando E, `0` `1` `0` `0`; una riga per *«router che segue»*, due per *«in un
+gruppo»*.
+
+- [ ] **Passo 2: il blocco E3 — prima il `--check`, poi davvero; e la posizione**
+
+```bash
+S=<scratchpad>; D=<data>
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" --check "$D" "$S/e3.txt"
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" "$D" "$S/e3.txt"
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" "$D" "$S/pos3.txt"
+```
+
+Atteso: `checked: 59 edits in 4 files`, `applied: 59 edits in 4 files`, `applied: 1 edits in 1 files`.
+
+Il blocco E3, in `e3.txt` — i commenti `# riga N` sono le righe della sezione 2 del disegno:
 
 ````text
 # compito 3 -- il disegno del 2026-09-04, e la cattura in tutte le sue case
@@ -882,7 +1400,96 @@ resto regge:** la strada B, l'ordine 2, 13, 3, AUD-004 che sbarra il 13, nessuna
 ++ ⚠️ **Richiamo del <data>:** le risposte 1, 2, 3, 4 e 7 sono **corrette** dalla revisione — righe 1, 2, 7 e 10 della sezione 2 del [disegno della revisione](2026-09-28-knowledge-base-revisione-design.md); la 5 e la 6 reggono, ⚠️ dedotto
 ````
 
-#### E4
+Il blocco POS3, in `pos3.txt`:
+
+````text
+# la posizione del compito 3, nello stesso commit
+@@ docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md
+>= | **3** |
+== | **3** | il disegno del 2026-09-04, e la cattura in tutte le sue case | uno | ✅ <data> |
+````
+
+- [ ] **Passo 3: le prove**
+
+```bash
+S=<scratchpad>; D=<data>
+F="docs/adr/0039-telecamera-come-sorgente-di-percezione.md docs/COMPENDIO.md docs/superpowers/specs/2026-09-03-riconoscimento-gesti-design.md docs/superpowers/specs/2026-09-04-knowledge-base-design.md"
+K=docs/superpowers/specs/2026-09-04-knowledge-base-design.md
+bash scripts/check-docs.sh
+bash scripts/gate.sh
+git ls-files --eol $F
+for f in $F; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; done
+awk -f "$S/tables.awk" $F | cut -d: -f1 | sort | uniq -c
+echo $(( $(sed -n 's/^ceiling=//p' scripts/check-docs.sh) - $(tr -d '\r' < docs/COMPENDIO.md | wc -c) - $(tr -cd '\n' < docs/COMPENDIO.md | wc -c) ))
+grep -o 'Rimando del' docs/adr/0039-*.md | wc -l; grep -c 'Rimando del' docs/adr/0039-*.md
+git diff -- docs/adr/0039-*.md | grep -c '^-[^-]'; git diff -- docs/adr/0039-*.md | grep -c '^+[^+]'
+git diff -- docs/adr/0039-*.md | awk '/^-[^-]/{m=substr($0,2)} /^[+][^+]/{p=substr($0,2)} END{print (index(p, substr(m,1,length(m)-2))==1) ? "la + comincia con la -" : "NO"}'
+grep -c "Richiamo del $D" $K; grep -c "RICHIAMO DEL $D" $K
+grep -c "Richiamo del $D" docs/superpowers/specs/2026-09-03-riconoscimento-gesti-design.md
+for f in $F; do printf '%s ' "$f"; grep -o '<data>' "$f" | wc -l; done
+git status --porcelain -- crates/ gui/ scripts/ Cargo.lock Cargo.toml
+grep -c '2026-09-28-knowledge-base-revisione-design' $F
+git diff --stat
+```
+
+Atteso: `OK` e `GATE GREEN`; fine-riga come al Passo 1; le tabelle, ancora `2` righe nel disegno del 2026-09-04 — più in
+basso di otto righe, per il richiamo in testa —; il margine più piccolo di circa 0,2 KB; ADR-0039, `2` occorrenze su `1`
+riga — P-15 —; `1`, `1` e *«la + comincia con la -»* — P-17 —; `54` e `1`; `2`; `<data>` come al Passo 1; niente fuori dai
+documenti; il comando E, `1` `1` `2` `55`; un diff che nomina i quattro file e questo piano.
+
+- [ ] **Passo 4: il commit e il push**
+
+```bash
+git add docs/adr/0039-telecamera-come-sorgente-di-percezione.md docs/COMPENDIO.md docs/superpowers/specs/2026-09-03-riconoscimento-gesti-design.md docs/superpowers/specs/2026-09-04-knowledge-base-design.md docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md
+git commit -m "knowledge-base-revisione(compito 3): il disegno della knowledge base del 2026-09-04 corretto dalla revisione — il richiamo in testa e uno per ogni riga superata, righe 0–23 della sezione 2 — e la cattura come ogni file nuovo in tutte le sue case: la riga di ADR-0039 e la sua voce della §5, le due righe del disegno dei gesti"
+git push
+```
+
+#### Criterio di chiusura del compito 3
+
+- [ ] il disegno del 2026-09-04 porta il richiamo in testa, sotto il capoverso di stato — D7 —, e un richiamo **nella cella o nel capoverso** di ogni posto che la sezione 2 nomina — D6 —; la cella della decisione 13 dice *«chiusa»*, col suo richiamo
+- [ ] la revisione ha riletto ogni richiamo contro la sua riga della sezione 2, e la cattura contro la risposta A della domanda di quella sezione; ADR-0039 contro ADR-0038 e ADR-0018, che nominano la cattura e gli artefatti
+- [ ] ADR-0039 cambia nella sola cella del perimetro negativo — P-17 —, e la sua voce della §5 rimanda
+- [ ] `check-docs.sh` → `OK`, `GATE GREEN`, fine-riga e tabelle come al Passo 1, commit pushato, posizione aggiornata
+
+---
+
+## Compito 4: la spec del sotto-progetto 1 in due punti, design/09 e design/10
+
+**Files:**
+- Modify: `docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md` — la riga `filesystem` della §2.3, la testa della §6.6 · `docs/design/09-l0-fisico.md` — ADR-0040 nella riga dei rimandi, il richiamo, il diagramma, la tabella · `docs/design/10-modello-dei-dati-durevoli.md` — il richiamo, cinque etichette, tre righe · questo piano — la posizione
+- Read: la 4.5 e la 5.4 del disegno, e la domanda 2 della 6.1; P-2, P-12; D8
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+S=<scratchpad>; D=<data>
+SPEC=docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md
+F="$SPEC docs/design/09-l0-fisico.md docs/design/10-modello-dei-dati-durevoli.md"
+bash scripts/check-docs.sh
+git ls-files --eol $F
+for f in $F; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; done
+awk -f "$S/tables.awk" $F | cut -d: -f1 | sort | uniq -c
+awk '/^## 8[.] /{p=1} p' $SPEC | md5sum
+awk '/^```mermaid/{m=1;next} /^```/{m=0} m' docs/design/09-l0-fisico.md docs/design/10-modello-dei-dati-durevoli.md | grep -c -e "'" -e nomeapp
+grep -c '2026-09-28-knowledge-base-revisione-design' $F
+```
+
+Atteso: `OK`; la colonna `w/…` e i CR si annotano; le tabelle, niente; l'impronta della §8 si **annota** — ⛔ è l'invariante
+del vincolo 3 —; `0` nei diagrammi — P-12 —; il comando E, `0` `0` `0`.
+
+- [ ] **Passo 2: il blocco E4 — prima il `--check`, poi davvero; e la posizione**
+
+```bash
+S=<scratchpad>; D=<data>
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" --check "$D" "$S/e4.txt"
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" "$D" "$S/e4.txt"
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" "$D" "$S/pos4.txt"
+```
+
+Atteso: `checked: 24 edits in 3 files`, `applied: 24 edits in 3 files`, `applied: 1 edits in 1 files`.
+
+Il blocco E4, in `e4.txt`:
 
 ````text
 # compito 4 -- la spec del sotto-progetto 1 (due punti soli), design/09 e design/10
@@ -980,7 +1587,95 @@ caricamento** di un file-guida (col 13). Il perché sta nella 5.4 del
 ++ ⚠️ **Richiamo del <data>:** per il file-guida di una zona l'approvazione è la fiducia alla cartella, col 5, e l'impronta si scrive a ogni caricamento, col 13 — D9, la 4.3 del [disegno della revisione](../superpowers/specs/2026-09-28-knowledge-base-revisione-design.md)
 ````
 
-#### E5
+Il blocco POS4, in `pos4.txt`:
+
+````text
+# la posizione del compito 4, nello stesso commit
+@@ docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md
+>= | **4** |
+== | **4** | la spec del sotto-progetto 1 in due punti, design/09 e design/10 | uno | ✅ <data> |
+````
+
+- [ ] **Passo 3: le prove**
+
+```bash
+S=<scratchpad>; D=<data>
+SPEC=docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md
+F="$SPEC docs/design/09-l0-fisico.md docs/design/10-modello-dei-dati-durevoli.md"
+bash scripts/check-docs.sh
+bash scripts/gate.sh
+git ls-files --eol $F
+for f in $F; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; done
+awk -f "$S/tables.awk" $F | cut -d: -f1 | sort | uniq -c
+awk '/^## 8[.] /{p=1} p' $SPEC | md5sum
+git diff -U0 -- $SPEC | grep -c '^@@'
+awk '/^```mermaid/{m=1;next} /^```/{m=0} m' docs/design/09-l0-fisico.md docs/design/10-modello-dei-dati-durevoli.md | grep -c -e "'" -e nomeapp
+grep -n 'class C,R,A,P,I,M plain' docs/design/09-l0-fisico.md | cut -c1-40
+git status --porcelain -- crates/ gui/ scripts/ Cargo.lock Cargo.toml
+grep -c '2026-09-28-knowledge-base-revisione-design' $F
+git diff --stat
+```
+
+Atteso: `OK` e `GATE GREEN`; fine-riga e tabelle come al Passo 1; l'impronta della §8 **uguale** a quella del Passo 1; `2`
+pezzi nella spec — la riga della §2.3 e la testa della §6.6 —; `0` nei diagrammi; una riga, i nodi nuovi `R` e `P` nella
+classe; niente fuori dai documenti; il comando E, `2` `1` `4`; un diff che nomina i tre file e questo piano. Il blocco A
+della §6 del compendio — il ritratto della §8 — rende lo stesso di prima, e lo dice già l'impronta.
+
+- [ ] **Passo 4: il commit e il push**
+
+```bash
+git add docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md docs/design/09-l0-fisico.md docs/design/10-modello-dei-dati-durevoli.md docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md
+git commit -m "knowledge-base-revisione(compito 4): la spec del sotto-progetto 1 in due punti — la porta dei file che cresce a pezzi, nella riga filesystem della §2.3, e il permesso che cresce, in testa alla §6.6 —, design/09 riallineato ad ADR-0040 nel diagramma e nella tabella, e design/10 coi richiami sulle etichette superate; la §8 non cambia"
+git push
+```
+
+#### Criterio di chiusura del compito 4
+
+- [ ] la spec cambia nei **due** punti soli, e la §8 ha la stessa impronta
+- [ ] design/09 dice nel diagramma e nella tabella la stessa cosa — i router nel backup, i file del proprietario e le copie fuori, l'indice uno per root —, e la revisione l'ha riletto contro la 5.4 e contro ADR-0040
+- [ ] design/10 porta il richiamo, le cinque etichette e le tre righe — P-2 —, e nessun diagramma ha un apostrofo o un segnaposto fra parentesi angolari — P-12
+- [ ] `check-docs.sh` → `OK`, `GATE GREEN`, fine-riga e tabelle come al Passo 1, commit pushato, posizione aggiornata
+
+---
+
+## Compito 5: `roadmap.md`, `tracciabilita.md` e la stella polare della GUI
+
+**Files:**
+- Modify: `docs/roadmap.md` — l'*«Ultimo aggiornamento»*, le righe 3, 5, 6, 11 e 13, *«Backup dopo indici e pesi»*, *«Il primo valore utile»* · `docs/tracciabilita.md` — undici righe · `docs/superpowers/specs/2026-09-07-direzione-gui-design.md` — i sette punti della 5.3, e il modulo Backup · questo piano — la posizione
+- Read: la 5.1, la 5.2, la 5.3 e la 5.5 del disegno; P-3, P-10, P-11; D9, D11, D18
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+S=<scratchpad>; D=<data>
+F="docs/roadmap.md docs/tracciabilita.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md"
+TR='^[|] (Multi-repo|Mappa del progetto|Git e gestione|Collezioni|File watching|Sessioni multiple|Selettore di modello|Backup della KB|Sandboxing|Permessi e sandbox|Modalità di permessi)'
+bash scripts/check-docs.sh
+git ls-files --eol $F
+for f in $F; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; done
+awk -f "$S/tables.awk" $F | cut -d: -f1 | sort | uniq -c
+for s in ✅ 🔶 📋 ⚠️ ❌; do printf '%s ' "$s"; grep -cE "^[|] .* [|] $s [|]" docs/tracciabilita.md; done
+grep -cE "$TR" docs/tracciabilita.md
+grep -cE '^[|] (3|5|6|10|11|13) [|]' docs/roadmap.md
+grep -c '2026-09-28-knowledge-base-revisione-design' $F
+```
+
+Atteso: `OK`; la colonna `w/…` e i CR si annotano; le tabelle, `1` riga nella stella polare — P-18 —; per stato
+`✅ 47`, `🔶 54`, `📋 76`, `⚠️ 0`, `❌ 1` — P-11 —; `11` righe della 5.2; `6` righe della roadmap; il comando E, `0` `0`
+`0`.
+
+- [ ] **Passo 2: il blocco E5 — prima il `--check`, poi davvero; e la posizione**
+
+```bash
+S=<scratchpad>; D=<data>
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" --check "$D" "$S/e5.txt"
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" "$D" "$S/e5.txt"
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" "$D" "$S/pos5.txt"
+```
+
+Atteso: `checked: 31 edits in 3 files`, `applied: 31 edits in 3 files`, `applied: 1 edits in 1 files`.
+
+Il blocco E5, in `e5.txt`:
 
 ````text
 # compito 5 -- roadmap, tracciabilita' e stella polare
@@ -1051,7 +1746,108 @@ caricamento** di un file-guida (col 13). Il perché sta nella 5.4 del
 ++ ⚠️ **Richiamo del <data>:** le copie stanno nella cartella dati del programma, fuori dal backup, e dopo un ripristino un passo di prima non si annulla — [ADR-0040](../../adr/0040-dove-vivono-i-dati-e-che-cosa-salva-il-programma.md), e il [disegno della revisione della knowledge base](2026-09-28-knowledge-base-revisione-design.md)
 ````
 
-#### E6
+Il blocco POS5, in `pos5.txt`:
+
+````text
+# la posizione del compito 5, nello stesso commit
+@@ docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md
+>= | **5** |
+== | **5** | `roadmap.md`, `tracciabilita.md` e la stella polare della GUI | uno | ✅ <data> |
+````
+
+- [ ] **Passo 3: le prove**
+
+```bash
+S=<scratchpad>; D=<data>
+F="docs/roadmap.md docs/tracciabilita.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md"
+TR='^[|] (Multi-repo|Mappa del progetto|Git e gestione|Collezioni|File watching|Sessioni multiple|Selettore di modello|Backup della KB|Sandboxing|Permessi e sandbox|Modalità di permessi)'
+G=docs/superpowers/specs/2026-09-07-direzione-gui-design.md
+bash scripts/check-docs.sh
+bash scripts/gate.sh
+git ls-files --eol $F
+for f in $F; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; done
+awk -f "$S/tables.awk" $F | cut -d: -f1 | sort | uniq -c
+for s in ✅ 🔶 📋 ⚠️ ❌; do printf '%s ' "$s"; grep -cE "^[|] .* [|] $s [|]" docs/tracciabilita.md; done
+grep -cE "$TR" docs/tracciabilita.md; grep -E "$TR" docs/tracciabilita.md | grep -c '2026-09-28-knowledge-base-revisione-design'
+grep -cE '^[|] (3|5|6|10|11|13) [|]' docs/roadmap.md
+git diff -U0 -- docs/roadmap.md | grep -c '^-| 10 |'
+grep -c "Richiamo del $D" $G; grep -c "chiusa il $D" $G
+grep -c '0040-dove-vivono-i-dati' $G
+git status --porcelain -- crates/ gui/ scripts/ Cargo.lock Cargo.toml
+grep -c '2026-09-28-knowledge-base-revisione-design' $F
+git diff --stat
+```
+
+Atteso: `OK` e `GATE GREEN`; fine-riga e tabelle come al Passo 1; il conto per stato **identico** al Passo 1; `11` righe, e
+`11` col link; `6` righe; `0` — la riga 10 intatta —; `9` richiami e `2` voci chiuse nella stella polare, cioè gli undici
+posti dei sette punti della 5.3 e del modulo Backup; `2` link ad ADR-0040, il Backup e il Checkpoint; niente fuori dai
+documenti; il comando E, `7` `11` `11`; un diff che nomina i tre file e questo piano.
+
+- [ ] **Passo 4: il commit e il push**
+
+```bash
+git add docs/roadmap.md docs/tracciabilita.md docs/superpowers/specs/2026-09-07-direzione-gui-design.md docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md
+git commit -m "knowledge-base-revisione(compito 5): la roadmap — le righe 3, 5, 6, 11 e 13 col rimando alla 4.2, l'11 che dipende da 6 e 9, Backup dopo indici e pesi, il primo valore utile con il 13 —, undici righe di tracciabilita e la stella polare della GUI coi richiami dei sette punti e del modulo Backup"
+git push
+```
+
+#### Criterio di chiusura del compito 5
+
+- [ ] ogni riga della 5.1 porta la frase corta e il rimando alla 4.2 — la risposta 1 della 5.5 —; l'11 dipende da **6, 9**, col richiamo — la risposta 2 —; la riga 10 intatta, nessuna riga rinumerata
+- [ ] le undici righe della 5.2 col link, e il conto per stato identico — nessuno stato cambia, D11
+- [ ] la stella polare: i sette punti della 5.3 e il modulo Backup — P-3 —, ciascuno col richiamo datato; le due voci registrate chiuse, col loro richiamo
+- [ ] `check-docs.sh` → `OK`, `GATE GREEN`, fine-riga e tabelle come al Passo 1, commit pushato, posizione aggiornata
+
+---
+
+## Compito 6: la chiusura — gli indici, la data e il puntatore, la Definizione di «fatto» eseguita
+
+**Files:**
+- Modify: `docs/README.md` — il disegno fra le specifiche · `docs/COMPENDIO.md` — la riga della data, la §12, il puntatore della §6 · `docs/roadmap.md` — l'*«Ultimo aggiornamento»* e la riga di questo piano · `docs/superpowers/specs/2026-09-28-knowledge-base-revisione-design.md` — la spunta del punto 3 della 6.6 · `docs/archivio/stato-storico.md` — la riga della data e il puntatore com'erano · questo piano — la posizione, la riga in testa alla tabella
+- Read: la 6.2 e la 6.6 del disegno; D12, D13, D16, D22; la §6 del compendio, il puntatore e il paragrafo 🆕 dei modelli decisionali
+
+- [ ] **Passo 1: le misure prima**
+
+```bash
+S=<scratchpad>; D=<data>
+F="docs/README.md docs/COMPENDIO.md docs/roadmap.md docs/superpowers/specs/2026-09-28-knowledge-base-revisione-design.md docs/archivio/stato-storico.md"
+bash scripts/check-docs.sh
+git ls-files --eol $F
+for f in $F; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; done
+awk -f "$S/tables.awk" $F | cut -d: -f1 | sort | uniq -c
+echo $(( $(sed -n 's/^ceiling=//p' scripts/check-docs.sh) - $(tr -d '\r' < docs/COMPENDIO.md | wc -c) - $(tr -cd '\n' < docs/COMPENDIO.md | wc -c) ))
+grep -c '^⏭️ [*][*]IL PROSSIMO PASSO' docs/COMPENDIO.md
+grep -c '2026-09-28-knowledge-base-revisione-design' $F
+```
+
+Atteso: `OK`; la colonna `w/…` e i CR si annotano; le tabelle, niente; il margine positivo — la simulazione dava `4653` —;
+`1` inizio del puntatore; il comando E, `0` `1` `7` e, sul disegno e sull'archivio, ciò che rendono — si annota.
+
+- [ ] **Passo 2: il puntatore e la riga della data in archivio — PRIMA del blocco**
+
+```bash
+S=<scratchpad>; D=<data>
+PYTHONIOENCODING=utf-8 python "$S/archive_head.py" --pointer "Il puntatore «Il prossimo passo» e l'intestazione del compendio, com'erano — archiviati il $D, alla chiusura del piano dei documenti della revisione della knowledge base"
+```
+
+Atteso: `archived: 2 piece(s) under «…»`.
+
+- [ ] **Passo 3: il blocco E6, poi il puntatore nuovo, poi la posizione**
+
+```bash
+S=<scratchpad>; D=<data>
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" --check "$D" "$S/e6.txt"
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" "$D" "$S/e6.txt"
+PYTHONIOENCODING=utf-8 python "$S/replace_pointer.py" "$D" "$S/pointer6.txt"
+PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" "$D" "$S/pos6.txt"
+```
+
+Atteso: `checked: 6 edits in 4 files`, `applied: 6 edits in 4 files`, `replaced: lines …-… with 10 line(s)`,
+`applied: 2 edits in 1 files`. ⚠️ Il blocco E6 cerca la cella *«⏳ **scritto il 2026-09-29**; il pre-controllo e
+l'esecuzione, in sessioni loro»* in `roadmap.md` e l'inizio del punto 3 della 6.6 del disegno: le ha scritte la chiusura
+della sessione che ha finito il piano, e se una sessione dopo le cambia, il blocco si riallinea con una voce d'errata.
+
+Il blocco E6, in `e6.txt`:
 
 ````text
 # compito 6 -- la chiusura (il puntatore lo scrive replace_pointer.py, dopo archive_head.py; non questo blocco)
@@ -1072,3 +1868,142 @@ caricamento** di un file-guida (col 13). Il perché sta nella 5.4 del
 >> 3. ✅ il **piano dei documenti** — **scritto il 2026-09-29**, in una sessione sua, al suo
 == 3. ✅ il **piano dei documenti** — **scritto il 2026-09-29** ed **eseguito il <data>**, al suo
 ````
+
+Il puntatore nuovo della §6 — D22: la revisione chiusa, i due fronti **senza** un ordine fra loro; `<data>` lo mette
+`replace_pointer.py`; in `pointer6.txt`:
+
+````text
+⏭️ **IL PROSSIMO PASSO. La REVISIONE DELLA KNOWLEDGE BASE è CHIUSA il <data>**: il [disegno](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md),
+riletto dal proprietario il 2026-09-29, e il suo [piano dei documenti](superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md), eseguito —
+ADR-0040, i rimandi e i richiami. Vengono **due fronti**, e il proprietario **non** li ha messi in ordine l'uno rispetto all'altro.
+**IL SOTTO-PROGETTO 13** — i meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima** del 3 —, col
+perimetro della **4.2** del disegno della revisione: la lettura della porta dei file, la sorgente degli eventi, la finestra del
+candidato, il registro delle guide che ammette la fiducia alla cartella. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill
+dichiarative: è una sua decisione, e viene prima. Chi riprende il 13 legge **per intero** il
+[disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md) e la sezione 4 della revisione; brainstorming e
+disegno del 13 vengono prima del piano, in sessioni distinte. E **il brainstorming dei modelli decisionali**, il fronte nuovo qui sotto,
+che il proprietario ha messo **dopo** questa revisione.
+````
+
+Il blocco POS6, in `pos6.txt` — la riga del compito e quella in testa alla tabella:
+
+````text
+# la posizione del compito 6, e la riga in testa alla tabella, nello stesso commit
+@@ docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md
+>= ✅ **IL PIANO È
+== ✅ **IL PIANO È ESEGUITO, il <data>.** A dirlo non è questa riga ma la tabella qui sotto — ogni riga ✅ — e la **Definizione di «fatto»**, eseguita al compito 6. Il passo dopo lo dice la §6 del compendio.
+>= | **6** |
+== | **6** | la chiusura: gli indici, la data e il puntatore, la Definizione di «fatto» eseguita | uno | ✅ <data> — la Definizione di «fatto» eseguita, ogni riga verde; le uscite nel rapporto del compito, nella cartella del dispaccio |
+````
+
+- [ ] **Passo 4: la Definizione di «fatto», riga per riga**
+
+Ogni riga della sezione *«La Definizione di «fatto»»*, col suo controllo, sul repository di adesso: i comandi A–E, la
+guardia dei totali, e le righe che si leggono. Le uscite vanno nel rapporto del compito, nella cartella del dispaccio —
+non in questo piano: una cifra scritta qui invecchierebbe (vincolo 8). Atteso: ogni riga verde; il comando A, uno in più
+per ciascuno dei dodici ADR rispetto al Passo 1 del compito 1 e del compito 2 — `2` per 0009, 0010, 0011, 0022, 0038 e
+0039, `1` per gli altri sei —; B niente; C positivo — la simulazione dava `4774` —; D niente da `<base>`; E almeno `1` su
+ogni file della mappa che il piano linka.
+
+- [ ] **Passo 5: le prove**
+
+```bash
+S=<scratchpad>; D=<data>
+F="docs/README.md docs/COMPENDIO.md docs/roadmap.md docs/superpowers/specs/2026-09-28-knowledge-base-revisione-design.md docs/archivio/stato-storico.md"
+bash scripts/check-docs.sh
+bash scripts/gate.sh
+git ls-files --eol $F
+for f in $F; do printf '%s CR=' "$f"; tr -cd '\r' < "$f" | wc -c; done
+awk -f "$S/tables.awk" $F | cut -d: -f1 | sort | uniq -c
+echo $(( $(sed -n 's/^ceiling=//p' scripts/check-docs.sh) - $(tr -d '\r' < docs/COMPENDIO.md | wc -c) - $(tr -cd '\n' < docs/COMPENDIO.md | wc -c) ))
+grep -c 'CHIUSA il' docs/COMPENDIO.md
+grep -c "eseguito il $D" docs/roadmap.md docs/superpowers/specs/2026-09-28-knowledge-base-revisione-design.md
+grep -n '^## Il puntatore' docs/archivio/stato-storico.md | tail -1 | cut -c1-80
+git status --porcelain -- crates/ gui/ scripts/ Cargo.lock Cargo.toml
+git diff --stat <base>..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml
+grep -c '2026-09-28-knowledge-base-revisione-design' $F
+git diff --stat
+```
+
+Atteso: `OK` e `GATE GREEN`; fine-riga e tabelle come al Passo 1; il margine positivo; `1`; `1` e `1`; l'intestazione di
+questo giorno; niente e niente; il comando E, `1` su `README.md` e `2` sul compendio — il puntatore e la §12 —, `7` sulla
+roadmap; un diff che nomina i cinque file e questo piano.
+
+- [ ] **Passo 6: il commit e il push**
+
+```bash
+git add docs/README.md docs/COMPENDIO.md docs/roadmap.md docs/superpowers/specs/2026-09-28-knowledge-base-revisione-design.md docs/archivio/stato-storico.md docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md
+git commit -m "knowledge-base-revisione(compito 6): la chiusura — il disegno della revisione in README e nella §12 del compendio, la riga della data e il puntatore della §6 con le loro copie in archivio, la riga del piano in roadmap e la spunta nel disegno portate a eseguito, la Definizione di «fatto» eseguita"
+git push
+```
+
+#### Criterio di chiusura del compito 6
+
+- [ ] il puntatore della §6 dice la revisione chiusa e i due fronti, **senza** un ordine fra loro; il puntatore e la riga della data com'erano stanno in `stato-storico.md`, parola per parola coi link riscritti
+- [ ] il disegno in `README.md` e nella §12; la riga di questo piano in roadmap e il punto 3 della 6.6 a *«eseguito»*
+- [ ] la Definizione di «fatto» eseguita riga per riga, e le uscite nel rapporto
+- [ ] `check-docs.sh` → `OK`, `GATE GREEN`, fine-riga e tabelle come al Passo 1, commit pushato, posizione aggiornata
+
+---
+
+## Dopo il compito 6
+
+La chiusura della **sessione** di esecuzione — `CLAUDE.md`, *«Manutenzione della documentazione»* — scrive il *«Come si
+riprende»* di questo piano, con la precedente in archivio; il puntatore lo ha già mosso il compito 6. ⛔ **Nessun
+sotto-progetto si chiude** con questo piano: `roadmap.md`, `README.md` e `tracciabilita.md` li tocca già il piano, e
+`HANDOFF.md` solo se l'esecuzione trova un gotcha nuovo.
+
+---
+
+## Come si riprende — scritto alla chiusura della sessione che ha finito il piano, il 2026-09-29, coi comandi
+
+⛔ **Da sapere subito: niente è a metà.** Il piano è **scritto**, e i sei compiti sono stati simulati **in sequenza** su un
+`git worktree` nello scratchpad, poi tolto — P-19. **Non è pre-controllato.** Tutto è pushato: si riparte anche dall'altra
+macchina, dopo il fetch. La chiusura precedente — la sospensione della prima sessione — sta in
+[archivio](../../archivio/consegna-piano-knowledge-base-revisione-documenti.md), parola per parola.
+
+| | Stato, e il comando che lo rifà |
+|---|---|
+| ramo | `main` allineato a `origin`: `git fetch --all --prune`, `git status -sb`; nessuno stash, e nessun worktree oltre al principale — `git worktree list` |
+| codice di prodotto | **non toccato**: il comando D da `<base>` non rende nulla |
+| cancello | `bash scripts/gate.sh` → `GATE GREEN` e `bash scripts/check-docs.sh` → `OK` all'apertura e prima del commit di questa chiusura: si rilanciano, non si citano |
+| il margine del compendio | il comando C |
+| i pezzi | `extract.py` copiato a mano dal suo recinto, poi il comando della sezione *«Gli attrezzi»*: diciotto righe |
+| i blocchi | il `--check` di ciascuno, dal comando sotto la tabella: su questo commit tutti e sei `checked`, perché la chiusura ha scritto le due ancore del blocco E6 |
+| il puntatore | la §6 del compendio: il piano è scritto, e viene il suo **pre-controllo** |
+
+```bash
+S=<scratchpad>; for n in 1 2 3 4 5 6; do printf 'E%s: ' $n; PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" --check "$(date +%F)" "$S/e$n.txt" 2>&1 | tail -1; done
+```
+
+**Il compito della sessione che riprende — il pre-controllo, con le quattro domande di `CLAUDE.md`:**
+
+1. La lettura d'apertura di `CLAUDE.md`; poi il disegno della revisione **per intero**, a blocchi; poi **questo piano per
+   intero**.
+2. `bash scripts/gate.sh`, da solo; il comando C; l'estrazione dei pezzi e il `--check` dei sei blocchi.
+3. Per ogni compito, nell'ordine: le **quattro domande** — la sonda sbagliata, la sonda che manca, l'artefatto sbagliato,
+   il compito già eseguito — e le righe 5–8 della tabella di `CLAUDE.md`, prima fra tutte: *il compito si legge contro i
+   documenti di ADESSO*. Qui l'artefatto sbagliato è un **testo** che dice il falso contro il documento che lo riceve, o
+   contro i fratelli di un ADR: si legge ogni rimando e ogni richiamo nel posto dove atterra. Ogni difetto è una voce
+   d'errata, col testo corretto, **prima** di dispacciare; se una voce cambia un blocco, la simulazione in sequenza si
+   rifà — P-19.
+4. La cartella del dispaccio — D17 — e i modelli dei prompt; il costo di ciascun subagente, detto al proprietario **prima**
+   con la banda misurata dei dispacci recenti, e il sì.
+5. La chiusura della sessione: la riga in testa alla tabella della posizione — *«pre-controllo fatto»*, restando una riga
+   che comincia con `✅ **IL PIANO È`, che il blocco POS6 cerca —; il puntatore della §6 mosso all'esecuzione, con
+   `archive_head.py --pointer` e `replace_pointer.py`, e la riga della data; questa sezione riscritta come consegna
+   all'esecuzione, e questa in archivio, nello stesso file della chiusura precedente.
+
+**Le decisioni prese in questa sessione** sono D19…D25, e ciò che ha trovato P-15…P-19: stanno nelle due tabelle in testa,
+e qui non si ricopiano. In più, fuori da questo file: il puntatore della §6 e la riga della data del compendio, con la
+loro copia in archivio; la riga di questo piano in `roadmap.md`, con l'*«Ultimo aggiornamento»*; nel disegno della
+revisione, il punto 3 della 6.6 e il richiamo sul comando A della 6.2 — D24.
+
+**Vicoli ciechi di questa sessione:**
+
+| | Che cosa insegna |
+|---|---|
+| la prima corsa della simulazione stampava tutto il controllo delle tabelle a ogni compito: le stesse trentaquattro righe preesistenti, sette volte | 📌 *Una sonda che rende righe preesistenti si confronta per conto, per file* — D25 |
+| un `grep -c` con una barra rovesciata finale costruita con `printf` è uscito con *«Trailing backslash»* | un conto di caratteri si fa con Python, `chr(92)`, non con un `grep` costruito in linea — trappola 13 |
+
+**Da verificare alla fonte prima del pre-controllo:** niente di esterno.

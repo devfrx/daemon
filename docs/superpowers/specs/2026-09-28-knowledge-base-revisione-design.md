@@ -727,6 +727,8 @@ I comandi, fuori dalla tabella per F10. **A** — i rimandi, uno in più per ADR
 for n in 0009 0010 0011 0012 0014 0015 0016 0022 0024 0025 0038 0039; do printf '%s ' $n; grep -c 'Rimando del' docs/adr/$n-*.md; done
 ```
 
+⚠️ **Richiamo del 2026-09-29, dalla scrittura del piano:** il comando conta le **righe**, e in ADR-0039 il rimando nuovo entra nella riga che porta già quello del 2026-09-05 — la cella del perimetro negativo —: renderebbe `1` prima e dopo. Il piano lo usa con `grep -o 'Rimando del' … | wc -l`, che conta le **occorrenze**: P-15 del [piano](../plans/2026-09-29-knowledge-base-revisione-documenti.md).
+
 **B** — il totale in `AVVIO-CHAT.md`, come lo legge la guardia; a piano eseguito non rende niente:
 
 ```
@@ -804,7 +806,7 @@ che toccano la porta stanno nella 4.6.
 2. ✅ la **rilettura del proprietario** — `superpowers:brainstorming` —, fatta il 2026-09-29: in chat, cinque voci in A/B, una
    alla volta, col consiglio; l'esito nella sezione *«La rilettura del proprietario»*. Il puntatore della §6 del compendio
    passa al piano.
-3. il **piano dei documenti**, con `superpowers:writing-plans`, in una sessione sua; il **pre-controllo** in una sua;
+3. ✅ il **piano dei documenti** — **scritto il 2026-09-29**, in una sessione sua, al suo [percorso](../plans/2026-09-29-knowledge-base-revisione-documenti.md); il **pre-controllo** in una sua;
    l'**esecuzione** in una sua, un subagente per compito — `superpowers:subagent-driven-development`. La Definizione di
    «fatto» e le trappole le copia dalla 6.2 e dalla 6.3.
 4. poi, come dice la §6 del compendio: il **sotto-progetto 13**, che AUD-004 sbarra — l'ADR del proprietario viene prima —,

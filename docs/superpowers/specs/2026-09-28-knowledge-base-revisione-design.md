@@ -374,7 +374,7 @@ riceve uno; righe riscritte nella roadmap, nella tracciabilità e nella stella p
 | ADR-0014 | da rileggere con D9: il passaggio esplicito e giornalato, per il file-guida di una zona, è la fiducia alla cartella | D9 |
 | ADR-0016 | la «sessione» del punto 3 è quella di D11, e al riavvio del core finisce — RR3; un rimando: il permesso lo chiede chi agisce per un modello o invoca una funzione, e la manutenzione deterministica del programma sulla sua cartella segue un'impostazione — D14 | D11, D14 |
 | ADR-0038 | un rimando, fratello di quello di ADR-0016: la regola 2 — lo stesso permesso per ogni invocatore — non copre la correzione deterministica di un fatto, D14; un router toccato dalla GUI resta una funzione del registro | D14, CF5 |
-| ADR-0022 | un **ADR nuovo** supera, per i file della root, le righe degli artefatti e delle guide e la conseguenza sulla base di conoscenza: il programma salva il giornale, la configurazione e i router, e dice al backup che cosa resta fuori; la root la salva il proprietario. La voce nuova nella §5 del compendio, e il rimando in testa ad ADR-0022 | D12 |
+| ADR-0022 | un **ADR nuovo** supera, per **ogni file del proprietario** — la root e le zone di lavoro, D17 —, le righe degli artefatti e delle guide e la conseguenza sulla base di conoscenza: il programma salva il giornale, la configurazione e i router, e dice al backup che cosa resta fuori; la root e le zone le salva il proprietario, coi suoi backup e con git. La voce nuova nella §5 del compendio, e il rimando in testa ad ADR-0022 | D12, D17 |
 | ADR-0024 | l'ambito di una zona si chiude con la sessione — K35; il limite di dimensione resta da fissare — K21 | D3, D11 |
 | ADR-0025 | il livello 2 nega i percorsi privati — K36 | D5 |
 | la stella polare della GUI, decisione 1 | un richiamo datato: la rete ha tutto ciò che sta **nella root**; un artefatto di una zona esterna sta nell'anello, e nella rete attraverso la scheda della sua zona | D13 |
@@ -1473,6 +1473,51 @@ esiste. **Assunto**: che il file del privato stia alla root, come dice il docume
 
 **Il consiglio: A.** Rende vero ciò che D5 ha già deciso, e non aspetta il 4.
 
+### D17, posta il 2026-09-29 — trovata dal controllo finale
+
+**Che cos'è, a parole semplici.** Con D12 la root è del proprietario, e il suo backup pure: il programma salva il giornale,
+la configurazione e i router. Ma l'ADR nuovo di D12 supera ADR-0022 *«per i file della root»*, e un file che l'agente scrive
+in una repo aperta come zona **fuori** dalla root resta nella riga degli artefatti di ADR-0022 — nel backup del programma.
+Il programma salverebbe file **dentro** le repo del proprietario — CF4.
+
+**Che cosa esiste già.**
+
+| | Che cosa dice | Dove, e il comando |
+|---|---|---|
+| ADR-0022 | gli artefatti *«sono già file dell'utente»*, **nel** backup, *«riferiti dal giornale»* | `grep -n -e '^. artefatti' -e 'irriproducibile' docs/adr/0022-*.md` |
+| D12 | la root e il suo backup sono del proprietario; un ADR nuovo supera per la root le righe degli artefatti e delle guide | la risposta D12 |
+| D2 e ADR-0024 | la copia prima che l'agente tocchi un file: per annullare, potata con ADR-0018 | la risposta D2 |
+| D3 e D13 | una zona fuori dalla root non entra nel grafo; i suoi file stanno nell'anello, dal giornale | le risposte |
+
+**Che cosa fa Claude Code — letto dal sorgente il 2026-09-29**, la provenienza in [`riferimenti.md`](../../riferimenti.md).
+Tiene le copie dei file che modifica per **tornare indietro** nella sessione, e le cancella dopo circa trenta giorni;
+*«Not a replacement for version control»*: per la storia lunga rimanda a git. Non fa il backup dei file del progetto.
+
+**La domanda: i file che l'agente scrive in una zona fuori dalla root entrano nel backup del programma?**
+
+| | **A — no: nessun file del proprietario nel backup del programma** | **B — sì: la riga degli artefatti resta per loro** |
+|---|---|---|
+| com'è | l'ADR nuovo di D12 vale per **ogni** file del proprietario, root e zone; il file sta al suo posto, il giornale lo riferisce, la copia per annullare resta | la riga degli artefatti di ADR-0022 resta viva per i file che l'agente scrive in una zona esterna |
+| costo | il perimetro dell'ADR nuovo si scrive «root e zone» | il programma deve sapere quali file di una repo sono «suoi», anche dopo che il proprietario o git li cambiano; i file stanno in due backup, o nel backup e in git |
+| che cosa si rifà dopo | niente | togliere la regola, se il confine si sfuma |
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | ADR-0022 e D12 letti; Claude Code letto dal sorgente | idem; ma il confine «artefatto» in una repo scritta anche da git non è sicuro — la stessa ragione di D12 |
+| coerenza | la regola di D12, estesa a tutti i file del proprietario | due regole: la root del proprietario, le zone del programma |
+| debito | nessuno | l'inseguitore di artefatti dentro le repo |
+| stato dell'arte | Claude Code: copie per annullare, e git per la storia | contro la fonte |
+| proporzione | niente da costruire | un pezzo in più nell'11 |
+| di chi è | **del proprietario**: il perimetro del suo ADR nuovo | idem |
+
+**Verificato, dedotto, assunto.** **Verificati**: ADR-0022, D12, D2, e alla fonte le copie di Claude Code. **Dedotto**:
+che un file scritto dall'agente in una repo sia poi toccato anche da git e dagli editor. **Assunto**: che le repo del
+proprietario stiano sotto git o nei suoi backup.
+
+**Il consiglio: A.** È la regola di D12, allargata; e come Claude Code, si annulla nella sessione e la storia è di git.
+
 ## Le risposte del proprietario
 
 | # | Risposta | Data |
@@ -1493,6 +1538,7 @@ esiste. **Assunto**: che il file del privato stia alla root, come dice il docume
 | D14 | ✅ **A, sullo stato dell'arte** — come le app di oggi, il riconciliatore segue un'**impostazione** scelta una volta — da solo, chiedi, mai —, e parte da **«da solo»**, come Obsidian e come D6; ogni correzione va nel giornale, con la copia, e si annulla. ADR-0016 riceverà un rimando col disegno: il permesso lo chiede chi agisce per un modello o invoca una funzione, e la manutenzione deterministica del programma sulla sua cartella segue la sua impostazione. Alla prima forma il proprietario aveva chiesto *«come farebbero con lo stato dell'arte attuale?»*: lette alla fonte Obsidian e VS Code. ⚠️ **2026-09-29, controllo finale, CF5:** il perimetro si scrive *«la correzione deterministica di un fatto che non cambia una scelta del proprietario»*, e non *«la cartella del programma»* — i router sono del proprietario, D4 —; e il rimando va anche in ADR-0038, la cui regola 2 vuole lo stesso permesso per ogni invocatore | 2026-09-29 |
 | D15 | ✅ **A** — a pezzi: la porta dei file vera la paga chi usa ciascun pezzo per primo — il **13** la lettura, la sorgente degli eventi e la finestra del candidato; il **6** lo scrivere, anche condizionato, l'elenco, i metadati, spostare, cancellare, le esclusioni del privato e la tripla su una cartella scelta a runtime; il **5** la chiusura delle zone. design/09 e la roadmap si riscrivono col disegno; ogni crescita della porta è un richiamo datato alla §4 della spec del sotto-progetto 1 | 2026-09-29 |
 | D16 | ✅ **A** — come Claude Code: il file del privato è un **percorso protetto**, controllato dal kernel **prima** dei sì; nessun sì — sulla root, su una cartella, di sessione — copre una scrittura dell'agente su di lui, e l'agente può solo proporre; lo cambia il proprietario, a mano o dal pannello, e ogni cambio che rende leggibile chiede conferma a ogni volta, perché è irripetibile — RR8. Lo costruisce il 6, senza aspettare i preset del 4. Chiude K26 | 2026-09-29 |
+| D17 | ✅ **A** — nessun file del proprietario nel backup del programma: l'ADR nuovo di D12 supera le righe degli artefatti e delle guide di ADR-0022 per **ogni** file del proprietario, la root **e** le zone di lavoro; il file sta al suo posto, il giornale lo riferisce, la copia per annullare di D2 resta; la storia lunga è dei backup del proprietario e di git, come in Claude Code | 2026-09-29 |
 
 ## Come si riprende — scritto alla chiusura della quarta sessione del 2026-09-29
 

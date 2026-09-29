@@ -2952,6 +2952,20 @@ documentazione di un prodotto: dice come lavora Claude Code, non che il suo modo
 | Microsoft Learn, *Build a Cloud Sync Engine that Supports Placeholder Files* e *File Attribute Constants*, letti dal sorgente, `https://raw.githubusercontent.com/MicrosoftDocs/win32/docs/desktop-src/cfApi/build-a-cloud-file-sync-engine.md` e `.../desktop-src/FileIO/file-attribute-constants.md` | 2026-09-29 | K34: un segnaposto *«will hydrate»* con qualunque API lo apra, ed è *«only available if the sync service is available»*; `FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS` dice che il file *«is not fully present locally»* e che leggerlo lo fa scaricare |
 | Cursor, *Ignore files* e *Ignore file reference*, lette dal sorgente, `https://cursor.com/help/customization/ignore-files.md` e `https://cursor.com/docs/reference/ignore-file.md`, trovate da `https://cursor.com/llms.txt` | 2026-09-29 | D20: **un** file, `.cursorignore`, per i file generati, i binari, il codice di terzi e i segreti; `.gitignore` rispettato; `.env`, `.git/` e i lockfile ignorati per default; i comandi del terminale e gli strumenti MCP restano fuori dal controllo |
 
+## La revisione della knowledge base — le fonti del disegno, 2026-09-29
+
+Le fonti lette per la sezione 3 del [disegno della revisione](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md):
+il merito lì, qui la provenienza. ⚠️ **Lette dal sorgente**: i tre file sulle pratiche degli ADR scaricati grezzi con
+`curl`, le due pagine di Claude Code nel loro sorgente `.md`.
+
+| Fonte | Letta | Per |
+|---|---|---|
+| npryce, `adr-tools`, lo script `adr-new`, `https://github.com/npryce/adr-tools/blob/master/src/adr-new`, dal sorgente `https://raw.githubusercontent.com/npryce/adr-tools/master/src/adr-new` | 2026-09-29 | la forma di un ADR modificato in parte: l'opzione `-l TARGET:LINK:REVERSE-LINK` lega il nuovo ADR a uno precedente con una descrizione in ciascuno — l'esempio dello script usa `Amends` e `Amended by` —, mentre `-s` segna il precedente come superato e ne cambia lo stato |
+| MADR, il modello di ADR, `https://github.com/adr/madr/blob/main/template/adr-template.md`, dal sorgente | 2026-09-29 | idem: gli stati sono *proposed*, *rejected*, *accepted*, *deprecated* e *superseded by*; nessuno per una modifica parziale |
+| Joel Parker Henderson, *Architecture decision record*, `https://github.com/joelparkerhenderson/architecture-decision-record`, il README dal sorgente | 2026-09-29 | idem: un ADR non si altera; lo si completa aggiungendo informazione, o lo si supera con un ADR nuovo |
+| Anthropic, *Checkpointing* di Claude Code, `https://code.claude.com/docs/en/checkpointing`, dal sorgente `.md` | 2026-09-29 | K53: le istantanee dei file per le cento verifiche più recenti di una sessione, cancellate nella pulizia automatica, per default circa trenta giorni dopo; i cambi fatti fuori da Claude Code, e dai comandi, non si tracciano. La riga di D17, nella sezione di sopra, resta |
+| Anthropic, *Explore the .claude directory*, `https://code.claude.com/docs/en/claude-directory`, dal sorgente `.md` | 2026-09-29 | K53: le istantanee stanno in `~/.claude/file-history/<session>/`, nella cartella dell'applicazione e non nel progetto; i dati di `~/.claude` sono in chiaro, e li protegge solo il permesso del sistema operativo; la pulizia li cancella dopo `cleanupPeriodDays`, trenta giorni per default |
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

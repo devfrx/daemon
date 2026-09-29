@@ -8,7 +8,7 @@ approvata il proprietario il 2026-09-29, e questa tabella è la **casa unica** d
 |---|---|---|
 | 1 | Il modello nuovo, in una pagina | ✅ approvata il 2026-09-29 |
 | 2 | Il disegno del 2026-09-04: che cosa si corregge | ✅ approvata il 2026-09-29 |
-| 3 | Gli ADR: i rimandi in testa, e l'ADR nuovo del backup | ⏳ da presentare |
+| 3 | Gli ADR: i rimandi in testa, e l'ADR nuovo del backup | ✅ approvata il 2026-09-29 |
 | 4 | La porta dei file e il codice che crescerà: chi costruisce che cosa | ⏳ da presentare |
 | 5 | Roadmap, tracciabilità, stella polare della GUI e design/09, col perimetro del 13 riletto | ⏳ da presentare |
 | 6 | I controlli per artefatto, verificato-dedotto-assunto, le voci aperte e il prossimo passo | ⏳ da presentare |
@@ -296,3 +296,118 @@ la sola riga dedotta nuova — la 6 — è stata detta al proprietario.
 | riga 11 | le frecce del 2026-09-04 dentro le tre specie di linea | la §4.2 le nomina |
 | riga 12 | *«copia percorso»* non era nuovo: c'era nella §4.1 | la §4.1 |
 | righe 6, 16 e 20 | la decisione 10, la decisione 9 e l'approccio scelto fra i posti da correggere | la tabella 3.4 e la testa del 2026-09-04 |
+
+## 3. Gli ADR: i rimandi in testa, e l'ADR nuovo del backup — ✅ approvata il 2026-09-29
+
+**A parole.** Un ADR non si riscrive. Quando una decisione nuova lo completa, riceve in testa un **rimando datato**, sotto
+`Deciders`, nella forma che il repository usa dal 2026-09-03 — il precedente è ADR-0001 —; e la sua voce nella §5 del
+compendio riceve una riga che vi rimanda. Qui c'è che cosa dice ciascun rimando, e l'ADR nuovo che D12 chiede. Li scrive il
+**piano dei documenti**; qui si decide che cosa dicono.
+
+**Riletti il 2026-09-29, per intero:** ADR-0009, 0010, 0011, 0012, 0014, 0015, 0016, 0022, 0024, 0025 e 0038. Ciascuno
+**contro i fratelli**, gotcha #59: le coppie sono nella colonna a destra. L'elenco della consegna ne portava otto;
+ADR-0010, 0012 e 0015 sono 🆕.
+
+### 3.1 I rimandi in testa
+
+| ADR | Che cosa dice il rimando | Da | Riletto contro |
+|---|---|---|---|
+| **0009** guide, sensori, anelli | il file-guida di una zona si carica per **fiducia alla cartella**, con l'impronta di ogni caricamento nel giornale; i trigger sono il sorvegliante più la scansione all'avvio, e sanno dire *«ho perso eventi, riscansiona»*. 🆕 ⚠️ **Dedotto:** il riconciliatore che corregge da solo i casi certi **non** è l'anello di miglioramento, e non tocca la sua regola *«non si auto-modifica in silenzio»*, che riguarda le guide e i sensori del sistema: i router sono dati del proprietario, osservati come `Untrusted`, e ogni correzione è giornalata, con la copia, e visibile | D9; K8; K9; K29; D6; D14 | 0014, 0038 |
+| **0010** 🆕 budget della proiezione | in un ripiego la proiezione si compone **per il candidato** — la sua finestra e la sua guida — e si controlla prima di mandarla; un candidato la cui finestra non tiene ciò che ADR-0008 dice mai sacrificabile si **salta**; la compressione *middle-out* di OpenRouter è spenta | D10 | 0008, 0012 |
+| **0011** routing risolto | la **sessione** della contabilità è quella di D11: la run radice che il proprietario apre, coi suoi discendenti | D11; RR1 | 0016 |
+| **0012** 🆕 equivalenza del fallback | che cosa fa scattare la catena lo decide D10: sovraccarico, indisponibilità, errore del server; **non** i limiti di frequenza — resta da misurare su OpenRouter, K48 —, e il contesto eccessivo si controlla **prima**, per candidato, col rimando di ADR-0010. La catena la scrive il proprietario e la percorre il gateway, un modello per richiesta; un rifiuto per contenuto ripiega e resta. Il *Context* dell'ADR, che nomina limiti di frequenza e contesto eccessivo, è contesto e non decisione | D10; K48 | 0010, 0011 |
+| **0014** confine dei dati non fidati | per il file-guida di una zona fidata, il **passaggio esplicito e giornalato** che l'ADR chiede è la fiducia alla cartella, data una volta dal proprietario e scritta nel giornale; ogni caricamento scrive l'impronta, la provenienza; un file-guida non concede permessi — ADR-0016 | D9 | 0015, 0016 |
+| **0015** 🆕 descrizioni degli strumenti | il file-guida di una zona fidata **non** si riapprova quando cambia, come nei software letti per D9. ⚠️ È il *rug pull* che il richiamo AUD-004 di questo ADR descrive per le skill, **accettato** dal proprietario con D9 per la zona che ha dichiarato fidata — un `git pull` arriva all'agente senza che lui lo guardi —; restano il punto 5 di questo ADR, perché un file-guida non concede permessi, l'impronta di ogni caricamento nel giornale, e la modalità ristretta per la zona non fidata. Le descrizioni degli strumenti — anche dei server MCP di una zona fidata — restano sotto questo ADR; per le skill della knowledge base decide AUD-004, che ha qui il caso scritto | D9 | 0009, 0014 |
+| **0016** permessi | la **sessione** del punto 3 è quella di D11, e finisce anche al riavvio del core — RR3; il permesso lo chiede chi agisce per un modello o invoca una funzione, e **la correzione deterministica di un fatto, che non cambia una scelta del proprietario**, segue un'impostazione — D14, col perimetro di CF5; i **percorsi protetti** — il file delle esclusioni e la cartella dati del programma —: nessun sì copre una scrittura dell'agente su di loro, e il controllo lo fa la porta prima di ogni sì; un effetto **irripetibile** chiede a **ogni invocazione**, non per la sessione — un'eccezione al punto 3, che la regola 4 di ADR-0038 dice già per ogni invocatore; fuori da ogni zona la **lettura** è una tripla `(file, percorso, lettura)` per la sessione, un file alla volta, e un'impostazione blocca ogni lettura fuori. Il sì oltre la sessione delle app di oggi resta registrato, K38 | D11; D14; D16; D18; D19; RR3; M1; M2 | 0007, 0014, 0038 |
+| **0022** layout dei dati e backup | **modificato da ADR-0040** per i file del proprietario: la riga «artefatti», le guide della riga «configurazione, guide, profili», e la conseguenza *«la base di conoscenza sopravvive alla reinstallazione perché i documenti sorgente … sono nel backup»*; il rimando del 2026-09-08, che per le guide diceva *«la politica non cambia»*, si legge con ADR-0040. Il resto regge: la separazione per natura, il giornale cifrato, i segreti mai, gli indici fuori, i requisiti del motore. La forma sta nella 3.3 | D12; D17 | 0018, 0023, 0024 |
+| **0024** checkpoint ad ambiti | l'ambito di una zona si **chiude** con la sessione; gli ambiti sono della porta e non della run, e fra due run li separa la sola tripla — K35; un ambito di **sola lettura**, per un file fuori da ogni zona, non è un ambito di lavoro e non tiene copie; 🆕 ⚠️ **dedotto:** il checkpoint copre le scritture del **programma**, non quelle del proprietario da fuori — D2; dove stanno le copie e quanto durano lo dice ADR-0040; il limite di dimensione resta da fissare, K21 | D2; D3; D11; D18; K21; K35; N2 | 0018, 0022 |
+| **0025** confinamento a livelli | per i comandi che l'agente esegue, il livello 2 nega i percorsi del **privato**, la **scrittura** sui percorsi protetti e, con l'impostazione accesa, la **lettura** fuori da ogni zona: la porta non vede uno script che apre i file da sé | D5; D16; D18; D19; K36; N3 | 0016 |
+| **0038** registro delle funzioni | la regola 2 — lo stesso permesso per ogni invocatore — non copre il riconciliatore, che non è un invocatore: la correzione deterministica di un fatto segue la sua impostazione, e un router toccato dalla GUI resta una funzione del registro; 🆕 nel rimando del 2026-09-05, *«spostare … fuori»* vuol dire verso una zona aperta: fuori da ogni zona non scrive nessuno, nemmeno il click — la riga 6 della sezione 2 | D3; D14; CF5 | 0016, 0024 |
+
+⚠️ **Nessun rimando serve in ADR-0007, 0018, 0019, 0023, 0034 e 0036**: le risposte li **usano**, non li cambiano. Un
+permesso scritto senza sessione, nei giornali di oggi, si legge come di una sessione finita, e davanti al dubbio ci si
+ferma — ADR-0007, CF9; la potatura delle copie è la logica di ADR-0018; un'indicizzazione in corso è una voce della lista
+aperta del degrado, ADR-0019; il giornale resta cifrato, ADR-0023; le impostazioni di D14 e D18 e la ritenzione delle copie
+sono parametri consegnati, ADR-0034; la sessione entra nel record del permesso su un indice nuovo, ADR-0036. Il codice che
+ne segue lo dice la sezione 4.
+
+### 3.2 L'ADR nuovo — ADR-0040, *«Dove vivono i dati, e che cosa salva il programma»*
+
+Il titolo e il nome del file li fissa il piano. **Modifica ADR-0022** — la forma della 3.3 —, e prende anche la decisione
+di D4 sul posto dei dati, che oggi il sorgente dichiara non presa da nessun ADR: *«where a per-user data directory belongs
+is a decision no ADR has taken»*, in `crates/daemon/src/main.rs`.
+
+| # | Decide | Da |
+|---|---|---|
+| 1 | **I dati del programma** stanno nella cartella dati per utente del sistema — `%LOCALAPPDATA%\<nomeapp>\` su Windows, le cartelle XDG su Linux —, in sottocartelle per natura, come vuole ADR-0022; la configurazione porta il percorso della root | D4; K1 |
+| 2 | **I router** stanno in `.<nomeapp>/`, alla root, marcata nascosta dal modulo di piattaforma; **l'indice** nella cartella dati del programma, fra i dati che si rifanno — su Linux, la cache —, uno per root | D4; K30; K32 |
+| 3 | **I file del proprietario** — la root e le zone di lavoro, coi file che le run vi producono e con le guide — stanno al loro posto, riferiti dal giornale, e **non** entrano nel backup del programma: li salvano i backup del proprietario e git. ⚠️ **L'eccezione è una:** `.<nomeapp>/`, coi router, che il programma salva — punto 4 | D12; D17 |
+| 4 | **Il backup del programma** contiene il giornale, cifrato, la configurazione e i router; mai i segreti, né l'indice, né i pesi; e **quando lo crea dice che cosa resta fuori** — la root, le zone, le copie —, il seguito di ADR-0022 | D12; ADR-0022 |
+| 5 | **Le copie del checkpoint** di ADR-0024 stanno nella cartella dati del programma, in una sottocartella loro; **in chiaro**, come i file che copiano; **fuori** dal backup; potate con la logica di ADR-0018, e mai quelle di un passo in dubbio non ancora riconciliato. Dopo un ripristino un passo di prima non si annulla più, e il programma lo dice: una copia assente non è una copia mai fatta — ADR-0018 | K53; lo stato dell'arte, 3.4 |
+| 6 | la cartella dati è un **percorso protetto e privato**: l'agente non ci scrive, non la legge, e non si indicizza; la regola vive nel rimando di ADR-0016, e qui si nomina | D19 |
+
+**Negative (accettate)**
+
+| | |
+|---|---|
+| il backup dei file del proprietario | è suo: il programma non lo fa, e lo dice quando crea il proprio |
+| dopo un ripristino | i passi di prima non si annullano; un passo in dubbio al momento del backup si riconcilia **senza** la sua copia, e allora si ferma e chiede — ADR-0007 · ⚠️ **dedotto** |
+| una copia in chiaro | resta finché non è potata, anche se nel frattempo il proprietario cancella il file o lo rende privato; la protegge il sistema operativo, come in Claude Code |
+| i router | finiscono in due backup, quello del programma e quello del proprietario, perché stanno nella root |
+| una root spostata | l'indice si rifà con una scansione |
+
+**Alternative considerate:** router e indice insieme in `.<nomeapp>/` — la B di D4; anche gli artefatti e le guide della
+root nel backup del programma, con l'inseguitore di artefatti — la B di D12; gli artefatti delle zone nel backup — la B di
+D17; le copie nel backup e cifrate, perché l'annulla sopravviva al ripristino — contro D17, coi file grandi due volte, K21.
+
+**Il seguito:** il limite di dimensione delle copie resta di ADR-0024, K21; il tempo di ritenzione delle copie è un
+parametro consegnato, ADR-0034, col valore a chi le costruisce; chi costruisce la cartella dati lo dice la sezione 4.
+
+### 3.3 La forma: un ADR modificato in parte
+
+**Il caso è nuovo:** nessun ADR del repository è mai stato superato solo in parte, e `CLAUDE.md` conosce due casi —
+*«superato → `Superseded by`; completato → un rimando»*.
+
+| | |
+|---|---|
+| la domanda | ADR-0040 cambia tre punti di ADR-0022, e il resto regge: **A**, modificato in parte — ADR-0022 resta `Accepted`, con un rimando in testa che nomina le righe, e ADR-0040 dichiara che lo modifica: la forma *«Amends / Amended by»* di `adr-tools`, 3.4; **B**, superato per intero — `Superseded by ADR-0040`, e ADR-0040 ricopia ciò che di ADR-0022 regge |
+| il costo | **A**: una riga nuova in `CLAUDE.md`. **B**: testo stabile ricopiato — il gotcha #68 —, un ADR lungo, e un ADR `Accepted` in meno nei conteggi |
+| i cinque criteri | **correttezza**: le tre fonti lette dal sorgente, e il controllo dei conteggi di `check-docs.sh` letto; **coerenza**: A è la forma dei rimandi che il repository usa già; **debito**: A nessuno, B un secondo testo della stessa decisione; **stato dell'arte**: A è `adr-tools`; MADR ha solo lo stato *superseded*; **proporzione**: A cambia una riga di regola, B riscrive un ADR |
+| verificato, dedotto, assunto | **verificati**: le tre fonti; il conteggio, che conta le righe `- **Status:** Accepted`. **Dedotto**: che la regola di `CLAUDE.md`, scritta per il superamento intero, non copra il caso. **Assunto**: niente |
+| ✅ **la risposta** | **A**, dal proprietario, il 2026-09-29, in chat |
+
+**Che cosa ne segue, e lo scrive il piano:**
+
+| Dove | Che cosa |
+|---|---|
+| la testa di ADR-0022 | *«⚠️ Rimando del ‹data› — modificato da ADR-0040»*, con le tre righe nominate e *«le altre reggono»*, al posto della frase *«Nessuna riga di questo ADR è superata»*; lo stato resta `Accepted` |
+| la testa di ADR-0040 | *«Modifica ADR-0022»*, con le stesse tre righe |
+| `CLAUDE.md`, la riga *«ADR append-only»* | un terzo caso: *superato in parte → un rimando in testa che nomina le righe, e l'ADR nuovo lo dichiara; lo stato resta `Accepted`* |
+| il compendio | la voce nuova di ADR-0040 nella §5, che `check-docs.sh` pretende; le righe dei rimandi nelle voci della 3.1; i conteggi degli ADR — oggi le righe 135 e 741 del compendio e la riga 23 di `roadmap.md`, ma si ritrovano col comando, non col numero di riga: `grep -rnE '[0-9]+ (ADR in stato|ADR|decisioni architetturali)' docs/COMPENDIO.md docs/README.md docs/roadmap.md`; e nella tabella della §13 la riga del caso nuovo |
+
+### 3.4 Le fonti lette per questa sezione
+
+Portate in [`riferimenti.md`](../../riferimenti.md), nella sezione *«La revisione della knowledge base — le fonti del
+disegno»*, con lo stesso commit.
+
+| Fonte | Letta | Per |
+|---|---|---|
+| `adr-tools`, lo script `adr-new`, dal sorgente | 2026-09-29 | la 3.3: l'opzione per legare due ADR, con *«Amends»* nel nuovo e *«Amended by»* nel vecchio, accanto a quella che supera e cambia lo stato del vecchio |
+| MADR, il modello di ADR, dal sorgente | 2026-09-29 | la 3.3: gli stati, e nessuno per una modifica parziale |
+| Joel Parker Henderson, *Architecture decision record*, il README dal sorgente | 2026-09-29 | la 3.3: non si altera un ADR; lo si completa aggiungendo, o lo si supera con un ADR nuovo |
+| Anthropic, *Checkpointing* e *Explore the .claude directory* di Claude Code, dal sorgente | 2026-09-29 | la 3.2, punto 5: le copie stanno nella cartella dell'applicazione, non nel progetto; in chiaro, protette dai permessi del sistema operativo; cancellate dopo trenta giorni per default; nessun backup |
+
+### 3.5 La verifica chiesta dall'approvazione
+
+Il proprietario ha approvato la sezione *«se tutto segue i principi … ed è coerente»*. Riletta la tabella presentata in chat
+contro le risposte, gli ADR e le fonti; il merito non cambia.
+
+| Nel testo presentato | Qui | Perché |
+|---|---|---|
+| ADR-0040: *«mai i tuoi file (root e zone)»* e *«router»* insieme | l'**eccezione** detta: `.<nomeapp>/` sta nella root, e il programma la salva | D12 salva i router; D17 parla degli artefatti |
+| le copie *«cancellate col tempo»* | mai quelle di un passo in dubbio non riconciliato; e un passo in dubbio ripristinato senza copia si ferma e chiede | ADR-0018; ADR-0007 |
+| ADR-0010: *«se non ci sta, quel modello si salta»* | se la sua finestra non tiene ciò che ADR-0008 dice **mai sacrificabile** | D10 |
+| ADR-0012 | i limiti di frequenza, da misurare su OpenRouter | K48 |
+| ADR-0009, il riconciliatore | **dedotto**, e detto così | i router come `Untrusted`, §2.2 del 2026-09-04 |
+| ADR-0016, *«il riconciliatore segue la sua impostazione»* | il perimetro scritto per esteso: la correzione deterministica di un fatto, che non cambia una scelta del proprietario | CF5 |
+| ADR-0015: *«è la differenza con questo ADR»* | detta per quello che è: il *rug pull* del richiamo AUD-004 di ADR-0015, accettato con D9 per le zone fidate, con le difese che restano; e le descrizioni dei server MCP di una zona fidata restano sotto ADR-0015 | ADR-0015 riletto per intero; D9 tocca i file-guida, non gli strumenti |

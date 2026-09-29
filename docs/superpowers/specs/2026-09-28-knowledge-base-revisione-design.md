@@ -268,7 +268,7 @@ la parte di prima resta, perché dice che cosa la risposta ha sciolto.
 | K6 | **a metà**: chi scrive da fuori è coperto dai due attori; restano i file «solo online», K34 |
 | K7 | **chiuso**: due attori, e il riallineamento |
 | K8 · K9 | **chiusi nel principio**: il sorvegliante più la scansione; al 13 resta l'evento «riscansiona» |
-| K10 | **chiuso**: il controllo prima di scrivere |
+| K10 | **chiuso nel principio**: il controllo prima di scrivere; ma la porta non sa scrivere *«solo se il file non è cambiato»*, e un controllo separato dalla scrittura lascia una corsa col proprietario — K45. ⚠️ **Richiamo del 2026-09-29, controllo finale, CF8:** diceva *«chiuso»* |
 | K11 | **a metà**: il privato si esclude, ed è un confine — D5; un segreto in una nota **non** esclusa resta — il sensore sulle scritture, al 6 |
 | K12 | **aperto**, registrato: al 4 |
 | K13 | **chiuso**: un collegamento che esce dalla root punta a una zona, la scheda progetto, e il modello la legge solo a zona aperta — fuori da ogni zona la porta risponde `OutsideScope`. D3, 2026-09-29 |
@@ -308,10 +308,11 @@ la parte di prima resta, perché dice che cosa la risposta ha sciolto.
 | **K42** | **il backup contro ADR-0022**: D4 scrive, come cosa comune alle due risposte, che il programma salva nel suo backup *«i suoi dati e i router»* e che il resto della root è dei backup del proprietario; ma nella root stanno anche gli **artefatti** delle run — K4 — e le **guide**, che ADR-0022 mette nel backup del programma: la riga degli artefatti, e il rimando del 2026-09-08, per cui la politica delle guide — nel backup — non cambia. E *«i suoi dati»*, alla lettera, comprende i segreti e l'indice, che ADR-0022 tiene fuori | V: `grep -n -e '^. artefatti' -e 'nel backup, permanente' docs/adr/0022-*.md`; `grep -n 'Backup della KB' docs/tracciabilita.md` | — | **D12** — ✅ **D12, A**, 2026-09-29, delegata allo stato dell'arte: la root, e il suo backup, sono del proprietario |
 | **K43** | **gli artefatti di una zona fuori dalla root, e la rete della Home**: la decisione 1 della [stella polare della GUI](2026-09-07-direzione-gui-design.md) mette nella rete al centro *«tutto: artefatti e file della knowledge base»*, e D3 tiene fuori dal grafo una zona esterna alla root. Il codice che l'agente scrive in una repo aperta come zona è un artefatto: per la decisione 1 sta nella rete, per D3 no | V: `grep -n 'Nell.anello solo' docs/superpowers/specs/2026-09-07-direzione-gui-design.md` | — | **D13** — ✅ A, 2026-09-29: nell'anello, e nella rete la scheda; la decisione 1 si legge «ciò che sta nella root» |
 | **K44** | **la risorsa di un permesso su un percorso scelto a runtime**: la risorsa del kernel è un `&'static str`, per I6, confrontato carattere per carattere; le zone di D3 e la cartella dei router di D7 sono percorsi scelti a runtime, e D7 vuole che una tripla su una cartella copra i file dentro | V: `grep -n 'pub resource' crates/kernel/src/permission.rs` | — | registrato: chi porta le zone — il 5, o chi costruisce prima la porta vera, K23 —, con la forma di RR5: un identificativo coniato dal kernel per l'ambito, e l'appartenenza decisa da chi implementa la porta |
-| **K45** | **il contratto della porta `filesystem` cresce**: chiudere un ambito, K35; le esclusioni del privato, D5; spostare e cancellare, le CRUD della knowledge base. Oggi la porta dichiara, conserva, ripristina, legge e scrive | V: `grep -n '^    fn ' crates/kernel/src/ports/filesystem.rs` | — | registrato: chi costruisce la porta vera, K23; è una porta del kernel, quindi un richiamo datato alla spec del sotto-progetto 1, del proprietario |
+| **K45** | **il contratto della porta `filesystem` cresce**: chiudere un ambito, K35; le esclusioni del privato, D5; spostare e cancellare, le CRUD della knowledge base; e — ⚠️ **aggiunti il 2026-09-29, controllo finale, CF8** — la scrittura **condizionata** di K10, l'**elenco** e i **metadati** che servono alla scansione e al riconciliatore, e la sorgente degli **eventi** del sorvegliante. Oggi la porta dichiara, conserva, ripristina, legge e scrive | V: `grep -n '^    fn ' crates/kernel/src/ports/filesystem.rs` | — | registrato: chi costruisce la porta vera, K23; è una porta del kernel, quindi un richiamo datato alla spec del sotto-progetto 1, del proprietario |
 | **K46** | **l'autorità del riconciliatore**: scrive i router da solo nei casi certi, D6, ma non è un invocatore del registro e lavora fuori da ogni sessione, mentre ADR-0016 fa chiedere le scritture e il sì di D7 vale dentro una sessione | V: `grep -n 'pub enum Invoker' crates/kernel/src/registry.rs` | — | **D14** — ✅ A, 2026-09-29: un'impostazione — da solo, chiedi, mai — che parte da «da solo» |
-| **K47** | **il candidato del gateway non sa dire un modello scelto a runtime, né la sua finestra**: il nome è un `&'static str`, per I6, e la finestra non c'è — RR12, RR13 | V: `grep -n -A10 '^pub struct Candidate' crates/kernel/src/gateway/mod.rs` | ✅ la proiezione per candidato | registrato: il **3**, che costruisce il gateway vero e il selettore, con la forma di K44 — un identificativo coniato dal kernel da un catalogo consegnato —; la finestra la legge il 13 |
-| **K48** | **quali errori fanno scattare la catena**: Claude Code **non** ripiega sui limiti di frequenza, perché ritenta; il contesto di ADR-0012 li nomina fra ciò da cui la catena protegge, ed è contesto, non decisione; su OpenRouter un limite può essere di un solo modello, e allora un ripiego servirebbe | V alla fonte il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md); D per OpenRouter | — | registrato: il **3**, partendo dalla regola di Claude Code, come chiede D10, e misurando i limiti di OpenRouter |
+| **K47** | **il gateway non sa ancora fare la catena di D10**: il nome del candidato è un `&'static str`, per I6, e così il modello di `RoutingDetail::new`; la finestra non c'è; `resolve` non cammina sui fallimenti; il record non porta i tentativi — un campo nuovo su un indice nuovo, ADR-0036 —; e non c'è un segnale «modello cambiato» distinto da `degraded` — RR10, RR12, RR13. ⚠️ **Allargato il 2026-09-29, controllo finale, CF3** | V: `grep -n -A10 '^pub struct Candidate' crates/kernel/src/gateway/mod.rs` | ✅ la proiezione per candidato | registrato: il **3**, che costruisce il gateway vero e il selettore, con la forma di K44 — un identificativo coniato dal kernel da un catalogo consegnato —; ⚠️ la finestra serve **prima**, alla proiezione del 13: chi la porta lo decide **D15** |
+| **K49** | **la chiave della fiducia di una zona**: D9 la tiene sul percorso dato dalla piattaforma — testo arrivato a runtime dentro una decisione del kernel, la tensione con I6 che RR5 scioglie con un identificativo coniato a ogni apertura —; ma quell'identificativo non è stabile fra due sessioni, e la fiducia deve esserlo: la stessa zona avrebbe due chiavi | D: `grep -n 'pub resource' crates/kernel/src/permission.rs`, e RR5, RR9 | — | registrato, con K44: la chiave **stabile** di una zona e come la tratta I6. Trovato dal controllo finale, CF7 |
+| **K48** | **quali errori fanno scattare la catena**: Claude Code **non** ripiega sui limiti di frequenza, perché ritenta; il contesto di ADR-0012 li nomina fra ciò da cui la catena protegge, ed è contesto, non decisione; su OpenRouter un limite può essere di un solo modello, e allora un ripiego servirebbe | V alla fonte il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md); D per OpenRouter | — | **deciso da D10**: la regola di Claude Code — i limiti di frequenza non fanno ripiegare —; resta registrato **da misurare** su OpenRouter, dal 3. ⚠️ **Riscritto il 2026-09-29, controllo finale, CF11:** diceva *«partendo dalla regola»*, come se fosse aperta |
 
 ## La revisione di coerenza e correttezza — 2026-09-29
 
@@ -347,11 +348,14 @@ il [disegno del 2026-09-04](2026-09-04-knowledge-base-design.md), e i testi di A
 Il disegno di questa revisione, nella sua sessione, lo scrive così: richiami datati al disegno del 2026-09-04; rimandi in
 testa agli ADR, ciascuno riletto contro i fratelli — gotcha #59 —, con la voce della §5 del compendio per ogni ADR che ne
 riceve uno; righe riscritte nella roadmap, nella tracciabilità e nella stella polare della GUI. ⚠️ **È l'elenco del
-2026-09-29:** le risposte a D10, D12 e D13 lo allungano.
+2026-09-29**, allungato dalle risposte a D10, D12, D13 e D14 e dal controllo finale; le risposte a D15–D18 lo allungheranno.
 
 | Dove | Che cosa cambia | Da |
 |---|---|---|
 | il disegno del 2026-09-04: le premesse, la risposta 1, §1.1a | non più *«un archivio unico»*: una cartella qualsiasi, e la root arriva dalla configurazione — ADR-0034 | il documento |
+| §1.3, la riga *«un record nuovo del giornale, una porta nuova, … regole di backup nuove: niente di tutto questo»* | non regge più: record nuovi — la fine della sessione, RR2; la fiducia, D9 —, la porta che cresce, K45, e le regole di backup di D12. ⚠️ Aggiunta del 2026-09-29, controllo finale, CF15 | RR2, D9, K45, D12 |
+| §2.3, regola 2 | *«ogni scrittura nella cartella»* si legge *«ogni scrittura del programma»*: il proprietario scrive da fuori, e il riconciliatore di D14 scrive come effetto giornalato. ⚠️ Aggiunta del 2026-09-29, controllo finale, CF15 | il documento, D14 |
+| §3.1, §3.2 e §3.3 | *«nessun ADR nuovo»* cade con D12; la riga *«0022, 0024, 0014: nessuno»* cade con D12, K35 e D9; la riga di I1, *«la cartella è artefatti (0022)»*, si rilegge con D12. ⚠️ Aggiunta del 2026-09-29, controllo finale, CF15 | D9, D12, K35 |
 | la risposta 3, §1.1b, §1.3 | non più *«solo il nostro assistente»*: due attori, e il proprietario scrive da fuori con qualunque strumento; cade l'esclusione degli *«altri strumenti che leggono o scrivono la cartella»* | il documento |
 | le risposte 4 e 10, §4.1 | l'agente cerca anche nel livello strutturale: un file che nessun router punta si trova lo stesso, con un costo in più | il documento |
 | §1.1c e la decisione 15 | il «router dell'ambito» del piano 0: per una zona di lavoro è la sua scheda progetto; per la knowledge base resta il router master, e l'area la sceglie l'agente leggendolo — il primo passo del documento —, salvo che la run nasca già da un'area. ⚠️ La sezione di D3 dice *«per la knowledge base la chiave è l'area»*: vale solo in quel caso | il documento, D3 |
@@ -369,6 +373,7 @@ riceve uno; righe riscritte nella roadmap, nella tracciabilità e nella stella p
 | ADR-0011 | la «sessione» della contabilità è quella di D11 | D11 |
 | ADR-0014 | da rileggere con D9: il passaggio esplicito e giornalato, per il file-guida di una zona, è la fiducia alla cartella | D9 |
 | ADR-0016 | la «sessione» del punto 3 è quella di D11, e al riavvio del core finisce — RR3; un rimando: il permesso lo chiede chi agisce per un modello o invoca una funzione, e la manutenzione deterministica del programma sulla sua cartella segue un'impostazione — D14 | D11, D14 |
+| ADR-0038 | un rimando, fratello di quello di ADR-0016: la regola 2 — lo stesso permesso per ogni invocatore — non copre la correzione deterministica di un fatto, D14; un router toccato dalla GUI resta una funzione del registro | D14, CF5 |
 | ADR-0022 | un **ADR nuovo** supera, per i file della root, le righe degli artefatti e delle guide e la conseguenza sulla base di conoscenza: il programma salva il giornale, la configurazione e i router, e dice al backup che cosa resta fuori; la root la salva il proprietario. La voce nuova nella §5 del compendio, e il rimando in testa ad ADR-0022 | D12 |
 | ADR-0024 | l'ambito di una zona si chiude con la sessione — K35; il limite di dimensione resta da fissare — K21 | D3, D11 |
 | ADR-0025 | il livello 2 nega i percorsi privati — K36 | D5 |
@@ -377,7 +382,8 @@ riceve uno; righe riscritte nella roadmap, nella tracciabilità e nella stella p
 | [design/09](../../design/09-l0-fisico.md), la riga della cartella della knowledge base | la cartella della knowledge base non è più nel backup del programma: ci sono i router | D12 |
 | la spec del sotto-progetto 1: §4, la porta `filesystem`, e §6.6, il permesso | la porta cresce — chiudere, escludere, spostare, cancellare —, K45; la risorsa di un permesso su un percorso scelto a runtime, K44; il permesso porta la sessione, RR2 | RR2, RR5, RR6 |
 | il codice: `permission.rs`, `record.rs`, `parameters.rs`, `filesystem.rs` | la sessione nel record del permesso e il record di fine sessione, RR2; i due tempi, RR4; la risorsa, K44; la porta, K45 | il 3 e il 5 |
-| il codice: `gateway/mod.rs` | il candidato con un nome scelto a runtime e la sua finestra, K47 | il 3 |
+| il codice: `gateway/mod.rs` e `record.rs` | il candidato con un nome scelto a runtime e la sua finestra; il cammino sui fallimenti; i tentativi e il cambio di modello nel record di routing — K47 | il 3; la finestra, D15 |
+| il codice: `permission.rs` | un permesso scritto senza sessione — i giornali di oggi — si legge come di una sessione **finita**: davanti al dubbio ci si ferma, ADR-0007 — CF9 | il 3 |
 | le funzioni della knowledge base nel registro | la funzione che rende leggibile è irripetibile — RR8 | D5 |
 | `roadmap.md` | il **6**: la cella dice ancora *«archivio unico»*, e la prima metà guadagna il livello strutturale e il riconciliatore con la sua impostazione, D14; il **5**: la porta `filesystem` vera, le zone, il livello 2 che nega il privato — K23, K35, K36, K44, K45; il **3**: la run nel giornale e la sessione di D11, con la fine come record e il riavvio — RR1–RR4; il **3** anche il selettore del modello, la catena nel gateway con un modello per richiesta e la compressione spenta, D10; il **13**: il «riscansiona», la fiducia di D9 e la proiezione per candidato, D10; l'**11**: il backup di D12; il **10**: le cartelle dati e la cartella nascosta — K1, K30 | le risposte |
 | `tracciabilita.md` | `Multi-repo/multi-progetto` e `Mappa del progetto`: le zone e la scheda progetto, D3; `Git e gestione branch`: la zona; `Collezioni e knowledge base`: la forma del documento; `File watching e awareness del progetto`: sorvegliante e scansione; `Sessioni multiple`: la sessione di D11; `Selettore di modello per compito`: il selettore della sessione e il modello nella definizione di un sotto-agente, D10; `Backup della KB indipendente dall'app`: la root nei backup del proprietario, i router in quello del programma, D12 | le risposte |
@@ -400,10 +406,73 @@ confrontato le risposte coi testi degli ADR, **non col codice** del kernel: ques
 | **RR7** | il riconciliatore scrive i router da solo, D6 | `registry::invoke` chiede `is_granted` a chi **invoca** una funzione, e la porta dei file non chiede niente: il riconciliatore non è né l'uno né l'altra | ❌ **nessuna risposta dice con quale autorità scrive**: lavora all'avvio e sugli eventi del sorvegliante, fuori da ogni sessione, mentre il sì di D7 vale dentro una sessione e ADR-0016 fa chiedere le scritture. **K46**, **D14** — ✅ A |
 | **RR8** | un cambio che rende leggibile qualcosa chiede conferma con ogni preset, D5 | `EffectClass`, e il preset `autonomo` di ADR-0016, che chiede per gli effetti **irripetibili** | ✅ **al cuore, senza regole nuove**: la funzione che rende leggibile è **irripetibile** — un contenuto letto può essere già andato al modello, e non si disfa —, quindi chiede con ogni preset. L'elenco qui sopra non chiede più un rimando in ADR-0016 per questo |
 | **RR9** | la fiducia di D9 | niente ancora; e `filesystem.rs`: il kernel non sa dire se due percorsi sono lo stesso file | ✅ **al cuore**: un record del giornale e una proiezione, come i permessi; la chiave è il percorso **come lo dà la piattaforma**, e se due grafie mancano la stessa zona la fiducia si richiede — l'errore cade dal lato chiuso |
-| **RR10** | il fallback di D10 | `gateway::resolve` risolve la catena **per chiamata**, coi vincoli di ADR-0012 — `grep -n 'THE CHAIN IS DELIVERED PER CALL' crates/kernel/src/gateway/mod.rs` | ✅ **al cuore**: la catena la fa già il kernel, e la risposta A di D10 ci si appoggia |
+| **RR10** | il fallback di D10 | `gateway::resolve` risolve la catena **per chiamata**, coi vincoli di ADR-0012 — `grep -n 'THE CHAIN IS DELIVERED PER CALL' crates/kernel/src/gateway/mod.rs` | ✅ **al cuore, a metà**: il kernel **filtra** la catena per chiamata coi vincoli, e la risposta di D10 ci si appoggia; ma `resolve` sceglie il primo candidato conforme e **non** cammina sulla catena quando una chiamata fallisce, e il record di routing non porta i tentativi — lo dice `record.rs`, *«which this milestone does not carry»*. Il cammino è del 3 — K47. ⚠️ **Richiamo del 2026-09-29, controllo finale, CF3:** diceva *«la catena la fa già il kernel»* |
 | **RR11** | la knowledge base intera | router, indice, scansione e riconciliatore nel 6; sorvegliante, registro delle guide e proiezione nel 13; zone, checkpoint, permessi e sessione nei meccanismi del kernel | ✅ **nessuna funzione a parte**: ogni pezzo sta su un meccanismo deciso; dove il meccanismo non basta ancora, lo dicono RR5, RR6 e RR7 |
 | **RR12** | il modello scelto col selettore, D10 | il nome di un `Candidate` del gateway è un `&'static str`, per I6 — `grep -n 'pub model' crates/kernel/src/gateway/mod.rs` | ❌ **oggi non si può esprimere**: il catalogo di OpenRouter non è noto a tempo di compilazione, e un modello scelto a runtime non è un `&'static str`. La forma coerente con la radice è quella di RR5: un identificativo coniato dal kernel da un catalogo consegnato, ADR-0034. **K47**. ⚠️ Aggiunta del 2026-09-29, alla risposta di D10 |
 | **RR13** | il controllo prima di mandare, D10 | `Candidate` porta modello, locale, ritenzione e prezzo, e nessuna finestra — `grep -n -A10 '^pub struct Candidate' crates/kernel/src/gateway/mod.rs` | ❌ **manca un campo**: senza la finestra il gateway non sa se la proiezione entra. **K47**. ⚠️ Aggiunta del 2026-09-29, alla risposta di D10 |
+
+## Il controllo finale — chiesto dal proprietario, 2026-09-29
+
+Dopo D10, prima di chiudere: *«fai un controllo su tutte le risposte date dall'inizio dello studio (non solo questa
+sessione) e confermami che sono ben integrate con architettura, struttura, fino alla radice seguendo decision-principles
+poi chiudiamo e continuiamo nella prossima»*.
+
+**Come.** Due lettori, su due lati. Il coordinatore ha letto le risposte contro il
+[disegno del 2026-09-04](2026-09-04-knowledge-base-design.md), che correggono. Un revisore indipendente, con
+`model: "opus"` e in sola lettura, le ha lette contro il codice del kernel su `f789778` — `permission.rs`, `registry.rs`,
+`record.rs`, `time.rs`, `parameters.rs`, le porte `filesystem` e `journal`, `gateway/mod.rs`, il `main.rs` del daemon —,
+contro gli ADR 0006, 0011, 0012, 0016, 0022, 0024, 0034, 0036 e 0038 letti per intero, gli altri attraverso le righe che
+questo file ne cita, e contro la roadmap e la stella polare della GUI. Ha rilanciato 33 comandi *«verificato»* di questo
+file: rendono tutti come scritto. Le divergenze stanno nelle **deduzioni** tratte dal codice, non nei comandi. Il
+coordinatore ha riletto nel codice i rilievi di merito prima di scriverli: `registry.rs`, dove `invoke` chiede soltanto
+`is_granted`; `gateway/mod.rs`, dove `resolve` filtra e non cammina sui fallimenti; `record.rs`, i tentativi che non ci
+sono; la riga 6 di [`roadmap.md`](../../roadmap.md), che dipende da 3 e 2; la riga degli artefatti di ADR-0022; la regola 2
+di ADR-0038.
+
+**La risposta al proprietario: non tutte.** Dieci risposte su quattordici stanno sui meccanismi che ci sono, o su buchi già
+registrati; quattro punti di merito no, e diventano **D15–D18**. Il resto è forma, corretto qui col richiamo datato.
+
+| # | Il punto | Specie | Dove sta ora |
+|---|---|---|---|
+| **CF1** | **K26 è chiuso a metà.** Il file del privato sta alla root, nel documento del proprietario; un sì di sessione a scrivere nella root lo copre, perché la porta non conosce esclusioni; RR8 protegge la sola **funzione** del registro, e *«chiede con ogni preset»* non sta nel codice — `invoke` chiede solo `is_granted`, che ignora `EffectClass`; i preset arrivano col 4, e il 6 non ne dipende | **merito** | **D16** |
+| **CF2** | **i chiusori dopo chi ne ha bisogno.** La porta vera, K44 e K45 vanno al 5; il 6 ne ha bisogno e non dipende dal 5 — K23, aperto. La finestra del candidato va al 3, la proiezione per candidato al 13, che viene prima | **merito** | **D15** |
+| **CF3** | **RR10 e D10 dicevano più del codice.** `resolve` sceglie il primo candidato conforme e non cammina sui fallimenti; il record di routing non porta i tentativi; `was_degraded` dice che un vincolo di **qualità** è stato allentato, non che il modello è cambiato; anche `RoutingDetail::new` vuole un `&'static str`. Le decisioni di D10 non cambiano: cambia ciò che resta da costruire | merito, sul testo | RR10, D10 e K47 riscritti |
+| **CF4** | **D12 e gli artefatti delle zone esterne**: l'ADR nuovo supera ADR-0022 *«per i file della root»*, e un file che l'agente scrive in una repo esterna resta nella riga degli artefatti, nel backup del programma | **merito** | **D17** |
+| **CF5** | **il perimetro del rimando di D14**: scritto sulla *«sua cartella»*, del programma, mentre i router sono del proprietario — D4, K32 —; e ADR-0038, regola 2, fratello di ADR-0016, riguarda lo stesso effetto | merito, sul perimetro | riscritto, e la riga di ADR-0038 nell'elenco — decisione 4 del coordinatore |
+| **CF6** | **leggere fuori da ogni zona**: D3 dice `OutsideScope`, D9 approva un import che esce dalla zona senza dire come si legge poi; la fonte che D3 cita dice che Claude Code legge *«i file altrove col permesso»*, e questo file non registrava la divergenza | **merito** | **D18** |
+| **CF7** | **la chiave della fiducia**: il percorso della piattaforma, contro l'identificativo coniato di RR5, che non è stabile fra due sessioni | merito, lieve | **K49**, registrato |
+| **CF8** | **K10 chiuso a metà**: la porta non sa scrivere *«solo se il file non è cambiato»*; e K45 non elencava elenco, metadati ed eventi | forma | K10 e K45 riscritti |
+| **CF9** | **un permesso senza sessione**: i giornali di oggi non la portano, e l'indice nuovo di RR2 resta vuoto; *«vuoto vuol dire sempre valido»* terrebbe vivi i sì vecchi | forma, da decidere | letto come sessione **finita**, ADR-0007 — decisione 5 del coordinatore, e una riga nell'elenco |
+| **CF10** | *«Come si riprende»* diceva D10 non posta, e K1–K46 | forma | riscritto alla chiusura |
+| **CF11** | K48 aperto, mentre D10 adotta la regola di Claude Code; e la riga *«il contesto eccessivo»* della tabella di D10 resta accanto alla risposta, che salta il candidato | forma | K48 riscritto; la riga resta, perché dice che cosa era proposto, e la risposta la supera |
+| **CF12** | D2 dice la copia *«solo per le azioni dell'agente»*, D14 la dà anche al riconciliatore | forma | una nota datata nella risposta D2 |
+| **CF13** | D10 non diceva **chi** scrive la catena: in Claude Code la scrive l'utente, e senza catena non c'è ripiego — ed è la risposta 3 del 2026-09-04 | forma, errore del coordinatore | la riga della riserva in D10 |
+| **CF14** | D10 chiamava la scelta del modello *«una sostituzione di parametro»*: la catena arriva per chiamata e non sta in `Parameters` | forma, errore del coordinatore | la riga di chi sceglie in D10 |
+| **CF15** | l'elenco per il disegno non portava §1.3 — niente record nuovi, niente regole di backup nuove —, la regola 2 della §2.3, né §3.1–§3.3 — nessun ADR nuovo, nessun rimando in 0022, 0024, 0014 — del disegno del 2026-09-04 | forma | tre righe nell'elenco |
+
+**L'esito per risposta.**
+
+| Risposta | Esito |
+|---|---|
+| D1, il documento | integrato, con due riserve: il controllo prima di scrivere, CF8, e il file del privato, D16 |
+| D2 | integrata; la copia vale per ogni scrittura del programma, CF12 |
+| D3 | integrata, con due riserve: la porta dei file, D15, e la lettura fuori zona, D18 |
+| D4 | integrata; i router sono del proprietario, e il perimetro di D14 lo dice ora, CF5 |
+| D5 | **non integrata nella garanzia di K26**: D16 |
+| D6 | integrata, se la porta arriva in tempo: D15 |
+| D7 | integrata, se la tripla su una cartella scelta a runtime arriva in tempo: K44, D15 |
+| D8 | integrata |
+| D9 | integrata, con due riserve: la lettura fuori zona, D18, e la chiave della fiducia, K49 |
+| D10 | integrata: le decisioni stanno su ADR-0011 e ADR-0012; il codice ne ha il filtro, e il resto è del 3, K47 — la finestra, D15 |
+| D11 | integrata; un permesso senza sessione si legge come di una sessione finita, CF9 |
+| D12 | integrata per la root; gli artefatti delle zone esterne, D17 |
+| D13 | integrata |
+| D14 | integrata, col perimetro riscritto e il rimando in ADR-0038, CF5 |
+
+**Verificato, dedotto, assunto.** **Verificati**: i 33 comandi, e le righe di codice e di ADR dei rilievi di merito,
+rilette dal coordinatore. **Dedotti**: l'aggiramento di K26 per la scrittura generica, CF1; il vuoto sul backup delle zone
+esterne, CF4; le due chiavi della stessa zona, CF7; la corsa fra controllo e scrittura, CF8. **Assunto**: che il file del
+privato stia alla root, come dice il documento del proprietario.
 
 ## Le domande, una per volta
 
@@ -427,7 +496,11 @@ risponde a D1 e a buona parte delle domande di prima; l'elenco di prima sta nel 
 | **D12** | **il backup**: il programma salva anche gli artefatti delle run e le guide che stanno nella root, come ADR-0022, o solo i suoi dati e i router, come D4 — trovata dalla revisione, posta **prima** di D10 | K42, e riapre K31 |
 | **D13** | **gli artefatti di una zona esterna**: anche nella rete della Home, o solo nell'anello — trovata dalla revisione, posta **prima** di D10 | K43 |
 | **D14** | **il riconciliatore**: le correzioni certe si scrivono da sole, come manutenzione del programma, o aspettano il sì del proprietario — trovata dalla prova alla radice, posta **prima** di D10 | K46 |
-| — | registrati col chiusore, senza domanda salvo che il proprietario la chieda: K11, K12, K17, K19, K21, K22, K23, K29, K34, K35, K36, K38, K41, K44, K45, K47, K48 | |
+| **D15** | **chi costruisce la porta dei file vera, e quando**: il 6 ne ha bisogno — leggere, scrivere, escludere, spostare, cancellare, la tripla su una cartella scelta a runtime — e in roadmap dipende da 3 e 2, non dal 5 che la porta; e la finestra del candidato serve al 13, prima del 3. Il 6 dipende dal 5, o la porta passa a chi arriva prima — trovata dal controllo finale, CF2 | K23, K44, K45, la metà di K47 |
+| **D16** | **il file del privato**: dove sta, e se per l'agente è in sola lettura — oggi un sì di sessione a scrivere nella root lo copre, perché la porta non conosce esclusioni —; e se *«chiede con ogni preset»* vale a ogni cambio, un'eccezione al punto 3 di ADR-0016, o per la sessione; e i preset arrivano col 4, mentre il 6 non ne dipende — trovata dal controllo finale, CF1 | K26, riaperto a metà |
+| **D17** | **il backup degli artefatti di una zona fuori dalla root**: l'ADR nuovo di D12 supera ADR-0022 *«per i file della root»*, e la riga degli artefatti resta viva per i file che l'agente scrive in una repo esterna — il programma salverebbe file dentro le repo del proprietario — trovata dal controllo finale, CF4 | il perimetro dell'ADR nuovo |
+| **D18** | **leggere un file fuori da ogni zona**: D3 risponde `OutsideScope`, D9 fa approvare un import che esce dalla zona senza dire come poi si legge, e Claude Code legge *«i file altrove col permesso»* — approvare apre una zona in sola lettura per la sessione, o l'import si rifiuta — trovata dal controllo finale, CF6 | la lettura fuori zona |
+| — | registrati col chiusore, senza domanda salvo che il proprietario la chieda: K11, K12, K17, K19, K21, K22, K23, K29, K34, K35, K36, K38, K41, K44, K45, K47, K48, K49 | |
 
 ### D1, posta il 2026-09-28
 
@@ -1088,15 +1161,15 @@ rispetta — controllare prima, passare al modello più grande —, e si spegne 
 
 | | |
 |---|---|
-| chi sceglie | il **proprietario**, col selettore accanto al pulsante di invio, in qualunque momento della sessione di D11, e vale dalla risposta dopo; per la sola sessione, o salvato come **default** — il default sta nella configurazione, ADR-0006 e ADR-0034; il cambio dentro la sessione è una sostituzione di parametro, cioè un record del giornale |
+| chi sceglie | il **proprietario**, col selettore accanto al pulsante di invio, in qualunque momento della sessione di D11, e vale dalla risposta dopo; per la sola sessione, o salvato come **default** — il default sta nella configurazione, ADR-0006 e ADR-0034; la scelta della sessione la tiene il core, I1, e arriva al gateway a ogni chiamata, dentro la catena — `gateway/mod.rs`: la catena non sta in `Parameters`. ⚠️ **Richiamo del 2026-09-29, controllo finale, CF14:** diceva *«una sostituzione di parametro»*, che il codice smentisce |
 | i sotto-agenti | prendono il modello della sessione, salvo quello scritto nella loro definizione |
-| la riserva | una catena in ordine, **percorsa dal nostro gateway** e mai dal fornitore: a OpenRouter va **un modello per richiesta**; i vincoli di ADR-0012 la filtrano prima — il gateway la risolve già per chiamata, RR10 |
+| la riserva | una catena in ordine che **scrive il proprietario**, nella configurazione — come `fallbackModel` di Claude Code, e come la risposta 3 del 2026-09-04: il modello lo sceglie lui, il routing applica —; **senza catena, nessun ripiego**, e l'errore si dichiara. La percorre **il nostro gateway**, mai il fornitore: a OpenRouter va **un modello per richiesta**; i vincoli di ADR-0012 la filtrano prima — RR10. ⚠️ **Richiamo del 2026-09-29, controllo finale, CF13:** non diceva chi scrive la catena |
 | quando scatta | sovraccarico, indisponibilità, errore del server; **non** i limiti di frequenza né la dimensione — K48 —; il rifiuto per contenuto, ADR-0012, ripiega e **resta** sul modello di riserva per la sessione, e il selettore lo mostra |
 | quanto dura | un ripiego per disponibilità dura **il turno**: il messaggio dopo riprova il modello scelto; un ritentativo resta nello stesso passo, ADR-0012 |
 | il contesto | per ogni candidato la proiezione si compone **per quel modello** — la sua finestra e la sua guida, ADR-0010 — e si controlla prima di mandarla; un candidato la cui finestra non tiene ciò che ADR-0008 dice mai sacrificabile si **salta**, come Claude Code non ripiega su una finestra che taglierebbe; la compressione *middle-out* di OpenRouter **spenta**, perché nessuna delle fonti di Claude taglia il contesto in silenzio — K39 |
-| che cosa si vede | un **avviso** quando il modello cambia, e ogni risposta porta il **nome del modello** che l'ha data, dal record di routing — ADR-0011, ADR-0019; il codice lo sa già dire: `Conforming::was_degraded` in `crates/kernel/src/gateway/mod.rs` |
+| che cosa si vede | un **avviso** quando il modello cambia, e ogni risposta porta il **nome del modello** che l'ha data, dal record di routing — ADR-0011, ADR-0019. Oggi il codice dice solo che un vincolo di **qualità** è stato allentato, `Conforming::was_degraded`; che il modello sia cambiato, e i tentativi, no — K47. ⚠️ **Richiamo del 2026-09-29, controllo finale, CF3:** diceva *«il codice lo sa già dire»* |
 
-**Letto contro il codice**, su `c12a170`: la catena per chiamata c'è — RR10 —, e il degrado dichiarato pure; due pezzi no — RR12 e RR13, K47.
+**Letto contro il codice**, su `c12a170`: il **filtro** della catena per chiamata c'è — RR10 —, e il degrado di qualità dichiarato pure; il cammino sui fallimenti, i tentativi nel record, il cambio di modello, il nome scelto a runtime e la finestra no — RR10, RR12, RR13, K47. ⚠️ **Richiamo del 2026-09-29, controllo finale, CF3:** diceva *«la catena per chiamata c'è»*, per intero.
 
 **I cinque criteri, sul risultato.**
 
@@ -1299,7 +1372,7 @@ piccola è quella che il programma ha già sui suoi dati.
 | # | Risposta | Data |
 |---|---|---|
 | D1 | ⛔ **respinta**: il proprietario risponde col suo documento, riportato nella sezione *«Il documento del proprietario»*; le sue decisioni aperte 2 e 3 si accolgono come le propone | 2026-09-28 |
-| D2 | ✅ **A** — la copia di ADR-0024 resta, **solo** per le azioni dell'agente, e il giornale resta; nessuno storico dei cambi del proprietario, nessun versioning, nessun sync. Nessun ADR cambia | 2026-09-28 |
+| D2 | ✅ **A** — la copia di ADR-0024 resta, **solo** per le azioni dell'agente, e il giornale resta; nessuno storico dei cambi del proprietario, nessun versioning, nessun sync. Nessun ADR cambia. ⚠️ **2026-09-29, controllo finale, CF12:** con D14 la copia vale per ogni scrittura **del programma**, il riconciliatore compreso | 2026-09-28 |
 | D3 | ✅ **A** — due specie di zona: la knowledge base, una e mappata, e le zone di lavoro, aperte come in Claude Desktop anche fuori dalla root, ciascuna col permesso per la sessione e la copia prima delle modifiche dell'agente; una zona **fuori** dalla root **non** entra nel grafo né nella ricerca, e nella knowledge base c'è la sua **scheda progetto**, che le fa da router; fuori da ogni zona l'agente non legge e non scrive. Posta il 2026-09-28, riformulata lo stesso giorno | 2026-09-29 |
 | D4 | ✅ **A** — separati per natura: i **router** in `.<nomeapp>/` alla root, nascosta dal modulo di piattaforma, e l'**indice** nella cartella dati del programma, fra i dati rigenerabili, uno per root; i dati del programma nella cartella dati per utente del sistema, e il programma salva nel proprio backup i suoi dati e i router ⚠️ **2026-09-29, la revisione:** la metà sul backup urta ADR-0022, e torna al proprietario come **D12** — ✅ A, 2026-09-29 | 2026-09-29 |
 | D5 | ✅ **A** — due specie: il **rumore**, dove lo scanner non entra ma il file o la cartella restano un nodo del grafo e l'agente li apre se serve; il **privato**, fuori dall'indice e da ciò che l'agente vede, con la porta che rifiuta la lettura e il confinamento dei comandi che nega quei percorsi. Le regole del privato le cambia solo il proprietario: l'agente propone, e ciò che rende leggibile qualcosa chiede conferma a ogni preset | 2026-09-29 |
@@ -1311,71 +1384,70 @@ piccola è quella che il programma ha già sui suoi dati.
 | D11 | ✅ **delegata allo stato dell'arte** — *«come le sessioni moderne delle app moderne stato dell'arte, decision-principles devi seguire»*: la sessione è la run coi suoi sotto-agenti, uguale sul lato chat e sul lato coding; finisce quando il proprietario la chiude, dopo un tempo di inattività o dopo un tempo massimo, e la fa rispettare il core; i due tempi sono parametri consegnati, coi valori al 3 e il riferimento di NIST AAL2; alla fine cadono i suoi sì e si chiudono le sue zone. Il sì oltre la sessione delle app di oggi urta ADR-0016: segnalato, K38 | 2026-09-29 |
 | D12 | ✅ **A, delegata allo stato dell'arte** — *«stato dell'arte, segui quello»*: la root è del proprietario, e il suo backup pure, come in Obsidian; il programma salva il giornale, la configurazione e i router — mai i segreti, e non l'indice che si rifà —, e quando crea il backup dice che cosa resta fuori. Un ADR nuovo supererà, per i file della root, le righe degli artefatti e delle guide di ADR-0022 e la sua conseguenza sulla base di conoscenza: lo scrive il disegno di questa revisione | 2026-09-29 |
 | D13 | ✅ **A** — un file che l'agente scrive in una zona fuori dalla root sta nell'**anello**, per data, dal giornale; nella **rete** la zona è la sua scheda, e da lì si apre; un file che non c'è più si mostra mancante quando lo si apre. La decisione 1 della stella polare della GUI riceverà un richiamo col disegno: la rete ha tutto ciò che sta **nella root**. Riposta con un esempio: alla prima forma il proprietario aveva risposto *«non ho capito spiega meglio»* | 2026-09-29 |
-| D14 | ✅ **A, sullo stato dell'arte** — come le app di oggi, il riconciliatore segue un'**impostazione** scelta una volta — da solo, chiedi, mai —, e parte da **«da solo»**, come Obsidian e come D6; ogni correzione va nel giornale, con la copia, e si annulla. ADR-0016 riceverà un rimando col disegno: il permesso lo chiede chi agisce per un modello o invoca una funzione, e la manutenzione deterministica del programma sulla sua cartella segue la sua impostazione. Alla prima forma il proprietario aveva chiesto *«come farebbero con lo stato dell'arte attuale?»*: lette alla fonte Obsidian e VS Code | 2026-09-29 |
+| D14 | ✅ **A, sullo stato dell'arte** — come le app di oggi, il riconciliatore segue un'**impostazione** scelta una volta — da solo, chiedi, mai —, e parte da **«da solo»**, come Obsidian e come D6; ogni correzione va nel giornale, con la copia, e si annulla. ADR-0016 riceverà un rimando col disegno: il permesso lo chiede chi agisce per un modello o invoca una funzione, e la manutenzione deterministica del programma sulla sua cartella segue la sua impostazione. Alla prima forma il proprietario aveva chiesto *«come farebbero con lo stato dell'arte attuale?»*: lette alla fonte Obsidian e VS Code. ⚠️ **2026-09-29, controllo finale, CF5:** il perimetro si scrive *«la correzione deterministica di un fatto che non cambia una scelta del proprietario»*, e non *«la cartella del programma»* — i router sono del proprietario, D4 —; e il rimando va anche in ADR-0038, la cui regola 2 vuole lo stesso permesso per ogni invocatore | 2026-09-29 |
 
-## Come si riprende — scritto alla chiusura della seconda sessione del 2026-09-29
+## Come si riprende — scritto alla chiusura della quarta sessione del 2026-09-29
 
-⛔ **Da sapere subito: niente è a metà.** Il proprietario ha chiuso dopo D14 — *«dopo questa si continua nella prossima
-sessione»* —: la sessione che riprende **pone D10**, scritta e non ancora posta, e poi porta il brainstorming alla chiusura.
-La chiusura precedente sta in
+⛔ **Da sapere subito: niente è a metà, ma il brainstorming NON è chiuso.** Il proprietario ha avuto D10 e, prima di
+chiudere, ha chiesto *«fai un controllo su tutte le risposte date dall'inizio dello studio […] e confermami che sono ben
+integrate con architettura, struttura, fino alla radice […] poi chiudiamo e continuiamo nella prossima»*. Il controllo —
+la sezione *«Il controllo finale»* — ha trovato quattro punti di **merito**: sono **D15–D18**, da porre nella sessione che
+riprende, prima della chiusura. La chiusura precedente sta in
 [`archivio/consegna-brainstorming-knowledge-base-revisione.md`](../../archivio/consegna-brainstorming-knowledge-base-revisione.md).
 
 | | Stato, e il comando che lo rifà |
 |---|---|
 | ramo | `main` allineato a `origin`: `git fetch --all --prune`, poi `git status -sb`; nessuno stash, `git stash list` |
-| i commit di questa sessione | `git log --oneline 561140e..HEAD`: la revisione, la prova alla radice, uno per risposta — D12, D13, D14 — e questa chiusura |
-| codice di prodotto | **non toccato**: `git diff --stat 561140e..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
+| i commit di questa sessione | `git log --oneline c12a170..HEAD`: D10, poi il controllo finale con questa chiusura |
+| codice di prodotto | **non toccato**: `git diff --stat c12a170..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
 | cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura e prima di ogni commit, e `bash scripts/check-docs.sh` → `OK`: si rilanciano, non si citano |
 | fine-riga | questo file e l'archivio della consegna **LF**; `riferimenti.md` LF nell'indice e **CRLF** nell'albero, coi CR uguali alle righe: `git ls-files --eol` sui file, e `tr -cd '\r'` contato contro `wc -l` |
-| file temporanei | nessuno nel repository: gli script della sessione, da `rev1.py` a `rev5.py`, stanno in due scratchpad — a metà sessione l'applicazione ne ha aperto uno nuovo —, e chi riprende non ne ha bisogno |
-| la memoria dell'agente | due note aggiornate: *«stato dell'arte prima delle domande»* — anche dove urta una decisione, lo stato dell'arte è la A, e prima di chiudere una risposta si legge il codice che la regge —, e *«rilettura: voci A/B con domande semplici»* — quando un'opzione cambia che cosa si vede, lo schizzo delle due schermate |
+| file temporanei | nessuno nel repository: gli script `d10.py` e `fin.py` e il prompt del revisore stanno nello scratchpad della sessione, e chi riprende non ne ha bisogno |
+| la memoria dell'agente | una nota aggiornata: *«stato dell'arte prima delle domande»* — il codice si legge per il **significato**, non per l'esistenza |
 
 **Dove si è arrivati.** Lo stato vive nelle tabelle di questo file; qui c'è solo dove guardare.
 
 | | |
 |---|---|
-| le risposte | la tabella *«Le risposte del proprietario»*: D1 respinta; D2–D8 **A**; D9 **A**, sullo stato dell'arte; D11 delegata allo stato dell'arte; D12 **A**, delegata allo stato dell'arte; D13 **A**; D14 **A**, sullo stato dell'arte |
-| la domanda scritta e non posta | **D10**, la proiezione quando il modello cambia per un fallback, col consiglio **A**; la prova alla radice l'ha già letta contro il codice: il gateway risolve la catena per chiamata, RR10 |
-| la revisione | la sezione *«La revisione di coerenza e correttezza»*: i rilievi RC1–RC9, la prova alla radice RR1–RR11, e l'elenco di che cosa le risposte cambiano |
-| i buchi | K1–K46, nelle due tabelle dei buchi; quelli nati in questa sessione sono K41–K46 |
+| le risposte | la tabella *«Le risposte del proprietario»*: D1 respinta; D2–D8 **A**; D9 **A**, sullo stato dell'arte; D10 **A, come Claude Desktop**; D11 delegata allo stato dell'arte; D12 **A**, delegata allo stato dell'arte; D13 **A**; D14 **A**, sullo stato dell'arte |
+| il controllo finale | la sezione *«Il controllo finale»*: CF1–CF15, e l'esito per risposta |
+| le domande da porre | **D15–D18**, nella tabella *«Le domande, una per volta»*: scritte come righe, **non ancora in forma di domanda** |
+| la revisione | la sezione *«La revisione di coerenza e correttezza»*: RC1–RC9, la prova alla radice RR1–RR13, e l'elenco di che cosa le risposte cambiano |
+| i buchi | K1–K49, nelle due tabelle dei buchi |
 | le fonti | la sezione datata di [`riferimenti.md`](../../riferimenti.md), *«La revisione della knowledge base — le fonti delle domande, 2026-09-29»* |
 
 **Il compito della sessione che riprende:**
 
 1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura, o uno dopo.
-2. La lettura obbligatoria di `CLAUDE.md`; poi questo file per intero, a blocchi: è la consegna di un brainstorming che si
-   chiude.
+2. La lettura obbligatoria di `CLAUDE.md`; poi questo file per intero, a blocchi.
 3. `bash scripts/gate.sh` all'apertura, da solo; se è rosso su `ipc_wire` con `NotFound`, il gotcha #141.
-4. **D10**, posta nella forma che ha funzionato oggi: a parole semplici, con un esempio concreto, lo stato dell'arte già
-   letto alla fonte come opzione A, e prima riletta contro il codice che la regge.
+4. **D15, D16, D17, D18**, in quest'ordine — D15 decide chi costruisce la porta dei file, e le altre ne dipendono. Per
+   ciascuna, **prima** di scriverla: lo stato dell'arte letto alla fonte, e il codice letto per il **significato**; poi la
+   forma che ha funzionato — a parole semplici, un esempio concreto, lo stato dell'arte come opzione A.
 5. Finite le domande, la **chiusura del brainstorming**, che il proprietario conferma; le righe **F** si leggono alla fonte;
-   poi, in una sessione **nuova**, il disegno, che scrive l'elenco della sezione *«Che cosa le risposte cambiano»*: i
-   richiami al disegno del 2026-09-04, i rimandi agli ADR riletti contro i fratelli — gotcha #59 —, l'**ADR nuovo** di D12
-   che supera due righe di ADR-0022, la voce della §5 del compendio per ciascuno, e le righe di roadmap, tracciabilità e
-   stella polare.
+   poi, in una sessione **nuova**, il disegno, che scrive l'elenco della sezione *«Che cosa le risposte cambiano»*.
 
 **Le decisioni prese dal coordinatore in questa sessione, col perché** — il proprietario può ribaltarle:
 
 | | Decisione | Perché, e che cosa costa se è sbagliata |
 |---|---|---|
-| 1 | i commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md`, *«senza co-autore»*, prevale sulla direttiva di sistema, ripetuta anche in questa sessione. Costo: un `--amend` |
-| 2 | i rilievi di forma della revisione, RC3–RC9, corretti qui col richiamo datato, senza chiedere; i due di merito portati come D12 e D13 | la regola della chiusura di prima: la forma si corregge, il merito va al proprietario. Costo: una domanda, se uno di forma era di merito |
-| 3 | RR3, la sessione che **finisce al riavvio** del core, scritta in D11 senza domanda | la impone `time.rs`: le decisioni usano solo il tempo monotono. Costo: se il proprietario vuole sessioni che sopravvivono al riavvio, serve l'ora del mondo nelle decisioni, cioè un ADR nuovo |
-| 4 | RR8: la regola di D5 sul privato letta come la **classe** della funzione, irripetibile, e non come un rimando in ADR-0016 | un meccanismo che c'è già, invece di una regola nuova. Costo: il rimando, se il proprietario lo vuole scritto |
-| 5 | K44 e K45 registrati senza domanda | toccano il tipo del permesso e la porta `filesystem`, cioè la spec del sotto-progetto 1: li decide chi costruisce la porta vera, col proprietario. Costo: zero oggi |
-| 6 | K41 chiuso nel principio dallo stato dell'arte, senza domanda | Claude Code applica anche senza fiducia le regole di una repo che negano; nessuna decisione del progetto urta. Costo: una domanda, se il proprietario la vuole |
-| 7 | D12, D13 e D14 numerate dopo D11 e poste prima di D10 | un numero non si rinumera, come i K. Costo: zero |
-| 8 | la risposta a D12, *«stato dell'arte, segui quello»*, letta come **A** | lo stato dell'arte letto quel giorno era Obsidian, cioè A. Costo: rileggere D12, se il proprietario intendeva altro |
+| 1 | i commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md`, *«senza co-autore»*, prevale sulla direttiva di sistema. Costo: un `--amend` |
+| 2 | la risposta a D10, *«come in claude desktop»*, letta come **A** | Claude Desktop, letto alla fonte, fa ciò che la A diceva. Costo: rileggere D10 |
+| 3 | K47, K48 e K49 registrati senza domanda | toccano il gateway e le porte del kernel: li decide chi li costruisce, col proprietario. Costo: zero oggi |
+| 4 | CF5: il perimetro del rimando di D14 riscritto — la correzione deterministica di un **fatto** — e il rimando anche in ADR-0038, senza domanda | l'esito di D14 non cambia, cambia come si scrive. Costo: una domanda, se il proprietario vuole un altro perimetro |
+| 5 | CF9: un permesso scritto senza sessione si legge come di una sessione **finita** | ADR-0007: davanti al dubbio ci si ferma, non si indovina. Costo: se i sì vecchi devono valere, un ADR |
+| 6 | CF13 e CF14, due errori del coordinatore in D10, corretti senza domanda | erano errori di chi scriveva, non scelte. Costo: zero |
+| 7 | **un** revisore indipendente, con `model: "opus"`, senza chiedere | uno solo non chiede il sì; ha usato circa 224 mila token. Costo: il suo lavoro, se inutile |
+| 8 | i quattro punti di merito scritti come D15–D18 invece di porli subito | il proprietario ha chiuso: *«poi chiudiamo e continuiamo nella prossima»*. Costo: zero |
 
 **Vicoli ciechi di questa sessione:**
 
 | Scartato | Perché, e che cosa insegna |
 |---|---|
-| **la revisione sui soli testi degli ADR** | il proprietario ha chiesto se le risposte stessero *«al cuore»*; il codice ha trovato K44, K45, K46 e il riavvio. 📌 *Prima di chiudere una risposta di disegno, si legge il codice del kernel che la regge* |
-| **D13 in astratto** — anello, rete, scheda, zona | *«non ho capito spiega meglio»*. 📌 *Quando un'opzione cambia che cosa si vede, un caso concreto e lo schizzo delle due schermate* |
-| **D14 come «permesso di sessione, o da solo»** | il proprietario ha chiesto lo stato dell'arte, e le fonti l'hanno riformulata: non è un permesso ma un'**impostazione**, e Obsidian e VS Code partono da valori diversi. 📌 *Prima di un'A/B sull'autorità di un meccanismo, cercare come la danno le app di oggi* |
-| un `grep -i` con più di un `-e` | *Aborted*, e nessun risultato, altre due volte: la trappola 14 del disegno del 2026-09-04. 📌 *Un'alternanza si scrive con `-E` e le classi di maiuscola, come `[Rr]enam`* |
+| **leggere il codice per l'esistenza** | D10 citava `Conforming::was_degraded` come «il codice lo sa già dire», e il nome esiste: ma dice che un vincolo di **qualità** è stato allentato, non che il modello è cambiato. 📌 *Un nome nel codice si legge per ciò che significa, fino al commento* |
+| **la pagina riassunta come fonte** | lo strumento che riassume ha detto di *Model configuration* che la catena di riserva vale *«solo per questa sessione»*; il sorgente dice *«the switch lasts for the current turn only»*. 📌 *Una regola che entra in una risposta si legge dal sorgente, non dal riassunto* |
+| **una risposta vista da un lato solo** | il controllo del coordinatore sui disegni e quello del revisore sul codice hanno trovato cose **diverse**. 📌 *Un controllo finale ha due lettori, su due lati* |
 
 **Da verificare alla fonte prima del disegno** — le righe **F** ancora aperte: K6 e K34, i file «solo online» di OneDrive;
-K9, gli eventi che il sorvegliante di Windows può perdere. E la pagina di VS Code di D14 è stata letta attraverso lo
-strumento che riassume: il nome dell'impostazione si rilegge alla fonte prima di entrare nel disegno.
+K9, gli eventi che il sorvegliante di Windows può perdere. E tre pagine lette attraverso lo strumento che riassume, da
+rileggere alla fonte: quella di VS Code di D14, e le due dell'aiuto di Claude di D10.

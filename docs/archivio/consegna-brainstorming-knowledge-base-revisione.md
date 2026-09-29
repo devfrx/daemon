@@ -188,3 +188,74 @@ precedente sta in [`archivio/consegna-brainstorming-knowledge-base-revisione.md`
 
 **Da verificare alla fonte prima del disegno** — le righe **F** ancora aperte: K6 e K34, i file «solo online» di OneDrive;
 K9, gli eventi che il sorvegliante di Windows può perdere. Le cartelle dati per utente di K1 sono state lette il 2026-09-29.
+
+## Archiviata il 2026-09-29, alla chiusura della quarta sessione della revisione
+
+La sezione scritta alla chiusura della sessione di D12, D13 e D14, com'era nel commit `f789778`.
+
+## Come si riprende — scritto alla chiusura della seconda sessione del 2026-09-29
+
+⛔ **Da sapere subito: niente è a metà.** Il proprietario ha chiuso dopo D14 — *«dopo questa si continua nella prossima
+sessione»* —: la sessione che riprende **pone D10**, scritta e non ancora posta, e poi porta il brainstorming alla chiusura.
+La chiusura precedente sta in
+[`archivio/consegna-brainstorming-knowledge-base-revisione.md`](consegna-brainstorming-knowledge-base-revisione.md).
+
+| | Stato, e il comando che lo rifà |
+|---|---|
+| ramo | `main` allineato a `origin`: `git fetch --all --prune`, poi `git status -sb`; nessuno stash, `git stash list` |
+| i commit di questa sessione | `git log --oneline 561140e..HEAD`: la revisione, la prova alla radice, uno per risposta — D12, D13, D14 — e questa chiusura |
+| codice di prodotto | **non toccato**: `git diff --stat 561140e..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
+| cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura e prima di ogni commit, e `bash scripts/check-docs.sh` → `OK`: si rilanciano, non si citano |
+| fine-riga | questo file e l'archivio della consegna **LF**; `riferimenti.md` LF nell'indice e **CRLF** nell'albero, coi CR uguali alle righe: `git ls-files --eol` sui file, e `tr -cd '\r'` contato contro `wc -l` |
+| file temporanei | nessuno nel repository: gli script della sessione, da `rev1.py` a `rev5.py`, stanno in due scratchpad — a metà sessione l'applicazione ne ha aperto uno nuovo —, e chi riprende non ne ha bisogno |
+| la memoria dell'agente | due note aggiornate: *«stato dell'arte prima delle domande»* — anche dove urta una decisione, lo stato dell'arte è la A, e prima di chiudere una risposta si legge il codice che la regge —, e *«rilettura: voci A/B con domande semplici»* — quando un'opzione cambia che cosa si vede, lo schizzo delle due schermate |
+
+**Dove si è arrivati.** Lo stato vive nelle tabelle di questo file; qui c'è solo dove guardare.
+
+| | |
+|---|---|
+| le risposte | la tabella *«Le risposte del proprietario»*: D1 respinta; D2–D8 **A**; D9 **A**, sullo stato dell'arte; D11 delegata allo stato dell'arte; D12 **A**, delegata allo stato dell'arte; D13 **A**; D14 **A**, sullo stato dell'arte |
+| la domanda scritta e non posta | **D10**, la proiezione quando il modello cambia per un fallback, col consiglio **A**; la prova alla radice l'ha già letta contro il codice: il gateway risolve la catena per chiamata, RR10 |
+| la revisione | la sezione *«La revisione di coerenza e correttezza»*: i rilievi RC1–RC9, la prova alla radice RR1–RR11, e l'elenco di che cosa le risposte cambiano |
+| i buchi | K1–K46, nelle due tabelle dei buchi; quelli nati in questa sessione sono K41–K46 |
+| le fonti | la sezione datata di [`riferimenti.md`](../riferimenti.md), *«La revisione della knowledge base — le fonti delle domande, 2026-09-29»* |
+
+**Il compito della sessione che riprende:**
+
+1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura, o uno dopo.
+2. La lettura obbligatoria di `CLAUDE.md`; poi questo file per intero, a blocchi: è la consegna di un brainstorming che si
+   chiude.
+3. `bash scripts/gate.sh` all'apertura, da solo; se è rosso su `ipc_wire` con `NotFound`, il gotcha #141.
+4. **D10**, posta nella forma che ha funzionato oggi: a parole semplici, con un esempio concreto, lo stato dell'arte già
+   letto alla fonte come opzione A, e prima riletta contro il codice che la regge.
+5. Finite le domande, la **chiusura del brainstorming**, che il proprietario conferma; le righe **F** si leggono alla fonte;
+   poi, in una sessione **nuova**, il disegno, che scrive l'elenco della sezione *«Che cosa le risposte cambiano»*: i
+   richiami al disegno del 2026-09-04, i rimandi agli ADR riletti contro i fratelli — gotcha #59 —, l'**ADR nuovo** di D12
+   che supera due righe di ADR-0022, la voce della §5 del compendio per ciascuno, e le righe di roadmap, tracciabilità e
+   stella polare.
+
+**Le decisioni prese dal coordinatore in questa sessione, col perché** — il proprietario può ribaltarle:
+
+| | Decisione | Perché, e che cosa costa se è sbagliata |
+|---|---|---|
+| 1 | i commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md`, *«senza co-autore»*, prevale sulla direttiva di sistema, ripetuta anche in questa sessione. Costo: un `--amend` |
+| 2 | i rilievi di forma della revisione, RC3–RC9, corretti qui col richiamo datato, senza chiedere; i due di merito portati come D12 e D13 | la regola della chiusura di prima: la forma si corregge, il merito va al proprietario. Costo: una domanda, se uno di forma era di merito |
+| 3 | RR3, la sessione che **finisce al riavvio** del core, scritta in D11 senza domanda | la impone `time.rs`: le decisioni usano solo il tempo monotono. Costo: se il proprietario vuole sessioni che sopravvivono al riavvio, serve l'ora del mondo nelle decisioni, cioè un ADR nuovo |
+| 4 | RR8: la regola di D5 sul privato letta come la **classe** della funzione, irripetibile, e non come un rimando in ADR-0016 | un meccanismo che c'è già, invece di una regola nuova. Costo: il rimando, se il proprietario lo vuole scritto |
+| 5 | K44 e K45 registrati senza domanda | toccano il tipo del permesso e la porta `filesystem`, cioè la spec del sotto-progetto 1: li decide chi costruisce la porta vera, col proprietario. Costo: zero oggi |
+| 6 | K41 chiuso nel principio dallo stato dell'arte, senza domanda | Claude Code applica anche senza fiducia le regole di una repo che negano; nessuna decisione del progetto urta. Costo: una domanda, se il proprietario la vuole |
+| 7 | D12, D13 e D14 numerate dopo D11 e poste prima di D10 | un numero non si rinumera, come i K. Costo: zero |
+| 8 | la risposta a D12, *«stato dell'arte, segui quello»*, letta come **A** | lo stato dell'arte letto quel giorno era Obsidian, cioè A. Costo: rileggere D12, se il proprietario intendeva altro |
+
+**Vicoli ciechi di questa sessione:**
+
+| Scartato | Perché, e che cosa insegna |
+|---|---|
+| **la revisione sui soli testi degli ADR** | il proprietario ha chiesto se le risposte stessero *«al cuore»*; il codice ha trovato K44, K45, K46 e il riavvio. 📌 *Prima di chiudere una risposta di disegno, si legge il codice del kernel che la regge* |
+| **D13 in astratto** — anello, rete, scheda, zona | *«non ho capito spiega meglio»*. 📌 *Quando un'opzione cambia che cosa si vede, un caso concreto e lo schizzo delle due schermate* |
+| **D14 come «permesso di sessione, o da solo»** | il proprietario ha chiesto lo stato dell'arte, e le fonti l'hanno riformulata: non è un permesso ma un'**impostazione**, e Obsidian e VS Code partono da valori diversi. 📌 *Prima di un'A/B sull'autorità di un meccanismo, cercare come la danno le app di oggi* |
+| un `grep -i` con più di un `-e` | *Aborted*, e nessun risultato, altre due volte: la trappola 14 del disegno del 2026-09-04. 📌 *Un'alternanza si scrive con `-E` e le classi di maiuscola, come `[Rr]enam`* |
+
+**Da verificare alla fonte prima del disegno** — le righe **F** ancora aperte: K6 e K34, i file «solo online» di OneDrive;
+K9, gli eventi che il sorvegliante di Windows può perdere. E la pagina di VS Code di D14 è stata letta attraverso lo
+strumento che riassume: il nome dell'impostazione si rilegge alla fonte prima di entrare nel disegno.

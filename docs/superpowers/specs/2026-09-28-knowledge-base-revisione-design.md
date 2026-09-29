@@ -156,6 +156,10 @@ una documentazione di prodotto: vale come **origine dell'idea**, non come prova.
 
 Ogni riga si rifà col comando accanto; il codice può muoversi, e il comando si rilancia prima di fidarsi della riga.
 
+✅ **Rilanciati il 2026-09-29 dalla revisione, su `561140e`:** ogni comando della tabella rende come scritto, e il codice
+non si è mosso da `f830cb9` — `git diff --stat f830cb9..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende
+nulla. La tabella resta la fotografia di **prima** delle risposte: ciò che è deciso dopo sta nelle tabelle dei buchi.
+
 | Domanda | Che cosa è deciso oggi | Dove, e il comando | Stato |
 |---|---|---|---|
 | **dove** vivono i dati del programma — giornale, disposizione dei pannelli | **niente**: il daemon scrive `journal.redb` e `layout.redb` nella **cartella da cui parte**, e il sorgente lo dichiara — *«where a per-user data directory belongs is a decision no ADR has taken»* | `grep -n -e 'JOURNAL_PATH: ' -e 'LAYOUT_PATH: ' -e 'no ADR has taken' crates/daemon/src/main.rs` | ❌ buco |
@@ -186,6 +190,11 @@ incontra una cartella scritta da git, dagli editor e da altri agenti. Quando il 
 backup della cartella si gonfiano, e il limite di dimensione che ADR-0024 chiede non è mai stato fissato. Quando il
 proprietario usa una seconda macchina, niente dice se la knowledge base lo segue. **Se non si decide qui, lo decidono il 5 o il
 6 da soli: due strade.**
+
+✅ **Riletto il 2026-09-29, dopo le risposte:** il primo punto lo chiudono i due attori del documento e le zone di lavoro
+di D3; il secondo è a metà — i file grandi restano nodi del grafo senza che lo scanner li apra, D5; la copia costa solo sui
+file che l'agente tocca; il limite di ADR-0024 resta da fissare, K21; e che cosa salva il backup lo decide D12 —; il terzo lo
+chiude K5, una knowledge base per installazione.
 
 ## I buchi e i casi limite
 
@@ -222,28 +231,30 @@ colonna *13?* dice se il buco tocca ciò che il 13 costruisce: quelli con ✅ si
 
 Ogni punto del documento del proprietario, letto contro il disegno del 2026-09-04, gli ADR e il codice. **Cambia** vuol dire
 che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scriverà il disegno.
+⚠️ **Riletta il 2026-09-29 dalla revisione:** una riga che una risposta ha chiuso porta ora la risposta in coda alla cella;
+la parte di prima resta, perché dice che cosa la risposta ha sciolto.
 
 | Punto del documento | Contro che cosa | Esito |
 |---|---|---|
 | la knowledge base è **una cartella qualsiasi**, e la root arriva dalla configurazione | la risposta 1 del 2026-09-04, *«un archivio unico»*; ADR-0034, i parametri li legge il daemon e li consegna | **cambia** la risposta 1: non più un archivio dedicato. Coerente con ADR-0034: la root è un parametro che il daemon consegna |
 | **due attori**: il proprietario da fuori, con qualsiasi strumento, e l'agente da dentro | la risposta 3, *«solo il nostro assistente»* | **cambia** la risposta 3. Chiude K7 |
 | il **sorvegliante** più la **scansione all'avvio** | i trigger del 13 (ADR-0009); K8 e K9 | chiude K8 e K9 nel principio; al 13 resta un requisito: il meccanismo deve saper dire *«ho perso eventi, riscansiona»* |
-| **niente storico**, versioning, audit o sync; una knowledge base per installazione | ADR-0007, il giornale delle azioni; ADR-0024, la copia prima che l'agente tocchi un file | ⚠️ **da conciliare — D2**. Chiude K5: niente sync |
-| indici **e router** «derivati, ricostruibili» | ADR-0022, gli indici fuori dal backup perché ricostruibili | ⚠️ vale per l'indice strutturale, **non per i router**, che portano le scelte del proprietario — K32 |
+| **niente storico**, versioning, audit o sync; una knowledge base per installazione | ADR-0007, il giornale delle azioni; ADR-0024, la copia prima che l'agente tocchi un file | ⚠️ **da conciliare — D2**. Chiude K5: niente sync — ✅ **D2, A**, 2026-09-28: il giornale e la copia restano, per le sole azioni dell'agente |
+| indici **e router** «derivati, ricostruibili» | ADR-0022, gli indici fuori dal backup perché ricostruibili | ⚠️ vale per l'indice strutturale, **non per i router**, che portano le scelte del proprietario — K32 — ✅ **D4, A**, 2026-09-29: i router in `.<nomeapp>/` alla root, l'indice nella cartella dati del programma; che cosa salva il backup, **D12** |
 | il **livello strutturale**: l'indice completo, testo compreso, senza modello | il disegno del 2026-09-04: l'indice della mappa (§4.2), e la ricerca per somiglianza come **seconda metà** del 6 (§4.4) | **allarga**: una ricerca testuale senza GPU nasce con la prima metà; la seconda resta per la somiglianza |
 | il **livello semantico**: router master → indici d'area → file chiave; le aree non sono cartelle | la risposta 1 e la §4.1: router → gruppi → foglie, e *«un gruppo è una voce di router, non una cartella»* | **uguale** nella sostanza: l'«area» è il «gruppo» del 2026-09-04 |
 | l'agente cerca anche nel **livello strutturale**, prima nell'area e poi dappertutto | la risposta 4 e la §4.1: *«l'agente naviga la mappa, mai le cartelle»*, e gli orfani per l'agente *«non esistono»* | **cambia** le risposte 4 e 10: un file fuori dai router si trova lo stesso, con un costo in più |
-| il **riconciliatore** corregge i router da solo, senza modello | la §1.4 del 2026-09-04: un sensore trova il puntatore rotto, l'anello **propone**, il proprietario approva | **cambia** per i due casi meccanici — cancellato, spostato con lo stesso hash — e resta deterministico, quindi fuori dal divieto di ADR-0020. Chiude K18 nel principio; apre K24 e K25 |
+| il **riconciliatore** corregge i router da solo, senza modello | la §1.4 del 2026-09-04: un sensore trova il puntatore rotto, l'anello **propone**, il proprietario approva | **cambia** per i due casi meccanici — cancellato, spostato con lo stesso hash — e resta deterministico, quindi fuori dal divieto di ADR-0020. Chiude K18 nel principio; apre K24 e K25 — ✅ **D6, A**, 2026-09-29: nel dubbio, rotto e una domanda; chiusi K24 e K25 |
 | un file nuovo entra nei router solo se **promosso** | la §4.1: gli orfani mostrati nel pannello | coerente |
 | la **UI**: grafo o griglia per cartella e per area, ricerca, anteprima, e tutte le CRUD **senza passare dall'agente** | la §4.3 del 2026-09-04; ADR-0038, un registro e molti invocatori | **allarga** il pannello. «Senza l'agente» vuol dire senza il **modello**: il click invoca la stessa funzione del registro, e il core la esegue, la giornala e ne controlla il permesso |
-| le **esclusioni** in stile `.gitignore` alla root, per l'indice **e** per ciò che l'agente legge | la decisione 13 del 2026-09-04, *«privato ma non segreto»*, aperta; K11 e K21 | chiude la 13 nel principio; apre K26 e K27 |
-| il **confinamento**: l'agente scrive solo dentro la root, niente `..` né collegamenti simbolici fuori | ADR-0024, l'ambito; K13 e K14 | chiude K14; K13 a metà, perché dice *scrive* e non *legge* — K28 |
+| le **esclusioni** in stile `.gitignore` alla root, per l'indice **e** per ciò che l'agente legge | la decisione 13 del 2026-09-04, *«privato ma non segreto»*, aperta; K11 e K21 | chiude la 13 nel principio; apre K26 e K27 — ✅ **D5, A**, 2026-09-29: due specie, rumore e privato; chiusi K26 e K27 |
+| il **confinamento**: l'agente scrive solo dentro la root, niente `..` né collegamenti simbolici fuori | ADR-0024, l'ambito; K13 e K14 | chiude K14; K13 a metà, perché dice *scrive* e non *legge* — K28 — ✅ **D3, A**, 2026-09-29: il confine è ogni zona aperta, e confina lo scrivere **e** il leggere; chiusi K13 e K28 |
 | le **scritture concorrenti**: prima di scrivere si controlla che il file non sia cambiato | K10 | chiude K10 |
 | il **setup** in due fasi, idempotente, coi soli percorsi relativi | la guida ARMS, il livello dei router | nuovo: è la capacità, il 6 |
-| la decisione aperta 1: **dove vivono** indici e router | ADR-0022; K30, K31, K32 | **D4** |
+| la decisione aperta 1: **dove vivono** indici e router | ADR-0022; K30, K31, K32 | **D4** — ✅ **A**, 2026-09-29 |
 | la decisione aperta 2: le **aree** proposte dall'agente e confermate dal proprietario | la risposta 10 del 2026-09-04 | coerente: la sua proposta si accoglie com'è |
 | la decisione aperta 3: la **cancellazione** dell'agente, morbida e con conferma | ADR-0024, la copia prima; ADR-0016, le scritture che chiedono | coerente, e la copia del kernel è una rete in più: la sua proposta si accoglie com'è |
-| la decisione aperta 4: i **link markdown** come archi del grafo | la §4.2 del 2026-09-04, le frecce della mappa | **D8** |
+| la decisione aperta 4: i **link markdown** come archi del grafo | la §4.2 del 2026-09-04, le frecce della mappa | **D8** — ✅ **A**, 2026-09-29 |
 
 ## Lo stato dei buchi dopo il documento
 
@@ -252,7 +263,7 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 | K1 | **chiuso**: i dati del programma nella cartella dati per utente del sistema — `%LOCALAPPDATA%\<nomeapp>\` su Windows, le cartelle XDG su Linux —, in sottocartelle per natura, e la configurazione porta il percorso della root. D4, 2026-09-29; lo costruisce il primo sotto-progetto che installa il programma |
 | K2 | **chiuso**: la root arriva dalla configurazione |
 | K3 | **chiuso**: una repo dentro la root sta nel livello strutturale, meno ciò che le esclusioni tolgono; una repo fuori è una zona di lavoro con la sua scheda progetto — D3, 2026-09-29 |
-| K4 | **chiuso**: i file delle run stanno dentro la root, perché l'agente scrive solo lì; resta la visibilità dei file pesanti, K27 |
+| K4 | **chiuso**: i file delle run stanno nella root o in una zona di lavoro aperta, gli unici posti dove l'agente scrive — D3; i file pesanti restano nodi del grafo — D5; come si vedono nella rete quelli di una zona fuori dalla root, K43. ⚠️ **Richiamo del 2026-09-29, revisione:** diceva *«dentro la root, perché l'agente scrive solo lì»*, vero per il documento e non più dopo D3, e *«resta la visibilità dei file pesanti, K27»*, chiusa da D5 |
 | K5 | **chiuso**: una knowledge base per installazione, niente sync |
 | K6 | **a metà**: chi scrive da fuori è coperto dai due attori; restano i file «solo online», K34 |
 | K7 | **chiuso**: due attori, e il riallineamento |
@@ -267,8 +278,8 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 | K17 | **a metà**: la cancellazione dell'agente è morbida; «dimentica davvero» resta registrato |
 | K18 | **chiuso**: l'hash per il caso certo, e il dubbio segnato rotto coi candidati — K24 e K25, D6 |
 | K19 | **a metà**: i percorsi relativi alla root; maiuscole e nomi riservati restano, alla porta vera |
-| K20 | **chiuso**: dentro la root i file li porta il proprietario da fuori, e l'agente fuori non arriva |
-| K21 | **a metà**: i file pesanti fuori dall'indice; la copia costa solo sui file che l'agente tocca; il limite di ADR-0024 resta da fissare |
+| K20 | **chiuso**: dentro la root i file li porta il proprietario da fuori; l'agente, da una zona aperta, **copia** — legge nella zona e scrive nella root, e il file entra da fuori con la provenienza della regola 4 della §2.3 del 2026-09-04 —; spostare è copiare più una cancellazione morbida con conferma, la decisione aperta 3 del proprietario; un collegamento verso un file di una zona punta alla scheda della zona, o non si disegna — D8. ⚠️ **Richiamo del 2026-09-29, revisione:** diceva *«e l'agente fuori non arriva»*, vero per il documento e non più dopo D3 |
+| K21 | **a metà**: lo scanner non apre i file pesanti, che restano nodi del grafo — D5; la copia costa solo sui file che l'agente tocca; il limite di ADR-0024 resta da fissare; il backup dei file grandi della root, D12. ⚠️ **Richiamo del 2026-09-29, revisione:** diceva *«i file pesanti fuori dall'indice»*, scritto prima di D5 |
 | K22 | **a metà**: il costo in token dipende dal percorso, non dalla dimensione; il grafo coi molti nodi resta al 6 |
 | K23 | **aperto**, registrato |
 
@@ -283,7 +294,7 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 | **K28** | **la root è il confine di tutto l'assistente, o solo della knowledge base?** Il coding lavora su repo: dentro la root, o anche fuori con ambiti suoi (ADR-0024) e permessi suoi (ADR-0016)? E il documento confina lo **scrivere**, non il **leggere** | D | ✅ gli ambiti che il piano 0 usa come chiave | **D3** — ✅ chiuso il 2026-09-29, risposta A: il confine è ogni zona aperta, la knowledge base più le zone di lavoro, e confina lo scrivere **e** il leggere |
 | **K29** | **una root enorme** — «tutto quello che ho sul PC»: la prima scansione è lunga, e le build nelle repo inondano il sorvegliante. Serve una scansione incrementale — dimensione e data, l'hash solo se cambiano — e lo stato *«indicizzazione in corso»* dichiarato prima, come vuole ADR-0019 | D | ✅ l'evento «riscansiona» | registrato: il 6, e il 13 per l'evento |
 | **K30** | **su Windows il punto nel nome non nasconde una cartella**: `.git` è nascosta perché git le mette l'attributo H, `.github` e `.superpowers` no. La cartella `.<nomeapp>/` va marcata nascosta dal modulo di piattaforma | V: `cmd //c "attrib .git"` e `cmd //c "attrib .github"` nella radice di questo repository | — | **D4** — ✅ chiuso il 2026-09-29: la marca il modulo di piattaforma |
-| **K31** | **il backup**: se la root è il PC intero, il programma non può salvarla tutta, mentre ADR-0022 metteva la cartella della knowledge base nel suo backup. Il programma salva ciò che è **suo** — i router —, e il resto è dei backup del proprietario | V + D | — | **D4** — ✅ chiuso il 2026-09-29: il programma salva i suoi dati e i router, il resto è del proprietario; lo costruisce l'11 |
+| **K31** | **il backup**: se la root è il PC intero, il programma non può salvarla tutta, mentre ADR-0022 metteva la cartella della knowledge base nel suo backup. Il programma salva ciò che è **suo** — i router —, e il resto è dei backup del proprietario | V + D | — | **D4** — ✅ chiuso il 2026-09-29: il programma salva i suoi dati e i router, il resto è del proprietario; lo costruisce l'11 ⚠️ **Riaperto il 2026-09-29 dalla revisione:** la frase urta ADR-0022 sugli artefatti e sulle guide — **D12**, K42 |
 | **K32** | **i router non si ricostruiscono**: portano le scelte del proprietario — le aree, i file chiave, la riga di descrizione. Rifarli è rifare il setup guidato, coi suoi token e le sue domande | D | — | **D4** — ✅ chiuso il 2026-09-29: i router stanno in `.<nomeapp>/`, lontani dall'indice che si rifà, e il programma li salva |
 | **K33** | **l'agente che scrive senza chiedere**: col preset di default di ADR-0016 ogni scrittura chiede conferma, mentre il documento vuole i router aggiornati nello stesso turno | V: ADR-0016, punto 2 | — | **D7** — ✅ chiuso il 2026-09-29: un sì per la sessione, la tripla sulla cartella dei router |
 | **K34** | **i file «solo online» di OneDrive** dentro la root: leggerli scarica il file, o fallisce senza rete | F | — | registrato: il 6, alla fonte |
@@ -293,6 +304,73 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 | **K38** | **il sì oltre la sessione**: Claude Code e VS Code offrono anche un sì per lo spazio di lavoro o per sempre, con un comando che li azzera, e Android azzera da solo i permessi non usati; ADR-0016 dice *«un'approvazione non si estende»*, e fra le sue alternative non ha mai valutato la durata | V alla fonte, il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md); `grep -n 'Alternative considerate per i permessi' docs/adr/0016-*.md` | — | registrato: il **proprietario**, con un ADR nuovo se vorrà riaprire il punto 3 di ADR-0016 |
 | **K39** | **OpenRouter comprime da solo il prompt**: la compressione *middle-out* toglie il centro sulle destinazioni con finestra fino a 8 192 token, accesa per default — proprio ciò che ADR-0008 vuole mai sacrificabile | V alla fonte, il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md) | ✅ la proiezione | **D10** |
 | **K40** | **il fallback dentro OpenRouter**: con la lista di modelli il ripiego avviene dentro di lui, e il gateway non valuta i vincoli di ogni candidato né ricompone la proiezione; il modello usato lo sa dalla risposta | V alla fonte, il 2026-09-29; D per il gateway | ✅ la proiezione | **D10** |
+| **K41** | **le regole di privacy di una zona di lavoro: dove stanno, e chi le scrive.** D3 dà a una zona *«la stessa lista di base, più le regole della zona»*, e D5 vuole il privato cambiato dal **solo** proprietario; ma le esclusioni che una repo porta con sé le ha scritte chi ha scritto la repo. Lo stato dell'arte risponde: in Claude Code le regole di una repo che **negano** valgono anche prima della fiducia, perché restringono soltanto, e quelle che **concedono** solo dopo | V alla fonte il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md); D per il nostro caso | — | registrato, e **chiuso nel principio dallo stato dell'arte**: una zona porta la lista di base, che non si toglie, le regole del proprietario per quella zona, e le esclusioni della repo, che possono solo **aggiungere** privato; nessuna regola della repo rende leggibile qualcosa. Dove stanno le regole del proprietario per una zona lo decide il 5, che costruisce le zone |
+| **K42** | **il backup contro ADR-0022**: D4 scrive, come cosa comune alle due risposte, che il programma salva nel suo backup *«i suoi dati e i router»* e che il resto della root è dei backup del proprietario; ma nella root stanno anche gli **artefatti** delle run — K4 — e le **guide**, che ADR-0022 mette nel backup del programma: la riga degli artefatti, e il rimando del 2026-09-08, per cui la politica delle guide — nel backup — non cambia. E *«i suoi dati»*, alla lettera, comprende i segreti e l'indice, che ADR-0022 tiene fuori | V: `grep -n -e '^. artefatti' -e 'nel backup, permanente' docs/adr/0022-*.md`; `grep -n 'Backup della KB' docs/tracciabilita.md` | — | **D12** |
+| **K43** | **gli artefatti di una zona fuori dalla root, e la rete della Home**: la decisione 1 della [stella polare della GUI](2026-09-07-direzione-gui-design.md) mette nella rete al centro *«tutto: artefatti e file della knowledge base»*, e D3 tiene fuori dal grafo una zona esterna alla root. Il codice che l'agente scrive in una repo aperta come zona è un artefatto: per la decisione 1 sta nella rete, per D3 no | V: `grep -n 'Nell.anello solo' docs/superpowers/specs/2026-09-07-direzione-gui-design.md` | — | **D13** |
+
+## La revisione di coerenza e correttezza — 2026-09-29
+
+Chiesta dal proprietario alla chiusura della sessione di prima — *«si continua nella prossima, con una revisione iniziale
+della coerenza e correttezza di quanto scritto»* — e fatta **prima** di D10, su `561140e`. Riletti per intero questo file e
+il [disegno del 2026-09-04](2026-09-04-knowledge-base-design.md), e i testi di ADR-0016, ADR-0022 e ADR-0024.
+
+| Che cosa si è controllato | Come | Esito |
+|---|---|---|
+| ogni risposta contro la sua sezione, e contro i K che dice di chiudere | le due tabelle dei buchi, riga per riga | reggono, salvo K4, K20 e K21, che D3 e D5 hanno reso vecchi, e K31, riaperto |
+| le risposte fra loro | D3 con D11; D7 con D11; D5 con K36 e con la lista di base di D3; D4 con ADR-0022; D9 con la regola 3 e la pretesa 1.1e del 2026-09-04, e con AUD-004 | due punti di **merito**, D12 e D13; gli altri di forma |
+| ogni riga *«verificato»* | ogni comando del file rilanciato, uno per uno | rendono tutti come scritto; il codice non si è mosso da `f830cb9` |
+| le fonti | ciò che questo file fa dire a ciascuna, contro la sua riga di [`riferimenti.md`](../../riferimenti.md); dove il file dice di più, riletta alla fonte | tre frasi su Claude Code senza la loro riga: rilette, reggono, con una precisione |
+| le tabelle e le sezioni del 2026-09-28 | riga per riga, contro le risposte | le righe superate portano la risposta in coda; *«Che cosa esiste oggi»* e *«Che cosa arriva»* una riga datata |
+| che cosa le risposte cambiano | ogni risposta contro il disegno del 2026-09-04, gli ADR, la roadmap, la tracciabilità e la stella polare della GUI | l'elenco qui sotto |
+
+**Che cosa ha trovato.**
+
+| # | Il punto | Specie | Dove sta ora |
+|---|---|---|---|
+| **RC1** | D4 scrive come **comune** alle due risposte che il programma salva nel suo backup i suoi dati e i router, e che il resto della root è del proprietario; ma nella root stanno anche gli artefatti delle run e le guide, che ADR-0022 mette nel backup del programma, e la sezione di D4 dava la frase per coerente con ADR-0022. La decisione 4 del coordinatore della sessione di prima ha sbagliato qui: ciò che era scritto come comune era una scelta | **merito** | **D12**, K42; un richiamo nella sezione di D4, nella risposta D4 e in K31 |
+| **RC2** | la decisione 1 della stella polare della GUI mette nella rete della Home *«tutto»*, artefatti compresi; D3 tiene fuori dal grafo le zone esterne alla root, e con loro il codice che l'agente vi scrive | **merito** | **D13**, K43 |
+| **RC3** | K4 e K20 dicevano che l'agente scrive solo nella root: vero per il documento, non più dopo D3; K4 lasciava aperta la visibilità dei file pesanti, e K21 li diceva *«fuori dall'indice»*: D5 li tiene come nodi | forma | le tre righe riscritte, col richiamo |
+| **RC4** | nella sezione di D3 il permesso della knowledge base, *«concesso per la root»*, si poteva leggere come un sì per sempre, contro il punto 3 di ADR-0016, che D11 riempie | forma | la cella riscritta, col richiamo |
+| **RC5** | D9 dice che la fiducia a una zona resta; D11 che alla fine della sessione *«cadono i suoi sì»*. Non si contraddicono — la fiducia non concede triple, e Claude Code la tiene su disco —, ma nessuna riga lo diceva | forma | una riga nuova in *«Che cosa ne segue»* di D9 |
+| **RC6** | D9 faceva dire a Claude Code che prima della fiducia *«le regole di permesso … non valgono»*: alla fonte non valgono quelle che **concedono**, e quelle che negano valgono sempre | forma | la riga della fonte in D9, e [`riferimenti.md`](../../riferimenti.md) |
+| **RC7** | D3 dà a una zona *«le regole della zona»* senza dire dove stanno né chi le scrive, e D5 vuole il privato cambiato dal solo proprietario | caso nuovo | **K41**, chiuso nel principio dallo stato dell'arte |
+| **RC8** | tre frasi su Claude Code usate da D9 e da D11 non avevano la loro riga in [`riferimenti.md`](../../riferimenti.md): la sessione come conversazione legata a una cartella, il sì per sempre ai comandi e ai domini, la fiducia alla cartella | forma | rilette alla fonte il 2026-09-29, e aggiunte |
+| **RC9** | la testa di D10 e K16 dicono *«posta il 2026-09-29»*, e D10 non era ancora posta | forma | vero da quando si pone, lo stesso giorno: nessuna correzione |
+
+### Che cosa le risposte cambiano — l'elenco per il disegno
+
+Il disegno di questa revisione, nella sua sessione, lo scrive così: richiami datati al disegno del 2026-09-04; rimandi in
+testa agli ADR, ciascuno riletto contro i fratelli — gotcha #59 —, con la voce della §5 del compendio per ogni ADR che ne
+riceve uno; righe riscritte nella roadmap, nella tracciabilità e nella stella polare della GUI. ⚠️ **È l'elenco del
+2026-09-29:** le risposte a D10, D12 e D13 lo allungano.
+
+| Dove | Che cosa cambia | Da |
+|---|---|---|
+| il disegno del 2026-09-04: le premesse, la risposta 1, §1.1a | non più *«un archivio unico»*: una cartella qualsiasi, e la root arriva dalla configurazione — ADR-0034 | il documento |
+| la risposta 3, §1.1b, §1.3 | non più *«solo il nostro assistente»*: due attori, e il proprietario scrive da fuori con qualunque strumento; cade l'esclusione degli *«altri strumenti che leggono o scrivono la cartella»* | il documento |
+| le risposte 4 e 10, §4.1 | l'agente cerca anche nel livello strutturale: un file che nessun router punta si trova lo stesso, con un costo in più | il documento |
+| §1.1c e la decisione 15 | il «router dell'ambito» del piano 0: per una zona di lavoro è la sua scheda progetto; per la knowledge base resta il router master, e l'area la sceglie l'agente leggendolo — il primo passo del documento —, salvo che la run nasca già da un'area. ⚠️ La sezione di D3 dice *«per la knowledge base la chiave è l'area»*: vale solo in quel caso | il documento, D3 |
+| la risposta 9, §2.3 regola 4 | lo spazio designato non è più uno: la knowledge base e le zone di lavoro aperte, D3; da una zona alla root l'agente copia, e il file entra con la provenienza della regola 4 — K20 | D3 |
+| §1.4 | il riconciliatore corregge da solo i due casi certi, e nel dubbio segna rotto e chiede — D6; una modifica del proprietario da fuori non si approva, perché è sua: il riconciliatore riallinea lo stato derivato, e una skill cambiata resta ad AUD-004 | il documento, D6 |
+| §1.4, la riga del privato, e la decisione 13 | chiusa: rumore e privato, D5; le zone, K41 | D5 |
+| §2.2, la cartella su disco | non più *«nel backup»* per intero: lo decide D12 | D4, D12 |
+| §2.2, i trigger | il sorvegliante più la scansione all'avvio; il meccanismo sa dire *«ho perso eventi, riscansiona»*, e l'indicizzazione in corso si dichiara prima — ADR-0019, K29 | il documento, K8, K9 |
+| §2.3 regola 3, §1.1e | per il file-guida di una zona l'approvazione è la fiducia alla cartella, e l'impronta si scrive a ogni caricamento | D9 |
+| §4.2, l'indice | ogni file è un nodo; le frecce di cartella, di area e dei link, D8; il segnale rotto anche per il file chiave perso, D6, e per il link verso un file che non c'è, D8; il rumore resta nodo, D5 | il documento, D5, D6, D8 |
+| §4.3, il pannello | la ricerca testuale mentre si scrive, coi filtri per tipo e per cartella; la griglia accanto al grafo | il documento |
+| §4.4, la prima metà del 6 | il livello strutturale, con la ricerca testuale senza modello; la seconda metà resta per la somiglianza | il documento |
+| §6.3 e §7 | *«nessuna fonte esterna»* non regge più: l'idea dei router viene dalla guida ARMS, datata il giorno del disegno | la sezione sulla guida ARMS |
+| ADR-0009 | i file-guida di una zona si caricano per fiducia alla cartella, con l'impronta di ogni caricamento nel giornale; i trigger col «riscansiona» | D9, K8, K9 |
+| ADR-0011 | la «sessione» della contabilità è quella di D11 | D11 |
+| ADR-0014 | da rileggere con D9: il passaggio esplicito e giornalato, per il file-guida di una zona, è la fiducia alla cartella | D9 |
+| ADR-0016 | la «sessione» del punto 3 è quella di D11; un cambio che rende leggibile qualcosa chiede conferma con ogni preset, anche `autonomo` | D11, D5 |
+| ADR-0022 | secondo la risposta a D12 | D12 |
+| ADR-0024 | l'ambito di una zona si chiude con la sessione — K35; il limite di dimensione resta da fissare — K21 | D3, D11 |
+| ADR-0025 | il livello 2 nega i percorsi privati — K36 | D5 |
+| la stella polare della GUI, decisione 1 | secondo la risposta a D13 | D13 |
+| [design/09](../../design/09-l0-fisico.md), la riga della cartella della knowledge base | secondo la risposta a D12 | D12 |
+| `roadmap.md` | il **6**: la cella dice ancora *«archivio unico»*, e la prima metà guadagna il livello strutturale; il **5**: la porta `filesystem` vera, le zone, il livello 2 che nega il privato — K23, K35, K36; il **3**: la sessione di D11; il **13**: il «riscansiona» e la fiducia di D9; l'**11**: il backup di D12; il **10**: le cartelle dati e la cartella nascosta — K1, K30 | le risposte |
+| `tracciabilita.md` | `Multi-repo/multi-progetto` e `Mappa del progetto`: le zone e la scheda progetto, D3; `Git e gestione branch`: la zona; `Collezioni e knowledge base`: la forma del documento; `File watching e awareness del progetto`: sorvegliante e scansione; `Sessioni multiple`: la sessione di D11; `Backup della KB indipendente dall'app`: D12 | le risposte |
 
 ## Le domande, una per volta
 
@@ -313,7 +391,9 @@ risponde a D1 e a buona parte delle domande di prima; l'elenco di prima sta nel 
 | **D9** | **i file-guida delle repo**: mai iniettati da soli; guida solo se importati e approvati | K15, con AUD-004 |
 | **D10** | **la proiezione quando il modello cambia** per un fallback | K16, K39, K40 |
 | **D11** | **la sessione**: che cos'è, e se scade col tempo — posta **prima** di D7, che ne dipende | K37 |
-| — | registrati col chiusore, senza domanda salvo che il proprietario la chieda: K11, K12, K17, K19, K21, K22, K23, K29, K34, K35, K36, K38 | |
+| **D12** | **il backup**: il programma salva anche gli artefatti delle run e le guide che stanno nella root, come ADR-0022, o solo i suoi dati e i router, come D4 — trovata dalla revisione, posta **prima** di D10 | K42, e riapre K31 |
+| **D13** | **gli artefatti di una zona esterna**: anche nella rete della Home, o solo nell'anello — trovata dalla revisione, posta **prima** di D10 | K43 |
+| — | registrati col chiusore, senza domanda salvo che il proprietario la chieda: K11, K12, K17, K19, K21, K22, K23, K29, K34, K35, K36, K38, K41 | |
 
 ### D1, posta il 2026-09-28
 
@@ -399,8 +479,8 @@ La prima forma sta nel commit `9bdbb59`.
 | mappata e indicizzata | sì: router, livello strutturale, grafo | la domanda qui sotto |
 | l'agente legge e scrive | solo dentro | solo dentro |
 | la copia prima delle modifiche dell'agente | sì, D2 | sì, D2 |
-| il permesso | concesso per la root | concesso all'apertura, per la sessione — ADR-0016 |
-| le regole di privacy | una **lista di base comune** a tutte le zone — `.env`, chiavi, `.ssh` —, più il file della root | la stessa lista di base, più le regole della zona |
+| il permesso | l'ambito della root c'è sempre, dalla configurazione; dentro, il preset di ADR-0016 — col default le letture procedono e le scritture chiedono, e un sì vale la sessione, D11. ⚠️ **Richiamo del 2026-09-29, revisione:** diceva *«concesso per la root»*, che si poteva leggere come un sì per sempre, contro il punto 3 di ADR-0016 | concesso all'apertura, per la sessione — ADR-0016, e la sessione è quella di D11 |
+| le regole di privacy | una **lista di base comune** a tutte le zone — `.env`, chiavi, `.ssh` —, più il file della root | la stessa lista di base, più le regole della zona — dove stanno, e chi le scrive: K41 |
 
 Fuori da tutte le zone l'agente non legge e non scrive: la porta risponde `OutsideScope`. E la lista di base comune toglie il
 costo che la B della prima forma aveva: una zona fuori dalla root **non** resta senza regole.
@@ -480,6 +560,11 @@ l'installazione.
 configurazione porta il percorso della root: chiude K1. La cartella `.<nomeapp>/` la marca nascosta il modulo di
 piattaforma, perché su Windows il punto non basta: chiude K30. Il programma salva nel proprio backup ciò che è **suo** — i
 suoi dati e i router —, e il resto della root è dei backup del proprietario: chiude K31.
+
+⚠️ **Richiamo del 2026-09-29, revisione:** l'ultima frase **non** era comune alle due risposte, né coerente con ADR-0022 come dice la
+tabella dei criteri qui sotto: nella root stanno anche gli artefatti delle run e le guide, che ADR-0022 mette nel backup del
+programma, e *«i suoi dati»* comprende alla lettera i segreti e l'indice, che ADR-0022 tiene fuori. La coppia indice–router
+resta decisa; il backup torna al proprietario come **D12** — K42.
 
 **La domanda: l'indice sta coi router nella cartella nascosta della root, o nella cartella dati del programma?**
 
@@ -836,7 +921,7 @@ AUD-004.
 | Fonte | Che cosa dice |
 |---|---|
 | Claude Code, *How Claude remembers your project* | il `CLAUDE.md` si carica **a ogni sessione**, e le istruzioni sono **contesto, non configurazione imposta**: per bloccare un'azione servono i permessi o un hook; un file importato da **fuori** dalla cartella chiede un'approvazione la prima volta — lo fa, dice la pagina, per proteggere dai file che altri committano in un progetto condiviso |
-| Claude Code, *Configure permissions* | la **fiducia alla cartella**: finché non c'è, le regole di permesso e le cartelle in più della repo non valgono, e i server MCP della repo si chiedono prima di connetterli |
+| Claude Code, *Configure permissions* | la **fiducia alla cartella**: finché non c'è, le regole della repo che **concedono** — i permessi *allow* e le cartelle in più — non valgono, mentre quelle che **negano** valgono sempre, perché restringono soltanto; i server MCP della repo si chiedono prima di connetterli; la fiducia si tiene per la radice della repo e si scrive su disco — nella sola cartella home vale per la sessione e basta. ⚠️ **Richiamo del 2026-09-29, revisione:** diceva *«le regole di permesso … non valgono»*, e sono solo quelle che concedono — riletto alla fonte |
 | Gemini CLI, *Trusted Folders* | la fiducia si chiede **una volta per cartella** e si salva in un file centrale; in una cartella non fidata — la *safe mode* — le impostazioni e le variabili d'ambiente della repo si ignorano, le approvazioni automatiche degli strumenti si spengono, il **caricamento automatico della memoria** si spegne, i server MCP non si connettono e i comandi su misura non si caricano |
 | VS Code, *Trust and safety for AI agents*, pagina del 2026-09-16 | una cartella non fidata gira in **modalità ristretta**, che spegne anche gli agenti; il contenuto dei file può tentare di dirottare l'agente |
 
@@ -851,6 +936,7 @@ Nessuna delle quattro riapprova un file-guida quando cambia.
 | una zona fidata | i file-guida si caricano a **ogni** sessione, anche quando cambiano, e l'impronta della versione caricata si scrive nel giornale: si sa sempre **quale** testo l'agente ha letto — la provenienza di ADR-0014 |
 | che cosa non possono fare | concedere permessi: i permessi stanno nel kernel, ADR-0016, e un testo non li cambia — come in Claude Code, dove le istruzioni sono contesto e i permessi stanno nelle impostazioni |
 | un import che esce dalla zona | chiede un'approvazione sua, come in Claude Code |
+| la fiducia e la sessione | la fiducia **non** è un permesso di ADR-0016: non concede triple; decide se i file-guida e le impostazioni della repo si caricano, e se valgono le approvazioni automatiche del preset. Per questo resta oltre la sessione, come in Claude Code, che la scrive su disco, mentre il permesso di aprire la zona si chiede a ogni sessione — D3, D11. ⚠️ **Aggiunta del 2026-09-29, revisione:** senza questa riga D9 e D11 — *«alla fine cadono i suoi sì»* — sembravano dirsi il contrario |
 
 **Dove urta il progetto, ed è la sola domanda.** La regola 3 del disegno del 2026-09-04 dice che il registro delle guide
 **rifiuta una guida senza impronta**, e la pretesa 1.1e vuole l'impronta **all'approvazione**: la forma di ADR-0015, che
@@ -951,6 +1037,116 @@ richiesta. **Assunto**: che il proprietario userà anche modelli con finestre pi
 **Il consiglio: A.** Il contesto è la cosa che il progetto ha deciso di non perdere mai: lo stato dell'arte si prende dove lo
 rispetta — controllare prima, passare al modello più grande —, e si spegne dove lo taglierebbe.
 
+### D12, posta il 2026-09-29 — trovata dalla revisione, prima di D10
+
+**Che cos'è, a parole semplici.** Il backup è la copia che il programma tiene per non perdere niente se il disco si rompe.
+ADR-0022 dice che cosa ci va: ciò che non si può rifare — il giornale, gli **artefatti** delle run, la configurazione e le
+**guide** —, e non ciò che si rifà, come l'indice, né i segreti, mai. D4 ha scritto, come cosa comune alle due risposte, che
+il programma salva **solo** i suoi dati e i router, e che il resto della root lo salva il proprietario coi suoi backup. Ma
+nella root stanno anche gli artefatti delle run — K4 — e le guide: la frase di D4 cambia due righe di ADR-0022 senza dirlo,
+e la sezione di D4 la dava per coerente — K42.
+
+**Che cosa esiste già.**
+
+| | Che cosa dice | Dove, e il comando |
+|---|---|---|
+| ADR-0022 | nel backup: il giornale, gli **artefatti** e *«configurazione, guide, profili»*; fuori: indici e pesi, e i segreti **mai**; il backup contiene *«solo l'irriproducibile»*; e la base di conoscenza *«sopravvive alla reinstallazione perché i documenti sorgente e la configurazione sono nel backup»* | `grep -n -e '^. artefatti' -e 'irriproducibile' docs/adr/0022-*.md` |
+| ADR-0022, il rimando del 2026-09-08 | le guide sono file della cartella della knowledge base, e la politica della riga — nel backup — non cambia | `grep -n 'nel backup, permanente' docs/adr/0022-*.md` |
+| il disegno del 2026-09-04 e design/09 | la cartella della knowledge base **nel backup** | la §2.2 del 2026-09-04; `grep -n 'col 6, la cartella della knowledge base' docs/design/09-l0-fisico.md` |
+| `tracciabilita.md` | `Backup della KB indipendente dall'app`: *«documenti nel backup, indice ricostruito»* | `grep -n 'Backup della KB' docs/tracciabilita.md` |
+| il documento del proprietario | *«Il programma è una finestra su quella directory»*, che può essere *«la cartella in cui tengo già tutto quello che ho sul PC»* | la sezione *«Presupposti»* |
+| la risposta D4 | *«il programma salva nel proprio backup i suoi dati e i router»* | la tabella delle risposte |
+| Obsidian | tiene le note in locale e **non** le salva: il suo recupero dei file è limitato e per dispositivo, e la guida chiede all'utente un sistema di backup suo; la sincronizzazione non è un backup | *Back up your Obsidian files*, letta dal sorgente il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md) |
+
+**Che cosa arriva.** L'**11** costruisce backup e ripristino; il **7** scrive asset 3D grandi, K21; il **6** l'indice.
+
+**Regge crescendo?** Col backup di ADR-0022 com'è, il programma deve sapere quali file della root sono artefatti — lo dice il
+giornale — anche dopo che il proprietario li sposta o li riscrive da fuori, e un asset 3D grande finisce in due backup,
+quello del programma e quello del proprietario. Col backup di D4, quello del programma resta piccolo.
+
+**In tutte e due le risposte**, e non è una domanda: i segreti **mai** nel backup, e l'indice fuori, perché si rifà —
+ADR-0022. *«I suoi dati»* di D4 si legge così.
+
+**La domanda: il backup del programma salva anche gli artefatti delle run e le guide che stanno nella root, come dice
+ADR-0022, o solo i suoi dati e i router, come dice D4?**
+
+| | **A — come D4 e lo stato dell'arte: la root è del proprietario** | **B — come ADR-0022: anche artefatti e guide** |
+|---|---|---|
+| com'è | il programma salva il giornale, la configurazione e i router; **ogni** file della root — artefatti e guide compresi — sta nei backup del proprietario, e il programma lo **dice** quando crea il backup, come chiede il seguito di ADR-0022 | il programma salva il giornale, la configurazione e i router, **e** gli artefatti delle run e le guide che stanno nella root; il resto della root è del proprietario |
+| costo | un **ADR nuovo** che superi, per i file della root, le righe degli artefatti e delle guide di ADR-0022 e la sua conseguenza sulla base di conoscenza — un ADR `Accepted` si cambia solo così, la §7 del compendio —; e il disegno del 2026-09-04, design/09 e la tracciabilità riletti | la regola «quali file della root sono artefatti», tenuta anche quando il proprietario li cambia da fuori — un file prodotto da una run e poi riscritto a mano è ancora un artefatto? —; i file grandi in due backup; nessun ADR cambia |
+| che cosa si rifà dopo | niente: rimettere gli artefatti nel backup, un giorno, è un ADR come questo | togliere la regola, se il confine si rivela sfumato |
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | ADR-0022 col rimando, design/09, la tracciabilità e la risposta D4 letti; Obsidian letto dal sorgente | idem; ma il confine «artefatto» con due attori non è sicuro: da solo il riconciliatore segue solo gli spostamenti esatti — D6 |
+| coerenza | segue il documento — *«una finestra»* — e la risposta D4, e cambia due righe di un ADR con un ADR, com'è la regola | ADR-0022 resta com'è; la risposta D4 riceve un richiamo |
+| debito | l'ADR da scrivere, dichiarato | il confine sfumato, da tenere nell'11 |
+| stato dell'arte | è Obsidian: la cartella è dell'utente, e il suo backup pure | contro la fonte letta |
+| proporzione | il backup del programma resta piccolo | un inseguitore di artefatti, e i file grandi due volte |
+| di chi è | **del proprietario**: cambia un suo ADR | **del proprietario**: cambia una sua risposta |
+
+**Verificato, dedotto, assunto.** **Verificati**: ADR-0022 col suo rimando, design/09, la tracciabilità, la risposta D4, e
+alla fonte Obsidian. **Dedotti**: che il confine «artefatto» si sfumi quando il proprietario riscrive un file da fuori; che
+un asset grande finisca in due backup. **Assunto**: che il proprietario abbia già un backup suo della cartella che userà
+come root.
+
+**Il consiglio: A.** È la risposta che il proprietario ha già dato in D4, col costo che allora non era scritto: un ADR che
+dica apertamente che il backup della root è suo, come in Obsidian.
+
+### D13, posta il 2026-09-29 — trovata dalla revisione, prima di D10
+
+**Che cos'è, a parole semplici.** Nella Home della GUI ci sono due cose: l'**anello**, coi file prodotti dalle run in ordine
+di data, e la **rete** al centro, il grafo della knowledge base. La decisione 1 della stella polare della GUI dice che la rete
+ha *«tutto: artefatti e file della knowledge base»*; D3 dice che una zona di lavoro **fuori** dalla root non entra nel grafo.
+Quando l'agente scrive codice in una repo aperta come zona fuori dalla root, quel codice è un artefatto: per la decisione 1
+sta nella rete, per D3 no — K43.
+
+**Che cosa esiste già.**
+
+| | Che cosa dice | Dove, e il comando |
+|---|---|---|
+| la stella polare della GUI, decisione 1 | nell'anello solo **file** prodotti dalle run, per data — l'artefatto è un file sul disco, riferito dal giornale —; la rete al centro ha **tutto** | `grep -n 'Nell.anello solo' docs/superpowers/specs/2026-09-07-direzione-gui-design.md` |
+| la stella polare della GUI, decisione 2 | la rete, a pagina intera, è il grafo della knowledge base | `grep -n 'la rete al centro è un modulo' docs/superpowers/specs/2026-09-07-direzione-gui-design.md` |
+| D3 | una zona fuori dalla root non entra nel grafo né nella ricerca; nella knowledge base c'è la sua **scheda progetto**; la zona non ha un indice, e nessuno la sorveglia | la risposta D3 |
+| il documento del proprietario | *«Un puntatore vecchio è peggio di nessun puntatore»* | la sezione *«Coerenza dei router»* |
+| Obsidian | il grafo disegna le note e i link interni fra di esse | *Graph view*, letta il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md) |
+
+**Che cosa arriva.** Il **5** apre le zone e vi scrive codice; il **6** costruisce la rete; l'anello è della Home, nel
+disegno della GUI.
+
+**Regge crescendo?** Una repo su cui si lavora molto produce centinaia di file. Nella rete la riempirebbero, e, siccome la
+zona non è sorvegliata, invecchierebbero appena il proprietario li sposta fuori dal programma. Nell'anello stanno per data, e
+un file che non c'è più si vede quando lo si apre.
+
+**La domanda: gli artefatti che l'agente scrive in una zona fuori dalla root stanno anche nella rete della Home, o solo
+nell'anello?**
+
+| | **A — solo nell'anello; nella rete la scheda** | **B — anche nella rete, appesi alla scheda** |
+|---|---|---|
+| com'è | l'anello li mostra, dal giornale, per data; nella rete la zona è la sua scheda, e da lì si apre; un file che non c'è più si mostra mancante quando lo si apre. La decisione 1 riceve un richiamo: la rete ha tutto ciò che sta **nella root** | la rete li mostra come nodi appesi alla scheda della zona, presi dal giornale; D3 riceve un richiamo: la zona non entra nel grafo, i file che le run vi scrivono sì |
+| costo | nella rete il lavoro fatto in una repo esterna non si vede file per file | nodi che invecchiano senza che nessuno lo sappia, finché un controllo a ogni apertura non li segna rotti; la rete piena dei file di una repo |
+| che cosa si rifà dopo | niente: aggiungerli un giorno si può | toglierli, se la rete diventa illeggibile |
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | la decisione 1, D3 e il documento letti | idem; ma la freschezza dei nodi non è sicura: la zona non è sorvegliata |
+| coerenza | D3 resta; la decisione 1 si legge «tutto ciò che sta nella root» | la decisione 1 resta; D3 si apre a metà |
+| debito | nessuno | il controllo di freschezza sui nodi delle zone |
+| stato dell'arte | è Obsidian: il grafo disegna le note della cartella che apre | un grafo di file fuori dalla cartella che mappa |
+| proporzione | niente da costruire in più | un pezzo di sorveglianza per le zone |
+| di chi è | **del proprietario**: cambia la lettura della sua decisione 1 | **del proprietario**: cambia la sua risposta D3 |
+
+**Verificato, dedotto, assunto.** **Verificati**: le decisioni 1 e 2 della stella polare, D3, il documento, e Obsidian alla
+fonte. **Dedotti**: che i nodi di una zona non sorvegliata invecchino; che la rete si riempia. **Assunto**: che al
+proprietario basti l'anello per ritrovare il lavoro fatto in una repo esterna.
+
+**Il consiglio: A.** Tiene la rete una mappa che dice il vero, e l'anello mostra comunque tutto ciò che le run hanno
+prodotto.
+
 ## Le risposte del proprietario
 
 | # | Risposta | Data |
@@ -958,7 +1154,7 @@ rispetta — controllare prima, passare al modello più grande —, e si spegne 
 | D1 | ⛔ **respinta**: il proprietario risponde col suo documento, riportato nella sezione *«Il documento del proprietario»*; le sue decisioni aperte 2 e 3 si accolgono come le propone | 2026-09-28 |
 | D2 | ✅ **A** — la copia di ADR-0024 resta, **solo** per le azioni dell'agente, e il giornale resta; nessuno storico dei cambi del proprietario, nessun versioning, nessun sync. Nessun ADR cambia | 2026-09-28 |
 | D3 | ✅ **A** — due specie di zona: la knowledge base, una e mappata, e le zone di lavoro, aperte come in Claude Desktop anche fuori dalla root, ciascuna col permesso per la sessione e la copia prima delle modifiche dell'agente; una zona **fuori** dalla root **non** entra nel grafo né nella ricerca, e nella knowledge base c'è la sua **scheda progetto**, che le fa da router; fuori da ogni zona l'agente non legge e non scrive. Posta il 2026-09-28, riformulata lo stesso giorno | 2026-09-29 |
-| D4 | ✅ **A** — separati per natura: i **router** in `.<nomeapp>/` alla root, nascosta dal modulo di piattaforma, e l'**indice** nella cartella dati del programma, fra i dati rigenerabili, uno per root; i dati del programma nella cartella dati per utente del sistema, e il programma salva nel proprio backup i suoi dati e i router | 2026-09-29 |
+| D4 | ✅ **A** — separati per natura: i **router** in `.<nomeapp>/` alla root, nascosta dal modulo di piattaforma, e l'**indice** nella cartella dati del programma, fra i dati rigenerabili, uno per root; i dati del programma nella cartella dati per utente del sistema, e il programma salva nel proprio backup i suoi dati e i router ⚠️ **2026-09-29, la revisione:** la metà sul backup urta ADR-0022, e torna al proprietario come **D12** | 2026-09-29 |
 | D5 | ✅ **A** — due specie: il **rumore**, dove lo scanner non entra ma il file o la cartella restano un nodo del grafo e l'agente li apre se serve; il **privato**, fuori dall'indice e da ciò che l'agente vede, con la porta che rifiuta la lettura e il confinamento dei comandi che nega quei percorsi. Le regole del privato le cambia solo il proprietario: l'agente propone, e ciò che rende leggibile qualcosa chiede conferma a ogni preset | 2026-09-29 |
 | D6 | ✅ **A** — nel dubbio, **rotto** e una domanda: il caso certo — la stessa impronta, un solo candidato — si applica da solo; un file chiave che il riconciliatore non ritrova con certezza resta nella mappa segnato rotto, l'agente non lo segue, il pannello lo mostra, e il riconciliatore propone i candidati — lo stesso nome altrove, o un contenuto simile come fa git — fra cui sceglie il proprietario; due file identici sono un caso di dubbio | 2026-09-29 |
 | D7 | ✅ **A** — un sì per la sessione: la tripla `(file, .<nomeapp>/, scrittura)` si concede alla prima modifica di un router e vale per la sessione di D11, come il punto 3 di ADR-0016; ogni modifica si vede nel turno e si annulla. Alla prima posa il proprietario aveva risposto con una domanda — la sessione non era definita, K37 —, e D7 si è riposta dopo D11. Con la risposta ha chiesto se la sessione sia già integrata nei permessi: **non ancora**, e dove va lo dice la sezione di D11 | 2026-09-29 |
@@ -966,6 +1162,8 @@ rispetta — controllare prima, passare al modello più grande —, e si spegne 
 | D9 | ✅ **A** — lo stato dell'arte: la fiducia si chiede una volta per zona e sta nel giornale; una zona non fidata va in modalità ristretta, coi file-guida non caricati da soli; in una zona fidata i file-guida si caricano a ogni sessione, anche quando cambiano, con l'impronta della versione caricata nel giornale; un file-guida non concede permessi; un import che esce dalla zona chiede la sua approvazione. La regola 3 e la pretesa 1.1e del disegno del 2026-09-04 ricevono un richiamo datato col disegno di questa revisione: per una guida di zona l'approvazione è la fiducia alla cartella. Posta il 2026-09-29 e riformulata sullo stato dell'arte lo stesso giorno | 2026-09-29 |
 | D10 | ⏳ scritta il 2026-09-29 e **non posta**: il proprietario ha chiuso la sessione prima; si pone dopo la revisione iniziale di coerenza e correttezza | 2026-09-29 |
 | D11 | ✅ **delegata allo stato dell'arte** — *«come le sessioni moderne delle app moderne stato dell'arte, decision-principles devi seguire»*: la sessione è la run coi suoi sotto-agenti, uguale sul lato chat e sul lato coding; finisce quando il proprietario la chiude, dopo un tempo di inattività o dopo un tempo massimo, e la fa rispettare il core; i due tempi sono parametri consegnati, coi valori al 3 e il riferimento di NIST AAL2; alla fine cadono i suoi sì e si chiudono le sue zone. Il sì oltre la sessione delle app di oggi urta ADR-0016: segnalato, K38 | 2026-09-29 |
+| D12 | ⏳ scritta il 2026-09-29 dalla revisione, e si pone **prima** di D10 | 2026-09-29 |
+| D13 | ⏳ scritta il 2026-09-29 dalla revisione, e si pone dopo D12 e **prima** di D10 | 2026-09-29 |
 
 ## Come si riprende — scritto alla chiusura della sessione del 2026-09-29
 

@@ -288,6 +288,7 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 | **K34** | **i file «solo online» di OneDrive** dentro la root: leggerli scarica il file, o fallisce senza rete | F | — | registrato: il 6, alla fonte |
 | **K35** | **una zona di lavoro si apre e non si chiude**: la porta `filesystem` ha `declare_scope` e nessuna chiusura, mentre la zona dura la sessione; e gli ambiti sono **della porta**, non della run — due run con due zone diverse, gli agenti del 4, alla porta vedrebbero l'una la zona dell'altra, e il confine per run lo dà solo il permesso di ADR-0016 | V: `grep -n '^    fn ' crates/kernel/src/ports/filesystem.rs` rende i cinque metodi del tratto, nessuno che chiuda; D: una porta sola nel daemon | — | registrato: chi costruisce la porta `filesystem` vera, con K23 |
 | **K36** | **il privato escluso dalla porta non lo è per i comandi**: uno script che l'agente esegue apre i file da sé, e la porta non lo vede. Le documentazioni di Claude Code e di Cursor lo dicono dei loro prodotti; da noi il livello 1 di ADR-0025, per costruzione, non regge contro codice eseguito | V alla fonte, il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md); D per il nostro caso | — | registrato: il 5, col confinamento di livello 2 che nega i percorsi privati; il 4 per MCP, con K12 |
+| **K37** | **la sessione non è definita**: ADR-0016 dice che un sì vale *«per la sessione corrente»* e *«non vale domani»*, ma nessun documento dice che cos'è una sessione; il kernel lo dichiara nel sorgente, e un permesso concesso resta concesso **per sempre**, anche dopo un riavvio; il disegno del 2 ha dato il confine a chi porta le run, il 3, senza definirlo. Trovato dal proprietario, rispondendo a D7 | V: `grep -n 'SCOPED TO A SESSION' crates/kernel/src/permission.rs`, `grep -n 'triple therefore survives' crates/kernel/src/registry.rs`, `grep -n 'il confine di sessione dei permessi' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` | — | **D11** |
 
 ## Le domande, una per volta
 
@@ -307,6 +308,7 @@ risponde a D1 e a buona parte delle domande di prima; l'elenco di prima sta nel 
 | **D8** | **i link markdown come archi** — la decisione aperta 4 del proprietario | — |
 | **D9** | **i file-guida delle repo**: mai iniettati da soli; guida solo se importati e approvati | K15, con AUD-004 |
 | **D10** | **la proiezione quando il modello cambia** per un fallback | K16 |
+| **D11** | **la sessione**: che cos'è, e se scade col tempo — posta **prima** di D7, che ne dipende | K37 |
 | — | registrati col chiusore, senza domanda salvo che il proprietario la chieda: K11, K12, K17, K19, K21, K22, K23, K29, K34, K35, K36 | |
 
 ### D1, posta il 2026-09-28
@@ -617,6 +619,11 @@ puntatore che si perde: un file chiave non esce dalla mappa senza che il proprie
 
 ### D7, posta il 2026-09-29
 
+⚠️ **Il proprietario ha risposto con una domanda, lo stesso giorno:** *«da cosa è definita una sessione? se non c'è una
+definizione di sessione nel software anche se ti dicessi "un si per sessione" ci sarebbe un buco. Cosa rappresenta una
+sessione nel software? è differente o uguale a quella del lato di coding?»*. La lacuna è vera — K37: la sessione non è
+definita da nessuna parte, e D7 poggiava su di lei. **D7 si ripone dopo D11**, che la definisce.
+
 **Che cos'è, a parole semplici.** Il documento vuole che l'agente, quando crea, sposta o modifica un file, aggiorni i router
 **nello stesso turno**. Ma col preset di default di ADR-0016, `auto-approva sicuri`, ogni scrittura **chiede**: creare un
 file e poi aggiornare il router sono due conferme — K33.
@@ -666,6 +673,62 @@ approvarle una per una.
 **Il consiglio: A.** Dà l'aggiornamento nello stesso turno che il documento chiede, con la regola che esiste già, e ogni
 modifica resta visibile e annullabile.
 
+### D11, posta il 2026-09-29 — prima di D7, che ne dipende
+
+**Che cos'è, a parole semplici.** «Sessione» è una parola che il repository usa senza averla mai definita. ADR-0016 dice che
+un sì vale *«per la tripla concessa e per la sessione corrente»*, e che *«non vale domani»*; il codice dice di sé che una
+sessione non esiste, e un permesso concesso oggi resta concesso per sempre, anche dopo un riavvio. **Chi** la costruisce è
+già scritto — il 3, che porta le run —; **che cosa** sia, no.
+
+**Che cosa esiste già.**
+
+| | Che cosa dice | Dove, e il comando |
+|---|---|---|
+| ADR-0016, il punto 3 | un sì vale per la tripla e *«per la sessione corrente»*; approvare `(file, ~/progetti/x, scrittura)` *«non vale domani»* | `grep -n 'non si estende' docs/adr/0016-*.md` |
+| ADR-0011 | una conversazione è una **run** interattiva di lunga durata, e ogni messaggio è un passo; la contabilità *«per messaggio, per sessione, per run agentica e per sub-agente»* è fatta di aggregazioni della stessa gerarchia, passo → run → run padre | `grep -n 'per sessione' docs/adr/0011-*.md`; la voce della §5 del compendio |
+| il kernel | *«NOTHING HERE IS SCOPED TO A SESSION»*: nessuna sessione, nessuna revoca; e il registro: un sì concesso sopravvive a un riavvio | i due comandi di K37 |
+| il disegno del 2 | il confine di sessione dei permessi è del **3**, con le run | il terzo comando di K37 |
+| D3 | una zona di lavoro dura la sessione | la risposta D3 |
+| Claude Code | una sessione è **una conversazione**, legata a una cartella, e si riprende; il sì alle modifiche dei file vale fino alla fine della sessione | *How Claude Code works* e *Configure permissions*, lette alla fonte il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md) |
+
+**Che cosa arriva.** Il **3** porta le run, e con loro il confine; il **4** gli agenti coi sotto-agenti, e le run che partono
+da un trigger senza il proprietario davanti; il **5** le zone di lavoro.
+
+**Regge crescendo?** Senza una definizione, no: ogni sotto-progetto ne inventerebbe una — i permessi al 3, le zone al 5 —, e
+due confini diversi per la stessa parola sono la forma del gotcha #68.
+
+**In tutte e due le risposte**, e non è una domanda: **la sessione è la run** che il proprietario apre — una conversazione, o
+un compito dell'agente — **coi suoi sotto-agenti**. È la stessa cosa sul lato della chat e su quello del coding, come in
+Claude Code: una zona di lavoro si apre in una sessione e si chiude con lei, e un sì vale per quella sessione e non per
+un'altra. La costruisce il 3, com'era già assegnato. ADR-0011 va già in questa direzione, mettendo la sessione fra le
+aggregazioni della gerarchia delle run: è una deduzione, e diventa una decisione con la risposta.
+
+**La domanda: una sessione finisce solo con la sua run, o scade anche col tempo?**
+
+| | **A — scade anche col tempo** | **B — solo con la run** |
+|---|---|---|
+| com'è | la sessione è la run, ma un sì dura al massimo un tempo fissato: dopo, anche nella stessa conversazione, si richiede. La durata è un parametro consegnato al kernel, come vuole ADR-0034, e il suo valore lo sceglie il 3 | un sì dura quanto la conversazione o il compito, anche giorni |
+| costo | una domanda in più nelle conversazioni lunghe; un parametro | ADR-0016 riceve un rimando — *«non vale domani»* diventa *«non vale per un'altra sessione»* —; e un sì dimenticato in una conversazione che non si chiude mai resta attivo per sempre, il rischio che il seguito di ADR-0016 nomina: *«un permesso concesso e dimenticato è indistinguibile da un permesso mai concesso»* |
+| che cosa si rifà dopo | niente | aggiungere la scadenza dopo |
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | ADR-0016 letto: *«non vale domani»* regge com'è scritto | ADR-0016 letto: va riletto con un rimando |
+| coerenza | nessuna decisione cambia; il tempo arriva dall'orologio iniettabile di ADR-0021, e il parametro è consegnato, ADR-0034 | ADR-0016 cambia lettura |
+| debito | il valore della durata, al 3 | i sì dimenticati nelle conversazioni lunghe |
+| stato dell'arte | più stretto di Claude Code, che per quanto letto lega il sì alla sola sessione; una scadenza nel tempo non è stata cercata alla fonte | è il modello di Claude Code, per quanto letto |
+| proporzione | un parametro | nessun meccanismo in più |
+| di chi è | **del proprietario**: rilegge ADR-0016 | idem |
+
+**Verificato, dedotto, assunto.** **Verificati**: ADR-0016, ADR-0011, il sorgente di `permission.rs` e di `registry.rs`, il
+disegno del 2, e alla fonte Claude Code. **Dedotti**: che la sessione sia la run — da ADR-0011 e dal modo di Claude Code —; che
+una run coi suoi sotto-agenti sia una sessione sola. **Assunto**: che le conversazioni del proprietario possano durare giorni.
+
+**Il consiglio: A.** Tiene ADR-0016 com'è scritto — *«non vale domani»* — e chiude il sì dimenticato; il prezzo è una domanda
+al giorno nelle conversazioni lunghe.
+
 ## Le risposte del proprietario
 
 | # | Risposta | Data |
@@ -676,6 +739,7 @@ modifica resta visibile e annullabile.
 | D4 | ✅ **A** — separati per natura: i **router** in `.<nomeapp>/` alla root, nascosta dal modulo di piattaforma, e l'**indice** nella cartella dati del programma, fra i dati rigenerabili, uno per root; i dati del programma nella cartella dati per utente del sistema, e il programma salva nel proprio backup i suoi dati e i router | 2026-09-29 |
 | D5 | ✅ **A** — due specie: il **rumore**, dove lo scanner non entra ma il file o la cartella restano un nodo del grafo e l'agente li apre se serve; il **privato**, fuori dall'indice e da ciò che l'agente vede, con la porta che rifiuta la lettura e il confinamento dei comandi che nega quei percorsi. Le regole del privato le cambia solo il proprietario: l'agente propone, e ciò che rende leggibile qualcosa chiede conferma a ogni preset | 2026-09-29 |
 | D6 | ✅ **A** — nel dubbio, **rotto** e una domanda: il caso certo — la stessa impronta, un solo candidato — si applica da solo; un file chiave che il riconciliatore non ritrova con certezza resta nella mappa segnato rotto, l'agente non lo segue, il pannello lo mostra, e il riconciliatore propone i candidati — lo stesso nome altrove, o un contenuto simile come fa git — fra cui sceglie il proprietario; due file identici sono un caso di dubbio | 2026-09-29 |
+| D7 | ⏳ il proprietario ha risposto con una domanda — la sessione non è definita, K37 —: si ripone dopo D11 | 2026-09-29 |
 
 ## Come si riprende — scritto alla chiusura della sessione del 2026-09-28
 

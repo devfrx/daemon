@@ -288,7 +288,8 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 | **K34** | **i file «solo online» di OneDrive** dentro la root: leggerli scarica il file, o fallisce senza rete | F | — | registrato: il 6, alla fonte |
 | **K35** | **una zona di lavoro si apre e non si chiude**: la porta `filesystem` ha `declare_scope` e nessuna chiusura, mentre la zona dura la sessione; e gli ambiti sono **della porta**, non della run — due run con due zone diverse, gli agenti del 4, alla porta vedrebbero l'una la zona dell'altra, e il confine per run lo dà solo il permesso di ADR-0016 | V: `grep -n '^    fn ' crates/kernel/src/ports/filesystem.rs` rende i cinque metodi del tratto, nessuno che chiuda; D: una porta sola nel daemon | — | registrato: chi costruisce la porta `filesystem` vera, con K23 |
 | **K36** | **il privato escluso dalla porta non lo è per i comandi**: uno script che l'agente esegue apre i file da sé, e la porta non lo vede. Le documentazioni di Claude Code e di Cursor lo dicono dei loro prodotti; da noi il livello 1 di ADR-0025, per costruzione, non regge contro codice eseguito | V alla fonte, il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md); D per il nostro caso | — | registrato: il 5, col confinamento di livello 2 che nega i percorsi privati; il 4 per MCP, con K12 |
-| **K37** | **la sessione non è definita**: ADR-0016 dice che un sì vale *«per la sessione corrente»* e *«non vale domani»*, ma nessun documento dice che cos'è una sessione; il kernel lo dichiara nel sorgente, e un permesso concesso resta concesso **per sempre**, anche dopo un riavvio; il disegno del 2 ha dato il confine a chi porta le run, il 3, senza definirlo. Trovato dal proprietario, rispondendo a D7 | V: `grep -n 'SCOPED TO A SESSION' crates/kernel/src/permission.rs`, `grep -n 'triple therefore survives' crates/kernel/src/registry.rs`, `grep -n 'il confine di sessione dei permessi' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` | — | **D11** |
+| **K37** | **la sessione non è definita**: ADR-0016 dice che un sì vale *«per la sessione corrente»* e *«non vale domani»*, ma nessun documento dice che cos'è una sessione; il kernel lo dichiara nel sorgente, e un permesso concesso resta concesso **per sempre**, anche dopo un riavvio; il disegno del 2 ha dato il confine a chi porta le run, il 3, senza definirlo. Trovato dal proprietario, rispondendo a D7 | V: `grep -n 'SCOPED TO A SESSION' crates/kernel/src/permission.rs`, `grep -n 'triple therefore survives' crates/kernel/src/registry.rs`, `grep -n 'il confine di sessione dei permessi' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` | — | **D11** — ✅ chiuso il 2026-09-29: la run coi sotto-agenti, con la chiusura a mano e le due scadenze; la costruisce il 3 |
+| **K38** | **il sì oltre la sessione**: Claude Code e VS Code offrono anche un sì per lo spazio di lavoro o per sempre, con un comando che li azzera, e Android azzera da solo i permessi non usati; ADR-0016 dice *«un'approvazione non si estende»*, e fra le sue alternative non ha mai valutato la durata | V alla fonte, il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md); `grep -n 'Alternative considerate per i permessi' docs/adr/0016-*.md` | — | registrato: il **proprietario**, con un ADR nuovo se vorrà riaprire il punto 3 di ADR-0016 |
 
 ## Le domande, una per volta
 
@@ -309,7 +310,7 @@ risponde a D1 e a buona parte delle domande di prima; l'elenco di prima sta nel 
 | **D9** | **i file-guida delle repo**: mai iniettati da soli; guida solo se importati e approvati | K15, con AUD-004 |
 | **D10** | **la proiezione quando il modello cambia** per un fallback | K16 |
 | **D11** | **la sessione**: che cos'è, e se scade col tempo — posta **prima** di D7, che ne dipende | K37 |
-| — | registrati col chiusore, senza domanda salvo che il proprietario la chieda: K11, K12, K17, K19, K21, K22, K23, K29, K34, K35, K36 | |
+| — | registrati col chiusore, senza domanda salvo che il proprietario la chieda: K11, K12, K17, K19, K21, K22, K23, K29, K34, K35, K36, K38 | |
 
 ### D1, posta il 2026-09-28
 
@@ -673,7 +674,12 @@ approvarle una per una.
 **Il consiglio: A.** Dà l'aggiornamento nello stesso turno che il documento chiede, con la regola che esiste già, e ogni
 modifica resta visibile e annullabile.
 
-### D11, posta il 2026-09-29 — prima di D7, che ne dipende
+### D11, posta il 2026-09-29 e riformulata lo stesso giorno — prima di D7, che ne dipende
+
+⚠️ **Il proprietario ha risposto alla prima forma — «finisce solo con la run, o scade anche col tempo?» — con una consegna:**
+*«come le sessioni moderne delle app moderne stato dell'arte, decision-principles devi seguire»*. È un'**accettazione
+condizionata**: la risposta la dà lo stato dell'arte letto alla fonte, coi cinque criteri, e dove lo stato dell'arte urta una
+decisione del progetto si **segnala** invece di applicarlo. La prima forma sta nel commit `516dc72`.
 
 **Che cos'è, a parole semplici.** «Sessione» è una parola che il repository usa senza averla mai definita. ADR-0016 dice che
 un sì vale *«per la tripla concessa e per la sessione corrente»*, e che *«non vale domani»*; il codice dice di sé che una
@@ -691,43 +697,48 @@ già scritto — il 3, che porta le run —; **che cosa** sia, no.
 | D3 | una zona di lavoro dura la sessione | la risposta D3 |
 | Claude Code | una sessione è **una conversazione**, legata a una cartella, e si riprende; il sì alle modifiche dei file vale fino alla fine della sessione | *How Claude Code works* e *Configure permissions*, lette alla fonte il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md) |
 
-**Che cosa arriva.** Il **3** porta le run, e con loro il confine; il **4** gli agenti coi sotto-agenti, e le run che partono
-da un trigger senza il proprietario davanti; il **5** le zone di lavoro.
+**Che cosa fanno le app di oggi — letto alla fonte il 2026-09-29**, la provenienza in [`riferimenti.md`](../../riferimenti.md).
 
-**Regge crescendo?** Senza una definizione, no: ogni sotto-progetto ne inventerebbe una — i permessi al 3, le zone al 5 —, e
-due confini diversi per la stessa parola sono la forma del gotcha #68.
+| Fonte | Che cosa dice |
+|---|---|
+| OWASP, *Session Management Cheat Sheet* | una sessione ha **due scadenze automatiche**: per **inattività** — da 2–5 minuti per le applicazioni di valore alto a 15–30 per quelle a basso rischio — e **assoluta**, dal momento in cui nasce — da 4 a 8 ore per chi la usa una giornata di lavoro —; più la chiusura **a mano**, con un comando visibile; e le scadenze le fa rispettare il **server**, mai il client |
+| NIST SP 800-63B-4, 26 agosto 2025 | la riautenticazione: al livello AAL2 una scadenza complessiva di **non più di 24 ore** e una per inattività di **non più di un'ora**; ad AAL3, 12 ore e 15 minuti; ad AAL1, 30 giorni e nessuna per inattività |
+| Claude Code, *Configure permissions* e *How Claude Code works* | una sessione è una **conversazione**; il sì alle modifiche dei file vale **fino alla fine della sessione**, quello a un comando o a un dominio si salva **per sempre** nel repository |
+| VS Code, *Manage approvals and permissions*, pagina del 2026-09-16 | un'approvazione vale **una volta**, **per la sessione**, **per lo spazio di lavoro** o **per sempre**, e un comando le **azzera** tutte; la pagina non definisce la sessione |
+| Android, *Request runtime permissions* | il permesso *«solo questa volta»* vale finché l'app è in uso e per poco dopo, poi si richiede; e i permessi di un'app non usata per qualche mese si **azzerano da soli** |
 
-**In tutte e due le risposte**, e non è una domanda: **la sessione è la run** che il proprietario apre — una conversazione, o
-un compito dell'agente — **coi suoi sotto-agenti**. È la stessa cosa sul lato della chat e su quello del coding, come in
-Claude Code: una zona di lavoro si apre in una sessione e si chiude con lei, e un sì vale per quella sessione e non per
-un'altra. La costruisce il 3, com'era già assegnato. ADR-0011 va già in questa direzione, mettendo la sessione fra le
-aggregazioni della gerarchia delle run: è una deduzione, e diventa una decisione con la risposta.
+**Che cosa ne segue: la definizione.**
 
-**La domanda: una sessione finisce solo con la sua run, o scade anche col tempo?**
+| | La sessione |
+|---|---|
+| che cos'è | la **run** che il proprietario apre — una conversazione, o un compito dell'agente — **coi suoi sotto-agenti**: la stessa cosa sul lato della chat e su quello del coding, come la conversazione di Claude Code e di VS Code |
+| quando finisce | alla prima di tre cose: il proprietario la **chiude**, con un comando visibile; passa un tempo di **inattività**; passa un tempo **massimo** da quando è nata — le due scadenze di OWASP e di NIST |
+| chi la fa rispettare | il **core**, mai la GUI: è il «server» di OWASP, e lo stato vive solo nel core, I1 |
+| i due tempi | **parametri consegnati** al kernel, ADR-0034, misurati con l'orologio iniettabile di ADR-0021; i valori li sceglie il 3, e il riferimento, per analogia, è il livello AAL2 di NIST — un'ora di inattività, 24 ore al massimo —, perché l'assistente scrive file ed esegue comandi |
+| che cosa si porta via | alla fine della sessione cadono i suoi sì — ADR-0016, punto 3 — e si chiudono le sue zone di lavoro, D3; la run invece resta nel giornale e si riprende, e ripresa chiede di nuovo |
+| che cosa si vede | i sì attivi di una sessione, con la revoca: il seguito di ADR-0016, e il comando che li azzera di VS Code |
 
-| | **A — scade anche col tempo** | **B — solo con la run** |
-|---|---|---|
-| com'è | la sessione è la run, ma un sì dura al massimo un tempo fissato: dopo, anche nella stessa conversazione, si richiede. La durata è un parametro consegnato al kernel, come vuole ADR-0034, e il suo valore lo sceglie il 3 | un sì dura quanto la conversazione o il compito, anche giorni |
-| costo | una domanda in più nelle conversazioni lunghe; un parametro | ADR-0016 riceve un rimando — *«non vale domani»* diventa *«non vale per un'altra sessione»* —; e un sì dimenticato in una conversazione che non si chiude mai resta attivo per sempre, il rischio che il seguito di ADR-0016 nomina: *«un permesso concesso e dimenticato è indistinguibile da un permesso mai concesso»* |
-| che cosa si rifà dopo | niente | aggiungere la scadenza dopo |
+⚠️ **Dove lo stato dell'arte urta il progetto, e si segnala senza applicarlo — K38.** Claude Code e VS Code offrono anche un sì
+**oltre** la sessione — per lo spazio di lavoro, o per sempre, con un comando che li azzera —, e Android azzera da solo i
+permessi non usati. ADR-0016 dice il contrario — *«un'approvazione non si estende»* — e fra le sue alternative non ha mai
+valutato la durata: ha scelto la tripla contro lo strumento, e basta. Riaprirlo vuol dire un ADR nuovo, ed è del proprietario.
 
-**I cinque criteri.**
+**I cinque criteri, sul risultato.**
 
-| Criterio | A | B |
-|---|---|---|
-| correttezza verificata | ADR-0016 letto: *«non vale domani»* regge com'è scritto | ADR-0016 letto: va riletto con un rimando |
-| coerenza | nessuna decisione cambia; il tempo arriva dall'orologio iniettabile di ADR-0021, e il parametro è consegnato, ADR-0034 | ADR-0016 cambia lettura |
-| debito | il valore della durata, al 3 | i sì dimenticati nelle conversazioni lunghe |
-| stato dell'arte | più stretto di Claude Code, che per quanto letto lega il sì alla sola sessione; una scadenza nel tempo non è stata cercata alla fonte | è il modello di Claude Code, per quanto letto |
-| proporzione | un parametro | nessun meccanismo in più |
-| di chi è | **del proprietario**: rilegge ADR-0016 | idem |
+| Criterio | La definizione |
+|---|---|
+| correttezza verificata | cinque fonti primarie lette oggi; ADR-0016, ADR-0011 e il codice letti |
+| coerenza | nessun ADR cambia: la sessione riempie la parola che ADR-0016 usa, con la run di ADR-0011; la scadenza vive nel core, I1; i tempi sono consegnati, ADR-0034, e l'orologio è iniettabile, ADR-0021 |
+| debito | i valori dei due tempi e la revoca, al 3, com'era già assegnato; K38, registrato |
+| stato dell'arte | le due scadenze di OWASP e di NIST, e la sessione come conversazione di Claude Code e di VS Code |
+| proporzione | due parametri e una chiusura a mano: nessun meccanismo che le fonti non abbiano |
+| di chi è | **del proprietario**, che l'ha delegata allo stato dell'arte con una condizione |
 
-**Verificato, dedotto, assunto.** **Verificati**: ADR-0016, ADR-0011, il sorgente di `permission.rs` e di `registry.rs`, il
-disegno del 2, e alla fonte Claude Code. **Dedotti**: che la sessione sia la run — da ADR-0011 e dal modo di Claude Code —; che
-una run coi suoi sotto-agenti sia una sessione sola. **Assunto**: che le conversazioni del proprietario possano durare giorni.
-
-**Il consiglio: A.** Tiene ADR-0016 com'è scritto — *«non vale domani»* — e chiude il sì dimenticato; il prezzo è una domanda
-al giorno nelle conversazioni lunghe.
+**Verificato, dedotto, assunto.** **Verificati**: le cinque fonti, lette il 2026-09-29; ADR-0016, ADR-0011, `permission.rs`,
+`registry.rs` e il disegno del 2. **Dedotti**: che la sessione dei permessi sia la conversazione anche da noi — le fonti degli
+agenti lo fanno, e ADR-0011 mette la sessione nella gerarchia delle run —; che le scadenze delle sessioni di accesso valgano
+anche per i sì dati a un agente — per analogia, e il permesso *«solo questa volta»* di Android è della stessa famiglia.
+**Assunto**: che il livello AAL2 sia il riferimento giusto per i valori; lo verifica il 3.
 
 ## Le risposte del proprietario
 
@@ -740,6 +751,7 @@ al giorno nelle conversazioni lunghe.
 | D5 | ✅ **A** — due specie: il **rumore**, dove lo scanner non entra ma il file o la cartella restano un nodo del grafo e l'agente li apre se serve; il **privato**, fuori dall'indice e da ciò che l'agente vede, con la porta che rifiuta la lettura e il confinamento dei comandi che nega quei percorsi. Le regole del privato le cambia solo il proprietario: l'agente propone, e ciò che rende leggibile qualcosa chiede conferma a ogni preset | 2026-09-29 |
 | D6 | ✅ **A** — nel dubbio, **rotto** e una domanda: il caso certo — la stessa impronta, un solo candidato — si applica da solo; un file chiave che il riconciliatore non ritrova con certezza resta nella mappa segnato rotto, l'agente non lo segue, il pannello lo mostra, e il riconciliatore propone i candidati — lo stesso nome altrove, o un contenuto simile come fa git — fra cui sceglie il proprietario; due file identici sono un caso di dubbio | 2026-09-29 |
 | D7 | ⏳ il proprietario ha risposto con una domanda — la sessione non è definita, K37 —: si ripone dopo D11 | 2026-09-29 |
+| D11 | ✅ **delegata allo stato dell'arte** — *«come le sessioni moderne delle app moderne stato dell'arte, decision-principles devi seguire»*: la sessione è la run coi suoi sotto-agenti, uguale sul lato chat e sul lato coding; finisce quando il proprietario la chiude, dopo un tempo di inattività o dopo un tempo massimo, e la fa rispettare il core; i due tempi sono parametri consegnati, coi valori al 3 e il riferimento di NIST AAL2; alla fine cadono i suoi sì e si chiudono le sue zone. Il sì oltre la sessione delle app di oggi urta ADR-0016: segnalato, K38 | 2026-09-29 |
 
 ## Come si riprende — scritto alla chiusura della sessione del 2026-09-28
 

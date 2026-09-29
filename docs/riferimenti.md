@@ -2914,7 +2914,7 @@ un autore organizza il lavoro con un agente, e vale come **origine dell'idea**, 
 
 ## La revisione della knowledge base — le fonti delle domande, 2026-09-29
 
-Le fonti lette per le domande D3, D4, D5, D6 e D7 della [revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md):
+Le fonti lette per le domande D3, D4, D5, D6, D7 e D11 della [revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md):
 il merito lì, qui la provenienza. ⚠️ **Lette attraverso lo strumento di lettura della sessione.** La prima è la
 documentazione di un prodotto: dice come lavora Claude Code, non che il suo modo basti su ogni repo.
 
@@ -2926,6 +2926,10 @@ documentazione di un prodotto: dice come lavora Claude Code, non che il suo modo
 | Anthropic, *Configure permissions*, `https://code.claude.com/docs/en/permissions` | 2026-09-29 | D5: le regole `Read` di negazione, con la sintassi di `.gitignore`, bloccano gli strumenti dei file e i comandi che nominano il file, non un comando che legge senza nominarlo né uno script che apre i file da sé; per un blocco su ogni processo la pagina rimanda alla sandbox. D7: nella tabella dei permessi, per le modifiche ai file la scelta *Yes, and don't ask again* vale *Until session end* |
 | Cursor, *Ignore file*, `https://cursor.com/docs/context/ignore-files` | 2026-09-29 | D5: `.cursorignore` blocca l'agente, Tab, la modifica in linea e le menzioni, non il terminale né gli strumenti MCP dell'agente; la pagina dice che la protezione completa non è garantita. Non nomina `.cursorindexingignore` |
 | git, *git-diff*, la documentazione della 2.56.0, `https://git-scm.com/docs/git-diff` | 2026-09-29 | D6: `-M`, il riconoscimento degli spostamenti per indice di somiglianza — un «cancellato più nuovo» è uno spostamento se abbastanza del file è rimasto uguale —, col 50% di default; `-M100%` limita ai soli spostamenti esatti |
+| OWASP, *Session Management Cheat Sheet*, `https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html` | 2026-09-29 | D11: le due scadenze automatiche di una sessione — per inattività, coi 2–5 minuti delle applicazioni di valore alto e i 15–30 di quelle a basso rischio, e assoluta, coi 4–8 ore di chi la usa una giornata di lavoro —; la chiusura a mano con un comando visibile; le scadenze fatte rispettare dal server, mai dal client |
+| NIST, *SP 800-63B*, revisione 800-63-4 del 26 agosto 2025, `https://pages.nist.gov/800-63-4/sp800-63b.html` | 2026-09-29 | D11: la riautenticazione — AAL1 al più 30 giorni e nessuna scadenza per inattività; AAL2 al più 24 ore e un'ora di inattività; AAL3 al più 12 ore e 15 minuti |
+| Microsoft, *Manage approvals and permissions* di VS Code, pagina del 2026-09-16, `https://code.visualstudio.com/docs/agents/run/approvals` | 2026-09-29 | D11: un'approvazione vale una volta, per la sessione, per lo spazio di lavoro o per sempre, e *Chat: Reset Tool Confirmations* le azzera tutte; la pagina non definisce la sessione |
+| Google, *Request runtime permissions* di Android, `https://developer.android.com/training/permissions/requesting` | 2026-09-29 | D11: il permesso *«solo questa volta»* vale finché l'attività è visibile e per poco dopo che l'app va in secondo piano, poi si richiede; i permessi di un'app non usata per qualche mese si azzerano da soli, da Android 11 |
 
 ## Cosa NON abbiamo adottato, e perché
 

@@ -2966,6 +2966,17 @@ il merito lì, qui la provenienza. ⚠️ **Lette dal sorgente**: i tre file sul
 | Anthropic, *Checkpointing* di Claude Code, `https://code.claude.com/docs/en/checkpointing`, dal sorgente `.md` | 2026-09-29 | K53: le istantanee dei file per le cento verifiche più recenti di una sessione, cancellate nella pulizia automatica, per default circa trenta giorni dopo; i cambi fatti fuori da Claude Code, e dai comandi, non si tracciano. La riga di D17, nella sezione di sopra, resta |
 | Anthropic, *Explore the .claude directory*, `https://code.claude.com/docs/en/claude-directory`, dal sorgente `.md` | 2026-09-29 | K53: le istantanee stanno in `~/.claude/file-history/<session>/`, nella cartella dell'applicazione e non nel progetto; i dati di `~/.claude` sono in chiaro, e li protegge solo il permesso del sistema operativo; la pulizia li cancella dopo `cleanupPeriodDays`, trenta giorni per default |
 
+## La revisione della knowledge base — il pre-controllo del piano dei documenti, 2026-09-29
+
+Le fonti del passo visivo del compito 4, la voce **ER-1** dell'errata del
+[piano dei documenti](superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md): la misura lì, qui la
+provenienza.
+
+| Fonte | Letta | Per |
+|---|---|---|
+| npm, il registro di `mermaid`, `https://registry.npmjs.org/mermaid/latest` | 2026-09-29 | l'ultima versione pubblicata quel giorno: **12.0.0**, col suo `parse` sui quattro sorgenti |
+| esm.sh, `https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs` | 2026-09-29 | il disegno, con la **11**: la stessa del precedente della passata sui diagrammi del 2026-09-08, e quella del modulo `diagram` del widget della chat |
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

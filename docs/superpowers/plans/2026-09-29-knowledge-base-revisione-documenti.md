@@ -483,10 +483,21 @@ commit di un compito li trova `git log --oneline --grep='knowledge-base-revision
 
 ⛔ **Nasce vuota.** La riempiono il pre-controllo e l'esecuzione: una voce per difetto trovato, col testo corretto, la data
 e chi l'ha trovata. Ciò che la **scrittura** del piano ha trovato sta nella sezione dopo, perché è già dentro i compiti.
+Le voci si chiamano **ER-1**, **ER-2**…, e non *E1*…: *E1*…*E6* sono i nomi dei blocchi — deciso nel pre-controllo, il
+2026-09-29.
 
 | # | Voce |
 |---|---|
 | — | *(vuota alla scrittura, 2026-09-29)* |
+| **ER-1** | ✅ **Compito 4, Passi 1 e 3 e criterio — il passo visivo, deciso dal proprietario nel pre-controllo, il 2026-09-29: A.** I due diagrammi che il blocco E4 cambia — il primo di design/09, il secondo di design/10 — sono disegnati prima e dopo il blocco, applicato a una copia nello scratchpad: in un widget della chat con mermaid 11, sul precedente della passata sui diagrammi del 2026-09-08, e nel browser integrato, dove la stessa pagina li disegna tutti e quattro senza errori e mermaid 12.0.0 — l'ultima su npm quel giorno — li legge tutti e quattro. Il proprietario li ha guardati e accettati, sotto la condizione che siano coerenti e corretti con ciò che esiste: riletti contro ADR-0040, la 5.4 del disegno, la tabella di design/10 dopo il blocco e il codice — `declare_scope`, `preserve`, `restore` e `CheckpointId` ci sono con quei nomi. ⛔ **Che cosa entra nel compito 4:** la sonda dell'impronta qui sotto, al **Passo 1** — atteso `93abe5d5066ebdd9` e `4b8d9f87d0ca24e8` — e al **Passo 3** — atteso `558f5f1e51c0be72` e `0836d966284fab09`, le impronte dei sorgenti che il proprietario ha visto —; e nel criterio di chiusura la riga *«le due impronte del Passo 3 sono quelle di ER-1»*. Se al Passo 3 un'impronta è diversa ci si **ferma prima del commit**: il diagramma non è quello visto, e servono una voce d'errata, il disegno rifatto e lo sguardo del proprietario. Con l'impronta uguale un secondo sguardo non aggiunge controllo, e non si chiede. La sonda rende lo stesso su un file CRLF, e non porta barre rovesciate — trappola 13 |
+
+La sonda di ER-1, fuori dalla tabella perché è lunga: `H` è il programma, e i due argomenti sono il file e il numero del
+blocco `mermaid` dentro il file.
+
+```bash
+H='import sys,hashlib,io;F=chr(96)*3;t=io.open(sys.argv[1],encoding="utf-8",newline="").read().replace(chr(13)+chr(10),chr(10)).split(chr(10));i=[k for k,l in enumerate(t) if l.startswith(F+"mermaid")][int(sys.argv[2])-1];j=next(m for m in range(i+1,len(t)) if t[m].startswith(F));print(hashlib.sha256(chr(10).join(t[i+1:j]).encode("utf-8")).hexdigest()[:16])'
+python -c "$H" docs/design/09-l0-fisico.md 1; python -c "$H" docs/design/10-modello-dei-dati-durevoli.md 2
+```
 
 ---
 
@@ -599,7 +610,7 @@ chiusore — P-13. Si dichiarano perché chi esegue le sappia, non perché le to
 | K10, K35, K44, K47, K49, K51, K52, K36, K12 | la 4.6 del disegno | il 6, il 5, il 3, il 4 — la sua colonna |
 | K11, K17, K19, K21, K22, K29, K34, K38, K41, K48; il testo scelto a runtime nei record del giornale; V36, Q22 e la riga `filesystem` della §8.2.2 | la 6.5 del disegno | ciascuna col suo chiusore |
 | **P-5** — la §8.5.2 della spec del sotto-progetto 1 dice ancora *«il filesystem reale, che arriva con il sotto-progetto 5»* | la spec; P-5 qui sopra | il **proprietario**, con la §8: il vincolo 3 la lascia com'è |
-| 🆕 **il passo visivo** — i due diagrammi che il compito 4 cambia, in design/09 e design/10, **nessuno li disegna**: il piano li controlla come testo, e il cancello non conosce mermaid — `grep -rn -i mermaid scripts/` non rende niente, 2026-09-29. Verificato che i nomi delle caselle nuove, `R` e `P`, non si scontrano con quelli che ci sono; **non** verificato che i due diagrammi si disegnino | posta al proprietario il 2026-09-29 in A/B — **A**, il consiglio: un passo nel compito 4, i due diagrammi disegnati prima e dopo nel browser integrato, lo sguardo del revisore e il suo; **B**: i soli controlli sul testo — e rimandata da lui, *«tempo al tempo»* | il **proprietario**, per prima cosa nel pre-controllo |
+| 🆕 **il passo visivo** — i due diagrammi che il compito 4 cambia, in design/09 e design/10, **nessuno li disegna**: il piano li controlla come testo, e il cancello non conosce mermaid — `grep -rn -i mermaid scripts/` non rende niente, 2026-09-29. Verificato che i nomi delle caselle nuove, `R` e `P`, non si scontrano con quelli che ci sono; **non** verificato che i due diagrammi si disegnino | posta al proprietario il 2026-09-29 in A/B — **A**, il consiglio: un passo nel compito 4, i due diagrammi disegnati prima e dopo nel browser integrato, lo sguardo del revisore e il suo; **B**: i soli controlli sul testo — e rimandata da lui, *«tempo al tempo»* | ✅ **deciso dal proprietario il 2026-09-29, A**, riposta per prima nel pre-controllo: la voce **ER-1** dell'errata |
 
 ---
 

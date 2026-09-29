@@ -248,7 +248,7 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 
 | # | Stato |
 |---|---|
-| K1 | **aperto**: dove vivono la configurazione che porta la root e gli altri dati del programma — con D4 |
+| K1 | **chiuso**: i dati del programma nella cartella dati per utente del sistema — `%LOCALAPPDATA%\<nomeapp>\` su Windows, le cartelle XDG su Linux —, in sottocartelle per natura, e la configurazione porta il percorso della root. D4, 2026-09-29; lo costruisce il primo sotto-progetto che installa il programma |
 | K2 | **chiuso**: la root arriva dalla configurazione |
 | K3 | **chiuso**: una repo dentro la root sta nel livello strutturale, meno ciò che le esclusioni tolgono; una repo fuori è una zona di lavoro con la sua scheda progetto — D3, 2026-09-29 |
 | K4 | **chiuso**: i file delle run stanno dentro la root, perché l'agente scrive solo lì; resta la visibilità dei file pesanti, K27 |
@@ -281,12 +281,13 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 | **K27** | **escluso non vuol dire invisibile**: i «media pesanti» esclusi sparirebbero dal grafo, mentre la rete della Home deve mostrare anche gli asset 3D — decisione 1 della stella polare | V + D | — | **D5** |
 | **K28** | **la root è il confine di tutto l'assistente, o solo della knowledge base?** Il coding lavora su repo: dentro la root, o anche fuori con ambiti suoi (ADR-0024) e permessi suoi (ADR-0016)? E il documento confina lo **scrivere**, non il **leggere** | D | ✅ gli ambiti che il piano 0 usa come chiave | **D3** — ✅ chiuso il 2026-09-29, risposta A: il confine è ogni zona aperta, la knowledge base più le zone di lavoro, e confina lo scrivere **e** il leggere |
 | **K29** | **una root enorme** — «tutto quello che ho sul PC»: la prima scansione è lunga, e le build nelle repo inondano il sorvegliante. Serve una scansione incrementale — dimensione e data, l'hash solo se cambiano — e lo stato *«indicizzazione in corso»* dichiarato prima, come vuole ADR-0019 | D | ✅ l'evento «riscansiona» | registrato: il 6, e il 13 per l'evento |
-| **K30** | **su Windows il punto nel nome non nasconde una cartella**: `.git` è nascosta perché git le mette l'attributo H, `.github` e `.superpowers` no. La cartella `.<nomeapp>/` va marcata nascosta dal modulo di piattaforma | V: `cmd //c "attrib .git"` e `cmd //c "attrib .github"` nella radice di questo repository | — | **D4** |
-| **K31** | **il backup**: se la root è il PC intero, il programma non può salvarla tutta, mentre ADR-0022 metteva la cartella della knowledge base nel suo backup. Il programma salva ciò che è **suo** — i router —, e il resto è dei backup del proprietario | V + D | — | **D4**, poi l'11 |
-| **K32** | **i router non si ricostruiscono**: portano le scelte del proprietario — le aree, i file chiave, la riga di descrizione. Rifarli è rifare il setup guidato, coi suoi token e le sue domande | D | — | **D4** |
+| **K30** | **su Windows il punto nel nome non nasconde una cartella**: `.git` è nascosta perché git le mette l'attributo H, `.github` e `.superpowers` no. La cartella `.<nomeapp>/` va marcata nascosta dal modulo di piattaforma | V: `cmd //c "attrib .git"` e `cmd //c "attrib .github"` nella radice di questo repository | — | **D4** — ✅ chiuso il 2026-09-29: la marca il modulo di piattaforma |
+| **K31** | **il backup**: se la root è il PC intero, il programma non può salvarla tutta, mentre ADR-0022 metteva la cartella della knowledge base nel suo backup. Il programma salva ciò che è **suo** — i router —, e il resto è dei backup del proprietario | V + D | — | **D4** — ✅ chiuso il 2026-09-29: il programma salva i suoi dati e i router, il resto è del proprietario; lo costruisce l'11 |
+| **K32** | **i router non si ricostruiscono**: portano le scelte del proprietario — le aree, i file chiave, la riga di descrizione. Rifarli è rifare il setup guidato, coi suoi token e le sue domande | D | — | **D4** — ✅ chiuso il 2026-09-29: i router stanno in `.<nomeapp>/`, lontani dall'indice che si rifà, e il programma li salva |
 | **K33** | **l'agente che scrive senza chiedere**: col preset di default di ADR-0016 ogni scrittura chiede conferma, mentre il documento vuole i router aggiornati nello stesso turno | V: ADR-0016, punto 2 | — | **D7** |
 | **K34** | **i file «solo online» di OneDrive** dentro la root: leggerli scarica il file, o fallisce senza rete | F | — | registrato: il 6, alla fonte |
 | **K35** | **una zona di lavoro si apre e non si chiude**: la porta `filesystem` ha `declare_scope` e nessuna chiusura, mentre la zona dura la sessione; e gli ambiti sono **della porta**, non della run — due run con due zone diverse, gli agenti del 4, alla porta vedrebbero l'una la zona dell'altra, e il confine per run lo dà solo il permesso di ADR-0016 | V: `grep -n '^    fn ' crates/kernel/src/ports/filesystem.rs` rende i cinque metodi del tratto, nessuno che chiuda; D: una porta sola nel daemon | — | registrato: chi costruisce la porta `filesystem` vera, con K23 |
+| **K36** | **il privato escluso dalla porta non lo è per i comandi**: uno script che l'agente esegue apre i file da sé, e la porta non lo vede. Le documentazioni di Claude Code e di Cursor lo dicono dei loro prodotti; da noi il livello 1 di ADR-0025, per costruzione, non regge contro codice eseguito | V alla fonte, il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md); D per il nostro caso | — | registrato: il 5, col confinamento di livello 2 che nega i percorsi privati; il 4 per MCP, con K12 |
 
 ## Le domande, una per volta
 
@@ -306,7 +307,7 @@ risponde a D1 e a buona parte delle domande di prima; l'elenco di prima sta nel 
 | **D8** | **i link markdown come archi** — la decisione aperta 4 del proprietario | — |
 | **D9** | **i file-guida delle repo**: mai iniettati da soli; guida solo se importati e approvati | K15, con AUD-004 |
 | **D10** | **la proiezione quando il modello cambia** per un fallback | K16 |
-| — | registrati col chiusore, senza domanda salvo che il proprietario la chieda: K11, K12, K17, K19, K21, K22, K23, K29, K34, K35 | |
+| — | registrati col chiusore, senza domanda salvo che il proprietario la chieda: K11, K12, K17, K19, K21, K22, K23, K29, K34, K35, K36 | |
 
 ### D1, posta il 2026-09-28
 
@@ -501,6 +502,64 @@ sia grande e cambi spesso — non misurato, lo misura il 6 —; che cancellare l
 **Il consiglio: A.** I router sono del proprietario e seguono la cartella; l'indice si rifà da solo e non ha motivo di stare
 nei suoi backup.
 
+### D5, posta il 2026-09-29
+
+**Che cos'è, a parole semplici.** Il documento mette alla root **un** file di esclusioni, in stile `.gitignore`, che tiene
+insieme il **rumore** — `.git`, `node_modules`, i binari, i media pesanti — e il **privato**; ciò che vi sta non entra
+nell'indice **e** l'agente non lo legge. Tenerli insieme dà due problemi: un asset 3D escluso come «media pesante» sparisce
+dal grafo, mentre la Home deve mostrarlo — K27; e se l'agente può cambiare il file, un file letto con dentro un'istruzione
+malevola può convincerlo a togliere un'esclusione e poi a leggere il privato — K26.
+
+**Che cosa esiste già.**
+
+| | Che cosa dice | Dove |
+|---|---|---|
+| ADR-0014 | il contenuto non fidato **informa, mai autorizza**; un'azione la cui decisione dipende da esso chiede la stessa autorizzazione che chiederebbe se l'utente non l'avesse chiesta | la voce della §5 del compendio |
+| ADR-0025 | il livello 1 — i permessi applicativi — **non regge** contro codice eseguito; per ogni comando il minimo è il livello 2, un processo ristretto dall'OS | idem |
+| D3 | una **lista di base** comune a tutte le zone — `.env`, chiavi, `.ssh` —, più le regole di ciascuna | la risposta D3 |
+| la stella polare della GUI, decisione 1 | nell'anello della Home stanno i file prodotti dalle run, **asset 3D** compresi | `grep -n 'Nell.anello solo' docs/superpowers/specs/2026-09-07-direzione-gui-design.md` |
+| Claude Code | la lista «non leggere» sta nelle regole `Read` di negazione dei permessi, con la sintassi di `.gitignore`; valgono per gli strumenti dei file e per i comandi che nominano il file, **non** per uno script che apre i file da sé, e per un blocco valido per ogni processo la pagina rimanda alla sandbox | letta alla fonte il 2026-09-29, la provenienza in [`riferimenti.md`](../../riferimenti.md) |
+| Cursor | la lista sta in un file dedicato, `.cursorignore`: blocca l'agente e le menzioni, **non** il terminale né gli strumenti MCP, e la pagina dice che la protezione completa non è garantita | idem |
+
+**Che cosa arriva.** Il **5** esegue comandi, al livello 2; il **4** porta i server MCP, K12; il **7** scrive asset 3D; il
+**6** costruisce l'indice.
+
+**Regge crescendo?** Con una specie sola, no. Quando arriva il 7, escludere i media li toglie dal grafo, e non escluderli fa
+lavorare l'indice su file enormi. E quando arriva il 5, un'esclusione tenuta **solo** dalla porta dei file non ferma un
+comando che legge da sé — lo dicono le due fonti: K36.
+
+**In tutte e due le risposte**, e non è una domanda: le regole del **privato** le cambia **solo il proprietario**, dal
+pannello o a mano; l'agente può proporre, e un cambio che rende leggibile qualcosa chiede conferma **con qualunque preset**,
+anche `autonomo`, perché la decisione può venire da contenuto non fidato — ADR-0014; e la lista di base non si toglie. Chiude
+K26.
+
+**La domanda: il file delle esclusioni distingue due specie — rumore e privato — o una sola, come nel documento?**
+
+| | **A — due specie** | **B — una specie, com'è nel documento** |
+|---|---|---|
+| com'è | **rumore**: lo scanner non ci entra — niente testo, niente impronta, una cartella non si apre —, ma il file o la cartella restano un **nodo** del grafo, e l'agente lo apre se serve · **privato**: fuori dall'indice e da ciò che l'agente vede, la porta **rifiuta** la lettura, e il confinamento dei comandi nega quei percorsi | ogni riga del file toglie dall'indice **e** dalle letture dell'agente |
+| costo | due sezioni da capire nel file; il privato vuole la sua regola anche nel confinamento del 5 | un asset 3D escluso sparisce dal grafo, K27; la `node_modules` di una repo dentro la root diventa illeggibile anche per il debug; e ogni riga, anche di rumore, è un confine di sicurezza: o ogni cambio chiede conferma, o il privato non è protetto |
+| che cosa si rifà dopo | niente | dividere dopo vuol dire riclassificare ogni riga del file del proprietario |
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | ADR-0014 e ADR-0025 letti; la decisione 1 della GUI; le due fonti lette oggi | contraddice la decisione 1 della GUI appena i media si escludono |
+| coerenza | il privato è un confine come gli altri — la porta e il livello 2 —; il rumore è un'ottimizzazione, e non chiede conferme | una lista che è insieme un'ottimizzazione e un confine di sicurezza |
+| debito | la regola del privato nel confinamento del 5, registrata: K36 | come mostrare i media, rimandato al primo asset |
+| stato dell'arte | Claude Code e Cursor tengono la lista «non leggere» in un posto **dedicato** | contro le due fonti |
+| proporzione | due sezioni in un file | un file più semplice, e un problema in più a ogni asset |
+| di chi è | **del proprietario**: il file è suo | idem |
+
+**Verificato, dedotto, assunto.** **Verificati**: ADR-0014, ADR-0025, la decisione 1 della GUI, e alla fonte le due
+documentazioni. **Dedotti**: che un'esclusione tenuta dalla sola porta non fermi i comandi **da noi** — le fonti lo dicono dei
+loro prodotti, e il nostro livello 1 per costruzione non regge contro codice eseguito —; che un binario non abbia testo da
+indicizzare. **Assunto**: che due sezioni siano chiare per il proprietario.
+
+**Il consiglio: A.** Il rumore è una questione di ordine, il privato di sicurezza: tenerli insieme rende la sicurezza o
+fastidiosa o finta.
+
 ## Le risposte del proprietario
 
 | # | Risposta | Data |
@@ -508,6 +567,7 @@ nei suoi backup.
 | D1 | ⛔ **respinta**: il proprietario risponde col suo documento, riportato nella sezione *«Il documento del proprietario»*; le sue decisioni aperte 2 e 3 si accolgono come le propone | 2026-09-28 |
 | D2 | ✅ **A** — la copia di ADR-0024 resta, **solo** per le azioni dell'agente, e il giornale resta; nessuno storico dei cambi del proprietario, nessun versioning, nessun sync. Nessun ADR cambia | 2026-09-28 |
 | D3 | ✅ **A** — due specie di zona: la knowledge base, una e mappata, e le zone di lavoro, aperte come in Claude Desktop anche fuori dalla root, ciascuna col permesso per la sessione e la copia prima delle modifiche dell'agente; una zona **fuori** dalla root **non** entra nel grafo né nella ricerca, e nella knowledge base c'è la sua **scheda progetto**, che le fa da router; fuori da ogni zona l'agente non legge e non scrive. Posta il 2026-09-28, riformulata lo stesso giorno | 2026-09-29 |
+| D4 | ✅ **A** — separati per natura: i **router** in `.<nomeapp>/` alla root, nascosta dal modulo di piattaforma, e l'**indice** nella cartella dati del programma, fra i dati rigenerabili, uno per root; i dati del programma nella cartella dati per utente del sistema, e il programma salva nel proprio backup i suoi dati e i router | 2026-09-29 |
 
 ## Come si riprende — scritto alla chiusura della sessione del 2026-09-28
 

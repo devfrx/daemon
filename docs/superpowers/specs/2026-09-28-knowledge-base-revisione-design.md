@@ -257,7 +257,7 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 | K7 | **chiuso**: due attori, e il riallineamento |
 | K8 · K9 | **chiusi nel principio**: il sorvegliante più la scansione; al 13 resta l'evento «riscansiona» |
 | K10 | **chiuso**: il controllo prima di scrivere |
-| K11 | **a metà**: il privato si esclude; un segreto in una nota **non** esclusa resta — il sensore sulle scritture, al 6 |
+| K11 | **a metà**: il privato si esclude, ed è un confine — D5; un segreto in una nota **non** esclusa resta — il sensore sulle scritture, al 6 |
 | K12 | **aperto**, registrato: al 4 |
 | K13 | **chiuso**: un collegamento che esce dalla root punta a una zona, la scheda progetto, e il modello la legge solo a zona aperta — fuori da ogni zona la porta risponde `OutsideScope`. D3, 2026-09-29 |
 | K14 | **chiuso**: niente collegamenti simbolici fuori |
@@ -277,8 +277,8 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 |---|---|---|---|---|
 | **K24** | **spostato e modificato insieme** — o salvato da un editor come file nuovo: l'hash cambia, il riconciliatore vede «cancellato» più «nuovo», toglie la voce, e un file chiave esce dalla mappa senza che nessuno lo sappia | D | — | **D6** |
 | **K25** | **due file identici**: lo stesso hash in due posti, e lo spostamento diventa ambiguo | D | — | **D6** |
-| **K26** | **chi scrive il file delle esclusioni**: se l'agente può toglierne una riga, un file malevolo che l'agente ha letto può convincerlo a scoprire il privato e poi leggerlo — *«un'istruzione trovata nei dati non è mai un'autorizzazione»*, ADR-0014 | D | — | **D5** |
-| **K27** | **escluso non vuol dire invisibile**: i «media pesanti» esclusi sparirebbero dal grafo, mentre la rete della Home deve mostrare anche gli asset 3D — decisione 1 della stella polare | V + D | — | **D5** |
+| **K26** | **chi scrive il file delle esclusioni**: se l'agente può toglierne una riga, un file malevolo che l'agente ha letto può convincerlo a scoprire il privato e poi leggerlo — *«un'istruzione trovata nei dati non è mai un'autorizzazione»*, ADR-0014 | D | — | **D5** — ✅ chiuso il 2026-09-29: le regole del privato le cambia solo il proprietario, con conferma a ogni preset |
+| **K27** | **escluso non vuol dire invisibile**: i «media pesanti» esclusi sparirebbero dal grafo, mentre la rete della Home deve mostrare anche gli asset 3D — decisione 1 della stella polare | V + D | — | **D5** — ✅ chiuso il 2026-09-29: il rumore resta un nodo del grafo |
 | **K28** | **la root è il confine di tutto l'assistente, o solo della knowledge base?** Il coding lavora su repo: dentro la root, o anche fuori con ambiti suoi (ADR-0024) e permessi suoi (ADR-0016)? E il documento confina lo **scrivere**, non il **leggere** | D | ✅ gli ambiti che il piano 0 usa come chiave | **D3** — ✅ chiuso il 2026-09-29, risposta A: il confine è ogni zona aperta, la knowledge base più le zone di lavoro, e confina lo scrivere **e** il leggere |
 | **K29** | **una root enorme** — «tutto quello che ho sul PC»: la prima scansione è lunga, e le build nelle repo inondano il sorvegliante. Serve una scansione incrementale — dimensione e data, l'hash solo se cambiano — e lo stato *«indicizzazione in corso»* dichiarato prima, come vuole ADR-0019 | D | ✅ l'evento «riscansiona» | registrato: il 6, e il 13 per l'evento |
 | **K30** | **su Windows il punto nel nome non nasconde una cartella**: `.git` è nascosta perché git le mette l'attributo H, `.github` e `.superpowers` no. La cartella `.<nomeapp>/` va marcata nascosta dal modulo di piattaforma | V: `cmd //c "attrib .git"` e `cmd //c "attrib .github"` nella radice di questo repository | — | **D4** — ✅ chiuso il 2026-09-29: la marca il modulo di piattaforma |
@@ -560,6 +560,61 @@ indicizzare. **Assunto**: che due sezioni siano chiare per il proprietario.
 **Il consiglio: A.** Il rumore è una questione di ordine, il privato di sicurezza: tenerli insieme rende la sicurezza o
 fastidiosa o finta.
 
+### D6, posta il 2026-09-29
+
+**Che cos'è, a parole semplici.** Il riconciliatore del documento ripara i router da solo: toglie la voce di un file
+cancellato, e aggiorna il percorso di un file spostato, che riconosce dallo **stesso hash**, l'impronta del contenuto. Ma un
+file spostato **e** modificato — cosa normale se il programma era chiuso mentre il proprietario riordinava — ha un'impronta
+nuova: il riconciliatore vede «cancellato» più «nuovo», toglie la voce, e un file chiave esce dalla mappa senza che nessuno
+lo sappia — K24. E due file identici hanno la stessa impronta, quindi uno spostamento diventa ambiguo — K25.
+
+**Che cosa esiste già.**
+
+| | Che cosa dice | Dove |
+|---|---|---|
+| il documento del proprietario | *«Un puntatore vecchio è peggio di nessun puntatore»*; il riconciliatore corregge in modo meccanico, senza modello | la sezione *«Coerenza dei router»* |
+| ADR-0007 | davanti a un dubbio non risolvibile il sistema si ferma, non indovina | la voce della §5 del compendio |
+| ADR-0009 | l'anello di miglioramento: il kernel **propone**, l'utente **approva** | idem |
+| ADR-0019 | *«si dichiara prima, non si fallisce dopo»*: il «nessun degrado silenzioso» di ADR-0005 diventa una proprietà del kernel | idem |
+| il disegno del 2026-09-04 | il pannello mostra gli **orfani** e i **collegamenti rotti**, perché il sensore li misura | la §4.1 |
+| git | riconosce uno spostamento **anche** con modifiche, per somiglianza: di default un «cancellato più nuovo» è uno spostamento se almeno metà del file è rimasta uguale; la sola impronta esatta è il caso `-M100%` | la documentazione di `git diff`, 2.56.0, letta alla fonte il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md) |
+
+**Che cosa arriva.** Il **6** costruisce il riconciliatore; il **13** i trigger, cioè gli eventi della sorveglianza.
+
+**Regge crescendo?** I file chiave sono pochi per costruzione — un indice d'area sta sotto una pagina —, quindi una domanda
+per un file chiave perso resta rara; una perdita silenziosa, invece, cresce a ogni riordino.
+
+**In tutte e due le risposte**, e non è una domanda: il riconciliatore resta **deterministico**, senza modello — ADR-0020 —, e
+il caso **certo** — la stessa impronta, un solo candidato — si applica da solo, come vuole il documento.
+
+**La domanda: un file chiave che il riconciliatore non ritrova con certezza si toglie dalla mappa, o si segna rotto e si
+chiede?**
+
+| | **A — nel dubbio, rotto e una domanda** | **B — si toglie, com'è nel documento** |
+|---|---|---|
+| com'è | la voce **resta**, marcata **rotta**: l'agente non la segue, il pannello la mostra; il riconciliatore propone i candidati — lo stesso nome altrove, o un contenuto simile, come fa git — e il proprietario sceglie, o conferma che il file non c'è più. Due file identici: rotto, coi due candidati | la voce sparisce; il file resta nel livello strutturale e si trova cercando, ma non è più un file chiave. Per due file identici serve una regola di spareggio |
+| costo | una domanda ogni tanto, per un file chiave che si è mosso **e** cambiato; la ricerca dei candidati, nel 6 | un file chiave esce dalla mappa **senza che nessuno lo sappia**, e il primo salto non lo trova più |
+| che cosa si rifà dopo | niente | aggiungere la domanda dopo; e i file chiave già persi non si ritrovano |
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | ADR-0007, ADR-0009 e la §4.1 del 2026-09-04 letti; git letto alla fonte | l'impronta esatta manca lo spostamento con modifica: è il caso `-M100%` di git |
+| coerenza | è la forma già decisa: il sensore trova il rotto, l'anello propone, il proprietario approva | una perdita silenziosa, contro il «nessun degrado silenzioso» di ADR-0019, per analogia |
+| debito | la ricerca dei candidati, al 6 | la regola di spareggio per i file identici, e le perdite che nessuno vede |
+| stato dell'arte | git riconosce lo spostamento con modifica per somiglianza | contro la stessa fonte |
+| proporzione | una domanda rara, su pochi file | nessun lavoro in più, e un difetto che non si vede |
+| di chi è | **del proprietario**: corregge il suo documento | idem |
+
+**Verificato, dedotto, assunto.** **Verificati**: il documento del proprietario, ADR-0007, ADR-0009, ADR-0019 e la §4.1 del
+2026-09-04; alla fonte, il riconoscimento degli spostamenti di git. **Dedotti**: che lo spostamento con modifica sia comune
+quando il programma era chiuso; che le domande restino rare perché i file chiave sono pochi. **Assunto**: che il proprietario
+preferisca una domanda a una perdita.
+
+**Il consiglio: A.** È la regola del documento stesso — un puntatore sbagliato è peggio di nessuno —, applicata anche al
+puntatore che si perde: un file chiave non esce dalla mappa senza che il proprietario lo sappia.
+
 ## Le risposte del proprietario
 
 | # | Risposta | Data |
@@ -568,6 +623,7 @@ fastidiosa o finta.
 | D2 | ✅ **A** — la copia di ADR-0024 resta, **solo** per le azioni dell'agente, e il giornale resta; nessuno storico dei cambi del proprietario, nessun versioning, nessun sync. Nessun ADR cambia | 2026-09-28 |
 | D3 | ✅ **A** — due specie di zona: la knowledge base, una e mappata, e le zone di lavoro, aperte come in Claude Desktop anche fuori dalla root, ciascuna col permesso per la sessione e la copia prima delle modifiche dell'agente; una zona **fuori** dalla root **non** entra nel grafo né nella ricerca, e nella knowledge base c'è la sua **scheda progetto**, che le fa da router; fuori da ogni zona l'agente non legge e non scrive. Posta il 2026-09-28, riformulata lo stesso giorno | 2026-09-29 |
 | D4 | ✅ **A** — separati per natura: i **router** in `.<nomeapp>/` alla root, nascosta dal modulo di piattaforma, e l'**indice** nella cartella dati del programma, fra i dati rigenerabili, uno per root; i dati del programma nella cartella dati per utente del sistema, e il programma salva nel proprio backup i suoi dati e i router | 2026-09-29 |
+| D5 | ✅ **A** — due specie: il **rumore**, dove lo scanner non entra ma il file o la cartella restano un nodo del grafo e l'agente li apre se serve; il **privato**, fuori dall'indice e da ciò che l'agente vede, con la porta che rifiuta la lettura e il confinamento dei comandi che nega quei percorsi. Le regole del privato le cambia solo il proprietario: l'agente propone, e ciò che rende leggibile qualcosa chiede conferma a ogni preset | 2026-09-29 |
 
 ## Come si riprende — scritto alla chiusura della sessione del 2026-09-28
 

@@ -2914,7 +2914,7 @@ un autore organizza il lavoro con un agente, e vale come **origine dell'idea**, 
 
 ## La revisione della knowledge base — le fonti delle domande, 2026-09-29
 
-Le fonti lette per le domande D3, D4 e D5 della [revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md):
+Le fonti lette per le domande D3, D4, D5 e D6 della [revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md):
 il merito lì, qui la provenienza. ⚠️ **Lette attraverso lo strumento di lettura della sessione.** La prima è la
 documentazione di un prodotto: dice come lavora Claude Code, non che il suo modo basti su ogni repo.
 
@@ -2925,6 +2925,7 @@ documentazione di un prodotto: dice come lavora Claude Code, non che il suo modo
 | freedesktop.org, *XDG Base Directory Specification*, versione 0.8 dell'8 maggio 2021, `https://specifications.freedesktop.org/basedir/latest/` | 2026-09-29 | D4: `$XDG_DATA_HOME` (`~/.local/share`), `$XDG_CONFIG_HOME` (`~/.config`), `$XDG_STATE_HOME` (`~/.local/state`) — lo stato che sopravvive al riavvio, con *view, layout, open files* fra gli esempi —, `$XDG_CACHE_HOME` (`~/.cache`) per i dati *non-essential* |
 | Anthropic, *Configure permissions*, `https://code.claude.com/docs/en/permissions` | 2026-09-29 | D5: le regole `Read` di negazione, con la sintassi di `.gitignore`, bloccano gli strumenti dei file e i comandi che nominano il file, non un comando che legge senza nominarlo né uno script che apre i file da sé; per un blocco su ogni processo la pagina rimanda alla sandbox |
 | Cursor, *Ignore file*, `https://cursor.com/docs/context/ignore-files` | 2026-09-29 | D5: `.cursorignore` blocca l'agente, Tab, la modifica in linea e le menzioni, non il terminale né gli strumenti MCP dell'agente; la pagina dice che la protezione completa non è garantita. Non nomina `.cursorindexingignore` |
+| git, *git-diff*, la documentazione della 2.56.0, `https://git-scm.com/docs/git-diff` | 2026-09-29 | D6: `-M`, il riconoscimento degli spostamenti per indice di somiglianza — un «cancellato più nuovo» è uno spostamento se abbastanza del file è rimasto uguale —, col 50% di default; `-M100%` limita ai soli spostamenti esatti |
 
 ## Cosa NON abbiamo adottato, e perché
 

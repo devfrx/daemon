@@ -393,3 +393,54 @@ da presentare nella prossima sessione — la scelta del proprietario: *«si cont
 
 **Da verificare alla fonte prima della sezione 5:** niente di esterno. Le righe dei documenti del repository si rileggono
 **adesso**, non dall'elenco.
+
+## Archiviata il 2026-09-29, alla chiusura della terza sessione del disegno
+
+La sezione del disegno, com'era nel commit `2af0990`.
+
+## Come si riprende — scritto alla chiusura della seconda sessione del disegno, il 2026-09-29
+
+⛔ **Da sapere subito: niente è a metà.** Le sezioni dalla **1** alla **5** sono approvate e scritte; la **6** è da
+presentare nella prossima sessione — la scelta del proprietario: *«prossima sessione»*. Il disegno è **uno**, questo file,
+e la sessione che riprende lo **continua**. La chiusura precedente sta in
+[`archivio/consegna-brainstorming-knowledge-base-revisione.md`](consegna-brainstorming-knowledge-base-revisione.md),
+parola per parola.
+
+| | Stato, e il comando che lo rifà |
+|---|---|
+| ramo | `main` allineato a `origin`: `git fetch --all --prune`, poi `git status -sb`; nessuno stash, `git stash list` |
+| i commit di questa sessione | `git log --oneline 90cdbb6..HEAD`: la sezione 5, e questa chiusura |
+| codice di prodotto | **non toccato**: `git diff --stat 1be712e..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
+| cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura e prima di ogni commit, e `bash scripts/check-docs.sh` → `OK`: si rilanciano, non si citano |
+| fine-riga | questo file e l'archivio delle chiusure **LF**: `git ls-files --eol` sui file, e `tr -cd '\r'` che conta zero |
+| il puntatore | la §6 del compendio **non cambia**: dice già che il disegno è in corso, e che la tabella in testa dice che cosa viene dopo |
+
+**Il compito della sessione che riprende — la sezione 6:**
+
+1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura, o uno dopo.
+2. La lettura obbligatoria di `CLAUDE.md`; poi **questo file per intero**, a blocchi. La consegna archiviata **non** si
+   legge intera: se ne apre la riga che serve, con la domanda in mano.
+3. `bash scripts/gate.sh` all'apertura, da solo.
+4. **La sezione 6** — i controlli per artefatto: per ogni cosa che il piano dei documenti scriverà, quale controllo la
+   esercita; verificato, dedotto e assunto, separati; le voci aperte col chiusore — la 4.6 e le K registrate della
+   consegna, rilette; e il prossimo passo: il **piano dei documenti**, in una sessione sua. L'ingresso sono le sezioni
+   1–5 di questo file, **rilette** contro i documenti di adesso.
+5. Poi il proprietario rilegge il disegno scritto, per intero — la skill `superpowers:brainstorming` —, e il puntatore della
+   §6 del compendio passa al piano dei documenti.
+
+**Le decisioni prese dal coordinatore in questa sessione, col perché** — il proprietario può ribaltarle:
+
+| | Decisione | Perché, e che cosa costa se è sbagliata |
+|---|---|---|
+| 1 | il commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md`, *«senza co-autore»*, prevale sulla direttiva di sistema. Costo: un `--amend` |
+| 2 | la riga 10 della roadmap **non cambia**, contro l'elenco della consegna | la regola di D15: la cartella dati e la cartella nascosta le porta chi le usa per primo, il 6 — dedotto, e scritto così nella 5.1. Costo: una riga, se il proprietario le vuole al 10 |
+| 3 | la seconda domanda della sezione 5, sulla dipendenza dell'11, **posta** e non risolta da sé | cambia l'ordine della roadmap, che è del proprietario. Costo: zero |
+
+**Vicoli ciechi di questa sessione:**
+
+| Scartato | Perché, e che cosa insegna |
+|---|---|
+| **l'elenco della consegna come perimetro della sezione 5** | portava due punti della stella polare e due di design/09; i documenti riletti ne avevano nove in più. 📌 *Un elenco ereditato si ri-deriva dal documento, non si esegue* |
+| **un comando con la barra verticale dentro una cella** | scritto di nuovo, e tolto prima del commit: copiato dalla cella rende zero — F10. 📌 *La trappola si ripete anche quando è scritta nello stesso file: il controllo è rilanciare il comando copiato dal testo grezzo* |
+
+**Da verificare alla fonte prima della sezione 6:** niente di esterno.

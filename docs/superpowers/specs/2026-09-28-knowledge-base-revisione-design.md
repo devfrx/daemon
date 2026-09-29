@@ -826,49 +826,56 @@ aperte stanno in due tabelle che non si sovrappongono. **Debito:** nessuna voce 
 righe della §8 ed E94 sono scritte, non taciute. **Stato dell'arte:** niente di esterno — la consegna lo diceva, e nessuna
 riga ne ha avuto bisogno. **Proporzione:** nessun controllo nuovo nel cancello; comandi, e la guardia che c'è.
 
-## Come si riprende — scritto alla chiusura della seconda sessione del disegno, il 2026-09-29
+## Come si riprende — scritto alla chiusura della terza sessione del disegno, il 2026-09-29
 
-⛔ **Da sapere subito: niente è a metà.** Le sezioni dalla **1** alla **5** sono approvate e scritte; la **6** è da
-presentare nella prossima sessione — la scelta del proprietario: *«prossima sessione»*. Il disegno è **uno**, questo file,
-e la sessione che riprende lo **continua**. La chiusura precedente sta in
+⛔ **Da sapere subito: niente è a metà.** Le sezioni dalla **1** alla **6** sono approvate e scritte, con le correzioni della
+6.1. Resta la **rilettura del proprietario**, per intero: il passo 2 della 6.6. Tutto è pushato: si riparte anche da
+un'altra macchina, dopo il fetch. La chiusura precedente sta in
 [`archivio/consegna-brainstorming-knowledge-base-revisione.md`](../../archivio/consegna-brainstorming-knowledge-base-revisione.md),
 parola per parola.
 
 | | Stato, e il comando che lo rifà |
 |---|---|
 | ramo | `main` allineato a `origin`: `git fetch --all --prune`, poi `git status -sb`; nessuno stash, `git stash list` |
-| i commit di questa sessione | `git log --oneline 90cdbb6..HEAD`: la sezione 5, e questa chiusura |
+| i commit di questa sessione | `git log --oneline 2af0990..HEAD`: la sezione 6, e questa chiusura |
 | codice di prodotto | **non toccato**: `git diff --stat 1be712e..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
 | cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura e prima di ogni commit, e `bash scripts/check-docs.sh` → `OK`: si rilanciano, non si citano |
-| fine-riga | questo file e l'archivio delle chiusure **LF**: `git ls-files --eol` sui file, e `tr -cd '\r'` che conta zero |
-| il puntatore | la §6 del compendio **non cambia**: dice già che il disegno è in corso, e che la tabella in testa dice che cosa viene dopo |
+| le tabelle | ogni riga di tabella di questo file ha le colonne della sua intestazione: il controllo sotto questa tabella non rende niente, e sul file di `2af0990` rende la riga rotta della 3.3 |
+| fine-riga | questo file e l'archivio delle chiusure: **LF** nell'indice, la colonna `i/` di `git ls-files --eol`; nell'albero dipende dalla macchina — su quella di questa sessione sono LF, e `tr -cd '\r'` conta zero |
+| il puntatore | la §6 del compendio **non cambia**: dice che il disegno è in corso e che la tabella in testa dice che cosa viene dopo — la rilettura. Passa al piano dei documenti **dopo** la rilettura |
 
-**Il compito della sessione che riprende — la sezione 6:**
+Il controllo delle tabelle — fuori dalla tabella, per F10:
+
+```
+awk '/^```/{c=!c; next} c{next} /^\|/{l=$0; gsub(/\\\|/,"",l); n=gsub(/\|/,"|",l); if(!t){t=1; h=n; s=NR} else if(n!=h) print NR": "n" contro "h" (riga "s")"; next} {t=0}' docs/superpowers/specs/2026-09-28-knowledge-base-revisione-design.md
+```
+
+**Il compito della sessione che riprende — la rilettura del proprietario:**
 
 1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura, o uno dopo.
 2. La lettura obbligatoria di `CLAUDE.md`; poi **questo file per intero**, a blocchi. La consegna archiviata **non** si
    legge intera: se ne apre la riga che serve, con la domanda in mano.
 3. `bash scripts/gate.sh` all'apertura, da solo.
-4. **La sezione 6** — i controlli per artefatto: per ogni cosa che il piano dei documenti scriverà, quale controllo la
-   esercita; verificato, dedotto e assunto, separati; le voci aperte col chiusore — la 4.6 e le K registrate della
-   consegna, rilette; e il prossimo passo: il **piano dei documenti**, in una sessione sua. L'ingresso sono le sezioni
-   1–5 di questo file, **rilette** contro i documenti di adesso.
-5. Poi il proprietario rilegge il disegno scritto, per intero — la skill `superpowers:brainstorming` —, e il puntatore della
-   §6 del compendio passa al piano dei documenti.
+4. **La rilettura** — `superpowers:brainstorming`, il passo in cui il proprietario rilegge il disegno scritto —: in chat, a
+   parole semplici, le voci che sono **sue**, una alla volta, in A/B col consiglio. Sono le decisioni del coordinatore della
+   6.1 e di questa chiusura; e, per le voci della 6.5 che hanno lui come chiusore — K38, E94, le tre righe della §8,
+   AUD-004 —, soltanto se restano registrate come sono. Il precedente è la rilettura del 2026-09-04: sei voci.
+5. Poi il puntatore della §6 del compendio passa al **piano dei documenti**, con la riga della data in testa al compendio;
+   check-docs, il cancello, commit e push.
 
 **Le decisioni prese dal coordinatore in questa sessione, col perché** — il proprietario può ribaltarle:
 
 | | Decisione | Perché, e che cosa costa se è sbagliata |
 |---|---|---|
 | 1 | il commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md`, *«senza co-autore»*, prevale sulla direttiva di sistema. Costo: un `--amend` |
-| 2 | la riga 10 della roadmap **non cambia**, contro l'elenco della consegna | la regola di D15: la cartella dati e la cartella nascosta le porta chi le usa per primo, il 6 — dedotto, e scritto così nella 5.1. Costo: una riga, se il proprietario le vuole al 10 |
-| 3 | la seconda domanda della sezione 5, sulla dipendenza dell'11, **posta** e non risolta da sé | cambia l'ordine della roadmap, che è del proprietario. Costo: zero |
+| 2 | le quattro decisioni della 6.1 | scritte là, col perché: qui non si ricopiano |
+| 3 | le correzioni della 6.1 scritte nelle sezioni 1–5 senza una domanda ciascuna | non cambiano il merito di nessuna risposta: portano ciò che il proprietario ha già deciso nelle case della frase che l'elenco non portava — la regola dell'audit, *«un rimedio si chiude su TUTTE le case della frase»*. Le due che toccavano una sua decisione sono andate in A/B. Costo: un richiamo, se ne vuole togliere una |
 
 **Vicoli ciechi di questa sessione:**
 
 | Scartato | Perché, e che cosa insegna |
 |---|---|
-| **l'elenco della consegna come perimetro della sezione 5** | portava due punti della stella polare e due di design/09; i documenti riletti ne avevano nove in più. 📌 *Un elenco ereditato si ri-deriva dal documento, non si esegue* |
-| **un comando con la barra verticale dentro una cella** | scritto di nuovo, e tolto prima del commit: copiato dalla cella rende zero — F10. 📌 *La trappola si ripete anche quando è scritta nello stesso file: il controllo è rilanciare il comando copiato dal testo grezzo* |
+| **un `grep -n -i` con più di un `-e`** sulle voci aperte della porta di qualità | non ha reso niente, ed era la trappola 14 del disegno del 2026-09-04: rifatto una parola alla volta, ha trovato E94. 📌 *Un «niente» si crede solo dopo la controprova: lo stesso comando, su un input che deve rendere uno* |
+| **la §4 della spec come casa della porta dei file** | la tabella della §2.3 della spec rimanda lì, e la consegna l'aveva ripreso; la §4 è il giornale. 📌 *Un rimando dentro un documento approvato è un'ipotesi: si apre il posto a cui punta* |
 
-**Da verificare alla fonte prima della sezione 6:** niente di esterno.
+**Da verificare alla fonte prima della rilettura:** niente di esterno.

@@ -7,7 +7,7 @@ approvata il proprietario il 2026-09-29, e questa tabella è la **casa unica** d
 | # | Sezione | Stato |
 |---|---|---|
 | 1 | Il modello nuovo, in una pagina | ✅ approvata il 2026-09-29 |
-| 2 | Il disegno del 2026-09-04: che cosa si corregge | ⏳ da presentare |
+| 2 | Il disegno del 2026-09-04: che cosa si corregge | ✅ approvata il 2026-09-29 |
 | 3 | Gli ADR: i rimandi in testa, e l'ADR nuovo del backup | ⏳ da presentare |
 | 4 | La porta dei file e il codice che crescerà: chi costruisce che cosa | ⏳ da presentare |
 | 5 | Roadmap, tracciabilità, stella polare della GUI e design/09, col perimetro del 13 riletto | ⏳ da presentare |
@@ -213,3 +213,86 @@ cambia.
 | *«i suoi file stanno nell'anello»*, di una zona esterna | i file che l'**agente vi scrive** | D13 |
 | *«quando il programma si riavvia»* | quando si riavvia il **core** | RR3; ADR-0004 |
 | mancavano | il dubbio del riconciliatore; la lista di base del privato; il limite dei comandi e dei server MCP; il setup; la cancellazione morbida; il controllo prima di scrivere; niente sync | D6; D3 e D19; K36 e K12; il documento; D2 |
+
+## 2. Il disegno del 2026-09-04: che cosa si corregge — ✅ approvata il 2026-09-29
+
+**A parole.** Il [disegno del 2026-09-04](2026-09-04-knowledge-base-design.md) resta il disegno approvato della knowledge
+base, e il suo piano dei documenti è eseguito dal 2026-09-05. Ogni riga che le risposte hanno superato riceve un
+**richiamo datato** nella riga stessa — `CLAUDE.md`, *«ogni correzione a una sezione approvata porta il proprio richiamo
+con la data»* —, che dice che cosa vale adesso, da quale risposta, e rimanda a questo disegno. La riga di prima **resta**
+leggibile: dice che cosa la risposta ha sciolto. I richiami li scrive il **piano dei documenti**, non questo disegno.
+
+**Riletto riga per riga.** L'elenco della consegna portava diciassette righe su quel disegno. Riletto contro il testo —
+le premesse, le dodici risposte, le sezioni dalla 1 alla 7, i vicoli ciechi —, ne mancavano: sono le righe segnate 🆕, e
+le parti 🆕 dentro righe che c'erano.
+
+| # | Dove, nel disegno del 2026-09-04 | Che cosa dice il richiamo | Da |
+|---|---|---|---|
+| 0 🆕 | la testa | il disegno è corretto dalla revisione del 2026-09-28 e 2026-09-29: ogni riga superata porta il proprio richiamo, e il perché sta in questo disegno | — |
+
+**A. La cartella, e chi la scrive**
+
+| # | Dove, nel disegno del 2026-09-04 | Che cosa dice il richiamo | Da |
+|---|---|---|---|
+| 1 | le premesse, la risposta 1, §1.1a | non più *«un archivio unico»*: una cartella qualsiasi, anche quella in cui il proprietario tiene tutto, e la root arriva dalla configurazione — ADR-0034. 🆕 *«Progetti, note, tutto dentro»*: una repo **dentro** la root sta nel livello strutturale, meno le esclusioni; una repo **fuori** è una zona di lavoro, con la sua scheda progetto nella knowledge base | il documento; D3; K3 |
+| 2 | la risposta 3, §1.1b, il primo punto della §1.3 | non più *«solo il nostro assistente»*: due attori, e il proprietario scrive da fuori con qualunque strumento; cade l'esclusione degli *«altri strumenti che leggono o scrivono la cartella»*. ⚠️ **L'altra metà della risposta 3 resta:** il modello lo sceglie il proprietario, e il routing lo applica — D10 la conferma, col selettore | il documento; D10 |
+| 3 🆕 | il vicolo cieco *«anche altri agenti da fuori»* | riaperto dal proprietario col suo documento: i due rischi di allora — router che marciscono per mano altrui, skill riscritte da altri — li reggono il riconciliatore e AUD-004 | il documento; D6; D14 |
+| 4 | §2.3, la regola 2 | *«ogni scrittura nella cartella»* si legge *«ogni scrittura del programma»*: il proprietario scrive da fuori, e il riconciliatore scrive come effetto giornalato | il documento; D14 |
+| 5 | §1.4, le righe *«chi aggiorna il router»*, *«e se il router marcisce»*, *«e se modifico un file a mano»* | l'agente aggiorna i router nello stesso turno, con un sì per la sessione; il riconciliatore corregge da solo i due casi certi, e nel dubbio segna rotto e chiede; l'anello di miglioramento resta per ciò che si ripete. Una modifica del proprietario da fuori **non si approva**, perché è sua: il riconciliatore riallinea lo stato derivato, e una skill cambiata resta ad AUD-004 | D6; D7; D14 |
+| 6 | la risposta 9, §1.1g, §2.3 regola 4, 🆕 la decisione 10 | lo spazio designato non è più uno: la root e le zone di lavoro aperte. Da una zona alla root l'agente **copia**, e il file entra con la provenienza della regola 4; 🆕 fuori da ogni zona **legge** col permesso, un file alla volta; **cancellare** è spostare nel cestino di sistema, con conferma. 🆕 ⚠️ **Dedotto:** *«fuori dallo spazio»*, per chi sposta, vuol dire verso una zona aperta — fuori da ogni zona la porta non scrive per nessuno, nemmeno per il click, perché il permesso è lo stesso per ogni invocatore; verso una cartella qualsiasi, la si apre come zona, o si sposta il file con l'OS | D3; D18; K20; la decisione aperta 3 del proprietario; ADR-0038 |
+
+**B. Come si naviga e si cerca**
+
+| # | Dove, nel disegno del 2026-09-04 | Che cosa dice il richiamo | Da |
+|---|---|---|---|
+| 7 | le risposte 2, 4 e 10, §4.1 | l'agente cerca anche nel livello strutturale: un file che nessun router punta si trova lo stesso, con un costo in più, e *«per l'agente non esistono»* non regge più. La ricerca **testuale**, senza modello, arriva con la prima metà del 6; quella per **somiglianza** resta dopo | il documento |
+| 8 🆕 | il vicolo cieco *«le cartelle come struttura della mappa»* | riaperto dal documento: cartella e area insieme, per il pannello e per la ricerca dell'agente, che si limita alle cartelle dell'area | il documento |
+| 9 | §1.1c, 🆕 §1.2, la decisione 15 | l'«ambito» del 2026-09-04 erano **due cose**, e si separano. **Il confine della porta**, ADR-0024, è la root, dalla configurazione, o una zona aperta. **La chiave del piano 0** è opaca per il kernel: per una zona la sua scheda progetto; per la knowledge base il router master, e l'area la sceglie l'agente leggendolo, salvo che la run nasca da un'area. **La forma della risorsa** di un permesso su un percorso scelto a runtime — un identificativo coniato dal kernel — è **registrata**, non decisa: la chiude il 6, K44, con K49 e K51 | D3; RR5; K44 |
+| 10 🆕 | la risposta 7 | *«la foto atterra in un gruppo, il router segue»* → la cattura entra nella knowledge base come ogni file nuovo — nel livello strutturale, nel grafo e nella ricerca —, e in un router solo se il proprietario o l'agente la promuovono; la run la vede, come riferimento. ✅ **Deciso dal proprietario il 2026-09-29**: la domanda sta sotto questa tabella | il documento; la risposta qui sotto |
+| 11 | §4.2, l'indice | ogni file **indicizzato** è un nodo, il rumore compreso; le frecce del 2026-09-04 stanno nelle tre specie di linea — l'**area**, cioè router master → indice d'area → file chiave; il **link**, che porta anche il ritorno dalla skill al suo router; e la **cartella** —; il segnale rotto anche per un file chiave che il riconciliatore non ritrova, e per un link verso un file che non c'è | D5; D6; D8 |
+| 12 | §4.3, il pannello | la ricerca mentre si scrive cerca nel **testo**, coi filtri per tipo e per cartella, e non più solo sui nomi; la griglia accanto al grafo; 🆕 l'**anteprima** al click, accanto al percorso col suo «copia», che c'era già nella §4.1 | il documento |
+| 13 | §4.4 | la prima metà del 6 guadagna il livello strutturale, con la ricerca testuale senza modello; la seconda resta per la somiglianza | il documento |
+
+**C. I pezzi del kernel, e i file su disco**
+
+| # | Dove, nel disegno del 2026-09-04 | Che cosa dice il richiamo | Da |
+|---|---|---|---|
+| 14 | §2.2, la cartella su disco e 🆕 l'indice | la cartella non è più *«nel backup»* per intero: la root sta nei backup del proprietario, e il programma salva i router, che stanno in `.<nomeapp>/`; 🆕 l'indice sta nella cartella dati del programma, uno per root | D4; D12 |
+| 15 | §2.2, i trigger | il sorvegliante più la scansione all'avvio; il meccanismo sa dire *«ho perso eventi, riscansiona»*, e un'indicizzazione in corso si dichiara prima — ADR-0019 | il documento; K8; K9; K29 |
+| 16 | §2.2 il registro delle guide, §2.3 regola 3, §1.1e, 🆕 la decisione 9 | per il file-guida di una zona l'approvazione è la **fiducia alla cartella**, e l'impronta si scrive a **ogni caricamento**; per le skill della knowledge base decide AUD-004 | D9 |
+| 17 🆕 | §2.2 la proiezione, e §1.4 *«come funziona se uso modelli diversi?»* | in un ripiego la proiezione si compone per il **candidato** — la sua finestra e la sua guida —, e un candidato che non la tiene si salta; senza catena di riserva il ripiego non c'è, e il costo resta zero | D10 |
+| 18 🆕 | §1.1d, §2.4, la riga 13 della tabella della §5.1 | il vincolo d'ordine resta, e il 13 **cresce**: la lettura e la sorgente degli eventi della porta dei file, la finestra del candidato nel gateway, il «riscansiona», la fiducia di D9, la proiezione per candidato. L'ordine vive nella roadmap: la sezione 5 | D15; D9; D10 |
+
+**D. Che cosa il disegno escludeva**
+
+| # | Dove, nel disegno del 2026-09-04 | Che cosa dice il richiamo | Da |
+|---|---|---|---|
+| 19 | §1.3 | non regge più *«un record nuovo del giornale, una porta nuova, … regole di backup nuove: niente»*: record nuovi — la fine della sessione, la fiducia —, la porta che cresce, e le regole di backup dell'ADR nuovo. 🆕 E nemmeno *«riaprire ADR-0022»*: l'ADR nuovo ne supera due righe | CF15; D9; D11; D12; D17; K45 |
+| 20 | 🆕 l'approccio scelto, §3.1–§3.3, 🆕 §6.4, 🆕 il vicolo cieco *«un ADR nuovo per la knowledge base»* | *«nessun ADR nuovo»* cade con D12: arriva l'ADR del backup, che **non** è un ADR della knowledge base — supera due righe di ADR-0022 per i file del proprietario; la riga *«0022, 0024, 0014: nessuno»* cade, e la sezione 3 dice che cosa ricevono; la riga di I1 si rilegge: la cartella è del proprietario, e il giornale, lo stato autorevole, sta nella cartella dati, che è protetta | D9; D12; D17; D19; K35 |
+| 21 | §1.4 la riga del privato, la decisione 13, §4.5 | **chiusa**: rumore e privato nel file delle esclusioni, che è un percorso protetto come la cartella dati del programma; per le zone, K41 | D5; D16; D19; D20; K41 |
+| 22 | §6.3 e §7 | *«nessuna fonte esterna»* non regge più: l'idea dei router viene dalla guida ARMS, datata il giorno del disegno; e le fonti della revisione stanno in [`riferimenti.md`](../../riferimenti.md) | la guida ARMS |
+
+**La domanda di questa sezione, e la risposta**
+
+| | |
+|---|---|
+| la domanda | la cattura di un gesto: la risposta 7 del 2026-09-04 dice *«la foto atterra in un gruppo, il router segue»*; il documento del proprietario vuole i router parziali per scelta — i file chiave, sotto una pagina — e un file nuovo in un router solo se promosso |
+| **A**, il consiglio | come ogni file nuovo: nel livello strutturale, nel grafo e nella ricerca; in un router solo se promossa; la run la vede comunque. Costo: finché non è promossa, non è nella mappa |
+| **B** | ogni cattura entra da sola nell'indice di un'area. Costo: l'indice cresce a ogni foto e supera la pagina, contro il documento; e una regola speciale per le catture |
+| i cinque criteri | **correttezza**: la risposta 7 e il documento letti; **coerenza**: A segue il documento; **debito**: nessuno per A, la regola speciale per B; **stato dell'arte**: non decide, è una regola del proprietario; **proporzione**: A non costruisce niente |
+| verificato, dedotto, assunto | **verificati**: la risposta 7 e il documento; **dedotto**: che una cattura sia un file nuovo per la regola del documento; **assunto**: niente |
+| ✅ **la risposta** | **A**, dal proprietario, il 2026-09-29, in chat |
+
+**La verifica chiesta dall'approvazione.** Il proprietario ha approvato la sezione *«se tutto segue i principi … ed è
+coerente»*. Riletta la tabella presentata in chat contro il disegno del 2026-09-04 e la consegna; il merito non cambia, e
+la sola riga dedotta nuova — la 6 — è stata detta al proprietario.
+
+| Nel testo presentato | Qui | Perché |
+|---|---|---|
+| riga 2 | la metà della risposta 3 sul modello **resta** | la risposta 3 ha due metà, e D10 conferma la seconda |
+| riga 5 | anche il sì per la sessione di D7 | la riga *«chi aggiorna il router»* |
+| riga 6 | *«fuori dallo spazio»* vuol dire verso una zona aperta, anche per il click — **dedotto** | D3 e ADR-0038 insieme |
+| riga 9 | *«l'ambito è un numero dato dal kernel»* diceva più del deciso: l'identificativo è la forma **registrata**, K44; e l'«ambito» del 2026-09-04 erano due cose | RR5; K44; D3 |
+| riga 11 | le frecce del 2026-09-04 dentro le tre specie di linea | la §4.2 le nomina |
+| riga 12 | *«copia percorso»* non era nuovo: c'era nella §4.1 | la §4.1 |
+| righe 6, 16 e 20 | la decisione 10, la decisione 9 e l'approccio scelto fra i posti da correggere | la tabella 3.4 e la testa del 2026-09-04 |

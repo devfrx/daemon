@@ -264,7 +264,7 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 | K15 | **aperto**: D9 |
 | K16 | **aperto**: D10 |
 | K17 | **a metà**: la cancellazione dell'agente è morbida; «dimentica davvero» resta registrato |
-| K18 | **chiuso nel principio**: l'hash; i suoi casi limite sono K24 e K25 |
+| K18 | **chiuso**: l'hash per il caso certo, e il dubbio segnato rotto coi candidati — K24 e K25, D6 |
 | K19 | **a metà**: i percorsi relativi alla root; maiuscole e nomi riservati restano, alla porta vera |
 | K20 | **chiuso**: dentro la root i file li porta il proprietario da fuori, e l'agente fuori non arriva |
 | K21 | **a metà**: i file pesanti fuori dall'indice; la copia costa solo sui file che l'agente tocca; il limite di ADR-0024 resta da fissare |
@@ -275,8 +275,8 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 
 | # | Il caso | Specie | 13? | Chi lo chiude, proposto |
 |---|---|---|---|---|
-| **K24** | **spostato e modificato insieme** — o salvato da un editor come file nuovo: l'hash cambia, il riconciliatore vede «cancellato» più «nuovo», toglie la voce, e un file chiave esce dalla mappa senza che nessuno lo sappia | D | — | **D6** |
-| **K25** | **due file identici**: lo stesso hash in due posti, e lo spostamento diventa ambiguo | D | — | **D6** |
+| **K24** | **spostato e modificato insieme** — o salvato da un editor come file nuovo: l'hash cambia, il riconciliatore vede «cancellato» più «nuovo», toglie la voce, e un file chiave esce dalla mappa senza che nessuno lo sappia | D | — | **D6** — ✅ chiuso il 2026-09-29: nel dubbio la voce resta, segnata rotta, coi candidati |
+| **K25** | **due file identici**: lo stesso hash in due posti, e lo spostamento diventa ambiguo | D | — | **D6** — ✅ chiuso il 2026-09-29: è un caso di dubbio, rotto coi due candidati |
 | **K26** | **chi scrive il file delle esclusioni**: se l'agente può toglierne una riga, un file malevolo che l'agente ha letto può convincerlo a scoprire il privato e poi leggerlo — *«un'istruzione trovata nei dati non è mai un'autorizzazione»*, ADR-0014 | D | — | **D5** — ✅ chiuso il 2026-09-29: le regole del privato le cambia solo il proprietario, con conferma a ogni preset |
 | **K27** | **escluso non vuol dire invisibile**: i «media pesanti» esclusi sparirebbero dal grafo, mentre la rete della Home deve mostrare anche gli asset 3D — decisione 1 della stella polare | V + D | — | **D5** — ✅ chiuso il 2026-09-29: il rumore resta un nodo del grafo |
 | **K28** | **la root è il confine di tutto l'assistente, o solo della knowledge base?** Il coding lavora su repo: dentro la root, o anche fuori con ambiti suoi (ADR-0024) e permessi suoi (ADR-0016)? E il documento confina lo **scrivere**, non il **leggere** | D | ✅ gli ambiti che il piano 0 usa come chiave | **D3** — ✅ chiuso il 2026-09-29, risposta A: il confine è ogni zona aperta, la knowledge base più le zone di lavoro, e confina lo scrivere **e** il leggere |
@@ -615,6 +615,57 @@ preferisca una domanda a una perdita.
 **Il consiglio: A.** È la regola del documento stesso — un puntatore sbagliato è peggio di nessuno —, applicata anche al
 puntatore che si perde: un file chiave non esce dalla mappa senza che il proprietario lo sappia.
 
+### D7, posta il 2026-09-29
+
+**Che cos'è, a parole semplici.** Il documento vuole che l'agente, quando crea, sposta o modifica un file, aggiorni i router
+**nello stesso turno**. Ma col preset di default di ADR-0016, `auto-approva sicuri`, ogni scrittura **chiede**: creare un
+file e poi aggiornare il router sono due conferme — K33.
+
+**Che cosa esiste già.**
+
+| | Che cosa dice | Dove, e il comando |
+|---|---|---|
+| ADR-0016, i preset | col default le letture procedono, le scritture chiedono; con `autonomo` chiedono solo gli effetti irripetibili e ciò che un sensore ferma | `grep -n -e 'auto-approva' -e 'autonomo' docs/adr/0016-*.md` |
+| ADR-0016, il punto 3 | un'approvazione vale per la tripla concessa **e per la sessione corrente**: approvare `(file, ~/progetti/x, scrittura)` non concede `~/progetti/y`, e non vale domani | `grep -n 'non si estende' docs/adr/0016-*.md` |
+| D2 e D4 | ogni modifica dell'agente ha la sua copia, e si annulla; i router stanno tutti in `.<nomeapp>/` | le risposte |
+| ADR-0014 e il disegno del 2026-09-04 | una riga scritta dall'agente dopo aver letto contenuto non fidato porta la provenienza e l'etichetta: **informa, non autorizza** | la regola 3 della §2.3 |
+| Claude Code | per le modifiche ai file, la scelta *Yes, and don't ask again* vale **fino alla fine della sessione** | la tabella dei permessi di *Configure permissions*, letta alla fonte il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md) |
+
+**Che cosa arriva.** Il **6** costruisce i router e la promozione dei file chiave; il **4** gli agenti, anche più run insieme.
+
+**Regge crescendo?** Con una conferma per ogni riga dei router, no: più file l'agente tocca, più conferme, e la tentazione è
+passare ad `autonomo` per tutto — che allarga il permesso a **ogni** scrittura, non solo ai router.
+
+**In tutte e due le risposte**, e non è una domanda: ogni cambio di un router è giornalato, ha la sua copia — D2 — e si
+mostra nel turno; le righe portano la loro provenienza — ADR-0014.
+
+**La domanda: quando l'agente aggiorna un router, chiede ogni volta, o basta un sì per tutta la sessione?**
+
+| | **A — un sì per la sessione** | **B — ogni volta** |
+|---|---|---|
+| com'è | la tripla `(file, .<nomeapp>/, scrittura)` si concede alla prima modifica di un router, e vale fino alla fine della sessione, com'è già il punto 3 di ADR-0016; dopo, l'agente aggiorna i router nello stesso turno | ogni modifica di un router chiede conferma, anche dopo la prima: i router diventano l'unica risorsa per cui il sì non vale per la sessione |
+| costo | una conferma per sessione; le modifiche dopo si vedono nel turno e si annullano, ma non si approvano una per una | due conferme per ogni file che l'agente crea o sposta e promuove; una regola speciale, più stretta di ADR-0016 |
+| che cosa si rifà dopo | niente | togliere la regola speciale |
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | ADR-0016 letto: il punto 3 lo prevede già; la fonte di Claude Code letta | ADR-0016 letto: serve un'eccezione al punto 3 |
+| coerenza | nessuna regola nuova: una tripla come le altre | una risorsa trattata diversamente da tutte le altre |
+| debito | nessuno | l'eccezione da scrivere e da mantenere |
+| stato dell'arte | è il modo di Claude Code per le modifiche ai file | più stretto delle fonti lette |
+| proporzione | il minimo che dà l'aggiornamento nello stesso turno | una conferma in più per ogni file |
+| di chi è | **del proprietario**: i router sono le sue scelte | idem |
+
+**Verificato, dedotto, assunto.** **Verificati**: i preset e il punto 3 di ADR-0016, D2 e D4, la regola 3 del 2026-09-04, e
+alla fonte la tabella dei permessi di Claude Code. **Dedotto**: che una tripla su una cartella copra i file che contiene — è la
+forma dell'esempio di ADR-0016, `~/progetti/x`. **Assunto**: che il proprietario voglia vedere le modifiche ai router, non
+approvarle una per una.
+
+**Il consiglio: A.** Dà l'aggiornamento nello stesso turno che il documento chiede, con la regola che esiste già, e ogni
+modifica resta visibile e annullabile.
+
 ## Le risposte del proprietario
 
 | # | Risposta | Data |
@@ -624,6 +675,7 @@ puntatore che si perde: un file chiave non esce dalla mappa senza che il proprie
 | D3 | ✅ **A** — due specie di zona: la knowledge base, una e mappata, e le zone di lavoro, aperte come in Claude Desktop anche fuori dalla root, ciascuna col permesso per la sessione e la copia prima delle modifiche dell'agente; una zona **fuori** dalla root **non** entra nel grafo né nella ricerca, e nella knowledge base c'è la sua **scheda progetto**, che le fa da router; fuori da ogni zona l'agente non legge e non scrive. Posta il 2026-09-28, riformulata lo stesso giorno | 2026-09-29 |
 | D4 | ✅ **A** — separati per natura: i **router** in `.<nomeapp>/` alla root, nascosta dal modulo di piattaforma, e l'**indice** nella cartella dati del programma, fra i dati rigenerabili, uno per root; i dati del programma nella cartella dati per utente del sistema, e il programma salva nel proprio backup i suoi dati e i router | 2026-09-29 |
 | D5 | ✅ **A** — due specie: il **rumore**, dove lo scanner non entra ma il file o la cartella restano un nodo del grafo e l'agente li apre se serve; il **privato**, fuori dall'indice e da ciò che l'agente vede, con la porta che rifiuta la lettura e il confinamento dei comandi che nega quei percorsi. Le regole del privato le cambia solo il proprietario: l'agente propone, e ciò che rende leggibile qualcosa chiede conferma a ogni preset | 2026-09-29 |
+| D6 | ✅ **A** — nel dubbio, **rotto** e una domanda: il caso certo — la stessa impronta, un solo candidato — si applica da solo; un file chiave che il riconciliatore non ritrova con certezza resta nella mappa segnato rotto, l'agente non lo segue, il pannello lo mostra, e il riconciliatore propone i candidati — lo stesso nome altrove, o un contenuto simile come fa git — fra cui sceglie il proprietario; due file identici sono un caso di dubbio | 2026-09-29 |
 
 ## Come si riprende — scritto alla chiusura della sessione del 2026-09-28
 

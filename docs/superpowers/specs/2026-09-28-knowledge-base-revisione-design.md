@@ -10,7 +10,7 @@ approvata il proprietario il 2026-09-29, e questa tabella è la **casa unica** d
 | 2 | Il disegno del 2026-09-04: che cosa si corregge | ✅ approvata il 2026-09-29 |
 | 3 | Gli ADR: i rimandi in testa, e l'ADR nuovo del backup | ✅ approvata il 2026-09-29 |
 | 4 | La porta dei file e il codice che crescerà: chi costruisce che cosa | ✅ approvata il 2026-09-29 |
-| 5 | Roadmap, tracciabilità, stella polare della GUI e design/09, col perimetro del 13 riletto | ⏳ da presentare |
+| 5 | Roadmap, tracciabilità, stella polare della GUI e design/09, col perimetro del 13 riletto | ✅ approvata il 2026-09-29 |
 | 6 | I controlli per artefatto, verificato-dedotto-assunto, le voci aperte e il prossimo passo | ⏳ da presentare |
 
 Chi riprende a metà presenta la prima riga con ⏳. L'ingresso di ciascuna sezione è l'elenco *«Che cosa le risposte
@@ -491,10 +491,115 @@ nuovi e chi li costruisce, e rimanda qui; il testo esatto di ciascun pezzo lo sc
 senza cambiare il merito, il doppio del simulatore e la suite di conformità col 13, F2; i metadati, conservare e
 ripristinare, e la modifica di `invoke` col 6; l'aprire le zone col 5; e i comandi della 4.1.
 
+## 5. Roadmap, tracciabilità, stella polare della GUI e design/09, col perimetro del 13 riletto — ✅ approvata il 2026-09-29
+
+**A parole.** Quattro documenti dicono ancora ciò che le risposte hanno superato. Qui si decide **che cosa** vi si
+corregge; le righe le scrive il **piano dei documenti**. Nella stella polare della GUI e in design/09, che sono disegni
+approvati, ogni correzione è un **richiamo datato** nella riga; nella roadmap e nella tracciabilità, che sono tabelle di
+stato, la cella si riscrive col suo richiamo datato, come fanno già.
+
+**Riletto contro i documenti di adesso, il 2026-09-29.** L'elenco della consegna portava le righe della roadmap, undici
+righe della tracciabilità, due punti della stella polare e due di design/09. Le righe segnate 🆕 mancavano. Ogni riga
+si ritrova col comando, non col numero di riga: `grep -n '^| <numero> |' docs/roadmap.md`, e il nome della riga per
+gli altri tre documenti.
+
+### 5.1 `roadmap.md`
+
+**La forma, decisa con la domanda della 5.5:** ogni riga porta una **frase corta** e un **rimando alla 4.2** di questo
+disegno, che resta la **casa unica** di chi costruisce che cosa. La lista non si ricopia.
+
+| Riga | Che cosa dice | Da |
+|---|---|---|
+| **13** | cresce: la lettura della porta, con l'ambito della root; la sorgente degli eventi, col «riscansiona»; l'implementazione vera in `platform`, il doppio del simulatore e la suite di conformità; la finestra in `gateway::Candidate` e la proiezione per candidato; il registro delle guide nella forma che ammette la fiducia alla cartella. La dipendenza non cambia: 1, e AUD-004 | 4.2; D15; D9; D10 |
+| **3** | la sessione, il gateway vero, il selettore del modello | 4.2; D10; D11 |
+| **5** | aprire e chiudere le zone; la domanda di fiducia e il suo record; il livello 2 per i comandi | 4.2; D3; D9 |
+| **6** | cade *«archivio unico»*: la root è una cartella qualsiasi, dalla configurazione. La prima metà porta il livello strutturale con la ricerca testuale, la scansione e il riconciliatore con la sua impostazione; lo scrivere e il resto della porta della 4.2; i percorsi protetti; la cartella dati per utente e la cartella nascosta dei router, se nessuno le porta prima. La seconda metà resta la somiglianza | 4.2; D4; D14; D15; D16; D19 |
+| **10** 🆕 | **nessun cambio.** L'elenco gli dava la cartella dati e la cartella nascosta, K1 e K30; per la regola di D15 le porta chi le usa per primo, il 6 — ⚠️ **dedotto** | D15 |
+| **11** | il rimando ad ADR-0040 accanto ad ADR-0022; la dipendenza diventa **6, 9**: il 5 esce — ✅ la seconda domanda della 5.5 | D12; D15; ADR-0040 |
+| *«Backup dopo indici e pesi»* | la non-vacuità di 6 e 9 resta; cade *«serve inoltre il filesystem reale, che arriva con 5»*: la porta arriva a pezzi; l'interfaccia che dichiara le esclusioni al momento del backup è il punto 4 di ADR-0040 | D15; ADR-0040 |
+| *«Il primo valore utile»* 🆕 | *«1 + 2 + 3»* diventa *«1 + 2 + 13 + 3»*: il 13 sta prima del 3 dal 2026-09-04, e la riga non lo diceva già prima di questa revisione | la decisione 16 del 2026-09-04 |
+
+### 5.2 `tracciabilita.md`
+
+Undici righe: `grep -c -E '^\| (Multi-repo|Mappa del progetto|Git e gestione|Collezioni|File watching|Sessioni multiple|Selettore di modello|Backup della KB|Sandboxing|Permessi e sandbox|Modalità di permessi)' docs/tracciabilita.md`.
+
+| Riga | Che cosa dice | Da |
+|---|---|---|
+| `Collezioni e knowledge base` | cade *«archivio unico»*: la root, i due livelli, il riconciliatore | il documento; D4 |
+| `Multi-repo/multi-progetto` · `Mappa del progetto` | le zone di lavoro, col 5, e la scheda progetto nella knowledge base, col 6 | D3 |
+| `Git e gestione branch` | la repo è una zona di lavoro | D3 |
+| `File watching e awareness del progetto` | il sorvegliante e la scansione all'avvio, col «riscansiona», al 13; la politica al 6 | K8; K9; D15 |
+| `Sessioni multiple` | la sessione di D11, al 3 | D11 |
+| `Selettore di modello per compito` | il selettore della sessione, come Claude Desktop, al 3; il modello scritto nella definizione di un sotto-agente | D10 |
+| `Backup della KB indipendente dall'app` | cade *«documenti nel backup»*: la root è nei backup del proprietario, i router in quello del programma — ADR-0040 | D12; D17 |
+| `Sandboxing ed esecuzione` · `Permessi e sandbox policy` · `Modalità di permessi a più livelli` | i percorsi protetti, col 6; la lettura fuori da ogni zona col permesso, e l'impostazione che la blocca, al primo che legge fuori; il livello 2, col 5 | D16; D18; D19 |
+
+### 5.3 La stella polare della GUI
+
+Sette punti; l'elenco ne portava due.
+
+| Dove | Che cosa dice il richiamo | Da |
+|---|---|---|
+| la decisione 1 | la rete ha tutto ciò che sta **nella root**; un file che l'agente scrive in una zona fuori sta nell'anello, e nella rete attraverso la scheda della zona | D13 |
+| la decisione 11, la riga 13 della barra, e la voce registrata del selettore | **deciso**: il modello si sceglie a mano accanto al pulsante di invio, per la sessione o come default, come Claude Desktop, e ogni risposta porta il nome del modello | D10 |
+| 🆕 la decisione 13 e il modulo **Ambito** | l'ambito della run diventa la **zona di lavoro**, aperta per la sessione, e la root c'è sempre; il resto — la copia prima delle modifiche, la domanda che dice se il percorso è dentro o fuori — regge | D3; D11 |
+| 🆕 la voce registrata *«le letture ovunque o solo dentro l'ambito?»* | **chiusa da D18**: dentro la root e le zone la lettura procede; fuori chiede, un file alla volta, per la sessione | D18 |
+| 🆕 la voce registrata *«un ambito per progetto o uno per run?»* | la zona è della sessione, e gli ambiti sono della porta e non della run; il resto della domanda — la cartella proposta a una nuova run — resta al 3 | D3; D11; K35 |
+| 🆕 il modulo **Knowledge base** | la ricerca nel **testo**, coi filtri per tipo e per cartella; la griglia accanto al grafo; l'anteprima al click; tre specie di linea; il segnale rotto anche per il file chiave perso | il documento; D6; D8 |
+| 🆕 il modulo **Checkpoint** | le copie stanno nella cartella dati del programma, fuori dal backup, e dopo un ripristino un passo di prima non si annulla | ADR-0040 |
+
+### 5.4 design/09
+
+Non basta una riga: il diagramma e la tabella si riallineano ad ADR-0040. L'elenco ne portava due punti.
+
+| Dove | Che cosa dice il richiamo | Da |
+|---|---|---|
+| la riga degli artefatti, e 🆕 il nodo del diagramma | i file del proprietario — la root e le zone, le guide comprese — **non** sono nel backup del programma; la porta dei file arriva a pezzi, 13, 6 e 5, e non più *«l'implementazione vera col 5»* | D12; D15; D17 |
+| 🆕 una riga nuova, i **router** | in `.<nomeapp>/` alla root, in chiaro, **nel** backup del programma, non ricostruibili; li scrive il 6 | D4; D12; K32 |
+| 🆕 una riga nuova, le **copie del checkpoint** | nella cartella dati, in chiaro, fuori dal backup, potate come vuole ADR-0018; col 6 | K53; ADR-0040 |
+| 🆕 la riga degli indici | l'indice del livello strutturale sta nella cartella dati del programma, uno per root | D4 |
+| 🆕 il richiamo del 2026-09-08 in testa | *«le guide sono … artefatti dell'utente»*: file del proprietario, fuori dal backup del programma; e **dove** sta tutto: la cartella dati per utente, ADR-0040 punto 1 | D4; D12 |
+| 🆕 il nodo del giornale | *«guide approvate (col 13)»*: anche la fiducia alle zone, col 5, e l'impronta di ogni caricamento, col 13 | D9; 4.3 |
+
+### 5.5 Le due domande, e le risposte
+
+| | La domanda | La risposta |
+|---|---|---|
+| 1 | come la roadmap porta chi costruisce che cosa: **A**, una frase corta e un rimando alla 4.2; **B**, la lista copiata in ogni riga — due copie che divergono, gotcha #68 | ✅ **A**, dal proprietario, il 2026-09-29 |
+| 2 | trovata dalla verifica dopo la prima risposta: la dipendenza dell'11 dal 5 aveva un solo motivo, il filesystem reale, che D15 toglie; V32, V33 e Q21 non chiedono il 5 — il comando sotto la tabella. **A**, l'11 dipende da 6 e 9; **B**, il 5 resta senza motivo scritto | ✅ **A**, dal proprietario, il 2026-09-29 |
+
+Il comando della seconda — fuori dalla tabella, per la trappola F10 della 4.1 —; rende tre righe:
+
+```
+grep -n -E '^\| *(V32|V33|Q21) *\|' docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md
+```
+
+Entrambe sotto la stessa accettazione condizionata delle sezioni prima. **Verificati:** le righe dei quattro documenti,
+e le tre righe della spec. **Dedotti:** la riga 10; la riga del primo valore; che nient'altro nell'11 chieda il 5.
+**Assunto:** niente.
+
+### 5.6 Il perimetro del 13, riletto
+
+Lo dicono la **4.2** e la **1.8**, e qui non si ripete. Che cosa **non** porta: la lettura fuori da ogni zona e la domanda
+di fiducia — la 4.3. Che cosa non cambia: la strada B; l'ordine 2, 13, 3; **AUD-004 lo sbarra ancora**, e ha ora il caso
+di D9 scritto nel rimando di ADR-0015 — la 3.1.
+
+### 5.7 La verifica chiesta dall'approvazione
+
+Il proprietario ha approvato *«se tutto segue i principi … ed è coerente»*. Riletto il testo presentato in chat contro i
+quattro documenti e la spec; il merito non cambia, salvo la seconda domanda, che è andata al proprietario.
+
+| Nel testo presentato | Qui | Perché |
+|---|---|---|
+| la riga 11, *«la frase non regge più»* | anche la **dipendenza** dal 5 perde il motivo: la seconda domanda | le righe V32, V33 e Q21 della spec |
+| *«anche la cartella nascosta dei router»* al 6 | *«se nessuno le porta prima»*, come la cartella dati | la 4.2 |
+| la stella polare, *«le zone valgono per la sessione»* | la root c'è sempre, e la domanda dentro o fuori regge | la decisione 13 riletta per intero |
+| design/09 | anche il nodo del giornale | le guide approvate, e la fiducia di D9 |
+
 ## Come si riprende — scritto alla chiusura della sessione del 2026-09-29
 
 ⛔ **Da sapere subito: niente è a metà.** Le sezioni dalla **1** alla **4** sono approvate e scritte; la **5** e la **6** sono
-da presentare nella prossima sessione — la scelta del proprietario: *«si continua nella prossima sessione»*. Il disegno è
+da presentare nella prossima sessione ⚠️ **richiamo del 2026-09-29, sessione successiva:** la **5** è approvata e scritta, e resta la **6**; lo stato vive nella tabella in testa — la scelta del proprietario: *«si continua nella prossima sessione»*. Il disegno è
 **uno**, questo file, e la sessione che riprende lo **continua**: la fase è la stessa.
 
 | | Stato, e il comando che lo rifà |

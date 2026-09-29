@@ -2914,7 +2914,7 @@ un autore organizza il lavoro con un agente, e vale come **origine dell'idea**, 
 
 ## La revisione della knowledge base — le fonti delle domande, 2026-09-29
 
-Le fonti lette per le domande da D3 a D14 della [revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md):
+Le fonti lette per le domande da D3 in poi della [revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md):
 il merito lì, qui la provenienza. ⚠️ **Lette attraverso lo strumento di lettura della sessione.** La prima è la
 documentazione di un prodotto: dice come lavora Claude Code, non che il suo modo basti su ogni repo.
 
@@ -2945,6 +2945,7 @@ documentazione di un prodotto: dice come lavora Claude Code, non che il suo modo
 | Anthropic, *Model configuration* di Claude Code, `https://code.claude.com/docs/en/model-config`, letta dal sorgente, `https://code.claude.com/docs/en/model-config.md` | 2026-09-29 | D10: il modello si sceglie nella sessione, per la sola sessione o come default, e i sotto-agenti lo ereditano; la catena `fallbackModel` — al più tre modelli — la percorre Claude Code, su sovraccarico, indisponibilità ed errori del server e mai su autenticazione, fatturazione, limiti di frequenza e dimensione della richiesta; un avviso al cambio; il cambio dura il turno; nella compattazione nessun ripiego su una finestra più piccola; la catena vale per i sotto-agenti; Cowork gira su Claude Code |
 | Anthropic, *Change the model, effort, and thinking settings*, `https://support.claude.com/en/articles/8664678-change-the-model-effort-and-thinking-settings` | 2026-09-29 | D10: il modello accanto al pulsante di invio, si cambia in qualunque momento della conversazione e vale dalla risposta dopo. ⚠️ Letta attraverso lo strumento che riassume, con le frasi citate: si rilegge alla fonte prima del disegno |
 | Anthropic, *Why Claude switched models in your conversation with Opus 5 or Opus 5.5*, `https://support.claude.com/en/articles/16049681-why-claude-switched-models-in-your-conversation-with-opus-5-or-opus-5-5` | 2026-09-29 | D10: il ripiego per contenuto è trasparente — un avviso, e la risposta porta il nome del modello —, il selettore resta sul modello di riserva per il resto della conversazione, e si torna indietro dal selettore. ⚠️ Letta attraverso lo strumento che riassume, con le frasi citate: si rilegge alla fonte prima del disegno |
+| Anthropic, *Choose a permission mode* di Claude Code, `https://code.claude.com/docs/en/permission-modes`, letta dal sorgente, `https://code.claude.com/docs/en/permission-modes.md` | 2026-09-29 | D16: la sezione *Protected paths* — le scritture su una lista di cartelle e file (`.git`, `.claude`, `.vscode`, `.bashrc`, `.mcp.json` e altri) non sono mai approvate da sole: chieste in `default` e `acceptEdits`, negate in `dontAsk`, permesse solo in `bypassPermissions`; e *«The safety check runs before Claude Code evaluates allow rules from settings»*, quindi nessuna regola `allow` le pre-approva |
 
 ## Cosa NON abbiamo adottato, e perché
 

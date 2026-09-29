@@ -289,7 +289,7 @@ la parte di prima resta, perché dice che cosa la risposta ha sciolto.
 |---|---|---|---|---|
 | **K24** | **spostato e modificato insieme** — o salvato da un editor come file nuovo: l'hash cambia, il riconciliatore vede «cancellato» più «nuovo», toglie la voce, e un file chiave esce dalla mappa senza che nessuno lo sappia | D | — | **D6** — ✅ chiuso il 2026-09-29: nel dubbio la voce resta, segnata rotta, coi candidati |
 | **K25** | **due file identici**: lo stesso hash in due posti, e lo spostamento diventa ambiguo | D | — | **D6** — ✅ chiuso il 2026-09-29: è un caso di dubbio, rotto coi due candidati |
-| **K26** | **chi scrive il file delle esclusioni**: se l'agente può toglierne una riga, un file malevolo che l'agente ha letto può convincerlo a scoprire il privato e poi leggerlo — *«un'istruzione trovata nei dati non è mai un'autorizzazione»*, ADR-0014 | D | — | **D5** — ✅ chiuso il 2026-09-29: le regole del privato le cambia solo il proprietario, con conferma a ogni preset |
+| **K26** | **chi scrive il file delle esclusioni**: se l'agente può toglierne una riga, un file malevolo che l'agente ha letto può convincerlo a scoprire il privato e poi leggerlo — *«un'istruzione trovata nei dati non è mai un'autorizzazione»*, ADR-0014 | D | — | **D5** — ✅ chiuso il 2026-09-29: le regole del privato le cambia solo il proprietario, con conferma a ogni preset ⚠️ **Riaperto a metà il 2026-09-29 dal controllo finale, CF1**, e richiuso: ✅ **D16, A** — il file del privato è un **percorso protetto**, controllato prima dei sì |
 | **K27** | **escluso non vuol dire invisibile**: i «media pesanti» esclusi sparirebbero dal grafo, mentre la rete della Home deve mostrare anche gli asset 3D — decisione 1 della stella polare | V + D | — | **D5** — ✅ chiuso il 2026-09-29: il rumore resta un nodo del grafo |
 | **K28** | **la root è il confine di tutto l'assistente, o solo della knowledge base?** Il coding lavora su repo: dentro la root, o anche fuori con ambiti suoi (ADR-0024) e permessi suoi (ADR-0016)? E il documento confina lo **scrivere**, non il **leggere** | D | ✅ gli ambiti che il piano 0 usa come chiave | **D3** — ✅ chiuso il 2026-09-29, risposta A: il confine è ogni zona aperta, la knowledge base più le zone di lavoro, e confina lo scrivere **e** il leggere |
 | **K29** | **una root enorme** — «tutto quello che ho sul PC»: la prima scansione è lunga, e le build nelle repo inondano il sorvegliante. Serve una scansione incrementale — dimensione e data, l'hash solo se cambiano — e lo stato *«indicizzazione in corso»* dichiarato prima, come vuole ADR-0019 | D | ✅ l'evento «riscansiona» | registrato: il 6, e il 13 per l'evento |
@@ -385,8 +385,9 @@ riceve uno; righe riscritte nella roadmap, nella tracciabilità e nella stella p
 | il codice: `permission.rs`, `record.rs`, `parameters.rs`, `filesystem.rs` | la sessione nel record del permesso e il record di fine sessione, RR2; i due tempi, RR4; la risorsa, K44; la porta, K45 | il 3 e il 5 |
 | il codice: `gateway/mod.rs` e `record.rs` | il candidato con un nome scelto a runtime e la sua finestra; il cammino sui fallimenti; i tentativi e il cambio di modello nel record di routing — K47 | il 3; la finestra, il 13 — D15 |
 | il codice: `permission.rs` | un permesso scritto senza sessione — i giornali di oggi — si legge come di una sessione **finita**: davanti al dubbio ci si ferma, ADR-0007 — CF9 | il 3 |
+| il codice: `registry.rs` e la porta `filesystem` | i **percorsi protetti**: il file del privato si controlla **prima** di `is_granted`, e nessun sì — sulla root, su una cartella, di sessione — copre una scrittura dell'agente su di lui; lo cambia il proprietario, e ogni cambio che rende leggibile chiede conferma, RR8. Lo costruisce il **6**, senza aspettare i preset del 4 | D16 |
 | le funzioni della knowledge base nel registro | la funzione che rende leggibile è irripetibile — RR8 | D5 |
-| `roadmap.md` | il **6**: la cella dice ancora *«archivio unico»*, e la prima metà guadagna il livello strutturale e il riconciliatore con la sua impostazione, D14; il **5**: la porta `filesystem` vera, le zone, il livello 2 che nega il privato — K23, K35, K36, K44, K45; il **3**: la run nel giornale e la sessione di D11, con la fine come record e il riavvio — RR1–RR4; il **3** anche il selettore del modello, la catena nel gateway con un modello per richiesta e la compressione spenta, D10; il **13**: il «riscansiona», la fiducia di D9 e la proiezione per candidato, D10; l'**11**: il backup di D12; il **10**: le cartelle dati e la cartella nascosta — K1, K30; e la porta dei file a pezzi, D15: il **13** la lettura, gli eventi e la finestra del candidato, il **6** lo scrivere, spostare, cancellare e il privato, il **5** le zone | le risposte |
+| `roadmap.md` | il **6**: la cella dice ancora *«archivio unico»*, e la prima metà guadagna il livello strutturale e il riconciliatore con la sua impostazione, D14; il **5**: la porta `filesystem` vera, le zone, il livello 2 che nega il privato — K23, K35, K36, K44, K45; il **3**: la run nel giornale e la sessione di D11, con la fine come record e il riavvio — RR1–RR4; il **3** anche il selettore del modello, la catena nel gateway con un modello per richiesta e la compressione spenta, D10; il **13**: il «riscansiona», la fiducia di D9 e la proiezione per candidato, D10; l'**11**: il backup di D12; il **10**: le cartelle dati e la cartella nascosta — K1, K30; e la porta dei file a pezzi, D15: il **13** la lettura, gli eventi e la finestra del candidato, il **6** lo scrivere, spostare, cancellare e il privato, il **5** le zone; il **6** anche i percorsi protetti, D16 | le risposte |
 | `tracciabilita.md` | `Multi-repo/multi-progetto` e `Mappa del progetto`: le zone e la scheda progetto, D3; `Git e gestione branch`: la zona; `Collezioni e knowledge base`: la forma del documento; `File watching e awareness del progetto`: sorvegliante e scansione; `Sessioni multiple`: la sessione di D11; `Selettore di modello per compito`: il selettore della sessione e il modello nella definizione di un sotto-agente, D10; `Backup della KB indipendente dall'app`: la root nei backup del proprietario, i router in quello del programma, D12 | le risposte |
 
 ### La prova alla radice — chiesta dal proprietario, 2026-09-29
@@ -1424,6 +1425,54 @@ esistono. **Assunto**: che il 3 non tocchi i file prima del 6; se lo facesse, pa
 
 **Il consiglio: A.** È la regola che il progetto usa già, e nessun pezzo resta senza chi lo usa.
 
+### D16, posta il 2026-09-29 — trovata dal controllo finale
+
+**Che cos'è, a parole semplici.** Alla root c'è il file che dice che cosa è privato. D5 ha deciso che lo cambia **solo il
+proprietario**, e l'agente propone. Ma nel codice niente lo garantisce: un sì dato all'agente per scrivere nella root copre
+**anche** quel file, perché la porta non conosce esclusioni; e un file malevolo letto dall'agente potrebbe convincerlo a
+togliere una regola e poi a leggere il privato — K26, ADR-0014. RR8 protegge la sola **funzione** del registro, e i preset,
+che chiederebbero, arrivano col 4, mentre il 6 non ne dipende — CF1.
+
+**Che cosa esiste già.**
+
+| | Che cosa dice | Dove, e il comando |
+|---|---|---|
+| il registro | `invoke` chiede soltanto `is_granted`, con `Approval::Checked`: niente preset, niente classe dell'effetto | `grep -n 'permission::is_granted' crates/kernel/src/registry.rs` |
+| ADR-0016 | tre preset; con `autonomo` chiedono solo gli effetti irripetibili e ciò che un sensore ferma | `grep -n -e 'auto-approva' -e 'autonomo' docs/adr/0016-*.md` |
+| RR8 | la funzione che rende leggibile è **irripetibile**, quindi chiede con ogni preset — **a ogni cambio**, non per sessione | la prova alla radice |
+| D5 | le regole del privato le cambia solo il proprietario; l'agente propone | la risposta D5 |
+| D15 | il privato e lo scrivere li costruisce il 6 | la risposta D15 |
+
+**Che cosa fa Claude Code — letto dal sorgente il 2026-09-29**, la provenienza in [`riferimenti.md`](../../riferimenti.md).
+Tiene una lista di **percorsi protetti** — `.git`, `.claude`, `.vscode`, `.bashrc`, `.mcp.json` e altri —, le cui scritture
+non sono mai approvate da sole: nei modi che chiedono, chiedono; in `dontAsk` sono negate. *«The safety check runs before
+Claude Code evaluates allow rules from settings»*: nessuna regola di permesso le pre-approva.
+
+**La domanda: il file del privato diventa un percorso protetto, o resta un file come gli altri?**
+
+| | **A — percorso protetto, come Claude Code** | **B — un file come gli altri** |
+|---|---|---|
+| com'è | il kernel controlla il file del privato **prima** dei sì: nessun sì — sulla root, su una cartella, di sessione — copre una scrittura dell'agente su di lui, e l'agente può solo proporre; lo cambia il proprietario, a mano o dal pannello | lo protegge il sistema dei permessi, come ogni file |
+| costo | il 6 costruisce il controllo, una lista di percorsi protetti | fino al 4 un sì sulla root lo copre; dopo, il file **chiede** ma non è **vietato** |
+| che cosa si rifà dopo | niente | aggiungere la protezione dopo |
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | `registry.rs` letto; Claude Code letto dal sorgente | lascia il buco di CF1, verificato nel codice |
+| coerenza | rende vera D5; ADR-0014 — il contenuto non fidato non autorizza | D5 resta una frase |
+| debito | nessuno | il buco fino al 4 |
+| stato dell'arte | i percorsi protetti di Claude Code | contro la fonte |
+| proporzione | un controllo su pochi percorsi | niente da costruire, e un confine che non regge |
+| di chi è | **del proprietario**: il suo file | idem |
+
+**Verificato, dedotto, assunto.** **Verificati**: `registry.rs`, ADR-0016, e alla fonte i percorsi protetti di Claude Code.
+**Dedotto**: che un sì sulla root copra il file, perché la porta non conosce esclusioni — il codice della porta vera non
+esiste. **Assunto**: che il file del privato stia alla root, come dice il documento del proprietario.
+
+**Il consiglio: A.** Rende vero ciò che D5 ha già deciso, e non aspetta il 4.
+
 ## Le risposte del proprietario
 
 | # | Risposta | Data |
@@ -1443,6 +1492,7 @@ esistono. **Assunto**: che il 3 non tocchi i file prima del 6; se lo facesse, pa
 | D13 | ✅ **A** — un file che l'agente scrive in una zona fuori dalla root sta nell'**anello**, per data, dal giornale; nella **rete** la zona è la sua scheda, e da lì si apre; un file che non c'è più si mostra mancante quando lo si apre. La decisione 1 della stella polare della GUI riceverà un richiamo col disegno: la rete ha tutto ciò che sta **nella root**. Riposta con un esempio: alla prima forma il proprietario aveva risposto *«non ho capito spiega meglio»* | 2026-09-29 |
 | D14 | ✅ **A, sullo stato dell'arte** — come le app di oggi, il riconciliatore segue un'**impostazione** scelta una volta — da solo, chiedi, mai —, e parte da **«da solo»**, come Obsidian e come D6; ogni correzione va nel giornale, con la copia, e si annulla. ADR-0016 riceverà un rimando col disegno: il permesso lo chiede chi agisce per un modello o invoca una funzione, e la manutenzione deterministica del programma sulla sua cartella segue la sua impostazione. Alla prima forma il proprietario aveva chiesto *«come farebbero con lo stato dell'arte attuale?»*: lette alla fonte Obsidian e VS Code. ⚠️ **2026-09-29, controllo finale, CF5:** il perimetro si scrive *«la correzione deterministica di un fatto che non cambia una scelta del proprietario»*, e non *«la cartella del programma»* — i router sono del proprietario, D4 —; e il rimando va anche in ADR-0038, la cui regola 2 vuole lo stesso permesso per ogni invocatore | 2026-09-29 |
 | D15 | ✅ **A** — a pezzi: la porta dei file vera la paga chi usa ciascun pezzo per primo — il **13** la lettura, la sorgente degli eventi e la finestra del candidato; il **6** lo scrivere, anche condizionato, l'elenco, i metadati, spostare, cancellare, le esclusioni del privato e la tripla su una cartella scelta a runtime; il **5** la chiusura delle zone. design/09 e la roadmap si riscrivono col disegno; ogni crescita della porta è un richiamo datato alla §4 della spec del sotto-progetto 1 | 2026-09-29 |
+| D16 | ✅ **A** — come Claude Code: il file del privato è un **percorso protetto**, controllato dal kernel **prima** dei sì; nessun sì — sulla root, su una cartella, di sessione — copre una scrittura dell'agente su di lui, e l'agente può solo proporre; lo cambia il proprietario, a mano o dal pannello, e ogni cambio che rende leggibile chiede conferma a ogni volta, perché è irripetibile — RR8. Lo costruisce il 6, senza aspettare i preset del 4. Chiude K26 | 2026-09-29 |
 
 ## Come si riprende — scritto alla chiusura della quarta sessione del 2026-09-29
 

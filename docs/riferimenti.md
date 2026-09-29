@@ -2914,7 +2914,7 @@ un autore organizza il lavoro con un agente, e vale come **origine dell'idea**, 
 
 ## La revisione della knowledge base — le fonti delle domande, 2026-09-29
 
-Le fonti lette per le domande D3, D4, D5, D6, D7 e D11 della [revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md):
+Le fonti lette per le domande D3, D4, D5, D6, D7, D8 e D11 della [revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md):
 il merito lì, qui la provenienza. ⚠️ **Lette attraverso lo strumento di lettura della sessione.** La prima è la
 documentazione di un prodotto: dice come lavora Claude Code, non che il suo modo basti su ogni repo.
 
@@ -2930,6 +2930,8 @@ documentazione di un prodotto: dice come lavora Claude Code, non che il suo modo
 | NIST, *SP 800-63B*, revisione 800-63-4 del 26 agosto 2025, `https://pages.nist.gov/800-63-4/sp800-63b.html` | 2026-09-29 | D11: la riautenticazione — AAL1 al più 30 giorni e nessuna scadenza per inattività; AAL2 al più 24 ore e un'ora di inattività; AAL3 al più 12 ore e 15 minuti |
 | Microsoft, *Manage approvals and permissions* di VS Code, pagina del 2026-09-16, `https://code.visualstudio.com/docs/agents/run/approvals` | 2026-09-29 | D11: un'approvazione vale una volta, per la sessione, per lo spazio di lavoro o per sempre, e *Chat: Reset Tool Confirmations* le azzera tutte; la pagina non definisce la sessione |
 | Google, *Request runtime permissions* di Android, `https://developer.android.com/training/permissions/requesting` | 2026-09-29 | D11: il permesso *«solo questa volta»* vale finché l'attività è visibile e per poco dopo che l'app va in secondo piano, poi si richiede; i permessi di un'app non usata per qualche mese si azzerano da soli, da Android 11 |
+| Obsidian, *Graph view*, `https://obsidian.md/help/plugins/graph` | 2026-09-29 | D8: i cerchi sono le note, le linee i link interni fra due note; una nota più citata è più grande; i filtri per gli orfani, per gli allegati e per i soli file che esistono |
+| Obsidian, *Internal links*, `https://obsidian.md/help/links` | 2026-09-29 | D8: i due formati, `[[nota]]` e `[testo](percorso)`; l'aggiornamento dei link quando si rinomina un file dentro Obsidian, che si può spegnere; la pagina non dice niente dei file rinominati da fuori |
 
 ## Cosa NON abbiamo adottato, e perché
 

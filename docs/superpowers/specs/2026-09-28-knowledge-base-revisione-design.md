@@ -284,7 +284,7 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 | **K30** | **su Windows il punto nel nome non nasconde una cartella**: `.git` è nascosta perché git le mette l'attributo H, `.github` e `.superpowers` no. La cartella `.<nomeapp>/` va marcata nascosta dal modulo di piattaforma | V: `cmd //c "attrib .git"` e `cmd //c "attrib .github"` nella radice di questo repository | — | **D4** — ✅ chiuso il 2026-09-29: la marca il modulo di piattaforma |
 | **K31** | **il backup**: se la root è il PC intero, il programma non può salvarla tutta, mentre ADR-0022 metteva la cartella della knowledge base nel suo backup. Il programma salva ciò che è **suo** — i router —, e il resto è dei backup del proprietario | V + D | — | **D4** — ✅ chiuso il 2026-09-29: il programma salva i suoi dati e i router, il resto è del proprietario; lo costruisce l'11 |
 | **K32** | **i router non si ricostruiscono**: portano le scelte del proprietario — le aree, i file chiave, la riga di descrizione. Rifarli è rifare il setup guidato, coi suoi token e le sue domande | D | — | **D4** — ✅ chiuso il 2026-09-29: i router stanno in `.<nomeapp>/`, lontani dall'indice che si rifà, e il programma li salva |
-| **K33** | **l'agente che scrive senza chiedere**: col preset di default di ADR-0016 ogni scrittura chiede conferma, mentre il documento vuole i router aggiornati nello stesso turno | V: ADR-0016, punto 2 | — | **D7** |
+| **K33** | **l'agente che scrive senza chiedere**: col preset di default di ADR-0016 ogni scrittura chiede conferma, mentre il documento vuole i router aggiornati nello stesso turno | V: ADR-0016, punto 2 | — | **D7** — ✅ chiuso il 2026-09-29: un sì per la sessione, la tripla sulla cartella dei router |
 | **K34** | **i file «solo online» di OneDrive** dentro la root: leggerli scarica il file, o fallisce senza rete | F | — | registrato: il 6, alla fonte |
 | **K35** | **una zona di lavoro si apre e non si chiude**: la porta `filesystem` ha `declare_scope` e nessuna chiusura, mentre la zona dura la sessione; e gli ambiti sono **della porta**, non della run — due run con due zone diverse, gli agenti del 4, alla porta vedrebbero l'una la zona dell'altra, e il confine per run lo dà solo il permesso di ADR-0016 | V: `grep -n '^    fn ' crates/kernel/src/ports/filesystem.rs` rende i cinque metodi del tratto, nessuno che chiuda; D: una porta sola nel daemon | — | registrato: chi costruisce la porta `filesystem` vera, con K23 |
 | **K36** | **il privato escluso dalla porta non lo è per i comandi**: uno script che l'agente esegue apre i file da sé, e la porta non lo vede. Le documentazioni di Claude Code e di Cursor lo dicono dei loro prodotti; da noi il livello 1 di ADR-0025, per costruzione, non regge contro codice eseguito | V alla fonte, il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md); D per il nostro caso | — | registrato: il 5, col confinamento di livello 2 che nega i percorsi privati; il 4 per MCP, con K12 |
@@ -740,6 +740,70 @@ agenti lo fanno, e ADR-0011 mette la sessione nella gerarchia delle run —; che
 anche per i sì dati a un agente — per analogia, e il permesso *«solo questa volta»* di Android è della stessa famiglia.
 **Assunto**: che il livello AAL2 sia il riferimento giusto per i valori; lo verifica il 3.
 
+**Dove va, perché la definizione non resti solo qui.** Il proprietario, rispondendo a D7, ha chiesto: *«la sessione è stata
+integrata nei permessi esistenti?»*. **Non ancora**: oggi vive solo in questo file.
+
+| Dove | Che cosa | Chi |
+|---|---|---|
+| ADR-0016 | un rimando datato in testa: la «sessione» del punto 3 è quella di D11; nessuna riga superata | il disegno di questa revisione, riletto contro i fratelli — gotcha #59 |
+| ADR-0011 | un rimando datato: la «sessione» della contabilità è la stessa | idem |
+| la voce di ADR-0016 nella §5 del compendio | la riga del rimando | idem |
+| il codice | oggi `permission::is_granted` rilegge tutto il giornale, un sì vale per sempre — anche dopo un riavvio — e la revoca non c'è; il 3 lega il sì alla sessione, con le due scadenze consegnate e la chiusura a mano, coi test nel simulatore sull'orologio iniettabile | il **3**, che porta le run, com'era assegnato dal disegno del 2 |
+| V21, nella §8 della spec del sotto-progetto 1 | resta ⚠️ parziale col suo innesco, C (4): il 3 ne costruisce la metà della sessione, e il ciclo d'approvazione è scaglionato al 4. ⚠️ La §8 è spec: non si tocca senza il proprietario | — |
+
+### D8, posta il 2026-09-29
+
+**Che cos'è, a parole semplici.** Il grafo della UI mostra i file come punti. Le linee, oggi, sono di due specie e si
+ricavano da sole: un file **sta in** una cartella, e un file chiave **appartiene** a un'area. Il documento lascia aperta una
+terza specie — la sua decisione aperta 4 —: i **link** che il proprietario scrive dentro un file verso un altro, come
+`[testo](percorso)` in markdown.
+
+**Che cosa esiste già.**
+
+| | Che cosa dice | Dove, e il comando |
+|---|---|---|
+| il documento del proprietario | il grafo si raggruppa per cartella e per area; *«Il contenimento in cartella e l'appartenenza a un'area si ricavano da soli»* | la decisione aperta 4 |
+| il disegno del 2026-09-04 | le frecce della mappa — router → gruppo → foglia → skill, e il ritorno — e i segnali **orfano** e **rotto**; i collegamenti puntano a **file**, non ad ancore | la §4.1 e la §4.2 |
+| D6 | un file chiave perso si segna rotto, coi candidati | la risposta D6 |
+| questo repository | `check-docs.sh` controlla i link fra i documenti, e un link rotto è un rosso; un'ancora non la vede — la trappola 6 della §10 del compendio | `scripts/check-docs.sh` |
+| la stella polare della GUI | la rete al centro della Home, un modulo che si mette a fuoco a pagina intera | `grep -n 'la rete al centro' docs/superpowers/specs/2026-09-07-direzione-gui-design.md` |
+| Obsidian | nel suo grafo i cerchi sono le note e le linee i **link interni** fra due note; una nota più citata è più grande; i filtri tengono o tolgono gli **orfani** e i link verso file che non esistono; i formati sono due, `[[nota]]` e `[testo](percorso)`; e aggiorna i link quando si rinomina un file dentro Obsidian | *Graph view* e *Internal links*, lette alla fonte il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md) |
+
+**Che cosa arriva.** Il **6** costruisce il livello strutturale — la scansione che legge il testo — e il pannello del grafo;
+la Home della GUI lo mette al centro.
+
+**Regge crescendo?** Con molti file le linee diventano tante, e servono i filtri — per specie di linea, per area, per gli
+orfani —, come quelli di Obsidian. Senza i link, invece, il grafo di una cartella di note mostra solo le cartelle, e la
+struttura che il proprietario ha scritto non si vede.
+
+**In tutte e due le risposte**: le linee di cartella e di area restano, ricavate da sole.
+
+**La domanda: i link che il proprietario scrive fra i file diventano linee del grafo?**
+
+| | **A — sì, una terza specie di linea** | **B — no, solo cartella e area** |
+|---|---|---|
+| com'è | la scansione, senza modello, legge i link dei file di testo — i due formati, `[testo](percorso)` e `[[nota]]` — e ne fa linee; un link verso un file che non c'è è un segnale **rotto**, come nel disegno del 2026-09-04; un link che esce dalla root punta alla scheda della sua zona, D3, o non si disegna | il grafo mostra cartelle e aree |
+| costo | la scansione legge i link, poco e sul solo testo; più linee, e i filtri che le tengono leggibili | i link scritti non si vedono; e un link rotto in una nota non lo segnala nessuno |
+| che cosa si rifà dopo | niente | aggiungerli dopo: un lettore dei link nella scansione |
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | Obsidian letto alla fonte; il segnale rotto esiste già nel disegno del 2026-09-04 | — |
+| coerenza | un link rotto è trattato come un puntatore dei router e come un link di questo repository | due pesi: i link dei router controllati, quelli delle note no |
+| debito | il lettore dei link e i filtri, al 6 | i link rotti che nessuno vede |
+| stato dell'arte | è il grafo di Obsidian | un grafo senza link è un albero di cartelle |
+| proporzione | un lettore deterministico dei link | niente |
+| di chi è | **del proprietario**: la sua decisione aperta 4 | idem |
+
+**Verificato, dedotto, assunto.** **Verificati**: Obsidian alla fonte, la §4.1 e la §4.2 del 2026-09-04, `check-docs.sh`, la
+stella polare della GUI. **Dedotti**: che leggere i link costi poco; che il grafo abbia bisogno di filtri. **Assunto**: che il
+proprietario scriva link fra i suoi file.
+
+**Il consiglio: A.** I link sono la struttura che il proprietario scrive da sé: leggerli non costa quasi niente, e un link
+rotto diventa visibile invece di mentire.
+
 ## Le risposte del proprietario
 
 | # | Risposta | Data |
@@ -750,7 +814,7 @@ anche per i sì dati a un agente — per analogia, e il permesso *«solo questa 
 | D4 | ✅ **A** — separati per natura: i **router** in `.<nomeapp>/` alla root, nascosta dal modulo di piattaforma, e l'**indice** nella cartella dati del programma, fra i dati rigenerabili, uno per root; i dati del programma nella cartella dati per utente del sistema, e il programma salva nel proprio backup i suoi dati e i router | 2026-09-29 |
 | D5 | ✅ **A** — due specie: il **rumore**, dove lo scanner non entra ma il file o la cartella restano un nodo del grafo e l'agente li apre se serve; il **privato**, fuori dall'indice e da ciò che l'agente vede, con la porta che rifiuta la lettura e il confinamento dei comandi che nega quei percorsi. Le regole del privato le cambia solo il proprietario: l'agente propone, e ciò che rende leggibile qualcosa chiede conferma a ogni preset | 2026-09-29 |
 | D6 | ✅ **A** — nel dubbio, **rotto** e una domanda: il caso certo — la stessa impronta, un solo candidato — si applica da solo; un file chiave che il riconciliatore non ritrova con certezza resta nella mappa segnato rotto, l'agente non lo segue, il pannello lo mostra, e il riconciliatore propone i candidati — lo stesso nome altrove, o un contenuto simile come fa git — fra cui sceglie il proprietario; due file identici sono un caso di dubbio | 2026-09-29 |
-| D7 | ⏳ il proprietario ha risposto con una domanda — la sessione non è definita, K37 —: si ripone dopo D11 | 2026-09-29 |
+| D7 | ✅ **A** — un sì per la sessione: la tripla `(file, .<nomeapp>/, scrittura)` si concede alla prima modifica di un router e vale per la sessione di D11, come il punto 3 di ADR-0016; ogni modifica si vede nel turno e si annulla. Alla prima posa il proprietario aveva risposto con una domanda — la sessione non era definita, K37 —, e D7 si è riposta dopo D11. Con la risposta ha chiesto se la sessione sia già integrata nei permessi: **non ancora**, e dove va lo dice la sezione di D11 | 2026-09-29 |
 | D11 | ✅ **delegata allo stato dell'arte** — *«come le sessioni moderne delle app moderne stato dell'arte, decision-principles devi seguire»*: la sessione è la run coi suoi sotto-agenti, uguale sul lato chat e sul lato coding; finisce quando il proprietario la chiude, dopo un tempo di inattività o dopo un tempo massimo, e la fa rispettare il core; i due tempi sono parametri consegnati, coi valori al 3 e il riferimento di NIST AAL2; alla fine cadono i suoi sì e si chiudono le sue zone. Il sì oltre la sessione delle app di oggi urta ADR-0016: segnalato, K38 | 2026-09-29 |
 
 ## Come si riprende — scritto alla chiusura della sessione del 2026-09-28

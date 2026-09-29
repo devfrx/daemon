@@ -498,7 +498,7 @@ rilievi di merito prima di scriverli: il commento di `Path` in `filesystem.rs`, 
 |---|---|---|---|
 | **M1** | il controllo dei percorsi protetti non può stare nel registro: il kernel non interpreta i percorsi, e `invoke` non ne vede | merito, sul meccanismo | la riga dei percorsi protetti nell'elenco; la sezione e la risposta D16 |
 | **M2** | *«a ogni volta»* non è nel codice — `invoke` non legge la classe — ed è un'eccezione al punto 3 di ADR-0016, senza rimando nell'elenco | merito, nell'elenco | le righe di ADR-0016, di `registry.rs` e delle funzioni; RR8 |
-| **M3** | il file del privato ha anche la sezione del **rumore**, D5: protetto per intero, l'agente non può più aggiungere una riga di rumore | **merito** | **D20** |
+| **M3** | il file del privato ha anche la sezione del **rumore**, D5: protetto per intero, l'agente non può più aggiungere una riga di rumore | **merito** | **D20** — ✅ A, 2026-09-29 |
 | **M4** | la cartella dati di D19 oggi non esiste: il daemon scrive nella cartella da cui parte | merito, lieve | una riga nuova nell'elenco per `main.rs`; decisione 1 del coordinatore |
 | **M5** | *«come Claude Code»* dice più della fonte: là la scrittura protetta **chiede**; la A di D16 è il suo `dontAsk` | forma | la sezione e la risposta D16 |
 | **M6** | l'ambito di sola lettura di D18 lo paga il primo che legge fuori, forse il 13, non per forza il 5 | merito, lieve | la sezione D18, K45, la riga della roadmap; decisione 2 del coordinatore |
@@ -514,7 +514,7 @@ rilievi di merito prima di scriverli: il commento di `Path` in `filesystem.rs`, 
 | Risposta | Esito |
 |---|---|
 | D15 | integrata, con le righe di forma corrette |
-| D16 | la decisione regge; il **meccanismo** era scritto nel posto sbagliato, M1, e senza il rimando di M2 — corretti nell'elenco; resta **D20** |
+| D16 | la decisione regge; il **meccanismo** era scritto nel posto sbagliato, M1, e senza il rimando di M2 — corretti nell'elenco; e **D20**, ✅ A |
 | D17 | integrata; apre K53 |
 | D18 | integrata; K51, e l'ambito di lettura fra run e contro i comandi nell'elenco |
 | D19 | integrata nella decisione; radicata ora nell'elenco, con `main.rs` |
@@ -557,6 +557,7 @@ risponde a D1 e a buona parte delle domande di prima; l'elenco di prima sta nel 
 | **D17** | **il backup degli artefatti di una zona fuori dalla root**: l'ADR nuovo di D12 supera ADR-0022 *«per i file della root»*, e la riga degli artefatti resta viva per i file che l'agente scrive in una repo esterna — il programma salverebbe file dentro le repo del proprietario — trovata dal controllo finale, CF4 | il perimetro dell'ADR nuovo |
 | **D18** | **leggere un file fuori da ogni zona**: D3 risponde `OutsideScope`, D9 fa approvare un import che esce dalla zona senza dire come poi si legge, e Claude Code legge *«i file altrove col permesso»* — approvare apre una zona in sola lettura per la sessione, o l'import si rifiuta — trovata dal controllo finale, CF6 | la lettura fuori zona |
 | **D19** | **la cartella dati del programma**: se la root la contiene, un sì sulla root apre giornale e configurazione all'agente — percorso protetto come il file del privato di D16, o nessuna regola in più — trovata dopo D18, alla domanda del proprietario sulla coerenza | K50 |
+| **D20** | **il rumore dentro il file del privato**: con D16 il file è protetto per intero, e l'agente non può più aggiungere nemmeno una riga di rumore — un file solo, tutto protetto, o due file — trovata dal secondo controllo, M3 | la sezione del rumore di D5 |
 | — | registrati col chiusore, senza domanda salvo che il proprietario la chieda: K11, K12, K17, K19, K21, K22, K29, K35, K36, K38, K41, K44, K45, K47, K48, K49, K51, K52, K53 — ⚠️ **2026-09-29:** tolti K23 e K34, chiusi da D15 e dalla fonte | |
 
 ### D1, posta il 2026-09-28
@@ -1672,6 +1673,44 @@ Claude Code. **Dedotto**: che la root possa contenere la cartella dati — lo pe
 
 **Il consiglio: A.** Lo stesso meccanismo di D16 chiude un buco vero su I1.
 
+### D20, posta il 2026-09-29 — trovata dal secondo controllo
+
+**Che cos'è, a parole semplici.** D5 dà al file delle esclusioni **due sezioni**: il **rumore**, che non si indicizza ma resta
+un nodo del grafo, e il **privato**, che non si legge. D16 rende il file un **percorso protetto**: l'agente non lo scrive mai.
+Così, senza volerlo, l'agente non può più aggiungere nemmeno una riga di rumore — una cartella `build/` che vorrebbe non
+indicizzare. D5 diceva del rumore *«un'ottimizzazione, e non chiede conferme»* — M3.
+
+**Che cosa fanno i software di oggi — letto dal sorgente il 2026-09-29**, la provenienza in [`riferimenti.md`](../../riferimenti.md).
+
+| Fonte | Che cosa dice |
+|---|---|
+| Claude Code, *Choose a permission mode* e *Configure permissions* | le regole — anche quelle che negano la lettura — stanno nelle impostazioni, in `.claude/`, fra i **percorsi protetti**; nessuna distinzione fra rumore e privato |
+| Cursor, *Ignore files* e *Ignore file reference* | **un** file, `.cursorignore`, per i file generati, i binari, il codice di terzi **e** i segreti; più `.gitignore` e una lista di default |
+
+**La domanda: il rumore resta nel file del privato, protetto con lui, o va in un secondo file che l'agente scrive?**
+
+| | **A — un file solo, tutto protetto** | **B — due file** |
+|---|---|---|
+| com'è | il file del documento del proprietario, alla root; l'agente **propone** anche le righe di rumore, e le conferma il proprietario | il privato resta nel file protetto; il rumore in un secondo file, che l'agente scrive col sì normale |
+| costo | una conferma quando l'agente vuole aggiungere rumore, cosa rara; il rumore *«non chiede conferme»* di D5 vale solo per il proprietario | due file da capire; un cambio al documento del proprietario |
+| che cosa si rifà dopo | niente | niente |
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | D5, D16 e le due fonti lette oggi | idem |
+| coerenza | il file unico del documento del proprietario | un file in più |
+| debito | nessuno | nessuno |
+| stato dell'arte | Claude Code, tutte le regole in un posto protetto; Cursor, un file solo | nessuna delle due fonti divide in due file |
+| proporzione | una conferma rara | un file per un caso raro |
+| di chi è | **del proprietario**: il suo file | idem |
+
+**Verificato, dedotto, assunto.** **Verificati**: D5, D16, e alla fonte Claude Code e Cursor. **Dedotto**: che l'agente
+voglia aggiungere rumore di rado. **Assunto**: niente.
+
+**Il consiglio: A.** Resta il file unico del documento, come le regole di Claude Code stanno tutte in un posto protetto.
+
 ## Le risposte del proprietario
 
 | # | Risposta | Data |
@@ -1680,7 +1719,7 @@ Claude Code. **Dedotto**: che la root possa contenere la cartella dati — lo pe
 | D2 | ✅ **A** — la copia di ADR-0024 resta, **solo** per le azioni dell'agente, e il giornale resta; nessuno storico dei cambi del proprietario, nessun versioning, nessun sync. Nessun ADR cambia. ⚠️ **2026-09-29, controllo finale, CF12:** con D14 la copia vale per ogni scrittura **del programma**, il riconciliatore compreso | 2026-09-28 |
 | D3 | ✅ **A** — due specie di zona: la knowledge base, una e mappata, e le zone di lavoro, aperte come in Claude Desktop anche fuori dalla root, ciascuna col permesso per la sessione e la copia prima delle modifiche dell'agente; una zona **fuori** dalla root **non** entra nel grafo né nella ricerca, e nella knowledge base c'è la sua **scheda progetto**, che le fa da router; fuori da ogni zona l'agente non legge e non scrive. Posta il 2026-09-28, riformulata lo stesso giorno ⚠️ **2026-09-29, D18:** fuori da ogni zona l'agente **non scrive**; **legge** col permesso, come Claude Code | 2026-09-29 |
 | D4 | ✅ **A** — separati per natura: i **router** in `.<nomeapp>/` alla root, nascosta dal modulo di piattaforma, e l'**indice** nella cartella dati del programma, fra i dati rigenerabili, uno per root; i dati del programma nella cartella dati per utente del sistema, e il programma salva nel proprio backup i suoi dati e i router ⚠️ **2026-09-29, la revisione:** la metà sul backup urta ADR-0022, e torna al proprietario come **D12** — ✅ A, 2026-09-29 | 2026-09-29 |
-| D5 | ✅ **A** — due specie: il **rumore**, dove lo scanner non entra ma il file o la cartella restano un nodo del grafo e l'agente li apre se serve; il **privato**, fuori dall'indice e da ciò che l'agente vede, con la porta che rifiuta la lettura e il confinamento dei comandi che nega quei percorsi. Le regole del privato le cambia solo il proprietario: l'agente propone, e ciò che rende leggibile qualcosa chiede conferma a ogni preset | 2026-09-29 |
+| D5 | ✅ **A** — due specie: il **rumore**, dove lo scanner non entra ma il file o la cartella restano un nodo del grafo e l'agente li apre se serve; il **privato**, fuori dall'indice e da ciò che l'agente vede, con la porta che rifiuta la lettura e il confinamento dei comandi che nega quei percorsi. Le regole del privato le cambia solo il proprietario: l'agente propone, e ciò che rende leggibile qualcosa chiede conferma a ogni preset ⚠️ **2026-09-29, D16 e D20:** il file è un percorso protetto, e anche una riga di rumore l'agente la propone soltanto | 2026-09-29 |
 | D6 | ✅ **A** — nel dubbio, **rotto** e una domanda: il caso certo — la stessa impronta, un solo candidato — si applica da solo; un file chiave che il riconciliatore non ritrova con certezza resta nella mappa segnato rotto, l'agente non lo segue, il pannello lo mostra, e il riconciliatore propone i candidati — lo stesso nome altrove, o un contenuto simile come fa git — fra cui sceglie il proprietario; due file identici sono un caso di dubbio | 2026-09-29 |
 | D7 | ✅ **A** — un sì per la sessione: la tripla `(file, .<nomeapp>/, scrittura)` si concede alla prima modifica di un router e vale per la sessione di D11, come il punto 3 di ADR-0016; ogni modifica si vede nel turno e si annulla. Alla prima posa il proprietario aveva risposto con una domanda — la sessione non era definita, K37 —, e D7 si è riposta dopo D11. Con la risposta ha chiesto se la sessione sia già integrata nei permessi: **non ancora**, e dove va lo dice la sezione di D11 | 2026-09-29 |
 | D8 | ✅ **A** — una terza specie di linea: la scansione, senza modello, legge i link dei file di testo — `[testo](percorso)` e `[[nota]]` — e ne fa linee del grafo; un link verso un file che non c'è è un segnale **rotto**; un link che esce dalla root punta alla scheda della sua zona, o non si disegna; i filtri — per specie di linea, per area, per gli orfani — al 6 | 2026-09-29 |
@@ -1695,6 +1734,7 @@ Claude Code. **Dedotto**: che la root possa contenere la cartella dati — lo pe
 | D17 | ✅ **A** — nessun file del proprietario nel backup del programma: l'ADR nuovo di D12 supera le righe degli artefatti e delle guide di ADR-0022 per **ogni** file del proprietario, la root **e** le zone di lavoro; il file sta al suo posto, il giornale lo riferisce, la copia per annullare di D2 resta; la storia lunga è dei backup del proprietario e di git, come in Claude Code | 2026-09-29 |
 | D18 | ✅ **A** — come Claude Code: fuori da ogni zona l'agente **legge col permesso** — la tripla `(file, percorso, lettura)` di ADR-0016, per la sessione —, e la porta apre per quel file un ambito di sola lettura; la **scrittura** fuori resta `OutsideScope`; la lista di base del privato e i percorsi protetti valgono anche lì; l'import che esce da una zona, D9, è la stessa domanda; un'impostazione blocca ogni lettura fuori. Cambia la metà «leggere» di D3 | 2026-09-29 |
 | D19 | ✅ **A** — la cartella dati del programma è un **percorso protetto**, come il file del privato di D16 — l'agente non ci scrive mai, qualunque sì abbia —, e sta nella **lista di base del privato**: non si indicizza e non si legge. Chiude K50 | 2026-09-29 |
+| D20 | ✅ **A** — un file solo, tutto protetto: il file delle esclusioni del documento del proprietario resta uno, alla root, con le due sezioni di D5; l'agente **propone** anche le righe di rumore, e le conferma il proprietario. Il rumore *«non chiede conferme»* di D5 vale per il proprietario, non per l'agente | 2026-09-29 |
 
 ## Come si riprende — scritto alla chiusura della quarta sessione del 2026-09-29
 

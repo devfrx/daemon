@@ -281,7 +281,7 @@ la parte di prima resta, perché dice che cosa la risposta ha sciolto.
 | K20 | **chiuso**: dentro la root i file li porta il proprietario da fuori; l'agente, da una zona aperta, **copia** — legge nella zona e scrive nella root, e il file entra da fuori con la provenienza della regola 4 della §2.3 del 2026-09-04 —; spostare è copiare più una cancellazione morbida con conferma, la decisione aperta 3 del proprietario; un collegamento verso un file di una zona punta alla scheda della zona, o non si disegna — D8. ⚠️ **Richiamo del 2026-09-29, revisione:** diceva *«e l'agente fuori non arriva»*, vero per il documento e non più dopo D3 |
 | K21 | **a metà**: lo scanner non apre i file pesanti, che restano nodi del grafo — D5; la copia costa solo sui file che l'agente tocca; il limite di ADR-0024 resta da fissare; il backup dei file grandi della root è del proprietario, D12. ⚠️ **Richiamo del 2026-09-29, revisione:** diceva *«i file pesanti fuori dall'indice»*, scritto prima di D5 |
 | K22 | **a metà**: il costo in token dipende dal percorso, non dalla dimensione; il grafo coi molti nodi resta al 6 |
-| K23 | **aperto**, registrato |
+| K23 | **chiuso**: la porta dei file vera la paga **a pezzi** chi la usa per primo — il 13 la lettura e gli eventi, il 6 lo scrivere e il resto della knowledge base, il 5 le zone —, e la riga di design/09 *«col 5»* si riscrive col disegno. D15, 2026-09-29 |
 
 ### I casi limite nuovi, aperti dal documento
 
@@ -307,10 +307,10 @@ la parte di prima resta, perché dice che cosa la risposta ha sciolto.
 | **K41** | **le regole di privacy di una zona di lavoro: dove stanno, e chi le scrive.** D3 dà a una zona *«la stessa lista di base, più le regole della zona»*, e D5 vuole il privato cambiato dal **solo** proprietario; ma le esclusioni che una repo porta con sé le ha scritte chi ha scritto la repo. Lo stato dell'arte risponde: in Claude Code le regole di una repo che **negano** valgono anche prima della fiducia, perché restringono soltanto, e quelle che **concedono** solo dopo | V alla fonte il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md); D per il nostro caso | — | registrato, e **chiuso nel principio dallo stato dell'arte**: una zona porta la lista di base, che non si toglie, le regole del proprietario per quella zona, e le esclusioni della repo, che possono solo **aggiungere** privato; nessuna regola della repo rende leggibile qualcosa. Dove stanno le regole del proprietario per una zona lo decide il 5, che costruisce le zone |
 | **K42** | **il backup contro ADR-0022**: D4 scrive, come cosa comune alle due risposte, che il programma salva nel suo backup *«i suoi dati e i router»* e che il resto della root è dei backup del proprietario; ma nella root stanno anche gli **artefatti** delle run — K4 — e le **guide**, che ADR-0022 mette nel backup del programma: la riga degli artefatti, e il rimando del 2026-09-08, per cui la politica delle guide — nel backup — non cambia. E *«i suoi dati»*, alla lettera, comprende i segreti e l'indice, che ADR-0022 tiene fuori | V: `grep -n -e '^. artefatti' -e 'nel backup, permanente' docs/adr/0022-*.md`; `grep -n 'Backup della KB' docs/tracciabilita.md` | — | **D12** — ✅ **D12, A**, 2026-09-29, delegata allo stato dell'arte: la root, e il suo backup, sono del proprietario |
 | **K43** | **gli artefatti di una zona fuori dalla root, e la rete della Home**: la decisione 1 della [stella polare della GUI](2026-09-07-direzione-gui-design.md) mette nella rete al centro *«tutto: artefatti e file della knowledge base»*, e D3 tiene fuori dal grafo una zona esterna alla root. Il codice che l'agente scrive in una repo aperta come zona è un artefatto: per la decisione 1 sta nella rete, per D3 no | V: `grep -n 'Nell.anello solo' docs/superpowers/specs/2026-09-07-direzione-gui-design.md` | — | **D13** — ✅ A, 2026-09-29: nell'anello, e nella rete la scheda; la decisione 1 si legge «ciò che sta nella root» |
-| **K44** | **la risorsa di un permesso su un percorso scelto a runtime**: la risorsa del kernel è un `&'static str`, per I6, confrontato carattere per carattere; le zone di D3 e la cartella dei router di D7 sono percorsi scelti a runtime, e D7 vuole che una tripla su una cartella copra i file dentro | V: `grep -n 'pub resource' crates/kernel/src/permission.rs` | — | registrato: chi porta le zone — il 5, o chi costruisce prima la porta vera, K23 —, con la forma di RR5: un identificativo coniato dal kernel per l'ambito, e l'appartenenza decisa da chi implementa la porta |
-| **K45** | **il contratto della porta `filesystem` cresce**: chiudere un ambito, K35; le esclusioni del privato, D5; spostare e cancellare, le CRUD della knowledge base; e — ⚠️ **aggiunti il 2026-09-29, controllo finale, CF8** — la scrittura **condizionata** di K10, l'**elenco** e i **metadati** che servono alla scansione e al riconciliatore, e la sorgente degli **eventi** del sorvegliante. Oggi la porta dichiara, conserva, ripristina, legge e scrive | V: `grep -n '^    fn ' crates/kernel/src/ports/filesystem.rs` | — | registrato: chi costruisce la porta vera, K23; è una porta del kernel, quindi un richiamo datato alla spec del sotto-progetto 1, del proprietario |
+| **K44** | **la risorsa di un permesso su un percorso scelto a runtime**: la risorsa del kernel è un `&'static str`, per I6, confrontato carattere per carattere; le zone di D3 e la cartella dei router di D7 sono percorsi scelti a runtime, e D7 vuole che una tripla su una cartella copra i file dentro | V: `grep -n 'pub resource' crates/kernel/src/permission.rs` | — | registrato: il **6**, primo a chiedere un permesso su un percorso scelto a runtime — la cartella dei router, D7 —, D15; il 5 lo riusa per le zone; con la forma di RR5: un identificativo coniato dal kernel per l'ambito, e l'appartenenza decisa da chi implementa la porta |
+| **K45** | **il contratto della porta `filesystem` cresce**: chiudere un ambito, K35; le esclusioni del privato, D5; spostare e cancellare, le CRUD della knowledge base; e — ⚠️ **aggiunti il 2026-09-29, controllo finale, CF8** — la scrittura **condizionata** di K10, l'**elenco** e i **metadati** che servono alla scansione e al riconciliatore, e la sorgente degli **eventi** del sorvegliante. Oggi la porta dichiara, conserva, ripristina, legge e scrive | V: `grep -n '^    fn ' crates/kernel/src/ports/filesystem.rs` | — | registrato, e **ripartito da D15**: il **13** la lettura e la sorgente degli eventi; il **6** lo scrivere condizionato, l'elenco, i metadati, spostare, cancellare, le esclusioni del privato; il **5** la chiusura delle zone. È una porta del kernel, quindi un richiamo datato alla spec del sotto-progetto 1, del proprietario |
 | **K46** | **l'autorità del riconciliatore**: scrive i router da solo nei casi certi, D6, ma non è un invocatore del registro e lavora fuori da ogni sessione, mentre ADR-0016 fa chiedere le scritture e il sì di D7 vale dentro una sessione | V: `grep -n 'pub enum Invoker' crates/kernel/src/registry.rs` | — | **D14** — ✅ A, 2026-09-29: un'impostazione — da solo, chiedi, mai — che parte da «da solo» |
-| **K47** | **il gateway non sa ancora fare la catena di D10**: il nome del candidato è un `&'static str`, per I6, e così il modello di `RoutingDetail::new`; la finestra non c'è; `resolve` non cammina sui fallimenti; il record non porta i tentativi — un campo nuovo su un indice nuovo, ADR-0036 —; e non c'è un segnale «modello cambiato» distinto da `degraded` — RR10, RR12, RR13. ⚠️ **Allargato il 2026-09-29, controllo finale, CF3** | V: `grep -n -A10 '^pub struct Candidate' crates/kernel/src/gateway/mod.rs` | ✅ la proiezione per candidato | registrato: il **3**, che costruisce il gateway vero e il selettore, con la forma di K44 — un identificativo coniato dal kernel da un catalogo consegnato —; ⚠️ la finestra serve **prima**, alla proiezione del 13: chi la porta lo decide **D15** |
+| **K47** | **il gateway non sa ancora fare la catena di D10**: il nome del candidato è un `&'static str`, per I6, e così il modello di `RoutingDetail::new`; la finestra non c'è; `resolve` non cammina sui fallimenti; il record non porta i tentativi — un campo nuovo su un indice nuovo, ADR-0036 —; e non c'è un segnale «modello cambiato» distinto da `degraded` — RR10, RR12, RR13. ⚠️ **Allargato il 2026-09-29, controllo finale, CF3** | V: `grep -n -A10 '^pub struct Candidate' crates/kernel/src/gateway/mod.rs` | ✅ la proiezione per candidato | registrato: il **3**, che costruisce il gateway vero e il selettore, con la forma di K44 — un identificativo coniato dal kernel da un catalogo consegnato —; ✅ la finestra la porta il **13**, che compone la proiezione per candidato e la usa per primo — D15, 2026-09-29 |
 | **K49** | **la chiave della fiducia di una zona**: D9 la tiene sul percorso dato dalla piattaforma — testo arrivato a runtime dentro una decisione del kernel, la tensione con I6 che RR5 scioglie con un identificativo coniato a ogni apertura —; ma quell'identificativo non è stabile fra due sessioni, e la fiducia deve esserlo: la stessa zona avrebbe due chiavi | D: `grep -n 'pub resource' crates/kernel/src/permission.rs`, e RR5, RR9 | — | registrato, con K44: la chiave **stabile** di una zona e come la tratta I6. Trovato dal controllo finale, CF7 |
 | **K48** | **quali errori fanno scattare la catena**: Claude Code **non** ripiega sui limiti di frequenza, perché ritenta; il contesto di ADR-0012 li nomina fra ciò da cui la catena protegge, ed è contesto, non decisione; su OpenRouter un limite può essere di un solo modello, e allora un ripiego servirebbe | V alla fonte il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md); D per OpenRouter | — | **deciso da D10**: la regola di Claude Code — i limiti di frequenza non fanno ripiegare —; resta registrato **da misurare** su OpenRouter, dal 3. ⚠️ **Riscritto il 2026-09-29, controllo finale, CF11:** diceva *«partendo dalla regola»*, come se fosse aperta |
 
@@ -380,12 +380,13 @@ riceve uno; righe riscritte nella roadmap, nella tracciabilità e nella stella p
 | la stella polare della GUI, decisione 1 | un richiamo datato: la rete ha tutto ciò che sta **nella root**; un artefatto di una zona esterna sta nell'anello, e nella rete attraverso la scheda della sua zona | D13 |
 | la stella polare della GUI, la voce registrata del **selettore del modello** e la riga 13 della barra | decisa: il modello si sceglie a mano accanto al pulsante di invio, per la sessione o come default, come Claude Desktop, e ogni risposta porta il nome del modello che l'ha data | D10 |
 | [design/09](../../design/09-l0-fisico.md), la riga della cartella della knowledge base | la cartella della knowledge base non è più nel backup del programma: ci sono i router | D12 |
+| [design/09](../../design/09-l0-fisico.md), la stessa riga, *«l'implementazione vera col 5»* | la porta dei file vera la paga a pezzi chi la usa per primo: il 13, il 6, il 5 | D15 |
 | la spec del sotto-progetto 1: §4, la porta `filesystem`, e §6.6, il permesso | la porta cresce — chiudere, escludere, spostare, cancellare —, K45; la risorsa di un permesso su un percorso scelto a runtime, K44; il permesso porta la sessione, RR2 | RR2, RR5, RR6 |
 | il codice: `permission.rs`, `record.rs`, `parameters.rs`, `filesystem.rs` | la sessione nel record del permesso e il record di fine sessione, RR2; i due tempi, RR4; la risorsa, K44; la porta, K45 | il 3 e il 5 |
-| il codice: `gateway/mod.rs` e `record.rs` | il candidato con un nome scelto a runtime e la sua finestra; il cammino sui fallimenti; i tentativi e il cambio di modello nel record di routing — K47 | il 3; la finestra, D15 |
+| il codice: `gateway/mod.rs` e `record.rs` | il candidato con un nome scelto a runtime e la sua finestra; il cammino sui fallimenti; i tentativi e il cambio di modello nel record di routing — K47 | il 3; la finestra, il 13 — D15 |
 | il codice: `permission.rs` | un permesso scritto senza sessione — i giornali di oggi — si legge come di una sessione **finita**: davanti al dubbio ci si ferma, ADR-0007 — CF9 | il 3 |
 | le funzioni della knowledge base nel registro | la funzione che rende leggibile è irripetibile — RR8 | D5 |
-| `roadmap.md` | il **6**: la cella dice ancora *«archivio unico»*, e la prima metà guadagna il livello strutturale e il riconciliatore con la sua impostazione, D14; il **5**: la porta `filesystem` vera, le zone, il livello 2 che nega il privato — K23, K35, K36, K44, K45; il **3**: la run nel giornale e la sessione di D11, con la fine come record e il riavvio — RR1–RR4; il **3** anche il selettore del modello, la catena nel gateway con un modello per richiesta e la compressione spenta, D10; il **13**: il «riscansiona», la fiducia di D9 e la proiezione per candidato, D10; l'**11**: il backup di D12; il **10**: le cartelle dati e la cartella nascosta — K1, K30 | le risposte |
+| `roadmap.md` | il **6**: la cella dice ancora *«archivio unico»*, e la prima metà guadagna il livello strutturale e il riconciliatore con la sua impostazione, D14; il **5**: la porta `filesystem` vera, le zone, il livello 2 che nega il privato — K23, K35, K36, K44, K45; il **3**: la run nel giornale e la sessione di D11, con la fine come record e il riavvio — RR1–RR4; il **3** anche il selettore del modello, la catena nel gateway con un modello per richiesta e la compressione spenta, D10; il **13**: il «riscansiona», la fiducia di D9 e la proiezione per candidato, D10; l'**11**: il backup di D12; il **10**: le cartelle dati e la cartella nascosta — K1, K30; e la porta dei file a pezzi, D15: il **13** la lettura, gli eventi e la finestra del candidato, il **6** lo scrivere, spostare, cancellare e il privato, il **5** le zone | le risposte |
 | `tracciabilita.md` | `Multi-repo/multi-progetto` e `Mappa del progetto`: le zone e la scheda progetto, D3; `Git e gestione branch`: la zona; `Collezioni e knowledge base`: la forma del documento; `File watching e awareness del progetto`: sorvegliante e scansione; `Sessioni multiple`: la sessione di D11; `Selettore di modello per compito`: il selettore della sessione e il modello nella definizione di un sotto-agente, D10; `Backup della KB indipendente dall'app`: la root nei backup del proprietario, i router in quello del programma, D12 | le risposte |
 
 ### La prova alla radice — chiesta dal proprietario, 2026-09-29
@@ -1367,6 +1368,62 @@ freschi sul disco, come il suo documento chiede.
 **Il consiglio: A.** È ciò che il documento e D6 hanno già deciso; mancava solo di scrivere con quale autorità, e la più
 piccola è quella che il programma ha già sui suoi dati.
 
+### D15, posta il 2026-09-29 — trovata dal controllo finale
+
+**Che cos'è, a parole semplici.** La porta `filesystem` è il pezzo che legge e scrive i file sul disco. Nel kernel c'è la
+sua forma, cinque metodi; l'implementazione vera **no** — `platform` non ne ha una. design/09 la dà al **5**, il Coding, ma
+il 13 e il 6 arrivano prima e ne hanno bisogno — K23, CF2.
+
+**Che cosa esiste già.**
+
+| | Che cosa dice | Dove, e il comando |
+|---|---|---|
+| la porta | cinque metodi — dichiarare un ambito, conservare, ripristinare, leggere, scrivere —; *«the real filesystem belongs to a later sub-project»* | `grep -n '^    fn ' crates/kernel/src/ports/filesystem.rs` |
+| `platform` | nessuna implementazione di `Filesystem` | `grep -rEn "^impl (Custody\|Journal\|Reactor\|Rng\|Filesystem\|Network\|Process\|Ipc) for " crates/platform/src/` |
+| design/09 | *«l'implementazione vera col 5»* | `grep -n 'implementazione vera col 5' docs/design/09-l0-fisico.md` |
+| la roadmap | il 13 prima del 3; il 6 dipende da 3 e 2; il 5 da 4 e 0b | la tabella di [`roadmap.md`](../../roadmap.md) |
+| il disegno del 2026-09-04, §2.2 e §2.4 | il 13 costruisce i trigger — *«`platform` la sorveglianza dei file»* — e il registro delle guide, che sono file della cartella; *«il primo paga»* | la §2.2 e la §2.4 |
+| il precedente | il primo worker vero paga, ADR-0039; il 2 ha costruito da sé la settima porta, `custody` | la voce di ADR-0039 nella §5 del compendio; la riga 2 di [`roadmap.md`](../../roadmap.md) |
+| il codice | *«They come back the day something needs them, with the caller that needs them»* | `crates/kernel/src/ports/filesystem.rs`, il commento di `Path` |
+
+**Chi ne ha bisogno per primo — dedotto dai disegni, non misurato.**
+
+| Arriva | Che cosa gli serve della porta |
+|---|---|
+| **13** | leggere i file-guida; la sorgente degli eventi del sorvegliante; e, fuori dalla porta, la finestra del candidato per la proiezione — K47 |
+| **6** | scrivere — anche *«solo se non è cambiato»*, K10 —, elencare, i metadati, spostare, cancellare, le esclusioni del privato; la tripla su una cartella scelta a runtime, K44 |
+| **5** | chiudere una zona, K35; il privato anche per i comandi, K36, che è confinamento e non porta |
+
+**Stato dell'arte.** Non decide: è l'ordine interno del progetto, e la regola la dà il progetto stesso.
+
+**Scartata senza domanda:** far dipendere il 6 dal 5 — la Conoscenza finirebbe dopo Agenti e Coding, contro la priorità del
+proprietario del 2026-09-28.
+
+**La domanda: la porta vera la paga a pezzi chi usa ciascun pezzo per primo, o tutta il primo che arriva?**
+
+| | **A — a pezzi** | **B — tutta al 13** |
+|---|---|---|
+| com'è | il 13 la lettura, gli eventi e la finestra; il 6 lo scrivere e il resto della knowledge base; il 5 le zone | il 13 costruisce la porta intera, anche i pezzi che userà solo il 6 o il 5 |
+| costo | il contratto cresce in tre momenti, e ogni volta è un richiamo datato alla §4 della spec del sotto-progetto 1, del proprietario; la suite di conformità nasce col 13 e cresce | metodi senza chiamante per due sotto-progetti, contro la regola scritta in `filesystem.rs` |
+| che cosa si rifà dopo | niente | togliere o correggere i metodi che il 6 o il 5 vogliono diversi |
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | la porta, `platform`, design/09 e la roadmap letti oggi | idem |
+| coerenza | è *«il primo paga»* del 2026-09-04, di ADR-0039 e di `custody` | un pezzo senza chiamante, contro `filesystem.rs` |
+| debito | tre richiami alla spec, dichiarati | metodi scritti prima di chi li usa: una previsione, gotcha #57 |
+| stato dell'arte | non decide | non decide |
+| proporzione | ogni sotto-progetto costruisce ciò che usa | il 13 più grande |
+| di chi è | **del proprietario**: l'ordine della roadmap | idem |
+
+**Verificato, dedotto, assunto.** **Verificati**: la porta, l'assenza dell'implementazione in `platform`, design/09, la
+roadmap, la §2.2 e la §2.4 del 2026-09-04. **Dedotto**: chi ha bisogno di quale pezzo — dai disegni, non dai piani, che non
+esistono. **Assunto**: che il 3 non tocchi i file prima del 6; se lo facesse, paga lui la lettura.
+
+**Il consiglio: A.** È la regola che il progetto usa già, e nessun pezzo resta senza chi lo usa.
+
 ## Le risposte del proprietario
 
 | # | Risposta | Data |
@@ -1385,6 +1442,7 @@ piccola è quella che il programma ha già sui suoi dati.
 | D12 | ✅ **A, delegata allo stato dell'arte** — *«stato dell'arte, segui quello»*: la root è del proprietario, e il suo backup pure, come in Obsidian; il programma salva il giornale, la configurazione e i router — mai i segreti, e non l'indice che si rifà —, e quando crea il backup dice che cosa resta fuori. Un ADR nuovo supererà, per i file della root, le righe degli artefatti e delle guide di ADR-0022 e la sua conseguenza sulla base di conoscenza: lo scrive il disegno di questa revisione | 2026-09-29 |
 | D13 | ✅ **A** — un file che l'agente scrive in una zona fuori dalla root sta nell'**anello**, per data, dal giornale; nella **rete** la zona è la sua scheda, e da lì si apre; un file che non c'è più si mostra mancante quando lo si apre. La decisione 1 della stella polare della GUI riceverà un richiamo col disegno: la rete ha tutto ciò che sta **nella root**. Riposta con un esempio: alla prima forma il proprietario aveva risposto *«non ho capito spiega meglio»* | 2026-09-29 |
 | D14 | ✅ **A, sullo stato dell'arte** — come le app di oggi, il riconciliatore segue un'**impostazione** scelta una volta — da solo, chiedi, mai —, e parte da **«da solo»**, come Obsidian e come D6; ogni correzione va nel giornale, con la copia, e si annulla. ADR-0016 riceverà un rimando col disegno: il permesso lo chiede chi agisce per un modello o invoca una funzione, e la manutenzione deterministica del programma sulla sua cartella segue la sua impostazione. Alla prima forma il proprietario aveva chiesto *«come farebbero con lo stato dell'arte attuale?»*: lette alla fonte Obsidian e VS Code. ⚠️ **2026-09-29, controllo finale, CF5:** il perimetro si scrive *«la correzione deterministica di un fatto che non cambia una scelta del proprietario»*, e non *«la cartella del programma»* — i router sono del proprietario, D4 —; e il rimando va anche in ADR-0038, la cui regola 2 vuole lo stesso permesso per ogni invocatore | 2026-09-29 |
+| D15 | ✅ **A** — a pezzi: la porta dei file vera la paga chi usa ciascun pezzo per primo — il **13** la lettura, la sorgente degli eventi e la finestra del candidato; il **6** lo scrivere, anche condizionato, l'elenco, i metadati, spostare, cancellare, le esclusioni del privato e la tripla su una cartella scelta a runtime; il **5** la chiusura delle zone. design/09 e la roadmap si riscrivono col disegno; ogni crescita della porta è un richiamo datato alla §4 della spec del sotto-progetto 1 | 2026-09-29 |
 
 ## Come si riprende — scritto alla chiusura della quarta sessione del 2026-09-29
 

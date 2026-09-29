@@ -300,13 +300,16 @@ la parte di prima resta, perché dice che cosa la risposta ha sciolto.
 | **K34** | **i file «solo online» di OneDrive** dentro la root: leggerli scarica il file, o fallisce senza rete | F | — | registrato: il 6, alla fonte |
 | **K35** | **una zona di lavoro si apre e non si chiude**: la porta `filesystem` ha `declare_scope` e nessuna chiusura, mentre la zona dura la sessione; e gli ambiti sono **della porta**, non della run — due run con due zone diverse, gli agenti del 4, alla porta vedrebbero l'una la zona dell'altra, e il confine per run lo dà solo il permesso di ADR-0016 | V: `grep -n '^    fn ' crates/kernel/src/ports/filesystem.rs` rende i cinque metodi del tratto, nessuno che chiuda; D: una porta sola nel daemon | — | registrato: chi costruisce la porta `filesystem` vera, con K23 |
 | **K36** | **il privato escluso dalla porta non lo è per i comandi**: uno script che l'agente esegue apre i file da sé, e la porta non lo vede. Le documentazioni di Claude Code e di Cursor lo dicono dei loro prodotti; da noi il livello 1 di ADR-0025, per costruzione, non regge contro codice eseguito | V alla fonte, il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md); D per il nostro caso | — | registrato: il 5, col confinamento di livello 2 che nega i percorsi privati; il 4 per MCP, con K12 |
-| **K37** | **la sessione non è definita**: ADR-0016 dice che un sì vale *«per la sessione corrente»* e *«non vale domani»*, ma nessun documento dice che cos'è una sessione; il kernel lo dichiara nel sorgente, e un permesso concesso resta concesso **per sempre**, anche dopo un riavvio; il disegno del 2 ha dato il confine a chi porta le run, il 3, senza definirlo. Trovato dal proprietario, rispondendo a D7 | V: `grep -n 'SCOPED TO A SESSION' crates/kernel/src/permission.rs`, `grep -n 'triple therefore survives' crates/kernel/src/registry.rs`, `grep -n 'il confine di sessione dei permessi' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` | — | **D11** — ✅ chiuso il 2026-09-29: la run coi sotto-agenti, con la chiusura a mano e le due scadenze; la costruisce il 3 |
+| **K37** | **la sessione non è definita**: ADR-0016 dice che un sì vale *«per la sessione corrente»* e *«non vale domani»*, ma nessun documento dice che cos'è una sessione; il kernel lo dichiara nel sorgente, e un permesso concesso resta concesso **per sempre**, anche dopo un riavvio; il disegno del 2 ha dato il confine a chi porta le run, il 3, senza definirlo. Trovato dal proprietario, rispondendo a D7 | V: `grep -n 'SCOPED TO A SESSION' crates/kernel/src/permission.rs`, `grep -n 'triple therefore survives' crates/kernel/src/registry.rs`, `grep -n 'il confine di sessione dei permessi' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` | — | **D11** — ✅ chiuso il 2026-09-29: la run coi sotto-agenti, con la chiusura a mano e le due scadenze; la costruisce il 3 — e al riavvio del core finisce, RR3 |
 | **K38** | **il sì oltre la sessione**: Claude Code e VS Code offrono anche un sì per lo spazio di lavoro o per sempre, con un comando che li azzera, e Android azzera da solo i permessi non usati; ADR-0016 dice *«un'approvazione non si estende»*, e fra le sue alternative non ha mai valutato la durata | V alla fonte, il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md); `grep -n 'Alternative considerate per i permessi' docs/adr/0016-*.md` | — | registrato: il **proprietario**, con un ADR nuovo se vorrà riaprire il punto 3 di ADR-0016 |
 | **K39** | **OpenRouter comprime da solo il prompt**: la compressione *middle-out* toglie il centro sulle destinazioni con finestra fino a 8 192 token, accesa per default — proprio ciò che ADR-0008 vuole mai sacrificabile | V alla fonte, il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md) | ✅ la proiezione | **D10** |
 | **K40** | **il fallback dentro OpenRouter**: con la lista di modelli il ripiego avviene dentro di lui, e il gateway non valuta i vincoli di ogni candidato né ricompone la proiezione; il modello usato lo sa dalla risposta | V alla fonte, il 2026-09-29; D per il gateway | ✅ la proiezione | **D10** |
 | **K41** | **le regole di privacy di una zona di lavoro: dove stanno, e chi le scrive.** D3 dà a una zona *«la stessa lista di base, più le regole della zona»*, e D5 vuole il privato cambiato dal **solo** proprietario; ma le esclusioni che una repo porta con sé le ha scritte chi ha scritto la repo. Lo stato dell'arte risponde: in Claude Code le regole di una repo che **negano** valgono anche prima della fiducia, perché restringono soltanto, e quelle che **concedono** solo dopo | V alla fonte il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md); D per il nostro caso | — | registrato, e **chiuso nel principio dallo stato dell'arte**: una zona porta la lista di base, che non si toglie, le regole del proprietario per quella zona, e le esclusioni della repo, che possono solo **aggiungere** privato; nessuna regola della repo rende leggibile qualcosa. Dove stanno le regole del proprietario per una zona lo decide il 5, che costruisce le zone |
 | **K42** | **il backup contro ADR-0022**: D4 scrive, come cosa comune alle due risposte, che il programma salva nel suo backup *«i suoi dati e i router»* e che il resto della root è dei backup del proprietario; ma nella root stanno anche gli **artefatti** delle run — K4 — e le **guide**, che ADR-0022 mette nel backup del programma: la riga degli artefatti, e il rimando del 2026-09-08, per cui la politica delle guide — nel backup — non cambia. E *«i suoi dati»*, alla lettera, comprende i segreti e l'indice, che ADR-0022 tiene fuori | V: `grep -n -e '^. artefatti' -e 'nel backup, permanente' docs/adr/0022-*.md`; `grep -n 'Backup della KB' docs/tracciabilita.md` | — | **D12** |
 | **K43** | **gli artefatti di una zona fuori dalla root, e la rete della Home**: la decisione 1 della [stella polare della GUI](2026-09-07-direzione-gui-design.md) mette nella rete al centro *«tutto: artefatti e file della knowledge base»*, e D3 tiene fuori dal grafo una zona esterna alla root. Il codice che l'agente scrive in una repo aperta come zona è un artefatto: per la decisione 1 sta nella rete, per D3 no | V: `grep -n 'Nell.anello solo' docs/superpowers/specs/2026-09-07-direzione-gui-design.md` | — | **D13** |
+| **K44** | **la risorsa di un permesso su un percorso scelto a runtime**: la risorsa del kernel è un `&'static str`, per I6, confrontato carattere per carattere; le zone di D3 e la cartella dei router di D7 sono percorsi scelti a runtime, e D7 vuole che una tripla su una cartella copra i file dentro | V: `grep -n 'pub resource' crates/kernel/src/permission.rs` | — | registrato: chi porta le zone — il 5, o chi costruisce prima la porta vera, K23 —, con la forma di RR5: un identificativo coniato dal kernel per l'ambito, e l'appartenenza decisa da chi implementa la porta |
+| **K45** | **il contratto della porta `filesystem` cresce**: chiudere un ambito, K35; le esclusioni del privato, D5; spostare e cancellare, le CRUD della knowledge base. Oggi la porta dichiara, conserva, ripristina, legge e scrive | V: `grep -n '^    fn ' crates/kernel/src/ports/filesystem.rs` | — | registrato: chi costruisce la porta vera, K23; è una porta del kernel, quindi un richiamo datato alla spec del sotto-progetto 1, del proprietario |
+| **K46** | **l'autorità del riconciliatore**: scrive i router da solo nei casi certi, D6, ma non è un invocatore del registro e lavora fuori da ogni sessione, mentre ADR-0016 fa chiedere le scritture e il sì di D7 vale dentro una sessione | V: `grep -n 'pub enum Invoker' crates/kernel/src/registry.rs` | — | **D14** |
 
 ## La revisione di coerenza e correttezza — 2026-09-29
 
@@ -363,14 +366,38 @@ riceve uno; righe riscritte nella roadmap, nella tracciabilità e nella stella p
 | ADR-0009 | i file-guida di una zona si caricano per fiducia alla cartella, con l'impronta di ogni caricamento nel giornale; i trigger col «riscansiona» | D9, K8, K9 |
 | ADR-0011 | la «sessione» della contabilità è quella di D11 | D11 |
 | ADR-0014 | da rileggere con D9: il passaggio esplicito e giornalato, per il file-guida di una zona, è la fiducia alla cartella | D9 |
-| ADR-0016 | la «sessione» del punto 3 è quella di D11; un cambio che rende leggibile qualcosa chiede conferma con ogni preset, anche `autonomo` | D11, D5 |
+| ADR-0016 | la «sessione» del punto 3 è quella di D11, e al riavvio del core finisce — RR3; il perimetro di chi chiede un permesso, secondo D14 | D11, D14 |
 | ADR-0022 | secondo la risposta a D12 | D12 |
 | ADR-0024 | l'ambito di una zona si chiude con la sessione — K35; il limite di dimensione resta da fissare — K21 | D3, D11 |
 | ADR-0025 | il livello 2 nega i percorsi privati — K36 | D5 |
 | la stella polare della GUI, decisione 1 | secondo la risposta a D13 | D13 |
 | [design/09](../../design/09-l0-fisico.md), la riga della cartella della knowledge base | secondo la risposta a D12 | D12 |
-| `roadmap.md` | il **6**: la cella dice ancora *«archivio unico»*, e la prima metà guadagna il livello strutturale; il **5**: la porta `filesystem` vera, le zone, il livello 2 che nega il privato — K23, K35, K36; il **3**: la sessione di D11; il **13**: il «riscansiona» e la fiducia di D9; l'**11**: il backup di D12; il **10**: le cartelle dati e la cartella nascosta — K1, K30 | le risposte |
+| la spec del sotto-progetto 1: §4, la porta `filesystem`, e §6.6, il permesso | la porta cresce — chiudere, escludere, spostare, cancellare —, K45; la risorsa di un permesso su un percorso scelto a runtime, K44; il permesso porta la sessione, RR2 | RR2, RR5, RR6 |
+| il codice: `permission.rs`, `record.rs`, `parameters.rs`, `filesystem.rs` | la sessione nel record del permesso e il record di fine sessione, RR2; i due tempi, RR4; la risorsa, K44; la porta, K45 | il 3 e il 5 |
+| le funzioni della knowledge base nel registro | la funzione che rende leggibile è irripetibile — RR8 | D5 |
+| `roadmap.md` | il **6**: la cella dice ancora *«archivio unico»*, e la prima metà guadagna il livello strutturale; il **5**: la porta `filesystem` vera, le zone, il livello 2 che nega il privato — K23, K35, K36, K44, K45; il **3**: la run nel giornale e la sessione di D11, con la fine come record e il riavvio — RR1–RR4; il **13**: il «riscansiona» e la fiducia di D9; l'**11**: il backup di D12; il **10**: le cartelle dati e la cartella nascosta — K1, K30 | le risposte |
 | `tracciabilita.md` | `Multi-repo/multi-progetto` e `Mappa del progetto`: le zone e la scheda progetto, D3; `Git e gestione branch`: la zona; `Collezioni e knowledge base`: la forma del documento; `File watching e awareness del progetto`: sorvegliante e scansione; `Sessioni multiple`: la sessione di D11; `Backup della KB indipendente dall'app`: D12 | le risposte |
+
+### La prova alla radice — chiesta dal proprietario, 2026-09-29
+
+Il proprietario, prima che la revisione ponesse D12: *«hai controllato che quanto scritto nella documentazione combaci e
+rientri nell'architettura del programma al cuore e non come feature aggiunta? idem vale per la sessione […] è integrata in
+modo coerente con quanto è scritto nei permessi e si integra con quanto già fatto o si farà alla radice?»*. La revisione aveva
+confrontato le risposte coi testi degli ADR, **non col codice** del kernel: questa è la prova che mancava, letta su `c698f37`.
+
+| # | Il punto | Che cosa c'è nel codice | Esito, e che cosa ne segue |
+|---|---|---|---|
+| **RR1** | la sessione è la run radice coi suoi discendenti, D11 | nessuna run nel kernel: il giornale conosce solo `StepId`, e il filo lo dichiara — `grep -n 'RunId' crates/kernel/src/wire/ipc.rs` | ✅ **al cuore**: ADR-0011 decide già la gerarchia passo → run → run padre, e la sessione ne è la cima, non un oggetto accanto. Il 3 la scrive nel giornale |
+| **RR2** | un sì vale per la sessione | `permission::is_granted` scorre tutto il giornale, e il record del permesso porta strumento, risorsa e operazione, nient'altro — `grep -n -A6 '^pub struct PermissionDetail' crates/kernel/src/record.rs` | ✅ **al cuore**, nella forma che il kernel usa già: il record del permesso guadagna la sessione su un **indice nuovo e facoltativo** — ADR-0036, regola 3: i byte congelati restano uguali finché è vuoto —; la fine della sessione è **un record del giornale**, scritto dal core con la sua causa; e *«quali sì valgono ora»* resta una **proiezione del giornale**, come dice `permission.rs` |
+| **RR3** | il riavvio del core | `time.rs`: le decisioni usano solo il tempo **monotono**, *«grant validity windows»* comprese, e mai l'ora del mondo — `grep -n 'grant validity windows' crates/kernel/src/time.rs` | ⚠️ **D11 non lo diceva, e la radice lo decide**: il tempo monotono non attraversa un riavvio, quindi il core non può misurare un'inattività che lo attraversa; **una sessione aperta finisce al riavvio**, e la riconciliazione all'avvio ne scrive la fine con la causa «riavvio». È anche ADR-0016, *«non vale domani»*. Scritto in D11 |
+| **RR4** | i due tempi di D11 | `Parameters` ha quattro campi, e aggiungerne cambia la firma di `new` — `grep -n -A6 '^pub struct Parameters' crates/kernel/src/parameters.rs` | ✅ **al cuore**: due parametri consegnati, ADR-0034; l'attrito della firma è voluto |
+| **RR5** | un permesso su una zona, e su `.<nomeapp>/` | la risorsa di `Permission` è un `&'static str`, confrontato carattere per carattere, e il motivo scritto è I6: un nome arrivato da fuori, dentro una decisione, è testo non fidato — `grep -n 'pub resource' crates/kernel/src/permission.rs` | ❌ **oggi non si può esprimere**: D3 apre zone su percorsi scelti a runtime, e D7 vuole una tripla su una **cartella** che copra i file dentro. ⚠️ La deduzione di D7, *«una tripla su una cartella copre i file che contiene»*, **il codice non la fa**. La forma coerente con la radice: la risorsa diventa un **identificativo coniato dal kernel** quando apre un ambito, come `StepId`, e se un file sta nell'ambito lo decide chi implementa la porta, come `filesystem.rs` dice già. Resta I6, resta la tripla. **K44** |
+| **RR6** | chiudere una zona, escludere il privato, spostare, cancellare | la porta `filesystem` ha cinque metodi: dichiarare un ambito, conservare, ripristinare, leggere, scrivere — `grep -n '^    fn ' crates/kernel/src/ports/filesystem.rs` | ❌ **oggi non si può**: niente chiusura — K35 —, niente esclusioni — il privato di D5, che *«la porta rifiuta»* —, niente spostare né cancellare — le CRUD della knowledge base, K20, la cancellazione morbida. E il confronto col privato — la sintassi di `.gitignore`, le maiuscole di Windows — lo fa chi implementa la porta, perché il kernel non interpreta i percorsi. Il contratto della porta cresce: è una porta del kernel, quindi un richiamo datato alla spec del sotto-progetto 1, del proprietario quando si fa. **K45** |
+| **RR7** | il riconciliatore scrive i router da solo, D6 | `registry::invoke` chiede `is_granted` a chi **invoca** una funzione, e la porta dei file non chiede niente: il riconciliatore non è né l'uno né l'altra | ❌ **nessuna risposta dice con quale autorità scrive**: lavora all'avvio e sugli eventi del sorvegliante, fuori da ogni sessione, mentre il sì di D7 vale dentro una sessione e ADR-0016 fa chiedere le scritture. **K46**, **D14** |
+| **RR8** | un cambio che rende leggibile qualcosa chiede conferma con ogni preset, D5 | `EffectClass`, e il preset `autonomo` di ADR-0016, che chiede per gli effetti **irripetibili** | ✅ **al cuore, senza regole nuove**: la funzione che rende leggibile è **irripetibile** — un contenuto letto può essere già andato al modello, e non si disfa —, quindi chiede con ogni preset. L'elenco qui sopra non chiede più un rimando in ADR-0016 per questo |
+| **RR9** | la fiducia di D9 | niente ancora; e `filesystem.rs`: il kernel non sa dire se due percorsi sono lo stesso file | ✅ **al cuore**: un record del giornale e una proiezione, come i permessi; la chiave è il percorso **come lo dà la piattaforma**, e se due grafie mancano la stessa zona la fiducia si richiede — l'errore cade dal lato chiuso |
+| **RR10** | il fallback di D10 | `gateway::resolve` risolve la catena **per chiamata**, coi vincoli di ADR-0012 — `grep -n 'THE CHAIN IS DELIVERED PER CALL' crates/kernel/src/gateway/mod.rs` | ✅ **al cuore**: la catena la fa già il kernel, e la risposta A di D10 ci si appoggia |
+| **RR11** | la knowledge base intera | router, indice, scansione e riconciliatore nel 6; sorvegliante, registro delle guide e proiezione nel 13; zone, checkpoint, permessi e sessione nei meccanismi del kernel | ✅ **nessuna funzione a parte**: ogni pezzo sta su un meccanismo deciso; dove il meccanismo non basta ancora, lo dicono RR5, RR6 e RR7 |
 
 ## Le domande, una per volta
 
@@ -393,7 +420,8 @@ risponde a D1 e a buona parte delle domande di prima; l'elenco di prima sta nel 
 | **D11** | **la sessione**: che cos'è, e se scade col tempo — posta **prima** di D7, che ne dipende | K37 |
 | **D12** | **il backup**: il programma salva anche gli artefatti delle run e le guide che stanno nella root, come ADR-0022, o solo i suoi dati e i router, come D4 — trovata dalla revisione, posta **prima** di D10 | K42, e riapre K31 |
 | **D13** | **gli artefatti di una zona esterna**: anche nella rete della Home, o solo nell'anello — trovata dalla revisione, posta **prima** di D10 | K43 |
-| — | registrati col chiusore, senza domanda salvo che il proprietario la chieda: K11, K12, K17, K19, K21, K22, K23, K29, K34, K35, K36, K38, K41 | |
+| **D14** | **il riconciliatore**: le correzioni certe si scrivono da sole, come manutenzione del programma, o aspettano il sì del proprietario — trovata dalla prova alla radice, posta **prima** di D10 | K46 |
+| — | registrati col chiusore, senza domanda salvo che il proprietario la chieda: K11, K12, K17, K19, K21, K22, K23, K29, K34, K35, K36, K38, K41, K44, K45 | |
 
 ### D1, posta il 2026-09-28
 
@@ -801,6 +829,7 @@ già scritto — il 3, che porta le run —; **che cosa** sia, no.
 |---|---|
 | che cos'è | la **run** che il proprietario apre — una conversazione, o un compito dell'agente — **coi suoi sotto-agenti**: la stessa cosa sul lato della chat e su quello del coding, come la conversazione di Claude Code e di VS Code |
 | quando finisce | alla prima di tre cose: il proprietario la **chiude**, con un comando visibile; passa un tempo di **inattività**; passa un tempo **massimo** da quando è nata — le due scadenze di OWASP e di NIST |
+| al riavvio del core | la sessione aperta **finisce**, e la riconciliazione all'avvio ne scrive la fine con la causa «riavvio»: le decisioni del kernel usano solo il tempo monotono, che non attraversa un riavvio — `time.rs`. ⚠️ **Aggiunta del 2026-09-29, dalla prova alla radice**, RR3 |
 | chi la fa rispettare | il **core**, mai la GUI: è il «server» di OWASP, e lo stato vive solo nel core, I1 |
 | i due tempi | **parametri consegnati** al kernel, ADR-0034, misurati con l'orologio iniettabile di ADR-0021; i valori li sceglie il 3, e il riferimento, per analogia, è il livello AAL2 di NIST — un'ora di inattività, 24 ore al massimo —, perché l'assistente scrive file ed esegue comandi |
 | che cosa si porta via | alla fine della sessione cadono i suoi sì — ADR-0016, punto 3 — e si chiudono le sue zone di lavoro, D3; la run invece resta nel giornale e si riprende, e ripresa chiede di nuovo |
@@ -1147,6 +1176,66 @@ proprietario basti l'anello per ritrovare il lavoro fatto in una repo esterna.
 **Il consiglio: A.** Tiene la rete una mappa che dice il vero, e l'anello mostra comunque tutto ciò che le run hanno
 prodotto.
 
+### D14, posta il 2026-09-29 — trovata dalla prova alla radice, prima di D10
+
+**Che cos'è, a parole semplici.** Il riconciliatore è il pezzo che, senza modello, rimette a posto i router quando il
+proprietario sposta o cancella un file: toglie la voce di un file cancellato, e aggiorna il percorso di un file spostato che
+riconosce dall'impronta. Il documento lo vuole **automatico**, e D6 ha deciso che il caso certo si applica da solo. Ma le
+regole dei permessi dicono che una scrittura chiede un sì, e il sì di D7 vale **dentro una sessione** del proprietario; il
+riconciliatore invece lavora all'avvio e quando il sorvegliante vede un cambio, cioè fuori da ogni sessione. Nessuna risposta
+dice con quale autorità scrive — RR7, K46.
+
+**Che cosa esiste già.**
+
+| | Che cosa dice | Dove, e il comando |
+|---|---|---|
+| ADR-0016 | i permessi nascono perché il sistema *«esegue codice generato da un modello e strumenti di terze parti»*; col default le scritture chiedono, e un sì vale la sessione | `grep -n 'codice generato da un' docs/adr/0016-*.md` |
+| il registro delle funzioni | chiede il permesso a chi **invoca** una funzione — oggi il click, poi gesto, voce e agente | `grep -n 'pub enum Invoker' crates/kernel/src/registry.rs` |
+| la porta `filesystem` | scrive dentro un ambito e non chiede nessun permesso: lo chiede chi la chiama | `grep -n 'fn write' crates/kernel/src/ports/filesystem.rs` |
+| ADR-0009 | l'anello di miglioramento **propone** e l'utente approva; *«non si auto-modifica in silenzio»* | la voce della §5 del compendio |
+| il disegno del 2026-09-04, regola 2 | ogni scrittura nella cartella è un effetto giornalato con classe, dentro l'ambito: niente scrive di lato | la §2.3 |
+| il documento, e D4 | la cartella `.<nomeapp>/` è del programma, *«una sola cosa da ignorare o cancellare»*, e i router vi stanno; D6: il caso certo si applica da solo | la decisione aperta 1; la risposta D6 |
+| Obsidian | quando si rinomina un file dentro Obsidian, aggiorna da solo i link nelle note, e l'opzione si può spegnere | *Internal links*, letta il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md) |
+
+**Che cosa arriva.** Il **6** costruisce il riconciliatore; il **13** il sorvegliante; il **4** i preset e il ciclo
+d'approvazione.
+
+**Regge crescendo?** Più file il proprietario riordina, più correzioni certe: se ciascuna aspetta un sì, i router restano
+vecchi sul disco fino alla sessione dopo, e le domande crescono con l'ordine che il proprietario mette.
+
+**In tutte e due le risposte**, e non è una domanda: ogni correzione va nel giornale con la sua classe, ha la sua copia e si
+annulla — D2, ADR-0024 —, e il pannello la mostra; ciò che cambia una **scelta** del proprietario — un file chiave nel
+dubbio, un candidato fra due — resta a lui, D6.
+
+**La domanda: le correzioni certe del riconciliatore si scrivono da sole, come manutenzione del programma sulla sua
+cartella, o aspettano il sì del proprietario nella sua prossima sessione?**
+
+| | **A — da sole: la manutenzione del programma** | **B — aspettano il sì** |
+|---|---|---|
+| com'è | il riconciliatore rimette a posto `.<nomeapp>/` come il programma tiene in ordine i suoi dati: scrive da solo i due casi certi, e un'opzione lo spegne, come in Obsidian. ADR-0016 riceve un rimando: il permesso lo chiede chi agisce per un modello o invoca una funzione, non la manutenzione deterministica del programma sulla sua cartella | ogni correzione certa si prepara e aspetta: alla prossima sessione del proprietario il sì di D7 la applica; intanto la voce è segnata rotta, e l'agente non la segue |
+| costo | un rimando in ADR-0016, che dice il perimetro; e la regola che separa un fatto da una scelta, da tenere nel 6 | i router vecchi sul disco fino alla sessione dopo; una conferma in più; e D6 si legge *«il caso certo si prepara da solo»* |
+| che cosa si rifà dopo | niente | togliere l'attesa, un giorno, è questo stesso rimando |
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | il registro, la porta e ADR-0016 letti: oggi nessuna regola copre chi non invoca; Obsidian letto alla fonte | idem |
+| coerenza | realizza il documento e D6 com'erano decisi; ADR-0016 lega già i permessi al codice di un modello e agli strumenti | tiene ADR-0016 alla lettera, e rilegge D6 |
+| debito | il rimando, dichiarato | le voci rotte fra una sessione e l'altra |
+| stato dell'arte | è Obsidian, che aggiorna i link da sé e si può spegnere | più stretto della fonte |
+| proporzione | nessun meccanismo nuovo: un effetto giornalato come gli altri | un'attesa e una coda di proposte |
+| di chi è | **del proprietario**: il perimetro di un suo ADR | **del proprietario**: una rilettura della sua D6 |
+
+**Verificato, dedotto, assunto.** **Verificati**: `registry.rs`, `filesystem.rs`, `permission.rs`, ADR-0016, ADR-0009, la
+regola 2 del 2026-09-04, e Obsidian alla fonte. **Dedotti**: che la manutenzione deterministica stia fuori dal perimetro di
+ADR-0016 — il suo contesto parla di codice di un modello e di strumenti di terze parti, e non lo dice per esteso —; che le
+correzioni certe non tocchino mai una scelta del proprietario. **Assunto**: che il proprietario voglia i router sempre
+freschi sul disco, come il suo documento chiede.
+
+**Il consiglio: A.** È ciò che il documento e D6 hanno già deciso; mancava solo di scrivere con quale autorità, e la più
+piccola è quella che il programma ha già sui suoi dati.
+
 ## Le risposte del proprietario
 
 | # | Risposta | Data |
@@ -1164,6 +1253,7 @@ prodotto.
 | D11 | ✅ **delegata allo stato dell'arte** — *«come le sessioni moderne delle app moderne stato dell'arte, decision-principles devi seguire»*: la sessione è la run coi suoi sotto-agenti, uguale sul lato chat e sul lato coding; finisce quando il proprietario la chiude, dopo un tempo di inattività o dopo un tempo massimo, e la fa rispettare il core; i due tempi sono parametri consegnati, coi valori al 3 e il riferimento di NIST AAL2; alla fine cadono i suoi sì e si chiudono le sue zone. Il sì oltre la sessione delle app di oggi urta ADR-0016: segnalato, K38 | 2026-09-29 |
 | D12 | ⏳ scritta il 2026-09-29 dalla revisione, e si pone **prima** di D10 | 2026-09-29 |
 | D13 | ⏳ scritta il 2026-09-29 dalla revisione, e si pone dopo D12 e **prima** di D10 | 2026-09-29 |
+| D14 | ⏳ scritta il 2026-09-29 dalla prova alla radice, e si pone dopo D13 e **prima** di D10 | 2026-09-29 |
 
 ## Come si riprende — scritto alla chiusura della sessione del 2026-09-29
 

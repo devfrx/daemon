@@ -804,12 +804,18 @@ proprietario scriva link fra i suoi file.
 **Il consiglio: A.** I link sono la struttura che il proprietario scrive da sé: leggerli non costa quasi niente, e un link
 rotto diventa visibile invece di mentire.
 
-### D9, posta il 2026-09-29
+### D9, posta il 2026-09-29 e riformulata lo stesso giorno
+
+⚠️ **Il proprietario ha risposto alla prima forma — «un file-guida approvato vale anche quando cambia, o si riapprova?» — con
+una consegna:** *«come funziona per i software stato dell'arte? tutto quello che puoi rispondere tramite il funzionamento di
+essi usalo. Voglio se segui lo stato dell'arte odierno.»*. La prima forma sta nel commit `f797545`. Da qui la regola vale per
+le domande che restano: lo stato dell'arte, letto alla fonte, risponde; al proprietario resta ciò che **urta** una decisione
+del progetto.
 
 **Che cos'è, a parole semplici.** Una repo aperta come zona di lavoro può contenere file scritti **per gli agenti**:
-`CLAUDE.md`, `AGENTS.md`, `.cursorrules`, cartelle di skill. Claude Code legge il `CLAUDE.md` da solo, a ogni sessione. Ma
-in una repo clonata da un altro quei file li ha scritti **un altro**: leggerli come istruzioni vorrebbe dire che la repo di
-uno sconosciuto dà ordini all'agente — K15, la sorella di AUD-004.
+`CLAUDE.md`, `AGENTS.md`, `.cursorrules`, cartelle di skill. In una repo clonata da un altro quei file li ha scritti **un
+altro**: leggerli come istruzioni vorrebbe dire che la repo di uno sconosciuto dà ordini all'agente — K15, la sorella di
+AUD-004.
 
 **Che cosa esiste già.**
 
@@ -817,45 +823,63 @@ uno sconosciuto dà ordini all'agente — K15, la sorella di AUD-004.
 |---|---|---|
 | ADR-0014 | il contenuto non fidato **informa, mai autorizza**; diventa istruzione solo con un passaggio esplicito, **giornalato** | la voce della §5 del compendio |
 | ADR-0015 | la descrizione di uno strumento si mostra **intera** all'approvazione e se ne registra l'**impronta**; se cambia, lo strumento è **sospeso** finché non si riapprova, col diff mostrato | idem |
-| il disegno del 2026-09-04, regola 3 | il registro delle guide **rifiuta** una guida senza impronta | la §2.3 |
+| ADR-0016 | i permessi sono triple tenute dal kernel, e *«una descrizione non concede permessi»* — ADR-0015, *«è testo, non autorità»* | idem |
+| il disegno del 2026-09-04 | la regola 3: il registro delle guide **rifiuta** una guida senza impronta; la pretesa 1.1e: provenienza e impronta **all'approvazione**, e «approvate ora» come proiezione del giornale | la §2.3 e la §1.1 |
 | AUD-004 | se le difese di ADR-0015 valgano anche per le skill: un ADR del proprietario, che **sbarra il 13** | la §6 del compendio |
 | D3 | *«Se il `CLAUDE.md` di una repo si legga da solo, come fa Claude Desktop, lo decide D9»* | la sezione di D3 |
-| Claude Code | legge il `CLAUDE.md` all'inizio di **ogni** sessione, e può leggere `AGENTS.md`; quando si passa a una cartella nuova ne carica il `CLAUDE.md` e chiede di **fidarsi** della cartella, elencando le regole di permesso, i hook e i comandi che le sue impostazioni accenderebbero | *Overview* e *Configure permissions*, lette alla fonte il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md) |
 
-**Che cosa arriva.** Il **13** costruisce il registro delle guide, cioè la porta d'ingresso di una guida; il **5** apre le
-repo come zone; il **4** gli agenti.
+**Che cosa fanno i software di oggi — letto alla fonte il 2026-09-29**, la provenienza in [`riferimenti.md`](../../riferimenti.md).
 
-**Regge crescendo?** Con tante repo, alcune di altri, un file-guida letto da solo cambia le istruzioni dell'agente a ogni
-`git pull`, senza che nessuno lo veda.
+| Fonte | Che cosa dice |
+|---|---|
+| Claude Code, *How Claude remembers your project* | il `CLAUDE.md` si carica **a ogni sessione**, e le istruzioni sono **contesto, non configurazione imposta**: per bloccare un'azione servono i permessi o un hook; un file importato da **fuori** dalla cartella chiede un'approvazione la prima volta — lo fa, dice la pagina, per proteggere dai file che altri committano in un progetto condiviso |
+| Claude Code, *Configure permissions* | la **fiducia alla cartella**: finché non c'è, le regole di permesso e le cartelle in più della repo non valgono, e i server MCP della repo si chiedono prima di connetterli |
+| Gemini CLI, *Trusted Folders* | la fiducia si chiede **una volta per cartella** e si salva in un file centrale; in una cartella non fidata — la *safe mode* — le impostazioni e le variabili d'ambiente della repo si ignorano, le approvazioni automatiche degli strumenti si spengono, il **caricamento automatico della memoria** si spegne, i server MCP non si connettono e i comandi su misura non si caricano |
+| VS Code, *Trust and safety for AI agents*, pagina del 2026-09-16 | una cartella non fidata gira in **modalità ristretta**, che spegne anche gli agenti; il contenuto dei file può tentare di dirottare l'agente |
 
-**In tutte e due le risposte**, e non è una domanda: il file-guida di una repo **non** diventa istruzione senza un primo sì
-esplicito del proprietario, giornalato — ADR-0014; prima di quel sì è contenuto «da fuori», che informa.
+Nessuna delle quattro riapprova un file-guida quando cambia.
 
-**La domanda: un file-guida approvato vale anche quando cambia, o si riapprova a ogni cambio?**
+**Che cosa ne segue.**
 
-| | **A — come ADR-0015: impronta, e si riapprova** | **B — come Claude Code: fiducia alla cartella** |
+| | Il file-guida di una repo |
+|---|---|
+| la fiducia | si chiede **una volta per zona**, la prima volta che il proprietario la apre, e si scrive nel giornale; il proprietario la toglie quando vuole |
+| una zona non fidata | **modalità ristretta**: i file-guida non si caricano da soli, le impostazioni e i server MCP della repo non valgono, nessuna approvazione automatica; i file-guida si possono leggere, e informano |
+| una zona fidata | i file-guida si caricano a **ogni** sessione, anche quando cambiano, e l'impronta della versione caricata si scrive nel giornale: si sa sempre **quale** testo l'agente ha letto — la provenienza di ADR-0014 |
+| che cosa non possono fare | concedere permessi: i permessi stanno nel kernel, ADR-0016, e un testo non li cambia — come in Claude Code, dove le istruzioni sono contesto e i permessi stanno nelle impostazioni |
+| un import che esce dalla zona | chiede un'approvazione sua, come in Claude Code |
+
+**Dove urta il progetto, ed è la sola domanda.** La regola 3 del disegno del 2026-09-04 dice che il registro delle guide
+**rifiuta una guida senza impronta**, e la pretesa 1.1e vuole l'impronta **all'approvazione**: la forma di ADR-0015, che
+**riapprova** a ogni cambio. Lo stato dell'arte approva la **cartella**, non la versione del file.
+
+**La domanda: per il file-guida di una zona si segue lo stato dell'arte — fiducia alla cartella, nessuna riapprovazione —
+correggendo la regola 3 del 2026-09-04, o si tiene la regola 3?**
+
+| | **A — lo stato dell'arte, e la regola 3 si corregge** | **B — la regola 3 com'è** |
 |---|---|---|
-| com'è | il proprietario vede il file **intero** e lo approva; se ne registra l'impronta; se cambia — un `git pull` — resta **sospeso** finché non lo riapprova, col diff; nel frattempo informa e non comanda | il proprietario approva la repo una volta, e il suo file-guida si legge da solo a ogni sessione, anche quando cambia |
-| costo | una riapprovazione a ogni cambio — anche nelle repo del proprietario, dove il diff l'ha scritto lui | un cambio del file entra nelle istruzioni senza che il proprietario lo veda; e contraddice la regola 3 del 2026-09-04, una guida senza impronta: serve un ADR |
-| che cosa si rifà dopo | niente | aggiungere l'impronta dopo, e riapprovare ogni file già letto |
+| com'è | la tabella qui sopra; la regola 3 riceve un richiamo datato: per una guida di zona l'approvazione è la fiducia alla cartella, e l'impronta si scrive a ogni caricamento, per la provenienza | la fiducia alla cartella e la modalità ristretta, **più** la riapprovazione a ogni cambio, col diff |
+| costo | un cambio del file — un `git pull` — arriva all'agente senza che il proprietario lo guardi, come in tutti e quattro i software letti; resta scritto nel giornale quale versione l'agente ha letto, e il testo non concede permessi | una conferma a ogni cambio, anche nelle repo del proprietario; più stretto di tutti i software letti |
+| che cosa si rifà dopo | niente | niente |
 
 **I cinque criteri.**
 
 | Criterio | A | B |
 |---|---|---|
-| correttezza verificata | ADR-0014, ADR-0015 e la regola 3 letti; Claude Code letto alla fonte | contraddice la regola 3 del 2026-09-04 |
-| coerenza | è il meccanismo di ADR-0015, lo stesso delle descrizioni degli strumenti — e la forma probabile dell'ADR di AUD-004 | un secondo modello di fiducia accanto ad ADR-0015 |
-| debito | la vista del diff alla riapprovazione, al 13 | un ADR che ammetta una guida senza impronta, e il rischio |
-| stato dell'arte | più stretto di Claude Code, che si fida della cartella | è il modello di Claude Code |
-| proporzione | una conferma a ogni cambio, su pochi file | nessuna conferma |
-| di chi è | **del proprietario**, e la risposta entra nel suo ADR di AUD-004 | idem |
+| correttezza verificata | quattro fonti primarie lette oggi; la regola 3, la pretesa 1.1e e ADR-0015 letti | idem |
+| coerenza | cambia una regola di un disegno, col richiamo datato; ADR-0014 e ADR-0016 restano: il testo informa e non concede | nessuna regola cambia |
+| debito | il richiamo alla regola 3, e l'ADR di AUD-004 da scrivere sapendolo, perché per le skill decide la stessa cosa | la vista del diff, al 13 |
+| stato dell'arte | è quello di Claude Code, Gemini CLI e VS Code | più stretto di tutti |
+| proporzione | nessuna conferma in più | una conferma a ogni cambio |
+| di chi è | **del proprietario**: corregge una sua regola del 2026-09-04 | idem |
 
-**Verificato, dedotto, assunto.** **Verificati**: ADR-0014, ADR-0015, la regola 3 del 2026-09-04, la §6 del compendio su
-AUD-004, e alla fonte Claude Code. **Dedotto**: che un `git pull` possa cambiare un file-guida senza che nessuno lo guardi.
-**Assunto**: che il proprietario lavorerà anche su repo scritte da altri.
+**Verificato, dedotto, assunto.** **Verificati**: le quattro fonti, lette il 2026-09-29; ADR-0014, ADR-0015, ADR-0016, la
+regola 3 e la pretesa 1.1e del 2026-09-04. **Dedotti**: che un file-guida non possa concedere permessi anche da noi — il
+kernel li tiene a parte, ADR-0016 —; che il «caricamento automatico della memoria» di Gemini CLI copra i suoi file di
+istruzioni — la pagina non li nomina. **Assunto**: che il proprietario lavorerà anche su repo scritte da altri.
 
-**Il consiglio: A.** È la regola che il progetto ha già per le descrizioni degli strumenti: un testo che dà istruzioni
-all'agente si approva com'è, e si riapprova quando cambia.
+**Il consiglio: A.** È ciò che fanno tutti i software letti: il testo non concede permessi, come da loro, e in più il giornale
+dice sempre quale versione l'agente ha letto.
 
 ## Le risposte del proprietario
 

@@ -259,3 +259,73 @@ La chiusura precedente sta in
 **Da verificare alla fonte prima del disegno** — le righe **F** ancora aperte: K6 e K34, i file «solo online» di OneDrive;
 K9, gli eventi che il sorvegliante di Windows può perdere. E la pagina di VS Code di D14 è stata letta attraverso lo
 strumento che riassume: il nome dell'impostazione si rilegge alla fonte prima di entrare nel disegno.
+
+## Archiviata il 2026-09-29, alla chiusura del brainstorming
+
+La sezione scritta alla chiusura della sessione di D10 e del controllo finale, com'era nel commit `d9bf860`.
+
+## Come si riprende — scritto alla chiusura della quarta sessione del 2026-09-29
+
+⛔ **Da sapere subito: niente è a metà, ma il brainstorming NON è chiuso.** Il proprietario ha avuto D10 e, prima di
+chiudere, ha chiesto *«fai un controllo su tutte le risposte date dall'inizio dello studio […] e confermami che sono ben
+integrate con architettura, struttura, fino alla radice […] poi chiudiamo e continuiamo nella prossima»*. Il controllo —
+la sezione *«Il controllo finale»* — ha trovato quattro punti di **merito**: sono **D15–D18**, da porre nella sessione che
+riprende, prima della chiusura. La chiusura precedente sta in
+[`archivio/consegna-brainstorming-knowledge-base-revisione.md`](consegna-brainstorming-knowledge-base-revisione.md).
+
+| | Stato, e il comando che lo rifà |
+|---|---|
+| ramo | `main` allineato a `origin`: `git fetch --all --prune`, poi `git status -sb`; nessuno stash, `git stash list` |
+| i commit di questa sessione | `git log --oneline c12a170..HEAD`: D10, poi il controllo finale con questa chiusura |
+| codice di prodotto | **non toccato**: `git diff --stat c12a170..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
+| cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura e prima di ogni commit, e `bash scripts/check-docs.sh` → `OK`: si rilanciano, non si citano |
+| fine-riga | questo file e l'archivio della consegna **LF**; `riferimenti.md` LF nell'indice e **CRLF** nell'albero, coi CR uguali alle righe: `git ls-files --eol` sui file, e `tr -cd '\r'` contato contro `wc -l` |
+| file temporanei | nessuno nel repository: gli script `d10.py` e `fin.py` e il prompt del revisore stanno nello scratchpad della sessione, e chi riprende non ne ha bisogno |
+| la memoria dell'agente | una nota aggiornata: *«stato dell'arte prima delle domande»* — il codice si legge per il **significato**, non per l'esistenza |
+
+**Dove si è arrivati.** Lo stato vive nelle tabelle di questo file; qui c'è solo dove guardare.
+
+| | |
+|---|---|
+| le risposte | la tabella *«Le risposte del proprietario»*: D1 respinta; D2–D8 **A**; D9 **A**, sullo stato dell'arte; D10 **A, come Claude Desktop**; D11 delegata allo stato dell'arte; D12 **A**, delegata allo stato dell'arte; D13 **A**; D14 **A**, sullo stato dell'arte |
+| il controllo finale | la sezione *«Il controllo finale»*: CF1–CF15, e l'esito per risposta |
+| le domande da porre | **D15–D18**, nella tabella *«Le domande, una per volta»*: scritte come righe, **non ancora in forma di domanda** |
+| la revisione | la sezione *«La revisione di coerenza e correttezza»*: RC1–RC9, la prova alla radice RR1–RR13, e l'elenco di che cosa le risposte cambiano |
+| i buchi | K1–K49, nelle due tabelle dei buchi |
+| le fonti | la sezione datata di [`riferimenti.md`](../riferimenti.md), *«La revisione della knowledge base — le fonti delle domande, 2026-09-29»* |
+
+**Il compito della sessione che riprende:**
+
+1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura, o uno dopo.
+2. La lettura obbligatoria di `CLAUDE.md`; poi questo file per intero, a blocchi.
+3. `bash scripts/gate.sh` all'apertura, da solo; se è rosso su `ipc_wire` con `NotFound`, il gotcha #141.
+4. **D15, D16, D17, D18**, in quest'ordine — D15 decide chi costruisce la porta dei file, e le altre ne dipendono. Per
+   ciascuna, **prima** di scriverla: lo stato dell'arte letto alla fonte, e il codice letto per il **significato**; poi la
+   forma che ha funzionato — a parole semplici, un esempio concreto, lo stato dell'arte come opzione A.
+5. Finite le domande, la **chiusura del brainstorming**, che il proprietario conferma; le righe **F** si leggono alla fonte;
+   poi, in una sessione **nuova**, il disegno, che scrive l'elenco della sezione *«Che cosa le risposte cambiano»*.
+
+**Le decisioni prese dal coordinatore in questa sessione, col perché** — il proprietario può ribaltarle:
+
+| | Decisione | Perché, e che cosa costa se è sbagliata |
+|---|---|---|
+| 1 | i commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md`, *«senza co-autore»*, prevale sulla direttiva di sistema. Costo: un `--amend` |
+| 2 | la risposta a D10, *«come in claude desktop»*, letta come **A** | Claude Desktop, letto alla fonte, fa ciò che la A diceva. Costo: rileggere D10 |
+| 3 | K47, K48 e K49 registrati senza domanda | toccano il gateway e le porte del kernel: li decide chi li costruisce, col proprietario. Costo: zero oggi |
+| 4 | CF5: il perimetro del rimando di D14 riscritto — la correzione deterministica di un **fatto** — e il rimando anche in ADR-0038, senza domanda | l'esito di D14 non cambia, cambia come si scrive. Costo: una domanda, se il proprietario vuole un altro perimetro |
+| 5 | CF9: un permesso scritto senza sessione si legge come di una sessione **finita** | ADR-0007: davanti al dubbio ci si ferma, non si indovina. Costo: se i sì vecchi devono valere, un ADR |
+| 6 | CF13 e CF14, due errori del coordinatore in D10, corretti senza domanda | erano errori di chi scriveva, non scelte. Costo: zero |
+| 7 | **un** revisore indipendente, con `model: "opus"`, senza chiedere | uno solo non chiede il sì; ha usato circa 224 mila token. Costo: il suo lavoro, se inutile |
+| 8 | i quattro punti di merito scritti come D15–D18 invece di porli subito | il proprietario ha chiuso: *«poi chiudiamo e continuiamo nella prossima»*. Costo: zero |
+
+**Vicoli ciechi di questa sessione:**
+
+| Scartato | Perché, e che cosa insegna |
+|---|---|
+| **leggere il codice per l'esistenza** | D10 citava `Conforming::was_degraded` come «il codice lo sa già dire», e il nome esiste: ma dice che un vincolo di **qualità** è stato allentato, non che il modello è cambiato. 📌 *Un nome nel codice si legge per ciò che significa, fino al commento* |
+| **la pagina riassunta come fonte** | lo strumento che riassume ha detto di *Model configuration* che la catena di riserva vale *«solo per questa sessione»*; il sorgente dice *«the switch lasts for the current turn only»*. 📌 *Una regola che entra in una risposta si legge dal sorgente, non dal riassunto* |
+| **una risposta vista da un lato solo** | il controllo del coordinatore sui disegni e quello del revisore sul codice hanno trovato cose **diverse**. 📌 *Un controllo finale ha due lettori, su due lati* |
+
+**Da verificare alla fonte prima del disegno** — le righe **F** ancora aperte: K6 e K34, i file «solo online» di OneDrive;
+K9, gli eventi che il sorvegliante di Windows può perdere. E tre pagine lette attraverso lo strumento che riassume, da
+rileggere alla fonte: quella di VS Code di D14, e le due dell'aiuto di Claude di D10.

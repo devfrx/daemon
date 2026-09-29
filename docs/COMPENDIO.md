@@ -17,7 +17,7 @@
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — il
 > comando in fondo alla §12 — e l'idea è già qui.
 
-**Aggiornato il 2026-09-28**, con l'**avvio della revisione della knowledge base**, che il proprietario mette **prima** del sotto-progetto 13 e dei modelli decisionali — il puntatore della §6, una riga nel capoverso dei modelli decisionali e la consegna al percorso del suo futuro disegno —, dopo l'avvio dei modelli decisionali «System One»; il puntatore, il capoverso e questa riga com'erano sono in [`archivio/stato-storico.md`](archivio/stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+**Aggiornato il 2026-09-29**, con la **chiusura del brainstorming della revisione della knowledge base** — il puntatore della §6 —; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](archivio/stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
 
 ---
 
@@ -617,8 +617,9 @@ per parola.
 
 ⏭️ **IL PROSSIMO PASSO, IN DUE TEMPI. Uno: la REVISIONE DELLA KNOWLEDGE BASE**, chiesta dal proprietario il 2026-09-28 **prima**
 del 13 e dei modelli decisionali — dove vivono i file, chi li scrive e chi li legge, come e quando, se le repo dei progetti
-stanno dentro, e i casi limite. Il brainstorming è **in corso**, una domanda alla volta: la consegna, coi buchi trovati e le
-risposte, sta al percorso del suo [futuro disegno](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md).
+stanno dentro, e i casi limite. Il brainstorming è **chiuso il 2026-09-29**: la consegna, con le risposte e l'elenco di ciò che
+cambiano, sta al percorso del suo [futuro disegno](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md), e il suo
+*«Come si riprende»* dice il passo dopo — **il disegno della revisione**, in una sessione nuova, sezione per sezione.
 **Due: IL SOTTO-PROGETTO 13** — i tre meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima**
 del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta proprietà** della §3, ma questo **vincolo d'ordine**;
 il suo perimetro si rilegge con l'esito della revisione. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill

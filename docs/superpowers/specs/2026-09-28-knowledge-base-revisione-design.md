@@ -1,9 +1,10 @@
 # Knowledge base, la revisione: la consegna del brainstorming
 
-⏳ **BRAINSTORMING IN CORSO, aperto il 2026-09-28.** Questo file è la **consegna** del brainstorming di revisione della
-knowledge base, al percorso del suo futuro disegno — il precedente è la consegna dei
-[modelli decisionali](2026-09-28-modelli-decisionali-design.md). Si aggiorna a **ogni risposta** del proprietario, nella
-tabella *«Le risposte del proprietario»*, e si committa ogni volta: una sessione che muore non fa ripresentare niente.
+✅ **BRAINSTORMING CHIUSO il 2026-09-29, aperto il 2026-09-28** — il proprietario l'ha confermato dopo D20. Questo file è
+la **consegna** del brainstorming di revisione della knowledge base, al percorso del suo futuro disegno — il precedente è
+la consegna dei [modelli decisionali](2026-09-28-modelli-decisionali-design.md). Si è aggiornato a **ogni risposta** del
+proprietario, nella tabella *«Le risposte del proprietario»*, con un commit ciascuna. Il passo dopo lo dice *«Come si
+riprende»*, in fondo: **il disegno**, in una sessione nuova.
 
 ✅ **Il 2026-09-28 il proprietario ha risposto a D1 col proprio documento**, con la guida ARMS allegata: è riportato
 **parola per parola** nella sezione *«Il documento del proprietario»*, e la forma della knowledge base ora è **quella**. Le
@@ -1734,70 +1735,65 @@ voglia aggiungere rumore di rado. **Assunto**: niente.
 | D17 | ✅ **A** — nessun file del proprietario nel backup del programma: l'ADR nuovo di D12 supera le righe degli artefatti e delle guide di ADR-0022 per **ogni** file del proprietario, la root **e** le zone di lavoro; il file sta al suo posto, il giornale lo riferisce, la copia per annullare di D2 resta; la storia lunga è dei backup del proprietario e di git, come in Claude Code | 2026-09-29 |
 | D18 | ✅ **A** — come Claude Code: fuori da ogni zona l'agente **legge col permesso** — la tripla `(file, percorso, lettura)` di ADR-0016, per la sessione —, e la porta apre per quel file un ambito di sola lettura; la **scrittura** fuori resta `OutsideScope`; la lista di base del privato e i percorsi protetti valgono anche lì; l'import che esce da una zona, D9, è la stessa domanda; un'impostazione blocca ogni lettura fuori. Cambia la metà «leggere» di D3 | 2026-09-29 |
 | D19 | ✅ **A** — la cartella dati del programma è un **percorso protetto**, come il file del privato di D16 — l'agente non ci scrive mai, qualunque sì abbia —, e sta nella **lista di base del privato**: non si indicizza e non si legge. Chiude K50 | 2026-09-29 |
-| D20 | ✅ **A** — un file solo, tutto protetto: il file delle esclusioni del documento del proprietario resta uno, alla root, con le due sezioni di D5; l'agente **propone** anche le righe di rumore, e le conferma il proprietario. Il rumore *«non chiede conferme»* di D5 vale per il proprietario, non per l'agente | 2026-09-29 |
+| D20 | ✅ **A** — un file solo, tutto protetto: il file delle esclusioni del documento del proprietario resta uno, alla root, con le due sezioni di D5; l'agente **propone** anche le righe di rumore, e le conferma il proprietario. ## Come si riprende — scritto alla chiusura del brainstorming, il 2026-09-29
 
-## Come si riprende — scritto alla chiusura della quarta sessione del 2026-09-29
-
-⛔ **Da sapere subito: niente è a metà, ma il brainstorming NON è chiuso.** Il proprietario ha avuto D10 e, prima di
-chiudere, ha chiesto *«fai un controllo su tutte le risposte date dall'inizio dello studio […] e confermami che sono ben
-integrate con architettura, struttura, fino alla radice […] poi chiudiamo e continuiamo nella prossima»*. Il controllo —
-la sezione *«Il controllo finale»* — ha trovato quattro punti di **merito**: sono **D15–D18**, da porre nella sessione che
-riprende, prima della chiusura. La chiusura precedente sta in
+⛔ **Da sapere subito: niente è a metà, e il brainstorming è CHIUSO** — il proprietario l'ha confermato dopo D20. La sessione
+che riprende apre il **disegno** di questa revisione, in una sessione **nuova**: una fase per sessione, `CLAUDE.md`. La
+chiusura precedente sta in
 [`archivio/consegna-brainstorming-knowledge-base-revisione.md`](../../archivio/consegna-brainstorming-knowledge-base-revisione.md).
 
 | | Stato, e il comando che lo rifà |
 |---|---|
 | ramo | `main` allineato a `origin`: `git fetch --all --prune`, poi `git status -sb`; nessuno stash, `git stash list` |
-| i commit di questa sessione | `git log --oneline c12a170..HEAD`: D10, poi il controllo finale con questa chiusura |
-| codice di prodotto | **non toccato**: `git diff --stat c12a170..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
+| i commit di questa sessione | `git log --oneline d9bf860..HEAD`: D15–D20, le righe F, le correzioni di forma, il secondo controllo, questa chiusura |
+| codice di prodotto | **non toccato**: `git diff --stat d9bf860..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
 | cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura e prima di ogni commit, e `bash scripts/check-docs.sh` → `OK`: si rilanciano, non si citano |
-| fine-riga | questo file e l'archivio della consegna **LF**; `riferimenti.md` LF nell'indice e **CRLF** nell'albero, coi CR uguali alle righe: `git ls-files --eol` sui file, e `tr -cd '\r'` contato contro `wc -l` |
-| file temporanei | nessuno nel repository: gli script `d10.py` e `fin.py` e il prompt del revisore stanno nello scratchpad della sessione, e chi riprende non ne ha bisogno |
-| la memoria dell'agente | una nota aggiornata: *«stato dell'arte prima delle domande»* — il codice si legge per il **significato**, non per l'esistenza |
+| fine-riga | questo file e l'archivio della consegna **LF**; `riferimenti.md`, `COMPENDIO.md` e `archivio/stato-storico.md` LF nell'indice e **CRLF** nell'albero, coi CR uguali alle righe: `git ls-files --eol` sui file, e `tr -cd '\r'` contato contro `wc -l` |
+| file temporanei | nessuno nel repository: gli script e il prompt del revisore stanno nello scratchpad della sessione, e chi riprende non ne ha bisogno |
+| la memoria dell'agente | una nota aggiornata: *«stato dell'arte prima delle domande»* — «come X» si scrive dopo aver letto che cosa fa X **nel suo modo di default** |
 
 **Dove si è arrivati.** Lo stato vive nelle tabelle di questo file; qui c'è solo dove guardare.
 
 | | |
 |---|---|
-| le risposte | la tabella *«Le risposte del proprietario»*: D1 respinta; D2–D8 **A**; D9 **A**, sullo stato dell'arte; D10 **A, come Claude Desktop**; D11 delegata allo stato dell'arte; D12 **A**, delegata allo stato dell'arte; D13 **A**; D14 **A**, sullo stato dell'arte |
-| il controllo finale | la sezione *«Il controllo finale»*: CF1–CF15, e l'esito per risposta |
-| le domande da porre | **D15–D18**, nella tabella *«Le domande, una per volta»*: scritte come righe, **non ancora in forma di domanda** |
-| la revisione | la sezione *«La revisione di coerenza e correttezza»*: RC1–RC9, la prova alla radice RR1–RR13, e l'elenco di che cosa le risposte cambiano |
-| i buchi | K1–K49, nelle due tabelle dei buchi |
-| le fonti | la sezione datata di [`riferimenti.md`](../../riferimenti.md), *«La revisione della knowledge base — le fonti delle domande, 2026-09-29»* |
+| le risposte | la tabella *«Le risposte del proprietario»*, D1–D20: D1 respinta, col documento del proprietario; tutte le altre **A** — alcune delegate allo stato dell'arte, e D10 *«come Claude Desktop»* |
+| i controlli | *«La revisione di coerenza e correttezza»*, RC1–RC9 e la prova alla radice RR1–RR13; *«Il controllo finale»*, CF1–CF15; *«Il secondo controllo»*, M1–M6, N1–N5, F1–F10 |
+| i buchi | K1–K53, nelle due tabelle dei buchi: quelli aperti sono registrati col loro chiusore, nell'ultima riga di *«Le domande, una per volta»* |
+| **l'ingresso del disegno** | *«Che cosa le risposte cambiano — l'elenco per il disegno»*: ogni riga è un richiamo datato, un rimando, un ADR nuovo o una riga da riscrivere |
+| le fonti | le due sezioni datate di [`riferimenti.md`](../../riferimenti.md) sulla revisione della knowledge base |
 
-**Il compito della sessione che riprende:**
+**Il compito della sessione che riprende — il disegno:**
 
 1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura, o uno dopo.
-2. La lettura obbligatoria di `CLAUDE.md`; poi questo file per intero, a blocchi.
+2. La lettura obbligatoria di `CLAUDE.md`; poi **questo file per intero**, a blocchi, e il
+   [disegno del 2026-09-04](2026-09-04-knowledge-base-design.md) per intero, perché è ciò che il disegno corregge.
 3. `bash scripts/gate.sh` all'apertura, da solo; se è rosso su `ipc_wire` con `NotFound`, il gotcha #141.
-4. **D15, D16, D17, D18**, in quest'ordine — D15 decide chi costruisce la porta dei file, e le altre ne dipendono. Per
-   ciascuna, **prima** di scriverla: lo stato dell'arte letto alla fonte, e il codice letto per il **significato**; poi la
-   forma che ha funzionato — a parole semplici, un esempio concreto, lo stato dell'arte come opzione A.
-5. Finite le domande, la **chiusura del brainstorming**, che il proprietario conferma; le righe **F** si leggono alla fonte;
-   poi, in una sessione **nuova**, il disegno, che scrive l'elenco della sezione *«Che cosa le risposte cambiano»*.
+4. Il disegno si scrive **sezione per sezione**, ciascuna presentata e approvata dal proprietario — `CLAUDE.md`. Porta
+   l'elenco *«Che cosa le risposte cambiano»* riga per riga: i richiami datati al disegno del 2026-09-04; i rimandi in testa
+   agli ADR, ciascuno riletto **contro i fratelli**, gotcha #59, con la voce della §5 del compendio; l'**ADR nuovo** del backup
+   di D12 e D17, con le copie del checkpoint di K53 e la sua voce nella §5; le righe di roadmap, tracciabilità, stella polare
+   della GUI e design/09; e il perimetro del 13 riletto, perché il 13 viene subito dopo.
+5. Dopo il disegno, in una sessione sua, il piano dei documenti; poi il brainstorming del 13, sbarrato da AUD-004.
 
 **Le decisioni prese dal coordinatore in questa sessione, col perché** — il proprietario può ribaltarle:
 
 | | Decisione | Perché, e che cosa costa se è sbagliata |
 |---|---|---|
 | 1 | i commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md`, *«senza co-autore»*, prevale sulla direttiva di sistema. Costo: un `--amend` |
-| 2 | la risposta a D10, *«come in claude desktop»*, letta come **A** | Claude Desktop, letto alla fonte, fa ciò che la A diceva. Costo: rileggere D10 |
-| 3 | K47, K48 e K49 registrati senza domanda | toccano il gateway e le porte del kernel: li decide chi li costruisce, col proprietario. Costo: zero oggi |
-| 4 | CF5: il perimetro del rimando di D14 riscritto — la correzione deterministica di un **fatto** — e il rimando anche in ADR-0038, senza domanda | l'esito di D14 non cambia, cambia come si scrive. Costo: una domanda, se il proprietario vuole un altro perimetro |
-| 5 | CF9: un permesso scritto senza sessione si legge come di una sessione **finita** | ADR-0007: davanti al dubbio ci si ferma, non si indovina. Costo: se i sì vecchi devono valere, un ADR |
-| 6 | CF13 e CF14, due errori del coordinatore in D10, corretti senza domanda | erano errori di chi scriveva, non scelte. Costo: zero |
-| 7 | **un** revisore indipendente, con `model: "opus"`, senza chiedere | uno solo non chiede il sì; ha usato circa 224 mila token. Costo: il suo lavoro, se inutile |
-| 8 | i quattro punti di merito scritti come D15–D18 invece di porli subito | il proprietario ha chiuso: *«poi chiudiamo e continuiamo nella prossima»*. Costo: zero |
+| 2 | per D15 lo stato dell'arte **non decide**: la regola è quella del progetto, *«il primo paga»* | è l'ordine interno del progetto, e la fonte sul progetto è il progetto. Costo: rileggere D15 |
+| 3 | D19 trovata e posta dal coordinatore, alla domanda del proprietario sulla coerenza | un buco su I1, dedotto dal documento del proprietario. Costo: zero |
+| 4 | **un** revisore opus in sola lettura, dopo la scelta A del proprietario | circa 214 mila token. Costo: il suo lavoro, se inutile — ha trovato M1–M6 |
+| 5 | M4 e M6 decisi con la regola di D15, e N1–N5 registrati come K senza domanda | le tre decisioni scritte in *«Il secondo controllo»*. Costo: una domanda, se il proprietario ne vuole una |
+| 6 | M5 corretto nel testo di D16 senza riporre D16 | la decisione era già di D5 — il privato lo cambia solo il proprietario —; cambia come si scrive la fonte. Costo: una domanda, se il proprietario vuole il sì di Claude Code |
 
 **Vicoli ciechi di questa sessione:**
 
 | Scartato | Perché, e che cosa insegna |
 |---|---|
-| **leggere il codice per l'esistenza** | D10 citava `Conforming::was_degraded` come «il codice lo sa già dire», e il nome esiste: ma dice che un vincolo di **qualità** è stato allentato, non che il modello è cambiato. 📌 *Un nome nel codice si legge per ciò che significa, fino al commento* |
-| **la pagina riassunta come fonte** | lo strumento che riassume ha detto di *Model configuration* che la catena di riserva vale *«solo per questa sessione»*; il sorgente dice *«the switch lasts for the current turn only»*. 📌 *Una regola che entra in una risposta si legge dal sorgente, non dal riassunto* |
-| **una risposta vista da un lato solo** | il controllo del coordinatore sui disegni e quello del revisore sul codice hanno trovato cose **diverse**. 📌 *Un controllo finale ha due lettori, su due lati* |
+| **«come Claude Code» dal nome della funzione** | D16 diceva *«come Claude Code»* dei percorsi protetti; là, nel modo di default, una scrittura protetta **chiede**, e l'utente può dire sì — M5. 📌 *Uno stato dell'arte si cita per ciò che fa nel suo modo di default, non per il nome del meccanismo* |
+| **un controllo scritto dove il kernel non vede** | D16 metteva il controllo dei percorsi protetti nel registro, prima di `is_granted`; il commento di `Path` dice che il kernel non interpreta i percorsi — M1. 📌 *Prima di dire dove vive un controllo, si legge il commento del tipo che deve confrontare* |
+| **un comando con `\|` in una tabella** | copiato grezzo dal sorgente rende zero righe, e la sonda è vacua — F10. 📌 *Accanto a un comando in tabella si scrive l'esito atteso* |
+| **un indirizzo di fonte vecchio** | la pagina di Cursor citata per D5 oggi rende *«Page not found»*; la viva si trova da `https://cursor.com/llms.txt`. 📌 *Una fonte si rilegge dall'indirizzo che il sito dichiara oggi* |
 
-**Da verificare alla fonte prima del disegno** — le righe **F** ancora aperte: K6 e K34, i file «solo online» di OneDrive;
-K9, gli eventi che il sorvegliante di Windows può perdere. E tre pagine lette attraverso lo strumento che riassume, da
-rileggere alla fonte: quella di VS Code di D14, e le due dell'aiuto di Claude di D10.
+**Da verificare alla fonte prima del disegno:** niente — le righe **F** sono chiuse, e le pagine lette per riassunto sono
+state rilette dal sorgente.

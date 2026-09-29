@@ -313,6 +313,7 @@ la parte di prima resta, perché dice che cosa la risposta ha sciolto.
 | **K47** | **il gateway non sa ancora fare la catena di D10**: il nome del candidato è un `&'static str`, per I6, e così il modello di `RoutingDetail::new`; la finestra non c'è; `resolve` non cammina sui fallimenti; il record non porta i tentativi — un campo nuovo su un indice nuovo, ADR-0036 —; e non c'è un segnale «modello cambiato» distinto da `degraded` — RR10, RR12, RR13. ⚠️ **Allargato il 2026-09-29, controllo finale, CF3** | V: `grep -n -A10 '^pub struct Candidate' crates/kernel/src/gateway/mod.rs` | ✅ la proiezione per candidato | registrato: il **3**, che costruisce il gateway vero e il selettore, con la forma di K44 — un identificativo coniato dal kernel da un catalogo consegnato —; ✅ la finestra la porta il **13**, che compone la proiezione per candidato e la usa per primo — D15, 2026-09-29 |
 | **K49** | **la chiave della fiducia di una zona**: D9 la tiene sul percorso dato dalla piattaforma — testo arrivato a runtime dentro una decisione del kernel, la tensione con I6 che RR5 scioglie con un identificativo coniato a ogni apertura —; ma quell'identificativo non è stabile fra due sessioni, e la fiducia deve esserlo: la stessa zona avrebbe due chiavi | D: `grep -n 'pub resource' crates/kernel/src/permission.rs`, e RR5, RR9 | — | registrato, con K44: la chiave **stabile** di una zona e come la tratta I6. Trovato dal controllo finale, CF7 |
 | **K48** | **quali errori fanno scattare la catena**: Claude Code **non** ripiega sui limiti di frequenza, perché ritenta; il contesto di ADR-0012 li nomina fra ciò da cui la catena protegge, ed è contesto, non decisione; su OpenRouter un limite può essere di un solo modello, e allora un ripiego servirebbe | V alla fonte il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md); D per OpenRouter | — | **deciso da D10**: la regola di Claude Code — i limiti di frequenza non fanno ripiegare —; resta registrato **da misurare** su OpenRouter, dal 3. ⚠️ **Riscritto il 2026-09-29, controllo finale, CF11:** diceva *«partendo dalla regola»*, come se fosse aperta |
+| **K50** | **la cartella dati del programma dentro la root**: la root può essere *«tutto quello che ho sul PC»*, e allora contiene `%LOCALAPPDATA%\<nomeapp>\` di D4; un sì a scrivere nella root darebbe all'agente il giornale — che scrive solo il core, I1 — e la configurazione — la root, la catena dei modelli —; e D18 gli fa leggere col permesso anche fuori | D: il documento del proprietario, *«Presupposti»*; D4; D16 | — | **D19** — ✅ A, 2026-09-29: percorso protetto e privato. Trovato dalla domanda del proprietario sulla coerenza, dopo D18 |
 
 ## La revisione di coerenza e correttezza — 2026-09-29
 
@@ -385,7 +386,7 @@ riceve uno; righe riscritte nella roadmap, nella tracciabilità e nella stella p
 | il codice: `permission.rs`, `record.rs`, `parameters.rs`, `filesystem.rs` | la sessione nel record del permesso e il record di fine sessione, RR2; i due tempi, RR4; la risorsa, K44; la porta, K45 | il 3 e il 5 |
 | il codice: `gateway/mod.rs` e `record.rs` | il candidato con un nome scelto a runtime e la sua finestra; il cammino sui fallimenti; i tentativi e il cambio di modello nel record di routing — K47 | il 3; la finestra, il 13 — D15 |
 | il codice: `permission.rs` | un permesso scritto senza sessione — i giornali di oggi — si legge come di una sessione **finita**: davanti al dubbio ci si ferma, ADR-0007 — CF9 | il 3 |
-| il codice: `registry.rs` e la porta `filesystem` | i **percorsi protetti**: il file del privato si controlla **prima** di `is_granted`, e nessun sì — sulla root, su una cartella, di sessione — copre una scrittura dell'agente su di lui; lo cambia il proprietario, e ogni cambio che rende leggibile chiede conferma, RR8. Lo costruisce il **6**, senza aspettare i preset del 4 | D16 |
+| il codice: `registry.rs` e la porta `filesystem` | i **percorsi protetti** — il file del privato e, con D19, la cartella dati del programma —: il file del privato si controlla **prima** di `is_granted`, e nessun sì — sulla root, su una cartella, di sessione — copre una scrittura dell'agente su di lui; lo cambia il proprietario, e ogni cambio che rende leggibile chiede conferma, RR8. Lo costruisce il **6**, senza aspettare i preset del 4 | D16, D19 |
 | la porta `filesystem`, e la risposta D3 | fuori da ogni zona la scrittura resta `OutsideScope`; la lettura di un file chiede il permesso di ADR-0016, una tripla `(file, percorso, lettura)` per la sessione, e la porta apre per quel file un ambito di **sola lettura**; la lista di base del privato e i percorsi protetti valgono anche lì; l'import che esce da una zona, D9, è la stessa domanda; un'impostazione blocca ogni lettura fuori, come `blockReadsOutsideWorkingDirectories` di Claude Code | D18 |
 | le funzioni della knowledge base nel registro | la funzione che rende leggibile è irripetibile — RR8 | D5 |
 | `roadmap.md` | il **6**: la cella dice ancora *«archivio unico»*, e la prima metà guadagna il livello strutturale e il riconciliatore con la sua impostazione, D14; il **5**: la porta `filesystem` vera, le zone, il livello 2 che nega il privato — K23, K35, K36, K44, K45; il **3**: la run nel giornale e la sessione di D11, con la fine come record e il riavvio — RR1–RR4; il **3** anche il selettore del modello, la catena nel gateway con un modello per richiesta e la compressione spenta, D10; il **13**: il «riscansiona», la fiducia di D9 e la proiezione per candidato, D10; l'**11**: il backup di D12; il **10**: le cartelle dati e la cartella nascosta — K1, K30; e la porta dei file a pezzi, D15: il **13** la lettura, gli eventi e la finestra del candidato, il **6** lo scrivere, spostare, cancellare e il privato, il **5** le zone; il **6** anche i percorsi protetti, D16 | le risposte |
@@ -503,6 +504,7 @@ risponde a D1 e a buona parte delle domande di prima; l'elenco di prima sta nel 
 | **D16** | **il file del privato**: dove sta, e se per l'agente è in sola lettura — oggi un sì di sessione a scrivere nella root lo copre, perché la porta non conosce esclusioni —; e se *«chiede con ogni preset»* vale a ogni cambio, un'eccezione al punto 3 di ADR-0016, o per la sessione; e i preset arrivano col 4, mentre il 6 non ne dipende — trovata dal controllo finale, CF1 | K26, riaperto a metà |
 | **D17** | **il backup degli artefatti di una zona fuori dalla root**: l'ADR nuovo di D12 supera ADR-0022 *«per i file della root»*, e la riga degli artefatti resta viva per i file che l'agente scrive in una repo esterna — il programma salverebbe file dentro le repo del proprietario — trovata dal controllo finale, CF4 | il perimetro dell'ADR nuovo |
 | **D18** | **leggere un file fuori da ogni zona**: D3 risponde `OutsideScope`, D9 fa approvare un import che esce dalla zona senza dire come poi si legge, e Claude Code legge *«i file altrove col permesso»* — approvare apre una zona in sola lettura per la sessione, o l'import si rifiuta — trovata dal controllo finale, CF6 | la lettura fuori zona |
+| **D19** | **la cartella dati del programma**: se la root la contiene, un sì sulla root apre giornale e configurazione all'agente — percorso protetto come il file del privato di D16, o nessuna regola in più — trovata dopo D18, alla domanda del proprietario sulla coerenza | K50 |
 | — | registrati col chiusore, senza domanda salvo che il proprietario la chieda: K11, K12, K17, K19, K21, K22, K23, K29, K34, K35, K36, K38, K41, K44, K45, K47, K48, K49 | |
 
 ### D1, posta il 2026-09-28
@@ -1574,6 +1576,43 @@ fuori siano rare.
 **Il consiglio: A.** È come funziona Claude Code, preso a modello; il sì resta del proprietario, file per file, e la
 scrittura fuori resta vietata.
 
+### D19, posta il 2026-09-29 — trovata dopo D18, alla domanda del proprietario sulla coerenza
+
+**Che cos'è, a parole semplici.** Il programma tiene i suoi dati nella cartella dati per utente, D4:
+`%LOCALAPPDATA%\<nomeapp>\` — giornale, configurazione, indice. Ma il documento del proprietario dice che la root può
+essere *«la cartella in cui tengo già tutto quello che ho sul PC»*, per esempio la cartella utente: allora la cartella dati
+del programma sta **dentro** la root, e un sì a scrivere nella root la coprirebbe — il giornale, che scrive solo il core,
+I1, e la configurazione, con la root e la catena dei modelli. K50.
+
+**Che cosa esiste già.** D4, la cartella dati; D5, la lista di base del privato, che non si toglie; D16, i percorsi
+protetti controllati prima dei sì; D18, la lettura fuori zona col permesso. E in Claude Code la cartella `.claude` e
+`~/.claude` sono fra i percorsi protetti — *Choose a permission mode*, letta dal sorgente per D16.
+
+**La domanda: la cartella dati del programma è un percorso protetto e privato, o non ha regole in più?**
+
+| | **A — protetta e privata** | **B — nessuna regola in più** |
+|---|---|---|
+| com'è | percorso protetto come il file del privato di D16 — l'agente non ci scrive mai, qualunque sì abbia —, e nella lista di base del privato: non si indicizza e non si legge | vale la regola generale dei permessi |
+| costo | una voce in più nella lista che il 6 costruisce per D16 | se la root la contiene, un sì sulla root apre giornale e configurazione all'agente |
+| che cosa si rifà dopo | niente | aggiungerla dopo |
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | il documento, D4, D16 e la fonte di Claude Code letti | lascia un buco dedotto da fatti letti |
+| coerenza | I1 — lo stato autorevole lo scrive solo il core —; lo stesso meccanismo di D16 | I1 dipende da un sì |
+| debito | nessuno | il buco |
+| stato dell'arte | Claude Code protegge la propria cartella | contro la fonte |
+| proporzione | una voce in una lista che esiste già | niente, e un confine aperto |
+| di chi è | **del proprietario** | idem |
+
+**Verificato, dedotto, assunto.** **Verificati**: il documento del proprietario, D4, D16, e alla fonte i percorsi protetti di
+Claude Code. **Dedotto**: che la root possa contenere la cartella dati — lo permette il documento, non è misurato.
+**Assunto**: niente.
+
+**Il consiglio: A.** Lo stesso meccanismo di D16 chiude un buco vero su I1.
+
 ## Le risposte del proprietario
 
 | # | Risposta | Data |
@@ -1596,6 +1635,7 @@ scrittura fuori resta vietata.
 | D16 | ✅ **A** — come Claude Code: il file del privato è un **percorso protetto**, controllato dal kernel **prima** dei sì; nessun sì — sulla root, su una cartella, di sessione — copre una scrittura dell'agente su di lui, e l'agente può solo proporre; lo cambia il proprietario, a mano o dal pannello, e ogni cambio che rende leggibile chiede conferma a ogni volta, perché è irripetibile — RR8. Lo costruisce il 6, senza aspettare i preset del 4. Chiude K26 | 2026-09-29 |
 | D17 | ✅ **A** — nessun file del proprietario nel backup del programma: l'ADR nuovo di D12 supera le righe degli artefatti e delle guide di ADR-0022 per **ogni** file del proprietario, la root **e** le zone di lavoro; il file sta al suo posto, il giornale lo riferisce, la copia per annullare di D2 resta; la storia lunga è dei backup del proprietario e di git, come in Claude Code | 2026-09-29 |
 | D18 | ✅ **A** — come Claude Code: fuori da ogni zona l'agente **legge col permesso** — la tripla `(file, percorso, lettura)` di ADR-0016, per la sessione —, e la porta apre per quel file un ambito di sola lettura; la **scrittura** fuori resta `OutsideScope`; la lista di base del privato e i percorsi protetti valgono anche lì; l'import che esce da una zona, D9, è la stessa domanda; un'impostazione blocca ogni lettura fuori. Cambia la metà «leggere» di D3 | 2026-09-29 |
+| D19 | ✅ **A** — la cartella dati del programma è un **percorso protetto**, come il file del privato di D16 — l'agente non ci scrive mai, qualunque sì abbia —, e sta nella **lista di base del privato**: non si indicizza e non si legge. Chiude K50 | 2026-09-29 |
 
 ## Come si riprende — scritto alla chiusura della quarta sessione del 2026-09-29
 

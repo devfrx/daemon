@@ -1,7 +1,11 @@
 # Knowledge base, la revisione: il disegno
 
-✅ **DISEGNO SCRITTO il 2026-09-29**, lo stesso giorno in cui è stato aperto: resta la **rilettura del proprietario**, per
-intero — la 6.6. Si è scritto **sezione per sezione**: ciascuna si presenta in chat a parole semplici, il proprietario la
+✅ **DISEGNO SCRITTO E RILETTO il 2026-09-29**, lo stesso giorno in cui è stato aperto. ✅ **Riletto dal proprietario il
+2026-09-29**, in chat, sotto accettazione condizionata: cinque voci poste una per volta in A/B, col consiglio scritto — la
+sezione *«La rilettura del proprietario»*, in fondo —, e il consiglio scelto **cinque volte su cinque**; alla voce 2 il
+consiglio ribaltava la decisione 2 del coordinatore della 6.1. ⚠️ Questa riga diceva *«resta la rilettura del
+proprietario, per intero — la 6.6»*, ed è riscritta sul posto, sul precedente del disegno del 2026-09-04. Si è scritto
+**sezione per sezione**: ciascuna si presenta in chat a parole semplici, il proprietario la
 approva, e solo dopo si scrive qui — `CLAUDE.md`, *«Sezione per sezione»*. La scaletta l'ha approvata il proprietario il
 2026-09-29, e questa tabella è la **casa unica** dello stato delle sezioni:
 
@@ -326,7 +330,7 @@ ADR-0010, 0012 e 0015 sono 🆕.
 | **0024** checkpoint ad ambiti | l'ambito di una zona si **chiude** con la sessione; gli ambiti sono della porta e non della run, e fra due run li separa la sola tripla — K35; un ambito di **sola lettura**, per un file fuori da ogni zona, non è un ambito di lavoro e non tiene copie; 🆕 ⚠️ **dedotto:** il checkpoint copre le scritture del **programma**, non quelle del proprietario da fuori — D2; dove stanno le copie e quanto durano lo dice ADR-0040; il limite di dimensione resta da fissare, K21 | D2; D3; D11; D18; K21; K35; N2 | 0018, 0022 |
 | **0025** confinamento a livelli | per i comandi che l'agente esegue, il livello 2 nega i percorsi del **privato**, la **scrittura** sui percorsi protetti e, con l'impostazione accesa, la **lettura** fuori da ogni zona: la porta non vede uno script che apre i file da sé | D5; D16; D18; D19; K36; N3 | 0016 |
 | **0038** registro delle funzioni | la regola 2 — lo stesso permesso per ogni invocatore — non copre il riconciliatore, che non è un invocatore: la correzione deterministica di un fatto segue la sua impostazione, e un router toccato dalla GUI resta una funzione del registro; 🆕 nel rimando del 2026-09-05, *«spostare … fuori»* vuol dire verso una zona aperta: fuori da ogni zona non scrive nessuno, nemmeno il click — la riga 6 della sezione 2 | D3; D14; CF5 | 0016, 0024 |
-| **0039** 🆕 telecamera | nella riga *«la destinazione di una cattura»* del perimetro negativo, dove sta il rimando del 2026-09-05: la cattura entra nella root come **ogni file nuovo** — nel livello strutturale, nel grafo e nella ricerca —, e in un router solo se il proprietario o l'agente la promuovono; la run la vede, come riferimento. È la riga 10 della sezione 2, con la risposta A del proprietario. La voce del compendio **non** cambia: dice *«nella knowledge base come artefatto, la run la vede come riferimento»*, e regge. ⚠️ **Aggiunta il 2026-09-29 dalla sezione 6**, la 6.1 | la risposta alla domanda della sezione 2 | le righe di 0038 e di 0018 che nominano la cattura e gli artefatti |
+| **0039** 🆕 telecamera | nella riga *«la destinazione di una cattura»* del perimetro negativo, dove sta il rimando del 2026-09-05: la cattura entra nella root come **ogni file nuovo** — nel livello strutturale, nel grafo e nella ricerca —, e in un router solo se il proprietario o l'agente la promuovono; la run la vede, come riferimento. È la riga 10 della sezione 2, con la risposta A del proprietario. La voce del compendio **non** cambia: dice *«nella knowledge base come artefatto, la run la vede come riferimento»*, e regge. ⚠️ **Richiamo del 2026-09-29, dalla rilettura del proprietario, voce 2:** la voce del compendio nomina **anche** questo richiamo, come fece col rimando del 2026-09-05 — la frase regge, ma senza il secondo rimando resterebbe indietro rispetto al suo ADR; la decisione 2 della 6.1 è ribaltata. ⚠️ **Aggiunta il 2026-09-29 dalla sezione 6**, la 6.1 | la risposta alla domanda della sezione 2 | le righe di 0038 e di 0018 che nominano la cattura e gli artefatti |
 
 ⚠️ **Nessun rimando serve in ADR-0007, 0018, 0019, 0023, 0034 e 0036**: le risposte li **usano**, non li cambiano. Un
 permesso scritto senza sessione, nei giornali di oggi, si legge come di una sessione finita, e davanti al dubbio ci si
@@ -653,7 +657,7 @@ delle risposte non cambia:** ogni correzione porta il suo richiamo datato nella 
 | 5 | la 1.1 diceva che il posto delle copie del checkpoint *«non è deciso»*, e la 3.2, punto 5, l'ha deciso dopo | la 1.1 |
 | 6 | la 3.3 nominava tre documenti per i totali degli ADR, e la guardia dei conteggi ne legge di più: il totale sta anche in [`HANDOFF.md`](../../HANDOFF.md) e in [`AVVIO-CHAT.md`](../../AVVIO-CHAT.md), che la decisione 32 della [stella polare della GUI](2026-09-07-direzione-gui-design.md) vuole fermo. E il comando stava in una cella, con la barra verticale — F10 | la 3.3; la domanda 1 |
 | 7 | la 4.5 diceva *«la §4 — la porta `filesystem`»*: la §4 della [spec del sotto-progetto 1](2026-08-06-sottoprogetto-1-kernel.md) è *«Giornale, riconciliazione e motore di persistenza»*, e nessuna sezione descrive il contratto della porta; la spec la nomina solo nella riga `filesystem` della tabella delle famiglie della §2.3, che rimanda alla §4 | la 4.5; la domanda 2 |
-| 8 | la 4.6 non portava dieci voci registrate della consegna; e una voce aperta della [porta di qualità](../../porta-di-qualita.md), **E94**, perde la premessa col 3 e col 6 | la 6.5 |
+| 8 | la 4.6 non portava dieci voci registrate della consegna; e una voce aperta della [porta di qualità](../../porta-di-qualita.md), **E94**, perde la premessa col 3 e col 6. ⚠️ **Richiamo del 2026-09-29, dalla rilettura del proprietario, voce 3:** E94 del piano del Traguardo 6 è **chiusa dal 2026-09-01**, per decisione del proprietario — commit `3c90119` —, e la riga che la dava aperta è stantia: è la riga 34 della tabella del Traguardo 5, la contraddizione C-S5-3. Resta vero, e più netto, il seguito: la riga della 6.5, riscritta | la 6.5 |
 | 9 | V36 e Q22 della §8 della spec, e la riga `filesystem` della sua §8.2.2, hanno l'innesco **D (5)**; ma conservare e ripristinare sui file veri li costruisce il 6, e la suite di conformità della porta nasce col 13 — la 4.2 | la 6.5, registrata |
 
 I comandi delle righe che ne hanno uno, nel loro ordine — fuori dalla tabella, per F10; le righe 4 e 5 si leggono in questo
@@ -687,9 +691,9 @@ grep -n 'D — si scrive su file reali' docs/superpowers/specs/2026-08-06-sottop
 | | Decisione | Perché, e che cosa costa se è sbagliata |
 |---|---|---|
 | 1 | negli altri documenti di stato i totali degli ADR si **riallineano**, come il 2026-09-03 | la regola di `CLAUDE.md` toglie una cifra perché, riallineata, resterebbe difesa dalla **sola** regola; questi totali li difende la guardia, che fa rosso — ⚠️ dedotto. Costo: un riallineamento a ogni ADR nuovo, che la guardia non lascia dimenticare |
-| 2 | la voce di ADR-0039 nella §5 del compendio **non** cambia | la sua frase regge, e il compendio ha un tetto. Costo: una riga, se il proprietario la vuole |
+| 2 | la voce di ADR-0039 nella §5 del compendio **non** cambia. ⚠️ **Ribaltata dal proprietario il 2026-09-29, alla rilettura, voce 2:** la voce nomina **anche** il richiamo nuovo, come fece col rimando del 2026-09-05 e come ogni altro ADR della 3.1 | la sua frase regge, e il compendio ha un tetto. Costo: una riga, se il proprietario la vuole |
 | 3 | V36, Q22 e la riga della §8.2.2 **registrate**, senza domanda | è la forma del precedente: l'innesco B (3) di Q6 e Q11, registrato nella stella polare della GUI col proprietario come chiusore. Costo zero oggi |
-| 4 | E94 registrata come **legame**, senza domanda | la decisione è di AUD-050, già del proprietario nella porta di qualità; qui si scrive solo **quando** smette di essere un'ipotesi. Costo zero oggi |
+| 4 | E94 registrata come **legame**, senza domanda. ⚠️ **Richiamo del 2026-09-29, dalla rilettura del proprietario, voce 3:** la premessa era falsa — E94 del piano del Traguardo 6 è chiusa dal 2026-09-01, e la decisione di AUD-050 per quel tipo è **presa** —; la riga della 6.5 porta ora il suo nome vero, e la chiude il disegno del primo che ne ha bisogno | la decisione è di AUD-050, già del proprietario nella porta di qualità; qui si scrive solo **quando** smette di essere un'ipotesi. Costo zero oggi |
 
 ### 6.2 Che cosa scrive il piano dei documenti, e il controllo che esercita ciascun artefatto
 
@@ -701,7 +705,7 @@ direzioni: prima del piano nessun file da toccare porta un link a questo disegno
 | # | Artefatto | Che cosa dice | Il controllo |
 |---|---|---|---|
 | 1 | il disegno del 2026-09-04: il richiamo in testa, e un richiamo per ogni riga della sezione 2 | la sezione 2 | la revisione, riga per riga contro la sezione 2; il link a questo disegno, comando E |
-| 2 | i rimandi in testa agli ADR della 3.1, e il richiamo nella riga di ADR-0039 | la 3.1 | ciascun ADR riletto **contro i fratelli** della sua riga — gotcha #59; il comando A prima e dopo: un rimando in più per ADR; la voce di ciascuno nella §5 del compendio con la riga che rimanda, salvo ADR-0039 — la decisione 2 della 6.1 |
+| 2 | i rimandi in testa agli ADR della 3.1, e il richiamo nella riga di ADR-0039 | la 3.1 | ciascun ADR riletto **contro i fratelli** della sua riga — gotcha #59; il comando A prima e dopo: un rimando in più per ADR; la voce di ciascuno nella §5 del compendio con la riga che rimanda, **ADR-0039 compreso**. ⚠️ **Richiamo del 2026-09-29, dalla rilettura del proprietario, voce 2:** diceva *«salvo ADR-0039 — la decisione 2 della 6.1»* |
 | 3 | ADR-0040, e la sua riga nell'indice di `README.md` | la 3.2 e la 3.3 | `check-docs.sh`, rosso in tre modi finché manca qualcosa: la voce della §5 del compendio, la riga dell'indice, un totale vecchio. E, cercati: lo stato `Accepted`; *«Modifica ADR-0022»* in testa ad ADR-0040 e *«modificato da ADR-0040»* in testa ad ADR-0022; le *«Negative (accettate)»* |
 | 4 | i totali degli ADR nei documenti di stato | la 3.3 | la guardia dei conteggi; e per `AVVIO-CHAT.md` il comando B, che oggi rende una riga e dopo niente: la cifra è tolta, domanda 1 |
 | 5 | la riga *«ADR append-only»* di `CLAUDE.md` | la 3.3 | la frase del terzo caso, cercata; nessuna cifra seguita da «ADR», perché `CLAUDE.md` è nella lista della guardia |
@@ -729,12 +733,13 @@ for n in 0009 0010 0011 0012 0014 0015 0016 0022 0024 0025 0038 0039; do printf 
 sed 's/`[^`]*`//g' docs/AVVIO-CHAT.md | grep -nE '[0-9]+ (ADR in stato|ADR|decisioni architetturali)'
 ```
 
-**C** — il tetto del compendio e la sua misura; **D** — il codice, da `<base>`, il commit su cui si apre il piano; **E** — il
-link a questo disegno, su ciascun file:
+**C** — il margine del compendio sotto il suo tetto, nella forma **CRLF**, che è quella che vincola: lo stesso numero su ogni
+clone — la trappola 2 della 6.3; **D** — il codice, da `<base>`, il commit su cui si apre il piano; **E** — il link a
+questo disegno, su ciascun file. ⚠️ **Richiamo del 2026-09-29, dalla rilettura del proprietario:** il comando C era il
+tetto e `wc -c` del compendio, che su un clone LF rende un byte in meno per riga.
 
 ```
-grep -n '^ceiling=' scripts/check-docs.sh
-wc -c docs/COMPENDIO.md
+echo $(( $(sed -n 's/^ceiling=//p' scripts/check-docs.sh) - $(tr -d '\r' < docs/COMPENDIO.md | wc -c) - $(tr -cd '\n' < docs/COMPENDIO.md | wc -c) ))
 git diff --stat <base>..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml
 grep -c '2026-09-28-knowledge-base-revisione-design' <file>
 ```
@@ -744,10 +749,10 @@ grep -c '2026-09-28-knowledge-base-revisione-design' <file>
 | # | Trappola | Che cosa fare |
 |---|---|---|
 | 1 | il totale degli ADR non vive solo nel compendio e nella roadmap: la guardia legge più documenti, e oggi lo trova anche in `HANDOFF.md` e in `AVVIO-CHAT.md` | aggiunto il file di ADR-0040, `bash scripts/check-docs.sh` nomina ogni documento e ogni totale; in `AVVIO-CHAT.md` la cifra si toglie, comando B |
-| 2 | il compendio ha un tetto, e il verde non è un margine: misurato il 2026-09-29, il margine è di **8 607 byte** — comando C | il piano aggiunge una voce, una riga di rimando per ADR, una riga in §12 e una in §13: ci sta, ⚠️ dedotto; si rimisura **prima**, e ciò che è verbale va in archivio |
+| 2 | il compendio ha un tetto, e il verde non è un margine: misurato il 2026-09-29, il margine è di **8 607 byte** — comando C. ⚠️ **Richiamo del 2026-09-29, dalla rilettura del proprietario:** è il margine in forma **CRLF**, ed è quello che vincola — `check-docs.sh` misura l'albero di lavoro con `wc -c`, e su un clone CRLF il compendio porta un byte in più per riga; su un clone LF, `wc -c` darebbe al piano un margine che non ha. Il comando C ora rende la forma CRLF su ogni clone | il piano aggiunge una voce, una riga di rimando per ADR, una riga in §12 e una in §13: ci sta, ⚠️ dedotto; si rimisura **prima**, e ciò che è verbale va in archivio |
 | 3 | i fine-riga sono misti fra i file di questo piano, e cambiano da una macchina all'altra | `git ls-files --eol` su ogni file prima di toccarlo — conta la colonna `i/` —; Python con `newline=""`, su un temporaneo e `os.replace`, gotcha #82; il conto dei CR rifatto dopo |
 | 4 | F10: un comando con la barra verticale dentro una cella di tabella | fuori dalla tabella, come nella 4.1, nella 5.5 e qui |
-| 5 | il `grep` di Git Bash: con `-i` e più di un `-e` non rende niente — ci è cascato anche questo disegno, la 6.7 | un `grep` per parola, e la controprova su un input che deve rendere uno |
+| 5 | il `grep` di Git Bash: con `-i` e più di un `-e` non rende niente — ci è cascato anche questo disegno, la 6.7. ⚠️ **Richiamo del 2026-09-29, dalla rilettura del proprietario:** non è un «niente» — il `grep` 3.0 di Git Bash **va in crash**, e bash stampa `Aborted`; con lo stderr scartato, o in fondo a una pipeline, sembra un niente | un `grep` per parola, e la controprova su un input che deve rendere uno |
 | 6 | la §4 della spec del sotto-progetto 1 non è la porta dei file | il richiamo va nella riga `filesystem` della §2.3 — domanda 2 |
 | 7 | ADR-0024 si chiama `…-ad-ambiti-dichiarati.md`: un link dedotto dal titolo è rotto | `ls docs/adr` prima del link |
 | 8 | `CLAUDE.md` e `HANDOFF.md` sono nella lista della guardia | nelle righe nuove, i numeri piccoli a parole |
@@ -765,7 +770,7 @@ che la sezione 6 aggiunge.
 | 3 | undici ADR per intero, e le fonti della 3.4 | i dedotti segnati nella 3.1 e nella 3.2; che la regola di `CLAUDE.md` non coprisse il superamento parziale, la 3.3 | niente |
 | 4 | lo stato del codice, coi comandi della 4.1 | le due precisazioni della 4.3 | niente |
 | 5 | le righe dei quattro documenti, e le tre righe della spec | la riga 10; il primo valore; che nient'altro nell'11 chieda il 5 — la 5.5 | niente |
-| 6 | i comandi della 6.1 e della 6.2; il codice fermo da `1be712e`; la lista della guardia, nel sorgente dello script; le voci aperte della porta di qualità, un `grep` per parola | la decisione 1 della 6.1; il legame di E94 col 3 e col 6; le tre righe della §8; che il piano stia sotto il tetto | niente |
+| 6 | i comandi della 6.1 e della 6.2; il codice fermo da `1be712e`; la lista della guardia, nel sorgente dello script; le voci aperte della porta di qualità, un `grep` per parola | la decisione 1 della 6.1; il legame di E94 col 3 e col 6 — ⚠️ **richiamo del 2026-09-29, dalla rilettura:** E94 è chiusa, e il dedotto è ora che il primo fra 13, 3 e 6 che scrive nel giornale un testo scelto a runtime riapra la forma sigillata, la 6.5; le tre righe della §8; che il piano stia sotto il tetto | niente |
 
 ### 6.5 Le voci che restano aperte, e chi le chiude
 
@@ -784,9 +789,9 @@ documenti di adesso. Le due tabelle non si sovrappongono: ogni voce ha una casa 
 | K38 | il sì oltre la sessione, che le app di oggi offrono e ADR-0016 non ha mai valutato | il **proprietario**, con un ADR nuovo se vorrà riaprire il punto 3 di ADR-0016 |
 | K41 | dove stanno le regole del proprietario per una zona di lavoro | il 5, che costruisce le zone |
 | K48 | se su OpenRouter un limite di frequenza possa essere di un solo modello, e allora un ripiego servirebbe | il 3, misurando |
-| **E94** | la voce 34 del Traguardo 6 in [`porta-di-qualita.md`](../../porta-di-qualita.md): un testo scelto a runtime dentro un record del giornale, la classe di AUD-050. La voce lo dà per **non attuale** perché il modello del candidato è `&'static str`, e oggi i costruttori di `RoutingDetail` e di `PermissionDetail` prendono `&'static str` — `grep -n 'pub fn new' crates/kernel/src/record.rs`. ⚠️ **Dedotto:** la premessa cade col 3, che sceglie il modello a runtime — K47 —, e col 6, che scrive un permesso su un percorso scelto a runtime — K44 e K51 | il **proprietario**, con la decisione di AUD-050 che la voce gli assegna: **prima del 3**, che arriva per primo |
+| **il testo scelto a runtime nei record del giornale** — era **E94** | ⚠️ **Richiamo del 2026-09-29, dalla rilettura del proprietario, voce 3:** questa riga si chiamava **E94**, la diceva aperta citando *«la voce 34 del Traguardo 6»* della [porta di qualità](../../porta-di-qualita.md) — che è la riga 34 della tabella del **Traguardo 5**, stantia: la contraddizione **C-S5-3** —, e la dava al proprietario *«prima del 3, che arriva per primo»*. **E94 del piano del Traguardo 6 è chiusa dal 2026-09-01**, per decisione del proprietario — commit `3c90119` —: i dettagli del giornale che portano testo accettano **solo testo del codice** — campi privati, e `RoutingDetail::new` e `PermissionDetail::new` prendono `&'static str`, `grep -n 'pub fn new' crates/kernel/src/record.rs` —, e tre casi `compile_fail` fanno rosso chi li allarga — `ls crates/kernel/tests/compile_fail/*detail*_is_not_runtime_text.rs`. ⚠️ **Dedotto:** il 3 scrive il nome di un modello scelto a runtime, K47, e il 6 il percorso di una cartella scelta a runtime, K44 e K51; forse già il 13, se identifica una guida caricata col suo percorso — dipende dal suo disegno. Il primo di loro **riapre la forma**: con quale tipo entra il testo scelto a runtime, e come lo stampa il `Debug`. ⛔ **Gotcha #96:** le tre prove tengono i campi che esistono, non la proprietà — un record **nuovo** nasce senza prova, e nulla lo dice. 📌 **Gotcha #99:** un `E<n>` si cita col suo piano | il **disegno del primo** che ne ha bisogno, in una sua sezione che approva il proprietario — la risposta A della rilettura, voce 3; il 6 applica la stessa forma al percorso |
 | **V36 · Q22**, e la riga `filesystem` della §8.2.2 | nella §8 della spec l'innesco è **D (5)** — *«si esegue codice o un comando, e si scrive su file reali»* —; ma conservare e ripristinare sui file veri li costruisce il 6, e la suite di conformità della porta nasce col 13 — la 4.2. La lettera resta vera come innesco; se le tre righe debbano potersi chiudere prima è del proprietario: è la forma dell'innesco B (3) di Q6 e Q11, registrata nella stella polare della GUI | il **proprietario**, con la §8.2, la §8.3 e la §8.4 |
-| **AUD-004** | la decisione registrata sulle skill: sbarra ancora il 13 — la 5.6 | il **proprietario**, con un ADR suo, prima del 13 |
+| **AUD-004** | la decisione registrata sulle skill: sbarra ancora il 13 — la 5.6. ⚠️ **Detto alla rilettura del 2026-09-29, voce 4:** il 2026-09-04 il proprietario ne scelse il **quando** — in parallelo al 2, e prima del brainstorming del 13 —; il 2 si è chiuso senza l'ADR, quindi la prima metà è in ritardo, e la seconda regge: il 13 non è cominciato | il **proprietario**, con un ADR suo, prima del 13 — confermato alla rilettura, voce 4 |
 
 ⚠️ Delle altre voci della consegna, nessuna resta aperta senza casa: le chiuse lo dicono nella consegna archiviata, e quelle
 che toccano la porta stanno nella 4.6.
@@ -796,8 +801,9 @@ che toccano la porta stanno nella 4.6.
 ⛔ **Il prossimo passo vive nella §6 del [compendio](../../COMPENDIO.md)**, in un posto solo; qui sta l'ordine.
 
 1. ✅ la sezione 6 — presentata, approvata e scritta il 2026-09-29, con le correzioni della 6.1.
-2. ⏳ la **rilettura del proprietario**, per intero — `superpowers:brainstorming` —: in chat, le voci per lui in A/B, una
-   alla volta, col consiglio. È l'ultimo passo del disegno; fatto quello, il puntatore della §6 del compendio passa al piano.
+2. ✅ la **rilettura del proprietario** — `superpowers:brainstorming` —, fatta il 2026-09-29: in chat, cinque voci in A/B, una
+   alla volta, col consiglio; l'esito nella sezione *«La rilettura del proprietario»*. Il puntatore della §6 del compendio
+   passa al piano.
 3. il **piano dei documenti**, con `superpowers:writing-plans`, in una sessione sua; il **pre-controllo** in una sua;
    l'**esecuzione** in una sua, un subagente per compito — `superpowers:subagent-driven-development`. La Definizione di
    «fatto» e le trappole le copia dalla 6.2 e dalla 6.3.
@@ -812,11 +818,11 @@ in chat contro i documenti, e rilanciati i comandi prima di scrivere; **il merit
 | Nel testo presentato | Qui | Perché |
 |---|---|---|
 | *«nessun file da toccare ha ancora un link a questo disegno»* | il compendio ne ha uno, il puntatore della §6 | il comando E |
-| le voci aperte che mancavano, da K11 a K48 | e **E94**: il primo `grep` sulle voci aperte della porta di qualità, con `-i` e più di un `-e`, non aveva reso niente — la trappola 5 —; rifatto una parola alla volta, ha trovato la voce | la voce 34 del Traguardo 6 |
+| le voci aperte che mancavano, da K11 a K48 | e **E94**: il primo `grep` sulle voci aperte della porta di qualità, con `-i` e più di un `-e`, non aveva reso niente — la trappola 5 —; rifatto una parola alla volta, ha trovato la voce | la voce 34 del Traguardo 6 — ⚠️ **richiamo del 2026-09-29, dalla rilettura:** è la riga 34 della tabella del Traguardo 5, stantia, ed E94 è chiusa — la 6.5 |
 | V36 e Q22 | e la riga `filesystem` della §8.2.2, trovata rilanciando i comandi prima di scrivere | lo stesso innesco, **D (5)** |
 | i totali, *«anche in `HANDOFF.md` e `AVVIO-CHAT.md`»* | e le righe del compendio e di `README.md` per questo disegno, che nessuna sezione nominava: la 6.2, righe 6, 7 e 14 | il precedente del 2026-09-04, che le scrisse col piano |
 | la risposta 1, A | negli altri documenti i totali si riallineano | la decisione 1 del coordinatore, nella 6.1 |
-| ADR-0039, *«un richiamo nella sua riga»* | la voce del compendio non cambia | la decisione 2 del coordinatore |
+| ADR-0039, *«un richiamo nella sua riga»* | la voce del compendio non cambia — ⚠️ **ribaltata alla rilettura del 2026-09-29, voce 2:** la voce lo nomina | la decisione 2 del coordinatore |
 | *«al compendio restano 8 607 byte»* | scritto con la data e il comando, nella trappola 2 | la regola di `CLAUDE.md` sui numeri misurati |
 
 **I cinque criteri**, controllati esplicitamente sulla sezione. **Correttezza:** ogni riga porta il suo comando, rilanciato
@@ -826,23 +832,57 @@ aperte stanno in due tabelle che non si sovrappongono. **Debito:** nessuna voce 
 righe della §8 ed E94 sono scritte, non taciute. **Stato dell'arte:** niente di esterno — la consegna lo diceva, e nessuna
 riga ne ha avuto bisogno. **Proporzione:** nessun controllo nuovo nel cancello; comandi, e la guardia che c'è.
 
-## Come si riprende — scritto alla chiusura della terza sessione del disegno, il 2026-09-29
+## La rilettura del proprietario — il 2026-09-29
 
-⛔ **Da sapere subito: niente è a metà.** Le sezioni dalla **1** alla **6** sono approvate e scritte, con le correzioni della
-6.1. Resta la **rilettura del proprietario**, per intero: il passo 2 della 6.6. Tutto è pushato: si riparte anche da
-un'altra macchina, dopo il fetch. La chiusura precedente sta in
+Il passo 2 della 6.6, fatto in chat il 2026-09-29 con `superpowers:brainstorming`, in una sessione sua. Prima, i comandi
+del *«Come si riprende»* rilanciati, e lo stato dichiarato ha retto riga per riga: `main` allineato dopo un fast-forward,
+nessun codice mosso da `1be712e`, `GATE GREEN`, `check-docs.sh` → `OK`, il controllo delle tabelle vuoto. Poi il disegno
+riletto per intero, e ogni voce **verificata contro il repository di adesso** prima di porla. Le voci sono le decisioni
+del coordinatore della 6.1 e della chiusura, e le voci della 6.5 col proprietario come chiusore; il precedente è la
+rilettura del 2026-09-04.
+
+| # | La voce | La risposta | Che cosa ne segue |
+|---|---|---|---|
+| 1 | i totali degli ADR negli altri documenti di stato — la decisione 1 della 6.1 | ✅ **A**, il consiglio: si **riallineano**, come il 2026-09-03 | niente di nuovo: lo dicono già la 3.3 e la riga 4 della 6.2 |
+| 2 | la voce di ADR-0039 nel compendio — la decisione 2 della 6.1, *«non cambia»* | ✅ **A**, il consiglio, che **ribalta** la decisione del coordinatore: la voce nomina **anche** il richiamo nuovo, come fece col rimando del 2026-09-05 e come ogni altro ADR della 3.1 | i richiami nella 3.1, nella decisione 2 della 6.1, nella riga 2 della 6.2 e nella 6.7 |
+| 3 | E94 — la decisione 4 della 6.1, e la sua riga nella 6.5 | ✅ **A**, il consiglio, sotto accettazione condizionata — *«se la scelta è coerente con quanto esiste e segue i principi di decision-principles»* —, verificata prima di registrarla: la riga porta il suo nome vero, e la chiude il disegno del primo che ne ha bisogno | la riga della 6.5 riscritta; i richiami nella riga 8 e nella decisione 4 della 6.1, nella 6.4 e nella 6.7 |
+| 4 | le voci registrate col proprietario come chiusore — V36, Q22 e la riga `filesystem` della §8.2.2; K38; AUD-004 | ✅ **A**, il consiglio, sotto la stessa condizione, verificata: restano registrate come sono | nella riga di AUD-004, il ritardo sul *«quando»* del 2026-09-04, detto invece di taciuto |
+| 5 | le correzioni scritte senza domanda — quelle della 6.1, la decisione 3 della chiusura, e le tre di questa rilettura | ✅ **A**, il consiglio, sotto la stessa condizione — *«coerente e corretta»* —, verificata coi comandi della 6.1 rilanciati: accettate come sue | i richiami della 6.2 e della 6.3 |
+
+⚠️ **Non è stata una domanda** la decisione 1 della chiusura, il commit senza `Co-Authored-By`: è la regola di
+`CLAUDE.md`, e la direttiva di sistema della sessione dice da sé che `CLAUDE.md` prevale.
+
+**Le tre correzioni di fatto di questa rilettura**, misurate prima di porle; i comandi sotto la tabella, per F10:
+
+| | Che cosa diceva il disegno | Che cosa è vero |
+|---|---|---|
+| a | E94 aperta, decisione del proprietario prima del 3 | chiusa dal 2026-09-01, e la riga che la dava aperta è la contraddizione C-S5-3 — la voce 3; il primo comando e il secondo |
+| b | il margine del compendio, **8 607 byte**, col tetto e `wc -c` | il numero è la forma **CRLF**, ed è quella che vincola; su un clone LF `wc -c` rende un byte in meno per riga — il comando C nuovo, nella 6.2 |
+| c | il `grep` con `-i` e più di un `-e` non rende niente | va in crash, `Aborted` — il terzo comando, sul `grep` 3.0 di Git Bash |
+
+```
+git log -1 --format=%B 3c90119
+grep -n 'C-S5-3' docs/porta-di-qualita.md
+grep -c -i -e E94 -e zzzqqq docs/porta-di-qualita.md
+```
+
+## Come si riprende — scritto alla chiusura della rilettura del proprietario, il 2026-09-29
+
+⛔ **Da sapere subito: niente è a metà.** Il disegno è **chiuso**: le sei sezioni approvate e scritte, e la rilettura del
+proprietario fatta — la sezione qui sopra. Tutto è pushato: si riparte anche da un'altra macchina, dopo il fetch. La
+chiusura precedente sta in
 [`archivio/consegna-brainstorming-knowledge-base-revisione.md`](../../archivio/consegna-brainstorming-knowledge-base-revisione.md),
 parola per parola.
 
 | | Stato, e il comando che lo rifà |
 |---|---|
 | ramo | `main` allineato a `origin`: `git fetch --all --prune`, poi `git status -sb`; nessuno stash, `git stash list` |
-| i commit di questa sessione | `git log --oneline 2af0990..HEAD`: la sezione 6, e questa chiusura |
+| i commit di questa sessione | `git log --oneline 1a399c2..HEAD`: la rilettura, con questa chiusura |
 | codice di prodotto | **non toccato**: `git diff --stat 1be712e..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
-| cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura e prima di ogni commit, e `bash scripts/check-docs.sh` → `OK`: si rilanciano, non si citano |
-| le tabelle | ogni riga di tabella di questo file ha le colonne della sua intestazione: il controllo sotto questa tabella non rende niente, e sul file di `2af0990` rende la riga rotta della 3.3 |
-| fine-riga | questo file e l'archivio delle chiusure: **LF** nell'indice, la colonna `i/` di `git ls-files --eol`; nell'albero dipende dalla macchina — su quella di questa sessione sono LF, e `tr -cd '\r'` conta zero |
-| il puntatore | la §6 del compendio **non cambia**: dice che il disegno è in corso e che la tabella in testa dice che cosa viene dopo — la rilettura. Passa al piano dei documenti **dopo** la rilettura |
+| cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura e prima del commit, e `bash scripts/check-docs.sh` → `OK`: si rilanciano, non si citano |
+| le tabelle | ogni riga di tabella di questo file ha le colonne della sua intestazione: il controllo sotto questa tabella non rende niente |
+| fine-riga | questo file, il compendio e i due archivi toccati: **LF** nell'indice, la colonna `i/` di `git ls-files --eol`; nell'albero dipende dalla macchina |
+| il puntatore | la §6 del compendio: il disegno è chiuso, e il prossimo passo è il **piano dei documenti** |
 
 Il controllo delle tabelle — fuori dalla tabella, per F10:
 
@@ -850,32 +890,31 @@ Il controllo delle tabelle — fuori dalla tabella, per F10:
 awk '/^```/{c=!c; next} c{next} /^\|/{l=$0; gsub(/\\\|/,"",l); n=gsub(/\|/,"|",l); if(!t){t=1; h=n; s=NR} else if(n!=h) print NR": "n" contro "h" (riga "s")"; next} {t=0}' docs/superpowers/specs/2026-09-28-knowledge-base-revisione-design.md
 ```
 
-**Il compito della sessione che riprende — la rilettura del proprietario:**
+**Il compito della sessione che riprende — il piano dei documenti:**
 
 1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura, o uno dopo.
-2. La lettura obbligatoria di `CLAUDE.md`; poi **questo file per intero**, a blocchi. La consegna archiviata **non** si
-   legge intera: se ne apre la riga che serve, con la domanda in mano.
-3. `bash scripts/gate.sh` all'apertura, da solo.
-4. **La rilettura** — `superpowers:brainstorming`, il passo in cui il proprietario rilegge il disegno scritto —: in chat, a
-   parole semplici, le voci che sono **sue**, una alla volta, in A/B col consiglio. Sono le decisioni del coordinatore della
-   6.1 e di questa chiusura; e, per le voci della 6.5 che hanno lui come chiusore — K38, E94, le tre righe della §8,
-   AUD-004 —, soltanto se restano registrate come sono. Il precedente è la rilettura del 2026-09-04: sei voci.
-5. Poi il puntatore della §6 del compendio passa al **piano dei documenti**, con la riga della data in testa al compendio;
-   check-docs, il cancello, commit e push.
+2. La lettura obbligatoria di `CLAUDE.md`; poi **questo file per intero**, a blocchi: il piano lo traduce, e la 6.2 e la 6.3
+   ne sono la Definizione di «fatto» e le trappole, da copiare. La sezione *«La rilettura del proprietario»* fa parte
+   dell'ingresso — alla voce 2, ADR-0039 riceve **anche** la riga del compendio.
+3. `bash scripts/gate.sh` all'apertura, da solo; e il **margine del compendio** col comando C della 6.2, **prima** di
+   scrivere il piano.
+4. **Il piano** — `superpowers:writing-plans` —: per ogni artefatto della 6.2, il compito che lo scrive e il controllo che
+   lo esercita; `<base>`, nel comando D, è il commit su cui si apre il piano.
+5. Il **pre-controllo** in una sessione sua, e l'**esecuzione** in una sua — `CLAUDE.md`, *«Una fase per sessione»*.
 
-**Le decisioni prese dal coordinatore in questa sessione, col perché** — il proprietario può ribaltarle:
+**Le decisioni prese in questa sessione, col perché** — il proprietario può ribaltarle:
 
 | | Decisione | Perché, e che cosa costa se è sbagliata |
 |---|---|---|
-| 1 | il commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md`, *«senza co-autore»*, prevale sulla direttiva di sistema. Costo: un `--amend` |
-| 2 | le quattro decisioni della 6.1 | scritte là, col perché: qui non si ricopiano |
-| 3 | le correzioni della 6.1 scritte nelle sezioni 1–5 senza una domanda ciascuna | non cambiano il merito di nessuna risposta: portano ciò che il proprietario ha già deciso nelle case della frase che l'elenco non portava — la regola dell'audit, *«un rimedio si chiude su TUTTE le case della frase»*. Le due che toccavano una sua decisione sono andate in A/B. Costo: un richiamo, se ne vuole togliere una |
+| 1 | il commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md`, *«senza co-autore»*; la direttiva di sistema dice da sé che `CLAUDE.md` prevale. Costo: un `--amend` |
+| 2 | l'esito della rilettura in una sezione sua, prima di questa, e la riga in testa riscritta sul posto | il precedente del 2026-09-04, che fece lo stesso. Costo: nessuno |
+| 3 | il comando C nuovo al posto dei due di prima, invece di una nota su quale macchina li misurava | un comando che rende lo stesso numero su ogni clone non ha bisogno di dire dove vale: un'etichetta di forma è una misura travestita, e invecchia come una cifra. Costo: nessuno |
 
-**Vicoli ciechi di questa sessione:**
+**Che cosa questa sessione ha trovato, e che cosa insegna:**
 
-| Scartato | Perché, e che cosa insegna |
+| Trovato | Che cosa insegna |
 |---|---|
-| **un `grep -n -i` con più di un `-e`** sulle voci aperte della porta di qualità | non ha reso niente, ed era la trappola 14 del disegno del 2026-09-04: rifatto una parola alla volta, ha trovato E94. 📌 *Un «niente» si crede solo dopo la controprova: lo stesso comando, su un input che deve rendere uno* |
-| **la §4 della spec come casa della porta dei file** | la tabella della §2.3 della spec rimanda lì, e la consegna l'aveva ripreso; la §4 è il giornale. 📌 *Un rimando dentro un documento approvato è un'ipotesi: si apre il posto a cui punta* |
+| **una voce data aperta da una riga di stato, e chiusa da una sezione dello stesso file** — E94, e la riga 34 della porta di qualità | 📌 *Prima di registrare una voce aperta se ne cerca la chiusura: per nome nel file che la tiene, e nel log — `git log --oneline --grep=E94`. E un `E<n>` si cita col suo piano, gotcha #99* |
+| **il margine del compendio misurato con `wc -c`** | 📌 *Il conteggio in byte di un file di testo dipende dal clone, come un'etichetta di fine-riga: si misura nella forma che vincola* |
 
-**Da verificare alla fonte prima della rilettura:** niente di esterno.
+**Da verificare alla fonte prima del piano:** niente di esterno.

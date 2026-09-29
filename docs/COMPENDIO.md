@@ -17,7 +17,7 @@
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — il
 > comando in fondo alla §12 — e l'idea è già qui.
 
-**Aggiornato il 2026-09-29**, con l'**apertura del disegno della revisione della knowledge base** — il puntatore della §6 —; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](archivio/stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+**Aggiornato il 2026-09-29**, con la **chiusura del disegno della revisione della knowledge base**, riletto dal proprietario — il puntatore della §6 —; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](archivio/stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
 
 ---
 
@@ -618,8 +618,8 @@ per parola.
 ⏭️ **IL PROSSIMO PASSO, IN DUE TEMPI. Uno: la REVISIONE DELLA KNOWLEDGE BASE**, chiesta dal proprietario il 2026-09-28 **prima**
 del 13 e dei modelli decisionali — dove vivono i file, chi li scrive e chi li legge, come e quando, se le repo dei progetti
 stanno dentro, e i casi limite. Il brainstorming è **chiuso il 2026-09-29**, e la sua consegna sta in
-[archivio](archivio/consegna-brainstorming-knowledge-base-revisione-intera.md). **Il disegno è in corso** dal 2026-09-29,
-sezione per sezione, al suo [percorso](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md): la tabella in testa dice che cosa è approvato e che cosa viene dopo.
+[archivio](archivio/consegna-brainstorming-knowledge-base-revisione-intera.md). **Il disegno è chiuso** il 2026-09-29,
+riletto dal proprietario, al suo [percorso](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md): ora viene il **piano dei documenti**, in una sessione sua, e il *«Come si riprende»* del disegno dice come.
 **Due: IL SOTTO-PROGETTO 13** — i tre meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima**
 del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta proprietà** della §3, ma questo **vincolo d'ordine**;
 il suo perimetro si rilegge con l'esito della revisione. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill

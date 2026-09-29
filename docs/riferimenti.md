@@ -2914,7 +2914,7 @@ un autore organizza il lavoro con un agente, e vale come **origine dell'idea**, 
 
 ## La revisione della knowledge base — le fonti delle domande, 2026-09-29
 
-Le fonti lette per le domande da D3 a D13 della [revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md):
+Le fonti lette per le domande da D3 a D14 della [revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md):
 il merito lì, qui la provenienza. ⚠️ **Lette attraverso lo strumento di lettura della sessione.** La prima è la
 documentazione di un prodotto: dice come lavora Claude Code, non che il suo modo basti su ogni repo.
 
@@ -2940,6 +2940,8 @@ documentazione di un prodotto: dice come lavora Claude Code, non che il suo modo
 | OpenRouter, *Message Transforms*, `https://openrouter.ai/docs/features/message-transforms` | 2026-09-29 | D10: la compressione *middle-out* toglie o accorcia i messaggi dal centro del prompt, perché i modelli guardano meno il centro; è accesa per default sulle destinazioni con finestra fino a 8 192 token, e si spegne con `plugins: [{"id": "context-compression", "enabled": false}]` |
 | LiteLLM, *Fallbacks (Provider Failover)*, `https://docs.litellm.ai/docs/proxy/reliability` | 2026-09-29 | D10: `context_window_fallbacks` ritenta con un altro modello quando l'ingresso supera la finestra, e con `enable_pre_call_checks` lo controlla prima della chiamata; i `fallbacks` generici coprono gli altri errori |
 | Obsidian, *Back up your Obsidian files*, `https://obsidian.md/help/backup`, letta dal sorgente della guida, `https://raw.githubusercontent.com/obsidianmd/obsidian-help/master/en/Getting%20started/Back%20up%20your%20Obsidian%20files.md`, ultimo cambio del 2026-05-13 | 2026-09-29 | D12: Obsidian tiene le note in locale e non le salva; il suo recupero dei file è limitato e tiene i dati per dispositivo, e la guida raccomanda all'utente un sistema di backup suo; la sincronizzazione non è un backup. ⚠️ Letta dal **sorgente**, non attraverso lo strumento che riassume |
+| Obsidian, *Settings* e *Manage notes*, letti dal sorgente della guida, `https://raw.githubusercontent.com/obsidianmd/obsidian-help/master/en/User%20interface/Settings.md` e `https://raw.githubusercontent.com/obsidianmd/obsidian-help/master/en/Files%20and%20folders/Manage%20notes.md`, ultimi cambi del 2026-07-13 e del 2025-11-25 | 2026-09-29 | D14: *Automatically update internal links* — accesa, quando si rinomina un file Obsidian aggiorna da solo i link; spenta, chiede dopo il rinomino —; e rinominando un file, Obsidian aggiorna tutti i link che lo puntano. Le pagine parlano dei rinomini fatti dentro Obsidian |
+| Microsoft, *Refactoring TypeScript* di VS Code, pagina del 2026-09-16, `https://code.visualstudio.com/docs/typescript/typescript-refactoring` | 2026-09-29 | D14: l'impostazione `js/ts.updateImportsOnFileMove.enabled` — `prompt`, il default, chiede a ogni spostamento se aggiornare i percorsi; `always` li aggiorna da solo; `never` né aggiorna né chiede. ⚠️ Letta attraverso lo strumento che riassume: il nome dell'impostazione si rilegge alla fonte prima del disegno |
 
 ## Cosa NON abbiamo adottato, e perché
 

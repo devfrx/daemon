@@ -104,3 +104,87 @@ in [`archivio/consegna-brainstorming-knowledge-base-revisione.md`](consegna-brai
 **Da verificare alla fonte prima del disegno** — le righe **F** delle tabelle: K6 e K34, i file «solo online» di OneDrive; K9,
 gli eventi che il sorvegliante di Windows può perdere; e, per K1, le cartelle dati per utente dei due sistemi — quella di
 Windows, e la specifica XDG per Linux.
+
+## Archiviata il 2026-09-29, alla chiusura della terza sessione della revisione
+
+La sezione scritta alla chiusura della sessione del 2026-09-29, com'era nel commit `561140e`.
+
+## Come si riprende — scritto alla chiusura della sessione del 2026-09-29
+
+⛔ **Da sapere subito: niente è a metà, ma la sessione che riprende NON riparte dalle domande.** Il proprietario ha chiuso —
+*«terminiamo qui dopo che hai fatto, si continua nella prossima, con una revisione iniziale della coerenza e correttezza di
+quanto scritto»* —: si apre con quella **revisione**, e solo dopo si pone **D10**, scritta e non ancora posta. La chiusura
+precedente sta in [`archivio/consegna-brainstorming-knowledge-base-revisione.md`](consegna-brainstorming-knowledge-base-revisione.md).
+
+| | Stato, e il comando che lo rifà |
+|---|---|
+| ramo | `main` allineato a `origin`: `git fetch --all --prune`, poi `git status -sb`; nessuno stash, `git stash list` |
+| i commit di questa sessione | `git log --oneline 5ba2ed5..HEAD`: uno per risposta, le due riformulazioni di D11 e di D9, e questa chiusura |
+| codice di prodotto | **non toccato**: `git diff --stat 5ba2ed5..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
+| cancello | `bash scripts/gate.sh` → `GATE GREEN` e `bash scripts/check-docs.sh` → `OK` prima di ogni commit: si rilanciano, non si citano. ⚠️ **All'apertura era ROSSO**, sul solo `the_committed_fixtures_match_the_schema`: il repository è stato spostato da `C:\Users\zagor\Desktop\harness` a `C:\EVERYTHING\DEV\MY_REPOS\daemon`, e un binario di test vecchio cercava i file nel posto vecchio — gotcha **#141** in `HANDOFF.md`; la cura è stata `cargo clean -p kernel` e lo stesso su `gui/fake-core` |
+| fine-riga | questo file e l'archivio della consegna **LF**; `riferimenti.md` e `HANDOFF.md` LF nell'indice e **CRLF** nell'albero, coi CR uguali alle righe: `git ls-files --eol` sui file, e `tr -cd '\r'` contato contro `wc -l` |
+| file temporanei | nessuno nel repository: gli script di questa sessione stanno nello scratchpad |
+| la memoria dell'agente | era rimasta nella cartella del progetto vecchio, `C:\Users\zagor\.claude\projects\C--Users-zagor-Desktop-harness\memory\`; è stata **copiata** nella nuova il 2026-09-29, con una nota in più: *«stato dell'arte prima delle domande»* |
+
+**Dove si è arrivati.** Lo stato vive nelle tabelle di questo file; qui c'è solo dove guardare.
+
+| | |
+|---|---|
+| le risposte | la tabella *«Le risposte del proprietario»*: D1 respinta; D2–D8 **A**; D9 **A**, sullo stato dell'arte; D11 **delegata allo stato dell'arte** |
+| la domanda scritta e non posta | **D10**, la proiezione quando il modello cambia per un fallback, col consiglio **A** |
+| i buchi | K1–K40, nelle due tabelle dei buchi; quelli nati in questa sessione sono K35–K40 |
+| la regola nuova del proprietario | la tabella *«Le regole di questo lavoro»*: dove i software di oggi hanno una risposta, la si legge alla fonte e la si adotta |
+| le fonti | la sezione datata di [`riferimenti.md`](../riferimenti.md), *«La revisione della knowledge base — le fonti delle domande, 2026-09-29»*. ⚠️ Lette attraverso lo strumento di lettura della sessione, che a volte riassume: una citazione si rilegge alla fonte prima di entrare nel disegno |
+
+**Il compito della sessione che riprende:**
+
+1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura, o uno dopo.
+2. La lettura obbligatoria di `CLAUDE.md`; poi **questo file per intero**, e il
+   [disegno del 2026-09-04](../superpowers/specs/2026-09-04-knowledge-base-design.md) per intero — la §12 del compendio lo chiede a chi riprende il
+   fronte della knowledge base.
+3. `bash scripts/gate.sh` all'apertura, da solo; se è rosso su `ipc_wire` con `NotFound`, il gotcha #141.
+4. **La revisione iniziale di coerenza e correttezza di quanto scritto**, chiesta dal proprietario, **prima** di D10. Almeno:
+   - ogni risposta della tabella contro la sua sezione, e contro gli stati dei K che dice di chiudere, nelle due tabelle dei
+     buchi;
+   - le risposte fra loro: D3, la zona che dura la sessione, con D11, che dice che cos'è una sessione; D7 con D11; D5, il
+     privato, con K36 e con la lista di base comune di D3; D4, l'indice fuori dal backup, con ADR-0022; D9 con la regola 3 e
+     la pretesa 1.1e del 2026-09-04, e con AUD-004;
+   - ogni riga *«verificato»* col suo comando, rilanciato; ogni fonte della sezione datata di `riferimenti.md` contro ciò che
+     questo file le fa dire;
+   - le tabelle *«Il documento contro ciò che esiste»* e *«Lo stato dei buchi dopo il documento»*, scritte il 2026-09-28:
+     con le risposte di oggi alcune righe sono superate;
+   - che cosa ciascuna risposta **cambia** del disegno del 2026-09-04 e degli ADR: è l'elenco che il disegno scriverà come
+     richiami e rimandi.
+
+   Ciò che la revisione trova si corregge qui, col richiamo datato dove serve; una correzione di merito va al proprietario in
+   A/B.
+5. Poi **D10**, posta com'è scritta, o riscritta se la revisione la tocca.
+6. Finite le domande: la chiusura del brainstorming e, in una sessione **nuova**, il disegno. Scrive i richiami datati al
+   disegno del 2026-09-04 — le risposte 1, 3, 4 e 10, le decisioni 13 e 15, la regola 3 e la pretesa 1.1e per D9 —; i
+   rimandi agli ADR che la revisione tocca, fra cui ADR-0016 e ADR-0011 per la sessione, ciascuno riletto contro i fratelli,
+   gotcha #59; le righe di `roadmap.md` e di `tracciabilita.md`, fra cui `Multi-repo/multi-progetto` e `Mappa del progetto`;
+   e la voce della §5 del compendio per ogni ADR che riceve un rimando.
+
+**Le decisioni prese dal coordinatore in questa sessione, col perché** — il proprietario può ribaltarle:
+
+| | Decisione | Perché, e che cosa costa se è sbagliata |
+|---|---|---|
+| 1 | i commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md`, *«senza co-autore»*, prevale sulla direttiva di sistema. Costo: un `--amend` |
+| 2 | il cancello rosso dell'apertura curato con `cargo clean -p kernel` e lo stesso su `gui/fake-core`, senza chiedere | è ripristino dell'ambiente, reversibile — si ricompila —, e nessun file del repository cambia. Costo: qualche minuto di compilazione |
+| 3 | la memoria dell'agente **copiata** dalla cartella del progetto vecchio alla nuova | era rimasta orfana dopo lo spostamento; la copia non tocca l'originale. Costo: cancellarla, se il proprietario voleva ripartire da zero |
+| 4 | in D4, D5, D6, D7, D9 e D10 ciò che non è una scelta — perché segue da un ADR già preso o dalle fonti — **scritto come comune** alle due risposte, e non posto | il proprietario l'ha letto in chat e non l'ha contestato. Costo: una domanda, se ne vuole riaprire uno |
+| 5 | la consegna del proprietario a D11 e a D9 presa come **regola** per le domande che restano | l'ha detta due volte, e la seconda in forma generale. Costo: rimettere le A/B dove lo stato dell'arte risponde |
+| 6 | D11 numerata **dopo** D10, anche se posta prima di D7 | un numero non si rinumera, come i K. Costo: zero |
+| 7 | i casi nuovi **continuano** la numerazione, K35–K40 | la regola della sessione del 2026-09-28. Costo: zero |
+
+**Vicoli ciechi di questa sessione:**
+
+| Scartato | Perché, e che cosa insegna |
+|---|---|
+| **D7 com'era posta**: un sì «per la sessione» | la sessione non era definita da nessuna parte, e il proprietario l'ha colto con una domanda. 📌 *Prima di mettere una parola del repository in un'opzione, cercare dove è definita: un ADR che la usa non la definisce* |
+| **D11 e D9 come A/B costruite sul solo repository** | il proprietario le ha rimandate chiedendo lo stato dell'arte. 📌 *Prima le fonti, poi la domanda: la regola sta nella tabella delle regole e nella memoria dell'agente* |
+| un `grep -i` con più di un `-e` | su questa macchina va in *Aborted* e rende vuoto: la trappola 14 del disegno del 2026-09-04, ricaduta due volte. 📌 *Un'alternanza si scrive in più `grep`* |
+| un comando chiuso da `&` per lanciare il cancello in sottofondo | il lavoro in sottofondo muore con la chiamata: nessun file cambiato, nessun cancello partito. 📌 *In sottofondo si lancia con lo strumento, mai con `&`* |
+
+**Da verificare alla fonte prima del disegno** — le righe **F** ancora aperte: K6 e K34, i file «solo online» di OneDrive;
+K9, gli eventi che il sorvegliante di Windows può perdere. Le cartelle dati per utente di K1 sono state lette il 2026-09-29.

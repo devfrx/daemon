@@ -309,7 +309,7 @@ la parte di prima resta, perché dice che cosa la risposta ha sciolto.
 | **K43** | **gli artefatti di una zona fuori dalla root, e la rete della Home**: la decisione 1 della [stella polare della GUI](2026-09-07-direzione-gui-design.md) mette nella rete al centro *«tutto: artefatti e file della knowledge base»*, e D3 tiene fuori dal grafo una zona esterna alla root. Il codice che l'agente scrive in una repo aperta come zona è un artefatto: per la decisione 1 sta nella rete, per D3 no | V: `grep -n 'Nell.anello solo' docs/superpowers/specs/2026-09-07-direzione-gui-design.md` | — | **D13** — ✅ A, 2026-09-29: nell'anello, e nella rete la scheda; la decisione 1 si legge «ciò che sta nella root» |
 | **K44** | **la risorsa di un permesso su un percorso scelto a runtime**: la risorsa del kernel è un `&'static str`, per I6, confrontato carattere per carattere; le zone di D3 e la cartella dei router di D7 sono percorsi scelti a runtime, e D7 vuole che una tripla su una cartella copra i file dentro | V: `grep -n 'pub resource' crates/kernel/src/permission.rs` | — | registrato: chi porta le zone — il 5, o chi costruisce prima la porta vera, K23 —, con la forma di RR5: un identificativo coniato dal kernel per l'ambito, e l'appartenenza decisa da chi implementa la porta |
 | **K45** | **il contratto della porta `filesystem` cresce**: chiudere un ambito, K35; le esclusioni del privato, D5; spostare e cancellare, le CRUD della knowledge base. Oggi la porta dichiara, conserva, ripristina, legge e scrive | V: `grep -n '^    fn ' crates/kernel/src/ports/filesystem.rs` | — | registrato: chi costruisce la porta vera, K23; è una porta del kernel, quindi un richiamo datato alla spec del sotto-progetto 1, del proprietario |
-| **K46** | **l'autorità del riconciliatore**: scrive i router da solo nei casi certi, D6, ma non è un invocatore del registro e lavora fuori da ogni sessione, mentre ADR-0016 fa chiedere le scritture e il sì di D7 vale dentro una sessione | V: `grep -n 'pub enum Invoker' crates/kernel/src/registry.rs` | — | **D14** |
+| **K46** | **l'autorità del riconciliatore**: scrive i router da solo nei casi certi, D6, ma non è un invocatore del registro e lavora fuori da ogni sessione, mentre ADR-0016 fa chiedere le scritture e il sì di D7 vale dentro una sessione | V: `grep -n 'pub enum Invoker' crates/kernel/src/registry.rs` | — | **D14** — ✅ A, 2026-09-29: un'impostazione — da solo, chiedi, mai — che parte da «da solo» |
 
 ## La revisione di coerenza e correttezza — 2026-09-29
 
@@ -366,7 +366,7 @@ riceve uno; righe riscritte nella roadmap, nella tracciabilità e nella stella p
 | ADR-0009 | i file-guida di una zona si caricano per fiducia alla cartella, con l'impronta di ogni caricamento nel giornale; i trigger col «riscansiona» | D9, K8, K9 |
 | ADR-0011 | la «sessione» della contabilità è quella di D11 | D11 |
 | ADR-0014 | da rileggere con D9: il passaggio esplicito e giornalato, per il file-guida di una zona, è la fiducia alla cartella | D9 |
-| ADR-0016 | la «sessione» del punto 3 è quella di D11, e al riavvio del core finisce — RR3; il perimetro di chi chiede un permesso, secondo D14 | D11, D14 |
+| ADR-0016 | la «sessione» del punto 3 è quella di D11, e al riavvio del core finisce — RR3; un rimando: il permesso lo chiede chi agisce per un modello o invoca una funzione, e la manutenzione deterministica del programma sulla sua cartella segue un'impostazione — D14 | D11, D14 |
 | ADR-0022 | un **ADR nuovo** supera, per i file della root, le righe degli artefatti e delle guide e la conseguenza sulla base di conoscenza: il programma salva il giornale, la configurazione e i router, e dice al backup che cosa resta fuori; la root la salva il proprietario. La voce nuova nella §5 del compendio, e il rimando in testa ad ADR-0022 | D12 |
 | ADR-0024 | l'ambito di una zona si chiude con la sessione — K35; il limite di dimensione resta da fissare — K21 | D3, D11 |
 | ADR-0025 | il livello 2 nega i percorsi privati — K36 | D5 |
@@ -375,7 +375,7 @@ riceve uno; righe riscritte nella roadmap, nella tracciabilità e nella stella p
 | la spec del sotto-progetto 1: §4, la porta `filesystem`, e §6.6, il permesso | la porta cresce — chiudere, escludere, spostare, cancellare —, K45; la risorsa di un permesso su un percorso scelto a runtime, K44; il permesso porta la sessione, RR2 | RR2, RR5, RR6 |
 | il codice: `permission.rs`, `record.rs`, `parameters.rs`, `filesystem.rs` | la sessione nel record del permesso e il record di fine sessione, RR2; i due tempi, RR4; la risorsa, K44; la porta, K45 | il 3 e il 5 |
 | le funzioni della knowledge base nel registro | la funzione che rende leggibile è irripetibile — RR8 | D5 |
-| `roadmap.md` | il **6**: la cella dice ancora *«archivio unico»*, e la prima metà guadagna il livello strutturale; il **5**: la porta `filesystem` vera, le zone, il livello 2 che nega il privato — K23, K35, K36, K44, K45; il **3**: la run nel giornale e la sessione di D11, con la fine come record e il riavvio — RR1–RR4; il **13**: il «riscansiona» e la fiducia di D9; l'**11**: il backup di D12; il **10**: le cartelle dati e la cartella nascosta — K1, K30 | le risposte |
+| `roadmap.md` | il **6**: la cella dice ancora *«archivio unico»*, e la prima metà guadagna il livello strutturale e il riconciliatore con la sua impostazione, D14; il **5**: la porta `filesystem` vera, le zone, il livello 2 che nega il privato — K23, K35, K36, K44, K45; il **3**: la run nel giornale e la sessione di D11, con la fine come record e il riavvio — RR1–RR4; il **13**: il «riscansiona» e la fiducia di D9; l'**11**: il backup di D12; il **10**: le cartelle dati e la cartella nascosta — K1, K30 | le risposte |
 | `tracciabilita.md` | `Multi-repo/multi-progetto` e `Mappa del progetto`: le zone e la scheda progetto, D3; `Git e gestione branch`: la zona; `Collezioni e knowledge base`: la forma del documento; `File watching e awareness del progetto`: sorvegliante e scansione; `Sessioni multiple`: la sessione di D11; `Backup della KB indipendente dall'app`: la root nei backup del proprietario, i router in quello del programma, D12 | le risposte |
 
 ### La prova alla radice — chiesta dal proprietario, 2026-09-29
@@ -393,7 +393,7 @@ confrontato le risposte coi testi degli ADR, **non col codice** del kernel: ques
 | **RR4** | i due tempi di D11 | `Parameters` ha quattro campi, e aggiungerne cambia la firma di `new` — `grep -n -A6 '^pub struct Parameters' crates/kernel/src/parameters.rs` | ✅ **al cuore**: due parametri consegnati, ADR-0034; l'attrito della firma è voluto |
 | **RR5** | un permesso su una zona, e su `.<nomeapp>/` | la risorsa di `Permission` è un `&'static str`, confrontato carattere per carattere, e il motivo scritto è I6: un nome arrivato da fuori, dentro una decisione, è testo non fidato — `grep -n 'pub resource' crates/kernel/src/permission.rs` | ❌ **oggi non si può esprimere**: D3 apre zone su percorsi scelti a runtime, e D7 vuole una tripla su una **cartella** che copra i file dentro. ⚠️ La deduzione di D7, *«una tripla su una cartella copre i file che contiene»*, **il codice non la fa**. La forma coerente con la radice: la risorsa diventa un **identificativo coniato dal kernel** quando apre un ambito, come `StepId`, e se un file sta nell'ambito lo decide chi implementa la porta, come `filesystem.rs` dice già. Resta I6, resta la tripla. **K44** |
 | **RR6** | chiudere una zona, escludere il privato, spostare, cancellare | la porta `filesystem` ha cinque metodi: dichiarare un ambito, conservare, ripristinare, leggere, scrivere — `grep -n '^    fn ' crates/kernel/src/ports/filesystem.rs` | ❌ **oggi non si può**: niente chiusura — K35 —, niente esclusioni — il privato di D5, che *«la porta rifiuta»* —, niente spostare né cancellare — le CRUD della knowledge base, K20, la cancellazione morbida. E il confronto col privato — la sintassi di `.gitignore`, le maiuscole di Windows — lo fa chi implementa la porta, perché il kernel non interpreta i percorsi. Il contratto della porta cresce: è una porta del kernel, quindi un richiamo datato alla spec del sotto-progetto 1, del proprietario quando si fa. **K45** |
-| **RR7** | il riconciliatore scrive i router da solo, D6 | `registry::invoke` chiede `is_granted` a chi **invoca** una funzione, e la porta dei file non chiede niente: il riconciliatore non è né l'uno né l'altra | ❌ **nessuna risposta dice con quale autorità scrive**: lavora all'avvio e sugli eventi del sorvegliante, fuori da ogni sessione, mentre il sì di D7 vale dentro una sessione e ADR-0016 fa chiedere le scritture. **K46**, **D14** |
+| **RR7** | il riconciliatore scrive i router da solo, D6 | `registry::invoke` chiede `is_granted` a chi **invoca** una funzione, e la porta dei file non chiede niente: il riconciliatore non è né l'uno né l'altra | ❌ **nessuna risposta dice con quale autorità scrive**: lavora all'avvio e sugli eventi del sorvegliante, fuori da ogni sessione, mentre il sì di D7 vale dentro una sessione e ADR-0016 fa chiedere le scritture. **K46**, **D14** — ✅ A |
 | **RR8** | un cambio che rende leggibile qualcosa chiede conferma con ogni preset, D5 | `EffectClass`, e il preset `autonomo` di ADR-0016, che chiede per gli effetti **irripetibili** | ✅ **al cuore, senza regole nuove**: la funzione che rende leggibile è **irripetibile** — un contenuto letto può essere già andato al modello, e non si disfa —, quindi chiede con ogni preset. L'elenco qui sopra non chiede più un rimando in ADR-0016 per questo |
 | **RR9** | la fiducia di D9 | niente ancora; e `filesystem.rs`: il kernel non sa dire se due percorsi sono lo stesso file | ✅ **al cuore**: un record del giornale e una proiezione, come i permessi; la chiave è il percorso **come lo dà la piattaforma**, e se due grafie mancano la stessa zona la fiducia si richiede — l'errore cade dal lato chiuso |
 | **RR10** | il fallback di D10 | `gateway::resolve` risolve la catena **per chiamata**, coi vincoli di ADR-0012 — `grep -n 'THE CHAIN IS DELIVERED PER CALL' crates/kernel/src/gateway/mod.rs` | ✅ **al cuore**: la catena la fa già il kernel, e la risposta A di D10 ci si appoggia |
@@ -1183,6 +1183,13 @@ prodotto.
 
 ### D14, posta il 2026-09-29 — trovata dalla prova alla radice, prima di D10
 
+⚠️ **Riposta lo stesso giorno sullo stato dell'arte.** Alla prima forma — da sole, o il sì nella prossima sessione — il
+proprietario ha risposto *«come farebbero con lo stato dell'arte attuale?»*. Lette alla fonte, Obsidian e VS Code non danno
+un permesso di sessione ma un'**impostazione** scelta una volta: Obsidian parte da «aggiorna da solo» e, spenta, chiede; VS
+Code parte da «chiedi», con «sempre» e «mai». La seconda forma chiedeva da che valore parte l'impostazione; la risposta sta
+nella tabella delle risposte. Qui sotto resta la prima forma, col merito che non cambia: ogni correzione va nel giornale,
+con la copia, e si annulla.
+
 **Che cos'è, a parole semplici.** Il riconciliatore è il pezzo che, senza modello, rimette a posto i router quando il
 proprietario sposta o cancella un file: toglie la voce di un file cancellato, e aggiorna il percorso di un file spostato che
 riconosce dall'impronta. Il documento lo vuole **automatico**, e D6 ha deciso che il caso certo si applica da solo. Ma le
@@ -1201,6 +1208,7 @@ dice con quale autorità scrive — RR7, K46.
 | il disegno del 2026-09-04, regola 2 | ogni scrittura nella cartella è un effetto giornalato con classe, dentro l'ambito: niente scrive di lato | la §2.3 |
 | il documento, e D4 | la cartella `.<nomeapp>/` è del programma, *«una sola cosa da ignorare o cancellare»*, e i router vi stanno; D6: il caso certo si applica da solo | la decisione aperta 1; la risposta D6 |
 | Obsidian | quando si rinomina un file dentro Obsidian, aggiorna da solo i link nelle note, e l'opzione si può spegnere | *Internal links*, letta il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md) |
+| VS Code | per i percorsi degli import dopo uno spostamento, l'impostazione `js/ts.updateImportsOnFileMove.enabled`: `prompt`, il default, chiede a ogni spostamento; `always` aggiorna da solo; `never` né aggiorna né chiede | *Refactoring TypeScript*, pagina del 2026-09-16, letta il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md) |
 
 **Che cosa arriva.** Il **6** costruisce il riconciliatore; il **13** il sorvegliante; il **4** i preset e il ciclo
 d'approvazione.
@@ -1258,84 +1266,71 @@ piccola è quella che il programma ha già sui suoi dati.
 | D11 | ✅ **delegata allo stato dell'arte** — *«come le sessioni moderne delle app moderne stato dell'arte, decision-principles devi seguire»*: la sessione è la run coi suoi sotto-agenti, uguale sul lato chat e sul lato coding; finisce quando il proprietario la chiude, dopo un tempo di inattività o dopo un tempo massimo, e la fa rispettare il core; i due tempi sono parametri consegnati, coi valori al 3 e il riferimento di NIST AAL2; alla fine cadono i suoi sì e si chiudono le sue zone. Il sì oltre la sessione delle app di oggi urta ADR-0016: segnalato, K38 | 2026-09-29 |
 | D12 | ✅ **A, delegata allo stato dell'arte** — *«stato dell'arte, segui quello»*: la root è del proprietario, e il suo backup pure, come in Obsidian; il programma salva il giornale, la configurazione e i router — mai i segreti, e non l'indice che si rifà —, e quando crea il backup dice che cosa resta fuori. Un ADR nuovo supererà, per i file della root, le righe degli artefatti e delle guide di ADR-0022 e la sua conseguenza sulla base di conoscenza: lo scrive il disegno di questa revisione | 2026-09-29 |
 | D13 | ✅ **A** — un file che l'agente scrive in una zona fuori dalla root sta nell'**anello**, per data, dal giornale; nella **rete** la zona è la sua scheda, e da lì si apre; un file che non c'è più si mostra mancante quando lo si apre. La decisione 1 della stella polare della GUI riceverà un richiamo col disegno: la rete ha tutto ciò che sta **nella root**. Riposta con un esempio: alla prima forma il proprietario aveva risposto *«non ho capito spiega meglio»* | 2026-09-29 |
-| D14 | ⏳ scritta il 2026-09-29 dalla prova alla radice, e si pone dopo D13 e **prima** di D10 | 2026-09-29 |
+| D14 | ✅ **A, sullo stato dell'arte** — come le app di oggi, il riconciliatore segue un'**impostazione** scelta una volta — da solo, chiedi, mai —, e parte da **«da solo»**, come Obsidian e come D6; ogni correzione va nel giornale, con la copia, e si annulla. ADR-0016 riceverà un rimando col disegno: il permesso lo chiede chi agisce per un modello o invoca una funzione, e la manutenzione deterministica del programma sulla sua cartella segue la sua impostazione. Alla prima forma il proprietario aveva chiesto *«come farebbero con lo stato dell'arte attuale?»*: lette alla fonte Obsidian e VS Code | 2026-09-29 |
 
-## Come si riprende — scritto alla chiusura della sessione del 2026-09-29
+## Come si riprende — scritto alla chiusura della seconda sessione del 2026-09-29
 
-⛔ **Da sapere subito: niente è a metà, ma la sessione che riprende NON riparte dalle domande.** Il proprietario ha chiuso —
-*«terminiamo qui dopo che hai fatto, si continua nella prossima, con una revisione iniziale della coerenza e correttezza di
-quanto scritto»* —: si apre con quella **revisione**, e solo dopo si pone **D10**, scritta e non ancora posta. La chiusura
-precedente sta in [`archivio/consegna-brainstorming-knowledge-base-revisione.md`](../../archivio/consegna-brainstorming-knowledge-base-revisione.md).
+⛔ **Da sapere subito: niente è a metà.** Il proprietario ha chiuso dopo D14 — *«dopo questa si continua nella prossima
+sessione»* —: la sessione che riprende **pone D10**, scritta e non ancora posta, e poi porta il brainstorming alla chiusura.
+La chiusura precedente sta in
+[`archivio/consegna-brainstorming-knowledge-base-revisione.md`](../../archivio/consegna-brainstorming-knowledge-base-revisione.md).
 
 | | Stato, e il comando che lo rifà |
 |---|---|
 | ramo | `main` allineato a `origin`: `git fetch --all --prune`, poi `git status -sb`; nessuno stash, `git stash list` |
-| i commit di questa sessione | `git log --oneline 5ba2ed5..HEAD`: uno per risposta, le due riformulazioni di D11 e di D9, e questa chiusura |
-| codice di prodotto | **non toccato**: `git diff --stat 5ba2ed5..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
-| cancello | `bash scripts/gate.sh` → `GATE GREEN` e `bash scripts/check-docs.sh` → `OK` prima di ogni commit: si rilanciano, non si citano. ⚠️ **All'apertura era ROSSO**, sul solo `the_committed_fixtures_match_the_schema`: il repository è stato spostato da `C:\Users\zagor\Desktop\harness` a `C:\EVERYTHING\DEV\MY_REPOS\daemon`, e un binario di test vecchio cercava i file nel posto vecchio — gotcha **#141** in `HANDOFF.md`; la cura è stata `cargo clean -p kernel` e lo stesso su `gui/fake-core` |
-| fine-riga | questo file e l'archivio della consegna **LF**; `riferimenti.md` e `HANDOFF.md` LF nell'indice e **CRLF** nell'albero, coi CR uguali alle righe: `git ls-files --eol` sui file, e `tr -cd '\r'` contato contro `wc -l` |
-| file temporanei | nessuno nel repository: gli script di questa sessione stanno nello scratchpad |
-| la memoria dell'agente | era rimasta nella cartella del progetto vecchio, `C:\Users\zagor\.claude\projects\C--Users-zagor-Desktop-harness\memory\`; è stata **copiata** nella nuova il 2026-09-29, con una nota in più: *«stato dell'arte prima delle domande»* |
+| i commit di questa sessione | `git log --oneline 561140e..HEAD`: la revisione, la prova alla radice, uno per risposta — D12, D13, D14 — e questa chiusura |
+| codice di prodotto | **non toccato**: `git diff --stat 561140e..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
+| cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura e prima di ogni commit, e `bash scripts/check-docs.sh` → `OK`: si rilanciano, non si citano |
+| fine-riga | questo file e l'archivio della consegna **LF**; `riferimenti.md` LF nell'indice e **CRLF** nell'albero, coi CR uguali alle righe: `git ls-files --eol` sui file, e `tr -cd '\r'` contato contro `wc -l` |
+| file temporanei | nessuno nel repository: gli script della sessione, da `rev1.py` a `rev5.py`, stanno in due scratchpad — a metà sessione l'applicazione ne ha aperto uno nuovo —, e chi riprende non ne ha bisogno |
+| la memoria dell'agente | due note aggiornate: *«stato dell'arte prima delle domande»* — anche dove urta una decisione, lo stato dell'arte è la A, e prima di chiudere una risposta si legge il codice che la regge —, e *«rilettura: voci A/B con domande semplici»* — quando un'opzione cambia che cosa si vede, lo schizzo delle due schermate |
 
 **Dove si è arrivati.** Lo stato vive nelle tabelle di questo file; qui c'è solo dove guardare.
 
 | | |
 |---|---|
-| le risposte | la tabella *«Le risposte del proprietario»*: D1 respinta; D2–D8 **A**; D9 **A**, sullo stato dell'arte; D11 **delegata allo stato dell'arte** |
-| la domanda scritta e non posta | **D10**, la proiezione quando il modello cambia per un fallback, col consiglio **A** |
-| i buchi | K1–K40, nelle due tabelle dei buchi; quelli nati in questa sessione sono K35–K40 |
-| la regola nuova del proprietario | la tabella *«Le regole di questo lavoro»*: dove i software di oggi hanno una risposta, la si legge alla fonte e la si adotta |
-| le fonti | la sezione datata di [`riferimenti.md`](../../riferimenti.md), *«La revisione della knowledge base — le fonti delle domande, 2026-09-29»*. ⚠️ Lette attraverso lo strumento di lettura della sessione, che a volte riassume: una citazione si rilegge alla fonte prima di entrare nel disegno |
+| le risposte | la tabella *«Le risposte del proprietario»*: D1 respinta; D2–D8 **A**; D9 **A**, sullo stato dell'arte; D11 delegata allo stato dell'arte; D12 **A**, delegata allo stato dell'arte; D13 **A**; D14 **A**, sullo stato dell'arte |
+| la domanda scritta e non posta | **D10**, la proiezione quando il modello cambia per un fallback, col consiglio **A**; la prova alla radice l'ha già letta contro il codice: il gateway risolve la catena per chiamata, RR10 |
+| la revisione | la sezione *«La revisione di coerenza e correttezza»*: i rilievi RC1–RC9, la prova alla radice RR1–RR11, e l'elenco di che cosa le risposte cambiano |
+| i buchi | K1–K46, nelle due tabelle dei buchi; quelli nati in questa sessione sono K41–K46 |
+| le fonti | la sezione datata di [`riferimenti.md`](../../riferimenti.md), *«La revisione della knowledge base — le fonti delle domande, 2026-09-29»* |
 
 **Il compito della sessione che riprende:**
 
 1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura, o uno dopo.
-2. La lettura obbligatoria di `CLAUDE.md`; poi **questo file per intero**, e il
-   [disegno del 2026-09-04](2026-09-04-knowledge-base-design.md) per intero — la §12 del compendio lo chiede a chi riprende il
-   fronte della knowledge base.
+2. La lettura obbligatoria di `CLAUDE.md`; poi questo file per intero, a blocchi: è la consegna di un brainstorming che si
+   chiude.
 3. `bash scripts/gate.sh` all'apertura, da solo; se è rosso su `ipc_wire` con `NotFound`, il gotcha #141.
-4. **La revisione iniziale di coerenza e correttezza di quanto scritto**, chiesta dal proprietario, **prima** di D10. Almeno:
-   - ogni risposta della tabella contro la sua sezione, e contro gli stati dei K che dice di chiudere, nelle due tabelle dei
-     buchi;
-   - le risposte fra loro: D3, la zona che dura la sessione, con D11, che dice che cos'è una sessione; D7 con D11; D5, il
-     privato, con K36 e con la lista di base comune di D3; D4, l'indice fuori dal backup, con ADR-0022; D9 con la regola 3 e
-     la pretesa 1.1e del 2026-09-04, e con AUD-004;
-   - ogni riga *«verificato»* col suo comando, rilanciato; ogni fonte della sezione datata di `riferimenti.md` contro ciò che
-     questo file le fa dire;
-   - le tabelle *«Il documento contro ciò che esiste»* e *«Lo stato dei buchi dopo il documento»*, scritte il 2026-09-28:
-     con le risposte di oggi alcune righe sono superate;
-   - che cosa ciascuna risposta **cambia** del disegno del 2026-09-04 e degli ADR: è l'elenco che il disegno scriverà come
-     richiami e rimandi.
-
-   Ciò che la revisione trova si corregge qui, col richiamo datato dove serve; una correzione di merito va al proprietario in
-   A/B.
-5. Poi **D10**, posta com'è scritta, o riscritta se la revisione la tocca.
-6. Finite le domande: la chiusura del brainstorming e, in una sessione **nuova**, il disegno. Scrive i richiami datati al
-   disegno del 2026-09-04 — le risposte 1, 3, 4 e 10, le decisioni 13 e 15, la regola 3 e la pretesa 1.1e per D9 —; i
-   rimandi agli ADR che la revisione tocca, fra cui ADR-0016 e ADR-0011 per la sessione, ciascuno riletto contro i fratelli,
-   gotcha #59; le righe di `roadmap.md` e di `tracciabilita.md`, fra cui `Multi-repo/multi-progetto` e `Mappa del progetto`;
-   e la voce della §5 del compendio per ogni ADR che riceve un rimando.
+4. **D10**, posta nella forma che ha funzionato oggi: a parole semplici, con un esempio concreto, lo stato dell'arte già
+   letto alla fonte come opzione A, e prima riletta contro il codice che la regge.
+5. Finite le domande, la **chiusura del brainstorming**, che il proprietario conferma; le righe **F** si leggono alla fonte;
+   poi, in una sessione **nuova**, il disegno, che scrive l'elenco della sezione *«Che cosa le risposte cambiano»*: i
+   richiami al disegno del 2026-09-04, i rimandi agli ADR riletti contro i fratelli — gotcha #59 —, l'**ADR nuovo** di D12
+   che supera due righe di ADR-0022, la voce della §5 del compendio per ciascuno, e le righe di roadmap, tracciabilità e
+   stella polare.
 
 **Le decisioni prese dal coordinatore in questa sessione, col perché** — il proprietario può ribaltarle:
 
 | | Decisione | Perché, e che cosa costa se è sbagliata |
 |---|---|---|
-| 1 | i commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md`, *«senza co-autore»*, prevale sulla direttiva di sistema. Costo: un `--amend` |
-| 2 | il cancello rosso dell'apertura curato con `cargo clean -p kernel` e lo stesso su `gui/fake-core`, senza chiedere | è ripristino dell'ambiente, reversibile — si ricompila —, e nessun file del repository cambia. Costo: qualche minuto di compilazione |
-| 3 | la memoria dell'agente **copiata** dalla cartella del progetto vecchio alla nuova | era rimasta orfana dopo lo spostamento; la copia non tocca l'originale. Costo: cancellarla, se il proprietario voleva ripartire da zero |
-| 4 | in D4, D5, D6, D7, D9 e D10 ciò che non è una scelta — perché segue da un ADR già preso o dalle fonti — **scritto come comune** alle due risposte, e non posto | il proprietario l'ha letto in chat e non l'ha contestato. Costo: una domanda, se ne vuole riaprire uno |
-| 5 | la consegna del proprietario a D11 e a D9 presa come **regola** per le domande che restano | l'ha detta due volte, e la seconda in forma generale. Costo: rimettere le A/B dove lo stato dell'arte risponde |
-| 6 | D11 numerata **dopo** D10, anche se posta prima di D7 | un numero non si rinumera, come i K. Costo: zero |
-| 7 | i casi nuovi **continuano** la numerazione, K35–K40 | la regola della sessione del 2026-09-28. Costo: zero |
+| 1 | i commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md`, *«senza co-autore»*, prevale sulla direttiva di sistema, ripetuta anche in questa sessione. Costo: un `--amend` |
+| 2 | i rilievi di forma della revisione, RC3–RC9, corretti qui col richiamo datato, senza chiedere; i due di merito portati come D12 e D13 | la regola della chiusura di prima: la forma si corregge, il merito va al proprietario. Costo: una domanda, se uno di forma era di merito |
+| 3 | RR3, la sessione che **finisce al riavvio** del core, scritta in D11 senza domanda | la impone `time.rs`: le decisioni usano solo il tempo monotono. Costo: se il proprietario vuole sessioni che sopravvivono al riavvio, serve l'ora del mondo nelle decisioni, cioè un ADR nuovo |
+| 4 | RR8: la regola di D5 sul privato letta come la **classe** della funzione, irripetibile, e non come un rimando in ADR-0016 | un meccanismo che c'è già, invece di una regola nuova. Costo: il rimando, se il proprietario lo vuole scritto |
+| 5 | K44 e K45 registrati senza domanda | toccano il tipo del permesso e la porta `filesystem`, cioè la spec del sotto-progetto 1: li decide chi costruisce la porta vera, col proprietario. Costo: zero oggi |
+| 6 | K41 chiuso nel principio dallo stato dell'arte, senza domanda | Claude Code applica anche senza fiducia le regole di una repo che negano; nessuna decisione del progetto urta. Costo: una domanda, se il proprietario la vuole |
+| 7 | D12, D13 e D14 numerate dopo D11 e poste prima di D10 | un numero non si rinumera, come i K. Costo: zero |
+| 8 | la risposta a D12, *«stato dell'arte, segui quello»*, letta come **A** | lo stato dell'arte letto quel giorno era Obsidian, cioè A. Costo: rileggere D12, se il proprietario intendeva altro |
 
 **Vicoli ciechi di questa sessione:**
 
 | Scartato | Perché, e che cosa insegna |
 |---|---|
-| **D7 com'era posta**: un sì «per la sessione» | la sessione non era definita da nessuna parte, e il proprietario l'ha colto con una domanda. 📌 *Prima di mettere una parola del repository in un'opzione, cercare dove è definita: un ADR che la usa non la definisce* |
-| **D11 e D9 come A/B costruite sul solo repository** | il proprietario le ha rimandate chiedendo lo stato dell'arte. 📌 *Prima le fonti, poi la domanda: la regola sta nella tabella delle regole e nella memoria dell'agente* |
-| un `grep -i` con più di un `-e` | su questa macchina va in *Aborted* e rende vuoto: la trappola 14 del disegno del 2026-09-04, ricaduta due volte. 📌 *Un'alternanza si scrive in più `grep`* |
-| un comando chiuso da `&` per lanciare il cancello in sottofondo | il lavoro in sottofondo muore con la chiamata: nessun file cambiato, nessun cancello partito. 📌 *In sottofondo si lancia con lo strumento, mai con `&`* |
+| **la revisione sui soli testi degli ADR** | il proprietario ha chiesto se le risposte stessero *«al cuore»*; il codice ha trovato K44, K45, K46 e il riavvio. 📌 *Prima di chiudere una risposta di disegno, si legge il codice del kernel che la regge* |
+| **D13 in astratto** — anello, rete, scheda, zona | *«non ho capito spiega meglio»*. 📌 *Quando un'opzione cambia che cosa si vede, un caso concreto e lo schizzo delle due schermate* |
+| **D14 come «permesso di sessione, o da solo»** | il proprietario ha chiesto lo stato dell'arte, e le fonti l'hanno riformulata: non è un permesso ma un'**impostazione**, e Obsidian e VS Code partono da valori diversi. 📌 *Prima di un'A/B sull'autorità di un meccanismo, cercare come la danno le app di oggi* |
+| un `grep -i` con più di un `-e` | *Aborted*, e nessun risultato, altre due volte: la trappola 14 del disegno del 2026-09-04. 📌 *Un'alternanza si scrive con `-E` e le classi di maiuscola, come `[Rr]enam`* |
 
 **Da verificare alla fonte prima del disegno** — le righe **F** ancora aperte: K6 e K34, i file «solo online» di OneDrive;
-K9, gli eventi che il sorvegliante di Windows può perdere. Le cartelle dati per utente di K1 sono state lette il 2026-09-29.
+K9, gli eventi che il sorvegliante di Windows può perdere. E la pagina di VS Code di D14 è stata letta attraverso lo
+strumento che riassume: il nome dell'impostazione si rilegge alla fonte prima di entrare nel disegno.

@@ -9,7 +9,7 @@ approvata il proprietario il 2026-09-29, e questa tabella è la **casa unica** d
 | 1 | Il modello nuovo, in una pagina | ✅ approvata il 2026-09-29 |
 | 2 | Il disegno del 2026-09-04: che cosa si corregge | ✅ approvata il 2026-09-29 |
 | 3 | Gli ADR: i rimandi in testa, e l'ADR nuovo del backup | ✅ approvata il 2026-09-29 |
-| 4 | La porta dei file e il codice che crescerà: chi costruisce che cosa | ⏳ da presentare |
+| 4 | La porta dei file e il codice che crescerà: chi costruisce che cosa | ✅ approvata il 2026-09-29 |
 | 5 | Roadmap, tracciabilità, stella polare della GUI e design/09, col perimetro del 13 riletto | ⏳ da presentare |
 | 6 | I controlli per artefatto, verificato-dedotto-assunto, le voci aperte e il prossimo passo | ⏳ da presentare |
 
@@ -411,3 +411,138 @@ contro le risposte, gli ADR e le fonti; il merito non cambia.
 | ADR-0009, il riconciliatore | **dedotto**, e detto così | i router come `Untrusted`, §2.2 del 2026-09-04 |
 | ADR-0016, *«il riconciliatore segue la sua impostazione»* | il perimetro scritto per esteso: la correzione deterministica di un fatto, che non cambia una scelta del proprietario | CF5 |
 | ADR-0015: *«è la differenza con questo ADR»* | detta per quello che è: il *rug pull* del richiamo AUD-004 di ADR-0015, accettato con D9 per le zone fidate, con le difese che restano; e le descrizioni dei server MCP di una zona fidata restano sotto ADR-0015 | ADR-0015 riletto per intero; D9 tocca i file-guida, non gli strumenti |
+
+## 4. La porta dei file e il codice che crescerà: chi costruisce che cosa — ✅ approvata il 2026-09-29
+
+**A parole.** La porta `filesystem` è il pezzo del kernel che legge e scrive su disco. Le risposte le chiedono di crescere,
+e chiedono al kernel altri pezzi: la sessione, il gateway vero, i percorsi protetti. Qui c'è **chi costruisce ogni pezzo,
+e quando**, con la regola di D15: paga chi usa il pezzo per primo. ⛔ **Nessuna riga di codice nasce con questo disegno:**
+ogni pezzo lo costruisce il suo sotto-progetto, col suo disegno e col suo piano.
+
+### 4.1 Che cosa c'è oggi nel codice — verificato il 2026-09-29, su `92243d9`
+
+Il codice di prodotto non è cambiato dalla fotografia della consegna, `f830cb9`:
+`git diff --stat f830cb9..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla.
+
+| Che cosa | Il comando |
+|---|---|
+| la porta ha cinque metodi — `declare_scope`, `preserve`, `restore`, `read`, `write` — e tre errori, `OutsideScope`, `Unavailable`, `Missing` | `grep -n '^    fn ' crates/kernel/src/ports/filesystem.rs` e `grep -n -A10 'pub enum FilesystemError' crates/kernel/src/ports/filesystem.rs` |
+| il kernel non interpreta i percorsi, e non sa dire se due `Path` sono lo stesso file | `grep -n -i 'interpret' crates/kernel/src/ports/filesystem.rs` |
+| nessuna implementazione vera: `platform` implementa cinque altre porte e non `Filesystem`, c'è solo il falso di un test, e il simulatore non la nomina | i tre comandi sotto la tabella |
+| un permesso non ha sessione, e resta concesso per sempre, anche dopo un riavvio | `grep -n 'SCOPED TO A SESSION' crates/kernel/src/permission.rs` e `grep -n 'triple therefore survives' crates/kernel/src/registry.rs` |
+| la risorsa di un permesso è un `&'static str`, e `invoke` chiede soltanto `is_granted` | `grep -n 'pub resource' crates/kernel/src/permission.rs` e `grep -n 'permission::is_granted' crates/kernel/src/registry.rs` |
+| `Parameters` ha quattro campi | `grep -n -A6 '^pub struct Parameters' crates/kernel/src/parameters.rs` |
+| il candidato del gateway ha il nome `&'static str` e nessuna finestra, e la catena arriva per chiamata | `grep -n -A8 '^pub struct Candidate' crates/kernel/src/gateway/mod.rs` e `grep -n 'THE CHAIN IS DELIVERED PER CALL' crates/kernel/src/gateway/mod.rs` |
+| il daemon apre `journal.redb` e `layout.redb` nella cartella da cui parte | `grep -n -e 'JOURNAL_PATH: ' -e 'LAYOUT_PATH: ' -e 'no ADR has taken' crates/daemon/src/main.rs` |
+
+I tre comandi della terza riga — fuori dalla tabella, perché la barra verticale in una cella va scritta con la barra
+rovesciata davanti, e copiata così rende zero: F10 della consegna. Rendono cinque righe, una riga, e niente:
+
+```
+grep -rEn '^impl (Custody|Journal|Reactor|Rng|Filesystem|Network|Process|Ipc) for ' crates/platform/src/
+grep -rEn '^impl Filesystem for ' crates/
+grep -rln Filesystem crates/simulator
+```
+
+### 4.2 Chi costruisce che cosa
+
+| Chi | Che cosa | Perché lui | Da |
+|---|---|---|---|
+| **13** | la **lettura** della porta, con `declare_scope` per la root; la **sorgente degli eventi** del sorvegliante, che sa dire *«ho perso eventi, riscansiona»*; l'implementazione vera in `platform`, il doppio del simulatore e la suite di conformità, che nascono con lui e crescono con gli altri; fuori dalla porta, la **finestra** in `gateway::Candidate` e la proiezione per candidato; e il registro delle guide in una forma che ammetta anche l'approvazione **per fiducia alla cartella**, con l'impronta a ogni caricamento | è il primo che legge i file-guida, sorveglia la cartella e compone il contesto | D15; D9; D10; K9; F1; F2 |
+| **3** | la **sessione**: la run radice nel giornale, il record di fine con la sua causa — anche il riavvio del core —, la sessione nel record del permesso su un indice nuovo e facoltativo, i due tempi come parametri consegnati; un permesso scritto senza sessione si legge come di una sessione finita. Il **gateway vero**: il nome del candidato scelto a runtime, il cammino sulla catena quando una chiamata fallisce, i tentativi e il cambio di modello nel record di routing. Il **selettore** del modello | porta le run | D11; D10; RR1–RR4; CF9; K47 |
+| **6** | lo **scrivere**, anche condizionato — solo se il file è ancora la versione letta —; **elencare** e i **metadati**; **spostare**; **cancellare**, nel cestino di sistema; **conservare e ripristinare**, cioè le copie; le **esclusioni del privato**; i **percorsi protetti**, con la modifica di `invoke`; la tripla su una **cartella scelta a runtime**; l'impostazione del riconciliatore; e la **cartella dati** per utente, se nessuno la porta prima | scrive router e note, fa la scansione e il riconciliatore | D15; D14; D16; D19; K10; K44; M4 |
+| **5** | **aprire e chiudere** le zone di lavoro; la domanda di **fiducia** alla zona e il suo record; il **livello 2** che nega ai comandi il privato e la scrittura sui percorsi protetti | apre le zone ed esegue comandi | D3; D9; K35; K36 |
+| il primo che **legge fuori**, a sessione esistente | l'ambito di sola lettura per un file fuori da ogni zona, con la tripla per la sessione, e l'impostazione che blocca ogni lettura fuori | — | D18; M6 |
+
+### 4.3 Due precisazioni, dedotte dalla regola di D15
+
+| | La precisazione | Perché |
+|---|---|---|
+| 1 | **la lettura fuori da ogni zona non la costruisce il 13**, come diceva la decisione 2 del coordinatore nel secondo controllo, M6: il sì di D18 vale **per la sessione**, e la sessione la porta il 3, che viene dopo. Prima di allora un import da fuori **non si carica**, e un avviso lo dice — la fallita chiusa di ADR-0012, per analogia | un sì costruito prima della sessione varrebbe per sempre, contro il punto 3 di ADR-0016 e CF9 |
+| 2 | **la fiducia alle zone di D9 si divide**: il 13 dà al registro delle guide la forma che la ammette — una pretesa, come le due della §1.1e del 2026-09-04 —; la domanda al proprietario e il record della fiducia li costruisce chi apre per primo una zona coi file-guida, il 5. L'elenco della consegna la dava tutta al 13 | prima del 5 non esiste una zona da fidare: costruirla nel 13 sarebbe un pezzo senza chiamante, una previsione — gotcha #57 |
+
+### 4.4 I due meccanismi, nella forma che regge la radice
+
+| Meccanismo | La forma | Da |
+|---|---|---|
+| **i percorsi protetti** | il controllo **non** sta nel registro, perché il kernel non interpreta i percorsi e `invoke` non ne vede: il kernel dichiara una variante nuova dell'errore della porta — per esempio `FilesystemError::Protected` — e il modo di dichiarare i percorsi protetti; l'appartenenza la decide l'implementazione della porta, dopo aver risolto i collegamenti; e il rifiuto vale anche dentro un ambito concesso | D16; D19; M1 |
+| **«chiede a ogni invocazione»** | con `Approval::Checked`, una funzione il cui effetto è `EffectClass::Unrepeatable` non si accontenta di `is_granted`: chiede ogni volta, a qualunque invocatore — la regola 4 di ADR-0038 | D16; M2; RR8 |
+
+### 4.5 La spec del sotto-progetto 1
+
+Ogni pezzo nuovo della porta, e il permesso con la sessione, cambiano la **§4** — la porta `filesystem` — e la **§6.6** — il
+permesso — della spec del sotto-progetto 1, che è del proprietario. ✅ **Deciso dal proprietario il 2026-09-29, con la
+sezione:** il **piano dei documenti** mette **adesso** in testa alle due sezioni un richiamo datato che annuncia i pezzi
+nuovi e chi li costruisce, e rimanda qui; il testo esatto di ciascun pezzo lo scrive chi lo costruisce, col suo richiamo.
+⛔ La **§8** non si tocca: V21 resta ⚠️ parziale col suo innesco — la sezione di D11 nella consegna archiviata.
+
+### 4.6 Registrate, col chiusore
+
+| # | Il caso | Chi |
+|---|---|---|
+| K10 | la scrittura condizionata, senza corsa col proprietario | il 6 |
+| K35 | gli ambiti sono della porta e non della run | il 5, con la chiusura delle zone |
+| K44 · K49 · K51 | la risorsa di un permesso su un percorso scelto a runtime; la chiave stabile della fiducia; l'identificativo coniato alla richiesta, col percorso come `Untrusted` | il 6; il 5 per la fiducia |
+| K47 | il gateway: il nome a runtime, il cammino, i tentativi, il cambio di modello | il 3; la finestra il 13 |
+| K52 | una cartella privata spostata: nel dubbio resta privata, e il riconciliatore chiede | il 6 |
+| K36 · K12 | il privato per i comandi; i server MCP | il 5; il 4 |
+
+**Rispetto al testo presentato in chat** — approvato con un sì, senza condizione —: aggiunti dall'elenco della consegna,
+senza cambiare il merito, il doppio del simulatore e la suite di conformità col 13, F2; i metadati, conservare e
+ripristinare, e la modifica di `invoke` col 6; l'aprire le zone col 5; e i comandi della 4.1.
+
+## Come si riprende — scritto alla chiusura della sessione del 2026-09-29
+
+⛔ **Da sapere subito: niente è a metà.** Le sezioni dalla **1** alla **4** sono approvate e scritte; la **5** e la **6** sono
+da presentare nella prossima sessione — la scelta del proprietario: *«si continua nella prossima sessione»*. Il disegno è
+**uno**, questo file, e la sessione che riprende lo **continua**: la fase è la stessa.
+
+| | Stato, e il comando che lo rifà |
+|---|---|
+| ramo | `main` allineato a `origin`: `git fetch --all --prune`, poi `git status -sb`; nessuno stash, `git stash list` |
+| i commit di questa sessione | `git log --oneline 1be712e..HEAD`: la sezione 1 con la consegna in archivio, la 2, la 3 con le fonti, la 4 con questa chiusura |
+| codice di prodotto | **non toccato**: `git diff --stat 1be712e..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
+| cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura e prima di ogni commit, e `bash scripts/check-docs.sh` → `OK`: si rilanciano, non si citano |
+| fine-riga | questo file e i due archivi della consegna **LF**; `COMPENDIO.md`, `archivio/stato-storico.md` e `riferimenti.md` LF nell'indice e **CRLF** nell'albero, coi CR uguali alle righe: `git ls-files --eol` sui file, e `tr -cd '\r'` contato contro `wc -l` |
+| file temporanei | nessuno nel repository: gli script e le bozze stanno nello scratchpad della sessione, e chi riprende non ne ha bisogno |
+
+**Il compito della sessione che riprende — le sezioni 5 e 6:**
+
+1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura, o uno dopo.
+2. La lettura obbligatoria di `CLAUDE.md`; poi **questo file per intero**, a blocchi. La consegna archiviata **non** si
+   legge intera: se ne apre la riga che serve, con la domanda in mano.
+3. `bash scripts/gate.sh` all'apertura, da solo.
+4. **La sezione 5** — roadmap, tracciabilità, stella polare della GUI, design/09, e il perimetro del 13 riletto.
+   L'ingresso sono le righe *«`roadmap.md`»*, *«`tracciabilita.md`»*, *«la stella polare della GUI»* e *«design/09»*
+   dell'elenco *«Che cosa le risposte cambiano»* della consegna archiviata, **rilette** contro i documenti di adesso —
+   [`roadmap.md`](../../roadmap.md), [`tracciabilita.md`](../../tracciabilita.md), la decisione 1 e il selettore della
+   [stella polare della GUI](2026-09-07-direzione-gui-design.md), [design/09](../../design/09-l0-fisico.md) —, con la
+   ripartizione della 4.2 e le due precisazioni della 4.3, che cambiano la riga del 13 rispetto all'elenco. Il perimetro
+   del 13 si legge dalla 4.2 e dalla 1.8; AUD-004 lo sbarra ancora, e ha ora il caso di D9 scritto nel rimando di
+   ADR-0015, 3.1.
+5. **La sezione 6** — i controlli per artefatto, verificato-dedotto-assunto, le voci aperte col chiusore, e il prossimo
+   passo: il **piano dei documenti**, in una sessione sua.
+6. Poi il proprietario rilegge il disegno scritto, per intero — la skill `superpowers:brainstorming` —, e il puntatore della
+   §6 del compendio passa al piano dei documenti.
+
+**Le decisioni prese dal coordinatore in questa sessione, col perché** — il proprietario può ribaltarle:
+
+| | Decisione | Perché, e che cosa costa se è sbagliata |
+|---|---|---|
+| 1 | i commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md`, *«senza co-autore»*, prevale sulla direttiva di sistema. Costo: un `--amend` |
+| 2 | la consegna archiviata **intera** in un file nuovo, `archivio/consegna-brainstorming-knowledge-base-revisione-intera.md`, con una riga datata in testa all'archivio delle chiusure | il nome del precedente del 2026-09-04 era già preso dall'archivio delle chiusure. Costo: due file d'archivio per la stessa revisione |
+| 3 | ogni sezione scritta **dopo** l'approvazione, con in fondo la verifica che l'approvazione chiedeva | il proprietario approva *«se tutto segue i principi … ed è coerente»*: la rilettura è la condizione, e il suo esito si scrive. Costo: qualche riga per sezione |
+| 4 | K53, le copie del checkpoint, **senza domanda**, dallo stato dell'arte: Claude Code | la regola del proprietario a D9 e D11 — ciò che i software di oggi rispondono si adotta, e al proprietario va ciò che urta —; nessuna decisione del progetto urtata. Costo: una domanda, se il proprietario la vuole |
+| 5 | ADR-0040 prende anche il **posto dei dati** di D4 | il sorgente del daemon dichiara la decisione non presa da nessun ADR, e una decisione fuori da un ADR non ha voce nella §5 del compendio — gotcha #40. Costo: un ADR più largo di quello che l'elenco nominava |
+| 6 | le fonti della sezione 3 in `riferimenti.md` subito, con la sezione | `CLAUDE.md`: una fonte va in `riferimenti.md`, e la consegna faceva lo stesso a ogni domanda. Costo: zero |
+
+**Vicoli ciechi di questa sessione:**
+
+| Scartato | Perché, e che cosa insegna |
+|---|---|
+| **il README di `adr-tools` come fonte della forma «modificato in parte»** | non la nomina: *«Amends»* e *«Amended by»* stanno nell'aiuto dello script `adr-new`. 📌 *Una pratica di uno strumento si cerca anche nel suo codice, non solo nel suo README* |
+| **la risposta dello strumento di lettura della sessione come citazione** | riassume con un modello piccolo: le frasi citate si sono rilette grezze con `curl`. 📌 *Una citazione si verifica sul sorgente grezzo* |
+| **copiare una tabella fino alla riga prima di un titolo** | nella consegna la riga D20 era fusa col titolo *«Come si riprende»*, senza l'a-capo, e lo script l'ha trovata solo perché controllava la riga intera. 📌 *Una riga di tabella si controlla per intero: il titolo attaccato non si vede nel testo reso* |
+
+**Da verificare alla fonte prima della sezione 5:** niente di esterno. Le righe dei documenti del repository si rileggono
+**adesso**, non dall'elenco.

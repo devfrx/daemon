@@ -599,6 +599,7 @@ chiusore — P-13. Si dichiarano perché chi esegue le sappia, non perché le to
 | K10, K35, K44, K47, K49, K51, K52, K36, K12 | la 4.6 del disegno | il 6, il 5, il 3, il 4 — la sua colonna |
 | K11, K17, K19, K21, K22, K29, K34, K38, K41, K48; il testo scelto a runtime nei record del giornale; V36, Q22 e la riga `filesystem` della §8.2.2 | la 6.5 del disegno | ciascuna col suo chiusore |
 | **P-5** — la §8.5.2 della spec del sotto-progetto 1 dice ancora *«il filesystem reale, che arriva con il sotto-progetto 5»* | la spec; P-5 qui sopra | il **proprietario**, con la §8: il vincolo 3 la lascia com'è |
+| 🆕 **il passo visivo** — i due diagrammi che il compito 4 cambia, in design/09 e design/10, **nessuno li disegna**: il piano li controlla come testo, e il cancello non conosce mermaid — `grep -rn -i mermaid scripts/` non rende niente, 2026-09-29. Verificato che i nomi delle caselle nuove, `R` e `P`, non si scontrano con quelli che ci sono; **non** verificato che i due diagrammi si disegnino | posta al proprietario il 2026-09-29 in A/B — **A**, il consiglio: un passo nel compito 4, i due diagrammi disegnati prima e dopo nel browser integrato, lo sguardo del revisore e il suo; **B**: i soli controlli sul testo — e rimandata da lui, *«tempo al tempo»* | il **proprietario**, per prima cosa nel pre-controllo |
 
 ---
 
@@ -1975,6 +1976,10 @@ macchina, dopo il fetch. La chiusura precedente — la sospensione della prima s
 ```bash
 S=<scratchpad>; for n in 1 2 3 4 5 6; do printf 'E%s: ' $n; PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" --check "$(date +%F)" "$S/e$n.txt" 2>&1 | tail -1; done
 ```
+
+⏳ **Una domanda aperta, da porre per prima:** il **passo visivo** del compito 4 — la riga 🆕 della tabella *«Le voci
+aperte che questo piano SA»*. Posta il 2026-09-29 in A/B, col consiglio A, e rimandata dal proprietario: si ripone, e se la
+risposta è A il passo entra nel compito 4 come voce d'errata, col primo disegno dei due diagrammi fatto nel pre-controllo.
 
 **Il compito della sessione che riprende — il pre-controllo, con le quattro domande di `CLAUDE.md`:**
 

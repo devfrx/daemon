@@ -250,7 +250,7 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 |---|---|
 | K1 | **aperto**: dove vivono la configurazione che porta la root e gli altri dati del programma — con D4 |
 | K2 | **chiuso**: la root arriva dalla configurazione |
-| K3 | **chiuso per la knowledge base**: le repo possono stare dentro la root, e il rumore lo toglie il file delle esclusioni; resta il confine, K28 |
+| K3 | **chiuso**: una repo dentro la root sta nel livello strutturale, meno ciò che le esclusioni tolgono; una repo fuori è una zona di lavoro con la sua scheda progetto — D3, 2026-09-29 |
 | K4 | **chiuso**: i file delle run stanno dentro la root, perché l'agente scrive solo lì; resta la visibilità dei file pesanti, K27 |
 | K5 | **chiuso**: una knowledge base per installazione, niente sync |
 | K6 | **a metà**: chi scrive da fuori è coperto dai due attori; restano i file «solo online», K34 |
@@ -259,7 +259,7 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 | K10 | **chiuso**: il controllo prima di scrivere |
 | K11 | **a metà**: il privato si esclude; un segreto in una nota **non** esclusa resta — il sensore sulle scritture, al 6 |
 | K12 | **aperto**, registrato: al 4 |
-| K13 | **a metà**: lo scrivere è confinato, il leggere no — K28 |
+| K13 | **chiuso**: un collegamento che esce dalla root punta a una zona, la scheda progetto, e il modello la legge solo a zona aperta — fuori da ogni zona la porta risponde `OutsideScope`. D3, 2026-09-29 |
 | K14 | **chiuso**: niente collegamenti simbolici fuori |
 | K15 | **aperto**: D9 |
 | K16 | **aperto**: D10 |
@@ -279,13 +279,14 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 | **K25** | **due file identici**: lo stesso hash in due posti, e lo spostamento diventa ambiguo | D | — | **D6** |
 | **K26** | **chi scrive il file delle esclusioni**: se l'agente può toglierne una riga, un file malevolo che l'agente ha letto può convincerlo a scoprire il privato e poi leggerlo — *«un'istruzione trovata nei dati non è mai un'autorizzazione»*, ADR-0014 | D | — | **D5** |
 | **K27** | **escluso non vuol dire invisibile**: i «media pesanti» esclusi sparirebbero dal grafo, mentre la rete della Home deve mostrare anche gli asset 3D — decisione 1 della stella polare | V + D | — | **D5** |
-| **K28** | **la root è il confine di tutto l'assistente, o solo della knowledge base?** Il coding lavora su repo: dentro la root, o anche fuori con ambiti suoi (ADR-0024) e permessi suoi (ADR-0016)? E il documento confina lo **scrivere**, non il **leggere** | D | ✅ gli ambiti che il piano 0 usa come chiave | **D3** |
+| **K28** | **la root è il confine di tutto l'assistente, o solo della knowledge base?** Il coding lavora su repo: dentro la root, o anche fuori con ambiti suoi (ADR-0024) e permessi suoi (ADR-0016)? E il documento confina lo **scrivere**, non il **leggere** | D | ✅ gli ambiti che il piano 0 usa come chiave | **D3** — ✅ chiuso il 2026-09-29, risposta A: il confine è ogni zona aperta, la knowledge base più le zone di lavoro, e confina lo scrivere **e** il leggere |
 | **K29** | **una root enorme** — «tutto quello che ho sul PC»: la prima scansione è lunga, e le build nelle repo inondano il sorvegliante. Serve una scansione incrementale — dimensione e data, l'hash solo se cambiano — e lo stato *«indicizzazione in corso»* dichiarato prima, come vuole ADR-0019 | D | ✅ l'evento «riscansiona» | registrato: il 6, e il 13 per l'evento |
 | **K30** | **su Windows il punto nel nome non nasconde una cartella**: `.git` è nascosta perché git le mette l'attributo H, `.github` e `.superpowers` no. La cartella `.<nomeapp>/` va marcata nascosta dal modulo di piattaforma | V: `cmd //c "attrib .git"` e `cmd //c "attrib .github"` nella radice di questo repository | — | **D4** |
 | **K31** | **il backup**: se la root è il PC intero, il programma non può salvarla tutta, mentre ADR-0022 metteva la cartella della knowledge base nel suo backup. Il programma salva ciò che è **suo** — i router —, e il resto è dei backup del proprietario | V + D | — | **D4**, poi l'11 |
 | **K32** | **i router non si ricostruiscono**: portano le scelte del proprietario — le aree, i file chiave, la riga di descrizione. Rifarli è rifare il setup guidato, coi suoi token e le sue domande | D | — | **D4** |
 | **K33** | **l'agente che scrive senza chiedere**: col preset di default di ADR-0016 ogni scrittura chiede conferma, mentre il documento vuole i router aggiornati nello stesso turno | V: ADR-0016, punto 2 | — | **D7** |
 | **K34** | **i file «solo online» di OneDrive** dentro la root: leggerli scarica il file, o fallisce senza rete | F | — | registrato: il 6, alla fonte |
+| **K35** | **una zona di lavoro si apre e non si chiude**: la porta `filesystem` ha `declare_scope` e nessuna chiusura, mentre la zona dura la sessione; e gli ambiti sono **della porta**, non della run — due run con due zone diverse, gli agenti del 4, alla porta vedrebbero l'una la zona dell'altra, e il confine per run lo dà solo il permesso di ADR-0016 | V: `grep -n '^    fn ' crates/kernel/src/ports/filesystem.rs` rende i cinque metodi del tratto, nessuno che chiuda; D: una porta sola nel daemon | — | registrato: chi costruisce la porta `filesystem` vera, con K23 |
 
 ## Le domande, una per volta
 
@@ -305,7 +306,7 @@ risponde a D1 e a buona parte delle domande di prima; l'elenco di prima sta nel 
 | **D8** | **i link markdown come archi** — la decisione aperta 4 del proprietario | — |
 | **D9** | **i file-guida delle repo**: mai iniettati da soli; guida solo se importati e approvati | K15, con AUD-004 |
 | **D10** | **la proiezione quando il modello cambia** per un fallback | K16 |
-| — | registrati col chiusore, senza domanda salvo che il proprietario la chieda: K11, K12, K17, K19, K21, K22, K23, K29, K34 | |
+| — | registrati col chiusore, senza domanda salvo che il proprietario la chieda: K11, K12, K17, K19, K21, K22, K23, K29, K34, K35 | |
 
 ### D1, posta il 2026-09-28
 
@@ -401,6 +402,15 @@ costo che la B della prima forma aveva: una zona fuori dalla root **non** resta 
 di lavoro, e nomina il coding fra chi scrive; ADR-0016 dà il permesso per percorso e per sessione. È anche il modo in cui
 lavora Claude Code, in questa stessa sessione: una cartella di lavoro, e i permessi chiesti.
 
+✅ **Verificato alla fonte il 2026-09-29**, nella documentazione di Claude Code — la provenienza in
+[`riferimenti.md`](../../riferimenti.md): l'agente vede la cartella di lavoro e le sottocartelle, e i file altrove **col
+permesso**; trova il codice **cercando sul posto**, file per nome e contenuto per espressione regolare, e la pagina **non
+nomina alcun indice**; prima di modificare un file ne tiene una copia, separata da git — la forma di ADR-0024 e di D2. ⚠️ La
+porta invece sa **aprire** una zona e non chiuderla: K35, registrato.
+
+⚠️ **Una repo DENTRO la root non cambia con nessuna delle due risposte**: è già nel livello strutturale, meno ciò che le
+esclusioni tolgono — K3. La domanda riguarda una zona **fuori** dalla root.
+
 **Una conseguenza per il 13 — dedotta.** Il router di una zona di lavoro è la sua **scheda progetto** nella knowledge base:
 il «router dell'ambito» del piano 0 del 2026-09-04 torna, per le zone di lavoro, nella forma della decisione 15. Per la
 knowledge base la chiave è l'**area**. Il kernel le riceve entrambe come chiavi **opache**. Se il `CLAUDE.md` di una repo si
@@ -421,15 +431,75 @@ legga da solo, come fa Claude Desktop, lo decide D9.
 | correttezza verificata | la porta accetta più zone; il modello è quello di Claude Code, in uso in questa sessione | l'indice a più root non esiste, ed è dedotto |
 | coerenza | la knowledge base resta a root unica, come nel documento | la cambia |
 | debito | il formato della scheda progetto, al 6 | l'indice e la sorveglianza a più root |
-| stato dell'arte | non serve: sono decisioni del repository | idem |
+| stato dell'arte | ✅ **verificato alla fonte il 2026-09-29**: è il modo in cui la documentazione di Claude Code descrive il suo lavoro — la ricerca sul posto, nessun indice nominato | non cercato alla fonte: quella letta descrive A |
 | proporzione | il minimo | un indice per un caso che la ricerca sul posto già copre |
 | di chi è | **del proprietario** | idem |
 
-**Verificato, dedotto, assunto.** **Verificati**: la porta `filesystem`, ADR-0024 e ADR-0016. **Dedotti**: la scheda come
-router della zona, e i costi di B. **Assunto**: che la ricerca sul posto, come fa Claude Code, basti per lavorare su una repo.
+**Verificato, dedotto, assunto.** **Verificati**: la porta `filesystem`, ADR-0024 e ADR-0016; e, alla fonte, come lavora
+Claude Code — la cartella di lavoro, la ricerca sul posto, la copia prima di modificare. **Dedotti**: la scheda come router
+della zona, e i costi di B. **Assunto**: che la ricerca sul posto **basti** per lavorare su una repo del proprietario — la
+fonte dice come lavora Claude Code, non che basti su ogni repo: lo misura il 5.
 
 **Il consiglio: A.** Il coding funziona come in Claude Desktop, la knowledge base resta una, e il progetto ci entra con la sua
 scheda.
+
+### D4, posta il 2026-09-29
+
+**Che cos'è, a parole semplici.** Il programma costruisce due cose sopra la cartella: l'**indice** — l'elenco completo dei
+file, coi metadati e il testo per la ricerca, che una scansione rifà da sola — e i **router** — le aree e i file chiave, che
+portano **le scelte del proprietario** e non si rifanno senza rifare il setup guidato, K32. Il proprietario propone di
+metterli **insieme** in una cartella nascosta `.<nomeapp>/` alla root. E ci sono i dati **del programma** — il giornale, la
+disposizione dei pannelli, la configurazione che dice dov'è la root —, che oggi finiscono nella cartella da cui parte il
+daemon, K1.
+
+**Che cosa esiste già.**
+
+| | Che cosa dice | Dove, e il comando |
+|---|---|---|
+| ADR-0022 | la separazione **per natura**: gli indici **fuori dal backup**, perché rigenerabili; configurazione e guide **nel** backup | `grep -n 'indici ed embedding' docs/adr/0022-*.md` |
+| il disegno del 2026-09-04 | l'indice della mappa è *«derivato dalla capacità, tenuto dal core, rigenerabile (ADR-0022: fuori dal backup)»* | la §2.2 |
+| il daemon | scrive `journal.redb` e `layout.redb` nella cartella da cui parte, e lo dichiara | K1, il comando della tabella *«Che cosa esiste oggi»* |
+| Windows | il punto nel nome **non** nasconde: `.git` porta l'attributo H, `.github` no | K30, `cmd //c "attrib .git"` e `cmd //c "attrib .github"`, rilanciati il 2026-09-29 |
+| le cartelle dati per utente | Windows: `%LOCALAPPDATA%`, per utente. Linux, XDG 0.8: `~/.local/share` per i dati, `~/.config` per la configurazione, `~/.local/state` per lo stato che sopravvive al riavvio — il *layout* fra gli esempi —, `~/.cache` per i dati **non essenziali** | lette alla fonte il 2026-09-29, la provenienza in [`riferimenti.md`](../../riferimenti.md) |
+
+**Che cosa arriva.** Il **6** costruisce indice e router; l'**11** il backup; il **10** l'integrazione con l'OS, e con lei
+l'installazione.
+
+**Regge crescendo?** La root può essere il PC intero: l'**indice** cresce con lei e cambia a ogni file che cambia; i
+**router** restano piccoli.
+
+**In tutte e due le risposte**, e non è una domanda: i dati del programma vanno nella cartella dati per utente del sistema —
+`%LOCALAPPDATA%\<nomeapp>\` su Windows, le cartelle XDG su Linux —, in sottocartelle per natura come vuole ADR-0022, e la
+configurazione porta il percorso della root: chiude K1. La cartella `.<nomeapp>/` la marca nascosta il modulo di
+piattaforma, perché su Windows il punto non basta: chiude K30. Il programma salva nel proprio backup ciò che è **suo** — i
+suoi dati e i router —, e il resto della root è dei backup del proprietario: chiude K31.
+
+**La domanda: l'indice sta coi router nella cartella nascosta della root, o nella cartella dati del programma?**
+
+| | **A — separati per natura** | **B — insieme, la proposta com'è** |
+|---|---|---|
+| com'è | i **router** in `.<nomeapp>/` alla root: seguono la cartella, li salva il backup del proprietario, sono suoi · l'**indice** nella cartella dati del programma, fra i dati rigenerabili, uno per root | router **e** indice in `.<nomeapp>/` alla root |
+| costo | se la root si sposta, l'indice si rifà con **una** scansione all'avvio — quella che il documento chiede già —, senza modello e senza token; due posti invece di uno | l'indice, grande e sempre in movimento, sta **dentro la cartella del proprietario**: finisce nei suoi backup e in ogni sincronizzazione che la copre, contro la riga di ADR-0022; e cancellare `.<nomeapp>/` per rifare l'indice cancella anche i **router**, che non si rifanno |
+| che cosa si rifà dopo | niente | separarli dopo vuol dire spostare l'indice e cambiare la regola del backup |
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | ADR-0022 e la §2.2 del 2026-09-04 letti; le cartelle per utente lette alla fonte; K30 misurato | mette un indice rigenerabile dentro una cartella che sta nei backup, contro la riga *«indici ed embedding»* di ADR-0022 |
+| coerenza | separa per natura come ADR-0022, e l'indice resta *«fuori dal backup»* come il 2026-09-04 | una cartella che mescola ciò che si rifà e ciò che non si rifà |
+| debito | nessuno: la scansione all'avvio esiste comunque | la regola «di `.<nomeapp>/` si salvano i router, non l'indice», da tenere a mano nel backup dell'11 e in quello del proprietario |
+| stato dell'arte | XDG mette i dati **non essenziali** in una cartella a sé, la cache | la stessa fonte: B mette dati non essenziali fra i dati dell'utente |
+| proporzione | nessun meccanismo nuovo | risparmia una scansione dopo uno spostamento |
+| di chi è | **del proprietario**: è la sua decisione aperta 1 | idem |
+
+**Verificato, dedotto, assunto.** **Verificati**: ADR-0022, la §2.2 del 2026-09-04, il daemon senza casa, il punto che su
+Windows non nasconde, e alla fonte le cartelle dati per utente dei due sistemi. **Dedotti**: che l'indice di una root grande
+sia grande e cambi spesso — non misurato, lo misura il 6 —; che cancellare la cartella nascosta sia il modo naturale di
+«rifare l'indice». **Assunto**: che spostare la root sia raro.
+
+**Il consiglio: A.** I router sono del proprietario e seguono la cartella; l'indice si rifà da solo e non ha motivo di stare
+nei suoi backup.
 
 ## Le risposte del proprietario
 
@@ -437,9 +507,12 @@ scheda.
 |---|---|---|
 | D1 | ⛔ **respinta**: il proprietario risponde col suo documento, riportato nella sezione *«Il documento del proprietario»*; le sue decisioni aperte 2 e 3 si accolgono come le propone | 2026-09-28 |
 | D2 | ✅ **A** — la copia di ADR-0024 resta, **solo** per le azioni dell'agente, e il giornale resta; nessuno storico dei cambi del proprietario, nessun versioning, nessun sync. Nessun ADR cambia | 2026-09-28 |
-| D3 | ⏳ posta, in attesa | 2026-09-28 |
+| D3 | ✅ **A** — due specie di zona: la knowledge base, una e mappata, e le zone di lavoro, aperte come in Claude Desktop anche fuori dalla root, ciascuna col permesso per la sessione e la copia prima delle modifiche dell'agente; una zona **fuori** dalla root **non** entra nel grafo né nella ricerca, e nella knowledge base c'è la sua **scheda progetto**, che le fa da router; fuori da ogni zona l'agente non legge e non scrive. Posta il 2026-09-28, riformulata lo stesso giorno | 2026-09-29 |
 
 ## Come si riprende — scritto alla chiusura della sessione del 2026-09-28
+
+📌 **In corsa dal 2026-09-29:** quali domande hanno risposta lo dice la tabella *«Le risposte del proprietario»*, che **vince**
+su questa sezione; la sezione si riscrive alla chiusura della sessione in corso.
 
 ⛔ **Da sapere subito: niente è a metà, ma D3 è senza risposta.** Albero pulito dopo il commit di questa chiusura, tutto
 pushato, nessuno stash, nessun codice toccato. Il proprietario ha chiuso la sessione — *«continuiamo l'analisi e le domande

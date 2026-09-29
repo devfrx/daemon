@@ -2912,6 +2912,18 @@ un autore organizza il lavoro con un agente, e vale come **origine dell'idea**, 
 |---|---|---|
 | RoboNuggets, *Build your Agentic OS — the ARMS setup*, PDF fornito dal proprietario, `C:\Users\zagor\Desktop\ARMS-Agentic-OS-Guide.pdf`, fuori dal repository; testo estratto con `pdftotext -layout` | 2026-09-28 | la sezione *Memory*, pagine 6 e 7: la cartella, i router — un router master che nomina le aree e punta ciascuna al suo indice, un indice per area coi file chiave su una riga — e il *visual second brain*; il criterio «al primo salto» |
 
+## La revisione della knowledge base — le fonti delle domande, 2026-09-29
+
+Le fonti lette per le domande D3 e D4 della [revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md):
+il merito lì, qui la provenienza. ⚠️ **Lette attraverso lo strumento di lettura della sessione.** La prima è la
+documentazione di un prodotto: dice come lavora Claude Code, non che il suo modo basti su ogni repo.
+
+| Fonte | Letta | Per |
+|---|---|---|
+| Anthropic, *How Claude Code works*, `https://code.claude.com/docs/en/how-claude-code-works` | 2026-09-29 | D3: l'accesso — la cartella di lavoro e le sottocartelle, e i file altrove col permesso; la ricerca sul posto con gli strumenti, file per nome e contenuto per espressione regolare, senza che la pagina nomini un indice; la copia di un file prima di modificarlo, separata da git |
+| Microsoft Learn, *KNOWNFOLDERID (Knownfolders.h)*, `https://learn.microsoft.com/en-us/windows/win32/shell/knownfolderid`, pagina aggiornata il 2023-08-30 | 2026-09-29 | D4: `FOLDERID_LocalAppData`, per utente, in `%LOCALAPPDATA%` (`%USERPROFILE%\AppData\Local`); `FOLDERID_RoamingAppData` in `%APPDATA%`. La pagina non spiega la differenza fra le due |
+| freedesktop.org, *XDG Base Directory Specification*, versione 0.8 dell'8 maggio 2021, `https://specifications.freedesktop.org/basedir/latest/` | 2026-09-29 | D4: `$XDG_DATA_HOME` (`~/.local/share`), `$XDG_CONFIG_HOME` (`~/.config`), `$XDG_STATE_HOME` (`~/.local/state`) — lo stato che sopravvive al riavvio, con *view, layout, open files* fra gli esempi —, `$XDG_CACHE_HOME` (`~/.cache`) per i dati *non-essential* |
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

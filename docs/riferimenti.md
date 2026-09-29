@@ -2914,7 +2914,7 @@ un autore organizza il lavoro con un agente, e vale come **origine dell'idea**, 
 
 ## La revisione della knowledge base — le fonti delle domande, 2026-09-29
 
-Le fonti lette per le domande da D3 a D9 e D11 della [revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md):
+Le fonti lette per le domande da D3 a D11 della [revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md):
 il merito lì, qui la provenienza. ⚠️ **Lette attraverso lo strumento di lettura della sessione.** La prima è la
 documentazione di un prodotto: dice come lavora Claude Code, non che il suo modo basti su ogni repo.
 
@@ -2936,6 +2936,9 @@ documentazione di un prodotto: dice come lavora Claude Code, non che il suo modo
 | Google, *Request runtime permissions* di Android, `https://developer.android.com/training/permissions/requesting` | 2026-09-29 | D11: il permesso *«solo questa volta»* vale finché l'attività è visibile e per poco dopo che l'app va in secondo piano, poi si richiede; i permessi di un'app non usata per qualche mese si azzerano da soli, da Android 11 |
 | Obsidian, *Graph view*, `https://obsidian.md/help/plugins/graph` | 2026-09-29 | D8: i cerchi sono le note, le linee i link interni fra due note; una nota più citata è più grande; i filtri per gli orfani, per gli allegati e per i soli file che esistono |
 | Obsidian, *Internal links*, `https://obsidian.md/help/links` | 2026-09-29 | D8: i due formati, `[[nota]]` e `[testo](percorso)`; l'aggiornamento dei link quando si rinomina un file dentro Obsidian, che si può spegnere; la pagina non dice niente dei file rinominati da fuori |
+| OpenRouter, *Model Fallbacks*, `https://openrouter.ai/docs/guides/routing/model-fallbacks` | 2026-09-29 | D10: col parametro `models`, se il primo modello dà errore si prova il successivo in ordine; per default qualunque errore, fra cui il contesto troppo lungo, la moderazione, i limiti e l'indisponibilità; si paga il modello usato davvero, che la risposta riporta nel campo `model`. La pagina non dice per esteso che al modello di riserva va la stessa richiesta |
+| OpenRouter, *Message Transforms*, `https://openrouter.ai/docs/features/message-transforms` | 2026-09-29 | D10: la compressione *middle-out* toglie o accorcia i messaggi dal centro del prompt, perché i modelli guardano meno il centro; è accesa per default sulle destinazioni con finestra fino a 8 192 token, e si spegne con `plugins: [{"id": "context-compression", "enabled": false}]` |
+| LiteLLM, *Fallbacks (Provider Failover)*, `https://docs.litellm.ai/docs/proxy/reliability` | 2026-09-29 | D10: `context_window_fallbacks` ritenta con un altro modello quando l'ingresso supera la finestra, e con `enable_pre_call_checks` lo controlla prima della chiamata; i `fallbacks` generici coprono gli altri errori |
 
 ## Cosa NON abbiamo adottato, e perché
 

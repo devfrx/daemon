@@ -150,6 +150,7 @@ una documentazione di prodotto: vale come **origine dell'idea**, non come prova.
 | la revisione viene **prima** del sotto-progetto 13 e del brainstorming dei modelli decisionali | la richiesta del proprietario |
 | la strada: questo brainstorming → il disegno, in una sessione sua → le correzioni ai documenti → poi il 13 | `CLAUDE.md`, *«Una fase per sessione»* |
 | ⛔ il 13 costruisce **registro delle guide, trigger e proiezione**: ogni buco che li tocca si chiude **qui**, prima che il 13 li costruisca | §2.4 del disegno del 2026-09-04, *«il primo paga»* |
+| dove i software di oggi hanno una risposta, la si **legge alla fonte e la si adotta**; al proprietario resta ciò che **urta** una decisione del progetto, o dove le fonti divergono | la consegna del proprietario del 2026-09-29, a D11 e a D9 |
 
 ## Che cosa esiste oggi — verificato il 2026-09-28 sull'albero di `f830cb9`
 
@@ -261,8 +262,8 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 | K12 | **aperto**, registrato: al 4 |
 | K13 | **chiuso**: un collegamento che esce dalla root punta a una zona, la scheda progetto, e il modello la legge solo a zona aperta — fuori da ogni zona la porta risponde `OutsideScope`. D3, 2026-09-29 |
 | K14 | **chiuso**: niente collegamenti simbolici fuori |
-| K15 | **aperto**: D9 |
-| K16 | **aperto**: D10 |
+| K15 | **chiuso**: fiducia una volta per zona, modalità ristretta per la zona non fidata, impronta della versione caricata nel giornale — D9, 2026-09-29; le skill della knowledge base restano ad AUD-004 |
+| K16 | **aperto**: D10, posta il 2026-09-29 |
 | K17 | **a metà**: la cancellazione dell'agente è morbida; «dimentica davvero» resta registrato |
 | K18 | **chiuso**: l'hash per il caso certo, e il dubbio segnato rotto coi candidati — K24 e K25, D6 |
 | K19 | **a metà**: i percorsi relativi alla root; maiuscole e nomi riservati restano, alla porta vera |
@@ -290,6 +291,8 @@ che una risposta del 2026-09-04 va corretta, col richiamo datato, quando si scri
 | **K36** | **il privato escluso dalla porta non lo è per i comandi**: uno script che l'agente esegue apre i file da sé, e la porta non lo vede. Le documentazioni di Claude Code e di Cursor lo dicono dei loro prodotti; da noi il livello 1 di ADR-0025, per costruzione, non regge contro codice eseguito | V alla fonte, il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md); D per il nostro caso | — | registrato: il 5, col confinamento di livello 2 che nega i percorsi privati; il 4 per MCP, con K12 |
 | **K37** | **la sessione non è definita**: ADR-0016 dice che un sì vale *«per la sessione corrente»* e *«non vale domani»*, ma nessun documento dice che cos'è una sessione; il kernel lo dichiara nel sorgente, e un permesso concesso resta concesso **per sempre**, anche dopo un riavvio; il disegno del 2 ha dato il confine a chi porta le run, il 3, senza definirlo. Trovato dal proprietario, rispondendo a D7 | V: `grep -n 'SCOPED TO A SESSION' crates/kernel/src/permission.rs`, `grep -n 'triple therefore survives' crates/kernel/src/registry.rs`, `grep -n 'il confine di sessione dei permessi' docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md` | — | **D11** — ✅ chiuso il 2026-09-29: la run coi sotto-agenti, con la chiusura a mano e le due scadenze; la costruisce il 3 |
 | **K38** | **il sì oltre la sessione**: Claude Code e VS Code offrono anche un sì per lo spazio di lavoro o per sempre, con un comando che li azzera, e Android azzera da solo i permessi non usati; ADR-0016 dice *«un'approvazione non si estende»*, e fra le sue alternative non ha mai valutato la durata | V alla fonte, il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md); `grep -n 'Alternative considerate per i permessi' docs/adr/0016-*.md` | — | registrato: il **proprietario**, con un ADR nuovo se vorrà riaprire il punto 3 di ADR-0016 |
+| **K39** | **OpenRouter comprime da solo il prompt**: la compressione *middle-out* toglie il centro sulle destinazioni con finestra fino a 8 192 token, accesa per default — proprio ciò che ADR-0008 vuole mai sacrificabile | V alla fonte, il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md) | ✅ la proiezione | **D10** |
+| **K40** | **il fallback dentro OpenRouter**: con la lista di modelli il ripiego avviene dentro di lui, e il gateway non valuta i vincoli di ogni candidato né ricompone la proiezione; il modello usato lo sa dalla risposta | V alla fonte, il 2026-09-29; D per il gateway | ✅ la proiezione | **D10** |
 
 ## Le domande, una per volta
 
@@ -308,7 +311,7 @@ risponde a D1 e a buona parte delle domande di prima; l'elenco di prima sta nel 
 | **D7** | **l'agente che scrive senza chiedere** | K33 |
 | **D8** | **i link markdown come archi** — la decisione aperta 4 del proprietario | — |
 | **D9** | **i file-guida delle repo**: mai iniettati da soli; guida solo se importati e approvati | K15, con AUD-004 |
-| **D10** | **la proiezione quando il modello cambia** per un fallback | K16 |
+| **D10** | **la proiezione quando il modello cambia** per un fallback | K16, K39, K40 |
 | **D11** | **la sessione**: che cos'è, e se scade col tempo — posta **prima** di D7, che ne dipende | K37 |
 | — | registrati col chiusore, senza domanda salvo che il proprietario la chieda: K11, K12, K17, K19, K21, K22, K23, K29, K34, K35, K36, K38 | |
 
@@ -881,6 +884,73 @@ istruzioni — la pagina non li nomina. **Assunto**: che il proprietario lavorer
 **Il consiglio: A.** È ciò che fanno tutti i software letti: il testo non concede permessi, come da loro, e in più il giornale
 dice sempre quale versione l'agente ha letto.
 
+### D10, posta il 2026-09-29
+
+**Che cos'è, a parole semplici.** Il contesto che il kernel manda al modello — la proiezione — si compone **per un modello**:
+il budget è una fetta della sua finestra, ADR-0010, e la guida è la sua, il `claude.md` o il `deepseek.md` del 2026-09-04. Ma
+se il routing ripiega su un altro modello — perché il primo è giù, limita, rifiuta, o il contesto è troppo grande —, il
+contesto composto per il primo arriverebbe al secondo: con la guida sbagliata, e magari troppo grande — K16.
+
+**Che cosa esiste già.**
+
+| | Che cosa dice | Dove |
+|---|---|---|
+| ADR-0008 | il contesto è una **proiezione** dello stato durevole, ricalcolata a ogni passo; **mai sacrificabili** obiettivo, vincoli, piano, decisioni, fatti — l'unica cosa sacrificabile è la trascrizione grezza. È fra le decisioni che la §7 del compendio dice non rilitigabili | la voce della §5 e la §7 del compendio |
+| ADR-0010 | il budget è **per modello**, e la ricomposizione è continua e proattiva | la voce della §5 |
+| ADR-0011 | il record di routing risolto: modello, provider, **catena di riserva valutata, tentativi**, esito | idem |
+| ADR-0012 | un candidato che viola un vincolo **non è un fallback** e si scarta prima; fra le cause l'indisponibilità, il **contesto eccessivo**, la moderazione; un ritentativo **non è un passo nuovo** | `grep -n 'contesto eccessivo' docs/adr/0012-*.md` |
+| il disegno del 2026-09-04 | la chiave della proiezione è (ambito, run, **modello**), e c'è una guida per modello | la §1.1 |
+
+**Che cosa fanno i software di oggi — letto alla fonte il 2026-09-29**, la provenienza in [`riferimenti.md`](../../riferimenti.md).
+
+| Fonte | Che cosa dice |
+|---|---|
+| OpenRouter, *Model Fallbacks* | una lista di modelli in ordine: se il primo dà errore — contesto troppo lungo, moderazione, limiti, indisponibilità — prova il successivo, **dentro OpenRouter**; il modello usato davvero lo dice la risposta, e si paga quello |
+| OpenRouter, *Message Transforms* | la compressione *middle-out* toglie o accorcia i messaggi **dal centro** del prompt, perché i modelli guardano meno il centro; è **accesa da sola** sulle destinazioni con finestra fino a 8 192 token, e un parametro la spegne |
+| LiteLLM, *Fallbacks* | un fallback apposta per il contesto troppo grande, `context_window_fallbacks`, controllabile **prima** della chiamata; i fallback generici per gli altri errori |
+
+**Che cosa ne segue**, dove lo stato dell'arte e i nostri ADR vanno d'accordo:
+
+| | |
+|---|---|
+| per ogni candidato | la proiezione si compone **per quel modello** — il suo budget e la sua guida — e si controlla **prima** che entri, come i controlli prima della chiamata di LiteLLM; se non entra, il candidato si salta |
+| il contesto eccessivo | si passa a un modello con la finestra più grande, come fa LiteLLM |
+| nel giornale | il tentativo resta nello stesso passo, ADR-0012; il record dice quale modello e quale proiezione, con la misura per categoria di ADR-0010 |
+| al 13 | la proiezione riceve il **modello** come ingresso — com'è già la chiave del 2026-09-04 — e si compone su richiesta del gateway, un candidato alla volta |
+
+**Dove urta il progetto, ed è la domanda.** Due pratiche dei gateway contraddicono ADR già presi. La compressione
+*middle-out* taglia il centro, cioè proprio ciò che ADR-0008 vuole **mai sacrificabile** — K39. E il fallback **dentro**
+OpenRouter lascia al gateway il solo esito: non valuta i vincoli di ogni candidato, ADR-0012, né ricompone, ADR-0010, e il
+modello lo sa a cose fatte — K40.
+
+**La domanda: si seguono i nostri ADR — il fallback lo fa il gateway, un modello per richiesta, ricomponendo per ciascuno, e
+la compressione dei gateway si spegne — o le pratiche dei gateway, con un ADR nuovo?**
+
+| | **A — i nostri ADR, con ciò che dello stato dell'arte li rispetta** | **B — le pratiche dei gateway** |
+|---|---|---|
+| com'è | la tabella qui sopra: il gateway fa la catena da sé, ricompone per ogni candidato, controlla prima che entri, e manda a OpenRouter un modello per richiesta con la compressione **spenta** | la lista di modelli di OpenRouter e la sua compressione, lasciate come sono |
+| costo | il gateway fa da sé ciò che OpenRouter offrirebbe già fatto; una richiesta per candidato | un ADR nuovo che superi ADR-0008 e ADR-0012; il centro del contesto si perde in silenzio sui modelli piccoli; la guida del primo modello arriva al secondo |
+| che cosa si rifà dopo | niente | tornare indietro vuol dire rifare il gateway |
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | ADR-0008, 0010, 0011 e 0012 letti; tre fonti primarie lette oggi | contraddice ADR-0008 e ADR-0012, letti |
+| coerenza | nessun ADR cambia; prende dallo stato dell'arte il controllo prima della chiamata e il modello più grande | due ADR superati, uno dei quali non rilitigabile |
+| debito | la catena del gateway e il parametro che spegne la compressione, al 3 — K39 e K40 | un contesto che perde il centro senza dirlo, contro il «nessun degrado silenzioso» di ADR-0019 |
+| stato dell'arte | il controllo prima della chiamata di LiteLLM e il passaggio al modello più grande | la lista e la compressione di OpenRouter |
+| proporzione | una composizione per candidato, deterministica | niente da costruire |
+| di chi è | **del proprietario** | idem |
+
+**Verificato, dedotto, assunto.** **Verificati**: ADR-0008, ADR-0010, ADR-0011, ADR-0012, la chiave del 2026-09-04, e alla
+fonte OpenRouter e LiteLLM. **Dedotti**: che col fallback dentro OpenRouter il gateway non possa ricomporre — il prompt lo
+manda una volta sola —; che la pagina di OpenRouter, che non lo dice per esteso, rimandi al modello di riserva la stessa
+richiesta. **Assunto**: che il proprietario userà anche modelli con finestre piccole, dove la compressione scatta da sola.
+
+**Il consiglio: A.** Il contesto è la cosa che il progetto ha deciso di non perdere mai: lo stato dell'arte si prende dove lo
+rispetta — controllare prima, passare al modello più grande —, e si spegne dove lo taglierebbe.
+
 ## Le risposte del proprietario
 
 | # | Risposta | Data |
@@ -893,39 +963,36 @@ dice sempre quale versione l'agente ha letto.
 | D6 | ✅ **A** — nel dubbio, **rotto** e una domanda: il caso certo — la stessa impronta, un solo candidato — si applica da solo; un file chiave che il riconciliatore non ritrova con certezza resta nella mappa segnato rotto, l'agente non lo segue, il pannello lo mostra, e il riconciliatore propone i candidati — lo stesso nome altrove, o un contenuto simile come fa git — fra cui sceglie il proprietario; due file identici sono un caso di dubbio | 2026-09-29 |
 | D7 | ✅ **A** — un sì per la sessione: la tripla `(file, .<nomeapp>/, scrittura)` si concede alla prima modifica di un router e vale per la sessione di D11, come il punto 3 di ADR-0016; ogni modifica si vede nel turno e si annulla. Alla prima posa il proprietario aveva risposto con una domanda — la sessione non era definita, K37 —, e D7 si è riposta dopo D11. Con la risposta ha chiesto se la sessione sia già integrata nei permessi: **non ancora**, e dove va lo dice la sezione di D11 | 2026-09-29 |
 | D8 | ✅ **A** — una terza specie di linea: la scansione, senza modello, legge i link dei file di testo — `[testo](percorso)` e `[[nota]]` — e ne fa linee del grafo; un link verso un file che non c'è è un segnale **rotto**; un link che esce dalla root punta alla scheda della sua zona, o non si disegna; i filtri — per specie di linea, per area, per gli orfani — al 6 | 2026-09-29 |
+| D9 | ✅ **A** — lo stato dell'arte: la fiducia si chiede una volta per zona e sta nel giornale; una zona non fidata va in modalità ristretta, coi file-guida non caricati da soli; in una zona fidata i file-guida si caricano a ogni sessione, anche quando cambiano, con l'impronta della versione caricata nel giornale; un file-guida non concede permessi; un import che esce dalla zona chiede la sua approvazione. La regola 3 e la pretesa 1.1e del disegno del 2026-09-04 ricevono un richiamo datato col disegno di questa revisione: per una guida di zona l'approvazione è la fiducia alla cartella. Posta il 2026-09-29 e riformulata sullo stato dell'arte lo stesso giorno | 2026-09-29 |
+| D10 | ⏳ scritta il 2026-09-29 e **non posta**: il proprietario ha chiuso la sessione prima; si pone dopo la revisione iniziale di coerenza e correttezza | 2026-09-29 |
 | D11 | ✅ **delegata allo stato dell'arte** — *«come le sessioni moderne delle app moderne stato dell'arte, decision-principles devi seguire»*: la sessione è la run coi suoi sotto-agenti, uguale sul lato chat e sul lato coding; finisce quando il proprietario la chiude, dopo un tempo di inattività o dopo un tempo massimo, e la fa rispettare il core; i due tempi sono parametri consegnati, coi valori al 3 e il riferimento di NIST AAL2; alla fine cadono i suoi sì e si chiudono le sue zone. Il sì oltre la sessione delle app di oggi urta ADR-0016: segnalato, K38 | 2026-09-29 |
 
-## Come si riprende — scritto alla chiusura della sessione del 2026-09-28
+## Come si riprende — scritto alla chiusura della sessione del 2026-09-29
 
-📌 **In corsa dal 2026-09-29:** quali domande hanno risposta lo dice la tabella *«Le risposte del proprietario»*, che **vince**
-su questa sezione; la sezione si riscrive alla chiusura della sessione in corso.
-
-⛔ **Da sapere subito: niente è a metà, ma D3 è senza risposta.** Albero pulito dopo il commit di questa chiusura, tutto
-pushato, nessuno stash, nessun codice toccato. Il proprietario ha chiuso la sessione — *«continuiamo l'analisi e le domande
-nella prossima sessione»* — sulla forma **riformulata** di D3, prima di leggerla: si ripone quella. La chiusura precedente sta
-in [`archivio/consegna-brainstorming-knowledge-base-revisione.md`](../../archivio/consegna-brainstorming-knowledge-base-revisione.md).
+⛔ **Da sapere subito: niente è a metà, ma la sessione che riprende NON riparte dalle domande.** Il proprietario ha chiuso —
+*«terminiamo qui dopo che hai fatto, si continua nella prossima, con una revisione iniziale della coerenza e correttezza di
+quanto scritto»* —: si apre con quella **revisione**, e solo dopo si pone **D10**, scritta e non ancora posta. La chiusura
+precedente sta in [`archivio/consegna-brainstorming-knowledge-base-revisione.md`](../../archivio/consegna-brainstorming-knowledge-base-revisione.md).
 
 | | Stato, e il comando che lo rifà |
 |---|---|
 | ramo | `main` allineato a `origin`: `git fetch --all --prune`, poi `git status -sb`; nessuno stash, `git stash list` |
-| i commit di questa sessione | `git log --oneline f830cb9..HEAD`: l'avvio col puntatore della §6; il documento del proprietario col confronto; D2 con D3 posta; questa chiusura, con D3 riformulata |
-| codice di prodotto | **non toccato**: `git diff --stat f830cb9..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
-| cancello | `bash scripts/gate.sh` → `GATE GREEN` e `bash scripts/check-docs.sh` → `OK`, all'apertura sull'albero di `f830cb9` e prima di ogni commit: si rilanciano, non si citano |
-| il puntatore | la §6 del compendio: la revisione **prima** del 13 e dei modelli decisionali — non cambia con questa chiusura |
-| fine-riga | questo file e l'archivio della consegna **LF**; compendio, archivio dello stato e `riferimenti.md` LF nell'indice e **CRLF** nell'albero, coi CR uguali alle righe: `git ls-files --eol` sui file, e `tr -cd '\r'` contato contro `wc -l` |
+| i commit di questa sessione | `git log --oneline 5ba2ed5..HEAD`: uno per risposta, le due riformulazioni di D11 e di D9, e questa chiusura |
+| codice di prodotto | **non toccato**: `git diff --stat 5ba2ed5..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
+| cancello | `bash scripts/gate.sh` → `GATE GREEN` e `bash scripts/check-docs.sh` → `OK` prima di ogni commit: si rilanciano, non si citano. ⚠️ **All'apertura era ROSSO**, sul solo `the_committed_fixtures_match_the_schema`: il repository è stato spostato da `C:\Users\zagor\Desktop\harness` a `C:\EVERYTHING\DEV\MY_REPOS\daemon`, e un binario di test vecchio cercava i file nel posto vecchio — gotcha **#141** in `HANDOFF.md`; la cura è stata `cargo clean -p kernel` e lo stesso su `gui/fake-core` |
+| fine-riga | questo file e l'archivio della consegna **LF**; `riferimenti.md` e `HANDOFF.md` LF nell'indice e **CRLF** nell'albero, coi CR uguali alle righe: `git ls-files --eol` sui file, e `tr -cd '\r'` contato contro `wc -l` |
 | file temporanei | nessuno nel repository: gli script di questa sessione stanno nello scratchpad |
-| la guida ARMS | **non** è nel repository: il riassunto sta nella sezione *«La fonte del documento»*, la provenienza in [`riferimenti.md`](../../riferimenti.md) |
+| la memoria dell'agente | era rimasta nella cartella del progetto vecchio, `C:\Users\zagor\.claude\projects\C--Users-zagor-Desktop-harness\memory\`; è stata **copiata** nella nuova il 2026-09-29, con una nota in più: *«stato dell'arte prima delle domande»* |
 
 **Dove si è arrivati.** Lo stato vive nelle tabelle di questo file; qui c'è solo dove guardare.
 
 | | |
 |---|---|
-| la forma della knowledge base | il **documento del proprietario**: una root qualsiasi, due attori, il livello strutturale e quello semantico, il riconciliatore meccanico, le esclusioni, il confinamento, il controllo prima di scrivere |
-| che cosa cambia del 2026-09-04 | la tabella *«Il documento contro ciò che esiste»*: le risposte 1, 3, 4 e 10 |
-| le risposte | D1 respinta, D2 **A** — la tabella *«Le risposte del proprietario»* |
-| la domanda aperta | **D3 riformulata**: il modello a due zone, e *«una repo aperta come zona di lavoro entra nel grafo e nella ricerca?»*, col consiglio **A** |
-| le domande dopo | D4–D10, nella tabella *«Le domande, una per volta»* |
-| i buchi | K1–K34: la tabella *«Lo stato dei buchi dopo il documento»* e quella dei casi nuovi |
+| le risposte | la tabella *«Le risposte del proprietario»*: D1 respinta; D2–D8 **A**; D9 **A**, sullo stato dell'arte; D11 **delegata allo stato dell'arte** |
+| la domanda scritta e non posta | **D10**, la proiezione quando il modello cambia per un fallback, col consiglio **A** |
+| i buchi | K1–K40, nelle due tabelle dei buchi; quelli nati in questa sessione sono K35–K40 |
+| la regola nuova del proprietario | la tabella *«Le regole di questo lavoro»*: dove i software di oggi hanno una risposta, la si legge alla fonte e la si adotta |
+| le fonti | la sezione datata di [`riferimenti.md`](../../riferimenti.md), *«La revisione della knowledge base — le fonti delle domande, 2026-09-29»*. ⚠️ Lette attraverso lo strumento di lettura della sessione, che a volte riassume: una citazione si rilegge alla fonte prima di entrare nel disegno |
 
 **Il compito della sessione che riprende:**
 
@@ -933,34 +1000,49 @@ in [`archivio/consegna-brainstorming-knowledge-base-revisione.md`](../../archivi
 2. La lettura obbligatoria di `CLAUDE.md`; poi **questo file per intero**, e il
    [disegno del 2026-09-04](2026-09-04-knowledge-base-design.md) per intero — la §12 del compendio lo chiede a chi riprende il
    fronte della knowledge base.
-3. Rilanciare i comandi della tabella *«Che cosa esiste oggi»*, e quello di D3 sulla porta `filesystem`: il codice può essersi
-   mosso.
-4. **Porre D3 com'è scritta qui**, nella forma riformulata. Poi D4–D10, una alla volta: ciascuna si scrive **qui**, nella forma
-   di D2 e D3, **prima** di porla — contesto, A/B col costo e ciò che si rifà, i cinque criteri, verificato, dedotto e assunto,
-   il consiglio —; in chat a parole semplici, poi `AskUserQuestion` con due opzioni e il consiglio per primo.
-5. A ogni risposta: la riga nella tabella delle risposte, lo stato dei K che tocca, il cancello, un commit, un push.
+3. `bash scripts/gate.sh` all'apertura, da solo; se è rosso su `ipc_wire` con `NotFound`, il gotcha #141.
+4. **La revisione iniziale di coerenza e correttezza di quanto scritto**, chiesta dal proprietario, **prima** di D10. Almeno:
+   - ogni risposta della tabella contro la sua sezione, e contro gli stati dei K che dice di chiudere, nelle due tabelle dei
+     buchi;
+   - le risposte fra loro: D3, la zona che dura la sessione, con D11, che dice che cos'è una sessione; D7 con D11; D5, il
+     privato, con K36 e con la lista di base comune di D3; D4, l'indice fuori dal backup, con ADR-0022; D9 con la regola 3 e
+     la pretesa 1.1e del 2026-09-04, e con AUD-004;
+   - ogni riga *«verificato»* col suo comando, rilanciato; ogni fonte della sezione datata di `riferimenti.md` contro ciò che
+     questo file le fa dire;
+   - le tabelle *«Il documento contro ciò che esiste»* e *«Lo stato dei buchi dopo il documento»*, scritte il 2026-09-28:
+     con le risposte di oggi alcune righe sono superate;
+   - che cosa ciascuna risposta **cambia** del disegno del 2026-09-04 e degli ADR: è l'elenco che il disegno scriverà come
+     richiami e rimandi.
+
+   Ciò che la revisione trova si corregge qui, col richiamo datato dove serve; una correzione di merito va al proprietario in
+   A/B.
+5. Poi **D10**, posta com'è scritta, o riscritta se la revisione la tocca.
 6. Finite le domande: la chiusura del brainstorming e, in una sessione **nuova**, il disegno. Scrive i richiami datati al
-   disegno del 2026-09-04 — le risposte 1, 3, 4 e 10, le decisioni 13 e 15 —; i rimandi agli ADR che la revisione tocca,
-   ciascuno riletto contro i fratelli, gotcha #59; le righe di `roadmap.md` e di `tracciabilita.md`, fra cui
-   `Multi-repo/multi-progetto` e `Mappa del progetto`; e la voce della §5 del compendio per ogni ADR che riceve un rimando.
+   disegno del 2026-09-04 — le risposte 1, 3, 4 e 10, le decisioni 13 e 15, la regola 3 e la pretesa 1.1e per D9 —; i
+   rimandi agli ADR che la revisione tocca, fra cui ADR-0016 e ADR-0011 per la sessione, ciascuno riletto contro i fratelli,
+   gotcha #59; le righe di `roadmap.md` e di `tracciabilita.md`, fra cui `Multi-repo/multi-progetto` e `Mappa del progetto`;
+   e la voce della §5 del compendio per ogni ADR che riceve un rimando.
 
 **Le decisioni prese dal coordinatore in questa sessione, col perché** — il proprietario può ribaltarle:
 
 | | Decisione | Perché, e che cosa costa se è sbagliata |
 |---|---|---|
 | 1 | i commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md`, *«senza co-autore»*, prevale sulla direttiva di sistema. Costo: un `--amend` |
-| 2 | le decisioni aperte 2 e 3 del proprietario **accolte** come le propone, senza domanda | coerenti con la risposta 10 del 2026-09-04 e con ADR-0024, e senza un'alternativa da porgli. Costo: una domanda, se le vuole riaprire |
-| 3 | le prime forme di D1 e di D3 **non** vanno in archivio | sono domande, non verbali di correzione: stanno nei commit `e714720` e `9bdbb59`, nominati dove servono. Costo: zero |
-| 4 | la guida ARMS in `riferimenti.md` come **origine dell'idea**, non come prova | è una guida di pratica, non una norma. Costo: zero |
-| 5 | i casi nuovi **continuano** la numerazione, da K24 | un caso tiene il suo numero per tutta la revisione. Costo: zero |
+| 2 | il cancello rosso dell'apertura curato con `cargo clean -p kernel` e lo stesso su `gui/fake-core`, senza chiedere | è ripristino dell'ambiente, reversibile — si ricompila —, e nessun file del repository cambia. Costo: qualche minuto di compilazione |
+| 3 | la memoria dell'agente **copiata** dalla cartella del progetto vecchio alla nuova | era rimasta orfana dopo lo spostamento; la copia non tocca l'originale. Costo: cancellarla, se il proprietario voleva ripartire da zero |
+| 4 | in D4, D5, D6, D7, D9 e D10 ciò che non è una scelta — perché segue da un ADR già preso o dalle fonti — **scritto come comune** alle due risposte, e non posto | il proprietario l'ha letto in chat e non l'ha contestato. Costo: una domanda, se ne vuole riaprire uno |
+| 5 | la consegna del proprietario a D11 e a D9 presa come **regola** per le domande che restano | l'ha detta due volte, e la seconda in forma generale. Costo: rimettere le A/B dove lo stato dell'arte risponde |
+| 6 | D11 numerata **dopo** D10, anche se posta prima di D7 | un numero non si rinumera, come i K. Costo: zero |
+| 7 | i casi nuovi **continuano** la numerazione, K35–K40 | la regola della sessione del 2026-09-28. Costo: zero |
 
 **Vicoli ciechi di questa sessione:**
 
 | Scartato | Perché, e che cosa insegna |
 |---|---|
-| **D1 com'era posta**: tre posti, con la knowledge base scritta dal solo assistente | il proprietario l'ha respinta e ha risposto col suo documento: la forma giusta non era fra le due opzioni. 📌 *Prima di porre una domanda sulla forma, chiedersi se la domanda assume una decisione vecchia — qui la risposta 3 del 2026-09-04 — che il proprietario può voler rovesciare* |
-| **D3 nella prima forma**: la root come confine di tutto l'assistente | non reggeva col coding stile Claude Desktop, che apre una cartella qualsiasi — una capacità della roadmap, il 5, che il consiglio ignorava. 📌 *La prova «che cosa arriva» di `CLAUDE.md` si fa anche sul consiglio, non solo sullo schema* |
+| **D7 com'era posta**: un sì «per la sessione» | la sessione non era definita da nessuna parte, e il proprietario l'ha colto con una domanda. 📌 *Prima di mettere una parola del repository in un'opzione, cercare dove è definita: un ADR che la usa non la definisce* |
+| **D11 e D9 come A/B costruite sul solo repository** | il proprietario le ha rimandate chiedendo lo stato dell'arte. 📌 *Prima le fonti, poi la domanda: la regola sta nella tabella delle regole e nella memoria dell'agente* |
+| un `grep -i` con più di un `-e` | su questa macchina va in *Aborted* e rende vuoto: la trappola 14 del disegno del 2026-09-04, ricaduta due volte. 📌 *Un'alternanza si scrive in più `grep`* |
+| un comando chiuso da `&` per lanciare il cancello in sottofondo | il lavoro in sottofondo muore con la chiamata: nessun file cambiato, nessun cancello partito. 📌 *In sottofondo si lancia con lo strumento, mai con `&`* |
 
-**Da verificare alla fonte prima del disegno** — le righe **F** delle tabelle: K6 e K34, i file «solo online» di OneDrive; K9,
-gli eventi che il sorvegliante di Windows può perdere; e, per K1, le cartelle dati per utente dei due sistemi — quella di
-Windows, e la specifica XDG per Linux.
+**Da verificare alla fonte prima del disegno** — le righe **F** ancora aperte: K6 e K34, i file «solo online» di OneDrive;
+K9, gli eventi che il sorvegliante di Windows può perdere. Le cartelle dati per utente di K1 sono state lette il 2026-09-29.

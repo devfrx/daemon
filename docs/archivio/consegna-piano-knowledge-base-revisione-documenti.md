@@ -133,3 +133,65 @@ della 4.6 e della 6.5 del disegno, ciascuna col suo chiusore; e P-5, nuova, col 
 
 Parola per parola com'era nello scratchpad alla chiusura, e controllato su `0c0d0d4` come dice la consegna. ⛔ **Chi
 riprende lo estrae, non lo riscrive:** ogni recinto è un file.
+
+## La consegna al pre-controllo, del 2026-09-29
+
+Tolta dal piano il 2026-09-29, alla chiusura del pre-controllo, quando la consegna all'esecuzione ne ha preso il
+posto. Parola per parola, coi link riscritti per questa cartella.
+
+## Come si riprende — scritto alla chiusura della sessione che ha finito il piano, il 2026-09-29, coi comandi
+
+⛔ **Da sapere subito: niente è a metà.** Il piano è **scritto**, e i sei compiti sono stati simulati **in sequenza** su un
+`git worktree` nello scratchpad, poi tolto — P-19. **Non è pre-controllato.** Tutto è pushato: si riparte anche dall'altra
+macchina, dopo il fetch. La chiusura precedente — la sospensione della prima sessione — sta in
+[archivio](consegna-piano-knowledge-base-revisione-documenti.md), parola per parola.
+
+| | Stato, e il comando che lo rifà |
+|---|---|
+| ramo | `main` allineato a `origin`: `git fetch --all --prune`, `git status -sb`; nessuno stash, e nessun worktree oltre al principale — `git worktree list` |
+| codice di prodotto | **non toccato**: il comando D da `<base>` non rende nulla |
+| cancello | `bash scripts/gate.sh` → `GATE GREEN` e `bash scripts/check-docs.sh` → `OK` all'apertura e prima del commit di questa chiusura: si rilanciano, non si citano |
+| il margine del compendio | il comando C |
+| i pezzi | `extract.py` copiato a mano dal suo recinto, poi il comando della sezione *«Gli attrezzi»*: diciotto righe |
+| i blocchi | il `--check` di ciascuno, dal comando sotto la tabella: su questo commit tutti e sei `checked`, perché la chiusura ha scritto le due ancore del blocco E6 |
+| il puntatore | la §6 del compendio: il piano è scritto, e viene il suo **pre-controllo** |
+
+```bash
+S=<scratchpad>; for n in 1 2 3 4 5 6; do printf 'E%s: ' $n; PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" --check "$(date +%F)" "$S/e$n.txt" 2>&1 | tail -1; done
+```
+
+⏳ **Una domanda aperta, da porre per prima:** il **passo visivo** del compito 4 — la riga 🆕 della tabella *«Le voci
+aperte che questo piano SA»*. Posta il 2026-09-29 in A/B, col consiglio A, e rimandata dal proprietario: si ripone, e se la
+risposta è A il passo entra nel compito 4 come voce d'errata, col primo disegno dei due diagrammi fatto nel pre-controllo.
+
+**Il compito della sessione che riprende — il pre-controllo, con le quattro domande di `CLAUDE.md`:**
+
+1. La lettura d'apertura di `CLAUDE.md`; poi il disegno della revisione **per intero**, a blocchi; poi **questo piano per
+   intero**.
+2. `bash scripts/gate.sh`, da solo; il comando C; l'estrazione dei pezzi e il `--check` dei sei blocchi.
+3. Per ogni compito, nell'ordine: le **quattro domande** — la sonda sbagliata, la sonda che manca, l'artefatto sbagliato,
+   il compito già eseguito — e le righe 5–8 della tabella di `CLAUDE.md`, prima fra tutte: *il compito si legge contro i
+   documenti di ADESSO*. Qui l'artefatto sbagliato è un **testo** che dice il falso contro il documento che lo riceve, o
+   contro i fratelli di un ADR: si legge ogni rimando e ogni richiamo nel posto dove atterra. Ogni difetto è una voce
+   d'errata, col testo corretto, **prima** di dispacciare; se una voce cambia un blocco, la simulazione in sequenza si
+   rifà — P-19.
+4. La cartella del dispaccio — D17 — e i modelli dei prompt; il costo di ciascun subagente, detto al proprietario **prima**
+   con la banda misurata dei dispacci recenti, e il sì.
+5. La chiusura della sessione: la riga in testa alla tabella della posizione — *«pre-controllo fatto»*, restando una riga
+   che comincia con `✅ **IL PIANO È`, che il blocco POS6 cerca —; il puntatore della §6 mosso all'esecuzione, con
+   `archive_head.py --pointer` e `replace_pointer.py`, e la riga della data; questa sezione riscritta come consegna
+   all'esecuzione, e questa in archivio, nello stesso file della chiusura precedente.
+
+**Le decisioni prese in questa sessione** sono D19…D25, e ciò che ha trovato P-15…P-19: stanno nelle due tabelle in testa,
+e qui non si ricopiano. In più, fuori da questo file: il puntatore della §6 e la riga della data del compendio, con la
+loro copia in archivio; la riga di questo piano in `roadmap.md`, con l'*«Ultimo aggiornamento»*; nel disegno della
+revisione, il punto 3 della 6.6 e il richiamo sul comando A della 6.2 — D24.
+
+**Vicoli ciechi di questa sessione:**
+
+| | Che cosa insegna |
+|---|---|
+| la prima corsa della simulazione stampava tutto il controllo delle tabelle a ogni compito: le stesse trentaquattro righe preesistenti, sette volte | 📌 *Una sonda che rende righe preesistenti si confronta per conto, per file* — D25 |
+| un `grep -c` con una barra rovesciata finale costruita con `printf` è uscito con *«Trailing backslash»* | un conto di caratteri si fa con Python, `chr(92)`, non con un `grep` costruito in linea — trappola 13 |
+
+**Da verificare alla fonte prima del pre-controllo:** niente di esterno.

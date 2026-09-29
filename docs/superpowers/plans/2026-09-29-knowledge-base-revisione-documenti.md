@@ -441,8 +441,9 @@ comando: `git log --format=%h --diff-filter=A -- docs/superpowers/plans/2026-09-
 
 ## ▶️ A che punto è QUESTO PIANO — casa unica, e si aggiorna scrivendo
 
-✅ **IL PIANO È SCRITTO, il 2026-09-29.** ⏳ **Il pre-controllo non è fatto**: lo fa una sessione sua, prima di dispacciare il
-compito 1 — il *«Come si riprende»*, in fondo.
+✅ **IL PIANO È SCRITTO E PRE-CONTROLLATO, il 2026-09-29.** Ciò che il pre-controllo ha trovato sta nell'errata, e i blocchi
+che ha cambiato sono provati in sequenza — P-19. ⏳ **L'esecuzione non è cominciata**: un compito per sessione — il
+*«Come si riprende»*, in fondo.
 
 | # | Compito | Commit | Stato |
 |---|---|---|---|
@@ -489,7 +490,13 @@ Le voci si chiamano **ER-1**, **ER-2**…, e non *E1*…: *E1*…*E6* sono i nom
 | # | Voce |
 |---|---|
 | — | *(vuota alla scrittura, 2026-09-29)* |
-| **ER-1** | ✅ **Compito 4, Passi 1 e 3 e criterio — il passo visivo, deciso dal proprietario nel pre-controllo, il 2026-09-29: A.** I due diagrammi che il blocco E4 cambia — il primo di design/09, il secondo di design/10 — sono disegnati prima e dopo il blocco, applicato a una copia nello scratchpad: in un widget della chat con mermaid 11, sul precedente della passata sui diagrammi del 2026-09-08, e nel browser integrato, dove la stessa pagina li disegna tutti e quattro senza errori e mermaid 12.0.0 — l'ultima su npm quel giorno — li legge tutti e quattro. Il proprietario li ha guardati e accettati, sotto la condizione che siano coerenti e corretti con ciò che esiste: riletti contro ADR-0040, la 5.4 del disegno, la tabella di design/10 dopo il blocco e il codice — `declare_scope`, `preserve`, `restore` e `CheckpointId` ci sono con quei nomi. ⛔ **Che cosa entra nel compito 4:** la sonda dell'impronta qui sotto, al **Passo 1** — atteso `93abe5d5066ebdd9` e `4b8d9f87d0ca24e8` — e al **Passo 3** — atteso `558f5f1e51c0be72` e `0836d966284fab09`, le impronte dei sorgenti che il proprietario ha visto —; e nel criterio di chiusura la riga *«le due impronte del Passo 3 sono quelle di ER-1»*. Se al Passo 3 un'impronta è diversa ci si **ferma prima del commit**: il diagramma non è quello visto, e servono una voce d'errata, il disegno rifatto e lo sguardo del proprietario. Con l'impronta uguale un secondo sguardo non aggiunge controllo, e non si chiede. La sonda rende lo stesso su un file CRLF, e non porta barre rovesciate — trappola 13 |
+| **ER-1** | ✅ **Compito 4, Passi 1 e 3 e criterio — il passo visivo, deciso dal proprietario nel pre-controllo, il 2026-09-29: A.** I due diagrammi che il blocco E4 cambia — il primo di design/09, il secondo di design/10 — sono disegnati prima e dopo il blocco, applicato a una copia nello scratchpad: in un widget della chat con mermaid 11, sul precedente della passata sui diagrammi del 2026-09-08, e nel browser integrato, dove la stessa pagina li disegna tutti e quattro senza errori e mermaid 12.0.0 — l'ultima su npm quel giorno — li legge tutti e quattro. Il proprietario li ha guardati e accettati, sotto la condizione che siano coerenti e corretti con ciò che esiste: riletti contro ADR-0040, la 5.4 del disegno, la tabella di design/10 dopo il blocco e il codice — `declare_scope`, `preserve`, `restore` e `CheckpointId` ci sono con quei nomi. ⛔ **Che cosa entra nel compito 4:** la sonda dell'impronta qui sotto, al **Passo 1** — atteso `93abe5d5066ebdd9` e `4b8d9f87d0ca24e8` — e al **Passo 3** — atteso `558f5f1e51c0be72` e `0836d966284fab09`, le impronte dei sorgenti che il proprietario ha visto —; e nel criterio di chiusura la riga *«le due impronte del Passo 3 sono quelle di ER-1»*. Se al Passo 3 un'impronta è diversa ci si **ferma prima del commit**: il diagramma non è quello visto, e servono una voce d'errata, il disegno rifatto e lo sguardo del proprietario. Con l'impronta uguale un secondo sguardo non aggiunge controllo, e non si chiede. La sonda rende lo stesso su un file CRLF, e non porta barre rovesciate — trappola 13. La rilancia anche il compito 6, al Passo 4, per le righe 12 e 17 della Definizione di «fatto»: le due impronte di dopo |
+| **ER-2** | ⚠️ **Compito 1, Passo 2 e blocco E1 — *«la riga «artefatti» delle due tabelle»* dice il falso di una delle due.** Trovata dal pre-controllo del 2026-09-29, rileggendo ADR-0022 per intero. Nella tabella del *Context* la riga è «artefatti prodotti» — non ricostruibili, file dell'utente, crescono con l'uso —, e con ADR-0040 resta vera; ciò che ADR-0040 cambia sta nella tabella del punto 1 della *Decision*, la colonna «Nel backup». Il disegno, nella 3.1 e nella 3.3, dice solo *«la riga «artefatti»»*: le parole in più erano del piano, e in un ADR, che è append-only, sarebbero rimaste. ✅ **Corretto nei recinti**, nella riga `Modifica:` del testo di ADR-0040 e nel rimando di ADR-0022 del blocco E1: *«nella tabella del punto 1 della* Decision*, la riga «artefatti» e le guide della riga «configurazione, guide, profili»; e la conseguenza …»*. Le voci del compendio dicevano già *«la riga «artefatti»»*, e non cambiano. La simulazione in sequenza è rifatta — P-19 |
+| **ER-3** | ⚠️ **Compito 1 — dal commit di ADR-0040 due commenti del codice dicono il falso, e il piano non li può toccare.** Trovata dal pre-controllo del 2026-09-29: è la riga 6 della tabella di `CLAUDE.md`, ciò che smentisce può stare in un commento. In `crates/daemon/src/main.rs`, sopra `JOURNAL_PATH` e sopra `LAYOUT_PATH`, il commento dice che dove stia la cartella dati per utente è *«a decision no ADR has taken»*: ADR-0040, punto 1, la prende. La consegna del brainstorming, in archivio, lo aveva scritto — i due percorsi e il commento *«cadono con D4»* —, e la 4.2 del disegno dà la cartella dati al 6; mancava che fino ad allora i commenti dicono il falso. Il vincolo 2 vieta il codice: la voce è **registrata** in *«Le voci aperte che questo piano SA»*, col suo chiusore. Il `grep` sulla frase ne trova uno solo, perché sopra `JOURNAL_PATH` la frase va a capo dopo *«no»* |
+| **ER-4** | ⚠️ **Compito 1, Passi 1 e 4 — la riga del rimando nella voce di ADR-0022 del compendio non ha una sonda.** Trovata dal pre-controllo del 2026-09-29, la seconda domanda: le altre modifiche del blocco E1 hanno la loro — la guardia dei totali, `superato in parte`, `modificato da ADR-0040` —, questa no. ✅ **La sonda:** `grep -c 'modificato in parte da ADR-0040' docs/COMPENDIO.md`, che rende `0` al Passo 1 e `1` al Passo 4; provata il 2026-09-29 nella direzione dello `0`, e nel blocco E1 la frase c'è una volta |
+| **ER-5** | ⚠️ **Compito 5, blocco E5 — la dipendenza vecchia dell'11 vive in altre due case, e nessun blocco le tocca.** Trovata dal pre-controllo del 2026-09-29, cercando *«5, 6 e 9»* e le sue forme fuori da archivio e piani: oltre ad ADR-0022 — il rimando di E1 —, alla riga 11 — E5 — e alla §8.5.2 della spec — P-5 —, la dicono la voce chiusa *«Dove vive backup e ripristino»* di `roadmap.md`, *«chiusa il 2026-08-07: sotto-progetto 11, dopo 5, 6 e 9»*, e la riga 2 della tabella di F2 in `HANDOFF.md`, *«dipendente da 5, 6 e 9»*. ✅ **La roadmap:** un richiamo in fondo alla cella, nel blocco E5 — il file che il compito tocca, dove la riga 11 direbbe *«6, 9»* poco sopra —; quindi al Passo 2 `checked: 32 edits in 3 files` e `applied: 32 edits in 3 files`, e il comando E sulla roadmap rende `8` e non `7`, al Passo 3 del compito 5 e ai Passi 1 e 5 del compito 6. ✅ **`HANDOFF.md` non si tocca:** la riga 14 della Definizione di «fatto» ne vuole solo i totali, e la riga è il consuntivo della §8.5.2 — sta con P-5, **registrata** col proprietario come chiusore. La simulazione in sequenza è rifatta — P-19 |
+| **ER-6** | ⚠️ **Compito 1, Passi 1 e 4 — il comando E sull'archivio rende `6`, non `5`.** Trovata dalla simulazione del pre-controllo, il 2026-09-29: la chiusura del pre-controllo ha copiato in `docs/archivio/stato-storico.md` il puntatore della §6 com'era, e il puntatore porta il link al disegno. Al Passo 4 resta `6`; al compito 6 l'archivio riceve il puntatore di adesso, e passa a `7` — quel Passo lo annota, non lo prescrive |
+| **ER-7** | ⛔ **Compito 5, Passi 1 e 3 — la sonda delle sei righe della roadmap ne conta nove, e l'«Atteso» `6` non torna mai.** Trovata dalla simulazione del pre-controllo, il 2026-09-29, e vera già su `ff6f0e5`: la sonda prende anche le righe 5 e 6 della tabella dei traguardi e la riga 3 della tabella della GPU della GUI. ✅ **La sonda, ristretta alla sezione dei sotto-progetti**, sta sotto questa tabella, accanto a quella di ER-1 — la trappola 4 —: `6` al Passo 1 e `6` al Passo 3, misurato sul repository e sulla simulazione; su una sezione che non c'è rende `0` |
 
 La sonda di ER-1, fuori dalla tabella perché è lunga: `H` è il programma, e i due argomenti sono il file e il numero del
 blocco `mermaid` dentro il file.
@@ -497,6 +504,14 @@ blocco `mermaid` dentro il file.
 ```bash
 H='import sys,hashlib,io;F=chr(96)*3;t=io.open(sys.argv[1],encoding="utf-8",newline="").read().replace(chr(13)+chr(10),chr(10)).split(chr(10));i=[k for k,l in enumerate(t) if l.startswith(F+"mermaid")][int(sys.argv[2])-1];j=next(m for m in range(i+1,len(t)) if t[m].startswith(F));print(hashlib.sha256(chr(10).join(t[i+1:j]).encode("utf-8")).hexdigest()[:16])'
 python -c "$H" docs/design/09-l0-fisico.md 1; python -c "$H" docs/design/10-modello-dei-dati-durevoli.md 2
+```
+
+La sonda di ER-7, fuori dalla tabella per la trappola 4: la prima riga è quella del compito 5, che rende `9`; la seconda la
+sostituisce.
+
+```bash
+grep -cE '^[|] (3|5|6|10|11|13) [|]' docs/roadmap.md
+awk '/^## Sotto-progetti/{s=1;next} s&&/^## /{s=0} s' docs/roadmap.md | grep -cE '^[|] (3|5|6|10|11|13) [|]'
 ```
 
 ---
@@ -609,7 +624,8 @@ chiusore — P-13. Si dichiarano perché chi esegue le sappia, non perché le to
 | **X-2** e **X-4** | [`audit-2026-08-27.md`](../../audit-2026-08-27.md), le voci senza numero AUD | il proprietario |
 | K10, K35, K44, K47, K49, K51, K52, K36, K12 | la 4.6 del disegno | il 6, il 5, il 3, il 4 — la sua colonna |
 | K11, K17, K19, K21, K22, K29, K34, K38, K41, K48; il testo scelto a runtime nei record del giornale; V36, Q22 e la riga `filesystem` della §8.2.2 | la 6.5 del disegno | ciascuna col suo chiusore |
-| **P-5** — la §8.5.2 della spec del sotto-progetto 1 dice ancora *«il filesystem reale, che arriva con il sotto-progetto 5»* | la spec; P-5 qui sopra | il **proprietario**, con la §8: il vincolo 3 la lascia com'è |
+| **P-5** — la §8.5.2 della spec del sotto-progetto 1 dice ancora *«il filesystem reale, che arriva con il sotto-progetto 5»*; e il suo consuntivo, la riga 2 della tabella di F2 in `HANDOFF.md`, dice *«dipendente da 5, 6 e 9»* — ER-5 | la spec; `HANDOFF.md`; P-5 qui sopra, ER-5 | il **proprietario**, con la §8: il vincolo 3 la lascia com'è, e la riga 14 della Definizione di «fatto» vuole da `HANDOFF.md` solo i totali |
+| **i due commenti di `crates/daemon/src/main.rs`**, sopra `JOURNAL_PATH` e sopra `LAYOUT_PATH`: dove stia la cartella dati per utente è *«a decision no ADR has taken»*, e dal compito 1 la prende ADR-0040, punto 1 — ER-3 | il sorgente; ER-3 | chi costruisce per primo la **cartella dati per utente**, e con lei riscrive i due percorsi e i loro commenti: il **6**, se nessuno la porta prima — la 4.2 del disegno, D15 |
 | 🆕 **il passo visivo** — i due diagrammi che il compito 4 cambia, in design/09 e design/10, **nessuno li disegna**: il piano li controlla come testo, e il cancello non conosce mermaid — `grep -rn -i mermaid scripts/` non rende niente, 2026-09-29. Verificato che i nomi delle caselle nuove, `R` e `P`, non si scontrano con quelli che ci sono; **non** verificato che i due diagrammi si disegnino | posta al proprietario il 2026-09-29 in A/B — **A**, il consiglio: un passo nel compito 4, i due diagrammi disegnati prima e dopo nel browser integrato, lo sguardo del revisore e il suo; **B**: i soli controlli sul testo — e rimandata da lui, *«tempo al tempo»* | ✅ **deciso dal proprietario il 2026-09-29, A**, riposta per prima nel pre-controllo: la voce **ER-1** dell'errata |
 
 ---
@@ -751,10 +767,10 @@ Il testo di ADR-0040 — `<data>` è il giorno del compito, e lo mette il `sed` 
 - **Status:** Accepted
 - **Date:** <data>
 - **Deciders:** proprietario del progetto
-- **Modifica:** [ADR-0022](0022-layout-dei-dati-per-natura-e-backup-dichiarato.md), in tre punti — la riga
-  «artefatti» delle due tabelle, le **guide** della riga «configurazione, guide, profili», e la conseguenza *«La base
-  di conoscenza sopravvive alla reinstallazione perché i documenti sorgente e la configurazione sono nel backup»*. Le
-  altre righe reggono, e lo stato di ADR-0022 resta `Accepted`
+- **Modifica:** [ADR-0022](0022-layout-dei-dati-per-natura-e-backup-dichiarato.md), in tre punti — nella tabella del
+  punto 1 della *Decision*, la riga «artefatti» e le **guide** della riga «configurazione, guide, profili»; e la
+  conseguenza *«La base di conoscenza sopravvive alla reinstallazione perché i documenti sorgente e la configurazione
+  sono nel backup»*. Le altre righe reggono, e lo stato di ADR-0022 resta `Accepted`
 
 ## Context
 
@@ -852,9 +868,10 @@ Il blocco E1, in `e1.txt`:
 > ⚠️ **Rimando del <data> — modificato da ADR-0040, in tre punti.**
 > [ADR-0040](0040-dove-vivono-i-dati-e-che-cosa-salva-il-programma.md), dal
 > [disegno della revisione della knowledge base](../superpowers/specs/2026-09-28-knowledge-base-revisione-design.md) —
-> risposte D12 e D17, approvate dal proprietario il 2026-09-29 —, cambia **tre** punti di questo ADR: la riga
-> **«artefatti»** delle due tabelle; le **guide** della riga «configurazione, guide, profili»; e la conseguenza *«La base
-> di conoscenza sopravvive alla reinstallazione perché i documenti sorgente e la configurazione sono nel backup»*. I file
+> risposte D12 e D17, approvate dal proprietario il 2026-09-29 —, cambia **tre** punti di questo ADR: nella tabella del
+> punto 1 della *Decision*, la riga **«artefatti»** e le **guide** della riga «configurazione, guide, profili»; e la
+> conseguenza *«La base di conoscenza sopravvive alla reinstallazione perché i documenti sorgente e la configurazione
+> sono nel backup»*. I file
 > del proprietario — la root e le zone di lavoro, guide comprese — **non** entrano nel backup del programma; l'eccezione
 > sono i **router**, in `.<nomeapp>/` alla root, che il programma salva. Il rimando del 2026-09-08, che per le guide diceva
 > *«la politica della riga … non cambia»*, si legge con ADR-0040. E nel rimando del 2026-08-07, in fondo, il backup viene
@@ -1710,6 +1727,8 @@ Il blocco E5, in `e5.txt`:
 == Sotto-progetti 1 + 2 + 13 + 3:
 >> smette di essere solo documenti.
 ++ ⚠️ **Richiamo del <data>:** qui stava *«1 + 2 + 3»*: il 13 sta prima del 3 dal 2026-09-04 — la decisione 16 del [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md) —, e la riga non lo diceva; lo ha trovato la 5.1 del [disegno della revisione](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md).
+>> che non riusciva a dare un numero all'innesco di V32, V33 e Q21 |
+++ ⚠️ **Richiamo del <data>:** dopo **6 e 9** — il 5 esce, perché il suo solo motivo era il filesystem reale, che arriva a pezzi: la riga 11 qui sopra, e la seconda domanda della 5.5 del [disegno della revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md), risposta A
 @@ docs/tracciabilita.md
 >> | Selettore di modello per compito | ✅ | §3 · profili |
 ++ ⚠️ **Richiamo del <data>:** il selettore della sessione, come Claude Desktop, → **3**, e il modello scritto nella definizione di un sotto-agente — D10 del [disegno della revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md)
@@ -1967,59 +1986,59 @@ sotto-progetto si chiude** con questo piano: `roadmap.md`, `README.md` e `tracci
 
 ---
 
-## Come si riprende — scritto alla chiusura della sessione che ha finito il piano, il 2026-09-29, coi comandi
+## Come si riprende — scritto alla chiusura del pre-controllo, il 2026-09-29, coi comandi
 
-⛔ **Da sapere subito: niente è a metà.** Il piano è **scritto**, e i sei compiti sono stati simulati **in sequenza** su un
-`git worktree` nello scratchpad, poi tolto — P-19. **Non è pre-controllato.** Tutto è pushato: si riparte anche dall'altra
-macchina, dopo il fetch. La chiusura precedente — la sospensione della prima sessione — sta in
+⛔ **Da sapere subito: niente è a metà.** Il piano è **pre-controllato**: sette voci nell'errata, ER-1…ER-7, e i sei
+compiti simulati **in sequenza** su un `git worktree` nello scratchpad, poi tolto — `check-docs.sh` → `OK` dopo ciascuno, e
+il margine del compendio sempre positivo. **Nessun compito è eseguito.** Tutto è pushato: si riparte anche dall'altra
+macchina, dopo il fetch. La consegna precedente, quella al pre-controllo, sta in
 [archivio](../../archivio/consegna-piano-knowledge-base-revisione-documenti.md), parola per parola.
 
 | | Stato, e il comando che lo rifà |
 |---|---|
 | ramo | `main` allineato a `origin`: `git fetch --all --prune`, `git status -sb`; nessuno stash, e nessun worktree oltre al principale — `git worktree list` |
+| i commit del pre-controllo | `git log --oneline c8322f1..HEAD`: la voce ER-1, e la chiusura con le altre sei |
 | codice di prodotto | **non toccato**: il comando D da `<base>` non rende nulla |
-| cancello | `bash scripts/gate.sh` → `GATE GREEN` e `bash scripts/check-docs.sh` → `OK` all'apertura e prima del commit di questa chiusura: si rilanciano, non si citano |
+| cancello | `bash scripts/gate.sh` → `GATE GREEN` e `bash scripts/check-docs.sh` → `OK` all'apertura e prima di ogni commit: si rilanciano, non si citano |
 | il margine del compendio | il comando C |
 | i pezzi | `extract.py` copiato a mano dal suo recinto, poi il comando della sezione *«Gli attrezzi»*: diciotto righe |
-| i blocchi | il `--check` di ciascuno, dal comando sotto la tabella: su questo commit tutti e sei `checked`, perché la chiusura ha scritto le due ancore del blocco E6 |
-| il puntatore | la §6 del compendio: il piano è scritto, e viene il suo **pre-controllo** |
+| i blocchi | il `--check` di ciascuno, dal comando sotto la tabella: tutti e sei `checked`, E5 con trentadue modifiche — ER-5 |
+| il puntatore | la §6 del compendio: il piano è pre-controllato, e viene l'**esecuzione** |
 
 ```bash
 S=<scratchpad>; for n in 1 2 3 4 5 6; do printf 'E%s: ' $n; PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" --check "$(date +%F)" "$S/e$n.txt" 2>&1 | tail -1; done
 ```
 
-⏳ **Una domanda aperta, da porre per prima:** il **passo visivo** del compito 4 — la riga 🆕 della tabella *«Le voci
-aperte che questo piano SA»*. Posta il 2026-09-29 in A/B, col consiglio A, e rimandata dal proprietario: si ripone, e se la
-risposta è A il passo entra nel compito 4 come voce d'errata, col primo disegno dei due diagrammi fatto nel pre-controllo.
+**Il compito della sessione che riprende — il compito 1, e prima il dispaccio:**
 
-**Il compito della sessione che riprende — il pre-controllo, con le quattro domande di `CLAUDE.md`:**
+1. La lettura d'apertura di `CLAUDE.md`; poi l'**errata** di questo piano per intero, e il compito 1 — tutto e
+   nient'altro — con le sezioni del disegno che nomina. Lo toccano ER-2, ER-3, ER-4 ed ER-6.
+2. `bash scripts/gate.sh`, da solo; l'estrazione dei pezzi e il `--check` dei sei blocchi.
+3. ⏳ **Il passo 4 del pre-controllo, spostato qui dal proprietario il 2026-09-29 — risposta A:** la cartella del dispaccio —
+   D17 —, che nasce al primo dispaccio, col prompt del compito 1 come **modello** e i campi della macchina da riempire; il
+   precedente è `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`. Poi il **costo** dell'implementatore e del
+   revisore, detto al proprietario **prima**, con la banda misurata dei dispacci recenti scalata sul peso del brief, il
+   modello di ciascuno — `opus`, `sonnet` per il lavoro meccanico —, e il sì.
+4. Il compito 1, un subagente fresco e la revisione con la regola 5 di *«Come si esegue un compito di questo piano»*; poi la
+   chiusura della sessione: questa sezione riscritta, e questa in archivio, nello stesso file delle consegne di prima.
 
-1. La lettura d'apertura di `CLAUDE.md`; poi il disegno della revisione **per intero**, a blocchi; poi **questo piano per
-   intero**.
-2. `bash scripts/gate.sh`, da solo; il comando C; l'estrazione dei pezzi e il `--check` dei sei blocchi.
-3. Per ogni compito, nell'ordine: le **quattro domande** — la sonda sbagliata, la sonda che manca, l'artefatto sbagliato,
-   il compito già eseguito — e le righe 5–8 della tabella di `CLAUDE.md`, prima fra tutte: *il compito si legge contro i
-   documenti di ADESSO*. Qui l'artefatto sbagliato è un **testo** che dice il falso contro il documento che lo riceve, o
-   contro i fratelli di un ADR: si legge ogni rimando e ogni richiamo nel posto dove atterra. Ogni difetto è una voce
-   d'errata, col testo corretto, **prima** di dispacciare; se una voce cambia un blocco, la simulazione in sequenza si
-   rifà — P-19.
-4. La cartella del dispaccio — D17 — e i modelli dei prompt; il costo di ciascun subagente, detto al proprietario **prima**
-   con la banda misurata dei dispacci recenti, e il sì.
-5. La chiusura della sessione: la riga in testa alla tabella della posizione — *«pre-controllo fatto»*, restando una riga
-   che comincia con `✅ **IL PIANO È`, che il blocco POS6 cerca —; il puntatore della §6 mosso all'esecuzione, con
-   `archive_head.py --pointer` e `replace_pointer.py`, e la riga della data; questa sezione riscritta come consegna
-   all'esecuzione, e questa in archivio, nello stesso file della chiusura precedente.
+**Le decisioni prese in questa sessione, col perché** — il proprietario può ribaltarle:
 
-**Le decisioni prese in questa sessione** sono D19…D25, e ciò che ha trovato P-15…P-19: stanno nelle due tabelle in testa,
-e qui non si ricopiano. In più, fuori da questo file: il puntatore della §6 e la riga della data del compendio, con la
-loro copia in archivio; la riga di questo piano in `roadmap.md`, con l'*«Ultimo aggiornamento»*; nel disegno della
-revisione, il punto 3 della 6.6 e il richiamo sul comando A della 6.2 — D24.
+| | Decisione | Perché, e che cosa costa se è sbagliata |
+|---|---|---|
+| 1 | le voci d'errata si chiamano **ER-n** | *E1…E6* sono i blocchi, e una voce «E4» si leggerebbe come il blocco. Costo: un prefisso nuovo nel repository |
+| 2 | il passo visivo disegnato con mermaid **11**, e letto anche con la **12.0.0** | la 11 è quella del precedente del 2026-09-08 e del widget; la 12.0.0 è l'ultima su npm, appena uscita, e un diagramma che le due leggono regge in entrambe. Costo: nessuno |
+| 3 | con l'impronta uguale, al compito 4 **nessun secondo sguardo** del proprietario | un'impronta uguale è il disegno già visto, e richiederlo sarebbe una conferma per rito; la A presentata diceva *«due tuoi sguardi»*, e la differenza è detta qui. Costo: uno sguardo, se il proprietario lo vuole comunque |
+| 4 | alla chiusura, la cella di questo piano in `roadmap.md` e il punto 3 della 6.6 del disegno **non** si toccano | sono le due ancore del blocco E6, e cambiarle vorrebbe dire riallinearlo; la cella dice già che pre-controllo ed esecuzione stanno in sessioni loro. Costo: la roadmap non dice *«pre-controllato»* fino al compito 6 |
+| 5 | `HANDOFF.md`, la riga 2 della tabella di F2, **registrata** con P-5 e non toccata — ER-5 | la riga 14 della Definizione di «fatto», approvata col disegno, vuole da `HANDOFF.md` solo i totali, e quella riga è il consuntivo della §8.5.2. Costo: fino alla decisione del proprietario dice *«5, 6 e 9»* |
+| 6 | la voce chiusa della roadmap *«Dove vive backup e ripristino»* **toccata** — ER-5 | è lo stesso file del compito, dove la riga 11 direbbe *«6, 9»* poco sopra, e il merito è la risposta A della 5.5. Costo: una modifica in più nel blocco E5 |
 
 **Vicoli ciechi di questa sessione:**
 
 | | Che cosa insegna |
 |---|---|
-| la prima corsa della simulazione stampava tutto il controllo delle tabelle a ogni compito: le stesse trentaquattro righe preesistenti, sette volte | 📌 *Una sonda che rende righe preesistenti si confronta per conto, per file* — D25 |
-| un `grep -c` con una barra rovesciata finale costruita con `printf` è uscito con *«Trailing backslash»* | un conto di caratteri si fa con Python, `chr(92)`, non con un `grep` costruito in linea — trappola 13 |
+| il widget della chat non si legge da qui — `read_widget_context` non ha contesto per `show_widget` —, e le righe di verifica del widget le vede solo il proprietario | 📌 *una verifica che l'agente deve leggere si serve nel browser integrato, con `http.server` su una porta sua, e si legge dal DOM; il widget resta per lo sguardo del proprietario* |
+| il `grep` sulla frase *«no ADR has taken»* in `main.rs` ha trovato un commento, e sono due | 📌 *nel sorgente un commento va a capo: una frase si cerca per un pezzo corto, o su righe unite* |
+| una sonda con la barra verticale scritta dentro una cella dell'errata, e tolta prima del commit | la trappola 4 vale anche per chi scrive l'errata: il comando va sotto la tabella |
 
-**Da verificare alla fonte prima del pre-controllo:** niente di esterno.
+**Da verificare alla fonte prima del compito 1:** niente di esterno.

@@ -17,7 +17,7 @@
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — il
 > comando in fondo alla §12 — e l'idea è già qui.
 
-**Aggiornato il 2026-09-29**, col **piano dei documenti della revisione della knowledge base** scritto — il puntatore della §6 —; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](archivio/stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+**Aggiornato il 2026-09-29**, col **piano dei documenti della revisione della knowledge base** pre-controllato — il puntatore della §6 —; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](archivio/stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
 
 ---
 
@@ -619,7 +619,7 @@ per parola.
 del 13 e dei modelli decisionali — dove vivono i file, chi li scrive e chi li legge, come e quando, se le repo dei progetti
 stanno dentro, e i casi limite. Il brainstorming è **chiuso il 2026-09-29**, e la sua consegna sta in
 [archivio](archivio/consegna-brainstorming-knowledge-base-revisione-intera.md). **Il disegno è chiuso** il 2026-09-29,
-riletto dal proprietario, al suo [percorso](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md). Il **piano dei documenti** è **scritto** il 2026-09-29, al suo [percorso](superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md): ora viene il suo **pre-controllo**, in una sessione sua, e il *«Come si riprende»* del piano dice come; poi l'esecuzione, in sessioni loro.
+riletto dal proprietario, al suo [percorso](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md). Il **piano dei documenti** è **scritto e pre-controllato** il 2026-09-29, al suo [percorso](superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md): ora viene la sua **esecuzione**, un compito per sessione e un subagente per compito, e il *«Come si riprende»* del piano dice come.
 **Due: IL SOTTO-PROGETTO 13** — i tre meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima**
 del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta proprietà** della §3, ma questo **vincolo d'ordine**;
 il suo perimetro si rilegge con l'esito della revisione. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill

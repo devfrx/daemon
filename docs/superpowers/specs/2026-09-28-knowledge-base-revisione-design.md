@@ -804,6 +804,59 @@ proprietario scriva link fra i suoi file.
 **Il consiglio: A.** I link sono la struttura che il proprietario scrive da sé: leggerli non costa quasi niente, e un link
 rotto diventa visibile invece di mentire.
 
+### D9, posta il 2026-09-29
+
+**Che cos'è, a parole semplici.** Una repo aperta come zona di lavoro può contenere file scritti **per gli agenti**:
+`CLAUDE.md`, `AGENTS.md`, `.cursorrules`, cartelle di skill. Claude Code legge il `CLAUDE.md` da solo, a ogni sessione. Ma
+in una repo clonata da un altro quei file li ha scritti **un altro**: leggerli come istruzioni vorrebbe dire che la repo di
+uno sconosciuto dà ordini all'agente — K15, la sorella di AUD-004.
+
+**Che cosa esiste già.**
+
+| | Che cosa dice | Dove |
+|---|---|---|
+| ADR-0014 | il contenuto non fidato **informa, mai autorizza**; diventa istruzione solo con un passaggio esplicito, **giornalato** | la voce della §5 del compendio |
+| ADR-0015 | la descrizione di uno strumento si mostra **intera** all'approvazione e se ne registra l'**impronta**; se cambia, lo strumento è **sospeso** finché non si riapprova, col diff mostrato | idem |
+| il disegno del 2026-09-04, regola 3 | il registro delle guide **rifiuta** una guida senza impronta | la §2.3 |
+| AUD-004 | se le difese di ADR-0015 valgano anche per le skill: un ADR del proprietario, che **sbarra il 13** | la §6 del compendio |
+| D3 | *«Se il `CLAUDE.md` di una repo si legga da solo, come fa Claude Desktop, lo decide D9»* | la sezione di D3 |
+| Claude Code | legge il `CLAUDE.md` all'inizio di **ogni** sessione, e può leggere `AGENTS.md`; quando si passa a una cartella nuova ne carica il `CLAUDE.md` e chiede di **fidarsi** della cartella, elencando le regole di permesso, i hook e i comandi che le sue impostazioni accenderebbero | *Overview* e *Configure permissions*, lette alla fonte il 2026-09-29, in [`riferimenti.md`](../../riferimenti.md) |
+
+**Che cosa arriva.** Il **13** costruisce il registro delle guide, cioè la porta d'ingresso di una guida; il **5** apre le
+repo come zone; il **4** gli agenti.
+
+**Regge crescendo?** Con tante repo, alcune di altri, un file-guida letto da solo cambia le istruzioni dell'agente a ogni
+`git pull`, senza che nessuno lo veda.
+
+**In tutte e due le risposte**, e non è una domanda: il file-guida di una repo **non** diventa istruzione senza un primo sì
+esplicito del proprietario, giornalato — ADR-0014; prima di quel sì è contenuto «da fuori», che informa.
+
+**La domanda: un file-guida approvato vale anche quando cambia, o si riapprova a ogni cambio?**
+
+| | **A — come ADR-0015: impronta, e si riapprova** | **B — come Claude Code: fiducia alla cartella** |
+|---|---|---|
+| com'è | il proprietario vede il file **intero** e lo approva; se ne registra l'impronta; se cambia — un `git pull` — resta **sospeso** finché non lo riapprova, col diff; nel frattempo informa e non comanda | il proprietario approva la repo una volta, e il suo file-guida si legge da solo a ogni sessione, anche quando cambia |
+| costo | una riapprovazione a ogni cambio — anche nelle repo del proprietario, dove il diff l'ha scritto lui | un cambio del file entra nelle istruzioni senza che il proprietario lo veda; e contraddice la regola 3 del 2026-09-04, una guida senza impronta: serve un ADR |
+| che cosa si rifà dopo | niente | aggiungere l'impronta dopo, e riapprovare ogni file già letto |
+
+**I cinque criteri.**
+
+| Criterio | A | B |
+|---|---|---|
+| correttezza verificata | ADR-0014, ADR-0015 e la regola 3 letti; Claude Code letto alla fonte | contraddice la regola 3 del 2026-09-04 |
+| coerenza | è il meccanismo di ADR-0015, lo stesso delle descrizioni degli strumenti — e la forma probabile dell'ADR di AUD-004 | un secondo modello di fiducia accanto ad ADR-0015 |
+| debito | la vista del diff alla riapprovazione, al 13 | un ADR che ammetta una guida senza impronta, e il rischio |
+| stato dell'arte | più stretto di Claude Code, che si fida della cartella | è il modello di Claude Code |
+| proporzione | una conferma a ogni cambio, su pochi file | nessuna conferma |
+| di chi è | **del proprietario**, e la risposta entra nel suo ADR di AUD-004 | idem |
+
+**Verificato, dedotto, assunto.** **Verificati**: ADR-0014, ADR-0015, la regola 3 del 2026-09-04, la §6 del compendio su
+AUD-004, e alla fonte Claude Code. **Dedotto**: che un `git pull` possa cambiare un file-guida senza che nessuno lo guardi.
+**Assunto**: che il proprietario lavorerà anche su repo scritte da altri.
+
+**Il consiglio: A.** È la regola che il progetto ha già per le descrizioni degli strumenti: un testo che dà istruzioni
+all'agente si approva com'è, e si riapprova quando cambia.
+
 ## Le risposte del proprietario
 
 | # | Risposta | Data |
@@ -815,6 +868,7 @@ rotto diventa visibile invece di mentire.
 | D5 | ✅ **A** — due specie: il **rumore**, dove lo scanner non entra ma il file o la cartella restano un nodo del grafo e l'agente li apre se serve; il **privato**, fuori dall'indice e da ciò che l'agente vede, con la porta che rifiuta la lettura e il confinamento dei comandi che nega quei percorsi. Le regole del privato le cambia solo il proprietario: l'agente propone, e ciò che rende leggibile qualcosa chiede conferma a ogni preset | 2026-09-29 |
 | D6 | ✅ **A** — nel dubbio, **rotto** e una domanda: il caso certo — la stessa impronta, un solo candidato — si applica da solo; un file chiave che il riconciliatore non ritrova con certezza resta nella mappa segnato rotto, l'agente non lo segue, il pannello lo mostra, e il riconciliatore propone i candidati — lo stesso nome altrove, o un contenuto simile come fa git — fra cui sceglie il proprietario; due file identici sono un caso di dubbio | 2026-09-29 |
 | D7 | ✅ **A** — un sì per la sessione: la tripla `(file, .<nomeapp>/, scrittura)` si concede alla prima modifica di un router e vale per la sessione di D11, come il punto 3 di ADR-0016; ogni modifica si vede nel turno e si annulla. Alla prima posa il proprietario aveva risposto con una domanda — la sessione non era definita, K37 —, e D7 si è riposta dopo D11. Con la risposta ha chiesto se la sessione sia già integrata nei permessi: **non ancora**, e dove va lo dice la sezione di D11 | 2026-09-29 |
+| D8 | ✅ **A** — una terza specie di linea: la scansione, senza modello, legge i link dei file di testo — `[testo](percorso)` e `[[nota]]` — e ne fa linee del grafo; un link verso un file che non c'è è un segnale **rotto**; un link che esce dalla root punta alla scheda della sua zona, o non si disegna; i filtri — per specie di linea, per area, per gli orfani — al 6 | 2026-09-29 |
 | D11 | ✅ **delegata allo stato dell'arte** — *«come le sessioni moderne delle app moderne stato dell'arte, decision-principles devi seguire»*: la sessione è la run coi suoi sotto-agenti, uguale sul lato chat e sul lato coding; finisce quando il proprietario la chiude, dopo un tempo di inattività o dopo un tempo massimo, e la fa rispettare il core; i due tempi sono parametri consegnati, coi valori al 3 e il riferimento di NIST AAL2; alla fine cadono i suoi sì e si chiudono le sue zone. Il sì oltre la sessione delle app di oggi urta ADR-0016: segnalato, K38 | 2026-09-29 |
 
 ## Come si riprende — scritto alla chiusura della sessione del 2026-09-28

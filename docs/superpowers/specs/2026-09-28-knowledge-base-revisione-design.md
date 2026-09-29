@@ -596,58 +596,49 @@ quattro documenti e la spec; il merito non cambia, salvo la seconda domanda, che
 | la stella polare, *«le zone valgono per la sessione»* | la root c'è sempre, e la domanda dentro o fuori regge | la decisione 13 riletta per intero |
 | design/09 | anche il nodo del giornale | le guide approvate, e la fiducia di D9 |
 
-## Come si riprende — scritto alla chiusura della sessione del 2026-09-29
+## Come si riprende — scritto alla chiusura della seconda sessione del disegno, il 2026-09-29
 
-⛔ **Da sapere subito: niente è a metà.** Le sezioni dalla **1** alla **4** sono approvate e scritte; la **5** e la **6** sono
-da presentare nella prossima sessione ⚠️ **richiamo del 2026-09-29, sessione successiva:** la **5** è approvata e scritta, e resta la **6**; lo stato vive nella tabella in testa — la scelta del proprietario: *«si continua nella prossima sessione»*. Il disegno è
-**uno**, questo file, e la sessione che riprende lo **continua**: la fase è la stessa.
+⛔ **Da sapere subito: niente è a metà.** Le sezioni dalla **1** alla **5** sono approvate e scritte; la **6** è da
+presentare nella prossima sessione — la scelta del proprietario: *«prossima sessione»*. Il disegno è **uno**, questo file,
+e la sessione che riprende lo **continua**. La chiusura precedente sta in
+[`archivio/consegna-brainstorming-knowledge-base-revisione.md`](../../archivio/consegna-brainstorming-knowledge-base-revisione.md),
+parola per parola.
 
 | | Stato, e il comando che lo rifà |
 |---|---|
 | ramo | `main` allineato a `origin`: `git fetch --all --prune`, poi `git status -sb`; nessuno stash, `git stash list` |
-| i commit di questa sessione | `git log --oneline 1be712e..HEAD`: la sezione 1 con la consegna in archivio, la 2, la 3 con le fonti, la 4 con questa chiusura |
+| i commit di questa sessione | `git log --oneline 90cdbb6..HEAD`: la sezione 5, e questa chiusura |
 | codice di prodotto | **non toccato**: `git diff --stat 1be712e..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
 | cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura e prima di ogni commit, e `bash scripts/check-docs.sh` → `OK`: si rilanciano, non si citano |
-| fine-riga | questo file e i due archivi della consegna **LF**; `COMPENDIO.md`, `archivio/stato-storico.md` e `riferimenti.md` LF nell'indice e **CRLF** nell'albero, coi CR uguali alle righe: `git ls-files --eol` sui file, e `tr -cd '\r'` contato contro `wc -l` |
-| file temporanei | nessuno nel repository: gli script e le bozze stanno nello scratchpad della sessione, e chi riprende non ne ha bisogno |
+| fine-riga | questo file e l'archivio delle chiusure **LF**: `git ls-files --eol` sui file, e `tr -cd '\r'` che conta zero |
+| il puntatore | la §6 del compendio **non cambia**: dice già che il disegno è in corso, e che la tabella in testa dice che cosa viene dopo |
 
-**Il compito della sessione che riprende — le sezioni 5 e 6:**
+**Il compito della sessione che riprende — la sezione 6:**
 
 1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura, o uno dopo.
 2. La lettura obbligatoria di `CLAUDE.md`; poi **questo file per intero**, a blocchi. La consegna archiviata **non** si
    legge intera: se ne apre la riga che serve, con la domanda in mano.
 3. `bash scripts/gate.sh` all'apertura, da solo.
-4. **La sezione 5** — roadmap, tracciabilità, stella polare della GUI, design/09, e il perimetro del 13 riletto.
-   L'ingresso sono le righe *«`roadmap.md`»*, *«`tracciabilita.md`»*, *«la stella polare della GUI»* e *«design/09»*
-   dell'elenco *«Che cosa le risposte cambiano»* della consegna archiviata, **rilette** contro i documenti di adesso —
-   [`roadmap.md`](../../roadmap.md), [`tracciabilita.md`](../../tracciabilita.md), la decisione 1 e il selettore della
-   [stella polare della GUI](2026-09-07-direzione-gui-design.md), [design/09](../../design/09-l0-fisico.md) —, con la
-   ripartizione della 4.2 e le due precisazioni della 4.3, che cambiano la riga del 13 rispetto all'elenco. Il perimetro
-   del 13 si legge dalla 4.2 e dalla 1.8; AUD-004 lo sbarra ancora, e ha ora il caso di D9 scritto nel rimando di
-   ADR-0015, 3.1.
-5. **La sezione 6** — i controlli per artefatto, verificato-dedotto-assunto, le voci aperte col chiusore, e il prossimo
-   passo: il **piano dei documenti**, in una sessione sua.
-6. Poi il proprietario rilegge il disegno scritto, per intero — la skill `superpowers:brainstorming` —, e il puntatore della
+4. **La sezione 6** — i controlli per artefatto: per ogni cosa che il piano dei documenti scriverà, quale controllo la
+   esercita; verificato, dedotto e assunto, separati; le voci aperte col chiusore — la 4.6 e le K registrate della
+   consegna, rilette; e il prossimo passo: il **piano dei documenti**, in una sessione sua. L'ingresso sono le sezioni
+   1–5 di questo file, **rilette** contro i documenti di adesso.
+5. Poi il proprietario rilegge il disegno scritto, per intero — la skill `superpowers:brainstorming` —, e il puntatore della
    §6 del compendio passa al piano dei documenti.
 
 **Le decisioni prese dal coordinatore in questa sessione, col perché** — il proprietario può ribaltarle:
 
 | | Decisione | Perché, e che cosa costa se è sbagliata |
 |---|---|---|
-| 1 | i commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md`, *«senza co-autore»*, prevale sulla direttiva di sistema. Costo: un `--amend` |
-| 2 | la consegna archiviata **intera** in un file nuovo, `archivio/consegna-brainstorming-knowledge-base-revisione-intera.md`, con una riga datata in testa all'archivio delle chiusure | il nome del precedente del 2026-09-04 era già preso dall'archivio delle chiusure. Costo: due file d'archivio per la stessa revisione |
-| 3 | ogni sezione scritta **dopo** l'approvazione, con in fondo la verifica che l'approvazione chiedeva | il proprietario approva *«se tutto segue i principi … ed è coerente»*: la rilettura è la condizione, e il suo esito si scrive. Costo: qualche riga per sezione |
-| 4 | K53, le copie del checkpoint, **senza domanda**, dallo stato dell'arte: Claude Code | la regola del proprietario a D9 e D11 — ciò che i software di oggi rispondono si adotta, e al proprietario va ciò che urta —; nessuna decisione del progetto urtata. Costo: una domanda, se il proprietario la vuole |
-| 5 | ADR-0040 prende anche il **posto dei dati** di D4 | il sorgente del daemon dichiara la decisione non presa da nessun ADR, e una decisione fuori da un ADR non ha voce nella §5 del compendio — gotcha #40. Costo: un ADR più largo di quello che l'elenco nominava |
-| 6 | le fonti della sezione 3 in `riferimenti.md` subito, con la sezione | `CLAUDE.md`: una fonte va in `riferimenti.md`, e la consegna faceva lo stesso a ogni domanda. Costo: zero |
+| 1 | il commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md`, *«senza co-autore»*, prevale sulla direttiva di sistema. Costo: un `--amend` |
+| 2 | la riga 10 della roadmap **non cambia**, contro l'elenco della consegna | la regola di D15: la cartella dati e la cartella nascosta le porta chi le usa per primo, il 6 — dedotto, e scritto così nella 5.1. Costo: una riga, se il proprietario le vuole al 10 |
+| 3 | la seconda domanda della sezione 5, sulla dipendenza dell'11, **posta** e non risolta da sé | cambia l'ordine della roadmap, che è del proprietario. Costo: zero |
 
 **Vicoli ciechi di questa sessione:**
 
 | Scartato | Perché, e che cosa insegna |
 |---|---|
-| **il README di `adr-tools` come fonte della forma «modificato in parte»** | non la nomina: *«Amends»* e *«Amended by»* stanno nell'aiuto dello script `adr-new`. 📌 *Una pratica di uno strumento si cerca anche nel suo codice, non solo nel suo README* |
-| **la risposta dello strumento di lettura della sessione come citazione** | riassume con un modello piccolo: le frasi citate si sono rilette grezze con `curl`. 📌 *Una citazione si verifica sul sorgente grezzo* |
-| **copiare una tabella fino alla riga prima di un titolo** | nella consegna la riga D20 era fusa col titolo *«Come si riprende»*, senza l'a-capo, e lo script l'ha trovata solo perché controllava la riga intera. 📌 *Una riga di tabella si controlla per intero: il titolo attaccato non si vede nel testo reso* |
+| **l'elenco della consegna come perimetro della sezione 5** | portava due punti della stella polare e due di design/09; i documenti riletti ne avevano nove in più. 📌 *Un elenco ereditato si ri-deriva dal documento, non si esegue* |
+| **un comando con la barra verticale dentro una cella** | scritto di nuovo, e tolto prima del commit: copiato dalla cella rende zero — F10. 📌 *La trappola si ripete anche quando è scritta nello stesso file: il controllo è rilanciare il comando copiato dal testo grezzo* |
 
-**Da verificare alla fonte prima della sezione 5:** niente di esterno. Le righe dei documenti del repository si rileggono
-**adesso**, non dall'elenco.
+**Da verificare alla fonte prima della sezione 6:** niente di esterno.

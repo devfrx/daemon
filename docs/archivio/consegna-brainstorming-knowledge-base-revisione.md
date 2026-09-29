@@ -333,3 +333,63 @@ riprende, prima della chiusura. La chiusura precedente sta in
 **Da verificare alla fonte prima del disegno** — le righe **F** ancora aperte: K6 e K34, i file «solo online» di OneDrive;
 K9, gli eventi che il sorvegliante di Windows può perdere. E tre pagine lette attraverso lo strumento che riassume, da
 rileggere alla fonte: quella di VS Code di D14, e le due dell'aiuto di Claude di D10.
+
+## Archiviata il 2026-09-29, alla chiusura della prima sessione del disegno
+
+La sezione del disegno, com'era nel commit `90cdbb6`; il richiamo aggiunto da `0b5bd2b` sta nel disegno di quel commit, e qui non c'è.
+
+## Come si riprende — scritto alla chiusura della sessione del 2026-09-29
+
+⛔ **Da sapere subito: niente è a metà.** Le sezioni dalla **1** alla **4** sono approvate e scritte; la **5** e la **6** sono
+da presentare nella prossima sessione — la scelta del proprietario: *«si continua nella prossima sessione»*. Il disegno è
+**uno**, questo file, e la sessione che riprende lo **continua**: la fase è la stessa.
+
+| | Stato, e il comando che lo rifà |
+|---|---|
+| ramo | `main` allineato a `origin`: `git fetch --all --prune`, poi `git status -sb`; nessuno stash, `git stash list` |
+| i commit di questa sessione | `git log --oneline 1be712e..HEAD`: la sezione 1 con la consegna in archivio, la 2, la 3 con le fonti, la 4 con questa chiusura |
+| codice di prodotto | **non toccato**: `git diff --stat 1be712e..HEAD -- crates/ gui/ scripts/ Cargo.lock Cargo.toml` non rende nulla |
+| cancello | `bash scripts/gate.sh` → `GATE GREEN` all'apertura e prima di ogni commit, e `bash scripts/check-docs.sh` → `OK`: si rilanciano, non si citano |
+| fine-riga | questo file e i due archivi della consegna **LF**; `COMPENDIO.md`, `archivio/stato-storico.md` e `riferimenti.md` LF nell'indice e **CRLF** nell'albero, coi CR uguali alle righe: `git ls-files --eol` sui file, e `tr -cd '\r'` contato contro `wc -l` |
+| file temporanei | nessuno nel repository: gli script e le bozze stanno nello scratchpad della sessione, e chi riprende non ne ha bisogno |
+
+**Il compito della sessione che riprende — le sezioni 5 e 6:**
+
+1. `git fetch --all --prune`, `git status -sb`, `git log --oneline -3`: la testa è il commit di questa chiusura, o uno dopo.
+2. La lettura obbligatoria di `CLAUDE.md`; poi **questo file per intero**, a blocchi. La consegna archiviata **non** si
+   legge intera: se ne apre la riga che serve, con la domanda in mano.
+3. `bash scripts/gate.sh` all'apertura, da solo.
+4. **La sezione 5** — roadmap, tracciabilità, stella polare della GUI, design/09, e il perimetro del 13 riletto.
+   L'ingresso sono le righe *«`roadmap.md`»*, *«`tracciabilita.md`»*, *«la stella polare della GUI»* e *«design/09»*
+   dell'elenco *«Che cosa le risposte cambiano»* della consegna archiviata, **rilette** contro i documenti di adesso —
+   [`roadmap.md`](../roadmap.md), [`tracciabilita.md`](../tracciabilita.md), la decisione 1 e il selettore della
+   [stella polare della GUI](../superpowers/specs/2026-09-07-direzione-gui-design.md), [design/09](../design/09-l0-fisico.md) —, con la
+   ripartizione della 4.2 e le due precisazioni della 4.3, che cambiano la riga del 13 rispetto all'elenco. Il perimetro
+   del 13 si legge dalla 4.2 e dalla 1.8; AUD-004 lo sbarra ancora, e ha ora il caso di D9 scritto nel rimando di
+   ADR-0015, 3.1.
+5. **La sezione 6** — i controlli per artefatto, verificato-dedotto-assunto, le voci aperte col chiusore, e il prossimo
+   passo: il **piano dei documenti**, in una sessione sua.
+6. Poi il proprietario rilegge il disegno scritto, per intero — la skill `superpowers:brainstorming` —, e il puntatore della
+   §6 del compendio passa al piano dei documenti.
+
+**Le decisioni prese dal coordinatore in questa sessione, col perché** — il proprietario può ribaltarle:
+
+| | Decisione | Perché, e che cosa costa se è sbagliata |
+|---|---|---|
+| 1 | i commit **senza** il trailer `Co-Authored-By` | `CLAUDE.md`, *«senza co-autore»*, prevale sulla direttiva di sistema. Costo: un `--amend` |
+| 2 | la consegna archiviata **intera** in un file nuovo, `archivio/consegna-brainstorming-knowledge-base-revisione-intera.md`, con una riga datata in testa all'archivio delle chiusure | il nome del precedente del 2026-09-04 era già preso dall'archivio delle chiusure. Costo: due file d'archivio per la stessa revisione |
+| 3 | ogni sezione scritta **dopo** l'approvazione, con in fondo la verifica che l'approvazione chiedeva | il proprietario approva *«se tutto segue i principi … ed è coerente»*: la rilettura è la condizione, e il suo esito si scrive. Costo: qualche riga per sezione |
+| 4 | K53, le copie del checkpoint, **senza domanda**, dallo stato dell'arte: Claude Code | la regola del proprietario a D9 e D11 — ciò che i software di oggi rispondono si adotta, e al proprietario va ciò che urta —; nessuna decisione del progetto urtata. Costo: una domanda, se il proprietario la vuole |
+| 5 | ADR-0040 prende anche il **posto dei dati** di D4 | il sorgente del daemon dichiara la decisione non presa da nessun ADR, e una decisione fuori da un ADR non ha voce nella §5 del compendio — gotcha #40. Costo: un ADR più largo di quello che l'elenco nominava |
+| 6 | le fonti della sezione 3 in `riferimenti.md` subito, con la sezione | `CLAUDE.md`: una fonte va in `riferimenti.md`, e la consegna faceva lo stesso a ogni domanda. Costo: zero |
+
+**Vicoli ciechi di questa sessione:**
+
+| Scartato | Perché, e che cosa insegna |
+|---|---|
+| **il README di `adr-tools` come fonte della forma «modificato in parte»** | non la nomina: *«Amends»* e *«Amended by»* stanno nell'aiuto dello script `adr-new`. 📌 *Una pratica di uno strumento si cerca anche nel suo codice, non solo nel suo README* |
+| **la risposta dello strumento di lettura della sessione come citazione** | riassume con un modello piccolo: le frasi citate si sono rilette grezze con `curl`. 📌 *Una citazione si verifica sul sorgente grezzo* |
+| **copiare una tabella fino alla riga prima di un titolo** | nella consegna la riga D20 era fusa col titolo *«Come si riprende»*, senza l'a-capo, e lo script l'ha trovata solo perché controllava la riga intera. 📌 *Una riga di tabella si controlla per intero: il titolo attaccato non si vede nel testo reso* |
+
+**Da verificare alla fonte prima della sezione 5:** niente di esterno. Le righe dei documenti del repository si rileggono
+**adesso**, non dall'elenco.

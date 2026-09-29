@@ -5,6 +5,10 @@
 l'ultima chiusura di sessione — `CLAUDE.md`, *«Un verbale di correzione non resta nel documento corretto»*. Le chiusure
 precedenti stanno qui, parola per parola, coi link riscritti per questa cartella.
 
+⚠️ **Richiamo del 2026-09-29, all'apertura del disegno:** a quel percorso vive ora il **disegno** della revisione,
+scritto sul posto; la consegna intera, con la sua ultima chiusura, sta in
+[`consegna-brainstorming-knowledge-base-revisione-intera.md`](consegna-brainstorming-knowledge-base-revisione-intera.md).
+
 ## Archiviata il 2026-09-28, alla chiusura della sessione che ha aperto la revisione
 
 La sezione scritta all'apertura del brainstorming, com'era nel commit `9bdbb59`.

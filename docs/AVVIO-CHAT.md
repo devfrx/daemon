@@ -12,6 +12,8 @@ porta, e quella riga delega esplicitamente a qui.
 Traguardo 6 ha portato il quinto.** Il numerale è **tolto e non riallineato** — gotcha **#31**: quanti
 siano lo dice `ls crates/kernel/tests/frozen/*.cbor`, e un comando non marcisce.
 
+⚠️ **RICHIAMO DEL 2026-09-30: il messaggio diceva `le 39 ADR`, e con ADR-0040 il totale è cambiato.** Il numerale è **tolto e non riallineato** — gotcha **#31**, e la risposta A del proprietario alla prima domanda della 6.1 del [disegno della revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md): una cifra che vive in più documenti si toglie, non si ricorregge. Quanti siano lo dice `ls docs/adr/*.md`.
+
 ⛔ **Prima questo campo portava un valore vero, e non ha funzionato.** È stato incollato
 tale e quale **due volte** — l'ultima vecchio di **quattro** commit — e due commit
 (`a2ac9f9`, `c7f3203`) sono serviti solo a rincorrerlo. Un valore d'esempio valido non si
@@ -160,7 +162,7 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
 
 LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
   1. CLAUDE.md
-  2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le 39 ADR
+  2. docs/COMPENDIO.md — contiene TUTTE le decisioni del progetto: le ADR
      compresse, le sei invarianti, le proprietà non retrofittabili, lo stack
      (§4), lo stato di oggi e il prossimo passo (§6), il non rilitigabile (§7),
      cosa NON rifare (§8), i gotcha (§9 — quanti, lo dice il suo titolo),

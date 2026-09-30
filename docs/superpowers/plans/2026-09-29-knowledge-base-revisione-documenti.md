@@ -447,7 +447,7 @@ che ha cambiato sono provati in sequenza — P-19. ⏳ **L'esecuzione non è com
 
 | # | Compito | Commit | Stato |
 |---|---|---|---|
-| **1** | ADR-0040, e ciò che il cancello pretende con lui | — | ⏳ |
+| **1** | ADR-0040, e ciò che il cancello pretende con lui | uno | ✅ 2026-09-30 |
 | **2** | i rimandi in testa a dieci ADR, e le loro voci nel compendio | — | ⏳ |
 | **3** | il disegno del 2026-09-04, e la cattura in tutte le sue case | — | ⏳ |
 | **4** | la spec del sotto-progetto 1 in due punti, design/09 e design/10 | — | ⏳ |

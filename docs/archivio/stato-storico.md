@@ -2684,3 +2684,9 @@ del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta propr
 il suo perimetro si rilegge con l'esito della revisione. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill
 dichiarative: è una sua decisione e non del piano. Il perimetro sta nel [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md),
 che chi riprende quel fronte legge **per intero**; brainstorming e disegno del 13 vengono prima del piano, in sessioni distinte.
+
+## L'intestazione del compendio, com'era — archiviata il 2026-09-30, al compito 1 del piano dei documenti della revisione della knowledge base
+
+⚠️ **Vera il giorno in cui fu scritta.** Uscita dal compendio parola per parola, col link riscritto per questa cartella.
+
+**Aggiornato il 2026-09-30**, con la **prima decisione della mappa del metodo**: il piano dei documenti si esegue adesso — il puntatore della §6 —; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.

@@ -17,7 +17,7 @@
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — il
 > comando in fondo alla §12 — e l'idea è già qui.
 
-**Aggiornato il 2026-09-30**, con la **prima decisione della mappa del metodo**: il piano dei documenti si esegue adesso — il puntatore della §6 —; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](archivio/stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+**Aggiornato il 2026-09-30**, col **piano dei documenti della revisione della knowledge base** in esecuzione: **ADR-0040** — la sua voce in §5, il rimando nella voce di ADR-0022, i totali, la riga del caso nuovo in §13 — e, compito per compito, i rimandi nelle voci della §5; fin dove, lo dice la tabella della posizione del piano. Questa riga com'era è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Il contenuto di merito nuovo è la voce di ADR-0040, coi rimandi. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
 
 ---
 
@@ -132,7 +132,7 @@ Solo **due delle cinque** — `kernel` e `simulator` — sono vincolate da ADR-0
 
 ## 5. Le decisioni, una per ADR
 
-Sono **39 ADR**, e **39 ADR in stato Accepted** — l'ultimo, 0029, chiuso il 2026-09-10 con SP-8.
+Sono **40 ADR**, e **40 ADR in stato Accepted** — l'ultimo, 0040, il 2026-09-30, dalla revisione della knowledge base.
 Ordine numerico. Il *perché*, le alternative scartate e i costi accettati stanno nel
 file di ciascuno: `docs/adr/`.
 
@@ -360,7 +360,7 @@ suite sarebbe una falsa sicurezza. Rimando: ADR-0034 aggiunge il **secondo asse*
 
 I segreti sono esclusi perché **un backup che trasporta chiavi API è un vettore di
 fuga**, non una comodità. Quattro requisiti del motore di persistenza; il **quarto** —
-ogni operazione di I/O **iniettabile** — è quello che ha poi deciso ADR-0032. ⚠️ **Rimando del 2026-09-08, in testa all'ADR:** le **guide** sono file della cartella della knowledge base (disegno del 2026-09-04); la configurazione contiene i profili e, col 2, la **disposizione dei pannelli**, raggiunta dal kernel da una **settima porta** — stella polare della GUI, §2.
+ogni operazione di I/O **iniettabile** — è quello che ha poi deciso ADR-0032. ⚠️ **Rimando del 2026-09-08, in testa all'ADR:** le **guide** sono file della cartella della knowledge base (disegno del 2026-09-04); la configurazione contiene i profili e, col 2, la **disposizione dei pannelli**, raggiunta dal kernel da una **settima porta** — stella polare della GUI, §2. ⚠️ **Rimando del 2026-09-30, in testa all'ADR:** **modificato in parte da ADR-0040** — la riga «artefatti», le guide e la conseguenza sulla base di conoscenza; il resto regge, e lo stato resta `Accepted`.
 
 **0023 — Cifratura a riposo con chiavi dell'OS, e gestore dei segreti unico.** Le
 chiavi le gestiscono le facility dell'OS, raggiunte dal modulo di piattaforma (I3); il
@@ -574,6 +574,16 @@ lettura — e lo paga il sotto-progetto **12**; la Voce riusa. Tre ipotesi le mi
 la sonda S3; il confinamento del worker (decisione 13) e la terza quota (decisione 9) restano
 **registrati**. Le fonti F1–F9 in [`riferimenti.md`](riferimenti.md). ✅ **Rimando del 2026-09-05, nella riga del perimetro negativo:** la destinazione di una cattura è **decisa** — nella knowledge base come artefatto, la run la vede come riferimento (decisione 7 dei gesti, chiusa dal disegno della knowledge base).
 
+**0040 — Dove vivono i dati, e che cosa salva il programma.** **Modifica ADR-0022 in tre punti** — la riga
+«artefatti», le guide, la conseguenza sulla base di conoscenza —, e lo stato di 0022 resta `Accepted`. I **dati del
+programma** — giornale, configurazione, indice, copie del checkpoint — stanno nella cartella dati per utente del sistema,
+e la configurazione porta il percorso della **root**. I **file del proprietario** — la root e le zone di lavoro, guide
+comprese — **non** entrano nel backup del programma: li salvano i suoi backup e git. L'eccezione sono i **router**, in
+`.<nomeapp>/` alla root, che il programma salva. Il backup porta giornale, configurazione e router — mai i segreti, né
+l'indice, né i pesi — e **dice che cosa resta fuori** quando lo crea. Le **copie del checkpoint** sono in chiaro, fuori
+dal backup, potate come vuole ADR-0018: dopo un ripristino un passo di prima non si annulla più. La cartella dati è un
+**percorso protetto e privato** — il rimando di ADR-0016.
+
 ---
 
 ## 6. Dove siamo, e cosa viene dopo
@@ -738,7 +748,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 | | |
 |---|---|
-| ❌ **ri-derivare l'architettura** | è nei 39 ADR, ciascuno con alternative scartate e motivo |
+| ❌ **ri-derivare l'architettura** | è nei 40 ADR, ciascuno con alternative scartate e motivo |
 | ❌ **riscrivere `tracciabilita.md` da zero** | le funzionalità sono già mappate, e **quante** lo dice il comando nel riquadro in testa a [`tracciabilita.md`](tracciabilita.md): si **aggiorna** — riletta alla chiusura del sotto-progetto 1 il 2026-09-03, e si riaggiorna a ogni sotto-progetto chiuso |
 | ❌ **ri-cercare lo stato dell'arte già tracciato** | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
 | ❌ **rifare gli spike SP-5, SP-6, SP-7 e SP-8** | esiti, versioni e comandi in `spikes/RISULTATI.md` — coi **seed** per SP-5 e SP-6, che SP-7 e SP-8 non hanno; per SP-7 e SP-8 i protocolli congelati in `spikes/gesti/PROTOCOLLO.md` e `spikes/gui-shell/PROTOCOLLO.md` |
@@ -904,6 +914,7 @@ Per questo la sua completezza **non è lasciata alla buona volontà**:
 |---|---|
 | ADR nuovo | una voce in **§5** — obbligatoria, la pretende lo script |
 | ADR superato | la voce resta e si marca; gli ADR sono **append-only** |
+| ADR **superato in parte** | la voce resta e riceve la riga del rimando; l'ADR nuovo ha la sua voce, che dice quali righe modifica — la forma di ADR-0040 su ADR-0022 |
 | voce della riapertura chiusa | la tabella e l'ordine in **§6** |
 | gotcha nuovo | ⛔ **niente qui:** la casa è **una sola**, la sezione *«I gotcha»* di [`HANDOFF.md`](HANDOFF.md), e la §9 vi **rimanda** invece di copiare. |
 | **misura nuova** | le **fonti** e i **comandi** in `riferimenti.md`, la riga d'esito in `HANDOFF.md`, e le evidenze nell'ADR o nella sezione che la misura decide. ⛔ I prototipi restano nello scratchpad e si ripuliscono |

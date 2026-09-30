@@ -3,7 +3,7 @@
 Piano generale del progetto. **Da aggiornare a ogni sotto-progetto chiuso**, insieme a
 [tracciabilità](tracciabilita.md).
 
-Ultimo aggiornamento: **2026-09-29**, con la riga del [piano dei documenti della revisione della knowledge base](superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md) nella tabella dei piani: scritto; il pre-controllo e l'esecuzione, in sessioni loro.
+Ultimo aggiornamento: **2026-09-30**, col compito 1 del [piano dei documenti della revisione della knowledge base](superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md): il totale degli ADR, con ADR-0040.
 ⚠️ **Questa riga diceva *«2026-08-11»*** mentre il file era stato toccato dopo, e **due**
 passate l'avevano vista senza prenderla — la ragione scritta era che quel ciclo non l'aveva
 resa falsa, e che la riga confonde *«quando l'ho scritto»* con *«a che cosa si riferisce»*.
@@ -20,7 +20,7 @@ con `git log -1 --format=%ad --date=short -- docs/roadmap.md` è una **riga di c
 
 ## Stato in una riga
 
-> Spec del kernel **completa e approvata** (§0–§10, 39 ADR). Stack deciso **per intero**: core in **Rust**,
+> Spec del kernel **completa e approvata** (§0–§10, 40 ADR). Stack deciso **per intero**: core in **Rust**,
 > interfaccia web in **Vue 3**, worker ML in **Python**, guscio **Electron** —
 > [ADR-0029](adr/0029-guscio-della-gui.md), `Accepted` il 2026-09-10 con **SP-8**.
 >

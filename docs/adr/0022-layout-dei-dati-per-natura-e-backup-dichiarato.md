@@ -17,6 +17,20 @@
 > nel backup, permanente — **non cambia**; il diagramma vivo è
 > [design/09](../design/09-l0-fisico.md). **Nessuna riga di questo ADR è superata.**
 
+> ⚠️ **Rimando del 2026-09-30 — modificato da ADR-0040, in tre punti.**
+> [ADR-0040](0040-dove-vivono-i-dati-e-che-cosa-salva-il-programma.md), dal
+> [disegno della revisione della knowledge base](../superpowers/specs/2026-09-28-knowledge-base-revisione-design.md) —
+> risposte D12 e D17, approvate dal proprietario il 2026-09-29 —, cambia **tre** punti di questo ADR: nella tabella del
+> punto 1 della *Decision*, la riga **«artefatti»** e le **guide** della riga «configurazione, guide, profili»; e la
+> conseguenza *«La base di conoscenza sopravvive alla reinstallazione perché i documenti sorgente e la configurazione
+> sono nel backup»*. I file
+> del proprietario — la root e le zone di lavoro, guide comprese — **non** entrano nel backup del programma; l'eccezione
+> sono i **router**, in `.<nomeapp>/` alla root, che il programma salva. Il rimando del 2026-09-08, che per le guide diceva
+> *«la politica della riga … non cambia»*, si legge con ADR-0040. E nel rimando del 2026-08-07, in fondo, il backup viene
+> *«dopo il 5, il 6 e il 9»*: il 5 esce — l'11 dipende da 6 e 9, la seconda risposta della 5.5 del disegno —, e la
+> ragione di 6 e 9, la non-vacuità, regge. **Le altre righe reggono:** la separazione per natura, il giornale cifrato, i
+> segreti mai, gli indici fuori, i requisiti del motore; lo stato resta `Accepted`.
+
 ## Context
 
 [ADR-0007](0007-giornale-write-ahead-e-riconciliazione.md) e

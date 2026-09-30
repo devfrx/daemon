@@ -31,7 +31,7 @@ apre oggi `journal.redb` e `layout.redb` nella cartella da cui parte.
 
 **Lo stato dell'arte, letto alla fonte il 2026-09-29** e portato in [`riferimenti.md`](../riferimenti.md): in Claude
 Code le copie per annullare stanno nella cartella dell'applicazione e non nel progetto, in chiaro, protette dai permessi
-del sistema operativo, cancellate dopo trenta giorni per default, e in nessun backup; `adr-tools` lega due ADR con
+del sistema operativo, cancellate dopo trenta giorni per default, e non sostituiscono il controllo di versione; `adr-tools` lega due ADR con
 *«Amends»* e *«Amended by»* quando il nuovo ne cambia una parte, accanto al superamento che cambia lo stato del vecchio.
 
 ### Alternative considerate

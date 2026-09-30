@@ -17,7 +17,7 @@
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — il
 > comando in fondo alla §12 — e l'idea è già qui.
 
-**Aggiornato il 2026-09-30**, col **piano dei documenti della revisione della knowledge base** in esecuzione: **ADR-0040** — la sua voce in §5, il rimando nella voce di ADR-0022, i totali, la riga del caso nuovo in §13 — e, compito per compito, i rimandi nelle voci della §5; fin dove, lo dice la tabella della posizione del piano. Questa riga com'era è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Il contenuto di merito nuovo è la voce di ADR-0040, coi rimandi. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+**Aggiornato il 2026-09-30**, col **piano dei documenti della revisione della knowledge base** in esecuzione: **ADR-0040** — la sua voce in §5, il rimando nella voce di ADR-0022, i totali, il caso nuovo del superamento in parte in §13 e in §7 — e, compito per compito, i rimandi nelle voci della §5; fin dove, lo dice la tabella della posizione del piano. Questa riga e il puntatore della §6, com'erano, sono in [`archivio/stato-storico.md`](archivio/stato-storico.md). Il contenuto di merito nuovo è la voce di ADR-0040, coi rimandi. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
 
 ---
 

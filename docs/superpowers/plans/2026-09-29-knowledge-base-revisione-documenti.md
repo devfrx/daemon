@@ -445,7 +445,7 @@ comando: `git log --format=%h --diff-filter=A -- docs/superpowers/plans/2026-09-
 
 | # | Compito | Commit | Stato |
 |---|---|---|---|
-| **1** | ADR-0040, e ciò che il cancello pretende con lui | due | ✅ 2026-09-30 |
+| **1** | ADR-0040, e ciò che il cancello pretende con lui | tre | ✅ 2026-09-30 |
 | **2** | i rimandi in testa a dieci ADR, e le loro voci nel compendio | — | ⏳ |
 | **3** | il disegno del 2026-09-04, e la cattura in tutte le sue case | — | ⏳ |
 | **4** | la spec del sotto-progetto 1 in due punti, design/09 e design/10 | — | ⏳ |
@@ -506,6 +506,8 @@ Le voci si chiamano **ER-1**, **ER-2**…, e non *E1*…: *E1*…*E6* sono i nom
 | **ER-16** | ⚠️ **Compito 1 — la §7 del compendio, e la frase gemella di `HANDOFF.md`, conoscevano un solo modo di superare un ADR, `Superseded by`.** Trovata dalla revisione del compito 1, il 2026-09-30: dal compito 1 `CLAUDE.md` e la §13 conoscono il superamento **in parte**, e le due letture d'apertura dicevano due cose diverse. ✅ **La §7 del compendio** nomina il caso nuovo, dal coordinatore nel commit di chiusura, col margine misurato prima — comando C. ⚠️ **`HANDOFF.md` non si tocca**, come per ER-5: la riga 14 della Definizione di «fatto» ne vuole solo i totali; la frase è **registrata** fra le voci aperte, col proprietario come chiusore |
 | **ER-17** | ⚠️ **Compito 1, il testo di ADR-0040 — il seguito copiava chi costruisce le due cartelle, e la casa unica di *chi costruisce che cosa* è la sezione 4 del disegno.** Trovata dalla revisione del compito 1, il 2026-09-30: la 3.2 del disegno, *«Il seguito»*, dice soltanto il rimando, e il recinto aggiungeva *«il sotto-progetto 6, se nessuno le porta prima»* — una seconda casa in un file append-only, gotcha #68. ✅ **Decisione del coordinatore, A:** la frase finisce col rimando, nel file e nel recinto del compito 1, prima del push — l'ADR non era ancora pubblicato |
 | **ER-18** | ⚠️ **Compito 1 — il commento sopra `LAYOUT_PATH`, in `crates/daemon/src/main.rs`, dice che la disposizione dei pannelli non va nel backup** — *«a window layout is neither»*, cioè né cifrata né salvata —, e la disposizione sta nella configurazione, che nel backup ci va: il rimando del 2026-09-08 di ADR-0022, e ADR-0040 al punto 4. Trovata dalla revisione del compito 1, il 2026-09-30; il commento è di prima del piano. Il vincolo 2 vieta il codice: **registrata** fra le voci aperte, accanto a ER-3, nello stesso blocco di commenti e con lo stesso chiusore |
+| **ER-19** | ⚠️ **Compito 1 — tre commit, non uno.** La *Forma* dice *«un commit ciascuno»*, e POS1…POS6 scrivono «uno» nella colonna *Commit*. Trovata dalla ri-revisione del compito 1, il 2026-09-30: la cura della revisione e la sua seconda ondata sono commit **del compito** — col suo prefisso, perché toccano i suoi artefatti, ADR-0040 e la riga della data del compendio —, e la colonna dice il conto che trova `git log --grep`, come vuole D21. ✅ La riga del compito 1 dice «tre». Un compito la cui revisione chiede una cura ha più di un commit: chi lo chiude riallinea la sua riga col conto, e POS2…POS6 restano come sono |
+| **ER-20** | ⚠️ **Compito 1, il testo di ADR-0040 — il *Context* attribuiva alla fonte *«in nessun backup»*, che le due pagine di Claude Code non dicono: è dedotto.** Trovata dalla revisione del compito 1, come Nit, e ripresa dalla ri-revisione, il 2026-09-30: le letture del 2026-09-29 in `riferimenti.md`, nella sezione delle fonti del disegno, dicono la cartella dell'applicazione, il chiaro, il permesso del sistema operativo, i trenta giorni e *«Not a replacement for version control»*, e nessun backup. ✅ **Decisione del coordinatore, come ER-17 e per la stessa finestra:** la frase dice ciò che la fonte dice — le copie *«non sostituiscono il controllo di versione»* —, nel file e nel recinto del compito 1, prima del push |
 
 La sonda di ER-1, fuori dalla tabella perché è lunga: `H` è il programma, e i due argomenti sono il file e il numero del
 blocco `mermaid` dentro il file.
@@ -650,8 +652,8 @@ chiusore — P-13. Si dichiarano perché chi esegue le sappia, non perché le to
 | **P-5** — la §8.5.2 della spec del sotto-progetto 1 dice ancora *«il filesystem reale, che arriva con il sotto-progetto 5»*; e il suo consuntivo, la riga 2 della tabella di F2 in `HANDOFF.md`, dice *«dipendente da 5, 6 e 9»* — ER-5 | la spec; `HANDOFF.md`; P-5 qui sopra, ER-5 | il **proprietario**, con la §8: il vincolo 3 la lascia com'è, e la riga 14 della Definizione di «fatto» vuole da `HANDOFF.md` solo i totali |
 | **i due commenti di `crates/daemon/src/main.rs`**, sopra `JOURNAL_PATH` e sopra `LAYOUT_PATH`: dove stia la cartella dati per utente è *«a decision no ADR has taken»*, e dal compito 1 la prende ADR-0040, punto 1 — ER-3 | il sorgente; ER-3 | chi costruisce per primo la **cartella dati per utente**, e con lei riscrive i due percorsi e i loro commenti: il **6**, se nessuno la porta prima — la 4.2 del disegno, D15 |
 | **il commento sopra `LAYOUT_PATH`**, nello stesso blocco: *«a window layout is neither»* — né cifrata né nel backup —, mentre la disposizione sta nella configurazione, che nel backup ci va — ER-18 | il sorgente; ER-18 | lo stesso chiusore dei due commenti qui sopra: il **6**, se nessuno porta prima la cartella dati |
-| **le copie del checkpoint e la cartella dati nascono leggibili dal solo proprietario, anche su Linux** — la lezione del rimando del 2026-08-18 di ADR-0023, dove un file nasceva leggibile da ogni utente della macchina finché nessuno gli dava il permesso; ADR-0040 accetta le copie in chiaro, protette dal sistema operativo — R8 della revisione del compito 1 | ADR-0040, punto 5 e *Negative (accettate)*; la revisione del compito 1, nella cartella del dispaccio | il **6**, che costruisce le copie e la cartella dati — la 4.2 del disegno |
-| **la frase di `HANDOFF.md`** che conosce un solo modo di superare un ADR, `Superseded by` — la gemella della §7 del compendio, che il compito 1 ha corretto — ER-16 | `HANDOFF.md`, la frase *«Rimettere in discussione uno richiede un ADR nuovo che lo superi»*; ER-16 | il **proprietario**: la riga 14 della Definizione di «fatto» ne vuole solo i totali, come per P-5 |
+| **le copie del checkpoint e la cartella dati nascono leggibili dal solo proprietario, anche su Linux** — la lezione del rimando del 2026-08-18 di ADR-0023, dove un file nasceva leggibile da ogni utente della macchina finché nessuno gli dava il permesso; ADR-0040 accetta le copie in chiaro, protette dal sistema operativo — R8 della revisione del compito 1 | ADR-0040, punto 5 e *Negative (accettate)*; la revisione del compito 1, nella cartella del dispaccio | il **6**, che costruisce le copie e, se nessuno la porta prima, la cartella dati — la 4.2 del disegno |
+| **la frase di `HANDOFF.md`** che conosce un solo modo di superare un ADR, `Superseded by` — la gemella della §7 del compendio, che il compito 1 ha corretto — ER-16 | `HANDOFF.md`, la frase che comincia *«Rimetterne in discussione uno»*; ER-16 | il **proprietario**: la riga 14 della Definizione di «fatto» ne vuole solo i totali, come per P-5 |
 | 🆕 **il passo visivo** — i due diagrammi che il compito 4 cambia, in design/09 e design/10, **nessuno li disegna**: il piano li controlla come testo, e il cancello non conosce mermaid — `grep -rn -i mermaid scripts/` non rende niente, 2026-09-29. Verificato che i nomi delle caselle nuove, `R` e `P`, non si scontrano con quelli che ci sono; **non** verificato che i due diagrammi si disegnino | posta al proprietario il 2026-09-29 in A/B — **A**, il consiglio: un passo nel compito 4, i due diagrammi disegnati prima e dopo nel browser integrato, lo sguardo del revisore e il suo; **B**: i soli controlli sul testo — e rimandata da lui, *«tempo al tempo»* | ✅ **deciso dal proprietario il 2026-09-29, A**, riposta per prima nel pre-controllo: la voce **ER-1** dell'errata |
 
 ---
@@ -821,7 +823,7 @@ apre oggi `journal.redb` e `layout.redb` nella cartella da cui parte.
 
 **Lo stato dell'arte, letto alla fonte il 2026-09-29** e portato in [`riferimenti.md`](../riferimenti.md): in Claude
 Code le copie per annullare stanno nella cartella dell'applicazione e non nel progetto, in chiaro, protette dai permessi
-del sistema operativo, cancellate dopo trenta giorni per default, e in nessun backup; `adr-tools` lega due ADR con
+del sistema operativo, cancellate dopo trenta giorni per default, e non sostituiscono il controllo di versione; `adr-tools` lega due ADR con
 *«Amends»* e *«Amended by»* quando il nuovo ne cambia una parte, accanto al superamento che cambia lo stato del vecchio.
 
 ### Alternative considerate
@@ -2016,20 +2018,22 @@ sotto-progetto si chiude** con questo piano: `roadmap.md`, `README.md` e `tracci
 
 ⛔ **Da sapere subito: niente è a metà.** Il compito 1 è **eseguito, rivisto e curato**: ADR-0040 esiste, e con lui ciò che
 il cancello pretende. La revisione ha trovato due Importanti, entrambi nel **dettato** — la testa della posizione, ER-13 ed
-ER-14 —, e sei Minori; le cure sono del coordinatore, nel commit di chiusura, e le voci stanno nell'errata, ER-11…ER-18.
-Tutto è pushato: si riparte anche dall'altra macchina, dopo il fetch. La consegna precedente, quella all'esecuzione, sta in
+ER-14 —, sei Minori e tre Nit; le cure sono del coordinatore, prima del push. La **ri-revisione**, voluta dal proprietario su
+`opus`, le ha trovate tutte risolte, e i suoi rilievi di sola prosa li ha chiusi il coordinatore a mano — gotcha #76. Le voci
+stanno nell'errata, ER-11…ER-20. Tutto è pushato: si riparte anche dall'altra macchina, dopo il fetch. La consegna
+precedente, quella all'esecuzione, sta in
 [archivio](../../archivio/consegna-piano-knowledge-base-revisione-documenti.md), parola per parola.
 
 | | Stato, e il comando che lo rifà |
 |---|---|
 | ramo | `main` allineato a `origin`: `git fetch --all --prune`, `git status -sb`; nessuno stash, e nessun worktree oltre al principale — `git worktree list` |
-| i commit di questa sessione | `git log --oneline dd0e265..HEAD`: il pre-dispaccio, il compito 1, la chiusura |
+| i commit di questa sessione | `git log --oneline dd0e265..HEAD`: il pre-dispaccio, e i tre commit del compito 1 — l'implementatore, la cura della revisione, la seconda ondata —, ER-19 |
 | la posizione | la tabella in testa al piano; i commit di un compito li trova `git log --oneline --grep='knowledge-base-revisione(compito N)'` |
 | codice di prodotto | **non toccato**: il comando D da `<base>` non rende nulla |
 | cancello | `bash scripts/gate.sh` → `GATE GREEN` e `bash scripts/check-docs.sh` → `OK`, all'apertura e prima di ogni commit: si rilanciano, non si citano |
 | il margine del compendio | il comando C |
-| i blocchi che restano | il `--check` di E2…E6 e di POS2…POS6, col comando sotto questa tabella: tutti `checked` alla chiusura del compito 1 |
-| il dispaccio | la cartella tracciata `docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti-esecuzione/`: il modello del prompt, `dispatch-task-1.md`; l'estrattore del brief, `_extract_brief_1.py`; e del compito 1 il prompt spedito, il rapporto, il prompt del revisore e la revisione |
+| i blocchi che restano | il `--check` di E2…E6 e di POS2…POS6, col comando sotto questa tabella: tutti `checked` alla chiusura del compito 1; e la ri-revisione ha rifatto in sequenza i compiti 2–6 su un clone, `check-docs.sh` → `OK` dopo ciascuno |
+| il dispaccio | la cartella tracciata `docs/superpowers/plans/2026-09-29-knowledge-base-revisione-documenti-esecuzione/`: il modello del prompt, `dispatch-task-1.md`; l'estrattore del brief, `_extract_brief_1.py`; e del compito 1 il prompt spedito, il rapporto, i prompt e i rapporti della revisione e della ri-revisione |
 | il puntatore | la §6 del compendio: l'esecuzione è in corso, e i ticket della mappa si alternano coi compiti a scelta del proprietario |
 
 ```bash
@@ -2046,7 +2050,8 @@ S=<scratchpad>; for b in e2 e3 e4 e5 e6 pos2 pos3 pos4 pos5 pos6; do printf '%s:
    `_extract_brief_N.py` sul modello di `_extract_brief_1.py`, coi pezzi che il compito nomina; il prompt dal modello
    `dispatch-task-1.md`, coi campi della macchina; il costo detto al proprietario, e il suo sì.
 4. Il compito, un subagente fresco, e la revisione con la regola 5 di *«Come si esegue un compito»*; poi la chiusura della
-   sessione: questa sezione riscritta, e questa in archivio, nello stesso file delle consegne di prima.
+   sessione: questa sezione riscritta, e questa in archivio, nello stesso file delle consegne di prima. Se la revisione
+   chiede una cura, la riga della posizione dice il conto dei commit — ER-19.
 5. ⚠️ **Il compito 2 chiude la finestra di ER-15**: fino a lui ADR-0040 rimanda a un rimando di ADR-0016 che non c'è ancora.
 
 **Il costo misurato, il 2026-09-30** — per la stima del prossimo dispaccio:
@@ -2055,21 +2060,25 @@ S=<scratchpad>; for b in e2 e3 e4 e5 e6 pos2 pos3 pos4 pos5 pos6; do printf '%s:
 |---|---|---|---|---|
 | implementatore del compito 1 | `sonnet` | ~272k | 58 | ~20 min |
 | revisore del compito 1 | `opus` | ~452k | 124 | ~38 min |
+| ri-revisore della cura | `opus` | ~369k | 127 | ~36 min |
 
-La banda detta al proprietario prima del dispaccio era 0,5–0,8 milioni di token: in tutto ~0,72, dentro.
+La banda detta al proprietario prima del dispaccio era 0,5–0,8 milioni di token, più 0,4–0,8 per un giro di cura: in tutto
+~1,09 milioni, dentro. ⚠️ La ri-revisione di una cura di sola prosa è costata quasi quanto la revisione: rifà i compiti che
+restano su un clone.
 
 **Le decisioni prese in questa sessione, col perché** — il proprietario può ribaltarle:
 
 | | Decisione | Perché, e che cosa costa se è sbagliata |
 |---|---|---|
-| 1 | ER-9 scritta come *«si annota al Passo 1, ed è la stessa al Passo 4»*, invece di riallineare il `6` a `8` | ogni sessione che archivia il puntatore muove quel numero: un conto che si muove non si prescrive — gotcha #31. Costo: nessuno |
+| 1 | ER-9: al Passo 1 il valore sull'archivio si annota, e al Passo 4 è lo stesso — invece di riallineare il `6` a `8` | ogni sessione che archivia il puntatore muove quel numero: un conto che si muove non si prescrive — gotcha #31. Costo: nessuno |
 | 2 | il Passo 5 diviso: l'implementatore committa, il coordinatore pusha dopo la revisione | il precedente del design system, E120: la cura della revisione arriva prima della pubblicazione. Costo: il push aspetta la revisione |
 | 3 | l'implementatore su `sonnet`, il revisore su `opus` | la risposta A del proprietario, col costo detto: i blocchi sono dettati parola per parola, e il giudizio sta nella revisione. Costo: nessuno, misurato |
-| 4 | le cure della revisione le fa il **coordinatore**, nel commit di chiusura, senza un giro dell'implementatore | sono voci del **dettato** — la testa della posizione, l'errata, il recinto di ADR-0040 —, che il dispaccio vietava all'implementatore; e il precedente delle cure di sola prosa. Costo: una cura che nessun subagente rilegge, se il proprietario non vuole la ri-revisione |
-| 5 | **ER-17, A:** il seguito di ADR-0040 perde la copia di *chi costruisce*, prima del push | la 3.2 del disegno dice solo il rimando alla sezione 4, casa unica; un ADR pubblicato si corregge solo con un rimando. Costo: un commit che tocca l'ADR prima di pubblicarlo |
+| 4 | le cure della revisione le fa il **coordinatore**, senza un giro dell'implementatore | sono voci del **dettato** — la testa della posizione, l'errata, il recinto di ADR-0040 —, che il dispaccio vietava all'implementatore. Il proprietario ha voluto la ri-revisione, su `opus`; la seconda ondata, di sola prosa, l'ha chiusa il coordinatore — gotcha #76. Costo: la seconda ondata non la rilegge nessun subagente |
+| 5 | **ER-17 ed ER-20, A:** due frasi di ADR-0040 corrette prima del push — il seguito senza la copia di *chi costruisce*, e il *Context* senza il *«in nessun backup»* che la fonte non dice | un ADR pubblicato si corregge solo con un rimando, e la finestra era aperta. Costo: due commit che toccano l'ADR prima di pubblicarlo |
 | 6 | **ER-16:** la §7 del compendio conosce il superamento in parte; la stessa frase di `HANDOFF.md` è **registrata** | le due letture d'apertura dicevano due cose diverse; `HANDOFF.md` segue ER-5 — la riga 14 della Definizione di «fatto» ne vuole solo i totali. Costo: `HANDOFF.md` resta indietro fino alla decisione del proprietario |
 | 7 | **R8 della revisione registrato** fra le voci aperte, col 6 come chiusore: le copie e la cartella dati nascono leggibili dal solo proprietario, anche su Linux | è la lezione del rimando del 2026-08-18 di ADR-0023, e dichiararla costa una riga; la revisione la poneva al proprietario in A/B, col consiglio A. Costo: una riga, da togliere se il proprietario la ritiene già coperta |
 | 8 | il puntatore della §6 e la consegna del metodo **non nominano più il numero del compito** | il numeratore dei compiti vive nella sola tabella della posizione — vincolo 13, gotcha #68 —, e *«riparte dal compito 1»* era diventato falso col compito 1. Costo: nessuno |
+| 9 | **R10 e R11 della revisione, due Nit, rimandati**: l'ordine dei richiami in testa ad `AVVIO-CHAT.md`, e un'etichetta del rapporto | stanno scritti nella revisione tracciata, nella cartella del dispaccio, e la ri-revisione ha giudicato giusto il rinvio. Costo: nessuno |
 
 **Che cosa questa sessione ha trovato, e che cosa insegna:**
 
@@ -2081,5 +2090,6 @@ La banda detta al proprietario prima del dispaccio era 0,5–0,8 milioni di toke
 | il mandato del revisore chiedeva `git diff --stat` contro il commit, nel clone, e un file **nuovo** e non tracciato vi risultava cancellato | 📌 *nel clone, prima del confronto, `git add -N` sul file nuovo* |
 | da Python, `subprocess.run` con `bash` prende la `bash` di WSL, in System32, e non quella di Git Bash | 📌 *da Python, Git Bash si chiama col percorso intero* |
 | il rapporto dell'implementatore porta, in un code span, una sequenza che sembra un link, e copiato nella cartella del dispaccio **non** fa rosso: il controllo dei link di `check-docs.sh` esclude apposta `docs/superpowers/plans/` — il commento del suo passo *«internal links»* | 📌 *nella cartella del dispaccio un rimando non lo difende nessun controllo: lo rilegge chi lo scrive* |
+| `archive_head.py --pointer` archivia anche la riga della data: se la riga poi non si riscrive, l'archivio dice *«com'erano»* di una riga ancora viva — la ri-revisione, M1 | 📌 *chi archivia il puntatore riscrive anche la riga della data, nello stesso commit* |
 
 **Da verificare alla fonte prima del prossimo compito:** niente di esterno.

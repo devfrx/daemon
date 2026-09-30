@@ -34,7 +34,7 @@ Il censimento è girato come **workflow**. Il proprietario dice di aver impostat
 | un tracker valutato prima? | **no**: *tracker*, *GitHub Issues*, *backlog*, *sub-issue* e *decision-map* non comparivano in `docs/` né in `CLAUDE.md`, il 2026-09-30 |
 | il censimento | ✅ fatto: **114** decisioni del proprietario aperte — la sezione qui sotto |
 | la ricerca | ✅ fatta il 2026-09-30, nel [suo ticket](https://github.com/devfrx/daemon/issues/4): la risposta in breve nel commento, le fonti verificate in [`riferimenti.md`](../../riferimenti.md), nella sezione *«Il metodo con la decision map — ticket di decisione, ADR e documenti: la ricerca, 2026-09-30»* |
-| il piano dei documenti | **pre-controllato, nessun compito eseguito**; si esegue **adesso**, un compito per sessione dal compito 1 — deciso dal proprietario il 2026-09-30 nel [suo ticket](https://github.com/devfrx/daemon/issues/2); il puntatore della §6 del compendio, e la voce **ER-8** del piano col suo richiamo |
+| il piano dei documenti | **pre-controllato**, e si esegue **adesso**, un compito per sessione — fin dove, lo dice la tabella della posizione del piano —, deciso dal proprietario il 2026-09-30 nel [suo ticket](https://github.com/devfrx/daemon/issues/2); il puntatore della §6 del compendio, e la voce **ER-8** del piano col suo richiamo |
 
 ```bash
 # A — il corpo della mappa
@@ -101,7 +101,7 @@ parola per parola.
 
 1. La lettura d'apertura di `CLAUDE.md`; poi il **corpo della mappa** — il comando A —, dove *«Decisioni prese»* ha una
    riga per ticket chiuso.
-2. ▶️ **Il prossimo passo proposto: il compito 1 del piano dei documenti** — il puntatore della §6 del compendio. Come si
+2. ▶️ **Il prossimo passo proposto: il compito che viene nel piano dei documenti** — la prima riga ⏳ della sua tabella della posizione, e il puntatore della §6 del compendio. Come si
    comincia lo dice il *«Come si riprende»* del [piano](../plans/2026-09-29-knowledge-base-revisione-documenti.md): la
    cartella del dispaccio, poi il costo detto al proprietario, e il suo sì. La sessione del compito legge anche la voce
    **ER-8** dell'errata, col richiamo del 2026-09-30.

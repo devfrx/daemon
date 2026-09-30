@@ -195,3 +195,65 @@ revisione, il punto 3 della 6.6 e il richiamo sul comando A della 6.2 — D24.
 | un `grep -c` con una barra rovesciata finale costruita con `printf` è uscito con *«Trailing backslash»* | un conto di caratteri si fa con Python, `chr(92)`, non con un `grep` costruito in linea — trappola 13 |
 
 **Da verificare alla fonte prima del pre-controllo:** niente di esterno.
+
+## La consegna all'esecuzione, del 2026-09-29
+
+Tolta dal piano il 2026-09-30, alla chiusura del compito 1, quando la consegna del compito 1 ne ha preso il posto.
+Parola per parola, coi link riscritti per questa cartella.
+
+## Come si riprende — scritto alla chiusura del pre-controllo, il 2026-09-29, coi comandi
+
+⛔ **Da sapere subito: niente è a metà.** Il piano è **pre-controllato**: sette voci nell'errata, ER-1…ER-7, e i sei
+compiti simulati **in sequenza** su un `git worktree` nello scratchpad, poi tolto — `check-docs.sh` → `OK` dopo ciascuno, e
+il margine del compendio sempre positivo. **Nessun compito è eseguito.** Tutto è pushato: si riparte anche dall'altra
+macchina, dopo il fetch. La consegna precedente, quella al pre-controllo, sta in
+[archivio](consegna-piano-knowledge-base-revisione-documenti.md), parola per parola.
+
+| | Stato, e il comando che lo rifà |
+|---|---|
+| ramo | `main` allineato a `origin`: `git fetch --all --prune`, `git status -sb`; nessuno stash, e nessun worktree oltre al principale — `git worktree list` |
+| i commit del pre-controllo | `git log --oneline c8322f1..HEAD`: la voce ER-1, e la chiusura con le altre sei |
+| codice di prodotto | **non toccato**: il comando D da `<base>` non rende nulla |
+| cancello | `bash scripts/gate.sh` → `GATE GREEN` e `bash scripts/check-docs.sh` → `OK` all'apertura e prima di ogni commit: si rilanciano, non si citano |
+| il margine del compendio | il comando C |
+| i pezzi | `extract.py` copiato a mano dal suo recinto, poi il comando della sezione *«Gli attrezzi»*: diciotto righe |
+| i blocchi | il `--check` di ciascuno, dal comando sotto la tabella: tutti e sei `checked`, E5 con trentadue modifiche — ER-5 |
+| il puntatore | la §6 del compendio: il piano è pre-controllato, e viene l'**esecuzione** |
+
+```bash
+S=<scratchpad>; for n in 1 2 3 4 5 6; do printf 'E%s: ' $n; PYTHONIOENCODING=utf-8 python "$S/apply_edits.py" --check "$(date +%F)" "$S/e$n.txt" 2>&1 | tail -1; done
+```
+
+**Il compito della sessione che riprende — il compito 1, e prima il dispaccio:**
+
+1. La lettura d'apertura di `CLAUDE.md`; poi l'**errata** di questo piano per intero, e il compito 1 — tutto e
+   nient'altro — con le sezioni del disegno che nomina. Lo toccano ER-2, ER-3, ER-4 ed ER-6.
+2. `bash scripts/gate.sh`, da solo; l'estrazione dei pezzi e il `--check` dei sei blocchi.
+3. ⏳ **Il passo 4 del pre-controllo, spostato qui dal proprietario il 2026-09-29 — risposta A:** la cartella del dispaccio —
+   D17 —, che nasce al primo dispaccio, col prompt del compito 1 come **modello** e i campi della macchina da riempire; il
+   precedente è `docs/superpowers/plans/2026-09-23-design-system-esecuzione/`. Poi il **costo** dell'implementatore e del
+   revisore, detto al proprietario **prima**, con la banda misurata dei dispacci recenti scalata sul peso del brief, il
+   modello di ciascuno — `opus`, `sonnet` per il lavoro meccanico —, e il sì.
+4. Il compito 1, un subagente fresco e la revisione con la regola 5 di *«Come si esegue un compito di questo piano»*; poi la
+   chiusura della sessione: questa sezione riscritta, e questa in archivio, nello stesso file delle consegne di prima.
+
+**Le decisioni prese in questa sessione, col perché** — il proprietario può ribaltarle:
+
+| | Decisione | Perché, e che cosa costa se è sbagliata |
+|---|---|---|
+| 1 | le voci d'errata si chiamano **ER-n** | *E1…E6* sono i blocchi, e una voce «E4» si leggerebbe come il blocco. Costo: un prefisso nuovo nel repository |
+| 2 | il passo visivo disegnato con mermaid **11**, e letto anche con la **12.0.0** | la 11 è quella del precedente del 2026-09-08 e del widget; la 12.0.0 è l'ultima su npm, appena uscita, e un diagramma che le due leggono regge in entrambe. Costo: nessuno |
+| 3 | con l'impronta uguale, al compito 4 **nessun secondo sguardo** del proprietario | un'impronta uguale è il disegno già visto, e richiederlo sarebbe una conferma per rito; la A presentata diceva *«due tuoi sguardi»*, e la differenza è detta qui. Costo: uno sguardo, se il proprietario lo vuole comunque |
+| 4 | alla chiusura, la cella di questo piano in `roadmap.md` e il punto 3 della 6.6 del disegno **non** si toccano | sono le due ancore del blocco E6, e cambiarle vorrebbe dire riallinearlo; la cella dice già che pre-controllo ed esecuzione stanno in sessioni loro. Costo: la roadmap non dice *«pre-controllato»* fino al compito 6 |
+| 5 | `HANDOFF.md`, la riga 2 della tabella di F2, **registrata** con P-5 e non toccata — ER-5 | la riga 14 della Definizione di «fatto», approvata col disegno, vuole da `HANDOFF.md` solo i totali, e quella riga è il consuntivo della §8.5.2. Costo: fino alla decisione del proprietario dice *«5, 6 e 9»* |
+| 6 | la voce chiusa della roadmap *«Dove vive backup e ripristino»* **toccata** — ER-5 | è lo stesso file del compito, dove la riga 11 direbbe *«6, 9»* poco sopra, e il merito è la risposta A della 5.5. Costo: una modifica in più nel blocco E5 |
+
+**Vicoli ciechi di questa sessione:**
+
+| | Che cosa insegna |
+|---|---|
+| il widget della chat non si legge da qui — `read_widget_context` non ha contesto per `show_widget` —, e le righe di verifica del widget le vede solo il proprietario | 📌 *una verifica che l'agente deve leggere si serve nel browser integrato, con `http.server` su una porta sua, e si legge dal DOM; il widget resta per lo sguardo del proprietario* |
+| il `grep` sulla frase *«no ADR has taken»* in `main.rs` ha trovato un commento, e sono due | 📌 *nel sorgente un commento va a capo: una frase si cerca per un pezzo corto, o su righe unite* |
+| una sonda con la barra verticale scritta dentro una cella dell'errata, e tolta prima del commit | la trappola 4 vale anche per chi scrive l'errata: il comando va sotto la tabella |
+
+**Da verificare alla fonte prima del compito 1:** niente di esterno.

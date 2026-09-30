@@ -2690,3 +2690,20 @@ che chi riprende quel fronte legge **per intero**; brainstorming e disegno del 1
 ⚠️ **Vera il giorno in cui fu scritta.** Uscita dal compendio parola per parola, col link riscritto per questa cartella.
 
 **Aggiornato il 2026-09-30**, con la **prima decisione della mappa del metodo**: il piano dei documenti si esegue adesso — il puntatore della §6 —; il puntatore e questa riga com'erano sono in [`archivio/stato-storico.md`](stato-storico.md). L'ultimo contenuto di merito resta la voce di ADR-0029. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+
+## Il puntatore «Il prossimo passo» e l'intestazione del compendio, com'erano — archiviati il 2026-09-30, alla chiusura del compito 1 del piano dei documenti della revisione della knowledge base
+
+⚠️ **Veri il giorno in cui furono scritti.** Usciti dal compendio parola per parola, coi link riscritti per questa cartella.
+
+**Aggiornato il 2026-09-30**, col **piano dei documenti della revisione della knowledge base** in esecuzione: **ADR-0040** — la sua voce in §5, il rimando nella voce di ADR-0022, i totali, la riga del caso nuovo in §13 — e, compito per compito, i rimandi nelle voci della §5; fin dove, lo dice la tabella della posizione del piano. Questa riga com'era è in [`archivio/stato-storico.md`](stato-storico.md). Il contenuto di merito nuovo è la voce di ADR-0040, coi rimandi. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+
+⏭️ **IL PROSSIMO PASSO, IN DUE TEMPI. Uno: la REVISIONE DELLA KNOWLEDGE BASE**, chiesta dal proprietario il 2026-09-28 **prima**
+del 13 e dei modelli decisionali — dove vivono i file, chi li scrive e chi li legge, come e quando, se le repo dei progetti
+stanno dentro, e i casi limite. Il brainstorming è **chiuso il 2026-09-29**, e la sua consegna sta in
+[archivio](consegna-brainstorming-knowledge-base-revisione-intera.md). **Il disegno è chiuso** il 2026-09-29,
+riletto dal proprietario, al suo [percorso](../superpowers/specs/2026-09-28-knowledge-base-revisione-design.md). Il **piano dei documenti** è **scritto e pre-controllato** il 2026-09-29, al suo [percorso](../superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md). ▶️ **La sua esecuzione riparte dal compito 1**, un compito per sessione: il 2026-09-30 il proprietario ha deciso **adesso**, nel primo ticket della [mappa del metodo](https://github.com/devfrx/daemon/issues/1); i ticket della mappa si alternano coi compiti a sua scelta, e la [consegna del metodo](../superpowers/specs/2026-09-30-metodo-decision-map-design.md) dice come si riprendono.
+**Due: IL SOTTO-PROGETTO 13** — i tre meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima**
+del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta proprietà** della §3, ma questo **vincolo d'ordine**;
+il suo perimetro si rilegge con l'esito della revisione. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill
+dichiarative: è una sua decisione e non del piano. Il perimetro sta nel [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md),
+che chi riprende quel fronte legge **per intero**; brainstorming e disegno del 13 vengono prima del piano, in sessioni distinte.

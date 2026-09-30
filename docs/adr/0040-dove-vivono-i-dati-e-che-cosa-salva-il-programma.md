@@ -79,4 +79,4 @@ del sistema operativo, cancellate dopo trenta giorni per default, e in nessun ba
   - Il tempo di ritenzione delle copie è un parametro consegnato
     ([ADR-0034](0034-parametri-di-decisione-consegnati-non-letti.md)), col valore a chi le costruisce.
   - Chi costruisce la cartella dati per utente e la cartella nascosta dei router lo dice la sezione 4 del disegno della
-    revisione, che è la casa unica di chi costruisce che cosa: il sotto-progetto 6, se nessuno le porta prima.
+    revisione, che è la casa unica di chi costruisce che cosa.

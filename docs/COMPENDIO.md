@@ -629,7 +629,7 @@ per parola.
 del 13 e dei modelli decisionali — dove vivono i file, chi li scrive e chi li legge, come e quando, se le repo dei progetti
 stanno dentro, e i casi limite. Il brainstorming è **chiuso il 2026-09-29**, e la sua consegna sta in
 [archivio](archivio/consegna-brainstorming-knowledge-base-revisione-intera.md). **Il disegno è chiuso** il 2026-09-29,
-riletto dal proprietario, al suo [percorso](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md). Il **piano dei documenti** è **scritto e pre-controllato** il 2026-09-29, al suo [percorso](superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md). ▶️ **La sua esecuzione riparte dal compito 1**, un compito per sessione: il 2026-09-30 il proprietario ha deciso **adesso**, nel primo ticket della [mappa del metodo](https://github.com/devfrx/daemon/issues/1); i ticket della mappa si alternano coi compiti a sua scelta, e la [consegna del metodo](superpowers/specs/2026-09-30-metodo-decision-map-design.md) dice come si riprendono.
+riletto dal proprietario, al suo [percorso](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md). Il **piano dei documenti** è **scritto e pre-controllato** il 2026-09-29, al suo [percorso](superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md). ▶️ **La sua esecuzione è in corso**, un compito per sessione, e fin dove lo dice la tabella della posizione del piano: il 2026-09-30 il proprietario ha deciso **adesso**, nel primo ticket della [mappa del metodo](https://github.com/devfrx/daemon/issues/1); i ticket della mappa si alternano coi compiti a sua scelta, e la [consegna del metodo](superpowers/specs/2026-09-30-metodo-decision-map-design.md) dice come si riprendono.
 **Due: IL SOTTO-PROGETTO 13** — i tre meccanismi che la knowledge base chiede al kernel, che la **decisione 16** mette **prima**
 del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta proprietà** della §3, ma questo **vincolo d'ordine**;
 il suo perimetro si rilegge con l'esito della revisione. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill
@@ -717,7 +717,7 @@ awk '/^## 8\. /{i=1} i && /^\|[[:space:]]*[VQ][0-9]+[[:space:]]*\|/ {r=$0; gsub(
 ## 7. Non rilitigabile
 
 Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi**
-(`Superseded by`), non una conversazione. Le più tentate, e il costo di riaprirle:
+(`Superseded by`) — o che lo superi **in parte**, la riga «ADR superato in parte» della §13 —, non una conversazione. Le più tentate, e il costo di riaprirle:
 
 | Decisione | Se la riapri |
 |---|---|

@@ -28,12 +28,13 @@ Il censimento è girato come **workflow**. Il proprietario dice di aver impostat
 | | Stato |
 |---|---|
 | la mappa | ✅ [*Il metodo: si lavora con la decision map*](https://github.com/devfrx/daemon/issues/1), creata il 2026-09-30, coi nove ticket come sub-issue e i blocchi; le quattro etichette della skill — il comando A |
-| la frontiera | tre ticket: [*Il piano dei documenti si esegue adesso o aspetta il metodo nuovo?*](https://github.com/devfrx/daemon/issues/2), [*Una decisione per sessione, sempre?*](https://github.com/devfrx/daemon/issues/3), e la ricerca [*Come si tengono insieme, oggi, ticket di decisione, ADR e documenti?*](https://github.com/devfrx/daemon/issues/4) — il comando B |
+| la frontiera | la dà il comando B, e non si ricopia qui: cambia a ogni ticket chiuso |
 | GitHub | `devfrx/daemon` è **pubblico**: mappa e ticket si vedono da fuori |
 | `gh` | la 2.101.0; `--parent` e `--blocked-by` alla creazione, `--add-blocked-by` alla modifica. La guida della skill dava incerto `--set-parent`: nel binario c'è `--parent` |
 | un tracker valutato prima? | **no**: *tracker*, *GitHub Issues*, *backlog*, *sub-issue* e *decision-map* non comparivano in `docs/` né in `CLAUDE.md`, il 2026-09-30 |
 | il censimento | ✅ fatto: **114** decisioni del proprietario aperte — la sezione qui sotto |
-| il piano dei documenti | **pre-controllato, nessun compito eseguito**, e la sua esecuzione **aspetta** il primo ticket — il puntatore della §6 del compendio; la voce **ER-8** del piano |
+| la ricerca | ✅ fatta il 2026-09-30, nel [suo ticket](https://github.com/devfrx/daemon/issues/4): la risposta in breve nel commento, le fonti verificate in [`riferimenti.md`](../../riferimenti.md), nella sezione *«Il metodo con la decision map — ticket di decisione, ADR e documenti: la ricerca, 2026-09-30»* |
+| il piano dei documenti | **pre-controllato, nessun compito eseguito**; si esegue **adesso**, un compito per sessione dal compito 1 — deciso dal proprietario il 2026-09-30 nel [suo ticket](https://github.com/devfrx/daemon/issues/2); il puntatore della §6 del compendio, e la voce **ER-8** del piano col suo richiamo |
 
 ```bash
 # A — il corpo della mappa
@@ -88,22 +89,36 @@ aperte, che citano la lista.
 | 3 | gli agenti del censimento sono di tipo `Explore` | non possono scrivere, e non ricevono `CLAUDE.md`: meno contesto a testa, come voleva il proprietario. Costo: le regole del progetto che servono stanno nel prompt |
 | 4 | il puntatore della §6 cambia in una frase, e il piano dei documenti riceve la voce **ER-8** | il prossimo passo è cambiato; il compito 6 del piano riscrive il puntatore intero con `replace_pointer.py`, e senza la voce cancellerebbe il rimando senza che nulla diventi rosso. Costo: una riga nell'errata |
 | 5 | la lista del censimento sta in **archivio**, e le otto voci C001…C008 non contano fra le 114 | è una fotografia datata, che non si aggiorna: la casa di ogni voce resta il suo documento finché il trasloco non la sposta; C001…C008 sono i ticket del metodo, già sulla mappa. Costo: nessuno |
+| 6 | il 2026-09-30, la ricerca **intera** e verificata in una sezione datata di `riferimenti.md`; nel ticket la risposta in breve, col **permalink** al commit | `CLAUDE.md` vuole le fonti in `riferimenti.md`, e la mappa è un indice che non archivia; il permalink fissa il testo che il ticket riassume — la fonte [15] della ricerca. Costo: una sezione lunga in `riferimenti.md`, che non è lettura d'apertura |
+| 7 | il 2026-09-30, la voce **ER-8** del piano riceve un **richiamo datato** invece di essere riscritta, e il puntatore nuovo della §6 **conserva** il rimando a questa consegna | ER-8 resta vera al compito 6, e un richiamo datato è la forma del repository per una voce che cambia a metà. Costo: una frase in coda alla cella |
 
 ## Come si riprende
 
-⛔ **Da sapere subito:** la mappa **esiste** ed è pubblica; nessun ticket è assegnato, nessuno è a metà. Niente è a metà
-nel repository.
+⛔ **Da sapere subito:** niente è a metà, e tutto è pushato. Il 2026-09-30 si sono chiusi due ticket della mappa: il piano
+dei documenti si esegue **adesso**, e la ricerca su ticket, ADR e documenti è fatta. Nessun ticket è assegnato. La
+consegna di prima — le due sezioni riscritte — sta in [archivio](../../archivio/consegna-metodo-decision-map.md),
+parola per parola.
 
-1. La lettura d'apertura di `CLAUDE.md`; poi il **corpo della mappa**, non tutti i ticket — il comando A.
-2. La frontiera — il comando B. Il prossimo passo proposto: il ticket *«Il piano dei documenti si esegue adesso o aspetta il
-   metodo nuovo?»*, perché dice se il compito 1 viene prima del resto. Chi lo prende se lo **assegna prima** di cominciare:
+1. La lettura d'apertura di `CLAUDE.md`; poi il **corpo della mappa** — il comando A —, dove *«Decisioni prese»* ha una
+   riga per ticket chiuso.
+2. ▶️ **Il prossimo passo proposto: il compito 1 del piano dei documenti** — il puntatore della §6 del compendio. Come si
+   comincia lo dice il *«Come si riprende»* del [piano](../plans/2026-09-29-knowledge-base-revisione-documenti.md): la
+   cartella del dispaccio, poi il costo detto al proprietario, e il suo sì. La sessione del compito legge anche la voce
+   **ER-8** dell'errata, col richiamo del 2026-09-30.
+3. **Oppure un ticket della mappa**, a scelta del proprietario: la frontiera è il comando B. Alla chiusura del 2026-09-30
+   erano *«Una decisione per sessione, sempre?»*, *«Come si combinano le cinque fasi con la mappa?»* e *«Le voci aperte
+   nei documenti: che cosa diventa ticket, e che cosa resta?»*; gli ultimi due partono dalla ricerca — il suo commento
+   nel ticket, e le fonti in `riferimenti.md`. Chi prende un ticket se lo **assegna prima** di cominciare:
    `gh issue edit <numero> --add-assignee "@me"`.
-3. La ricerca *«Come si tengono insieme, oggi, ticket di decisione, ADR e documenti?»* si delega a **un** subagente, in
-   parallelo alla decisione della sessione: il costo si dice al proprietario prima di lanciarlo, e l'esito si verifica prima
-   di scriverlo sul ticket.
-4. La chiusura di un ticket, nell'ordine della skill: il commento con la risposta, il ticket chiuso, una riga in *«Decisioni
-   prese»* nel corpo della mappa, riletto subito prima di riscriverlo. Poi la chiusura della sessione secondo `CLAUDE.md`:
+4. Finché il piano non finisce, un ticket che cambia `CLAUDE.md` o `docs/COMPENDIO.md` si prova contro i blocchi che
+   restano: `extract.py` copiato a mano dal piano, il `--check` di ciascun blocco col comando del *«Come si riprende»*
+   del piano, e il comando C per il margine del compendio.
+5. La chiusura di un ticket, nell'ordine della skill: il commento con la risposta, il ticket chiuso, una riga in
+   *«Decisioni prese»* nel corpo della mappa, riletto subito prima di riscriverlo. Una risposta che rimanda a un file del
+   repository si scrive **dopo** il push, col permalink al commit. Poi la chiusura della sessione secondo `CLAUDE.md`:
    questa sezione riscritta, quella di prima in archivio, il puntatore della §6 se il prossimo passo cambia, commit e push.
+
+Il conteggio dei file coi segni del censimento — per il trasloco, che rilegge ogni voce contro il repository:
 
 ```bash
 RE='non pres|registrat|⏳|proprietari'; { find docs -name '*.md' -not -path '*/archivio/*'; ls spikes/*.md spikes/*/*.md; echo docs/archivio/stato-storico.md; } | sort -u | while read f; do n=$(grep -c -E "$RE" "$f"); [ "$n" -gt 0 ] && echo "$n $f"; done | wc -l

@@ -120,3 +120,46 @@ il censimento è fatto adesso, quindi resta lo **spostamento** delle voci second
 ```bash
 RE='non pres|registrat|⏳|proprietari'; { find docs -name '*.md' -not -path '*/archivio/*'; ls spikes/*.md spikes/*/*.md; echo docs/archivio/stato-storico.md; } | sort -u | while read f; do n=$(grep -c -E "$RE" "$f"); [ "$n" -gt 0 ] && echo "$n $f"; done | wc -l
 ```
+
+## Il punto fermo di `10bed09` — 2026-09-30, dopo il censimento: le due sezioni che la sessione dopo ha riscritto
+
+⚠️ **Vere il giorno in cui furono scritte.** Uscite dalla consegna viva parola per parola, coi link riscritti per questa cartella, quando la prima decisione della mappa — il piano dei documenti si esegue adesso — ha cambiato lo stato e il modo di riprendere.
+
+## Che cosa esiste adesso
+
+| | Stato |
+|---|---|
+| la mappa | ✅ [*Il metodo: si lavora con la decision map*](https://github.com/devfrx/daemon/issues/1), creata il 2026-09-30, coi nove ticket come sub-issue e i blocchi; le quattro etichette della skill — il comando A |
+| la frontiera | tre ticket: [*Il piano dei documenti si esegue adesso o aspetta il metodo nuovo?*](https://github.com/devfrx/daemon/issues/2), [*Una decisione per sessione, sempre?*](https://github.com/devfrx/daemon/issues/3), e la ricerca [*Come si tengono insieme, oggi, ticket di decisione, ADR e documenti?*](https://github.com/devfrx/daemon/issues/4) — il comando B |
+| GitHub | `devfrx/daemon` è **pubblico**: mappa e ticket si vedono da fuori |
+| `gh` | la 2.101.0; `--parent` e `--blocked-by` alla creazione, `--add-blocked-by` alla modifica. La guida della skill dava incerto `--set-parent`: nel binario c'è `--parent` |
+| un tracker valutato prima? | **no**: *tracker*, *GitHub Issues*, *backlog*, *sub-issue* e *decision-map* non comparivano in `docs/` né in `CLAUDE.md`, il 2026-09-30 |
+| il censimento | ✅ fatto: **114** decisioni del proprietario aperte — la sezione qui sotto |
+| il piano dei documenti | **pre-controllato, nessun compito eseguito**, e la sua esecuzione **aspetta** il primo ticket — il puntatore della §6 del compendio; la voce **ER-8** del piano |
+
+```bash
+# A — il corpo della mappa
+gh issue view 1 --json title,body,subIssuesSummary
+# B — la frontiera: aperti, non assegnati, senza blocchi aperti
+for n in $(gh issue view 1 --json subIssues --jq '.subIssues.nodes[] | select(.state=="OPEN") | .number'); do gh issue view $n --json number,title,assignees,blockedBy --jq '"\(.number) assegnati=\(.assignees|length) bloccato-da=\([.blockedBy.nodes[]? | select(.state=="OPEN") | .number]|join(",")) \(.title)"'; done
+```
+
+## Come si riprende
+
+⛔ **Da sapere subito:** la mappa **esiste** ed è pubblica; nessun ticket è assegnato, nessuno è a metà. Niente è a metà
+nel repository.
+
+1. La lettura d'apertura di `CLAUDE.md`; poi il **corpo della mappa**, non tutti i ticket — il comando A.
+2. La frontiera — il comando B. Il prossimo passo proposto: il ticket *«Il piano dei documenti si esegue adesso o aspetta il
+   metodo nuovo?»*, perché dice se il compito 1 viene prima del resto. Chi lo prende se lo **assegna prima** di cominciare:
+   `gh issue edit <numero> --add-assignee "@me"`.
+3. La ricerca *«Come si tengono insieme, oggi, ticket di decisione, ADR e documenti?»* si delega a **un** subagente, in
+   parallelo alla decisione della sessione: il costo si dice al proprietario prima di lanciarlo, e l'esito si verifica prima
+   di scriverlo sul ticket.
+4. La chiusura di un ticket, nell'ordine della skill: il commento con la risposta, il ticket chiuso, una riga in *«Decisioni
+   prese»* nel corpo della mappa, riletto subito prima di riscriverlo. Poi la chiusura della sessione secondo `CLAUDE.md`:
+   questa sezione riscritta, quella di prima in archivio, il puntatore della §6 se il prossimo passo cambia, commit e push.
+
+```bash
+RE='non pres|registrat|⏳|proprietari'; { find docs -name '*.md' -not -path '*/archivio/*'; ls spikes/*.md spikes/*/*.md; echo docs/archivio/stato-storico.md; } | sort -u | while read f; do n=$(grep -c -E "$RE" "$f"); [ "$n" -gt 0 ] && echo "$n $f"; done | wc -l
+```

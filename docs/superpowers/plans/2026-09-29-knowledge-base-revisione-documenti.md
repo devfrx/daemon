@@ -498,6 +498,8 @@ Le voci si chiamano **ER-1**, **ER-2**…, e non *E1*…: *E1*…*E6* sono i nom
 | **ER-6** | ⚠️ **Compito 1, Passi 1 e 4 — il comando E sull'archivio rende `6`, non `5`.** Trovata dalla simulazione del pre-controllo, il 2026-09-29: la chiusura del pre-controllo ha copiato in `docs/archivio/stato-storico.md` il puntatore della §6 com'era, e il puntatore porta il link al disegno. Al Passo 4 resta `6`; al compito 6 l'archivio riceve il puntatore di adesso, e passa a `7` — quel Passo lo annota, non lo prescrive |
 | **ER-7** | ⛔ **Compito 5, Passi 1 e 3 — la sonda delle sei righe della roadmap ne conta nove, e l'«Atteso» `6` non torna mai.** Trovata dalla simulazione del pre-controllo, il 2026-09-29, e vera già su `ff6f0e5`: la sonda prende anche le righe 5 e 6 della tabella dei traguardi e la riga 3 della tabella della GPU della GUI. ✅ **La sonda, ristretta alla sezione dei sotto-progetti**, sta sotto questa tabella, accanto a quella di ER-1 — la trappola 4 —: `6` al Passo 1 e `6` al Passo 3, misurato sul repository e sulla simulazione; su una sezione che non c'è rende `0` |
 | **ER-8** | ⚠️ **Compito 6 — dal 2026-09-30 il puntatore della §6 porta il metodo con la decision map, e `replace_pointer.py` lo riscrive intero.** Trovata aprendo il fronte del metodo, il 2026-09-30, prima del compito 1: il puntatore dice che l'esecuzione di questo piano **aspetta**, e rimanda alla [consegna del metodo](../specs/2026-09-30-metodo-decision-map-design.md). Il testo nuovo del puntatore, al compito 6, **conserva** quel rimando finché il metodo non è deciso: senza questa voce `archive_head.py` e `replace_pointer.py` lo toglierebbero senza che nulla diventi rosso. Quando questo piano si esegue lo decide il ticket *«Il piano dei documenti si esegue adesso o aspetta il metodo nuovo?»* della mappa del metodo. ✅ **Richiamo del 2026-09-30, dal ticket:** il proprietario ha deciso **adesso**, e il ticket è chiuso; il puntatore non dice più che l'esecuzione aspetta, e porta ancora il rimando alla consegna del metodo, che al compito 6 si conserva come qui sopra finché il metodo non è deciso |
+| **ER-9** | ⚠️ **Compito 1, Passi 1 e 4 — il comando E sull'archivio non rende `6`, e il suo numero non si prescrive.** Trovata dal coordinatore il 2026-09-30, rimisurando il Passo 1 prima del primo dispaccio: su `dd0e265` rende `8`. Dopo la chiusura del pre-controllo, due chiusure del fronte del metodo — `a9e8265` e `fc81594` — hanno copiato in `docs/archivio/stato-storico.md` il puntatore della §6 com'era, con `archive_head.py`, e il puntatore porta il link al disegno: `6`, poi `7`, poi `8` — la misura sotto questa tabella. Ogni sessione che archivia il puntatore ne aggiunge uno, quindi il numero di ER-6 è **tolto, non riallineato** — gotcha **#31** —: al Passo 1 il valore sull'archivio si **annota**, e al Passo 4 è **lo stesso**, perché il compito 1 archivia la sola riga della data, che il link non lo porta. Al compito 6 vale ciò che ER-6 dice già: si annota. ✅ **La simulazione in sequenza, rifatta** il 2026-09-30 su `dd0e265`, coi blocchi datati quel giorno — P-19 —: i sei blocchi applicati in ordine, `check-docs.sh` → `OK` dopo ciascun compito, il comando D vuoto; il margine del compendio — comando C — parte da `8103`, e il più basso è `4390`, dopo i compiti 3–5 |
+| **ER-10** | ⚠️ **Compito 1, Passi 2 e 4 — che l'archivio tenga la riga della data DI PRIMA non lo prova niente.** Trovata dal coordinatore il 2026-09-30, la seconda domanda di `CLAUDE.md`: `archive_head.py` stampa `archived: 1 piece(s)`, ma se girasse **dopo** il blocco E1 — l'ordine che D10 vieta — l'archivio terrebbe la riga nuova, e nessun controllo diventerebbe rosso. ✅ **La sonda**, sotto questa tabella per la trappola 4: al Passo 4, prima del commit, rende `SAME` — l'ultima riga della data che l'archivio porta è quella di `HEAD`, col solo link riscritto per la cartella dell'archivio. Provata il 2026-09-30 nelle due direzioni su un `git worktree` nello scratchpad, poi tolto: `SAME` con l'ordine del compito, `DIFFERENT` con `archive_head.py` lanciato dopo il blocco. Il compito 6 la può rilanciare per la riga della data |
 
 La sonda di ER-1, fuori dalla tabella perché è lunga: `H` è il programma, e i due argomenti sono il file e il numero del
 blocco `mermaid` dentro il file.
@@ -513,6 +515,20 @@ sostituisce.
 ```bash
 grep -cE '^[|] (3|5|6|10|11|13) [|]' docs/roadmap.md
 awk '/^## Sotto-progetti/{s=1;next} s&&/^## /{s=0} s' docs/roadmap.md | grep -cE '^[|] (3|5|6|10|11|13) [|]'
+```
+
+La misura di ER-9, fuori dalla tabella per la trappola 4: il comando E sull'archivio, commit per commit.
+
+```bash
+for c in 93ae91d a9e8265 fc81594 dd0e265; do printf '%s ' $c; git show $c:docs/archivio/stato-storico.md | grep -c '2026-09-28-knowledge-base-revisione-design'; done
+```
+
+La sonda di ER-10, fuori dalla tabella per la trappola 4: `S` è lo scratchpad, come nei compiti, e `HEAD` è ancora il commit
+di prima del compito.
+
+```bash
+git show HEAD:docs/COMPENDIO.md | tr -d '\r' | grep -F '**Aggiornato il ' | sed 's#](archivio/#](#' > "$S/old-date.txt"
+tr -d '\r' < docs/archivio/stato-storico.md | grep -F '**Aggiornato il ' | tail -1 | diff -q - "$S/old-date.txt" > /dev/null && echo SAME || echo DIFFERENT
 ```
 
 ---

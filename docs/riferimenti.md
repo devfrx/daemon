@@ -2977,6 +2977,251 @@ provenienza.
 | npm, il registro di `mermaid`, `https://registry.npmjs.org/mermaid/latest` | 2026-09-29 | l'ultima versione pubblicata quel giorno: **12.0.0**, col suo `parse` sui quattro sorgenti |
 | esm.sh, `https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs` | 2026-09-29 | il disegno, con la **11**: la stessa del precedente della passata sui diagrammi del 2026-09-08, e quella del modulo `diagram` del widget della chat |
 
+## Il metodo con la decision map — ticket di decisione, ADR e documenti: la ricerca, 2026-09-30
+
+⚠️ **Vera il giorno in cui fu fatta.** È l'esito del ticket di ricerca *«Come si tengono insieme, oggi, ticket di decisione, ADR e documenti?»* della [mappa del metodo](https://github.com/devfrx/daemon/issues/1): la risposta in breve sta nel [ticket](https://github.com/devfrx/daemon/issues/4), le fonti qui. **Nessuna decisione**: decidono i ticket che la ricerca sblocca.
+
+**Chi e come.** Un subagente `opus` in sola lettura — GET soltanto, su GitHub e sul web —, col mandato scritto dal coordinatore; circa 219 mila token, 60 chiamate, 18 minuti. **La verifica del coordinatore**, lo stesso giorno: per ogni riga della tabella delle fonti una richiesta GET sull'URL e la ricerca della frase citata, a spazi e segni di formattazione normalizzati — ritrovate tutte e trenta quelle controllate; la [19] ha la minuscola in pagina, e la [29] va a capo nel sorgente; la misura M rifatta, uguale. ⚠️ **Una correzione:** il rapporto dava a `gh` il flag `--set-parent`, che il changelog del 2026-06-10 nomina [11] ma che il binario in uso, la 2.101.0, **non ha**: `gh issue edit --help` mostra `--parent` — *«Set the parent issue»* — e `--remove-parent`. Corretto qui sotto, nei due punti che lo dicevano.
+
+| | |
+|---|---|
+| **Data** | 2026-09-30 |
+| **Mandato** | la domanda del ticket parola per parola, col contesto e le regole — un file dello scratchpad della sessione, non nel repository |
+| **Natura** | indagine: **nessuna decisione e nessun consiglio** per `devfrx/daemon` |
+| **Metodo** | pagine lette alla fonte (WebFetch, WebSearch). I testi di GitHub, dei processi e degli strumenti letti **dai loro sorgenti** con `gh api --method GET`, così le frasi sono parola per parola: `github/docs`, `github/rest-api-description`, `kubernetes/enhancements`, `rust-lang/rfcs`, `python/peps`, `golang/proposal`, `adr/madr`, `npryce/adr-tools`. La mappa vera misurata solo in GET. Niente scritto su GitHub né nel repository |
+| **Citazioni** | una per fonte, sotto le 15 parole, nella tabella delle fonti. Nel testo si parafrasa, col numero della fonte fra parentesi quadre. ⚠️ Le frasi delle pagine lette **solo** con WebFetch — [8]–[11], [21], [24] — sono l'estrazione dello strumento: verosimilmente letterali, **non** ricontrollate su un sorgente. Quelle di [15] e [16] ricontrollate parola per parola sul sorgente; l'inizio di quelle di [19] e [22] ritrovato nel sorgente con la ricerca del codice di GitHub |
+| **Date** | docs.github.com non mostra date: per quelle pagine vale l'ultimo commit al file sorgente in `github/docs` (il comando è sotto la tabella delle fonti). ⚠️ Un sorgente include pezzi riusati (`data/variables`, `data/reusables`) che cambiano a parte; per il limite delle sub-issue la variabile è datata da sola |
+| **Letture** | 20 pagine e 4 ricerche web, più un download della descrizione OpenAPI. Le chiamate GET all'API di GitHub — sorgenti, date, misure sulla mappa — sono state un centinaio, brevi, e **non** le ho contate nel tetto: se il tetto le comprendeva, l'ho superato |
+
+---
+
+### GitHub, limiti e comportamento
+
+#### Verificato
+
+| Domanda del ticket | Risposta alla fonte | Fonte |
+|---|---|---|
+| Quante sub-issue per issue padre | **100**; erano 50 fino al 2024-12-12 | [1], [8] |
+| Quanti livelli | **8** livelli di annidamento | [1] |
+| Sub-issue da un altro repository | **sì**: nell'interfaccia si sceglie un repository diverso, e la lista mostra il nome del repository d'origine | [1], [8] |
+| Sub-issue da un altro proprietario | **no**, per l'API REST: la sub-issue dev'essere dello stesso proprietario del padre | [4] |
+| Blocchi per issue | **50 per tipo di relazione** (*blocked by*, *blocking*) — lo dice il changelog del GA, **non** la documentazione | [10] |
+| Chi può modificarli | almeno il permesso *triage* sul repository, per le sub-issue come per le dipendenze | [1], [3] |
+| Dove esistono | sub-issue: github.com, Enterprise Cloud e Enterprise Server; dipendenze: Free, Pro, Team ed Enterprise Cloud — la loro pagina non ha la versione Enterprise Server | [1], [3] |
+| Da quando | sub-issue GA il 2025-04-09; dipendenze GA il 2025-08-21; `gh` le gestisce dalla v2.94.0 (2026-06-10) | [9], [10], [11] |
+
+- **Un padre.** L'endpoint REST che aggiunge una sub-issue ha il parametro `replace_parent`, descritto come la sostituzione del padre *attuale* della sub-issue; `GET …/issues/{n}/parent` restituisce **una** issue [4]. Da una sub-issue si trova sempre il link al padre, al singolare [2]. `gh` 2.101.0 ha `--parent` su `issue create` e su `issue edit`, e `--remove-parent` [1]; il changelog nomina anche `--set-parent` [11], che nel binario in uso non c'è — `gh issue edit --help`, 2026-09-30.
+- **Gli identificatori.** Le API di scrittura non vogliono il numero dell'issue ma il suo `id`: `sub_issue_id` per le sub-issue, `issue_id` per i blocchi [4], [5]. `gh` accetta numeri o URL [1], [3].
+- **Ricerca e vista.** Qualificatori `is:blocked`, `is:blocking`, `blocked-by:`, `blocking:` [10]. Un'icona «Blocked» nelle board dei progetti e nella pagina Issues del repository [3].
+- **Webhook e riepiloghi.** Gli eventi delle dipendenze portano anche il repository dell'issue che blocca (`blocking_issue_repo`) o di quella bloccata (`blocked_issue_repo`) [7]. Il riepilogo `issue_dependencies_summary` ha quattro contatori — `blocked_by`, `blocking`, `total_blocked_by`, `total_blocking` — **senza descrizione** nello schema [7].
+- **Issue chiusa, lato sub-issue.** L'esempio di `gh issue view` nella documentazione mostra un padre con una sub-issue *Closed* ancora in lista, e l'avanzamento a 1/3 [2].
+- **Issue trasferita.** Solo fra repository dello **stesso** proprietario, mai da privato a pubblico, con permesso di scrittura su entrambi. La pagina parla di trasferire issue **aperte**. Restano commenti e assegnatari; etichette e milestone solo se esistono nel repository d'arrivo. L'URL originale reindirizza al nuovo [12]; l'API risponde `301 Moved Permanently` [6].
+- **Issue cancellata.** Cancellazione permanente. In un repository di un account personale può farla solo quell'account; in un'organizzazione solo admin o owner, e solo se l'organizzazione l'ha abilitata. Chi visita l'URL vede «pagina non trovata» [13]; l'API risponde `410 Gone` a chi ha accesso in lettura, `404` a chi non ce l'ha [6].
+- **Misurato oggi sulla mappa vera** (M), solo GET:
+
+```bash
+# 2026-09-30, gh 2.101.0
+gh api --method GET "repos/devfrx/daemon/issues/1/sub_issues?per_page=100" --jq '.[] | "#\(.number) \(.state) id=\(.id)"'
+#   → 9 righe, #2 … #10, tutte in devfrx/daemon; la #2 è closed e RESTA in lista
+gh api --method GET repos/devfrx/daemon/issues/1 --jq .sub_issues_summary
+#   → {"completed":1,"percent_completed":11,"total":9}: la chiusa conta come completata
+for n in 2 3 4 5 6 7 8 9 10; do gh api --method GET repos/devfrx/daemon/issues/$n/parent --jq .number; done
+#   → 1 per tutte, anche per la #2 chiusa (state_reason: completed)
+for n in 2 3 4 5 6 7 8 9 10; do gh api --method GET repos/devfrx/daemon/issues/$n/dependencies/blocking --jq '[.[].number]'; done
+#   → la #4 blocca 5 e 6; la #5 blocca 7 e 8; la #6 blocca 9 e 10; le altre nessuna.
+#     Ogni blocco compare anche dall'altro lato, in .../dependencies/blocked_by
+gh api --method GET repos/devfrx/daemon/issues/5 --jq .issue_dependencies_summary
+#   → {"blocked_by":1,"blocking":2,"total_blocked_by":1,"total_blocking":2}
+# Esempio di id, quello che vogliono le API di scrittura: la #4 ha id 5642649198
+```
+
+#### Dedotto
+
+- Un'issue ha **un solo padre alla volta**: lo dicono insieme `replace_parent`, l'endpoint del padre al singolare e `--parent` di `gh issue edit`, che *imposta* il padre. Nessuna frase lo afferma in chiaro.
+- **Blocchi fra issue di mappe diverse** nello stesso repository: nelle fonti niente lega le dipendenze alla gerarchia, e l'endpoint prende l'`id` di un'issue qualsiasi [5]. Quindi sono ammessi. **Non misurato**: misurarlo vuol dire scrivere.
+- **Blocchi fra repository diversi**: il campo `blocking_issue_repo` nel webhook [7] e l'output `owner/repo#N` di `gh` [3] fanno pensare che siano previsti. Fra proprietari diversi, niente.
+- Le sub-issue chiuse restano nella lista e nel `total` (misurato), quindi **verosimilmente** occupano un posto dei 100. Non verificato.
+- I due contatori `blocked_by` e `total_blocked_by` fanno pensare a «bloccanti aperti» contro «tutti». Non verificato: sulla mappa coincidono, perché i bloccanti sono tutti aperti.
+- Un'issue trasferita cambia URL — da qui il redirect [12] — e quindi numero nel repository d'arrivo. Che il suo `id` resti lo stesso, e con lui sub-issue e blocchi, non è scritto.
+- Una sub-issue **chiusa** non si trasferisce per la strada documentata, che parla solo di issue aperte [12]. Non è scritto come divieto.
+
+#### Non trovato
+
+- Che fine fanno sub-issue, padre e blocchi quando un'issue è **trasferita** o **cancellata**: le due pagine tacciono [12], [13].
+- Che cosa succede al segno «Blocked» quando l'issue che blocca viene **chiusa** [3], [10].
+- Una frase esplicita «un'issue ha un solo padre».
+- Una frase esplicita sulle dipendenze fra repository, o fra proprietari, diversi.
+- Il limite di 50 blocchi nella documentazione: c'è solo nel changelog del 2025-08-21 [10]. Se valga ancora, non verificato.
+- Se chiudere il padre chiuda le sub-issue.
+- Un tetto complessivo per una gerarchia, oltre ai 100 per padre e agli 8 livelli.
+
+---
+
+### Il collegamento che non marcisce
+
+#### Verificato
+
+- **Le forme di riferimento.** URL completo, `#26`, `GH-26` e `owner/repo#26` diventano link corti; gli SHA dei commit diventano link al commit [14]. Valgono **nelle conversazioni**: i riferimenti automatici **non** si creano nei wiki né nei **file del repository** [14].
+- **Issue trasferita**: l'URL vecchio reindirizza [12]; l'API risponde `301` [6].
+- **Issue cancellata**: pagina non trovata [13]; l'API risponde `410` o `404` [6].
+- **Repository rinominato**: reindirizzati issue, wiki, stelle, follower e le operazioni git. Eccezioni: gli URL dei siti di progetto e le Actions. I redirect si rompono se si crea un nuovo repository col **vecchio nome** [16].
+- **Repository trasferito**: tutti i link alla vecchia posizione reindirizzano. I redirect sono cancellati per sempre se alla vecchia posizione nasce un repository o un fork [17].
+- **Link a un file**: su un ramo (`/blob/main/`) il contenuto cambia coi commit. Il permalink mette l'ID del commit al posto del ramo, anche col tasto `y`. Vale anche un tag, e si possono fissare righe o intervalli [15].
+- **Chiusura da PR**: una parola chiave (`Closes #10`, `Fixes owner/repo#100`) nella descrizione della PR, o in un messaggio di commit, chiude l'issue al merge — **solo** se la PR punta al ramo predefinito. A mano, fino a dieci issue per PR [18].
+- **Come fanno i progetti**, dalle loro guide:
+  - **il numero condiviso** — la cartella del KEP porta il numero dell'issue di tracciamento [29]; il design doc di Go si chiama `design/NNNN-shortname.md`, col numero dell'issue [33]; il file della RFC di Rust prende il numero della PR, e in testa porta il link «RFC PR» [31];
+  - **il campo d'intestazione** — nei PEP, `Discussions-To` porta l'URL del thread di discussione canonico, `Resolution` il link al messaggio che decide [32];
+  - **il doppio senso** — l'issue del KEP ha un campo per il link al KEP, riempito dopo, e per il rilascio deve puntare alla **cartella** del KEP, non alla PR iniziale [29]; `Replaces` ↔ `Superseded-By` nei PEP [32]; `replaces` ↔ `superseded-by` nei KEP [28]; in adr-tools, `-s` e `-l` scrivono il link nel nuovo ADR **e** quello inverso nel vecchio [25];
+  - **il link corto del progetto** — il README di Go usa `go.dev/issue/…` e `go.dev/s/proposal-minutes` [33].
+
+#### Dedotto
+
+- In un URL di issue è stabile la terna **proprietario / repository / numero**. La proteggono i redirect su rinomina e trasferimento del repository, e su trasferimento dell'issue. La rompono la cancellazione, il riuso del vecchio nome, un repository o un fork creato alla vecchia posizione [12], [13], [16], [17].
+- **Dentro un file del repository** l'unica forma cliccabile è l'URL completo; `owner/repo#N` e `#N` restano testo [14]. Nel senso inverso — da un'issue verso il file o il commit — `#N`, URL e SHA diventano link.
+- Il **numero condiviso** nel nome del file ricostruisce il collegamento anche senza URL, e regge a un cambio d'indirizzo (KEP, Go, Rust).
+- Un **permalink** a un commit non marcisce ma **congela** il contenuto; un link al ramo segue il documento, ma si rompe se il file è rinominato o spostato. Questo secondo punto è dedotto: nessuna fonte letta parla di redirect per file spostati.
+- La **parola chiave di chiusura** mette il collegamento issue ↔ PR su GitHub, non nel file.
+
+#### Non trovato
+
+- Se numero e `id` di un'issue si conservano dopo un trasferimento.
+- Se GitHub reindirizza gli URL `/blob/<ramo>/` di un file rinominato o spostato.
+- Una forma di riferimento automatico che funzioni dentro i file del repository: la pagina li esclude [14].
+
+---
+
+### ADR e decisioni aperte
+
+#### Verificato
+
+- **Nygard, 2011.** Una decisione è `proposed` finché gli interessati non sono d'accordo, `accepted` quando lo sono. Se un ADR successivo la cambia o la rovescia, la vecchia diventa `deprecated` o `superseded`, col rimando alla sostituta, e **si tiene**. Gli ADR stanno nel repository del progetto (`doc/arch/adr-NNN.md`), con numeri sequenziali mai riusati [24].
+- **adr.github.io.** Un ADR registra **una** decisione e la sua motivazione; l'insieme degli ADR di un progetto è il suo *decision log* [19]. Le pagine *AD Practices* [20] e *Decision Capturing Tools* [21] non parlano di issue, pull request o decisioni aperte. Fra gli strumenti, pyadr gestisce il ciclo proposta → accettazione, rifiuto, deprecazione, sostituzione [21].
+- **MADR 4.0.0** (2024-09-17). Cartella `docs/decisions`, file `NNNN-title-with-dashes.md` [22]. Il modello ha `status` fra `proposed | rejected | accepted | deprecated | … | superseded by ADR-0123`, un campo `date` che è la data dell'**ultimo aggiornamento** della decisione, e i campi `decision-makers`, `consulted`, `informed` [23]. Nel *Context and Problem Statement* suggerisce link a board di collaborazione o a **sistemi di gestione delle issue**; in *More Information*, quando e come attuarla, **se e quando rivederla**, e i link alle altre decisioni [23].
+- **adr-tools**, lo script `adr-new`, non toccato dal 2018-02-16. `-s` sostituisce un ADR: mette il link nello *Status* del nuovo **e cambia lo status del vecchio**. `-l TARGET:LINK:REVERSE-LINK` scrive il link nel nuovo e quello inverso nel vecchio; l'esempio dell'aiuto usa `Amends` / `Amended by` [25].
+- **Zimmermann**, la revisione degli ADR, pagina collegata da [20]: niente su dove vivano le decisioni aperte [26].
+
+#### Dedotto
+
+- Nelle guide ADR lette, la decisione aperta vive **dentro l'ADR stesso**, con lo status `proposed`. Nessuna indica un'issue o una PR come il suo posto; MADR si limita a suggerire il link *verso* le issue.
+- Le guide accettano una modifica **minima** al vecchio ADR per tenere il collegamento nei due sensi: la riga di status (Nygard, adr-tools) o il link inverso (adr-tools).
+- Il campo `date` di MADR, «ultimo aggiornamento», ammette un ADR che si aggiorna nel tempo. Nygard e adr-tools, per un cambio di decisione, fanno invece un ADR nuovo.
+
+#### Non trovato
+
+- In adr.github.io, MADR, Nygard e adr-tools: una regola su dove tenere una decisione **aperta** fuori dall'ADR `proposed`, e una regola «un posto solo» fra issue tracker e ADR.
+- Nelle pagine lette di MADR, la prassi di proporre un ADR con una pull request.
+
+---
+
+### Progetti veri
+
+#### Verificato
+
+| Progetto | Dove vive **aperta** | Dove vive **presa** | Contro il doppione | Il collegamento |
+|---|---|---|---|---|
+| **Kubernetes KEP** [27]–[30] | il KEP in stato `provisional`, un documento di lavoro soggetto a cambiare; i punti in discussione marcati `<<[UNRESOLVED …]>>` nel testo [29]; lo stato in `kep.yaml` [30]. L'issue di tracciamento è l'«ombrello» dell'enhancement e **non** ospita la discussione del disegno: per quella, un'issue o una PR collegata [27] | il KEP nel repository, `implementable` quando approvato, poi `implemented`; i respinti restano come documento storico [28], [30] | ruoli divisi: l'issue traccia stato e rilasci, il KEP disegna [27]. Un KEP per tutta la vita della funzione; dopo `implemented`, i cambi grossi vanno in un KEP nuovo [29]; `replaces` / `superseded-by` [28] | la cartella `NNNN-titolo` col numero dell'issue; nell'issue un campo col link al KEP; l'issue punta alla cartella del KEP, non alla PR iniziale [29] |
+| **Rust RFC** [31] | la **pull request** della RFC: si discute nel suo thread, e lì si riportano i riassunti delle discussioni fatte fuori | la PR fusa: la RFC diventa `active`, un file in `text/`. Respinta, la PR si chiude, a volte con `postponed`. Ogni RFC accettata ha un'issue che ne traccia l'attuazione in `rust-lang/rust` | dopo l'accettazione, solo emendamenti molto piccoli; i cambi sostanziali in una RFC nuova, con una nota nell'originale. Niente squash né rebase dei commit già visibili nella PR | il file prende il numero della PR, e in testa il link «RFC PR» |
+| **Python PEP** [32] | il PEP in `Draft` nel repository; la discussione in un thread indicato da `Discussions-To`; una sezione *Open Issues* registra le idee ancora senza risoluzione | lo status (Accepted, Final, Rejected…) e `Resolution`, col link al messaggio che decide. Da lì il PEP è un **documento storico**; la specifica viva sta nella documentazione ufficiale (Language Reference, Library Reference, PyPA) | dopo la risoluzione il PEP non cambia in modo sostanziale; la sua storia è la cronologia git; `Replaces` / `Superseded-By`. I refusi via issue o PR su GitHub, il contenuto sul thread | i campi d'intestazione con gli URL |
+| **Go** [33] | un'**issue GitHub** con l'etichetta Proposal; la discussione sull'issue tracker; il design doc solo se serve | sull'issue: etichetta Proposal-Accepted, e l'issue passa a tracciare l'attuazione; respinta, si chiude. Quando decidono gli architetti, decisione e motivazione si scrivono sull'issue. Il design doc, se c'è, nel repository `golang/proposal` | sulle modifiche al design doc solo commenti di forma: tutto il resto va sull'issue | `design/NNNN-shortname.md` col numero dell'issue; link corti `go.dev/issue/…` |
+
+- **Una divergenza interna a Kubernetes.** KEP-0000 voleva le issue riservate al lavoro in corso invece che «ombrello» [28], e il suo file non cambia dal 2021-02-02; il README, aggiornato il 2026-09-04, chiama le issue di tracciamento proprio «ombrelli» [27].
+
+#### Dedotto
+
+- I quattro separano il **luogo della discussione** — issue, PR o thread, uno solo per decisione — dal **registro versionato**, e nessuno ripete il contenuto della decisione nei due posti. Fa eccezione Go senza design doc, dove l'issue è insieme discussione e registro.
+- La colla ricorrente è il **numero condiviso** nel nome del file, più un **link in un campo fisso**, spesso nei due sensi.
+- Dopo la decisione tre su quattro **congelano** il documento e mandano i cambi sostanziali in un documento nuovo, coi rimandi incrociati (Rust, PEP, KEP dopo `implemented`): la stessa forma del `superseded` degli ADR.
+- KEP, Rust e Go usano un'issue **dopo** la decisione per tracciare l'attuazione, non per ridiscutere.
+- Il cambio di Kubernetes, dalle issue «solo lavoro in corso» del 2021 alle issue «ombrello» di oggi, è un caso vero di documento di processo rimasto indietro rispetto alla pratica.
+
+#### Non trovato
+
+- Nei documenti di processo letti, nessuno usa le **sub-issue** o le **dipendenze** native di GitHub: Go traccia le proposte in un GitHub Project [33], Kubernetes in board di tracciamento per rilascio [27].
+- Un progetto che documenti nel proprio processo il binomio «decisione aperta in un'issue, decisione presa in un ADR del repository»: non trovato entro il tetto di letture.
+
+---
+
+### Le opzioni che le fonti mostrano
+
+Nessuna è una scelta: le elenco con chi le usa.
+
+**Dove vive la decisione aperta**
+
+| | Opzione | Chi la usa |
+|---|---|---|
+| 1 | **nel documento**, con uno stato «aperto» (`proposed`, `provisional`, `Draft`) e i punti aperti marcati nel testo; la discussione altrove, indicata da un campo | Nygard [24], MADR [23], KEP [29], PEP [32] |
+| 2 | **nella pull request** che porta il documento: si discute nel thread, e il merge è la decisione | Rust RFC [31] |
+| 3 | **nell'issue**: discussione e decisione scritte lì; un documento solo se il disegno lo chiede | Go [33] |
+| 4 | **issue e documento insieme, coi ruoli divisi**: l'issue traccia, il documento disegna e decide | Kubernetes KEP [27], [29] |
+
+**Dopo la decisione**
+
+| | Opzione | Chi la usa |
+|---|---|---|
+| 5 | **documento congelato**; i cambi sostanziali in un documento nuovo, coi rimandi nei due sensi | Rust [31], PEP [32], KEP dopo `implemented` [29], ADR `superseded` [24], [25] |
+| 6 | **documento storico**, e la specifica viva altrove | PEP [32] |
+| 7 | **l'issue resta**, come tracciamento dell'attuazione | Go [33], Rust [31], KEP [27] |
+
+**Il collegamento**
+
+| | Opzione | Chi la usa, e che cosa ne dice la fonte |
+|---|---|---|
+| 8 | l'**URL completo** dell'issue nel file | l'unica forma cliccabile nei file [14]; regge a rinomina e trasferimento, non a cancellazione né al riuso del nome [12], [13], [16], [17] |
+| 9 | il **numero condiviso** nel nome del file | KEP [29], Go [33], Rust [31] |
+| 10 | un **campo d'intestazione** con l'URL | PEP `Discussions-To` e `Resolution` [32]; il link «RFC PR» [31]; il campo dell'issue del KEP [29] |
+| 11 | il **permalink** al commit (contenuto congelato), contro il link al ramo (contenuto vivo) | GitHub [15] |
+| 12 | la **parola chiave di chiusura** nella PR che porta il documento | GitHub, solo verso il ramo predefinito [18] |
+| 13 | un **link corto** gestito dal progetto | Go [33] |
+
+---
+
+### Le fonti
+
+| # | URL | Titolo | Data | Frase citata |
+|---|---|---|---|---|
+| 1 | https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/adding-sub-issues | Adding sub-issues — GitHub Docs | senza data in pagina; sorgente 2026-09-29 (`c008b66`); il limite è la variabile `sub-issue_limit` di `data/variables/projects.yml`, 2026-06-09 (`c64d84d`) | «up to 100 sub-issues per parent issue and create up to eight levels» |
+| 2 | https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/browsing-sub-issues | Browsing sub-issues — GitHub Docs | sorgente 2026-09-29 | «you can always find a link back to the parent issue» |
+| 3 | https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/creating-issue-dependencies | Creating issue dependencies — GitHub Docs | sorgente 2026-06-17 | «Each flag accepts a comma-separated list of issue numbers or URLs.» |
+| 4 | https://docs.github.com/en/rest/issues/sub-issues | REST API endpoints for sub-issues — GitHub Docs | testo letto nella descrizione OpenAPI, 2026-09-30 (`417dbcd`) | «The sub-issue must belong to the same repository owner as the parent issue» |
+| 5 | https://docs.github.com/en/rest/issues/issue-dependencies | REST API endpoints for issue dependencies — GitHub Docs | come [4] | «The id of the issue that blocks the current issue» |
+| 6 | https://docs.github.com/en/rest/issues/issues#get-an-issue | REST API endpoints for issues — Get an issue | come [4] | «The API returns a 301 Moved Permanently status if the issue was transferred» |
+| 7 | https://github.com/github/rest-api-description/blob/417dbcdbc615bff59f3a476385049a4c5bd0149b/descriptions/api.github.com/api.github.com.json | GitHub REST API — descrizione OpenAPI | 2026-09-30 | «blocking_issue_repo» (campo dello schema del webhook) |
+| 8 | https://github.blog/changelog/2024-12-12-github-issues-projects-close-issue-as-a-duplicate-rest-api-for-sub-issues-and-more/ | GitHub Issues & Projects – Close issue as a duplicate, REST API for sub-issues, and more! | 2024-12-12 | «You can now have up to 100 sub-issues per parent issue (up from 50)» |
+| 9 | https://github.blog/changelog/2025-04-09-evolving-github-issues-and-projects/ | Evolving GitHub Issues and Projects | 2025-04-09 | «the general availability of sub-issues, issue types, advanced search» |
+| 10 | https://github.blog/changelog/2025-08-21-dependencies-on-issues/ | Dependencies on issues | 2025-08-21 | «You can link up to 50 issues for each relationship type.» |
+| 11 | https://github.blog/changelog/2026-06-10-manage-sub-issues-types-and-dependencies-from-github-cli/ | Manage sub-issues, types, and dependencies from GitHub CLI | 2026-06-10 | «expose parent, sub-issue, type, and dependency data as new JSON fields» |
+| 12 | https://docs.github.com/en/issues/tracking-your-work-with-issues/administering-issues/transferring-an-issue-to-another-repository | Transferring an issue to another repository — GitHub Docs | sorgente 2026-07-08 | «The original URL redirects to the new issue's URL.» |
+| 13 | https://docs.github.com/en/issues/tracking-your-work-with-issues/administering-issues/deleting-an-issue | Deleting an issue — GitHub Docs | sorgente 2026-07-08 | «a message stating that the web page can't be found» |
+| 14 | https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/autolinked-references-and-urls | Autolinked references and URLs — GitHub Docs | sorgente 2026-07-08 | «Autolinked references are not created in wikis or files in a repository.» |
+| 15 | https://docs.github.com/en/repositories/working-with-files/using-files/getting-permanent-links-to-files | Getting permanent links to files — GitHub Docs | sorgente 2026-03-12 | «the file contents might not be the same when someone looks at it later» |
+| 16 | https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository | Renaming a repository — GitHub Docs | sorgente 2026-03-12 | «do not reuse the original name of the renamed repository» |
+| 17 | https://docs.github.com/en/repositories/creating-and-managing-repositories/transferring-a-repository | Transferring a repository — GitHub Docs | sorgente 2026-09-29 | «All links to the previous repository location are automatically redirected» |
+| 18 | https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue | Linking a pull request to an issue — GitHub Docs | sorgente 2026-03-18 | «interpreted only when the pull request targets the repository's _default_ branch» |
+| 19 | https://adr.github.io/ | Architectural Decision Records (ADRs) — home | senza data; letta il 2026-09-30 | «captures a single AD and its rationale» |
+| 20 | https://adr.github.io/ad-practices/ | AD Practices | pubblicata 2024-10-27, aggiornata 2026-05-11 | — niente di pertinente (non trovato) |
+| 21 | https://adr.github.io/adr-tooling/ | Decision Capturing Tools | pubblicata 2024-10-28, aggiornata 2026-09-23 | «CLI to help with an ADR process lifecycle (proposal/acceptance/rejection/deprecation/superseding)» |
+| 22 | https://adr.github.io/madr/ | MADR — Markdown Architectural Decision Records | pagina senza data; MADR 4.0.0 del 2024-09-17; letta il 2026-09-30 | «Create folder `docs/decisions` in your project.» |
+| 23 | https://github.com/adr/madr/blob/8135ed2e01503be852769402ec3eeb585bfe75a2/template/adr-template.md | MADR, `template/adr-template.md` (ramo `develop`) | 2026-04-17 | «Consider adding links to collaboration boards or issue management systems.» |
+| 24 | https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions | Documenting Architecture Decisions — Michael Nygard | 2011-11-15 | «A decision may be "proposed" if the project stakeholders haven't agreed with it yet» |
+| 25 | https://github.com/npryce/adr-tools/blob/5f6c310f1756ab6c99cb2a9bae65e05d0f9103a0/src/adr-new | adr-tools, `src/adr-new` | 2018-02-16 | «adr new -s 3 -s 4 -l "5:Amends:Amended by"» |
+| 26 | https://www.ozimmer.ch/practices/2023/04/05/ADRReview.html | How to review ADRs — and how not to — Olaf Zimmermann | 2023-04-05, aggiornata 2026-08-28 | — niente di pertinente (non trovato) |
+| 27 | https://github.com/kubernetes/enhancements/blob/1383357a60539cbf265ae028088d102222c6d9fa/README.md | Enhancement Tracking and Backlog — `kubernetes/enhancements` | 2026-09-04 | «These issues are umbrellas for new enhancements to be added to Kubernetes.» |
+| 28 | https://github.com/kubernetes/enhancements/blob/353137c2716c4d56895974e198139e5e3bd2282d/keps/sig-architecture/0000-kep-process/README.md | Kubernetes Enhancement Proposal Process (KEP-0000) | 2021-02-02 | «reserve GitHub issues for tracking work in flight, instead of creating "umbrella" issues» |
+| 29 | https://github.com/kubernetes/enhancements/blob/6ab9bf717d1228928740bdbfe761b6e62b870902/keps/NNNN-kep-template/README.md | KEP template, `README.md` | 2025-11-21 | «where `NNNN` is the issue number (with no leading-zero padding)» |
+| 30 | https://github.com/kubernetes/enhancements/blob/eec531dae4e4ae969f3a6d33c59d685c55c69807/keps/NNNN-kep-template/kep.yaml | KEP template, `kep.yaml` | 2024-12-16 | «`status: provisional\|implementable\|implemented\|deferred\|rejected\|withdrawn\|replaced`» |
+| 31 | https://github.com/rust-lang/rfcs/blob/895324ee01f0c579ae1de46ddddd55967aff6c5e/README.md | Rust RFCs — `README.md` | 2025-12-11 | «More substantial changes should be new RFCs, with a note added» |
+| 32 | https://github.com/python/peps/blob/ff16962a22fdc5e2095e0cbc5c243ea76e34fb52/peps/pep-0001.rst (resa in https://peps.python.org/pep-0001/) | PEP 1 – PEP Purpose and Guidelines | 2026-09-27 | «a PEP is considered a historical document rather than a living specification» |
+| 33 | https://github.com/golang/proposal/blob/58e952a6dd29795163bdff3de8b2d77329ff995b/README.md | Proposing Changes to Go — `golang/proposal` | 2026-04-23 | «the issue is repurposed to track the work of implementing the proposal» |
+| M | `gh api --method GET` su `repos/devfrx/daemon/issues/…` | misura in sola lettura della mappa vera | 2026-09-30 | — (i comandi e gli esiti sono nella prima sezione) |
+
+**Come sono datate le pagine di docs.github.com e i file dei repository** — l'ultimo commit al file sorgente:
+
+```bash
+gh api --method GET "repos/github/docs/commits?path=<percorso del sorgente>&per_page=1" --jq '.[0].commit.committer.date'
+```
+
+Per le fonti su GitHub, l'URL è un **permalink** al commit che ho letto: il testo citato resta quello anche se il file cambia.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

@@ -2724,3 +2724,30 @@ del 3 — il verdetto della knowledge base del 2026-09-05: **nessuna sesta propr
 il suo perimetro si rilegge con l'esito della revisione. ⛔ **Lo sbarra AUD-004**, l'ADR del proprietario sulle skill
 dichiarative: è una sua decisione e non del piano. Il perimetro sta nel [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md),
 che chi riprende quel fronte legge **per intero**; brainstorming e disegno del 13 vengono prima del piano, in sessioni distinte.
+
+## La consegna del terzo audit, com'era — archiviata il 2026-10-01, alla chiusura della Fase 2
+
+Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende — scritto alla chiusura della sessione del 2026-09-30»*, parola per parola:
+
+
+1. `git fetch --all --prune`, poi `git status -sb`. ⚠️ L'albero può portare le modifiche **non committate** del
+   pre-dispaccio del compito 2 del piano della knowledge base — il piano, `_extract_brief_2.py`, `dispatch-task-2.md` —:
+   sono del proprietario, e **non si toccano**.
+2. `ls .repo-audit/20260930-1510/` deve mostrare `inventario.json`, `glossario.json`, `contesto.md`,
+   `controlli.json`, `ventaglio-audit.js`, `calibrazione.json` ed `esiti/strumenti.json`. Se la cartella manca, l'audit
+   **non** si riprende da questa macchina.
+3. Si leggono la skill `repo-audit:repo-audit` dalla Fase 2, `contesto.md` e questo file. Il glossario **non** si
+   legge intero.
+4. **La calibrazione.** Il `Workflow` con `scriptPath` = `.repo-audit/20260930-1510/ventaglio-audit.js` e `args` =
+   `{dir: <percorso assoluto della cartella del run>, skill:
+   "C:/Users/zagor/.claude/plugins/marketplaces/local-desktop-app-uploads/repo-audit/skills/repo-audit", fase:
+   "estrazione", agente: "repo-audit:estrattore", elementi: <il contenuto di calibrazione.json>, modello: "sonnet"}`.
+   Il proprietario legge in `/workflows` i token e il modello effettivo; si ridice la stima del resto e si aspetta il
+   suo sì.
+5. Poi il resto dell'estrazione — gli id di `estrazione/_elenco.json` meno quelli di `calibrazione.json` —,
+   `soggetti.py`, il giudizio (`repo-audit:giudice`, `modello: "opus"`), `ledger.py evidenze` e `ledger.py
+   da-verificare`, la verifica (`repo-audit:verificatore`, `modello: "opus"`), `ledger.py consolida`. Gli script del
+   plugin si lanciano con `PYTHONUTF8=1`: la console di questa macchina è cp1252, e senza si fermano sul primo `≈`.
+6. Il controllo di non intrusione: `git status --porcelain` mostra **solo** le righe del punto 1.
+7. Alla chiusura della Fase 2 si aggiornano la tabella delle fasi e questa sezione — la chiusura di adesso va in
+   [`archivio/`](stato-storico.md), parola per parola —, e si committa.

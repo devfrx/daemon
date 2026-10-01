@@ -2751,3 +2751,37 @@ Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende 
 6. Il controllo di non intrusione: `git status --porcelain` mostra **solo** le righe del punto 1.
 7. Alla chiusura della Fase 2 si aggiornano la tabella delle fasi e questa sezione — la chiusura di adesso va in
    [`archivio/`](stato-storico.md), parola per parola —, e si committa.
+
+## La consegna del terzo audit, com'era — archiviata il 2026-10-01, alla chiusura del triage per radici
+
+Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende — scritto alla chiusura della sessione del 2026-10-01»*, parola per parola:
+
+
+1. `git fetch --all --prune`, poi `git status -sb`. ⚠️ L'albero può portare le modifiche **non committate** del
+   pre-dispaccio del compito 2 del piano della knowledge base — il piano, `_extract_brief_2.py`, `dispatch-task-2.md` —:
+   sono del proprietario, e **non si toccano**.
+2. Lo stato del run è in `.repo-audit/20260930-1510/`, **solo su questa macchina**. Si leggono `STATO.md` — il diario
+   dei passi della Fase 2, coi costi, le decisioni e i workflow —, **`sintesi-radici.md`** — la bozza del coordinatore:
+   nove radici, l'ordine consigliato, ciò che non ha fatto — e `copertura.md`. `ledger.json` e `sintesi.md` sono
+   grandi: si interrogano con uno script, non si leggono interi. Alla chiusura: **627 finding aperti** — 43 alti, 584
+   medi —, 103 confutati, 1497 bassi non verificati (P6).
+3. **La Fase 3 è il triage col proprietario**, radice per radice, una domanda alla volta in A/B: correggere, accettare,
+   decidere, rinviare. Quattro radici chiedono una sua decisione **prima** di ogni correzione — la §8 della spec (R1), la
+   convenzione del pianificato in `design/` (R2), la regola dei rimandi negli ADR (R3), il piano della knowledge base
+   (R6) —; lo sfoltimento (R5, e la parte di R4 che toglie le copie) va a `lean-docs`. Le decisioni si scrivono in
+   `triage.json`, con lo schema della §6 di `references/schemi.md` della skill.
+4. Poi la Fase 4: il ramo `repo-audit/20260930-1510` dal `main` di allora (C8), i pacchetti, `piano_correzioni.py`, un
+   correttore per pacchetto — **col numero di agenti e il costo detti prima** (P6).
+5. Gli script del plugin si lanciano con `PYTHONUTF8=1`. ⛔ Non rilanciare `ledger.py da-verificare`: cancellerebbe i
+   lotti senza esito; i lotti di questo run li fa `lotti_alti_medi.py`, nella cartella del run.
+6. Il controllo di non intrusione: `git status --porcelain` mostra **solo** le righe del punto 1.
+7. Alla chiusura della Fase 3 si aggiornano la tabella delle fasi e questa sezione — la chiusura di adesso va in
+   [`archivio/`](stato-storico.md), parola per parola —, e si committa.
+
+## L'intestazione del compendio e la riga delle contraddizioni, com'erano — archiviate il 2026-10-01, al triage del terzo audit
+
+⚠️ **Vere il giorno in cui furono scritte.** Uscite dal compendio parola per parola, coi link riscritti per questa cartella.
+
+**Aggiornato il 2026-09-30**, all'**apertura del terzo audit completo** — codice e documentazione, chiesto dal proprietario **prima** del resto del piano dei documenti della revisione della knowledge base, che ne ha eseguito il compito 1: **ADR-0040**, la sua voce in §5, il rimando nella voce di ADR-0022, i totali, il caso del superamento in parte in §13 e in §7. Questa riga e il puntatore della §6, com'erano, sono in [`archivio/stato-storico.md`](stato-storico.md). Il contenuto di merito nuovo è la voce di ADR-0040, coi rimandi; l'audit cambia il solo puntatore. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+
+📌 **La compressione di [`porta-di-qualita.md`](../porta-di-qualita.md) è fatta, il 2026-09-24:** il file com'era sta intero in [`archivio/porta-di-qualita-storico.md`](porta-di-qualita-storico.md). ⏳ **Resta la correzione delle contraddizioni** che la compressione ha segnato e non corretto — decisione 11 del [verbale degli sfoltimenti](../superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md) —, una sessione loro che il proprietario **non ha ancora collocato**: la lista sta in fondo a quel file.

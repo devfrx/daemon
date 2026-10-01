@@ -17,7 +17,7 @@
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — il
 > comando in fondo alla §12 — e l'idea è già qui.
 
-**Aggiornato il 2026-09-30**, all'**apertura del terzo audit completo** — codice e documentazione, chiesto dal proprietario **prima** del resto del piano dei documenti della revisione della knowledge base, che ne ha eseguito il compito 1: **ADR-0040**, la sua voce in §5, il rimando nella voce di ADR-0022, i totali, il caso del superamento in parte in §13 e in §7. Questa riga e il puntatore della §6, com'erano, sono in [`archivio/stato-storico.md`](archivio/stato-storico.md). Il contenuto di merito nuovo è la voce di ADR-0040, coi rimandi; l'audit cambia il solo puntatore. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+**Aggiornato il 2026-10-01**, al **triage del terzo audit**: le nove radici decise dal proprietario stanno nel [rapporto](audit-2026-09-30.md), e qui cambia la sola riga delle contraddizioni di `porta-di-qualita.md` in §6, che il triage porta dentro l'audit. Questa riga e quella delle contraddizioni, com'erano, sono in [`archivio/stato-storico.md`](archivio/stato-storico.md). Il contenuto di merito resta quello del 2026-09-30: la voce di ADR-0040, coi rimandi. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
 
 ---
 
@@ -623,7 +623,7 @@ Qui resta lo stato di oggi: è l'unico posto dove vive il prossimo passo, e più
 mandato del 2026-09-09 che sfoltì la lettura, stanno in [`archivio/stato-storico.md`](archivio/stato-storico.md), parola
 per parola.
 
-📌 **La compressione di [`porta-di-qualita.md`](porta-di-qualita.md) è fatta, il 2026-09-24:** il file com'era sta intero in [`archivio/porta-di-qualita-storico.md`](archivio/porta-di-qualita-storico.md). ⏳ **Resta la correzione delle contraddizioni** che la compressione ha segnato e non corretto — decisione 11 del [verbale degli sfoltimenti](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md) —, una sessione loro che il proprietario **non ha ancora collocato**: la lista sta in fondo a quel file.
+📌 **La compressione di [`porta-di-qualita.md`](porta-di-qualita.md) è fatta, il 2026-09-24:** il file com'era sta intero in [`archivio/porta-di-qualita-storico.md`](archivio/porta-di-qualita-storico.md). ⏳ **La correzione delle contraddizioni** che la compressione ha segnato e non corretto — decisione 11 del [verbale degli sfoltimenti](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md) — la fa il **terzo audit**, nel pacchetto della radice R4: deciso dal proprietario al triage del 2026-10-01. La lista sta in fondo a quel file.
 
 ⏭️ **IL PROSSIMO PASSO, IN TRE TEMPI. Uno: IL TERZO AUDIT COMPLETO**, aperto dal proprietario il 2026-09-30 — codice e
 documentazione, da testa a piedi, con la skill `repo-audit` — perché il pre-controllo del compito 2 del piano dei documenti

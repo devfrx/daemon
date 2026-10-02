@@ -3404,3 +3404,169 @@ Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende 
 9. Il controllo di non intrusione, fuori dalle ondate: `git status --porcelain` vuoto.
 10. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per parola,
     la nuova al suo posto, e il commit, portato anche su `main` (C18).
+
+## La consegna del terzo audit, com'era — archiviata il 2026-10-03, alla chiusura della sessione dell'ondata 4
+
+Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende — scritto alla chiusura della sessione del 2026-10-02, a ondata 3 integrata»*, parola per parola:
+
+1. `git fetch --all --prune`, poi `git status -sb`. La Fase 4 vive sul ramo `repo-audit/20260930-1510`, spinto su
+   `origin`: su questa macchina è il ramo attivo. `main` porta questa consegna e non il codice delle ondate (C18); il
+   ramo entra in `main` alla Fase 5.
+2. Lo stato del run è in `.repo-audit/20260930-1510/`, **solo su questa macchina**. Nuovi della sessione dell'ondata 3:
+   gli esiti `esiti/correzione/` ed `esiti/riverifica/` di P06; `integrazione/3.json`; `correzione/_prompt-ondata-3.txt`
+   e `riverifica/_prompt-ondata-3.txt`, i prompt dati agli agenti; due passi a mano — `decisioni_ondata_2.py`, le scelte
+   del passaggio in `triage.json`, nei due versi; `messaggi_ondata_3.py`, C17 —; e `prima-del-passaggio-2-3/`, la copia
+   di `triage.json`, di `componi_pacchetti.py`, di `bozza_pacchetti.py` e di `correzione/` com'erano prima del
+   passaggio, con la base e i rami dell'ondata 2 che le specifiche riscritte non portano più.
+3. **Fatto il 2026-10-02: il passaggio fra l'ondata 2 e la 3, e l'ondata 3.** Il cancello di partenza, su `3756862`, era
+   verde.
+   - Il passaggio: i sei residui di P02 e P04 nelle note delle loro case, per la tabella `RESIDUI`; AUD-530 e AUD-140 in
+     `triage.json` come `decisione`, e AUD-685 e AUD-688 tornati `correggere`, verso P06 per `SPOSTAMENTI`, con
+     `decisioni_ondata_2.py`; la specifica di P06 riletta contro ADR-0041, e i suoi file ricontati (C21); le frasi delle
+     note dell'ondata 2 a mano nelle note di P06, P19, P29 e P30 (C22, C23). `valida_ondate.py` esce 0.
+   - L'ondata 3: P06 integrato — `8afcb3a` —, col cancello verde dopo di sé e il messaggio riscritto per dire ciò che il
+     pacchetto ha fatto (C17). Il capo del core di ADR-0041 sta nel trasporto: l'account chiesto al sistema e
+     consegnato a `LocalSocketIpc::bound`; su Windows la pipe col descrittore di un SID solo; su Linux il socket in
+     `$XDG_RUNTIME_DIR`, con la cartella verificata prima del legame e il socket rimasto tolto sotto un lucchetto. Il
+     contatore è uno: `Progressive` senza `Clone` né `Copy`, condiviso con `share` dal trasporto, dal core e dal
+     rubinetto del core finto. `windows-sys`, `widestring` e `libc` sono dipendenze dirette di `platform`, in due passi,
+     alle versioni che i due lockfile avevano già. La riverifica su `sonnet` dà risolti dieci finding su tredici —
+     AUD-551 compreso, che il correttore teneva con la scelta di AUD-533: la scadenza «milestone 6» è tolta e il
+     chiusore nominato —, e `ledger.py consolida` li dà `corretto`; dei finding aperti sugli stessi file nessuno è
+     risolto da P06, e cinque avanzano in parte — AUD-070, AUD-081, AUD-549, AUD-550, AUD-059 —. Ha riprodotto con
+     mutazioni, su una copia fuori dal repository, le misure che i commenti dichiarano, e ha letto dal binario vero il
+     descrittore della pipe: un ACE solo, per l'utente. Restano aperti AUD-533 — con AUD-078, che la stessa scelta
+     tiene — e AUD-051: i commenti accanto al codice dicono il vero di oggi, e ciascuno porta una scelta del proprietario
+     (punto 7).
+   - La metà Linux non gira su questa macchina: compilata con `cargo check --locked --target x86_64-unknown-linux-gnu
+     --tests` dal correttore e, dopo l'integrazione, dal coordinatore, senza avvisi; la prima corsa delle sue sonde è la
+     CI su `ubuntu-latest`. ✅ Verde sui due sistemi, la corsa `37047943024` di `8afcb3a`, e nel log del job
+     `gate (ubuntu-latest)`, letto con `gh run view --log`, ogni sonda solo-Linux è `ok` — la cartella aperta agli altri,
+     il socket rimasto, il core vivo, il lucchetto, l'account diverso, la cartella di runtime assente.
+   - Il correttore si è fermato a metà, con `stalled: no progress for 600s`, dopo il proprio commit; ripreso con
+     `SendMessage`, ha controllato e scritto l'esito senza commit nuovi (C24).
+   - Da guardare, e scritto accanto al codice. La sonda del lucchetto, solo su Linux, aspetta 200 ms: un lucchetto giusto
+     passa sempre, uno tolto può sfuggire su una macchina molto carica. Le sonde del descrittore non distinguono
+     l'accesso pieno di ADR-0041 da `GRGW`, che misurato lascia entrare lo stesso tre client di fila. E il richiamo del
+     2026-08-21 tolto dal capo-file del daemon — AUD-050 — resta in git a `3756862`, e E67 del piano della parte 2 lo
+     nomina: è la forma del gotcha #121, nel sorgente un puntatore e la storia nell'errata; se serva anche in archivio,
+     parola per parola, lo dice il passaggio di `lean-docs` di R5.
+   - Il costo, in *«Il costo»*.
+4. **Il prossimo passo, in una sessione sua: il passaggio fra l'ondata 3 e la 4, e l'ondata 4** — P10, P14, P15 e P20, i
+   primi pacchetti di documenti, quattro insieme: il costo si dice prima del lancio (P6), e più di un subagente vuole il
+   sì del proprietario.
+   - Il passaggio, coi passi del punto 5. `componi_pacchetti.py` si ferma finché `RESIDUI` non ha la riga di P06, e la
+     ferma è voluta (C19). Le case dei sette residui di P06, proposte oggi nell'ordine del campo `residui` del suo esito —
+     il testo sta lì, e qui non si ricopia —; `residui()` dice se a una casa manca il suo file, e allora va in `EXTRA`:
+
+     | # | Il residuo | La casa |
+     |---|---|---|
+     | 0 | `docs/porta-di-qualita.md`, l'argomento con cui la firma di `accept` restava (AUD-533) | P23 |
+     | 1 | la stella polare, «nessun tetto di dimensione» (AUD-051) | P19 |
+     | 2 | il disegno del 2, la riga del contatore condiviso (AUD-052) | P20 |
+     | 3 | ADR-0041, il rimando in testa: il capo del core è costruito (AUD-685) | P08, con l'ADR in `EXTRA`: nessun titolo lo nomina |
+     | 4 | il compendio, la voce di ADR-0041 in §5 (AUD-685) | P08 |
+     | 5 | `design/01`, la riga del canale gui ↔ core (AUD-688) | P15 |
+     | 6 | `docs/riferimenti.md`, la tabella di M-13 (AUD-688) | P28 |
+
+   - AUD-533, AUD-078 e AUD-051 in `triage.json` come `decisione` — `decisioni_ondata_2.py` è il modello —, con le
+     opzioni nel campo `scelte_aperte` dell'esito di P06: la scelta di AUD-533 vale anche per AUD-078. AUD-551, che il
+     correttore metteva nella stessa scelta, la riverifica lo dà risolto: resta `correggere`, in P06.
+   - A mano in `NOTE`, dalla nota della riverifica di P06: per P29, due rimandi imprecisi nei richiami del 2026-10-02 —
+     `crates/simulator/src/ipc.rs` cita AUD-078 per la frase sulla suite di conformità, che è di AUD-081 e AUD-549;
+     `crates/kernel/src/numbering.rs` cita la §2.4.1 per «una sola attività alla volta», da rileggere contro la §2.4.2 —,
+     coi due file in `EXTRA`; per P28, accanto al residuo di M-13, la misura `GRGW` che il commento di `listen` cita e la
+     riverifica ha riprodotto, e che `docs/riferimenti.md` non porta.
+   - Le quindici sonde nuove di P06, nel campo `sonde_nuove` del suo esito, vanno alle note di P23 e P24 prima delle loro
+     ondate, con quelle di P01–P05 (punto 5).
+   - Poi `PYTHONUTF8=1 python .repo-audit/20260930-1510/componi_pacchetti.py --scrivi` e `valida_ondate.py`: escono 0.
+   - L'ondata 4, coi passi che hanno retto oggi, per quattro pacchetti:
+     1. `PYTHONUTF8=1 python C:/Users/zagor/.claude/plugins/marketplaces/local-desktop-app-uploads/repo-audit/scripts/piano_correzioni.py prepara --run .repo-audit/20260930-1510 --ondata 4`;
+     2. il costo detto prima del lancio (P6), con le misure delle ondate in *«Il costo»*: un correttore di documenti
+        non è ancora misurato in questo audit, e la stima del 2026-10-02 gli dà ~0,5–1,1M token, cioè ~4–7M per l'ondata
+        con le quattro riverifiche;
+     3. i correttori, col consenso del proprietario in quella sessione: quattro `Agent` con `subagent_type`
+        `repo-audit:correttore`, `model` `opus`, `isolation` `worktree`, lanciati insieme, e per prompt di ciascuno il
+        testo fra le righe `=====` del suo blocco in `node .repo-audit/20260930-1510/prompt_ventaglio.mjs .repo-audit/20260930-1510/ventaglio-audit.js correzione P10 P14 P15 P20`,
+        salvato prima in `correzione/_prompt-ondata-4.txt`; col `Workflow` solo se il proprietario scrive «ultracode»
+        (P5). Un correttore fermato dal watchdog si riprende, non si rilancia (C24);
+     4. ⛔ finito ogni correttore, **l'esito si salva e la copia si toglie prima di integrare** (C16, C20): un esito che
+        il correttore non ha potuto scrivere nella cartella del run sta nella sua copia, sotto `.repo-audit/`, e si copia
+        prima; poi `git -C <copia> status --porcelain` vuoto e `git worktree remove --force <copia>`; il ramo
+        `worktree-agent-*` si cancella se `git rev-list <ramo> --not main <base>` è vuoto — le copie nascono da `main`
+        —; la cartella `.claude/` rimasta vuota si toglie;
+     5. il diff di ciascuno, letto dal coordinatore: cura alla radice o toppa;
+     6. `PYTHONUTF8=1 python .repo-audit/20260930-1510/dichiara_nuovi.py`, e `--scrivi` se dichiara file nuovi: esce 1,
+        e non scrive niente, se un file cambiato è fuori dalla specifica;
+     7. `integra.py --run .repo-audit/20260930-1510 --ondata 4`, lanciato da Git Bash, perché il `bash` di
+        `controlli.json` sia quello di Git: integra i pacchetti uno alla volta, ciascuno col cancello dopo di sé.
+        ⚠️ Di un controllo fallito `integra.py` salva le ultime quindici righe di stdout e stderr insieme: un rosso si
+        legge rilanciando il controllo a mano;
+     8. i messaggi dei commit riletti contro gli esiti, prima della riverifica e del push (C17): `messaggi_ondata_3.py`
+        è il modello;
+     9. le riverifiche: quattro `Agent` con `subagent_type` `repo-audit:verificatore`, `model` `sonnet` (P7), senza
+        copia, col prompt di `prompt_ventaglio.mjs … riverifica P10 P14 P15 P20`; poi
+        `PYTHONUTF8=1 python C:/Users/zagor/.claude/plugins/marketplaces/local-desktop-app-uploads/repo-audit/scripts/ledger.py consolida --run .repo-audit/20260930-1510`.
+5. **Fra un'ondata e l'altra**, il coordinatore:
+   - porta ogni **residuo** al pacchetto della sua casa in un'ondata successiva: una riga per esito in `RESIDUI` di
+     `componi_pacchetti.py`, una casa per residuo nell'ordine del campo `residui`, e il file in `EXTRA` se la casa non lo
+     ha — `residui()` lo dice —; se la casa è un pacchetto già integrato, il residuo va in P30. Le frasi che una nota di
+     riverifica dà da rileggere vanno a mano in `NOTE`. Poi `--scrivi` e `valida_ondate.py` (C19);
+   - mette ogni **scelta aperta** in `triage.json` come `decisione` — `componi_pacchetti.py` la toglie da sé dal suo
+     pacchetto — e nella tabella del punto 7: torna al proprietario come le quattordici della P9, una alla volta, in A/B;
+   - aggiunge le **sonde nuove** dei pacchetti di codice alle note di P23 e P24, prima delle loro ondate;
+   - toglie dai pacchetti successivi i finding che una correzione ha già risolto, come vuole il plugin: `consolida` li
+     dà `corretto` dalle riverifiche, e in `SPOSTAMENTI` di `componi_pacchetti.py` passano al pacchetto che li ha
+     risolti. Dopo le ondate 1, 2 e 3 non ce n'è nessuno;
+   - lascia i **finding nuovi** delle riverifiche dove il metodo li vuole: un medio passa da un verificatore prima di un
+     pacchetto (P6), i bassi aspettano la P8. Tre dei bassi dell'ondata 1 — AUD-2230, AUD-2231, AUD-2233 — dicono la
+     stessa cosa di un residuo, e la correzione del residuo li risolve. Il medio AUD-2228 aspetta il suo verificatore, e
+     la sua casa, `crates/kernel/tests/ipc_wire.rs`, è P30, salvo che il proprietario lo voglia prima. Il basso
+     AUD-2236 dell'ondata 3 — il contatore unico del core finto senza una sonda — ha la sua casa in P30, e aspetta la
+     P8 come gli altri;
+   - ⛔ si ferma ed espone al proprietario se un pacchetto è respinto per conflitto o regressione.
+6. **P30 e le osservazioni.** Prima dell'ondata 12 il coordinatore decide se le quattro osservazioni della nota di P30
+   diventano finding (C23): solo allora i loro file della GUI entrano in `FILE_CODICE` di P30.
+7. Fuori dalla Fase 4, e già decisi: dopo l'audit, `lean-docs` sulle storie nei documenti vivi (R5); dopo la Fase 4,
+   la verifica dei bassi rimasti contro i testi corretti (P8); e **le scelte da parte** — le quattordici della P9 e
+   quelle che i correttori trovano —, al proprietario una alla volta, ciascuna con la sua A/B. Le opzioni, i costi e il
+   consiglio di quelle nuove stanno nel campo `scelte_aperte` dell'esito del loro pacchetto:
+
+   | Finding | La scelta |
+   |---|---|
+   | AUD-204 | una richiesta più grande del budget allocabile ma non del totale resta in coda per sempre, e design/02 vuole «Rifiutata»: rifiutarla, o scrivere che attende |
+   | AUD-201, AUD-560 | la finestra di una concessione vale per tutta la sua vita o fino all'avvio del lavoro |
+   | AUD-290 | le chiavi del giornale si riusano dopo una potatura e una riapertura: si corregge design/10, o il codice |
+   | AUD-182 | ADR-0040, il passo in dubbio ripristinato senza la sua copia: testo da chiarire, o una decisione nuova su ADR-0007 |
+   | AUD-352 | «spec prima del codice» contro i disegni che non sono spec: «spec o disegno approvato», o una spec per ogni sotto-progetto |
+   | AUD-172 | ADR-0038: «un evento informa, mai autorizza» contro «per default la conferma non è gestuale» |
+   | AUD-170 | ADR-0038: «aprire un pannello» passa dal registro delle funzioni, o è presentazione |
+   | AUD-150 | in autonomo, una scrittura fuori dagli ambiti del checkpoint chiede conferma (ADR-0016) o vale il preset (ADR-0024) |
+   | AUD-162 | l'archivio dei parametri di ADR-0034: quale sotto-progetto lo costruisce |
+   | AUD-180 | la prontezza del reattore per il primo worker: la paga il 3 o il 12 |
+   | AUD-581 | il bus eventi di ADR-0001: assorbito, o da costruire e da chi |
+   | AUD-461 | il guscio Electron — preload, decodifica nel processo principale, prova capo a capo —: lo costruisce il 10 o il 3 |
+   | AUD-689 | l'indicatore della telecamera sta nella GUI, e la telecamera vive anche a GUI chiusa |
+   | AUD-475 | il vocabolario GenAI di OpenTelemetry vale anche per il modulo Passi, o solo per la proiezione trace |
+   | AUD-687 | il limite di decodifica del filo `ipc`, che oggi dieci byte superano mandando il core in panico: il tetto diventa del protocollo, una costante nel kernel (A), o arriva al decodificatore a tempo di compilazione dalla radice di composizione (B, il consiglio del correttore); la terza opzione è una toppa, e l'esito lo dice |
+   | AUD-686 | che cosa dicono il filo e la GUI sulla protezione del giornale finché il sotto-progetto 15 non cifra: una seconda variante di `Protection`, l'innesco di D22 (A, il consiglio), la sola frase della GUI (B), o niente fino al 15 (C) |
+   | AUD-530 | che cosa fa il core se all'arrivo di `Hello` il giornale non si rilegge: tenere il comportamento di oggi, col chiusore che `run` già nomina, il modulo Stato del sotto-progetto 6 (A, il consiglio del correttore); finire da sé il benvenuto quando il giornale torna leggibile (B); una variante «sconosciuto» di `Degradation` (C) |
+   | AUD-140 | la lista dei permessi attivi tenuta dal core, che il seguito di ADR-0016 vuole visibile: col sotto-progetto 3, insieme al confine di sessione (A, il consiglio del correttore), o adesso, con una variante nuova del filo (B) |
+   | AUD-533, AUD-078 | un ascoltatore rotto, che il trasporto legge «nessuno bussa» e che lascia il core sordo alla GUI senza una parola: cambiare la firma di `Ipc::accept`, con una variante nuova di `IpcError` (A), o tenere `Option` e dichiararlo, col chiusore nel primo canale diagnostico del sotto-progetto 10 (B, il consiglio del correttore) |
+   | AUD-051 | un `SaveLayout` oltre il tetto del corpo, che lascia la GUI senza risposta per il resto della sessione: renderlo visibile, con una risposta o col canale diagnostico del sotto-progetto 10 (A), o un tetto applicativo sulla disposizione nella GUI, sotto quello del trasporto (B, il consiglio del correttore) |
+
+   Un'opportunità fuori perimetro, registrata e non presa (esito di P05): un `match` esaustivo su `Detail` in un banco,
+   nella forma di `frozen_bytes.rs`, renderebbe errore di compilazione l'obbligo che il doc di `Detail` ora scrive — un
+   caso `compile_fail` per ogni testo di una specie —: è un meccanismo nuovo, quindi del proprietario. E due
+   dall'ondata 3. Le due contro-sonde di `crates/platform/src/lib.rs` hanno ora il codice vero che il loro commento
+   aspettava — `std` e `unsafe` sui due sistemi —: se vadano tolte lo decide il proprietario, e il richiamo accanto
+   lo registra (esito di P06). E la corsa della CI del 2026-10-02 annota che `ubuntu-latest` passa a Ubuntu 26 dal 19
+   ottobre 2026, e che `actions/checkout@v4` gira forzato su Node 24: tocca `.github/workflows/quality-gate.yml`,
+   fuori dall'audit.
+8. Gli script si lanciano con `PYTHONUTF8=1`. ⛔ Non rilanciare `ledger.py da-verificare`: cancellerebbe i lotti senza
+   esito. ⛔ `componi_pacchetti.py --scrivi` e `valida_ondate.py` si lanciano solo fra un'ondata integrata e la
+   preparazione della successiva: riscrivono tutte le specifiche. ⛔ `messaggi_ondata_2.py` e
+   `messaggi_ondata_3.py` non si rilanciano: `origin` porta ora i commit che riscrivevano, e ciascuno si ferma da sé.
+9. Il controllo di non intrusione, fuori dalle ondate: `git status --porcelain` vuoto.
+10. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per parola,
+    la nuova al suo posto, e il commit, portato anche su `main` (C18).

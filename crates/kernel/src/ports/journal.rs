@@ -69,11 +69,12 @@ use alloc::vec::Vec;
 /// of the sub-project 2 design, confirmed A by the owner on 2026-09-09. Saying so is cheaper than
 /// a reader deducing a guarantee that is not here. Under `crates/*/src/` what mints step
 /// identities is `crate::serving::Core`, two per invocation, from the
-/// `crate::numbering::Progressive` handed to `Core::new` -- which the daemon seeds above every
-/// step this journal already holds (`crate::numbering::seeded_from`); the other production `new`
+/// `crate::numbering::Progressive` handed to `Core::new` -- the ONE counter of the core, which the
+/// daemon seeds above every step this journal already holds (`crate::numbering::seeded_from`) and
+/// shares with the `ipc` transport, which numbers its clients from it; the other production `new`
 /// is `FileJournal::replay`, rebuilding one it has just read. ⚠️ RECALL OF 2026-10-02 -- audit of
 /// 2026-09-30, AUD-062, AUD-070: the core has minted them since 2026-09-18, and the two dated
-/// recalls below each describe their own day.
+/// recalls below each describe their own day; and AUD-045: the counter is shared.
 ///
 /// ⚠️ RECALL OF 2026-08-21 — THIS SAID "the allocator arrives with milestone 3". Milestone 3
 /// closed on 2026-08-10 WITH the durable record and WITHOUT the allocator, and milestone 4

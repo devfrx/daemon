@@ -62,13 +62,14 @@
 //! `kernel` and the simulator therefore exchanges bytes too, so the DST campaign really
 //! exercises encoding and decoding instead of going around them.
 //!
-//! ⛔ DECLARED OPEN QUESTION, AND IT IS NOT RESOLVED HERE -- named at the top of the file for
-//! `network`'s reason, which is that this is where a reader sent by §6 of the compendium looks
-//! for it. `accept` HAS NO ERROR CHANNEL while `receive` has one, so a listener that has itself
-//! broken -- as opposed to a client that has -- surfaces as `None`, a wrong value rather than
-//! an error. ⚠️ The consequence that matters is the PRICE: closing it costs the SIGNATURE, not
-//! a third variant of `IpcError`. The full argument, and why the signature nevertheless stays
-//! as it is today, sits on `Ipc::accept`.
+//! ⛔ DECLARED OPEN QUESTION, AND IT IS NOT RESOLVED HERE -- named at the top of the file, as
+//! `network` names its own. `accept` HAS NO ERROR CHANNEL while `receive` has one, so a listener
+//! that has itself broken -- as opposed to a client that has -- surfaces as `None`, a wrong value
+//! rather than an error; and since the transport exists, `platform::ipc::LocalSocketIpc`, that is
+//! what every error of its listener does. ⚠️ The consequence that matters is the PRICE: closing
+//! it costs the SIGNATURE, not a third variant of `IpcError`. The full argument, and why the
+//! signature still stands today, sits on `Ipc::accept`. ⚠️ RECALL OF 2026-10-02 -- audit of
+//! 2026-09-30, AUD-078.
 //!
 //! ⚠️ AND WHAT HOLDS THESE THREE SIGNATURES IS EVERY IMPLEMENTATION FROM OUTSIDE THE CRATE, and
 //! WHICH THEY ARE IS WHAT THE COMMAND PRINTS rather than this line:
@@ -163,6 +164,9 @@ use alloc::vec::Vec;
 /// port in milestone 6 draws from THAT counter rather than starting a private one of its own" is no longer a
 /// promise about a type that does not exist: the type is one line away, and a private `u64`
 /// inside the transport is now a visible choice rather than the only road.
+/// ⚠️ RECALL OF 2026-10-02 -- audit of 2026-09-30, AUD-045, AUD-052: the transport and
+/// `crate::serving::Core` now draw from the SAME counter -- the composition root builds one and
+/// hands each a `crate::numbering::Progressive::share` of it -- and the type no longer copies.
 ///
 /// ⚠️ "ASSIGNED BY THE CORE" MEANS "NOT CHOSEN BY THE CLIENT", and the line is worth spending
 /// because the other reading contradicts the signature below it. `accept` RETURNS one, so the
@@ -214,10 +218,11 @@ impl ClientId {
 
 /// What can go wrong on the way to a client.
 ///
-/// ⚠️ THE "NO CALLER, NO ITEM" RULE DOES NOT REACH THESE VARIANTS, the same note that sits on
-/// `FilesystemError`, `NetworkError` and `ProcessError`: the port has no implementation, so NO
-/// variant has a producer, and applying the rule on that basis would empty the enum instead of
-/// pruning it.
+/// ⛔ BOTH VARIANTS HAVE A PRODUCER, the transport `platform::ipc::LocalSocketIpc`: `Disconnected`
+/// when a peer has gone or was never in its table, `MalformedMessage` when a declared length
+/// passes the cap it is delivered. The note on `FilesystemError`, `NetworkError` and
+/// `ProcessError` -- no implementation, so no variant has a producer -- holds for those ports and
+/// no longer for this one. ⚠️ RECALL OF 2026-10-02 -- audit of 2026-09-30, AUD-078.
 ///
 /// ⚠️ TWO VARIANTS AND THREE METHODS, so not every word is reachable on every path -- and that
 /// is deliberate rather than sloppy. `MalformedMessage` belongs to `receive`, where bytes
@@ -259,8 +264,10 @@ pub trait Ipc {
     /// path, which is how a caller learns to ignore the error path.
     ///
     /// ⚠️ DECLARED RATHER THAN LEFT TO BE DISCOVERED: a LISTENER that has itself broken -- as
-    /// opposed to a client that has -- gets no word from this vocabulary today, and would
-    /// surface here as `None`, which is a wrong value rather than an error (gotcha #30).
+    /// opposed to a client that has -- gets no word from this vocabulary today, and surfaces here
+    /// as `None`, which is a wrong value rather than an error (gotcha #30). ⛔ AND IT IS NO LONGER
+    /// A HYPOTHESIS: the transport, `platform::ipc::LocalSocketIpc`, answers `None` for EVERY error
+    /// of its listener, and only `WouldBlock` among them means "nobody is knocking".
     ///
     /// ⛔ AND THE RESIDUE IS ALSO AN ASYMMETRY BETWEEN THESE SIGNATURES, which is worth saying
     /// straight because the cheap reading gets the PRICE OF CLOSING IT wrong. `receive` two
@@ -275,14 +282,18 @@ pub trait Ipc {
     /// ⛔ THE COST THAT FOLLOWS, and it is the part a later reader would otherwise get wrong:
     /// adding a third variant tomorrow WOULD NOT CLOSE THIS. There is nowhere to return it.
     /// Closing it means CHANGING THE SIGNATURE, not widening the enum -- and whoever reopens
-    /// this at milestone 6 should know that before deciding it is cheap.
+    /// this should know that before deciding it is cheap.
     ///
-    /// ⚠️ AND THE SIGNATURE STAYS AS IT IS TODAY, deliberately. `IpcError` currently has NO
-    /// variant `accept` could ever return, so a `Result` here would be one that can never be
-    /// `Err`: dead surface, of exactly the kind this port has just pruned three derives and a
-    /// getter for. The minimal choice is defensible; what would not be defensible is leaving
-    /// its price unstated. Same posture as `network`'s declared open question, and the same
-    /// reason: a minimal vocabulary can be widened, a rich wrong one cannot (ADR-0009).
+    /// ⚠️ AND THE SIGNATURE STILL STANDS AS IT IS, BUT THE REASON IT WAS KEPT FOR HAS AGED. It was
+    /// kept because a `Result` here would have been one that could never be `Err` -- dead surface,
+    /// of exactly the kind this port pruned three derives and a getter for -- and that held while
+    /// the port had no implementation. A real listener CAN fail, so the `Err` would now have a
+    /// producer, and only the word for it is missing. Whether to change the signature and add that
+    /// word, or keep the `Option` and declare for good that the transport swallows a broken
+    /// listener, is the owner's: registered by the audit of 2026-09-30, AUD-533. Until then the
+    /// posture is `network`'s declared open question, for the same reason: a minimal vocabulary
+    /// can be widened, a rich wrong one cannot (ADR-0009). ⚠️ RECALL OF 2026-10-02 -- same audit,
+    /// AUD-533, AUD-078, AUD-551.
     fn accept(&mut self) -> Option<ClientId>;
 
     /// Sends bytes to a client.

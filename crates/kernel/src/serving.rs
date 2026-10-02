@@ -112,6 +112,8 @@ pub struct Core<I: Ipc, J: Journal, C: Custody> {
     arbiter: Arbiter,
     registry: Registry,
     grants: ClientGrants,
+    /// ⛔ A `share` OF THE CORE'S ONE COUNTER, which the transport numbers its clients from too
+    /// (`crate::numbering`): the composition root builds it once and hands each its share.
     steps: Progressive,
     clients: Vec<Client>,
     parameters: Parameters,

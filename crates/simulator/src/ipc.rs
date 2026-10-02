@@ -16,8 +16,9 @@
 //!
 //! ⚠️ IT IS NOT HELD TO ANY CONFORMANCE SUITE, deliberately, for the reason `CrashingJournal` is
 //! not: this type is a LIAR by construction, and gotcha #50 says a fake may break a contract when
-//! the test around it speaks about the breaking. There is no `ipc` conformance suite in any case
-//! — the port has no real transport yet.
+//! the test around it speaks about the breaking. The `ipc` suite is expanded on the real
+//! transport alone in any case -- `crates/kernel/tests/contract/ipc.rs`, D82. ⚠️ RECALL OF
+//! 2026-10-02 -- audit of 2026-09-30, AUD-078.
 
 use alloc::vec::Vec;
 

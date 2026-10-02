@@ -81,7 +81,8 @@ pub const POLICY_FUNCTION: Function = Function {
 
 /// Where a known client has got to.
 enum Stage {
-    /// Connected, and it has not introduced itself. Only `Hello` is answered.
+    /// Connected, and not welcomed: it has not introduced itself, or its `Hello` came while the
+    /// degradation could not be told (`greet`). Only `Hello` is answered.
     Greeting,
     /// The stamp matched. From here the core sends the piece that CHANGES, and the gui does not
     /// pull (§6.1.4).
@@ -356,13 +357,19 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
             Some(report) => report,
             // ⛔ AN UNKNOWN DEGRADATION IS NOT SENT AS "NOTHING IS DEGRADED", which is the silent
             // degradation ADR-0019 forbids and the argument `DegradationError` spells out. The wire
-            // has no third state for it: the gui is simply not told, and the sweep will tell it as
-            // soon as the journal reads again. ⚠️ REGISTERED AND NOT TAKEN: whether `Degradation`
-            // should gain an "unknown" the way `LayoutState` gained `Unavailable` (decision 35) is
-            // the owner's, and what it would cost is a schema change in lockstep -- `IpcMessage`,
-            // the fixtures, the stamp and the gui's reader move together, because this wire
-            // renounces versioning (I4) -- not an index spent for ever. ⚠️ RECALL OF 2026-10-02 --
-            // audit of 2026-09-30, AUD-074.
+            // has no third state for it, so NOTHING of the welcome goes out -- not even `Accepted`
+            // -- and the client stays in `Greeting`. ⛔ THE SWEEP DOES NOT MAKE UP FOR IT: D23
+            // re-reads the degradation only for a client already welcomed, and this one was not.
+            // What welcomes it is its NEXT `Hello`, which the gui sends from its `retry` -- it has
+            // no timeout (D48) -- and until then the gui waits. The probe is
+            // `a_hello_the_journal_cannot_answer_gets_nothing_until_the_next_hello`, in
+            // `tests/serving.rs`. ⚠️ REGISTERED AND NOT TAKEN: whether the core should finish this
+            // welcome by itself once the journal reads again, or `Degradation` should gain an
+            // "unknown" the way `LayoutState` gained `Unavailable` (decision 35), is the owner's.
+            // What the second would cost is a schema change in lockstep -- `IpcMessage`, the
+            // fixtures, the stamp and the gui's reader move together, because this wire renounces
+            // versioning (I4) -- not an index spent for ever. ⚠️ RECALL OF 2026-10-02 -- audit of
+            // 2026-09-30: AUD-530, AUD-531, AUD-071 and AUD-554 on the sweep, AUD-074 on the cost.
             None => return Outcome::Keep,
         };
 
@@ -441,6 +448,9 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
                 }
                 match self.step_list() {
                     Some(steps) => self.tell(id, &IpcMessage::Steps(steps)),
+                    // ⚠️ NO LIST RATHER THAN AN EMPTY OR A SHORT ONE -- the argument is on
+                    // `step_list`, and the probe is
+                    // `after_the_welcome_an_unreadable_journal_sends_no_clean_report_and_no_list`.
                     None => Outcome::Keep,
                 }
             }
@@ -487,6 +497,9 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
     }
 
     /// D23: every turn, only while somebody is attending, and only when it CHANGED.
+    ///
+    /// ⚠️ A CLIENT STILL IN `Greeting` IS NOT ATTENDING, even one whose stamp matched: it was told
+    /// nothing to compare with, and what welcomes it is its next `Hello` -- see `greet`.
     fn sweep_degradation(&mut self, now: Monotonic) {
         if self.attending().is_empty() {
             // ⛔ A BOUND AND NOT AN OPTIMISATION: `degradation_now` re-reads the whole journal, and
@@ -495,6 +508,10 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
             return;
         }
         let Some(state) = self.degradation() else {
+            // ⛔ AN UNKNOWN DEGRADATION SAYS NOTHING, for `greet`'s reason: "nothing is degraded"
+            // would be the silent degradation ADR-0019 forbids, so every client keeps the last
+            // state it was told until the journal reads again. The probe is
+            // `after_the_welcome_an_unreadable_journal_sends_no_clean_report_and_no_list`.
             return;
         };
 
@@ -585,7 +602,10 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
     /// ⛔ `None` WHEN THE ARCHIVE CANNOT BE READ, and never a short list. An incomplete list read
     /// as complete is the same silent partial truth `is_granted` and `degradation_now` both refuse
     /// in their own words, arrived at here by the one road nobody guards: a record this build
-    /// cannot decode, skipped, would take a step out of the list the gui shows.
+    /// cannot decode, skipped, would take a step out of the list the gui shows. Both callers then
+    /// send no list at all; the probes are, in `tests/serving.rs`,
+    /// `a_welcome_whose_step_list_cannot_be_read_goes_out_without_one` and
+    /// `after_the_welcome_an_unreadable_journal_sends_no_clean_report_and_no_list`.
     fn step_list(&self) -> Option<Vec<StepSummary>> {
         let entries = self.journal.replay().ok()?;
         let mut list: Vec<StepSummary> = Vec::new();

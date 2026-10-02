@@ -877,6 +877,14 @@ mod tests {
         // operation of the port (decision 22), so only a message sent AFTER the refusal tells
         // "it stopped listening" apart from "it had nothing more to say".
         //
+        // ⛔ AND IT IS A `Hello` WITH THIS BUILD'S STAMP, because no other message can tell them
+        // apart: the handshake gate of `kernel::serving` refuses in silence everything else a
+        // client still in `Greeting` says, so any other second message earns the same silence
+        // from a core that kept the refused client as from one that forgot it. A kept client's
+        // `Hello` is read on a later turn and earns the welcome, and the faucet's tokens after it.
+        // MEASURED on 2026-10-02 with `greet` KEEPING the refused client: red. ⚠️ RECALL OF
+        // 2026-10-02 -- audit of 2026-09-30, AUD-701, AUD-718.
+        //
         // ⛔ AND THAT IS WHY THIS ONE PROBE STREAMS INSTEAD OF BEING JOINED (E110): the second
         // message never comes -- which is the point -- and nothing closes the connection, so a
         // `join` here waits FOR EVER. Measured 2026-09-20: `run_the_graph` returns, `peer.join()`
@@ -886,10 +894,7 @@ mod tests {
             name.clone(),
             vec![
                 IpcMessage::Hello(a_stamp_that_is_not_ours()),
-                IpcMessage::Invoke(kernel::wire::ipc::Call {
-                    function: "set-policy".to_string(),
-                    argument: "local".to_string(),
-                }),
+                IpcMessage::Hello(build_stamp()),
             ],
             |heard| heard.len() >= 2,
             None,

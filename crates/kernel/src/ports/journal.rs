@@ -60,14 +60,20 @@
 
 use alloc::vec::Vec;
 
-/// The identity of a step. It WILL BE progressive and assigned by the journal, NOT random:
-/// §2.2 chose that over random identifiers because it is deterministic by construction and
-/// readable in a trace.
+/// The identity of a step: progressive, NOT random -- §2.2 chose that over random identifiers
+/// because it is deterministic by construction and readable in a trace.
 ///
-/// ⚠️ THE FUTURE TENSE IS EXACT, AND TODAY NOTHING ASSIGNS ANYTHING. `new` is public, `intent`
-/// RECEIVES the identity from its caller, and this port declares no operation that allocates
-/// one; so "assigned by the journal" describes the design and not this file, and saying so is
-/// cheaper than a reader deducing a guarantee that is not here.
+/// ⚠️ §2.2 ALSO HAS IT "ASSIGNED BY THE JOURNAL", AND THIS PORT ASSIGNS NOTHING: TODAY THE CORE
+/// DOES. `new` is public, `intent` RECEIVES the identity from its caller, and this port declares
+/// no operation that allocates one -- nor will it until a second consumer asks: open item 6 of §9
+/// of the sub-project 2 design, confirmed A by the owner on 2026-09-09. Saying so is cheaper than
+/// a reader deducing a guarantee that is not here. Under `crates/*/src/` what mints step
+/// identities is `crate::serving::Core`, two per invocation, from the
+/// `crate::numbering::Progressive` handed to `Core::new` -- which the daemon seeds above every
+/// step this journal already holds (`crate::numbering::seeded_from`); the other production `new`
+/// is `FileJournal::replay`, rebuilding one it has just read. ⚠️ RECALL OF 2026-10-02 -- audit of
+/// 2026-09-30, AUD-062, AUD-070: the core has minted them since 2026-09-18, and the two dated
+/// recalls below each describe their own day.
 ///
 /// ⚠️ RECALL OF 2026-08-21 — THIS SAID "the allocator arrives with milestone 3". Milestone 3
 /// closed on 2026-08-10 WITH the durable record and WITHOUT the allocator, and milestone 4

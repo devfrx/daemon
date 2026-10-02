@@ -74,9 +74,13 @@ pub trait Sensor {
 /// has this shape for "read the journal and derive", and this one writes as well. A struct
 /// holding the journal would give the ring state, and I5 keeps state in one place.
 ///
-/// ⛔ `next` IS DELIVERED AND NOT ALLOCATED, and that is not laziness: `StepId` HAS NO ALLOCATOR,
-/// `ports/journal.rs` says so beside the type, and whether one arrives is the owner's — registered
-/// and not taken since 2026-08-21. Inventing one here would take that decision by writing it.
+/// ⛔ `next` IS DELIVERED AND NOT ALLOCATED, and that is not laziness: the `journal` port has NO
+/// ALLOCATOR for a `StepId` and stays without one until a second consumer asks — open item 6 of
+/// §9 of the sub-project 2 design, confirmed A by the owner on 2026-09-09, and `ports/journal.rs`
+/// says so beside the type. Step numbers come from `crate::numbering::Progressive`, handed to
+/// whoever mints them — today `crate::serving::Core` — and a counter of this ring's own would be
+/// a second source of them beside it, the divergence `crate::numbering` exists to prevent.
+/// ⚠️ RECALL OF 2026-10-02 — audit of 2026-09-30, AUD-070.
 ///
 /// ⛔ AND THE STEP MUST ALREADY BE OPEN: the verdict is written with `Journal::note`, whose
 /// contract is that "a note for a step with NO INTENT is `OutOfOrder`". So this function answers

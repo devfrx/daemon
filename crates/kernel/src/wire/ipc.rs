@@ -8,11 +8,13 @@
 //! Today there is no such caller -- the transport is staged out (open item 5) -- and the day
 //! there is one, the guard that pays for itself is on the composition side, not here.
 //!
-//! ⛔ THE SCHEMA MINTS NO IDENTIFIERS BECAUSE IT CARRIES NONE, and saying it that way is the
-//! point (§6.5). Writing "§6.1.3 is satisfied" would be green having compared empty sets. A
-//! grant request is not a step of a run: it writes no record and carries neither `StepId` nor
-//! `RunId`. The first message that carries an identifier is where the rule becomes real, and
-//! where its probe is born.
+//! ⛔ THE SCHEMA MINTS NO IDENTIFIERS, AND THE ONE IT CARRIES IS THE JOURNAL'S (§6.1.3).
+//! `StepSummary::step`, inside `IpcMessage::Steps`, is the step number the journal wrote:
+//! `crate::serving` reads it out of `Journal::replay` and invents none, and
+//! `the_step_list_carries_the_journals_own_step_numbers` in `crates/kernel/tests/serving.rs` is
+//! the probe that goes red the day a number is minted instead. A grant request is not a step of a
+//! run: it writes no record and carries neither `StepId` nor `RunId`. ⚠️ RECALL OF 2026-10-02 --
+//! audit of 2026-09-30, AUD-693.
 //!
 //! ⛔ NO VERSION ENUM, NO RETIRED-INDEX REGISTER, NO FROZEN BYTES -- I4 renounces versioning
 //! (§6.4). What stands in its place is the BUILD STAMP of §6.1.2, WHICH THIS MILESTONE DOES
@@ -94,9 +96,12 @@ use crate::time::Millis;
 /// ⛔ WHICH IS TO SAY THE OTHER HALF OF ADR-0005 HAS NO HOUSE YET: the reservation is
 /// "declared by the requester and VERIFIED BY THE ARBITER", and only the declaring half is
 /// built here. It is not exploitable today because THE CONSUMER DOES NOT EXIST -- nothing
-/// turns a message into a `ResourceProfile`, and
-/// `grep -rnE "^[^/]*(GrantRequest|IpcMessage)" crates/` names only this file and
-/// `crates/kernel/tests/ipc_wire.rs`. ⛔ THE TRIGGER IS THAT CONSUMER: the task that first
+/// turns a message into a `ResourceProfile`: `crate::serving` decodes every `IpcMessage` and does
+/// not serve `Request` (D5), and `a_request_reaches_neither_the_arbiter_nor_the_journal` in
+/// `crates/kernel/tests/serving.rs` holds that a request moves neither the arbiter's books nor the
+/// journal and earns no word on the wire, so it goes red the day one is served -- measured on
+/// 2026-10-02 by admitting one. ⚠️ RECALL OF 2026-10-02 -- audit of 2026-09-30, AUD-555.
+/// ⛔ THE TRIGGER IS THAT CONSUMER: the task that first
 /// decodes arriving bytes into a profile is where the verifying half is written and where its
 /// probe is born. ⚠️ NARROWING THE FIELDS HERE IS NOT THE SMALLER FIX: the three are what
 /// decision D16 of the milestone-6 plan and §6.2 of the design ask for, and cutting them would
@@ -171,8 +176,8 @@ impl BuildStamp {
     }
 }
 
-/// What the core knows about the journal's protection, as a VALUE and not as fixed text in
-/// the gui (G16, ADR-0023).
+/// What the core tells the gui about the journal's protection, as a VALUE and not as fixed text
+/// in the gui (G16, ADR-0023).
 ///
 /// ⛔ ONE VARIANT AND NOT A `bool`, AND THE REASON IS ADR-0023 ITSELF: "encrypted at rest"
 /// here means PROTECTED AS MUCH AS YOUR SYSTEM ACCOUNT, and that sentence has to reach the
@@ -181,7 +186,19 @@ impl BuildStamp {
 /// level of protection a VARIANT rather than a silent change of meaning.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
 pub enum Protection {
-    /// The keys are the OS's, reached through the platform module. ADR-0023.
+    /// The sentence of ADR-0023: the journal encrypted at rest with keys the OS holds, reached
+    /// through the platform module -- protected as much as your system account.
+    ///
+    /// ⚠️ NOT TRUE TODAY, AND THE CORE SENDS IT ALL THE SAME. No key protects the journal: the
+    /// encryption at rest is sub-project 15's, and until it exists `platform::journal::FileJournal`
+    /// writes a plain `redb` file -- mode `0600` on Unix, at creation only, and on Windows whatever
+    /// its directory hands down, at a path relative to the working directory. A permission keeps
+    /// the machine's other accounts out; it does not protect a disk read outside the OS, which is
+    /// what the OS's keys are for. So the sentence the gui shows promises more than the system
+    /// does, and whether the wire and the interface say the real level until then is the owner's
+    /// choice (audit of 2026-09-30, AUD-686). Who sends this, and when it becomes delivered, is
+    /// written beside the literal in `crate::serving`. ⚠️ RECALL OF 2026-10-02 -- audit of
+    /// 2026-09-30, AUD-073.
     AsSystemAccount,
 }
 
@@ -302,7 +319,8 @@ pub enum LayoutState {
 /// (P-39). `RecordV1::outcome` carries no success flag: an outcome written says the step
 /// CLOSED, and there is no "closed badly". A step whose effect failed returns before the
 /// outcome is written and stays IN DOUBT (ADR-0007), which is `false` here. A third state
-/// would be a variant on the wire with no producer, and an index on the wire never retires.
+/// would be a variant on the wire with no producer. ⚠️ RECALL OF 2026-10-02 -- audit of
+/// 2026-09-30, AUD-074.
 #[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
 pub struct StepSummary {
     pub step: u64,
@@ -402,6 +420,16 @@ impl IpcMessage {
     /// ⚠️ `decode_from_slice` FIXES `Decode`'s CONTEXT PARAMETER TO `()`, which is why nothing
     /// in this signature names it: the trait is `Decode<Context>`, and choosing the context is
     /// the caller's only when the caller wants one.
+    ///
+    /// ⚠️ THE LIMIT, DECLARED -- AND IT WAITS ON A CHOICE OF THE OWNER (audit of 2026-09-30,
+    /// AUD-687). `bincode::config::standard()` decodes WITHOUT A LIMIT, and bincode 2.0.1 allocates
+    /// a container from the length the body DECLARES, before its bytes are read: MEASURED on
+    /// 2026-10-02, a body of ten bytes declaring a `SaveLayout` of `u64::MAX` bytes panics with
+    /// `capacity overflow` instead of answering `Malformed`, and the audit measured that one
+    /// declaring more than the memory there is aborts the process. The cap a transport puts on the
+    /// envelope does not reach the counts inside it. bincode takes a limit only as a compile-time
+    /// constant, while the cap is chosen per core and delivered (D9, D31) and the kernel names no
+    /// default (§2.8.2): how the one reaches the other is that choice.
     pub fn decode(bytes: &[u8]) -> Result<Self, WireError> {
         let body = framing::unframe(bytes)?;
         let (message, used) = bincode::decode_from_slice(body, bincode::config::standard())
@@ -413,15 +441,28 @@ impl IpcMessage {
     }
 }
 
-/// The canonical set: ONE message per variant, in a fixed order.
+/// The canonical set: ONE message per variant of `IpcMessage`, in a fixed order, and after them
+/// one more for every variant of a NESTED enum that those do not carry.
 ///
 /// ⛔ ONE FUNCTION AND NOT TWO LISTS. The fixtures are generated from this and the stamp is
 /// computed from this, so THEY CANNOT DRIFT APART: a variant added here changes both, and a
-/// variant added to `IpcMessage` and forgotten here is caught by
-/// `every_variant_is_in_the_canonical_set` in `crates/kernel/tests/ipc_wire.rs`, an integration
-/// bench OUTSIDE this crate. Two lists would be two places to keep aligned for one property,
-/// and the first one to stop being updated lies in silence -- the argument
-/// `crates/kernel/tests/frozen/record_v1.map` makes about itself.
+/// variant forgotten here is caught in `crates/kernel/tests/ipc_wire.rs`, an integration bench
+/// OUTSIDE this crate -- by `every_variant_is_in_the_canonical_set` for `IpcMessage`, and by
+/// `every_variant_of_every_nested_enum_is_in_the_canonical_set` one level down. Two lists would be
+/// two places to keep aligned for one property, and the first one to stop being updated lies in
+/// silence -- the argument `crates/kernel/tests/frozen/record_v1.map` makes about itself.
+///
+/// ⛔ EVERY VARIANT AT EVERY LEVEL, the rule the journal's frozen bytes keep, because bincode
+/// writes an enum as the INDEX of its variant and nothing more. With one value per nested enum, a
+/// variant appended to `LayoutState` -- or two that no message carried, swapped -- changes no byte
+/// of this set, so neither a fixture nor the stamp, and a stale gui passes the handshake to fail on
+/// the first message it cannot read. ⚠️ THE NESTED ONES GO AT THE END, and so does any added
+/// later: every fixture already written keeps its index. ⚠️ RECALL OF 2026-10-02 -- audit of
+/// 2026-09-30, AUD-532 and AUD-694.
+///
+/// ⚠️ THE LIMIT, DECLARED: the stamp sees VALUES, not types. A change that leaves the encoding of
+/// every value here as it was changes no byte and no stamp -- an integer field widened is one,
+/// because bincode's varint writes a number the same way whatever the width of its type.
 ///
 /// ⚠️ THE VALUES ARE ARBITRARY BUT NOT RANDOM: each one is chosen so that no two encodings
 /// are equal and no field is left at its type's default, because a fixture full of zeroes
@@ -483,6 +524,41 @@ pub fn stamp_set() -> Vec<IpcMessage> {
             asked: Mib::new(4096),
             ceiling: Mib::new(1024),
         }),
+        // ⛔ FROM HERE, THE VARIANTS OF THE NESTED ENUMS THAT THE MESSAGES ABOVE DO NOT CARRY, one
+        // message each, in the order of `IpcMessage` and then of each enum -- see the doc above.
+        IpcMessage::Policy(PolicyReport {
+            policy: PolicyName::Local,
+            allocated: Mib::new(14336),
+            total: Mib::new(16384),
+        }),
+        IpcMessage::PermissionRequired(Triple {
+            tool: String::from("arbiter"),
+            resource: String::from("policy"),
+            operation: Access::Read,
+        }),
+        IpcMessage::Token {
+            text: String::from("ciao"),
+            provenance: Provenance::Trusted,
+        },
+        IpcMessage::Layout(LayoutState::Nothing),
+        IpcMessage::Layout(LayoutState::Unavailable),
+        IpcMessage::Request(GrantRequest {
+            reserved_vram: Mib::new(1024),
+            compute_class: ComputeClass::Realtime,
+            preemption: Preemption::After(Millis::new(250)),
+        }),
+        IpcMessage::Request(GrantRequest {
+            reserved_vram: Mib::new(4096),
+            compute_class: ComputeClass::Batch,
+            preemption: Preemption::After(Millis::new(750)),
+        }),
+        IpcMessage::Request(GrantRequest {
+            reserved_vram: Mib::new(512),
+            compute_class: ComputeClass::Interactive,
+            preemption: Preemption::Never,
+        }),
+        IpcMessage::Verdict(Verdict::Granted),
+        IpcMessage::Verdict(Verdict::Queued),
     ]
 }
 

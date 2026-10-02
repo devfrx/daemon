@@ -229,6 +229,10 @@ const SOCKET_NAME: &str = "harness-core";
 /// problem, and a mebibyte is both. ⛔ ITS TRIGGER IS THE FIRST PACKAGE REFUSED: a `SaveLayout` that
 /// comes back `MalformedMessage` is this line being too small, not a broken peer, and the remedy is
 /// this literal rather than a loosening of the transport.
+///
+/// ⚠️ IT BOUNDS THE ENVELOPE AND NOT THE COUNTS INSIDE IT: a body well under this cap can still
+/// declare a container the decoder allocates before reading it. That limit, and the choice it
+/// waits on, are written once, beside `kernel::wire::ipc::IpcMessage::decode`.
 const MAX_BODY: usize = 1024 * 1024;
 
 /// How long the serving activity sleeps between turns (§5, ADR-0034).

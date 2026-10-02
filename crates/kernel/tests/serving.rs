@@ -31,7 +31,9 @@ use kernel::ports::custody::{Custody, CustodyError, CustodyKey};
 use kernel::ports::ipc::{ClientId, Ipc, IpcError};
 use kernel::ports::journal::{Journal, StepId};
 use kernel::ports::reactor::Reactor;
-use kernel::record::{EffectClass, Record, RecordKind, RecordV1, RoutingDetail, Trust};
+use kernel::record::{
+    EffectClass, InvocationDetail, Record, RecordKind, RecordV1, RoutingDetail, Trust,
+};
 use kernel::serving::{serve, Core, POLICY_FUNCTION};
 use kernel::time::{Millis, Monotonic, WallTime};
 use kernel::wire::ipc::{
@@ -650,6 +652,62 @@ fn an_approve_changes_the_policy_and_the_gui_is_told() {
     assert!(
         matches!(heard.get(6), Some(IpcMessage::Steps(steps)) if steps.len() == 1 && steps[0].done),
         "and the step list, with the invocation closed: {heard:?}"
+    );
+}
+
+#[test]
+fn the_step_list_carries_the_journals_own_step_numbers() {
+    // ⛔ §6.1.3 ON THE ONE IDENTIFIER THE `ipc` SCHEMA CARRIES: `StepSummary::step` is the number
+    // the JOURNAL wrote, read back out of `Journal::replay`, and never one the core mints.
+    // MEASURED on 2026-10-02 before this probe existed: with `step_list` numbering its own lines,
+    // every probe of this bench and of `ipc_wire.rs` stayed green.
+    //
+    // ⚠️ THE TWO NUMBERS ARE NOTHING A MINT WOULD GIVE: not from one, not consecutive, and far
+    // from what this bench's `Progressive` hands out. They are written into the journal BY HAND,
+    // the way `degrade_once` writes its routing, because a round through the dispatch numbers its
+    // steps from one -- where a counter would land too, and the probe would decide nothing.
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(GUI, &[IpcMessage::Hello(build_stamp())]);
+
+    bench.round(
+        |core| {
+            for step in [900, 907] {
+                let intent = Record::V1(RecordV1::intent(
+                    EffectClass::Idempotent,
+                    Trust::Instruction,
+                    Vec::new(),
+                    "a step the journal numbered",
+                ))
+                .encode();
+                let invocation = Record::V1(RecordV1::invocation(
+                    EffectClass::Idempotent,
+                    Trust::Instruction,
+                    Vec::new(),
+                    "the invocation on that step",
+                    InvocationDetail::new(POLICY_FUNCTION.name, 0),
+                ))
+                .encode();
+                let journal = core.journal();
+                journal
+                    .intent(StepId::new(step), &intent)
+                    .expect("the memory journal writes");
+                journal
+                    .note(StepId::new(step), &invocation)
+                    .expect("the memory journal writes");
+            }
+        },
+        |_| {},
+    );
+
+    let heard = bench.heard(GUI);
+    let numbers: Option<Vec<u64>> = heard.iter().find_map(|message| match message {
+        IpcMessage::Steps(lines) => Some(lines.iter().map(|line| line.step).collect()),
+        _ => None,
+    });
+    assert_eq!(
+        numbers,
+        Some(vec![900, 907]),
+        "the welcome's step list carries the numbers the JOURNAL wrote: {heard:?}"
     );
 }
 

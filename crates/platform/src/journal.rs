@@ -190,6 +190,14 @@ impl FileBackend {
     /// Linux is **0644** — WORLD-READABLE, that is, LESS than the account. Measured on the code
     /// rather than assumed: before this line there was no `.mode()` anywhere in `crates/`.
     ///
+    /// ⚠️ AND IT IS NOT THE ENCRYPTION THAT SENTENCE MEANS, only the half of it a file mode can
+    /// carry: it keeps the machine's OTHER accounts out, on Unix and at creation. On Windows
+    /// nothing here sets a permission at all -- the file takes the security its directory hands
+    /// down -- and on neither system does a mode protect a disk read outside the OS, which is what
+    /// ADR-0023's keys are for. The encryption at rest is sub-project 15's; what the gui is told
+    /// meanwhile is the doc of `kernel::wire::ipc::Protection`. ⚠️ RECALL OF 2026-10-02 -- audit
+    /// of 2026-09-30, AUD-686.
+    ///
     /// ⚠️ IT IS INVISIBLE ON THE DEVELOPMENT HOST. Windows has no Unix mode, so `cfg(unix)`
     /// compiles this away and the defect could not show up where the work happens — it was
     /// programmed to appear on the SECOND supported system, exactly like gotcha #52. The probe

@@ -359,13 +359,28 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
             // has no third state for it: the gui is simply not told, and the sweep will tell it as
             // soon as the journal reads again. ⚠️ REGISTERED AND NOT TAKEN: whether `Degradation`
             // should gain an "unknown" the way `LayoutState` gained `Unavailable` (decision 35) is
-            // the owner's, and it is a variant on a wire that never retires one.
+            // the owner's, and what it would cost is a schema change in lockstep -- `IpcMessage`,
+            // the fixtures, the stamp and the gui's reader move together, because this wire
+            // renounces versioning (I4) -- not an index spent for ever. ⚠️ RECALL OF 2026-10-02 --
+            // audit of 2026-09-30, AUD-074.
             None => return Outcome::Keep,
         };
 
+        // ⛔ THE PROTECTION IS NOT DELIVERED, decision D22 of the sub-project 2 plan: `Protection`
+        // has one variant, and a parameter that can take one value is dead surface inside
+        // `Parameters`. ⛔ THE TRIGGER, written beside the literal as the design asks and held by
+        // the compiler rather than by this sentence: the day `Protection` gains a second variant,
+        // the `match` below stops compiling, and the value becomes DELIVERED through `Parameters`
+        // -- what the core announces must be the protection the platform gives, never one picked
+        // here (ADR-0023). What the one variant promises today is in its own doc.
+        let protection = Protection::AsSystemAccount;
+        match protection {
+            Protection::AsSystemAccount => {}
+        }
+
         // The welcome, in the order sequence 1 of the north star fixes.
         for message in [
-            IpcMessage::Accepted(Protection::AsSystemAccount),
+            IpcMessage::Accepted(protection),
             IpcMessage::Degradation(told),
             IpcMessage::Policy(self.policy_report()),
             IpcMessage::Layout(self.layout()),

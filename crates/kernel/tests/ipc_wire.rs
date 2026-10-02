@@ -4,8 +4,8 @@ use kernel::arbiter::{ComputeClass, Mib, Preemption};
 use kernel::framing::{self, LENGTH_WIDTH, WireError};
 use kernel::time::Millis;
 use kernel::wire::ipc::{
-    build_stamp, stamp_set, Access, Call, GrantRequest, IpcMessage, LayoutState, PolicyName,
-    Protection, Provenance, Triple, Verdict,
+    build_stamp, stamp_set, Access, Call, DegradationReport, GrantRequest, IpcMessage, LayoutState,
+    PolicyName, PolicyReport, Protection, Provenance, StepSummary, Triple, Verdict,
 };
 
 fn a_request() -> GrantRequest {
@@ -134,8 +134,12 @@ fn every_variant_is_in_the_canonical_set() {
     // unchanged, and every probe in this file GREEN -- the schema would have grown and
     // nothing would say so. The `match` is exhaustive on purpose: adding a variant makes THIS
     // a compile error, which is level 1 rather than a test at level 2.
+    //
+    // ⚠️ ONCE EACH, AND AT THE HEAD: the set OPENS with one message per variant, and the
+    // messages for the nested variants come after it -- the guard below this one. That head is
+    // what keeps every fixture already written at its index when a nested variant is appended.
     let mut seen = [false; VARIANTS];
-    for message in stamp_set() {
+    for message in stamp_set().into_iter().take(VARIANTS) {
         let slot = match message {
             IpcMessage::Hello(_) => 0,
             IpcMessage::Accepted(_) => 1,
@@ -156,13 +160,161 @@ fn every_variant_is_in_the_canonical_set() {
         seen[slot] = true;
     }
     let missing: Vec<usize> = (0..VARIANTS).filter(|i| !seen[*i]).collect();
-    assert!(missing.is_empty(), "variants missing from stamp_set: {missing:?}");
+    assert!(missing.is_empty(), "variants missing from the head of stamp_set: {missing:?}");
+}
+
+/// One enum NESTED inside `IpcMessage`: how many variants it has, and which of them the canonical
+/// set carries -- the guard below.
+///
+/// ⚠️ THE COUNT IS WRITTEN ONCE, BESIDE THE NAME, for the reason `VARIANTS` gives: once a variant
+/// is added and its arm written, a slot past the count says so in words instead of panicking with
+/// `index out of bounds`.
+struct Nested {
+    name: &'static str,
+    seen: Vec<bool>,
+}
+
+impl Nested {
+    fn new(name: &'static str, variants: usize) -> Self {
+        Nested {
+            name,
+            seen: vec![false; variants],
+        }
+    }
+
+    fn saw(&mut self, slot: usize) {
+        assert!(
+            slot < self.seen.len(),
+            "{}: slot {slot} is past the {} variants written beside its name -- raise the count",
+            self.name,
+            self.seen.len()
+        );
+        self.seen[slot] = true;
+    }
+
+    /// The slots no message carried, as one line of the report -- `None` when every one is there.
+    fn missing(&self) -> Option<String> {
+        let missing: Vec<usize> = (0..self.seen.len()).filter(|slot| !self.seen[*slot]).collect();
+        (!missing.is_empty()).then(|| format!("  {}: slots {missing:?}", self.name))
+    }
+}
+
+#[test]
+fn every_variant_of_every_nested_enum_is_in_the_canonical_set() {
+    // ⛔ THE SAME GUARD ONE LEVEL DOWN, AND WITHOUT IT THE STAMP IS BLIND TO A NESTED VARIANT.
+    // bincode writes an enum as the INDEX of its variant and nothing else, so a variant no message
+    // of the set carries changes no byte when it appears: one appended to `LayoutState` -- or two
+    // that nobody carried, swapped -- left every fixture and the stamp as they were, and a stale
+    // gui would pass the handshake to fail on the first message it could not read. Every variant
+    // at every level is the rule the journal's frozen bytes already keep
+    // (`every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record`).
+    //
+    // ⛔ EVERY `match` BELOW IS EXHAUSTIVE: a variant added to a nested enum is a compile error
+    // HERE, level 1, and then a red until a message carrying it joins `stamp_set`. ⛔ AND THE
+    // PAYLOADS ARE TAKEN APART FIELD BY FIELD, WITH NO `..`, which is what reaches the enum nobody
+    // has written yet: a field added to any of them stops this compiling, and whoever adds it
+    // decides here whether it is an enum the stamp must see. `BuildStamp` is the one payload left
+    // shut -- its field is private by design, and it is a `u64`.
+    //
+    // ⚠️ ONE REPORT AND NOT ONE ASSERT PER ENUM, gotcha #14: one red names every missing slot.
+    let mut verdict = Nested::new("Verdict", 3);
+    let mut protection = Nested::new("Protection", 1);
+    let mut policy = Nested::new("PolicyName", 2);
+    let mut access = Nested::new("Access", 2);
+    let mut provenance = Nested::new("Provenance", 2);
+    let mut layout = Nested::new("LayoutState", 3);
+    let mut class = Nested::new("ComputeClass", 3);
+    let mut preemption = Nested::new("Preemption", 2);
+
+    let access_slot = |operation: Access| match operation {
+        Access::Read => 0,
+        Access::Write => 1,
+    };
+    for message in stamp_set() {
+        match message {
+            IpcMessage::Hello(_) | IpcMessage::StaleBuild(_) => {}
+            IpcMessage::Accepted(value) => protection.saw(match value {
+                Protection::AsSystemAccount => 0,
+            }),
+            IpcMessage::Degradation(DegradationReport {
+                vram_exhausted: _,
+                routing_degraded: _,
+            }) => {}
+            IpcMessage::Policy(PolicyReport { policy: name, allocated: _, total: _ }) => {
+                policy.saw(match name {
+                    PolicyName::Remote => 0,
+                    PolicyName::Local => 1,
+                })
+            }
+            IpcMessage::Invoke(Call { function: _, argument: _ }) => {}
+            IpcMessage::PermissionRequired(Triple { tool: _, resource: _, operation }) => {
+                access.saw(access_slot(operation))
+            }
+            IpcMessage::Approve {
+                triple: Triple { tool: _, resource: _, operation },
+                call: Call { function: _, argument: _ },
+            } => access.saw(access_slot(operation)),
+            IpcMessage::Token { text: _, provenance: value } => provenance.saw(match value {
+                Provenance::Trusted => 0,
+                Provenance::Untrusted => 1,
+            }),
+            IpcMessage::Layout(state) => layout.saw(match state {
+                LayoutState::Package(_) => 0,
+                LayoutState::Nothing => 1,
+                LayoutState::Unavailable => 2,
+            }),
+            IpcMessage::SaveLayout(_) => {}
+            // ⚠️ A LOOP WITH NOTHING IN IT, and the pattern is the point: the compiler checks it
+            // whatever the vector holds, so a field added to `StepSummary` lands here too.
+            IpcMessage::Steps(steps) => {
+                for StepSummary { step: _, function: _, done: _ } in steps {}
+            }
+            IpcMessage::Request(GrantRequest {
+                reserved_vram: _,
+                compute_class,
+                preemption: value,
+            }) => {
+                class.saw(match compute_class {
+                    ComputeClass::Realtime => 0,
+                    ComputeClass::Interactive => 1,
+                    ComputeClass::Batch => 2,
+                });
+                preemption.saw(match value {
+                    Preemption::Never => 0,
+                    Preemption::After(_) => 1,
+                });
+            }
+            IpcMessage::Verdict(value) => verdict.saw(match value {
+                Verdict::Granted => 0,
+                Verdict::Queued => 1,
+                Verdict::Refused { asked: _, ceiling: _ } => 2,
+            }),
+        }
+    }
+
+    let all = [
+        &verdict,
+        &protection,
+        &policy,
+        &access,
+        &provenance,
+        &layout,
+        &class,
+        &preemption,
+    ];
+    let missing: Vec<String> = all.iter().filter_map(|nested| nested.missing()).collect();
+    assert!(
+        missing.is_empty(),
+        "variants of nested enums missing from stamp_set -- append a message that carries each, \
+         then regenerate the fixtures:\n{}",
+        missing.join("\n")
+    );
 }
 
 #[test]
 fn every_message_of_the_canonical_set_survives_the_round_trip() {
-    // ⚠️ ONE LOOP THAT COLLECTS RATHER THAN FOURTEEN ASSERTS IN A ROW -- gotcha #14 from the
-    // other side. A row of asserts stops at the first red and hides the other thirteen; a
+    // ⚠️ ONE LOOP THAT COLLECTS RATHER THAN ONE ASSERT PER MESSAGE IN A ROW -- gotcha #14 from
+    // the other side. A row of asserts stops at the first red and hides every one after it; a
     // loop that stops does the same. This one records every failure and reports them together,
     // so one red tells the whole story.
     let mut broken = Vec::new();
@@ -532,11 +684,12 @@ fn every_u64_reaches_the_json_as_a_decimal_string() {
     // and compare equal to itself (gotcha #51, which the step-6 prose cites of itself).
     //
     // ⚠️ AND THE LIMIT, DECLARED RATHER THAN HIDDEN: this list is kept BY HAND. It covers every
-    // arm of `variant_json` that renders a `u64` today, and nothing makes it grow on its own --
-    // a variant added tomorrow that carries one would come back green, UNWATCHED, while the name
-    // still says "every". WHOEVER ADDS A VARIANT WITH A `u64` ADDS ITS LINE HERE. A probe that
-    // walked the values instead would have to know which fields are `u64`, which is the schema
-    // stated a second time -- what ADR-0037 refuses and what the literal exists to avoid.
+    // message of the set that renders a `u64` today, and nothing makes it grow on its own -- a
+    // message added tomorrow that carries one would come back green, UNWATCHED, while the name
+    // still says "every". WHOEVER ADDS A MESSAGE WITH A `u64` TO THE SET -- a variant, or one of
+    // the nested ones at its end -- ADDS ITS LINE HERE. A probe that walked the values instead
+    // would have to know which fields are `u64`, which is the schema stated a second time -- what
+    // ADR-0037 refuses and what the literal exists to avoid.
     let set = stamp_set();
     let rule = "rule 1: every u64 is a decimal STRING";
     assert_eq!(
@@ -567,6 +720,26 @@ fn every_u64_reaches_the_json_as_a_decimal_string() {
     assert_eq!(
         variant_json(&set[13]),
         r#"{"kind":"Verdict","value":{"verdict":"Refused","asked":"4096","ceiling":"1024"}}"#,
+        "{rule}"
+    );
+    assert_eq!(
+        variant_json(&set[14]),
+        r#"{"kind":"Policy","value":{"policy":"Local","allocated":"14336","total":"16384"}}"#,
+        "{rule}"
+    );
+    assert_eq!(
+        variant_json(&set[19]),
+        r#"{"kind":"Request","value":{"reserved_vram":"1024","compute_class":"Realtime","preemption":{"kind":"After","grace_ms":"250"}}}"#,
+        "{rule}"
+    );
+    assert_eq!(
+        variant_json(&set[20]),
+        r#"{"kind":"Request","value":{"reserved_vram":"4096","compute_class":"Batch","preemption":{"kind":"After","grace_ms":"750"}}}"#,
+        "{rule}"
+    );
+    assert_eq!(
+        variant_json(&set[21]),
+        r#"{"kind":"Request","value":{"reserved_vram":"512","compute_class":"Interactive","preemption":{"kind":"Never"}}}"#,
         "{rule}"
     );
 }

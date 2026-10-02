@@ -51,8 +51,8 @@ interface Card {
  * ⛔ THE STRIP IS NOT DRAWN (D14 of the plan): it is in every view, the same, with no icon -- and the board's miniatures
  * leave it out. A module type that is gone is drawn without an icon: it is there, and the miniature says so.
  * ⛔ A LAYOUT IT CANNOT READ IS DRAWN EMPTY (E90 of the plan): `unpack` keeps any object as a layout, and `schematic`
- * throws on one it cannot read -- the dock only when that view is shown, while the cards draw every view at once, and one
- * would take the whole overview down. */
+ * throws on one it cannot read -- the cards draw every view at once, and one would take the whole overview down. The dock
+ * opens the next layout in its place (`apply`, AUD-536 of the audit of 2026-09-30). */
 function drawn(saved: SerializedDockview): Drawn[] {
   let tiles: ReturnType<typeof schematic>;
   try {

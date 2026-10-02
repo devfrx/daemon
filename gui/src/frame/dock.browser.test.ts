@@ -7,10 +7,13 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { userEvent } from "vitest/browser";
 
 import { registerModules } from "../panels/modules";
+import { VIEWS } from "../panels/views";
 import { computed, concentricRadii } from "../testing/probes";
 import { readToken } from "../tokens/readToken";
 
-import { createDock } from "./dock";
+import { canonical, createDock } from "./dock";
+import { moveActive } from "./moveActive";
+import type { Direction } from "./nearest";
 
 // ⛔ THE DRESSED DOCK IN THE INSTALLED CHROME (design system, section (c)): what only a layout engine can judge -- the
 // space between the cards, their radius and surface, the grab's height, the level and the surface of a floating group.
@@ -219,3 +222,119 @@ for (const theme of ["light", "dark"] as const) {
     });
   });
 }
+
+/** The layout on screen in the form `dock.ts` compares: key order is not layout. */
+function layoutOf(api: DockviewApi): string {
+  return JSON.stringify(canonical(api.toJSON()));
+}
+
+/** Home again, as it ships, once `dockview` has laid it out: every probe below starts from it. */
+async function home(api: DockviewApi): Promise<void> {
+  api.fromJSON(VIEWS.home);
+  await new Promise((resolve) => setTimeout(resolve, 50));
+}
+
+const DIRECTIONS: readonly Direction[] = ["left", "right", "up", "down"];
+
+// ⛔ MOVE 6 OF SP-8 WITH THE LIBRARY THAT DOES THE MOVING (AUD-721 of the audit of 2026-09-30): `keys.test.ts` hands
+// `moveActive` a dock of its own, which records the `moveTo` and cannot see what `dockview-core` 8.3.1 does with it -- and
+// under jsdom every rectangle is zero. Here the geometry is Chrome's and the grid is `dockview`'s.
+describe("the tile moved with the keyboard, in the installed Chrome (move 6 of SP-8)", () => {
+  it("moves a tile alone in its group into the nearest unlocked group that way, past the nucleus, and leaves it where it is where nothing lies", async () => {
+    const { api } = await dock("light");
+    const group = (id: string) => api.getPanel(id)?.group;
+    // Stato is alone in its group, at the top of the left column: Permessi lies below it, Attività's column right of it,
+    // past the nucleus -- locked, so not a target -- and nothing left of it or above it.
+    const moves: [Direction, string | null][] = [
+      ["down", "permissions"],
+      ["right", "activity"],
+      ["left", null],
+      ["up", null],
+    ];
+    for (const [direction, into] of moves) {
+      await home(api);
+      api.getPanel("status")?.api.setActive();
+      const before = layoutOf(api);
+      const groups = api.groups.length;
+      if (into !== null) {
+        expect(moveActive(api, direction), direction).toBe("moved");
+        expect(group("status"), direction).toBe(group(into));
+        expect(api.groups.length, direction).toBe(groups - 1);
+        continue;
+      }
+      // ⛔ NOTHING THAT WAY, AND NOTHING TO SPLIT: a tile alone in its group is already on that side of it. In
+      // `dockview-core` 8.3.1 a `moveTo` onto its own side either puts the group back where it was or takes it out of the
+      // grid, and the return said "split" in both.
+      expect(moveActive(api, direction), direction).toBe("none");
+      expect(layoutOf(api), direction).toBe(before);
+      expect(api.groups.length, direction).toBe(groups);
+    }
+  });
+
+  it("splits a group of two on that side when nothing lies that way, in the four directions", async () => {
+    const { api } = await dock("light");
+    // An edge of Home for each direction, and a second tile brought into that group: the left column's top for left and
+    // up, Attività's column's top for right, the left column's bottom -- above the strip, which is locked -- for down.
+    const edges: Record<Direction, [string, string]> = {
+      left: ["status", "permissions"],
+      up: ["status", "permissions"],
+      right: ["activity", "costs"],
+      down: ["settings", "permissions"],
+    };
+    for (const direction of DIRECTIONS) {
+      await home(api);
+      const [stays, moves] = edges[direction];
+      const edge = api.getPanel(stays)?.group;
+      expect(edge, direction).toBeDefined();
+      if (edge === undefined) continue;
+      api.getPanel(moves)?.api.moveTo({ group: edge, position: "center" });
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      // ⛔ NON-VACUITY: a group of two, the tile brought in is the active one.
+      expect(edge.size, direction).toBe(2);
+      expect(api.activePanel?.id, direction).toBe(moves);
+      expect(moveActive(api, direction), direction).toBe("split");
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      const split = api.getPanel(moves)?.group;
+      expect(split, direction).toBeDefined();
+      expect(split, direction).not.toBe(edge);
+      expect(edge.panels.map((panel) => panel.id), direction).toEqual([stays]);
+      // On that side of the group it left, and across from it.
+      const from = edge.element.getBoundingClientRect();
+      const to = (split as NonNullable<typeof split>).element.getBoundingClientRect();
+      const beyond =
+        direction === "left" ? to.right <= from.left + 1
+        : direction === "right" ? to.left >= from.right - 1
+        : direction === "up" ? to.bottom <= from.top + 1
+        : to.top >= from.bottom - 1;
+      expect(beyond, `${direction}: ${JSON.stringify(to)} from ${JSON.stringify(from)}`).toBe(true);
+    }
+  });
+
+  it("never moves the nucleus or the strip, not even as the active panel (move 1, AUD-537 and AUD-538 of the audit of 2026-09-30)", async () => {
+    const { host, api } = await dock("light");
+    // ⛔ THE STRIP BECOMES THE ACTIVE PANEL BY ITS OWN BUTTON: «+ moduli» takes the focus with Tab, and `dockview` makes the
+    // group whose content holds the focus the active one.
+    const button = host.querySelector<HTMLElement>(".strip .base-button");
+    expect(button).not.toBeNull();
+    button?.focus();
+    // ⛔ NON-VACUITY: the road the keyboard takes does make the strip active.
+    expect(api.activePanel?.id).toBe("strip");
+    const actives: [string, () => void][] = [
+      ["strip", () => button?.focus()],
+      ["knowledge", () => api.getPanel("knowledge")?.api.setActive()],
+      // ⛔ COMPATTA OPENS WITH THE STRIP ACTIVE, and its two groups are both locked: there is nothing to move in it.
+      ["strip", () => api.fromJSON(VIEWS.compact)],
+    ];
+    for (const [id, activate] of actives) {
+      activate();
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      expect(api.activePanel?.id).toBe(id);
+      expect(api.activePanel?.group.locked).toBe(true);
+      const before = layoutOf(api);
+      for (const direction of DIRECTIONS) {
+        expect(moveActive(api, direction), `${id} ${direction}`).toBe("none");
+        expect(layoutOf(api), `${id} ${direction}`).toBe(before);
+      }
+    }
+  });
+});

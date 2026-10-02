@@ -151,6 +151,63 @@ describe("the layout", () => {
     expect(layout.view).toBe("compact");
     expect(layout.saved).toEqual({ view: "compact", layouts: { compact: theirs } });
   });
+
+  /** The bytes of the n-th `SaveLayout` the store sent: what the core answers with when the write sticks. */
+  function sentBytes(bridge: ReturnType<typeof createFakeBridge>, index: number): number[] {
+    const message = bridge.sent[index];
+    if (message?.kind !== "SaveLayout") throw new Error(`no SaveLayout at ${index}`);
+    return message.value;
+  }
+
+  function held(bytes: number[]): IpcMessage {
+    return { kind: "Layout", value: { state: "Package", bytes } };
+  }
+
+  it("does not count the echo of an earlier save while a later one is in flight (D89, AUD-542 of the audit of 2026-09-30)", () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    // ⛔ TWO SAVES BEFORE THE FIRST ANSWER: a settle, then a theme chosen -- each `keep` sends at once.
+    const home = { marker: "home, moved" } as never;
+    layout.settle(home);
+    layout.chooseTheme("dark");
+    // The core answers each one, in order, with what it holds after it (decision 13).
+    layout.receive(held(sentBytes(bridge, 0)));
+    // ⛔ THE FIRST ANSWER IS OUR OWN SAVE COMING BACK, NOT A PACKAGE TO SHOW: shown, it took the theme back to `system`
+    // and the dock back to the first save, and the second answer, equal to the last bytes sent, was dropped.
+    expect(layout.arrivals).toBe(0);
+    expect(layout.theme).toBe("dark");
+    layout.receive(held(sentBytes(bridge, 1)));
+    expect(layout.arrivals).toBe(0);
+    expect(layout.saved).toEqual({ view: "home", layouts: { home }, theme: "dark" });
+    // And the next move starts from what the core holds: the theme stays.
+    const work = { marker: "work, moved" } as never;
+    layout.showView("work");
+    layout.settle(work);
+    expect(unpack({ state: "Package", bytes: sentBytes(bridge, 2) })).toEqual({ view: "work", layouts: { home, work }, theme: "dark" });
+  });
+
+  it("does count what the core holds after a write that did not stick, with a later save in flight, and then the later one (decision 13)", () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    const welcome = [...pack_({ view: "home", layouts: {} })];
+    layout.receive(held(welcome));
+    expect(layout.arrivals).toBe(1);
+    const first = { marker: "first move" } as never;
+    const second = { marker: "second move" } as never;
+    layout.settle(first);
+    layout.settle(second);
+    // ⛔ THE FIRST WRITE DID NOT STICK: the core answers with the package it still holds, and the gui shows it.
+    layout.receive(held(welcome));
+    expect(layout.arrivals).toBe(2);
+    expect(layout.saved).toEqual({ view: "home", layouts: {} });
+    // ⛔ AND THE SECOND STUCK: the core holds it now, and so must the gui. Read as our own echo, it was dropped, and the gui
+    // went on holding the old package -- the next settle would have written the second move away.
+    layout.receive(held(sentBytes(bridge, 1)));
+    expect(layout.arrivals).toBe(3);
+    expect(layout.saved).toEqual({ view: "home", layouts: { home: second } });
+  });
 });
 
 describe("the theme in the package (design system, section (a))", () => {

@@ -75,9 +75,12 @@ function sameBytes(a: readonly number[], b: readonly number[]): boolean {
  * change. So the shape above is the gui's business alone, and the wire carries `number[]`.
  *
  * ⛔ AND WHAT COMES BACK IS NOT TRUSTED TO BE OURS: an archive can hold a package written by an
- * older build. `unpack` returns `null` on anything it does not recognise, and the caller falls
+ * older build. `unpack` returns `null` on a package it does not recognise, and the caller falls
  * back to the committed views -- the same shape as row 8 of §2, where a panel pointing at a type
- * that is gone says so and closes.
+ * that is gone says so and closes. ⛔ A LAYOUT INSIDE A PACKAGE IS KEPT UNREAD: only `dockview`
+ * knows which layouts it can open, so one it cannot open loses to the committed view where the dock
+ * opens it (`apply` in `dock.ts`, AUD-536 and AUD-543 of the audit of 2026-09-30), and the overview
+ * draws it empty (E90 of the design-system plan).
  */
 export const useLayout = defineStore("layout", () => {
   const state = ref<LayoutState>({ state: "Nothing" });
@@ -91,7 +94,12 @@ export const useLayout = defineStore("layout", () => {
    * it and shows what arrived. A counter and not an event, because the dock is a Vue watcher. */
   const arrivals = ref(0);
   let wire: Bridge | null = null;
-  let sent: readonly number[] | null = null;
+  /** ⛔ EVERY SAVE SENT SINCE THE LAST ARRIVAL WHOSE ANSWER HAS NOT COME, OLDEST FIRST, and not the last one alone (AUD-542
+   * of the audit of 2026-09-30): a settle and a theme chosen at once put two in flight, and with one slot the answer to
+   * the first was shown as a package of someone else's -- the theme back to `system`, the screen back a move.
+   * ⚠️ A SAVE THAT GETS NO ANSWER -- one no core hears, or one the core refuses without a word before the handshake --
+   * stays here until the next arrival empties the list: the cost is the bytes of the saves made while no core listens. */
+  let inFlight: (readonly number[])[] = [];
 
   function attach(bridge: Bridge): void {
     wire = bridge;
@@ -100,11 +108,24 @@ export const useLayout = defineStore("layout", () => {
   function receive(message: IpcMessage): void {
     if (message.kind !== "Layout") return;
     state.value = message.value;
-    // ⛔ THE CORE ANSWERS EVERY `SaveLayout` WITH WHAT IT HOLDS (decision 13, task 7), so a package
-    // equal to the bytes we last sent is our own save coming back: nothing new, nothing to show.
+    // ⛔ THE CORE ANSWERS EVERY `SaveLayout` WITH WHAT IT HOLDS, IN ORDER (decision 13, task 7), so a
+    // package equal to a save in flight is our own save coming back: nothing new, nothing to show --
+    // we hold that one, or a later one built on it. It answers that save, and every older one has had
+    // its answer or will have none: they leave the list together.
+    if (message.value.state === "Package") {
+      const bytes = message.value.bytes;
+      const echo = inFlight.findIndex((sent) => sameBytes(bytes, sent));
+      if (echo !== -1) {
+        inFlight = inFlight.slice(echo + 1);
+        return;
+      }
+    }
     // Anything else -- the welcome, the OLD package after a write that did not stick, a package
-    // another build wrote -- replaces what we hold, and the dock shows it (D89).
-    if (message.value.state === "Package" && sent !== null && sameBytes(message.value.bytes, sent)) return;
+    // another build wrote -- replaces what we hold, and the dock shows it (D89). ⛔ AND THE SAVES STILL
+    // IN FLIGHT ARE NO LONGER ECHOES: they were built on what we held before, so each answer to come
+    // says what the core holds after it, and is shown in its turn -- the last leaves the gui holding
+    // what the core holds.
+    inFlight = [];
     saved.value = unpack(message.value);
     if (saved.value !== null) view.value = saved.value.view;
     // ⛔ AND THE NAMED VIEW THAT IS OPEN (R3-19 of the design-system review), or none -- ALSO WHEN NOTHING
@@ -185,9 +206,10 @@ export const useLayout = defineStore("layout", () => {
 
   function keep(pack: LayoutPack): void {
     saved.value = pack;
+    if (wire === null) return;
     const bytes = [...pack_(pack)];
-    sent = bytes;
-    wire?.send({ kind: "SaveLayout", value: bytes });
+    inFlight.push(bytes);
+    wire.send({ kind: "SaveLayout", value: bytes });
   }
 
   return { state, view, openNamed, saved, arrivals, theme, attach, receive, settle, showView, showNamed, saveNamed, chooseTheme };
@@ -210,7 +232,8 @@ export function unpack(state: LayoutState): LayoutPack | null {
     const held = candidate.layouts as Record<string, unknown>;
     const layouts: LayoutPack["layouts"] = {};
     // ⛔ ONLY THE THREE VIEWS THIS BUILD KNOWS ARE READ (decision 11): an entry under another
-    // name is another build's, and is neither shown nor kept -- row 8 of §2, for views.
+    // name is another build's, and is neither shown nor kept -- row 8 of §2, for views. ⚠️ The
+    // layout under a known name is any object, kept unread: `dockview` judges it, in `apply`.
     for (const name of VIEWS) {
       const layout = held[name];
       if (typeof layout === "object" && layout !== null) layouts[name] = layout as SerializedDockview;

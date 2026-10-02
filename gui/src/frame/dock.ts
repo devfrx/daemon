@@ -147,10 +147,18 @@ export function createDock(host: HTMLElement): DockviewApi {
  * Before D80 the one saved layout was applied under every tab.
  * ⛔ A NAMED VIEW WINS WHILE IT IS OPEN (the (d) of the design system), and a name the package no
  * longer holds falls back to the view of always.
+ *
+ * ⛔ AND A LAYOUT `dockview` CANNOT READ LOSES AS ONE THE PACKAGE DOES NOT HOLD (AUD-536 and AUD-543
+ * of the audit of 2026-09-30): `unpack` keeps any object as a layout, and only `fromJSON` knows what
+ * it can open -- `dockview-core` 8.3.1 refuses `{}` before touching the grid, and a group it cannot
+ * rebuild after clearing it, which leaves the dock empty. Uncaught, the refusal left the dock on the
+ * view before, under the new view's name, and the next move saved it there; a dock built over such
+ * a package was not born at all. ⛔ THE SHIPPED VIEW IS NOT GUARDED: it is committed, and a refusal
+ * of it is a defect of this build, to be seen.
  */
 export function apply(api: DockviewApi, view: ViewName, pack: LayoutPack | null, named: string | null = null): void {
   const chosen = named === null ? undefined : pack?.named?.find((entry) => entry.name === named)?.layout;
-  api.fromJSON(chosen ?? pack?.layouts[view] ?? VIEWS[view]);
+  openFirst(api, [chosen, pack?.layouts[view]], VIEWS[view]);
   for (const panel of api.panels) {
     // ⛔ ONLY WHAT NOBODY BUILT (R6-17): the strip is a piece of the frame, carries no `params`, and
     // is not a module type -- without this line it got `{ missing: true }` at every `apply`, and
@@ -160,4 +168,18 @@ export function apply(api: DockviewApi, view: ViewName, pack: LayoutPack | null,
       panel.api.updateParameters(placeholderParams(panel.id));
     }
   }
+}
+
+/** The first of the saved layouts `dockview` opens, in order, or else the shipped one. */
+function openFirst(api: DockviewApi, saved: readonly (SerializedDockview | undefined)[], shipped: SerializedDockview): void {
+  for (const layout of saved) {
+    if (layout === undefined) continue;
+    try {
+      api.fromJSON(layout);
+      return;
+    } catch {
+      // Refused: the next one wins.
+    }
+  }
+  api.fromJSON(shipped);
 }

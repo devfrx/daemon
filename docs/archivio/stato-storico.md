@@ -2891,3 +2891,74 @@ Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende 
 9. Il controllo di non intrusione: `git status --porcelain` vuoto.
 10. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per parola,
     la nuova al suo posto, e il commit.
+
+## La consegna del terzo audit, com'era — archiviata il 2026-10-02, alla chiusura della sessione dell'ondata 1
+
+Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende — scritto alla chiusura della sessione del 2026-10-02, a composizione finita»*, parola per parola:
+
+1. `git fetch --all --prune`, poi `git status -sb`. L'albero è pulito.
+2. Lo stato del run è in `.repo-audit/20260930-1510/`, **solo su questa macchina**. Nuovi di questa sessione:
+   `componi_pacchetti.py` (i file, le note e le ondate di ogni pacchetto: C13), `valida_ondate.py` (la variante di
+   `valida`: C14), `cerca_ondate.py` (la misura della P10), `regole-correttori.md` (le regole di ogni correttore),
+   `correzione/` — una specifica e un file di finding per pacchetto, e `_ondate.json` —, la riga della fase `correzione`
+   in `ventaglio-audit.js` (C12), e `triage-prima-della-composizione.json`, la copia di prima. `triage.json` porta ora
+   una decisione per ogni finding aperto, i pacchetti, le ondate e i vincoli `dopo`. Il piano si ricontrolla col comando,
+   non con questa riga: `PYTHONUTF8=1 python .repo-audit/20260930-1510/valida_ondate.py` — esce 0 e stampa le ondate solo
+   se ogni finding da correggere sta in un pacchetto solo e dentro ogni ondata i pacchetti sono disgiunti per file e per
+   soggetto.
+3. **Fatto il 2026-10-02**: la composizione, le regole dei correttori, la variante di `valida` provata nelle due
+   direzioni, il costo detto al proprietario (*«Il costo»*), e la P10 — le ondate con file e soggetti disgiunti.
+4. **Il prossimo passo: l'ondata 1**, in una sessione sua, e poi un'ondata per sessione (P10). I passi:
+   - il ramo `repo-audit/20260930-1510` dal `main` di allora (C8): `git switch -c repo-audit/20260930-1510`;
+   - `PYTHONUTF8=1 python C:/Users/zagor/.claude/plugins/marketplaces/local-desktop-app-uploads/repo-audit/scripts/piano_correzioni.py prepara --run .repo-audit/20260930-1510 --ondata 1`;
+   - il costo dell'ondata detto prima del ventaglio (P6), con le bande di *«Il costo»*;
+   - ⛔ il ventaglio è uno strumento `Workflow`: si lancia solo col consenso del proprietario in quella sessione
+     (ultracode, P5). `scriptPath` `.repo-audit/20260930-1510/ventaglio-audit.js`, argomenti `dir` — il percorso
+     assoluto della cartella del run —, `skill` `C:/Users/zagor/.claude/plugins/marketplaces/local-desktop-app-uploads/repo-audit/skills/repo-audit`,
+     `fase` `correzione`, `agente` `repo-audit:correttore`, `modello` `opus`, `elementi` da `correzione/_elenco.json`;
+   - letti gli esiti: per **P01**, le fixture nuove di `file_toccati` si aggiungono a `nuovi_file` **direttamente in
+     `correzione/P01.json`** — non con `componi_pacchetti.py` né con `valida_ondate.py`, che riscriverebbero la
+     specifica senza base e ramo (C13); poi i residui, le scelte aperte e le sonde nuove, al punto 5;
+   - `PYTHONUTF8=1 python C:/Users/zagor/.claude/plugins/marketplaces/local-desktop-app-uploads/repo-audit/scripts/integra.py --run .repo-audit/20260930-1510 --ondata 1`:
+     lancia `scripts/gate.sh` dopo ogni pacchetto, quindi niente altro cancello insieme;
+   - il ventaglio di riverifica: `fase` `riverifica`, `agente` `repo-audit:verificatore`, `modello` `sonnet` (P7),
+     `elementi` da `riverifica/_elenco.json`; poi `ledger.py consolida --run .repo-audit/20260930-1510`.
+5. **Fra un'ondata e l'altra**, il coordinatore:
+   - porta ogni **residuo** al pacchetto della sua casa in un'ondata successiva — il file in `EXTRA`, la modifica in
+     `NOTE` di `componi_pacchetti.py`, poi `--scrivi` e `valida_ondate.py`; se quella casa è di un pacchetto già
+     integrato, il residuo va in un pacchetto finale, P30, composto dopo l'ondata 11;
+   - mette ogni **scelta aperta** in `triage.json` come `decisione` — `componi_pacchetti.py` la toglie da sé dal suo
+     pacchetto — e nella tabella del punto 7: torna al proprietario come le quattordici della P9, una alla volta, in A/B;
+   - aggiunge le **sonde nuove** dei pacchetti di codice alle note di P23 e P24, prima delle loro ondate;
+   - toglie dai pacchetti successivi i finding che una correzione ha già risolto, come vuole il plugin: `consolida` li
+     dà `corretto` dalle riverifiche, e in `SPOSTAMENTI` di `componi_pacchetti.py` passano al pacchetto che li ha risolti;
+   - ⛔ si ferma ed espone al proprietario se un pacchetto è respinto per conflitto o regressione.
+6. ⛔ **L'ondata 3, P06, aspetta l'ADR del canale locale** (AUD-685 e AUD-688), in una sessione sua, prima di lei: la
+   specifica di P06 si rilegge contro l'ADR e i suoi file si ricontano.
+7. Fuori dalla Fase 4, e già decisi: dopo l'audit, `lean-docs` sulle storie nei documenti vivi (R5); dopo la Fase 4,
+   la verifica dei bassi rimasti contro i testi corretti (P8); e **le quattordici scelte da parte (P9)**, al proprietario
+   una alla volta, ciascuna con la sua A/B — le scelte aperte che i correttori troveranno si aggiungono qui:
+
+   | Finding | La scelta |
+   |---|---|
+   | AUD-204 | una richiesta più grande del budget allocabile ma non del totale resta in coda per sempre, e design/02 vuole «Rifiutata»: rifiutarla, o scrivere che attende |
+   | AUD-201, AUD-560 | la finestra di una concessione vale per tutta la sua vita o fino all'avvio del lavoro |
+   | AUD-290 | le chiavi del giornale si riusano dopo una potatura e una riapertura: si corregge design/10, o il codice |
+   | AUD-182 | ADR-0040, il passo in dubbio ripristinato senza la sua copia: testo da chiarire, o una decisione nuova su ADR-0007 |
+   | AUD-352 | «spec prima del codice» contro i disegni che non sono spec: «spec o disegno approvato», o una spec per ogni sotto-progetto |
+   | AUD-172 | ADR-0038: «un evento informa, mai autorizza» contro «per default la conferma non è gestuale» |
+   | AUD-170 | ADR-0038: «aprire un pannello» passa dal registro delle funzioni, o è presentazione |
+   | AUD-150 | in autonomo, una scrittura fuori dagli ambiti del checkpoint chiede conferma (ADR-0016) o vale il preset (ADR-0024) |
+   | AUD-162 | l'archivio dei parametri di ADR-0034: quale sotto-progetto lo costruisce |
+   | AUD-180 | la prontezza del reattore per il primo worker: la paga il 3 o il 12 |
+   | AUD-581 | il bus eventi di ADR-0001: assorbito, o da costruire e da chi |
+   | AUD-461 | il guscio Electron — preload, decodifica nel processo principale, prova capo a capo —: lo costruisce il 10 o il 3 |
+   | AUD-689 | l'indicatore della telecamera sta nella GUI, e la telecamera vive anche a GUI chiusa |
+   | AUD-475 | il vocabolario GenAI di OpenTelemetry vale anche per il modulo Passi, o solo per la proiezione trace |
+
+8. Gli script si lanciano con `PYTHONUTF8=1`. ⛔ Non rilanciare `ledger.py da-verificare`: cancellerebbe i lotti senza
+   esito. ⛔ `componi_pacchetti.py --scrivi` e `valida_ondate.py` si lanciano solo fra un'ondata integrata e la
+   preparazione della successiva: riscrivono tutte le specifiche.
+9. Il controllo di non intrusione, fuori dalle ondate: `git status --porcelain` vuoto.
+10. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per parola,
+    la nuova al suo posto, e il commit.

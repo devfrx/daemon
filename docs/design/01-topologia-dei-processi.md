@@ -5,6 +5,10 @@ su chi possiede lo stato e su quali canali esistono.
 
 Decisione e motivazioni: [ADR-0004](../adr/0004-topologia-di-processo.md).
 
+⚠️ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-122, AUD-193 e AUD-194: oggi esistono il core e la
+SPA della GUI, sul ponte finto; ogni altro pezzo è deciso, e porta il segno «(col N)» della regola 2 del
+[README](../README.md).
+
 ## Vista d'insieme
 
 ```mermaid
@@ -12,24 +16,26 @@ flowchart TB
     subgraph host["Macchina locale — utente singolo"]
         direction TB
 
-        gui["gui — client sottile<br/>0..1 istanze, effimero<br/>solo stato di presentazione"]
+        gui["gui — client sottile<br/>0..1 istanze, effimero<br/>solo stato di presentazione<br/><br/>oggi la SPA, sul ponte finto<br/>il guscio: col 3 o col 10 (AUD-461)"]
 
-        core["core — daemon, 1 istanza singola<br/>vita lunga, indipendente dalla GUI<br/><br/>unico detentore dello stato autorevole<br/>arbitro GPU · gateway inferenza<br/>orchestratore agenti · permessi · code"]
+        core["core — daemon, 1 istanza singola<br/>vita lunga, indipendente dalla GUI<br/><br/>unico detentore dello stato autorevole<br/>arbitro GPU · gateway inferenza<br/>orchestratore agenti (col 3) · permessi · code"]
 
         subgraph w["worker — 0..N, senza stato, uccidibili senza preavviso"]
             direction LR
-            ml["worker ML<br/>LLM locale · embedding<br/>STT · TTS · TRELLIS2"]
-            aud["worker audio<br/>cattura · wake word · VAD"]
+            ml["worker ML<br/>LLM locale (col 9) · embedding (col 6)<br/>STT · TTS (col 8) · TRELLIS2 (col 7)"]
+            aud["worker audio (col 8)<br/>cattura · wake word · VAD"]
+            cam["worker telecamera (col 12)<br/>la mano e i gesti, ADR-0039"]
         end
 
-        mcp["server MCP<br/>processi di terzi<br/>isolati e revocabili"]
+        mcp["server MCP (col 4)<br/>processi di terzi<br/>isolati e revocabili"]
     end
 
-    or["OpenRouter"]
+    or["OpenRouter (col 3)"]
 
     gui <--> core
-    core --> ml
-    core --> aud
+    core <--> ml
+    core <--> aud
+    core <--> cam
     core <--> mcp
     core --> or
 
@@ -37,22 +43,29 @@ flowchart TB
     classDef efim fill:#0f766e,stroke:#134e4a,color:#fff
     classDef untrusted fill:#b45309,stroke:#78350f,color:#fff
     class core autor
-    class gui,ml,aud efim
+    class gui,ml,aud,cam efim
     class mcp,or untrusted
 ```
 
 Legenda dei colori: **blu** = detiene stato autorevole · **verde** = effimero e
-sacrificabile · **ambra** = sorgente di contenuto non fidato.
+sacrificabile · **ambra** = sorgente di contenuto non fidato. Il segno «(col N)» è la regola 2 del
+[README](../README.md); le frecce doppie verso i worker si leggono con la tabella qui sotto: il dialogo
+è bidirezionale, ma a iniziativa del core.
 
 ## Canali
 
 | Da → A | Canale | Direzione | Note |
 |---|---|---|---|
-| gui ↔ core | IPC privato | bidirezionale | Un trasporto, uno schema, non versionato (I4). **Solo l'account del core**, controllato dal sistema operativo ai due capi — [ADR-0041](../adr/0041-chi-puo-parlare-col-core.md) |
-| core ↔ worker ML | porta `process` | **bidirezionale, ma a iniziativa del core** | I **sei verbi** sono i metodi del tratto `Worker`: `instruct_one` · `instruct_stream` · `read_one` · `read_next` · `close` · `kill`. ⚠️ **`Process::start` è FUORI dai sei** — restituisce il `Worker`, e il richiamo in fondo lo dice già. Il worker non risponde **di iniziativa propria**: ogni byte che risale è coperto da una **ricevuta** |
-| core ↔ worker audio | porta `process` | idem | Idem; il flusso audio risale al core **dentro una ricevuta di flusso** |
-| core ↔ server MCP | protocollo MCP | bidirezionale | **Tutto ciò che arriva da qui è contenuto non fidato**, descrizioni degli strumenti incluse |
-| core → OpenRouter | HTTPS | uscente | Unico processo autorizzato a uscire in rete verso i provider |
+| gui ↔ core | IPC privato | bidirezionale | Un trasporto, uno schema, non versionato (I4). **Solo l'account del core**, controllato dal sistema operativo ai due capi — [ADR-0041](../adr/0041-chi-puo-parlare-col-core.md): il capo del core esiste, nel trasporto di `platform`; quello della GUI nasce col guscio (col 3 o col 10: la scelta aperta su AUD-461, audit del 2026-09-30) |
+| core ↔ worker ML (col 6, 7, 8, 9) | porta `process` | **bidirezionale, ma a iniziativa del core** | I **sei verbi** sono i metodi del tratto `Worker`: `instruct_one` · `instruct_stream` · `read_one` · `read_next` · `close` · `kill`. ⚠️ **`Process::start` è FUORI dai sei** — restituisce il `Worker`, e il richiamo in fondo lo dice già. Il worker non risponde **di iniziativa propria**: ogni byte che risale è coperto da una **ricevuta** |
+| core ↔ worker audio (col 8) | porta `process` | idem | Idem; il flusso audio risale al core **dentro una ricevuta di flusso** |
+| core ↔ worker telecamera (col 12) | porta `process` | idem | Una `instruct_stream` all'accensione, poi `read_next` per tutta la vita: lo stato della mano e il gesto, **eventi e non passi** — [ADR-0039](../adr/0039-telecamera-come-sorgente-di-percezione.md) |
+| core ↔ server MCP (col 4) | protocollo MCP | bidirezionale | **Tutto ciò che arriva da qui è contenuto non fidato**, descrizioni degli strumenti incluse |
+| core → OpenRouter (col 3) | HTTPS | uscente | Unico processo autorizzato a uscire in rete verso i provider |
+
+Della porta `process` oggi esiste il **contratto**, `crates/kernel/src/ports/process.rs`, provato dai soli
+banchi: il primo worker vero è del 12 ([ADR-0039](../adr/0039-telecamera-come-sorgente-di-percezione.md)),
+che ne paga il trasporto, e la Voce lo riusa.
 
 **La GUI non parla con nessuno tranne il core.** Nessun canale gui → worker,
 gui → MCP, gui → rete. È ciò che la rende sacrificabile.
@@ -61,21 +74,15 @@ gui → MCP, gui → rete. È ciò che la rende sacrificabile.
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Richiesto : una capacità chiede lavoro
-
-    Richiesto --> Rifiutato : non entrerebbe mai nel budget
-    Richiesto --> InCoda : risorse occupate ora
-    Richiesto --> Concesso : risorse disponibili
-
-    InCoda --> Concesso : risorse liberate
-    InCoda --> Annullato : annullamento utente / timeout
+    [*] --> Concesso : la concessione in mano, dalla macchina di design/02
 
     Concesso --> Attivo : processo avviato
+    Concesso --> NonAvviato : avvio fallito, la concessione torna
+
     Attivo --> Terminato : compito completato
     Attivo --> Ucciso : revoca dell'arbitro, annullamento, crash
 
-    Rifiutato --> [*]
-    Annullato --> [*]
+    NonAvviato --> [*]
     Terminato --> [*]
     Ucciso --> [*]
 
@@ -83,15 +90,17 @@ stateDiagram-v2
         Uccidere un worker in qualsiasi
         istante non perde e non corrompe
         nulla: il worker non possiede stato.
+        La concessione torna sempre.
     end note
 ```
 
-⚠️ **RICHIAMO DEL 2026-08-27, finding AUD-044:** la transizione `InCoda --> Annullato` di questo
-diagramma **non ha nessun meccanismo** nell'arbitro. Il racconto, la misura e il chiusore stanno
-in [`02-arbitrato-gpu.md`](02-arbitrato-gpu.md) accanto alla macchina a stati che la §5.3 della
-spec adotta come propria, e la voce aperta vive in
-[`porta-di-qualita.md`](../porta-di-qualita.md): qui c'è **un rimando e non una seconda copia**,
-perché un rimando non può marcire.
+⚠️ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-190: il diagramma è la vita del **processo**,
+dalla concessione in mano. La concessione ha la sua macchina in [`02-arbitrato-gpu.md`](02-arbitrato-gpu.md),
+che la §5.3 della spec adotta come propria — la richiesta, la coda, il rifiuto, la scadenza, e
+l'annullamento dalla coda che l'arbitro non ha (finding AUD-044 del 2026-08-27, voce aperta in
+[`porta-di-qualita.md`](../porta-di-qualita.md)) —: qui c'è **un rimando e non una seconda copia**,
+perché un rimando non può marcire. La porta `process` ne fissa il contratto — `Started::Rejected` rende
+la concessione di un avvio fallito, `Killed` quella di un worker ucciso — e il primo worker vero è del 12.
 
 ## Regole che il diagramma non esprime
 

@@ -133,7 +133,17 @@ sotto-progetto**, nello stesso passaggio.
 1. Gli ADR sono **append-only**. Una decisione superata non si cancella: si marca
    `Superseded by ADR-XXXX` e se ne scrive una nuova.
 2. I diagrammi in `design/` descrivono lo stato **corrente**, mai la storia. Si
-   aggiornano nello stesso task che cambia il sistema, mai "dopo".
+   aggiornano nello stesso task che cambia il sistema, mai "dopo". Ciò che è **deciso e non
+   costruito** vi sta col segno **«(col N)»**: N è il sotto-progetto della [roadmap](roadmap.md)
+   che lo costruisce, o il primo che ne avrà bisogno quando la roadmap non lo fissa —
+   «(col il primo …)» —; se chi lo costruisce è una scelta aperta, il segno porta i candidati e
+   il rimando alla scelta, mai un numero solo. Un pezzo senza segno esiste nel codice, e «oggi»
+   lo dice dove sta accanto a uno deciso. Il sotto-progetto N, quando costruisce, **toglie il
+   proprio «(col N)»** nello stesso task; in [design/10](design/10-modello-dei-dati-durevoli.md)
+   l'entità passa dal secondo diagramma al primo. ⚠️ **RICHIAMO DEL 2026-10-02** — audit del
+   2026-09-30, AUD-119 e AUD-122: il segno è la regola di tutti i file di `design/`, ed è nato
+   coi diagrammi del 2026-09-08, decisioni 16–18 della
+   [stella polare](superpowers/specs/2026-09-07-direzione-gui-design.md).
 3. Nessun sotto-progetto si implementa senza spec approvata.
 
 ## Indice delle decisioni

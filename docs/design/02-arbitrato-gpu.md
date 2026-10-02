@@ -6,6 +6,10 @@ Fonte di verità su chi può toccare la GPU e a quali condizioni.
 Decisioni: [ADR-0005](../adr/0005-arbitrato-gpu-su-due-dimensioni.md) ·
 [ADR-0006](../adr/0006-due-policy-vram-come-oggetti-distinti.md).
 
+⚠️ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-119 e AUD-122: ciò che qui è deciso e non
+costruito porta il segno «(col N)», la regola 2 del [README](../README.md); le correzioni sul codice di
+oggi hanno il loro richiamo accanto.
+
 ## Le due dimensioni della risorsa
 
 Modellare solo la VRAM è l'errore che fa balbettare la voce durante un render:
@@ -54,14 +58,19 @@ non un numero sparso nel codice.
 **Un tipo di lavoro può avere più profili.** Il fabbisogno di TRELLIS2 dipende dalla
 risoluzione e dai parametri di qualità, quindi non produce un numero ma una **curva**:
 i punti utili di quella curva diventano profili nominati distinti
-(es. `trellis2-512-lean`, `trellis2-512-standard`, `trellis2-1024`), ciascuno con la
+(col 7 — es. `trellis2-512-lean`, `trellis2-512-standard`, `trellis2-1024`), ciascuno con la
 propria `vram_riservata` misurata. La scelta del profilo è la scelta del punto di
 lavoro. Vedi SP-1 in §9 della spec.
 
 **La riserva è dichiarata dal richiedente, verificata dall'arbitro.** Il picco reale
-viene misurato durante l'esecuzione e registrato: se supera la riserva dichiarata, il
-profilo è sbagliato e va corretto. È così che la "stima di fit prima del caricamento"
-smette di essere un'illusione e diventa un dato che migliora nel tempo.
+si misura durante l'esecuzione e si registra (col il primo worker sulla GPU): se supera la
+riserva dichiarata, il profilo è sbagliato e va corretto. È così che la "stima di fit prima
+del caricamento" smette di essere un'illusione e diventa un dato che migliora nel tempo.
+⚠️ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-198: del picco oggi esiste la sola variante
+di filo `FromWorker::VramPeak` (`crates/kernel/src/wire/worker.rs`), che nessun worker manda e nessun
+record porta; il worker lo misura e il giornale lo scrive al rilascio, sotto la regola di §4.9 della
+spec (§5.2.2). I worker sulla GPU sono del 6, del 7, dell'8 e del 9 ([design/01](01-topologia-dei-processi.md)),
+e la roadmap non fissa quale arrivi per primo.
 
 ## Ciclo di vita di una concessione
 
@@ -74,16 +83,19 @@ stateDiagram-v2
     Valutazione --> Concessa : entra e le risorse sono libere
 
     InCoda --> Concessa : risorse liberate
-    InCoda --> Annullata : annullamento utente o scadenza
+    InCoda --> Annullata : annullamento utente o scadenza, voce aperta
 
     Concessa --> Attiva : il richiedente ha avviato il lavoro
-    Concessa --> Scaduta : non avviato entro la finestra di validita
+    Concessa --> Rilasciata : avvio fallito, la concessione torna
+    Concessa --> Scaduta : finestra di validita chiusa
 
     Attiva --> Rilasciata : lavoro completato
     Attiva --> InRevoca : l arbitro richiama le risorse
+    Attiva --> Scaduta : finestra di validita chiusa
 
     InRevoca --> Rilasciata : rilascio entro il tempo di grazia
     InRevoca --> Forzata : grazia scaduta, processo ucciso
+    InRevoca --> Scaduta : finestra di validita chiusa
 
     Rifiutata --> [*]
     Annullata --> [*]
@@ -95,7 +107,21 @@ stateDiagram-v2
         Uccidere e sempre lecito: nessun
         worker possiede stato (I1, I5).
     end note
+
+    note left of Attiva
+        L arbitro non vede l avvio:
+        nei suoi libri Concessa e Attiva
+        sono uno stato solo.
+    end note
 ```
+
+⚠️ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-008, AUD-009 e AUD-190: la finestra di validità si
+apre quando la concessione nasce e vale in ogni stato — chiusa, l'arbitro riprende la riserva alla prima
+operazione che segue, anche a lavoro in corso o in revoca (`collect_expired`), e un rilascio dopo risponde
+`Released::AlreadyCollected`; l'avvio è `Process::start`, che l'arbitro non vede, e se fallisce
+`Started::Rejected` rende la concessione; a grazia scaduta la spazzata riprende la riserva, e uccidere il
+processo tocca a chi ne tiene il `Worker`, con `Worker::kill`: oggi nessuno lo fa, e chi lo costruisce lo dice
+AUD-202. Se l'arbitro debba sapere dell'avvio, e la finestra fermarsi lì, è la scelta aperta su AUD-201.
 
 ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-044 — la transizione `InCoda --> Annullata` NON HA
 NESSUN MECCANISMO nell'arbitro, e fino a oggi non aveva nemmeno un indirizzo.** Misurato invece
@@ -127,8 +153,11 @@ macchina intera.
 - **`Rifiutata` è diversa da `InCoda`.** Rifiutata significa "non entrerebbe *mai*",
   e va detto subito con l'alternativa praticabile. InCoda significa "non ora".
   Confonderle produce attese infinite per lavori impossibili.
-- **`Concessa` ha una finestra di validità.** Una concessione non ritirata blocca
-  risorse per un richiedente che forse è morto.
+- **La concessione ha una finestra di validità**, che si apre quando nasce e vale in ogni
+  stato: una concessione non restituita blocca risorse per un richiedente che forse è morto, e
+  una finestra più corta del lavoro rende la riserva al budget mentre il lavoro gira ancora. Le
+  due quote permanenti chiedono la finestra più lunga che l'asse ammette (`FOR_EVER`, in
+  `crates/daemon/src/main.rs`).
 - **`InRevoca` non esiste per i profili non prelazionabili**: per loro l'arbitro
   attende o rifiuta, non revoca.
 - Nessun processo passa a `Attiva` senza concessione valida in mano (I2).
@@ -137,9 +166,15 @@ macchina intera.
 
 | Corsia | Chi la usa | Prelazionabile | Garanzia |
 |---|---|---|---|
-| `realtime` | wake word, VAD, STT, TTS | **mai** | quota VRAM riservata, fuori dal pool allocabile |
-| `interactive` | chat e agente in primo piano | sì, grazia breve | servita prima di `batch` |
-| `batch` | render 3D, indicizzazione, run in background | sì | può attendere indefinitamente |
+| `realtime` | wake word, VAD, STT, TTS (col 8), la telecamera (col 12); oggi le due quote permanenti | **mai** | quota VRAM riservata, fuori dal pool allocabile |
+| `interactive` | chat (col 3) e agente in primo piano (col 4) | sì, grazia breve | tentata prima di `batch`; la precedenza piena è una voce aperta, qui sotto |
+| `batch` | render 3D (col 7), indicizzazione (col 6), run in background (col 4) | sì | può attendere indefinitamente |
+
+⚠️ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-010: oggi `interactive` ha la meglio su `batch` in due
+punti — `promote` serve le corsie dalla migliore, `ask_back` revoca dalla peggiore —, ma una testa che non entra
+lascia passare le corsie peggiori, e `admit` non guarda le code. Se diventi una precedenza piena lo decidono le
+voci E50 ed E51 della tabella del Traguardo 5 in [`porta-di-qualita.md`](../porta-di-qualita.md), chiusore il
+primo ciclo di orchestrazione.
 
 ### La quota audio è sottratta, non prioritaria
 
@@ -151,17 +186,22 @@ rientra mai. Nessun altro lavoro può richiederla, nemmeno se la GPU è scarica.
 già allocato. Un budget sottratto non può essere allocato per errore. Questa è la
 risposta strutturale a "la voce non deve balbettare durante un render".
 
-**La sottrazione non è un'esenzione.** Il worker audio non è fuori dall'arbitrato:
+**La sottrazione non è un'esenzione.** Il worker audio (col 8) non è fuori dall'arbitrato:
 detiene una **concessione permanente e non prelazionabile** sulla quota riservata.
 I2 vale anche per lui — nessun processo tocca la GPU senza concessione. Ciò che cambia
 non è l'obbligo, è che la sua concessione non può essere revocata né contesa.
+⚠️ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-200 e AUD-203: oggi la concessione della quota la
+chiede all'avvio la radice di composizione (`build_the_arbiter`, in `crates/daemon/src/main.rs`), che ne
+lascia cadere il gettone: la riserva resta nei libri e nessuno la restituisce. Come il worker audio riceva la
+sua concessione è una scelta aperta (AUD-200).
 
 ### La quota di presentazione della GUI
 
 Decisione: [ADR-0033](../adr/0033-gpu-della-gui-quota-di-presentazione.md).
 
-Anche il processo `gui` tocca la GPU: il **compositing** della webview sempre, il
-**viewer 3D** (G6) quando serve. Si modella come **tre consumatori distinti**, perché
+Anche il processo `gui` tocca la GPU: il **compositing** della webview sempre (col 3 o col 10: la
+scelta aperta su AUD-461 dell'audit del 2026-09-30, che dice chi costruisce il guscio), il
+**viewer 3D** (G6, col 7) quando serve. Si modella come **tre consumatori distinti**, perché
 hanno percorsi di richiesta diversi.
 
 | # | Consumo | Governo | Corsia | Rifiuto esecutivo? |
@@ -203,15 +243,19 @@ e indipendente.
 dell'arbitro è *esecutivo*: il processo non parte. Verso il compositor **non lo è**:
 compone lo stesso. La quota è una **promessa di budget, non un'imposizione**.
 
-Il valore della quota è **non misurato**: lo chiude M5, insieme a M1–M4 di
-[ADR-0029](../adr/0029-guscio-della-gui.md).
+Il valore della quota non è misurato sulla macchina di ADR-0002: lo stato della sua misura, M5,
+vive in [ADR-0029](../adr/0029-guscio-della-gui.md) e qui non si ripete. ⚠️ **RICHIAMO DEL 2026-10-02** —
+audit del 2026-09-30, AUD-199: che cosa dica del default conservativo di ADR-0033 la misura presa come
+proxy è una scelta aperta.
 
 ### Contesa di calcolo
 
 Il calcolo GPU non è prelazionabile a grana fine come la memoria. La leva praticabile
 è indiretta: quando una corsia `realtime` è attiva, i lavori `batch` in corso vengono
 istruiti a **ridurre la propria occupazione** (meno stream concorrenti, batch più
-piccoli), accettando di allungarsi.
+piccoli), accettando di allungarsi (col 8). ⚠️ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30,
+AUD-603: il segnale non esiste nel codice, e la direzione core → worker non ha ancora nessun messaggio
+(`crates/kernel/src/wire/worker.rs`); lo costruisce l'8, che chiude SP-2.
 
 Quanto questo basti a tenere Q1 sotto i 600 ms è una domanda aperta, non una
 certezza: è oggetto dello spike SP-2 in §9 della spec.
@@ -223,14 +267,14 @@ flowchart LR
     subgraph R["Policy REMOTA — default"]
         direction TB
         r1["VRAM occupata:<br/>audio riservato<br/>+ presentazione GUI"]
-        r2["Job 3D: parte subito<br/>nessuno swap"]
-        r3["Chat durante il render:<br/>inalterata, gira su OpenRouter"]
+        r2["Job 3D (col 7): parte subito<br/>nessuno swap"]
+        r3["Chat durante il render (col 3):<br/>inalterata, gira su OpenRouter"]
     end
     subgraph L["Policy LOCALE"]
         direction TB
-        l1["VRAM occupata:<br/>audio + presentazione<br/>+ LLM + embedding"]
-        l2["Job 3D: richiede eviction<br/>coordinata e ricarica dopo"]
-        l3["Chat durante il render:<br/>attende, o si dirotta su remoto"]
+        l1["VRAM occupata:<br/>audio + presentazione<br/>+ LLM (col 9) + embedding (col 6)"]
+        l2["Job 3D (col 7): richiede eviction<br/>coordinata e ricarica dopo (col 9)"]
+        l3["Chat durante il render (col 3):<br/>attende, o si dirotta su remoto"]
     end
     R -.->|"transizione esplicita — dal 2 una funzione del registro"| L
     L -.-> R
@@ -238,10 +282,10 @@ flowchart LR
 
 | | Policy REMOTA *(default)* | Policy LOCALE |
 |---|---|---|
-| Chi occupa VRAM | audio riservato **+ presentazione** | audio + presentazione + LLM + embedding locali |
-| Prima di un job 3D | nulla da fare | eviction coordinata, obbligatoria |
-| Dopo un job 3D | nulla da fare | ricarica con avvio a freddo visibile |
-| Chat durante un render | inalterata | bloccata, oppure dirottata su remoto |
+| Chi occupa VRAM | audio riservato **+ presentazione** | audio + presentazione + LLM (col 9) + embedding (col 6) locali |
+| Prima di un job 3D (col 7) | nulla da fare | eviction coordinata, obbligatoria |
+| Dopo un job 3D (col 7) | nulla da fare | ricarica con avvio a freddo visibile (col 9) |
+| Chat durante un render (col 3) | inalterata | bloccata, oppure dirottata su remoto |
 | Modo di fallire | rete assente | avvio a freddo lungo, attese |
 
 **Sono due oggetti distinti, non due rami di un `if`.** Hanno invarianti diverse e
@@ -273,3 +317,8 @@ qualcosa al posto dell'utente, glielo dice.
 | Viewer 3D revocato durante un render | che il 3D è in pausa e perché, con la ripresa attesa ([ADR-0033](../adr/0033-gpu-della-gui-quota-di-presentazione.md)) |
 | Avvio a freddo | che un modello si sta ricaricando, con attesa stimata |
 | Policy in transizione | che il backend è cambiato, e per quali richieste |
+
+⚠️ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-119: di questa tabella oggi esiste la policy corrente,
+col budget, che la GUI del 2 mostra; il resto arriva col primo richiedente di concessioni che l'utente vede — il
+viewer 3D col 7, i modelli locali col 9 —, perché il core non serve ancora nessuna richiesta di concessione della
+GUI (`IpcMessage::Request`, in `crates/kernel/src/serving.rs`).

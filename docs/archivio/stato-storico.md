@@ -3080,3 +3080,9 @@ Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende 
 9. Il controllo di non intrusione, fuori dalle ondate: `git status --porcelain` vuoto.
 10. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per parola,
     la nuova al suo posto, e il commit, portato anche su `main` (C18).
+
+## L'intestazione del compendio, com'era — archiviata il 2026-10-02, con ADR-0041
+
+⚠️ **Vera il giorno in cui fu scritta.** Uscita dal compendio parola per parola, coi link riscritti per questa cartella.
+
+**Aggiornato il 2026-10-01**, al **triage del terzo audit**: le nove radici decise dal proprietario stanno nel [rapporto](../audit-2026-09-30.md), e qui cambia la sola riga delle contraddizioni di `porta-di-qualita.md` in §6, che il triage porta dentro l'audit. Questa riga e quella delle contraddizioni, com'erano, sono in [`archivio/stato-storico.md`](stato-storico.md). Il contenuto di merito resta quello del 2026-09-30: la voce di ADR-0040, coi rimandi. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.

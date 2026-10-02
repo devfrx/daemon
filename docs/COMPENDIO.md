@@ -17,7 +17,7 @@
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — il
 > comando in fondo alla §12 — e l'idea è già qui.
 
-**Aggiornato il 2026-10-01**, al **triage del terzo audit**: le nove radici decise dal proprietario stanno nel [rapporto](audit-2026-09-30.md), e qui cambia la sola riga delle contraddizioni di `porta-di-qualita.md` in §6, che il triage porta dentro l'audit. Questa riga e quella delle contraddizioni, com'erano, sono in [`archivio/stato-storico.md`](archivio/stato-storico.md). Il contenuto di merito resta quello del 2026-09-30: la voce di ADR-0040, coi rimandi. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+**Aggiornato il 2026-10-02**, con **ADR-0041** dal terzo audit — chi può parlare col core —: la sua voce in §5 e i totali. Questa riga com'era è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Il contenuto di merito nuovo è la voce di ADR-0041. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
 
 ---
 
@@ -132,7 +132,7 @@ Solo **due delle cinque** — `kernel` e `simulator` — sono vincolate da ADR-0
 
 ## 5. Le decisioni, una per ADR
 
-Sono **40 ADR**, e **40 ADR in stato Accepted** — l'ultimo, 0040, il 2026-09-30, dalla revisione della knowledge base.
+Sono **41 ADR**, e **41 ADR in stato Accepted** — l'ultimo, 0041, il 2026-10-02, dal terzo audit.
 Ordine numerico. Il *perché*, le alternative scartate e i costi accettati stanno nel
 file di ciascuno: `docs/adr/`.
 
@@ -584,6 +584,17 @@ l'indice, né i pesi — e **dice che cosa resta fuori** quando lo crea. Le **co
 dal backup, potate come vuole ADR-0018: dopo un ripristino un passo di prima non si annulla più. La cartella dati è un
 **percorso protetto e privato** — il rimando di ADR-0016.
 
+**0041 — Chi può parlare col core: il solo account che lo esegue.** Il canale `ipc` è del solo **account del
+sistema operativo** con cui il core gira; nel prodotto non esiste un utente (§0.3): l'account lo conosce il sistema,
+nessun login. **Il controllo sta alla radice, una volta**: nel trasporto, in `platform` (I3), prima di ogni messaggio;
+kernel, schema, `Hello` e fixture non cambiano, e il timbro di build **non** è un'identità. **Ai due capi, dal
+sistema:** su Windows la pipe nasce con un descrittore che dà accesso al solo SID dell'account, e la GUI confronta il
+proprietario della pipe col proprio; su Linux il socket è un file in `$XDG_RUNTIME_DIR`, che il core verifica chiusa
+agli altri prima di legarlo — assente o aperta, il core non parte —, e un socket rimasto da un crollo si toglie solo
+se nessun core vivo risponde. L'account atteso è **consegnato** al trasporto, come il nome e il tetto: il rifiuto si
+prova con un account solo. ⚠️ **Fuori dal confine**, come in ADR-0023: un processo che gira come l'account. Lo
+costruisce P06 del terzo audit; il capo della GUI nasce con la shell.
+
 ---
 
 ## 6. Dove siamo, e cosa viene dopo
@@ -755,7 +766,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 
 | | |
 |---|---|
-| ❌ **ri-derivare l'architettura** | è nei 40 ADR, ciascuno con alternative scartate e motivo |
+| ❌ **ri-derivare l'architettura** | è nei 41 ADR, ciascuno con alternative scartate e motivo |
 | ❌ **riscrivere `tracciabilita.md` da zero** | le funzionalità sono già mappate, e **quante** lo dice il comando nel riquadro in testa a [`tracciabilita.md`](tracciabilita.md): si **aggiorna** — riletta alla chiusura del sotto-progetto 1 il 2026-09-03, e si riaggiorna a ogni sotto-progetto chiuso |
 | ❌ **ri-cercare lo stato dell'arte già tracciato** | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
 | ❌ **rifare gli spike SP-5, SP-6, SP-7 e SP-8** | esiti, versioni e comandi in `spikes/RISULTATI.md` — coi **seed** per SP-5 e SP-6, che SP-7 e SP-8 non hanno; per SP-7 e SP-8 i protocolli congelati in `spikes/gesti/PROTOCOLLO.md` e `spikes/gui-shell/PROTOCOLLO.md` |

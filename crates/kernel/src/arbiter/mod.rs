@@ -170,14 +170,16 @@ impl TicketId {
 /// ⛔ THERE IS NO `is_ok()`, NO `is_granted()`, AND NO CONVERSION TO A BOOLEAN. That is how
 /// `V4` becomes a SIGNATURE instead of a recommendation: "refused" and "queued" are
 /// different answers that call for different behaviour, and a boolean would collapse them.
-/// The negative case -- `tests/compile_fail/admission_has_no_is_granted.rs`, written at
-/// Task 5 once there was an `admit` to obtain a real `Admission` from -- names a method that
-/// does not exist, so the day somebody adds it the case starts COMPILING and trybuild reports
-/// `error`, which no bulk regeneration disarms (gotcha #42, strong form). ✅ MEASURED, not
-/// asserted: with `is_granted` added, that case comes back `error` and EVERY OTHER CASE stays
-/// `ok`. ⚠️ RECALL OF 2026-08-28, AUD-045: this said "the other twenty-six", and the count
-/// is REMOVED, not realigned -- it was already wrong at `d662644` (28 cases, so 27), and
-/// `tests/compile_fail.rs` globs the directory, so any total here ages on its own.
+/// The negative cases are THREE, one per shortcut, because a case names ONE road:
+/// `tests/compile_fail/admission_has_no_is_granted.rs`, `admission_has_no_is_ok.rs` and
+/// `admission_is_not_a_bool.rs` — RECALL OF 2026-10-02, audit of 2026-09-30, AUD-695. Each
+/// names what does not exist, so the day somebody adds it that case starts COMPILING and
+/// trybuild reports `error`, which no bulk regeneration disarms (gotcha #42, strong form).
+/// ✅ MEASURED, not asserted: with one shortcut added, its own case comes back `error` and
+/// EVERY OTHER CASE stays `ok`. ⚠️ RECALL OF 2026-08-28, AUD-045: this said "the other
+/// twenty-six", and the count is REMOVED, not realigned -- it was already wrong at `d662644`
+/// (28 cases, so 27), and `tests/compile_fail.rs` globs the directory, so any total here ages
+/// on its own.
 ///
 /// ⛔ `Refused` CARRIES TWO NUMBERS AND NOT A SENTENCE. design/02 wants "why it does not fit,
 /// and the workable alternative": the alternative is built by the interface, the kernel

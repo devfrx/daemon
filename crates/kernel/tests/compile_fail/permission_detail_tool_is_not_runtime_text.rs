@@ -8,7 +8,7 @@
 //! would have been that same mouth twice over; it is sealed from its first commit instead.
 //!
 //! ⛔ A GUARD IS WORTH WHAT ITS CONSTRUCTOR IS WORTH — AUD-050's own argument, landing on a third
-//! type. Every species that grows a `Detail` with text of its own owes the same signature.
+//! type. A species with text of its own owes this signature AND one case per text: see `Detail`.
 
 fn main() {
     // Text computed at runtime, from bytes that could have come from anywhere.

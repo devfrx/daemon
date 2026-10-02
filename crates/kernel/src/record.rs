@@ -244,21 +244,35 @@ pub enum Trust {
 /// ⚠️ WHAT THE DISCIPLINE WAS WORTH IS MEASURED AND NOT GUESSED: while the pair was held by
 /// convention alone, errata `E73` and `E79` found the assertion missing in TWO production sites
 /// out of three, each a live mutant on the whole workspace.
+///
+/// ⛔ A SPECIES WHOSE DETAIL CARRIES TEXT OF ITS OWN OWES TWO THINGS, AND THE SECOND IS THE ONE
+/// THAT GETS FORGOTTEN: the `E94` signature — private fields, every text a `&'static str` on
+/// `new` — and ONE `compile_fail` CASE PER TEXT PARAMETER, named
+/// `<species>_detail_<field>_is_not_runtime_text.rs`. A signature without its case is a guard
+/// nobody sees firing: `InvocationDetail` arrived with the first and not the second, and with its
+/// `function` widened to `&str` every case of `tests/compile_fail/` stayed `ok` — gotcha #96, a
+/// guard follows the type it is written on and not the property. Audit of 2026-09-30, AUD-690.
+/// ⛔ SO EACH VARIANT BELOW SAYS WHAT TEXT OF ITS OWN IT CARRIES AND WHICH CASE HOLDS IT, and a
+/// new variant says the same when it is written: "none" is an answer, silence is not.
 #[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
 pub enum Detail {
-    /// A sensor verdict upon the step's artefact (§6.4).
+    /// A sensor verdict upon the step's artefact (§6.4). Text of its own: none.
     #[n(0)]
     Verdict(#[n(0)] VerdictDetail),
-    /// The resolved routing of the step (§6.2, ADR-0011).
+    /// The resolved routing of the step (§6.2, ADR-0011). Text of its own: `model`, held by
+    /// `tests/compile_fail/routing_detail_model_is_not_runtime_text.rs`.
     #[n(1)]
     Routing(#[n(0)] RoutingDetail),
-    /// The triple a permission was granted for (§6.6, ADR-0016).
+    /// The triple a permission was granted for (§6.6, ADR-0016). Text of its own: `tool` and
+    /// `resource`, held by `tests/compile_fail/permission_detail_tool_is_not_runtime_text.rs` and
+    /// `permission_detail_resource_is_not_runtime_text.rs`.
     #[n(2)]
     Permission(#[n(0)] PermissionDetail),
-    /// Who invoked which function of the registry (ADR-0038).
+    /// Who invoked which function of the registry (ADR-0038). Text of its own: `function`, held
+    /// by `tests/compile_fail/invocation_detail_function_is_not_runtime_text.rs`.
     #[n(3)]
     Invocation(#[n(0)] InvocationDetail),
-    /// Which VRAM policy the transition moved to (§5.4, ADR-0006).
+    /// Which VRAM policy the transition moved to (§5.4, ADR-0006). Text of its own: none.
     #[n(4)]
     Policy(#[n(0)] PolicyDetail),
 }
@@ -388,7 +402,7 @@ impl RoutingDetail {
 /// because a struct literal from ANY crate put a runtime `String` in a `Detail` and the
 /// hand-written `Debug` of `RecordV1` prints `detail` in full (D25). This type carries TWO text
 /// fields, so it would have been that mouth twice over. The rule `E94` states is the one obeyed
-/// here: every species that grows a `Detail` with text of its own owes the same signature.
+/// here, and it is written whole on `Detail`: the same signature, and one case per text.
 ///
 /// ⛔ THE QUALIFIER `RoutingDetail` CARRIES APPLIES HERE WORD FOR WORD, and it is not a hedge:
 /// this type derives `Decode` and `Record::decode` is `pub`, so BYTES build one without passing
@@ -545,8 +559,8 @@ impl InvocationDetail {
 ///
 /// ⚠️ NOT SEALED, AND THAT IS MEASURED RATHER THAN AN OVERSIGHT — the same sentence
 /// `VerdictDetail` carries: it holds ONE `bool`, so no runtime TEXT can enter through it, and the
-/// `E94` signature that `RoutingDetail` and `PermissionDetail` owe is owed by a type with a mouth.
-/// This one has none.
+/// `E94` signature every species with text of its own owes — see `Detail` — is owed by a type
+/// with a mouth. This one has none.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
 #[cbor(array)]
 pub struct PolicyDetail {
@@ -697,6 +711,11 @@ pub struct RecordV1 {
 /// `Vec<u8>` a caller fills, and `trust` is still a parameter. The label describing the payload
 /// is the CALLER's statement, and no signature can check it — road A4 of `crate::boundary` is
 /// where that is declared, and it is unchanged.
+/// ⛔ SO WHAT HOLDS A PRODUCER'S LABEL IS A PROBE THAT READS IT BACK FROM THE ARCHIVE, one per
+/// producer: a producer whose bench never calls `trust()` writes a label nobody watches.
+/// Measured on `registry`'s invocation note, which went without until 2026-10-02: flipped to
+/// `Instruction`, it left green every bench that touches the note. Audit of 2026-09-30,
+/// AUD-691.
 impl RecordV1 {
     /// The INTENT of a step, made durable BEFORE the effect runs (ADR-0007).
     pub fn intent(

@@ -25,14 +25,25 @@ fn c6_future_native_sotto_il_nostro_esecutore_sono_ordinabili_dal_seed() {
 
     // La traccia non deve essere banale: se i task non si interlacciassero,
     // il determinismo sarebbe vero ma privo di significato.
+    //
+    // ⛔ SI CONTANO LE CORSE DI ETICHETTA UGUALE, NON LE COPPIE DIVERSE. Una
+    // traccia con le voci di TASK task contiene sempre due voci adiacenti di task
+    // diversi, anche se ogni task è andato fino in fondo prima del successivo:
+    // cercarne una non può scattare. Eseguiti in fila, i task danno esattamente
+    // TASK corse; interlacciati, almeno un task è stato sospeso mentre un altro
+    // avanzava, e le corse sono di più. Misurato il 2026-10-02 nelle due
+    // direzioni: con l'esecutore che porta ogni task a termine questa prova va
+    // rossa, con quello vero resta verde. Audit del 2026-09-30, AUD-730.
     let traccia = tracce.iter().next().expect("una traccia");
     assert_eq!(traccia.len(), TASK * PASSI);
-    let interlacciata = traccia.windows(2).any(|w| {
-        w[0].split_whitespace().next() != w[1].split_whitespace().next()
-    });
+    let corse = 1 + traccia
+        .windows(2)
+        .filter(|w| w[0].split_whitespace().next() != w[1].split_whitespace().next())
+        .count();
     assert!(
-        interlacciata,
-        "C6 vacuo: i task non si sono interlacciati, il determinismo non prova nulla"
+        corse > TASK,
+        "C6 vacuo: {corse} corse di etichetta uguale per {TASK} task, cioè ogni task è \
+         andato fino in fondo prima del successivo: il determinismo non prova nulla"
     );
 }
 

@@ -48,7 +48,7 @@ sacrificabile · **ambra** = sorgente di contenuto non fidato.
 
 | Da → A | Canale | Direzione | Note |
 |---|---|---|---|
-| gui ↔ core | IPC privato | bidirezionale | Un trasporto, uno schema, non versionato (I4) |
+| gui ↔ core | IPC privato | bidirezionale | Un trasporto, uno schema, non versionato (I4). **Solo l'account del core**, controllato dal sistema operativo ai due capi — [ADR-0041](../adr/0041-chi-puo-parlare-col-core.md) |
 | core ↔ worker ML | porta `process` | **bidirezionale, ma a iniziativa del core** | I **sei verbi** sono i metodi del tratto `Worker`: `instruct_one` · `instruct_stream` · `read_one` · `read_next` · `close` · `kill`. ⚠️ **`Process::start` è FUORI dai sei** — restituisce il `Worker`, e il richiamo in fondo lo dice già. Il worker non risponde **di iniziativa propria**: ogni byte che risale è coperto da una **ricevuta** |
 | core ↔ worker audio | porta `process` | idem | Idem; il flusso audio risale al core **dentro una ricevuta di flusso** |
 | core ↔ server MCP | protocollo MCP | bidirezionale | **Tutto ciò che arriva da qui è contenuto non fidato**, descrizioni degli strumenti incluse |

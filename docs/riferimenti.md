@@ -3222,6 +3222,40 @@ gh api --method GET "repos/github/docs/commits?path=<percorso del sorgente>&per_
 
 Per le fonti su GitHub, l'URL è un **permalink** al commit che ho letto: il testo citato resta quello anche se il file cambia.
 
+## Il canale locale — chi può aprirlo: le fonti e la misura, 2026-10-02
+
+Le fonti e la misura di [ADR-0041](adr/0041-chi-puo-parlare-col-core.md): il merito lì, qui la provenienza. Le pagine
+sono lette dal sorgente — l'HTML scaricato con `curl` e ripulito dei tag, i file di codice dal ramo principale del loro
+repository —, non dal riassunto di uno strumento.
+
+| Fonte | Letta | Per |
+|---|---|---|
+| Microsoft, *Named Pipe Security and Access Rights*, `https://learn.microsoft.com/en-us/windows/win32/ipc/named-pipe-security-and-access-rights` | 2026-10-02 | il descrittore di base di una pipe — controllo pieno a LocalSystem, agli amministratori e al creatore, lettura a Everyone e all'account anonimo —; `FILE_CREATE_PIPE_INSTANCE`, che il descrittore deve concedere a chi apre un'altra istanza della stessa pipe |
+| Microsoft, *CreateNamedPipeA*, `https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createnamedpipea` | 2026-10-02 | `PIPE_REJECT_REMOTE_CLIENTS`; `FILE_FLAG_FIRST_PIPE_INSTANCE`, con cui la creazione di un'istanza dopo la prima fallisce con `ERROR_ACCESS_DENIED` |
+| Microsoft, *PipeOptions Enum* di .NET, `https://learn.microsoft.com/en-us/dotnet/api/system.io.pipes.pipeoptions?view=net-9.0` | 2026-10-02 | `CurrentUserOnly` ai due capi; su Windows verifica anche il livello di elevazione |
+| `dotnet/runtime`, `src/libraries/System.IO.Pipes/src/System/IO/Pipes/`, i file `NamedPipeServerStream.Windows.cs`, `NamedPipeClientStream.Windows.cs`, `NamedPipeServerStream.Unix.cs` e `NamedPipeClientStream.Unix.cs`, ramo `main` | 2026-10-02 | come `CurrentUserOnly` è fatto: il descrittore con una regola sola, il proprietario della pipe confrontato dal client, l'utente del pari su Unix, il socket leggibile e scrivibile dal solo proprietario |
+| *unix(7)*, Linux man-pages 6.19 del 2026-02-08, `https://man7.org/linux/man-pages/man7/unix.7.html` | 2026-10-02 | i socket astratti senza permessi; i socket su file che rispettano i permessi della cartella; `EADDRINUSE` su un file di socket che esiste già; `SO_PEERCRED`; `AF_UNIX` fra processi della stessa macchina |
+| freedesktop.org, *XDG Base Directory Specification* 0.8 dell'8 maggio 2021, `https://specifications.freedesktop.org/basedir-spec/latest/` | 2026-10-02 | `$XDG_RUNTIME_DIR`: dell'utente, `0700`, per socket e pipe; il ripiego consigliato quando manca |
+| freedesktop.org, *D-Bus Specification* 0.43, `https://dbus.freedesktop.org/doc/dbus-specification.html` | 2026-10-02 | EXTERNAL raccomandato su Unix; i socket astratti legati allo spazio di rete e non al filesystem, e il rischio per un confinamento; `unix:runtime=yes;unix:tmpdir=/tmp` come ripiego |
+| `microsoft/vscode`, `src/vs/base/parts/ipc/node/ipc.net.ts`, ramo `main` | 2026-10-02 | i socket in `XDG_RUNTIME_DIR` su Linux, e nella cartella temporanea senza di essa |
+| `moby/moby`, `daemon/listeners/listeners_windows.go`, ramo `master` | 2026-10-02 | la pipe di Docker col descrittore `D:P(A;;GA;;;BA)(A;;GA;;;SY)`, *«Any other user is denied access»* |
+| `git/git`, `compat/simple-ipc/ipc-win32.c`, `unix-stream-server.c` e `unix-socket.c`, ramo `master` | 2026-10-02 | su Windows Everyone in lettura e scrittura, col perché; su Unix il lucchetto, la prova del server vivo, e il file tolto prima del legame |
+| `interprocess` 2.4.4, il sorgente nella cache di `cargo` | 2026-10-02 | `GenericNamespaced` nello spazio astratto su Linux; `ListenerOptionsExt::security_descriptor` e `SecurityDescriptor::deserialize`; `PIPE_REJECT_REMOTE_CLIENTS` e `FILE_FLAG_FIRST_PIPE_INSTANCE` di default; `PeerCreds::euid`; il socket che resta dopo un crollo, `reclaim_name` e `try_overwrite` |
+
+**La misura M-13**, del 2026-10-02 — Windows 11, livello d'integrità medio (`S-1-16-8192`), `rustc` 1.95.0,
+`interprocess` 2.4.4, `windows-sys` 0.61.2, `widestring` 1.2.1. Una prova in un progetto `cargo` fuori dal repository,
+cancellata dopo: il SID dell'utente da `whoami /user /fo csv /nh`; per ciascun caso un ascoltatore
+`ListenerOptions::new().name(..).security_descriptor(SecurityDescriptor::deserialize(..))`, un client `Stream::connect`
+sullo stesso nome, e un giro `ping`/`pong`.
+
+| Caso | Descrittore | Esito |
+|---|---|---|
+| di base | nessuno | due client entrano |
+| il SID dell'utente | `D:P(A;;GA;;;<SID dell'utente>)` | tre client di fila entrano |
+| gli ospiti | `D:P(A;;GA;;;BG)` | respinto: `PermissionDenied`, errore 5 |
+| un SID inventato | `D:P(A;;GA;;;S-1-5-21-1-2-3-1001)` | respinto: `PermissionDenied`, errore 5 |
+| il proprietario visto dal client | di base, e quello del SID dell'utente | `GetSecurityInfo` con `SE_KERNEL_OBJECT` e `OWNER_SECURITY_INFORMATION`, sulla connessione del client, dà il SID dell'utente |
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

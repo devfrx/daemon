@@ -20,7 +20,7 @@ con `git log -1 --format=%ad --date=short -- docs/roadmap.md` è una **riga di c
 
 ## Stato in una riga
 
-> Spec del kernel **completa e approvata** (§0–§10, 40 ADR). Stack deciso **per intero**: core in **Rust**,
+> Spec del kernel **completa e approvata** (§0–§10, 41 ADR). Stack deciso **per intero**: core in **Rust**,
 > interfaccia web in **Vue 3**, worker ML in **Python**, guscio **Electron** —
 > [ADR-0029](adr/0029-guscio-della-gui.md), `Accepted` il 2026-09-10 con **SP-8**.
 >

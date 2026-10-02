@@ -180,6 +180,7 @@ sotto-progetto**, nello stesso passaggio.
 | [0038](adr/0038-registro-delle-funzioni-del-programma.md) | Il registro delle funzioni del programma: un registro, molti invocatori, lo stesso permesso | Accepted |
 | [0039](adr/0039-telecamera-come-sorgente-di-percezione.md) | La telecamera come sorgente di percezione always-on sotto il core | Accepted |
 | [0040](adr/0040-dove-vivono-i-dati-e-che-cosa-salva-il-programma.md) | Dove vivono i dati, e che cosa salva il programma — modifica in parte ADR-0022 | Accepted |
+| [0041](adr/0041-chi-puo-parlare-col-core.md) | Chi può parlare col core — il solo account che lo esegue | Accepted |
 
 ## Indice dei diagrammi
 

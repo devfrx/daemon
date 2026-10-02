@@ -123,7 +123,7 @@ const rows = [
 
       <section class="kit-card">
         <BaseLabel icon="float" as="h2">Finestra</BaseLabel>
-        <BaseDialog title="Serve un permesso" description="Vale per questa tripla e per questa sessione.">
+        <BaseDialog title="Serve un permesso" description="Vale per questa tripla e resta concesso anche dopo un riavvio: il confine di sessione lo costruisce il sotto-progetto 3.">
           <template #trigger>
             <BaseButton data-kit="open-dialog">Apri la finestra</BaseButton>
           </template>

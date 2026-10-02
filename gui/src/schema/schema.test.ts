@@ -7,7 +7,13 @@ describe("the committed fixtures and the TypeScript types", () => {
   it("parses every fixture the kernel generated", () => {
     // ⛔ `loadFixtures` PARSES, so this call IS the assertion: a field renamed on the Rust side,
     // a variant added, a `u64` written as a number -- each makes `SchemaError` come out of here
-    // with the path of the field that disagreed.
+    // with the path of the field that disagreed, once the fixtures are regenerated (until then
+    // `the_committed_fixtures_match_the_schema` is the red, on the Rust side).
+    // ⚠️ THE RENAME REACHES THIS FILE ONLY BECAUSE THE GENERATOR'S KEYS ARE THE FIELDS' OWN
+    // IDENTIFIERS -- `json_struct!` and `json_members!` in `crates/kernel/tests/ipc_wire.rs`
+    // (AUD-726 of the audit of 2026-09-30). A key written there as a literal kept the old name,
+    // and this probe stayed green on a translation table. A VARIANT renamed is not caught: its
+    // word is still a literal, declared beside `variant_json`.
     const fixtures = loadFixtures();
     expect(fixtures.length).toBeGreaterThan(0);
   });

@@ -37,6 +37,13 @@ export type Listener = (message: IpcMessage) => void;
  * component that registers an inline arrow.
  */
 export interface Bridge {
+  /**
+   * ⛔ A MESSAGE CROSSES BY COPY, SO IT IS PLAIN DATA (AUD-541 of the audit of 2026-09-30): no reactive proxy of a store,
+   * no function, no instance of a class. The shell of ADR-0029 hands it to Electron's IPC, whose arguments to
+   * `ipcRenderer.send` "will be serialized with the Structured Clone Algorithm" -- read in `electron.d.ts` of `electron`
+   * 44.3.0, the version installed in `spikes/gui-shell/electron` -- and that algorithm throws `DataCloneError` on a
+   * proxy. `createFakeBridge` clones the same way, so a sender that hands over a store's value goes red in the probes first.
+   */
   send(message: OutboundMessage): void;
   listen(listener: Listener): () => void;
 }

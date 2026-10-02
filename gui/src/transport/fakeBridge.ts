@@ -6,7 +6,10 @@ import type { Bridge, Listener, OutboundMessage } from "./bridge";
 export interface FakeBridge extends Bridge {
   /** What the SPA has sent, in order. ⚠️ The observable the probes assert on. */
   readonly sent: readonly OutboundMessage[];
-  /** Delivers the fixture of that kind. Throws if the kernel never generated one. */
+  /**
+   * Delivers the FIRST fixture of that kind -- the head of the canonical set, one per variant; the messages appended
+   * after it for the nested variants reach the SPA only through `deliverAll`. Throws if the kernel never generated one.
+   */
   deliver(kind: IpcMessage["kind"]): void;
   /** Delivers every fixture, in file order -- which is the canonical set's order. */
   deliverAll(): void;
@@ -30,7 +33,11 @@ export function createFakeBridge(): FakeBridge {
   return {
     sent,
     send(message) {
-      sent.push(message);
+      // ⛔ RECORDED AS A COPY, THE WAY THE SHELL'S IPC TAKES IT (AUD-541 of the audit of 2026-09-30): what crosses the
+      // seam is cloned -- `Bridge.send` says why -- and a value the clone refuses must go red HERE, in the probes, and
+      // not in the shell at the first permission. Kept by reference, an `Approve` carrying two reactive proxies of the
+      // stores passed every probe.
+      sent.push(structuredClone(message));
     },
     listen(listener) {
       listeners.add(listener);

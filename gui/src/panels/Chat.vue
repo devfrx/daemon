@@ -56,9 +56,12 @@ function label(block: Block): string {
     <p v-if="empty" class="empty">{{ $t("chat.noRun") }}</p>
     <!-- aria-live ON THE FROZEN BLOCKS AND NOT ON THE STREAM (§6a: announced "with moderation"):
          a live region over the streaming block would read every token; a block is announced once,
-         when it closes. -->
+         when it closes.
+         ⛔ AND KEYED BY THE BLOCK'S `id`, NOT BY ITS POSITION (AUD-539 of the audit of 2026-09-30): past KEEP blocks
+         every freeze drops the oldest, and a key by position made Vue rewrite each article with the next one's
+         content -- the region re-read the whole window instead of the one block that closed. -->
     <div aria-live="polite">
-      <article v-for="(block, index) in frozen" :key="index" class="block" :data-provenance="block.provenance">
+      <article v-for="block in frozen" :key="block.id" class="block" :data-provenance="block.provenance">
         <p class="provenance">{{ $t(label(block)) }}</p>
         <!-- v-html OF OUR OWN OUTPUT: `renderMarkdown` escapes the model's text (html: false), so
              what lands here is HTML the renderer wrote, never HTML the model wrote. Task 15's lint

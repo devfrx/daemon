@@ -101,14 +101,14 @@
   "permissions": {
     "pendingTitle": "Richiesta in attesa",
     "none": "nessuna",
-    "approvedTitle": "Concesse in questa sessione",
+    "approvedTitle": "Concesse da questa finestra",
     "noneApproved": "nessuna",
     "triple": "strumento {tool}, risorsa {resource}, {operation}",
     "operation": {
       "Read": "lettura",
       "Write": "scrittura"
     },
-    "duration": "Un permesso vale per quella tripla e per quella sessione; il confine di sessione lo costruisce il sotto-progetto 3."
+    "duration": "Un permesso vale per quella tripla e resta concesso anche dopo un riavvio; quelli concessi prima di questa finestra non compaiono qui. Il confine di sessione lo costruisce il sotto-progetto 3."
   },
   "steps": {
     "none": "Nessun passo ancora.",
@@ -138,7 +138,7 @@
   "confirm": {
     "title": "Serve un permesso",
     "call": "Per: {function} con {argument}",
-    "scope": "Vale per questa tripla e per questa sessione.",
+    "scope": "Vale per questa tripla e resta concesso anche dopo un riavvio: il confine di sessione lo costruisce il sotto-progetto 3.",
     "yes": "Consenti",
     "no": "Rifiuta"
   }

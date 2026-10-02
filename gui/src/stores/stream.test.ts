@@ -36,16 +36,19 @@ describe("the stream", () => {
     stream.receive({ kind: "Token", text: "a", provenance: "Untrusted" });
     stream.receive({ kind: "Token", text: "b", provenance: "Trusted" });
     expect(stream.blocks.map((block) => [block.text, block.provenance])).toEqual([["a", "Untrusted"]]);
-    expect(stream.current).toEqual({ text: "b", provenance: "Trusted" });
+    expect(stream.current).toEqual({ id: 1, text: "b", provenance: "Trusted" });
   });
 
-  it("keeps the last KEEP frozen blocks and drops the oldest", () => {
+  it("keeps the last KEEP frozen blocks and drops the oldest, each keeping the id it opened with (AUD-539)", () => {
     const stream = useStream();
     for (let n = 0; n < KEEP + 3; n += 1) {
       stream.receive({ kind: "Token", text: `${n}:` + "y".repeat(FREEZE_AT), provenance: "Untrusted" });
     }
     expect(stream.blocks).toHaveLength(KEEP);
     expect(stream.blocks[0]?.text.startsWith("3:")).toBe(true);
+    // ⛔ THE ID FOLLOWS THE BLOCK, NOT THE POSITION (AUD-539 of the audit of 2026-09-30): the three dropped took 0, 1 and
+    // 2 with them, and the first block kept is still 3 -- what the Chat keys its frozen articles by.
+    expect(stream.blocks.map((block) => block.id)).toEqual(Array.from({ length: KEEP }, (_, index) => index + 3));
   });
 
   it("ignores every other kind", () => {

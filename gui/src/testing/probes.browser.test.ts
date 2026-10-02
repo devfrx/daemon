@@ -1,6 +1,6 @@
 import { afterEach, expect, it } from "vitest";
 
-import { computed, concentricRadii } from "./probes";
+import { computed, concentricRadii, fits, iconsCentred } from "./probes";
 
 // ⛔ THE RADIUS PROBE ON BOXES DRAWN BY HAND (E30 and E33 of the design-system plan): the kit page gives every piece four
 // equal corners and puts it IN its corner, so two things would stay unproven there -- that each corner is read with its
@@ -104,6 +104,67 @@ it("does not judge what reaches the corner through a box that scrolls, and judge
   // The same piece in the same place, once the box holds more than it shows: where it lands is the scroll's.
   box("filler", "position:absolute;left:0;top:0;width:1px;height:400px", scroller);
   expect(concentricRadii([root])).toEqual({ near: 0, bad: [] });
+});
+
+// ⛔ THE TWO OTHER PROBES OF THE BOARDS, ON BOXES DRAWN BY HAND TOO (AUD-728 of the audit of 2026-09-30): the pages call
+// `fits` and `iconsCentred` and want them silent, so their red direction lived only in the table of step 7 of task 4 of
+// the design-system plan -- violations put into the pages by hand, once, and taken out. Here every branch that can go
+// red goes red, beside a case that must not; and each case says the WHOLE report, counters included (trap 1).
+
+it("fits: passes a piece inside its box, and finds a text cut and a piece that sticks out", () => {
+  const root = box("root", "position:absolute;left:0;top:0;width:300px;height:120px", document.body);
+  const frame = box("frame", "position:absolute;left:10px;top:10px;width:200px;height:60px", root);
+  const piece = box("piece", "position:absolute;left:10px;top:10px;width:100px;height:20px;white-space:nowrap;overflow:hidden", frame);
+  piece.textContent = "ok";
+  expect(fits([root], ".frame")).toEqual({ seen: 2, boxed: 1, problems: [] });
+  // Words wider than the piece: cut, with the widths that say by how much.
+  piece.textContent = "una parola troppo lunga per cento pixel";
+  expect(fits([root], ".frame")).toEqual({
+    seen: 2,
+    boxed: 1,
+    problems: [expect.stringMatching(/^cut: piece "una parola troppo lunga " \d+>100$/)],
+  });
+  // Back to two letters, and one pixel over the frame's edge: the probe's slack, still inside.
+  piece.textContent = "ok";
+  piece.style.left = "-1px";
+  expect(fits([root], ".frame")).toEqual({ seen: 2, boxed: 1, problems: [] });
+  // Ten pixels over: it sticks out.
+  piece.style.left = "-10px";
+  expect(fits([root], ".frame")).toEqual({ seen: 2, boxed: 1, problems: ["sticks out: piece of frame"] });
+});
+
+/** An icon as `BaseIcon` draws one: an `svg.base-icon` with its name. */
+function icon(name: string, css: string, parent: Element): SVGSVGElement {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("class", "base-icon");
+  svg.setAttribute("data-icon", name);
+  svg.style.cssText = css;
+  parent.append(svg);
+  return svg;
+}
+
+it("iconsCentred: passes an icon centred in its row, and finds one not drawn, one stroked in its own colour, one off centre", () => {
+  const root = box("root", "position:absolute;left:0;top:0;width:300px;height:120px", document.body);
+  const row = box("row", "display:flex;align-items:center;height:40px", root);
+  const drawn = icon("drawn", "width:16px;height:16px;stroke:currentColor", row);
+  expect(iconsCentred([root])).toEqual({ icons: 1, centred: 1, problems: [] });
+  // Half a pixel low is inside the probe's 0.75; three pixels low is not.
+  drawn.style.position = "relative";
+  drawn.style.top = "0.5px";
+  expect(iconsCentred([root])).toEqual({ icons: 1, centred: 1, problems: [] });
+  drawn.style.top = "3px";
+  expect(iconsCentred([root])).toEqual({ icons: 1, centred: 1, problems: ["off centre by 3.00 px: drawn in row"] });
+  drawn.remove();
+  // ⛔ OUTSIDE A ROW THAT CENTRES, AN ICON IS COUNTED AND NOT JUDGED: the two below are off any centre, and only what
+  // they are is wrong -- one has no size, one strokes in a colour of its own.
+  const loose = box("loose", "position:absolute;left:0;top:60px", root);
+  icon("hidden", "width:0;height:0;stroke:currentColor", loose);
+  icon("red", "width:16px;height:16px;stroke:rgb(255, 0, 0)", loose);
+  expect(iconsCentred([root])).toEqual({
+    icons: 2,
+    centred: 0,
+    problems: ["not drawn: hidden", "stroke is not currentColor: red"],
+  });
 });
 
 // ⛔ THE ORACLE OF A TOKEN ANSWERS ONLY FOR A TOKEN THE PAGE DEFINES (E108 of the design-system plan), as `readToken` does:

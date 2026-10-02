@@ -103,7 +103,9 @@ export default [
      * ⛔ THE ONE EXCEPTION, IN ONE PLACE. `Chat.vue` renders HTML WE produced, from text
      * `renderMarkdown` has already escaped, with links as visible text and images never as `<img>`
      * (D54). Scoped to the file rather than scattered across two `eslint-disable` comments, so a
-     * reviewer finds every exception by reading this file.
+     * reviewer finds every exception by reading this file. ⚠️ WITH THE LINT OFF, THE REASON IS HELD
+     * BY PROBES (AUD-719 and AUD-723 of the audit of 2026-09-30): `markdown.test.ts` escapes what the
+     * renderer's own rules write, and `chat.test.ts` reads both `v-html` of the file, the frozen one too.
      */
     name: "harness/chat-renders-our-own-html",
     files: ["src/panels/Chat.vue"],

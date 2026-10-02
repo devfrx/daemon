@@ -482,6 +482,27 @@ fn variant_name(message: &IpcMessage) -> &'static str {
     }
 }
 
+/// RULE 2 OF `variant_json` WHERE A `match` ARM HAS ALREADY TAKEN THE FIELDS APART: one member per
+/// binding, and its key is `stringify!` of the binding -- which IS the field's name, because the
+/// arm binds it by name. A field renamed in Rust stops the arm until the binding is renamed, and
+/// renaming the binding renames the key: nothing is left beside it to forget.
+macro_rules! json_members {
+    ($($field:ident: $encode:expr),+ $(,)?) => {
+        [$(format!("\"{}\":{}", stringify!($field), ($encode)($field))),+].join(",")
+    };
+}
+
+/// RULE 2 OF `variant_json` FOR A STRUCT: ONE exhaustive destructuring, with NO `..`, whose
+/// bindings are the object's members -- so a field renamed, added or removed in Rust stops the
+/// generator HERE (`E0026`, `E0027`) until the call names it, and naming it writes it, key and
+/// value. The struct comes in by its bare name: every one the wire has is imported at the top.
+macro_rules! json_struct {
+    ($value:expr, $struct:ident { $($field:ident: $encode:expr),+ $(,)? }) => {{
+        let $struct { $($field),+ } = $value;
+        format!("{{{}}}", json_members!($($field: $encode),+))
+    }};
+}
+
 /// The value a fixture carries, as JSON, for the sub-project 2 SPA to compare its own types
 /// against. ⛔ HAND-WRITTEN AND NOT A DEPENDENCY, for `build_stamp`'s two reasons plus one of
 /// its own: `serde_json` would want `Serialize` derives on SHIPPED wire types, or a mirror of
@@ -493,10 +514,26 @@ fn variant_name(message: &IpcMessage) -> &'static str {
 ///      round it, and the fixture would compare equal to a value it does not hold.
 ///   2. FIELD NAMES ARE RUST'S, verbatim and `snake_case`. Renaming them to the web's taste
 ///      would be a translation table, which is a second definition that drifts in silence --
-///      the very failure these fixtures exist to prevent.
+///      the very failure these fixtures exist to prevent. ⛔ HELD BY THE COMPILER AND NOT BY A
+///      LITERAL (AUD-726 of the audit of 2026-09-30): every named field reaches the JSON through
+///      `json_struct!` or `json_members!`, whose key IS the field's identifier. Measured on
+///      2026-10-02, when the keys were literals: `DegradationReport::vram_exhausted` renamed in
+///      the kernel, the two lines of this file that stopped compiling renamed with it, and the
+///      whole bench GREEN with `"vram_exhausted"` still in the JSON; now the same rename reaches
+///      the JSON, and `the_committed_fixtures_match_the_schema` is red until it is regenerated.
+///
+/// ⚠️ WHAT RULE 2 DOES NOT REACH, declared: the WORDS -- the tags `kind`, `state` and `verdict`,
+/// the names of the unit variants, and the keys of a tuple variant's payload (`value`, `bytes`,
+/// `grace_ms`) -- are no field of Rust. They are written here once, each beside an exhaustive
+/// `match`, and a variant RENAMED in Rust stops that `match` but keeps its old word unless the
+/// word is renamed with it.
 ///
 /// ⚠️ THE `match` IS EXHAUSTIVE for the reason `variant_name` gives: a variant added must be a
-/// compile error here, not a fixture that quietly never appears.
+/// compile error here, not a fixture that quietly never appears. ⛔ AND AN UNUSED BINDING IS AN
+/// ERROR HERE: a field added to a variant with named fields stops its arm until the pattern
+/// names it, and a name bound and never written into the JSON is the half of that fix that a
+/// warning would let pass.
+#[deny(unused_variables)]
 fn variant_json(message: &IpcMessage) -> String {
     match message {
         IpcMessage::Hello(stamp) => format!(r#"{{"kind":"Hello","value":"{}"}}"#, stamp.get()),
@@ -510,17 +547,19 @@ fn variant_json(message: &IpcMessage) -> String {
             format!(r#"{{"kind":"StaleBuild","value":"{}"}}"#, stamp.get())
         }
         IpcMessage::Degradation(report) => format!(
-            r#"{{"kind":"Degradation","value":{{"vram_exhausted":{},"routing_degraded":{}}}}}"#,
-            report.vram_exhausted, report.routing_degraded
+            r#"{{"kind":"Degradation","value":{}}}"#,
+            json_struct!(report, DegradationReport {
+                vram_exhausted: json_bool,
+                routing_degraded: json_bool,
+            })
         ),
         IpcMessage::Policy(report) => format!(
-            r#"{{"kind":"Policy","value":{{"policy":"{}","allocated":"{}","total":"{}"}}}}"#,
-            match report.policy {
-                PolicyName::Remote => "Remote",
-                PolicyName::Local => "Local",
-            },
-            report.allocated.get(),
-            report.total.get()
+            r#"{{"kind":"Policy","value":{}}}"#,
+            json_struct!(report, PolicyReport {
+                policy: json_policy_name,
+                allocated: json_mib,
+                total: json_mib,
+            })
         ),
         IpcMessage::Invoke(call) => format!(r#"{{"kind":"Invoke","value":{}}}"#, json_call(call)),
         IpcMessage::PermissionRequired(triple) => format!(
@@ -528,17 +567,12 @@ fn variant_json(message: &IpcMessage) -> String {
             json_triple(triple)
         ),
         IpcMessage::Approve { triple, call } => format!(
-            r#"{{"kind":"Approve","triple":{},"call":{}}}"#,
-            json_triple(triple),
-            json_call(call)
+            r#"{{"kind":"Approve",{}}}"#,
+            json_members!(triple: json_triple, call: json_call)
         ),
         IpcMessage::Token { text, provenance } => format!(
-            r#"{{"kind":"Token","text":{},"provenance":"{}"}}"#,
-            json_text(text),
-            match provenance {
-                Provenance::Trusted => "Trusted",
-                Provenance::Untrusted => "Untrusted",
-            }
+            r#"{{"kind":"Token",{}}}"#,
+            json_members!(text: json_text, provenance: json_provenance)
         ),
         IpcMessage::Layout(state) => format!(
             r#"{{"kind":"Layout","value":{}}}"#,
@@ -556,28 +590,21 @@ fn variant_json(message: &IpcMessage) -> String {
             r#"{{"kind":"Steps","value":[{}]}}"#,
             steps
                 .iter()
-                .map(|summary| format!(
-                    r#"{{"step":"{}","function":{},"done":{}}}"#,
-                    summary.step,
-                    json_text(&summary.function),
-                    summary.done
-                ))
+                .map(|summary| json_struct!(summary, StepSummary {
+                    step: json_u64,
+                    function: json_text,
+                    done: json_bool,
+                }))
                 .collect::<Vec<String>>()
                 .join(",")
         ),
         IpcMessage::Request(request) => format!(
-            r#"{{"kind":"Request","value":{{"reserved_vram":"{}","compute_class":"{}","preemption":{}}}}}"#,
-            request.reserved_vram.get(),
-            match request.compute_class {
-                ComputeClass::Realtime => "Realtime",
-                ComputeClass::Interactive => "Interactive",
-                ComputeClass::Batch => "Batch",
-            },
-            match request.preemption {
-                Preemption::Never => String::from(r#"{"kind":"Never"}"#),
-                Preemption::After(grace) =>
-                    format!(r#"{{"kind":"After","grace_ms":"{}"}}"#, grace.get()),
-            }
+            r#"{{"kind":"Request","value":{}}}"#,
+            json_struct!(request, GrantRequest {
+                reserved_vram: json_mib,
+                compute_class: json_compute_class,
+                preemption: json_preemption,
+            })
         ),
         IpcMessage::Verdict(verdict) => format!(
             r#"{{"kind":"Verdict","value":{}}}"#,
@@ -585,12 +612,63 @@ fn variant_json(message: &IpcMessage) -> String {
                 Verdict::Granted => String::from(r#"{"verdict":"Granted"}"#),
                 Verdict::Queued => String::from(r#"{"verdict":"Queued"}"#),
                 Verdict::Refused { asked, ceiling } => format!(
-                    r#"{{"verdict":"Refused","asked":"{}","ceiling":"{}"}}"#,
-                    asked.get(),
-                    ceiling.get()
+                    r#"{{"verdict":"Refused",{}}}"#,
+                    json_members!(asked: json_mib, ceiling: json_mib)
                 ),
             }
         ),
+    }
+}
+
+/// The encoders of the members, one per Rust type, each taking its value by reference, as a
+/// destructuring hands it over. ⛔ RULE 1 LIVES IN `json_u64`: a `u64` is a decimal STRING.
+fn json_u64(value: &u64) -> String {
+    format!("\"{value}\"")
+}
+
+fn json_mib(mib: &Mib) -> String {
+    json_u64(&mib.get())
+}
+
+fn json_bool(flag: &bool) -> String {
+    flag.to_string()
+}
+
+fn json_policy_name(policy: &PolicyName) -> String {
+    json_text(match policy {
+        PolicyName::Remote => "Remote",
+        PolicyName::Local => "Local",
+    })
+}
+
+fn json_access(operation: &Access) -> String {
+    json_text(match operation {
+        Access::Read => "Read",
+        Access::Write => "Write",
+    })
+}
+
+fn json_provenance(provenance: &Provenance) -> String {
+    json_text(match provenance {
+        Provenance::Trusted => "Trusted",
+        Provenance::Untrusted => "Untrusted",
+    })
+}
+
+fn json_compute_class(class: &ComputeClass) -> String {
+    json_text(match class {
+        ComputeClass::Realtime => "Realtime",
+        ComputeClass::Interactive => "Interactive",
+        ComputeClass::Batch => "Batch",
+    })
+}
+
+fn json_preemption(preemption: &Preemption) -> String {
+    match preemption {
+        Preemption::Never => String::from(r#"{"kind":"Never"}"#),
+        Preemption::After(grace) => {
+            format!(r#"{{"kind":"After","grace_ms":{}}}"#, json_u64(&grace.get()))
+        }
     }
 }
 
@@ -621,23 +699,18 @@ fn json_bytes(bytes: &[u8]) -> String {
 }
 
 fn json_triple(triple: &Triple) -> String {
-    format!(
-        r#"{{"tool":{},"resource":{},"operation":"{}"}}"#,
-        json_text(&triple.tool),
-        json_text(&triple.resource),
-        match triple.operation {
-            Access::Read => "Read",
-            Access::Write => "Write",
-        }
-    )
+    json_struct!(triple, Triple {
+        tool: json_text,
+        resource: json_text,
+        operation: json_access,
+    })
 }
 
 fn json_call(call: &Call) -> String {
-    format!(
-        r#"{{"function":{},"argument":{}}}"#,
-        json_text(&call.function),
-        json_text(&call.argument)
-    )
+    json_struct!(call, Call {
+        function: json_text,
+        argument: json_text,
+    })
 }
 
 #[test]

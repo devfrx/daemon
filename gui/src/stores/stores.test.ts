@@ -1,12 +1,20 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it } from "vitest";
 
+import { loadFixtures } from "../schema/fixtures";
 import type { IpcMessage } from "../schema/messages";
 import { createFakeBridge } from "../transport/fakeBridge";
 
 import { useConnection } from "./connection";
 import { useCore } from "./core";
 import { pack_, unpack, useLayout, type LayoutPack } from "./layout";
+
+/** The map the KERNEL wrote beside the fixtures: its last line is the build stamp, in hex. */
+const MAP = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "..", "..", "schema", "fixtures", "ipc_v1.map"), "utf8");
 
 beforeEach(() => {
   setActivePinia(createPinia());
@@ -22,9 +30,17 @@ describe("the connection", () => {
     expect(bridge.sent).toHaveLength(1);
     const sent = bridge.sent[0];
     expect(sent?.kind).toBe("Hello");
-    // ⛔ THE ORACLE IS NOT "a string": it is a DECIMAL string that round-trips through BigInt.
-    // "0x…" or a rounded Number would both be truthy and both wrong.
-    expect(sent?.kind === "Hello" && /^[0-9]+$/.test(sent.value)).toBe(true);
+    // ⛔ THE ORACLE IS THE MAP ITSELF, READ HERE (AUD-727 of the audit of 2026-09-30): the `stamp 0x…` line the kernel
+    // wrote, in decimal through `BigInt`. A test of the SHAPE -- digits only -- let through both wrong values `stamp.ts`
+    // warns about: the `hello` fixture's arbitrary value, and the stamp rounded by a `Number`.
+    const digits = /^stamp 0x([0-9a-fA-F]{16})$/m.exec(MAP)?.[1];
+    expect(digits, "ipc_v1.map carries no `stamp 0x…` line").toBeDefined();
+    const stamp = BigInt(`0x${digits}`).toString(10);
+    // ⛔ NON-VACUITY: neither wrong value is the stamp, so the equality below tells each of them from it.
+    const fixture = loadFixtures().find(({ message }) => message.kind === "Hello")?.message;
+    expect(fixture?.kind === "Hello" && fixture.value).not.toBe(stamp);
+    expect(String(Number(BigInt(stamp)))).not.toBe(stamp);
+    expect(sent?.kind === "Hello" && sent.value).toBe(stamp);
   });
 
   it("becomes connected on Accepted, and stale on StaleBuild", () => {
@@ -85,14 +101,17 @@ describe("the layout", () => {
   });
 
   it("keeps the default view on Nothing and on Unavailable", () => {
-    // ⛔ THE TWO CASES THE FIXTURES CANNOT REACH (D46): `stamp_set` carries ONE message per
-    // variant, so `deliver("Layout")` only ever delivers `Package`. The type system is what
-    // keeps this honest -- `LayoutState` has three variants and not one more.
-    for (const value of [{ state: "Nothing" }, { state: "Unavailable" }] as const) {
+    // ⛔ THE TWO FIXTURES THE KERNEL APPENDED FOR THEM (17-layout and 18-layout, the guard of the nested variants):
+    // `deliver("Layout")` hands out the FIRST fixture of a kind, the `Package`, so this probe reads them from the set
+    // instead of writing them by hand.
+    const others = loadFixtures().flatMap(({ message }) => (message.kind === "Layout" && message.value.state !== "Package" ? [message] : []));
+    // ⛔ NON-VACUITY: the two states, each once -- `LayoutState` has three variants and not one more.
+    expect(others.map((message) => message.value.state)).toEqual(["Nothing", "Unavailable"]);
+    for (const message of others) {
       setActivePinia(createPinia());
       const layout = useLayout();
-      layout.receive({ kind: "Layout", value });
-      expect(layout.state.state).toBe(value.state);
+      layout.receive(message);
+      expect(layout.state.state).toBe(message.value.state);
       expect(layout.view).toBe("home");
     }
   });

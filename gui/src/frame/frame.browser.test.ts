@@ -3,14 +3,20 @@ import "../tokens";
 
 import { createPinia, setActivePinia } from "pinia";
 import { userEvent } from "vitest/browser";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { createApp, type App as VueApp } from "vue";
 
 import App from "../App.vue";
 import { i18n } from "../i18n";
-import { registerModules } from "../panels/modules";
+import { MODULES, registerModules } from "../panels/modules";
+import { isBuilt } from "../panels/registry";
+import { VIEWS } from "../panels/views";
+import { buildStamp } from "../schema/stamp";
 import { useConnection } from "../stores/connection";
+import { useCore } from "../stores/core";
+import { useInvoke } from "../stores/invoke";
 import { useLayout } from "../stores/layout";
+import { useStream } from "../stores/stream";
 import { contrastJudged, violations } from "../testing/axe";
 import { computed, concentricRadii, fits, iconsCentred } from "../testing/probes";
 import { readToken } from "../tokens/readToken";
@@ -20,10 +26,6 @@ import { readToken } from "../tokens/readToken";
 // `main.ts` loads them. Born with task 6bis for the band on the page (E60); task 8 extends it.
 
 const frames: VueApp[] = [];
-
-beforeEach(() => {
-  registerModules();
-});
 
 afterEach(() => {
   for (const frame of frames.splice(0)) frame.unmount();
@@ -35,9 +37,11 @@ afterEach(() => {
  * The frame in one theme, once `dockview` has laid out the Home view. ⛔ MOUNTED AS `main.ts` MOUNTS IT, on `#app`
  * itself: `mount` of `@vue/test-utils` puts the app in a `div` of its own inside the element it is given, and that `div`
  * has no height -- the frame came out 116 px high, the dock 0, and the strip in the middle of the page, measured on
- * 2026-09-24 (P-23 of the plan).
+ * 2026-09-24 (P-23 of the plan). The modules are registered before the mount, as `main.ts` does; the theme is set by
+ * hand and no bridge is wired -- `main.ts`'s own wiring is the first probe below.
  */
 async function frame(theme: "light" | "dark"): Promise<void> {
+  registerModules();
   document.documentElement.dataset.theme = theme;
   const pinia = createPinia();
   setActivePinia(pinia);
@@ -57,6 +61,59 @@ function px(token: string): number {
 
 const overview = (): HTMLElement | null => document.querySelector('.base-dialog[data-variant="full"]');
 const cards = (): HTMLElement[] => [...document.querySelectorAll<HTMLElement>("[data-card]")];
+
+// ⛔ `main.ts` ITSELF, RUN AS THE PAGE RUNS IT -- FIRST IN THE FILE, AND THE PLACE IS PART OF THE PROBE (AUD-722 of the audit
+// of 2026-09-30). It is the one file that wires the SPA, and its own words mark three orders with a ⛔; until this probe no
+// test imported it, and each one rebuilt the part it needed -- `frame()` above included. It must find the registry EMPTY,
+// so it runs before any `frame()` registers the modules, and checks that first. ⚠️ WHAT IT CANNOT SEE, declared: the
+// order of the two stylesheets, which this file imports itself at the top -- `scripts/gate-gui.sh` proves it on the package.
+// ⚠️ AND WHAT IT LEAVES BEHIND: `main.ts` keeps no handle on its `watchTheme`, which goes on listening to the colour
+// scheme for the rest of the file and would rewrite `data-theme` at a change -- no probe below emulates one, and a probe
+// that must belongs in a file of its own.
+describe("main.ts, as the page runs it", () => {
+  it("registers the modules and sets the theme before the mount, says Hello, and hands every message to the five stores", async () => {
+    // ⛔ NON-VACUITY: no module registered yet, so a dock mounted before `registerModules` would draw placeholders.
+    expect(isBuilt("status"), "a probe called frame() before this one: main.ts must find the registry empty").toBe(false);
+    const host = document.createElement("div");
+    host.id = "app";
+    document.body.append(host);
+    const order: string[] = [];
+    const observer = new MutationObserver((records) => {
+      for (const record of records) order.push(record.target === host ? "mount" : "theme");
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    observer.observe(host, { childList: true });
+    const { app } = await import("../main");
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      // ⛔ THE THEME BEFORE THE MOUNT: the first change the page saw is the root's `data-theme`, then the app's nodes.
+      expect(order[0]).toBe("theme");
+      expect(order).toContain("mount");
+      // ⛔ THE MODULES BEFORE THE MOUNT: Home's built modules are drawn, and the placeholders are the unbuilt types alone.
+      const home = Object.values(VIEWS.home.panels).map((panel) => panel.contentComponent ?? "");
+      const unbuilt = home.filter((name) => name !== "strip" && !(name in MODULES));
+      expect(home.some((name) => name in MODULES)).toBe(true);
+      expect(unbuilt.length).toBeGreaterThan(0);
+      expect(host.querySelectorAll(".placeholder")).toHaveLength(unbuilt.length);
+      // Hello, once, with the stamp of this build -- and with no shell on `window`, through the fake it exposes (D57).
+      const fake = window.harnessFake;
+      expect(fake?.sent).toEqual([{ kind: "Hello", value: buildStamp() }]);
+      // ⛔ THE FAN-OUT: one message for each of the five stores, and each heard its own.
+      const pinia = app.config.globalProperties.$pinia;
+      useInvoke(pinia).send({ function: "vram-policy", argument: "local" });
+      for (const kind of ["Accepted", "Degradation", "Layout", "Policy", "Token"] as const) fake?.deliver(kind);
+      expect(useConnection(pinia).phase).toBe("connected");
+      expect(useCore(pinia).degradation).not.toBeNull();
+      expect(useLayout(pinia).state.state).toBe("Package");
+      expect(useInvoke(pinia).inFlight).toBeNull();
+      expect(useStream(pinia).current?.text).toBe("ciao");
+    } finally {
+      observer.disconnect();
+      app.unmount();
+      delete window.harnessFake;
+    }
+  });
+});
 
 for (const theme of ["light", "dark"] as const) {
   describe(`the frame, ${theme} theme`, () => {

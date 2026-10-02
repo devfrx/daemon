@@ -41,6 +41,20 @@ npm run build
 # non-vacuity guard -- a build that produced nothing would pass the second.
 test -f dist/index.html || { echo "dist/index.html is missing: the build produced nothing to check"; exit 1; }
 if [ -e dist/kit.html ] || grep -rlq 'kit-card' dist/assets; then echo "the kit page is in the package"; exit 1; fi
+# ⛔ THE FIRST LINE OF `src/main.ts`, PROVEN ON THE PACKAGE TOO (AUD-722 of the audit of 2026-09-30): `dockview`'s stylesheet
+# is imported FIRST, so that our tokens, after it, win where both style the dock -- and `vite build` writes the page's one
+# stylesheet in the order of the imports. So the package must OPEN with `dockview`'s first rule, whose selector is read
+# from the installed sheet and not written here. Imports inverted, the package opens with our fonts; the import dropped,
+# with something else: red either way. The probe of `main.ts` in `frame.browser.test.ts` cannot see this order -- that
+# file imports both sheets itself. The two `test` lines are the non-vacuity guards: a selector read, one sheet found.
+first=$(grep -m 1 -o '^[^{]*' node_modules/dockview/dist/styles/dockview.css | tr -d '[:space:]' || true)
+test -n "$first" || { echo "no first rule read in dockview's stylesheet: the order of the sheets would be checked against nothing"; exit 1; }
+sheets=(dist/assets/index-*.css)
+test "${#sheets[@]}" -eq 1 -a -f "${sheets[0]}" || { echo "the page has not exactly one stylesheet in the package: ${sheets[*]}"; exit 1; }
+case "$(head -c 400 "${sheets[0]}" | tr -d '[:space:]')" in
+  "$first{"*) ;;
+  *) echo "the package's stylesheet does not open with dockview's first rule ($first): main.ts must import dockview.css FIRST"; exit 1 ;;
+esac
 echo "-------- gui: probes"
 # ⛔ TWO PROJECTS, ONE AT A TIME (design system, task 2; E10 of its plan): jsdom, and the INSTALLED Chrome for
 # what only a layout engine can judge -- fonts, motion, radii, clipping, the contrast of the drawn page. One at a

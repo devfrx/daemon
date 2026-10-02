@@ -1,6 +1,9 @@
 // ⛔ FIRST LINE, AND MEASURED: `dockview-core` does not ship the stylesheet and does not inject
 // one (E2 of the part-1 plan, measured in the browser on 2026-09-10). Without it the groups
-// stack in the document flow and a floating group leaves the viewport.
+// stack in the document flow and a floating group leaves the viewport. ⚠️ HELD ON THE PACKAGE by
+// `scripts/gate-gui.sh`, which wants the page's stylesheet to open with this one; the two orders
+// marked ⛔ below, and the wiring after the mount, by the first probe of `frame/frame.browser.test.ts`
+// (AUD-722 of the audit of 2026-09-30).
 import "dockview/dist/styles/dockview.css";
 import "./tokens";
 
@@ -49,7 +52,9 @@ const bridge: Bridge = window.harnessBridge ?? fakeForTheReviewer();
 // and a module registered after that would be a placeholder until the next `fromJSON`.
 registerModules();
 
-const app = createApp(App);
+// ⚠️ EXPORTED FOR THE ONE PROBE THAT RUNS THIS FILE AS THE PAGE DOES (AUD-722 of the audit of 2026-09-30): the first one of
+// `frame/frame.browser.test.ts` imports it, reads its stores, and unmounts what it mounted.
+export const app = createApp(App);
 app.use(createPinia());
 app.use(i18n);
 

@@ -2785,3 +2785,33 @@ Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende 
 **Aggiornato il 2026-09-30**, all'**apertura del terzo audit completo** — codice e documentazione, chiesto dal proprietario **prima** del resto del piano dei documenti della revisione della knowledge base, che ne ha eseguito il compito 1: **ADR-0040**, la sua voce in §5, il rimando nella voce di ADR-0022, i totali, il caso del superamento in parte in §13 e in §7. Questa riga e il puntatore della §6, com'erano, sono in [`archivio/stato-storico.md`](stato-storico.md). Il contenuto di merito nuovo è la voce di ADR-0040, coi rimandi; l'audit cambia il solo puntatore. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
 
 📌 **La compressione di [`porta-di-qualita.md`](../porta-di-qualita.md) è fatta, il 2026-09-24:** il file com'era sta intero in [`archivio/porta-di-qualita-storico.md`](porta-di-qualita-storico.md). ⏳ **Resta la correzione delle contraddizioni** che la compressione ha segnato e non corretto — decisione 11 del [verbale degli sfoltimenti](../superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md) —, una sessione loro che il proprietario **non ha ancora collocato**: la lista sta in fondo a quel file.
+
+## La consegna del terzo audit, com'era — archiviata il 2026-10-02, alla chiusura della sessione della bozza dei pacchetti
+
+Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende — scritto alla chiusura della sessione del 2026-10-01, dopo il triage»*, parola per parola:
+
+1. `git fetch --all --prune`, poi `git status -sb`. L'albero è pulito: le righe del pre-dispaccio del compito 2 del piano
+   della knowledge base sono salvate in `ecba791`, su permesso del proprietario.
+2. Lo stato del run è in `.repo-audit/20260930-1510/`, **solo su questa macchina**. Le decisioni stanno in *«Il triage»*,
+   qui sopra, che è la loro casa; `triage.json` ne porta la forma per gli script — la chiave `radici`, una voce per radice
+   col testo delle regole da scrivere, e le decisioni per finding prese fin qui. `sintesi-radici.md` ha le liste dei
+   finding per radice; `ledger.json` e `sintesi.md` si interrogano con uno script.
+3. **La prossima sessione comincia le correzioni** — il proprietario, il 2026-10-01: *«prossima sessione iniziamo le
+   correzioni, queste comprese»*. Il primo passo sono i **pacchetti**:
+   - ogni finding aperto riceve la sua radice e la sua decisione, secondo *«Il triage»*; i doppioni — lo stesso difetto
+     visto da più agenti — finiscono nello stesso pacchetto;
+   - i pacchetti sono disgiunti per file e per soggetto, e `piano_correzioni.py valida` lo controlla; prima le radici;
+   - R3 e R5 toccano entrambe `CLAUDE.md`: un pacchetto solo;
+   - R6 scrive i richiami nel disegno della revisione e le voci d'errata nel piano, da **ER-23**;
+   - il pacchetto che tocca il file del canale locale **aspetta** l'ADR di AUD-685 e AUD-688, in una sessione sua.
+4. I **bassi** — 1497, `da_verificare` per la P6 — non entrano in un pacchetto senza un verificatore: quelli che cadono
+   nei file di un pacchetto si verificano prima, col costo detto.
+5. Poi il ramo `repo-audit/20260930-1510` dal `main` di allora (C8), e un correttore per pacchetto su `opus` (P3),
+   **col numero di agenti e il costo detti prima** (P6).
+6. Fuori dalla Fase 4, e già decisi: l'ADR del canale locale, in una sessione sua; dopo l'audit, il lavoro con `lean-docs`
+   sulle storie nei documenti vivi (R5).
+7. Gli script del plugin si lanciano con `PYTHONUTF8=1`. ⛔ Non rilanciare `ledger.py da-verificare`: cancellerebbe i
+   lotti senza esito.
+8. Il controllo di non intrusione: `git status --porcelain` vuoto.
+9. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per parola,
+   la nuova al suo posto, e il commit.

@@ -2815,3 +2815,79 @@ Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende 
 8. Il controllo di non intrusione: `git status --porcelain` vuoto.
 9. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per parola,
    la nuova al suo posto, e il commit.
+
+## La consegna del terzo audit, com'era — archiviata il 2026-10-02, alla chiusura della sessione della composizione dei pacchetti
+
+Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende — scritto alla chiusura della sessione del 2026-10-02, a metà della composizione dei pacchetti»*, parola per parola:
+
+1. `git fetch --all --prune`, poi `git status -sb`. L'albero è pulito.
+2. Lo stato del run è in `.repo-audit/20260930-1510/`, **solo su questa macchina**. Nuovi di questa sessione:
+   `bozza_pacchetti.py` e il suo esito `pacchetti-bozza.json`, e trenta decisioni in `triage.json` — le sei di prima,
+   le quindici `decisione` della P9, le nove `rinviare` di R5. La copertura si ricontrolla col comando, non con questa
+   riga: `PYTHONUTF8=1 python .repo-audit/20260930-1510/bozza_pacchetti.py` — esce 0 solo se ogni finding aperto sta
+   in un secchio solo.
+3. **Fatto il 2026-10-02.** P8 e P9, nella tabella del proprietario. Ogni finding aperto ha una destinazione: un
+   pacchetto della bozza, `decisione` (la P9, e AUD-685 e AUD-688 per l'ADR del canale locale), `rinviare` (R5),
+   `accettare` (AUD-534). La bozza ha **29 pacchetti**, coi finding scelti uno per uno sui titoli del ledger e, dove il
+   titolo non bastava, sui campi `cosa` e `radice`: P01–P06 il codice (R7), P07–P08 gli ADR con le due regole di R3 e
+   R5, P09–P10 la §8 (R1), P11 la spec fuori dalla §8, P12 il cancello (R8), P13–P14 la revisione della knowledge base
+   (R6), P15–P18 `design/` (R2), P19–P25 le altre case (R4), P26 il sotto-progetto 15 (R9), P27–P29 compendio, indici
+   e commenti del codice (R4). I titoli stanno nello script.
+4. **Le quattordici scelte da parte (P9)** — tornano al proprietario una alla volta, ciascuna con la sua A/B:
+
+   | Finding | La scelta |
+   |---|---|
+   | AUD-204 | una richiesta più grande del budget allocabile ma non del totale resta in coda per sempre, e design/02 vuole «Rifiutata»: rifiutarla, o scrivere che attende |
+   | AUD-201, AUD-560 | la finestra di una concessione vale per tutta la sua vita o fino all'avvio del lavoro |
+   | AUD-290 | le chiavi del giornale si riusano dopo una potatura e una riapertura: si corregge design/10, o il codice |
+   | AUD-182 | ADR-0040, il passo in dubbio ripristinato senza la sua copia: testo da chiarire, o una decisione nuova su ADR-0007 |
+   | AUD-352 | «spec prima del codice» contro i disegni che non sono spec: «spec o disegno approvato», o una spec per ogni sotto-progetto |
+   | AUD-172 | ADR-0038: «un evento informa, mai autorizza» contro «per default la conferma non è gestuale» |
+   | AUD-170 | ADR-0038: «aprire un pannello» passa dal registro delle funzioni, o è presentazione |
+   | AUD-150 | in autonomo, una scrittura fuori dagli ambiti del checkpoint chiede conferma (ADR-0016) o vale il preset (ADR-0024) |
+   | AUD-162 | l'archivio dei parametri di ADR-0034: quale sotto-progetto lo costruisce |
+   | AUD-180 | la prontezza del reattore per il primo worker: la paga il 3 o il 12 |
+   | AUD-581 | il bus eventi di ADR-0001: assorbito, o da costruire e da chi |
+   | AUD-461 | il guscio Electron — preload, decodifica nel processo principale, prova capo a capo —: lo costruisce il 10 o il 3 |
+   | AUD-689 | l'indicatore della telecamera sta nella GUI, e la telecamera vive anche a GUI chiusa |
+   | AUD-475 | il vocabolario GenAI di OpenTelemetry vale anche per il modulo Passi, o solo per la proiezione trace |
+
+5. **Il prossimo passo: finire la composizione**, in una sessione sua, poi il costo detto al proprietario.
+   - ⛔ **La disgiunzione globale del plugin non si può avere:** legati da ogni file che il loro `dove` nomina, i finding
+     aperti fanno un gruppo solo — misurato, `bozza_pacchetti.py --componenti`, 626 su 627 il 2026-10-02 —, e le radici
+     correggono le stesse case: la spec del 1 (R1 e R8), `porta-di-qualita.md` (R4, R8, R9), il compendio (R3, R4, R9),
+     il README (R2, R4), la roadmap (R4, R9). `piano_correzioni.py valida` chiede la disgiunzione fra **tutti** i
+     pacchetti, quindi respingerebbe il piano. **La proposta da portare al
+     proprietario insieme al costo:** una variante di `valida` nella cartella del run che chiede la disgiunzione dei file
+     dichiarati **dentro un'ondata** e non fra ondate, con le ondate in un ordine scritto. Fra un'ondata e l'altra la base
+     avanza, quindi un correttore vede ciò che gli altri hanno già integrato; la coerenza fra soggetti la controlla la
+     ri-verifica di ogni pacchetto, che il plugin già fa. `prepara` e `integra.py` restano quelli del plugin.
+   - **L'ordine proposto:** prima il codice — P01, P03, P05 in un'ondata, P02 e P04 nella seconda, perché toccano
+     `serving.rs` e `it.json` come P01 —; P06 dopo l'ADR del canale locale, perché tocca `crates/platform/src/ipc.rs`. Poi i
+     documenti, allineati al codice già corretto, a ondate di pacchetti che non condividono file: le regole (P07) per
+     prime, R1 e R9 presto, perché gli altri citano la §8 rigiudicata e il sotto-progetto 15.
+   - **Per ogni pacchetto si scrivono:** i file che il correttore può toccare — per i documenti le sole case da
+     correggere, non i file citati come prova, o le ondate si allungano —, i `nuovi_file` col nome deciso prima (i casi
+     `compile_fail` nuovi del P05), la descrizione con le regole del triage da applicare e il principio *«il codice è lo
+     stato di oggi; si corregge il codice solo nei pacchetti di R7, per riportarlo a una decisione già presa»*, il
+     `piano_test`, e i finding del ledger **dentro la specifica**: il ledger è grande — `wc -c` sul file — e un
+     correttore non deve leggerlo.
+   - **La regola per un finding che chiede una scelta non presa, da scrivere in ogni pacchetto:** il correttore non lo
+     corregge, lo elenca nell'esito con le opzioni e il consiglio, e l'esito resta `completo` se il resto è risolto. Dopo
+     l'ondata il finding va in `triage.json` come `decisione` e torna al proprietario. Senza questa regola un solo
+     finding fermerebbe un pacchetto intero: `integra.py` integra solo gli esiti completi.
+   - **Le sonde nuove** dei pacchetti di codice si registrano in [`porta-di-qualita.md`](../porta-di-qualita.md) nei
+     pacchetti di quella casa, P23 e P24, che vengono dopo: il cancello non confronta i banchi col registro.
+   - **Il costo, da dire prima del primo ventaglio (P6):** 29 correttori su Opus; la banda da annunciare, dalle misure
+     dei compiti fatti, è ~0,3–0,6M token per un pacchetto di codice e ~0,5–1,1M per uno di documenti; la ri-verifica di
+     ogni pacchetto su Sonnet; un cancello per pacchetto all'integrazione, col tempo della baseline in `baseline-gate.log` della cartella del run.
+6. Poi il ramo `repo-audit/20260930-1510` dal `main` di allora (C8), e le ondate: un'ondata per sessione, se il
+   proprietario non dice altro.
+7. Fuori dalla Fase 4, e già decisi: l'ADR del canale locale, in una sessione sua, prima di P06; dopo l'audit,
+   `lean-docs` sulle storie nei documenti vivi (R5); dopo la Fase 4, la verifica dei bassi rimasti contro i testi corretti
+   (P8).
+8. Gli script del plugin si lanciano con `PYTHONUTF8=1`. ⛔ Non rilanciare `ledger.py da-verificare`: cancellerebbe i
+   lotti senza esito.
+9. Il controllo di non intrusione: `git status --porcelain` vuoto.
+10. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per parola,
+    la nuova al suo posto, e il commit.

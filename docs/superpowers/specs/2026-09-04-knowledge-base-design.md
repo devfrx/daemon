@@ -4,7 +4,7 @@
 proprietario, una per volta, in chat il 2026-09-04, sotto l'**accettazione condizionata** la cui
 regola sta qui sotto — e la **§5** fissa dove va la capacità, le dipendenze e l'ordine di ciò che
 segue. Chi riprende ha un disegno intero da tradurre in un **piano dei documenti** — **dopo** che il
-proprietario lo ha riletto in questa forma. ✅ **Riletto il 2026-09-04**, in chat, sotto accettazione
+proprietario lo ha riletto in questa forma. ⚠️ **Richiamo del 2026-10-03:** il piano dei documenti è scritto ed eseguito — la §5.5, punto 4 —, e il prossimo passo lo dice la §6 del [compendio](../../COMPENDIO.md) — audit del 2026-09-30, AUD-454. ✅ **Riletto il 2026-09-04**, in chat, sotto accettazione
 condizionata: le sei voci della sezione *«Le voci che questo disegno apre per il proprietario»* sono
 state poste **una per volta**, in forma A/B, col consiglio scritto, e il proprietario ha scelto il
 consiglio **sei volte su sei**. ⚠️ Questa riga diceva *«⏳ La rilettura del proprietario è da fare»*,
@@ -151,7 +151,7 @@ tabella è quella della consegna, portata qui come la sezione approvata prescriv
 | Il buco | Sciolto da |
 |---|---|
 | «chi aggiorna il router quando un file si sposta?» | l'assistente, come scrittura giornalata (ADR-0007) dentro un ambito con checkpoint (ADR-0024); e un **sensore** (ADR-0009 — `Sensor::observe(&Untrusted)` esiste in `crates/kernel/src/sensor.rs`) che verifica i router: un puntatore rotto è un **verdetto negativo** che rientra nell'anello |
-| «e se il router marcisce lo stesso?» | l'anello di miglioramento (ADR-0009): il kernel vede la ricorrenza e **propone** la voce; il proprietario approva. La regola «il router si aggiorna nello stesso turno» diventa un meccanismo, non una speranza. ⚠️ **È la lezione di questo stesso repository:** la regola «un puntatore si toglie, non si ricorregge» ha ceduto tre volte finché era solo scritta; il freno è nel cancello — `check-docs.sh` — e non nella buona volontà |
+| «e se il router marcisce lo stesso?» | l'anello di miglioramento (ADR-0009): il kernel vede la ricorrenza e **propone** la voce; il proprietario approva. La regola «il router si aggiorna nello stesso turno» diventa un meccanismo, non una speranza. ⚠️ **È la lezione di questo stesso repository:** la regola «un puntatore si toglie, non si ricorregge» ha ceduto tre volte finché era solo scritta; il freno è nel cancello — `check-docs.sh` — e non nella buona volontà. ⚠️ **Richiamo del 2026-10-03:** quel freno non c'è: `check-docs.sh` non legge il puntatore, e la §6 del [compendio](../../COMPENDIO.md) registra la sua guardia fra le voci aperte; la lezione resta, l'esempio no — audit del 2026-09-30, AUD-453 |
 | «come non saturo il contesto?» | la proiezione ha un **budget per modello** (ADR-0010), misurato per categoria nel giornale; la mappa è una categoria; le foglie entrano come **riferimenti** e si rileggono su richiesta (ADR-0008) |
 | «e se modifico un file a mano?» | trigger su cambiamento di file (ADR-0009) → contenuto da fuori (I6, ADR-0014) finché il proprietario non approva. Una skill cambiata → AUD-004 |
 | «come so se funziona BENE?» | ogni salto è un passo con costo (ADR-0011): salti-per-trovare e salti-a-vuoto sono **numeri nel giornale**; il test «al primo salto» si misura. La valutazione probabilistica sta in L2 (ADR-0020) |
@@ -385,7 +385,7 @@ questo disegno, non il piano dei documenti.
    `tracciabilita.md`; la decisione 7 chiusa nel disegno gesti; questo file nella §12 del compendio e in
    `README.md`; il puntatore della §6. Esecuzione con `superpowers:subagent-driven-development`.
 5. poi **AUD-004**, ADR del proprietario — in parallelo con ciò che segue.
-6. poi il **sotto-progetto 2**, poi il **13**, poi il **3** — decisione 16.
+6. poi il **sotto-progetto 2**, poi il **13**, poi il **3** — decisione 16. ⚠️ **Richiamo del 2026-10-03:** il 2 è chiuso — lo dice la sua riga in [`roadmap.md`](../../roadmap.md) —, e dove sta il lavoro lo dice la §6 del compendio — audit del 2026-09-30, AUD-454.
 
 **La Definizione di «fatto» del piano dei documenti** — il piano la copia **da qui**:
 
@@ -564,8 +564,11 @@ in una sessione nuova»*. La rilettura è fatta quel giorno, e il piano si scriv
 sessione**, che è la strada B della sezione qui sotto.
 ✅ **RICHIAMO DEL 2026-09-04, sera:** il piano è scritto col pre-controllo; l'esecuzione va in una sessione nuova, e la §6 del compendio lo dice.
 ✅ **RICHIAMO DEL 2026-09-05:** il piano è eseguito; la §6 del compendio porta il passo successivo, il sotto-progetto 2 con AUD-004 in parallelo.
+⚠️ **Richiamo del 2026-10-03:** le righe qui sopra dicono il prossimo passo del loro giorno; quello di oggi lo dice solo la §6 del compendio, e qui non si ripete — audit del 2026-09-30, AUD-657.
 
 ### Come si riprende — scritto alla chiusura della sessione del 2026-09-04, coi comandi
+
+⚠️ **Richiamo del 2026-10-03:** è la chiusura del 2026-09-04, e ciò che detta è fatto — la rilettura del proprietario e il piano dei documenti, scritto ed eseguito: la §5.5, punti 3 e 4 —; il prossimo passo lo dice la §6 del compendio, e la lettura d'apertura e la regola di una fase per sessione le dice `CLAUDE.md`, non i passi qui sotto; i comandi rendono la sessione di allora, fino al suo commit, `8fb9a94` — audit del 2026-09-30, AUD-656.
 
 ⚠️ **È il documento di consegna di questa sessione**, e sta qui e non in un file a parte perché il
 repo ha già la sua convenzione: lo stato vive in file **tracciati**, e chi riprende legge **questo**
@@ -589,8 +592,8 @@ che la rilettura aggiunge si registra nella stessa sezione, come fece il disegno
 | | Stato alla chiusura, e il comando che lo rifà |
 |---|---|
 | Ramo | `main`, allineato a `origin` — zero avanti, zero dietro: `git status -sb` dopo `git fetch --all --prune`. Nessuno stash, nessuna operazione a metà |
-| I commit di questa sessione | `git log --oneline 07ab6dc..HEAD` — il primo: il disegno scritto sul posto, l'archivio della consegna, il puntatore della §6; il secondo: la trappola 14; il terzo: questa chiusura |
-| Codice di prodotto | **non toccato**: `git diff --stat 07ab6dc..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml docs/adr/` non rende nulla. Sono cambiati tre file di documentazione: questo, il compendio, e l'archivio della consegna |
+| I commit di questa sessione | `git log --oneline 07ab6dc..8fb9a94` — il primo: il disegno scritto sul posto, l'archivio della consegna, il puntatore della §6; il secondo: la trappola 14; il terzo: questa chiusura |
+| Codice di prodotto | **non toccato**: `git diff --stat 07ab6dc..8fb9a94 -- crates/ scripts/ Cargo.lock Cargo.toml rust-toolchain.toml docs/adr/` non rende nulla. Sono cambiati tre file di documentazione: questo, il compendio, e l'archivio della consegna |
 | Cancello | `bash scripts/check-docs.sh` → `OK` a ogni commit; `bash scripts/gate.sh` → **`GATE GREEN`, rilanciato all'apertura (misura 3) e alla chiusura** — e nessun file che il cancello legga è cambiato fra le due corse. Si rilanciano, non si citano |
 | Fine-riga | questo file e l'archivio sono **LF** nell'indice e nell'albero; il compendio è LF nell'indice e **CRLF** nell'albero, con CR = righe: `git ls-files --eol docs/COMPENDIO.md docs/archivio/consegna-brainstorming-knowledge-base.md docs/superpowers/specs/2026-09-04-knowledge-base-design.md`, e `tr -cd '\r' < docs/COMPENDIO.md \| wc -c` contro `wc -l < docs/COMPENDIO.md` |
 | File temporanei | nessuno nel repository: gli script di questa sessione stanno nello scratchpad, fuori dall'albero, come `CLAUDE.md` prescrive |

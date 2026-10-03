@@ -4,6 +4,26 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-10-03 — tre punti di questo ADR si leggono con ciò che è stato misurato dopo.** Audit del
+> 2026-09-30. **Nessuna riga è superata, e la decisione — il core si scrive in Rust — è invariata.**
+>
+> - **`#![no_std]` si scavalca con una riga** — la terza *Positive*, su I3 e V28, e la seconda *Negative*, *«chi non
+>   sceglie `forbid` e `no_std` ottiene un confine disattivabile»*. `no_std` non si zittisce con un `#[allow]`, ma
+>   `extern crate std;` scritto dentro la crate rimette `std` nella sua portata: misurato il 2026-10-03, `rustc 1.95.0`,
+>   una crate `#![no_std]` con quella riga e una chiamata a `std::fs::metadata` **compila**, e senza la riga dà
+>   `E0433`. La misura di T6 (b) aveva provato la sola forma che nomina `std::fs`. Nel prodotto la regola la regge il
+>   **cancello senza OS**, `scripts/gate-no-os.sh`: costruisce `kernel` e `simulator` per `x86_64-unknown-none`, e lì
+>   la stessa riga dà `E0463` — provato con quella violazione nella §7.2 del
+>   [disegno della chiusura del sotto-progetto 1](../superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md).
+>   AUD-587.
+> - **«l'unica via di aggiramento residua»** — la seconda *Positive*. Poggia sulla premessa di T2 dello spike, falsa
+>   alla lettera: `Instruction::new(String)` è pubblico, e `Instruction::new(u.as_str().to_string())` porta il testo
+>   non fidato nel canale delle istruzioni senza `unsafe`; nel kernel le vie aperte sono dichiarate una per una in
+>   `crate::boundary`. Che cosa ne segua per il verdetto di T4 è la scelta aperta su AUD-681.
+> - **«nessuno dei due ADR nomina l'altro»** — nel rimando in fondo. Vale **a proposito di `madsim`**:
+>   [ADR-0031](0031-dipendenze-del-kernel-parte-del-confine.md) nomina questo ADR due volte, per `no_std` e per
+>   `forbid`, e mai per la conseguenza su `madsim`. AUD-151.
+
 ## Context
 
 Il linguaggio del core non era scelto perché due spike bloccanti potevano escluderne

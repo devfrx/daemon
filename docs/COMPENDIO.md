@@ -371,7 +371,7 @@ l'unico punto di lettura delle credenziali**, e da questo punto unico discendono
 meccanismi già decisi: mascheratura nel record di routing, escalation automatica dei
 vincoli sui dati, canary di esfiltrazione. **Profilo «riservato»** opzionale con
 passphrase, che **disattiva avvio automatico e voce always-on** — mutuamente esclusivi,
-e fingere il contrario sarebbe disonesto. ⚠️ **Rimando del 2026-09-03, in testa all'ADR:** il profilo «riservato» disattiva **anche la telecamera** — ADR-0039.
+e fingere il contrario sarebbe disonesto. ⚠️ **Rimando del 2026-09-03, in testa all'ADR:** il profilo «riservato» disattiva **anche la telecamera** — ADR-0039. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** il `0600` vale solo su Unix e alla creazione, e non protegge un disco letto fuori dal sistema; la cifratura è del **15**, e che cosa dica l'interfaccia fino ad allora la scelta aperta AUD-686.
 
 **0024 — Il checkpoint del filesystem copre ambiti dichiarati.** Un **ambito di
 lavoro** è un insieme di percorsi dichiarato esplicitamente; il checkpoint copre quelli
@@ -406,14 +406,14 @@ in Go lo scheduler appartiene al runtime e il determinismo è *fornito* solo den
 test, e misurato solo parzialmente; in TypeScript il controllo esiste solo rinunciando
 ad `async`/`await`, e senza parallelismo reale. ⚠️ **L'esito non era scontato:** i
 criteri erano fissati prima che i candidati esistessero, e la verifica su Go è stata
-eseguita per **falsificare** l'attesa.
+eseguita per **falsificare** l'attesa. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** `extern crate std;` scavalca `no_std`, e nel prodotto lo coglie il cancello senza OS; la premessa di T2 è falsa, e T4 è la scelta aperta AUD-681; 0031 nomina 0026, ma non su `madsim`.
 
 **0027 — La GUI è un'interfaccia web, non un toolkit nativo.** Ha deciso **G7 —
 artifacts o canvas con anteprima viva**: rendere contenuto arbitrario prodotto da un
 modello con anteprima viva **richiede** un motore web, e un toolkit nativo dovrebbe
 incorporarne uno comunque, cioè pagare due stack invece di uno. Rinforzano G6 (viewer
 3D) e G20 (accessibilità: quella del web è la più matura). **Scelta a basso rischio per
-costruzione:** se fosse sbagliata, la GUI si riscrive **senza toccare il kernel**.
+costruzione:** se fosse sbagliata, la GUI si riscrive **senza toccare il kernel**. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** il guscio è deciso; col rendering vero P3 **non passa** (SP-8), la leva è la SPA e il flusso pesa anch'esso; P4 prova che il core sopravvive e riaccetta, non che non aspetti.
 
 **0028 — Worker ML in Python.** Non è una scelta: i modelli hanno implementazioni
 Python. L'ADR ne dichiara i costi. Ciò che un worker **non** contiene, e non è una
@@ -427,13 +427,13 @@ riposo e sotto streaming · dimensione del pacchetto · fps del viewer 3D e API 
 P3 con rendering vero · **M5**, VRAM a riposo e sotto carico 3D (aggiunta da ADR-0033).
 ⚠️ **L'innesco Linux:** al primo Linux vero si rimisurano M3 e M5; se M3 mostra la stessa API
 grafica sulle due piattaforme con Tauri, la decisione si **riapre con un ADR nuovo**.
-`dockview` resta, dopo le otto mosse.
+`dockview` resta, dopo le otto mosse. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** la parte 2 non ha misurato né P3 né il rimedio di Q3, che passa al guscio del **10**; M5 è un proxy; il decodificatore di Q1 non è costruito — scelte aperte AUD-591, AUD-592, AUD-593.
 
 **0030 — L'interfaccia si scrive in Vue 3, come SPA.** Ha deciso la **competenza del
 proprietario**, criterio **legittimo qui** perché nessuna invariante vincola la scelta
 e la GUI è l'artefatto più sacrificabile del sistema (in ADR-0026 non lo era). Per le
 componenti pesanti si preferiscono le librerie **agnostiche** rispetto al framework
-(`three`, `codemirror`) alle incapsulazioni Vue: sopravvivrebbero a un cambio.
+(`three`, `codemirror`) alle incapsulazioni Vue: sopravvivrebbero a un cambio. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** il guscio non è più aperto, è Electron.
 
 **0031 — Le dipendenze del kernel sono parte del confine I3.** Le crate che devono
 essere deterministiche e prive di OS — `kernel` e `simulator` — hanno una **lista
@@ -451,13 +451,13 @@ prima volta il kernel porta `syn` a tempo di compilazione.
 controllo.** Usato con uno `StorageBackend` **scritto da noi** invece di quello su file
 predefinito. Il backend nostro **non è un dettaglio**: è il punto in cui il requisito 4
 (I/O iniettabile) diventa reale. Due implementazioni: backend su file in `platform`
-(l'I/O vero) e backend **cadente in memoria** — cade a un'operazione scelta dal seme, ed è
+(l'I/O vero) e backend **cadente in memoria** — cade al punto che sceglie chi chiama, e la campagna li percorre tutti, senza seme: è
 **l'iniezione di livello 2**. ⛔ **Il cadente vive in `platform` e NON in `simulator`:**
 `redb` non ha `no_std`, i sei metodi di `StorageBackend` restituiscono `std::io::Error`, e il
 grafo spedito di `simulator` lo rifiuterebbe come **«I3 violated»**. I **due livelli di crash**
 hanno soggetti diversi — rimando datato in ADR-0032.
 `redb` vive in `platform`, quindi ADR-0031 non lo vincola: il kernel conosce solo la porta
-`journal`.
+`journal`. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** il livello 2 non ha seme, e il suo oracolo confronta il contenuto, a prefisso.
 
 **0033 — La GPU della GUI: quota di presentazione sottratta, concessione tenuta dal
 core.** Il consumo GPU della GUI si modella come **tre consumatori distinti**:
@@ -476,7 +476,7 @@ ha un titolare · **sopravvive alla GUI uccisa in qualsiasi istante**, quindi ne
 protocollo di liveness contro un processo progettato per morire · la quota non si
 libera a GUI chiusa, o la GUI riaperta andrebbe in OOM. Se la GUI muore tenendo una
 concessione ordinaria, il core se ne accorge dalla **disconnessione IPC** e riconcilia.
-**I2 si completa, non si riformula.**
+**I2 si completa, non si riformula.** ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** M5 è un proxy — scelte aperte AUD-592 e AUD-199 —; P3 non ha più margine, quindi E va misurata; il gettone audio la radice di composizione lo lascia cadere, e il titolare per l'8 è la scelta aperta AUD-200.
 
 **0034 — I parametri di decisione sono consegnati al kernel, non letti.** **Nessuna
 decisione del kernel legge un parametro che non le è stato consegnato.** Il kernel
@@ -488,7 +488,7 @@ ricava dall'archivio via `platform` e in simulazione lo riceve dal banco · la
 è un sistema di configurazione (niente formato, schema, validazione, ricarica a caldo),
 non è un registro a chiavi stringa, non è sostituzione a caldo generalizzata, e non
 decide il formato dell'archivio. In sotto-progetto 1 i default sono **letterali in
-`daemon`**.
+`daemon`**. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** la campagna che fa variare i parametri col seme non esiste — scelta aperta AUD-711.
 
 **0035 — La porta verso i worker, e cosa significa «singolo» in I4.** Il dialogo con un
 worker vive dentro la porta **`process`**, che copre **avvio, dialogo e uccisione** —
@@ -499,7 +499,7 @@ di trasporto e uno schema _per canale privato_** — nessun broker, nessun servi
 discovery, nessuna negoziazione, nessun versionamento. Ciò che I4 compra è che non
 esista un **contratto pubblico** da congelare, e nessuno dei due canali ha consumatori
 esterni. Il rifiuto di un pari stantio resta il **timbro di build**, identico sui due
-canali. **I4 si completa, non si riformula.**
+canali. **I4 si completa, non si riformula.** ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** l'esito B di M-1 non è scattato — il canale `process` è `minicbor` in `kernel`, ADR-0037 —, e il codice tratta il testo che la GUI sceglie come non fidato: scelta aperta AUD-005.
 
 **0036 — L'evoluzione del formato durevole del giornale.** **Ogni record durevole
 dichiara la propria versione, e i suoi campi si identificano per indice esplicito.**
@@ -520,15 +520,15 @@ dentro la scrittura**, e perché il costo misurato è piccolo. **Il controllo è
 non due, perché un registro separato sarebbe un secondo posto da tenere allineato e il
 primo che smette mente in silenzio. ⛔ **I byte congelati non si rigenerano:** se
 cambiano non è un aggiornamento, è un **cambio di formato**.
-✅ **Esistono dal 2026-08-10** — `crates/kernel/tests/frozen_bytes.rs` e `tests/frozen/` — e
-sono **tre** record, non uno: i tre enum `index_only` hanno **otto** varianti fra loro e un
-record solo ne fisserebbe tre. Le otto sono state rinumerate una per una: **otto rossi su otto**.
+✅ **Esistono dal 2026-08-10** — `crates/kernel/tests/frozen_bytes.rs` e `tests/frozen/` —: ogni
+variante dei tre enum `index_only` ha il suo record congelato, e un test che legge gli enum lo pretende;
+quanti, `ls crates/kernel/tests/frozen/*.cbor`. Rinumerate una per una il 2026-08-10, ciascuna diede un rosso.
 ✅ **E l'additività della regola 3 è MISURATA, non citata:** un campo facoltativo su un indice
 libero lascia i byte **identici** finché è `None` — `minicbor` tronca un `None` in coda invece
 di scrivere `null` — e li allunga di un byte quando è `Some`, che è la metà senza la quale il
 verde non proverebbe nulla (gotcha **#54**). ⛔ **La mappa è RILETTA dal banco**, non prosa:
 offset e byte di ogni riga devono ricostruire il `.cbor`, il che rende impossibile un
-segnaposto sopravvissuto al commit (gotcha #43).
+segnaposto sopravvissuto al commit (gotcha #43). ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** la regola 3 vale per le aggiunte — una specie nuova entra con un `kind` nuovo **e** il dettaglio, mai l'uno senza l'altro (D20) —; una variante ignota rende il record `Malformed` a una build vecchia, una specie di `Detail` ignota diventa `None` in silenzio.
 
 **0037 — Il criterio del pari.** **Il formato di un canale privato si sceglie _anche_
 sull'ecosistema di chi lo legge, e la risposta si _misura per pari_.** M-1 chiedeva se il
@@ -546,7 +546,7 @@ parte, e P1 sembrava rispondervi pur avendo **due binari Rust** ai due capi.
 **misurata**, non accidentale, e non va «sanata». ⛔ E un decodificatore scritto e
 mantenuto **da noi** nel linguaggio del pari **non è una via**: è una seconda definizione
 dello schema, e misurato sbaglia **in silenzio** — un lettore ingenuo del varint ha
-restituito `251` al posto di `4096` senza sollevare nulla.
+restituito `251` al posto di `4096` senza sollevare nulla. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** modifica in parte ADR-0035, sul formato del canale worker; come decodifica la GUI l'ha deciso il 2, con Q1 di ADR-0029.
 
 **0038 — Il registro delle funzioni del programma.** **Un registro unico, molti invocatori,
 lo stesso permesso.** Il kernel dà registrazione, invocazione, il permesso come tripla di ADR-0016
@@ -555,8 +555,8 @@ Agente, gesto, voce e click passano dalla **stessa** porta con la **stessa** tri
 logica «solo per gesti» esiste. Un evento di percezione **informa, mai autorizza** (ADR-0014 per
 analogia); un effetto irripetibile chiede conferma a qualunque invocatore, e **per default la
 conferma non è gestuale**. La manipolazione della GUI — pannelli, menu — è presentazione e
-**non passa dal registro**. ⛔ **Nessun codice nasce con l'ADR:** il registro lo costruisce il
-primo invocatore, il click del sotto-progetto 2; quali funzioni siano gestuali lo decide il 12. ⚠️ **Rimando del 2026-09-05, in testa all'ADR:** la knowledge base registra le **CRUD** dei propri file e gruppi come funzioni del registro, spostamenti compresi; «aggiungi al contesto» ha **due invocatori**, il click e il modello — disegno della knowledge base.
+**non passa dal registro**. ⛔ **Nessun codice nacque con l'ADR:** il registro l'ha costruito il
+sotto-progetto 2, col click — rimando del 2026-10-03 —, ma niente impone ancora che una funzione nuova vi passi; quali siano gestuali lo decide il 12. ⚠️ **Rimando del 2026-09-05, in testa all'ADR:** la knowledge base registra le **CRUD** dei propri file e gruppi come funzioni del registro, spostamenti compresi; «aggiungi al contesto» ha **due invocatori**, il click e il modello — disegno della knowledge base.
 
 **0039 — La telecamera come sorgente di percezione always-on sotto il core.** Un worker Python
 **possiede** la telecamera e i fotogrammi **non escono mai**; al core arrivano **eventi** — lo
@@ -573,6 +573,7 @@ Concessione da **zero MiB**, `Preemption::Never`, chiesta all'**accensione**: la
 lettura — e lo paga il sotto-progetto **12**; la Voce riusa. Tre ipotesi le misurano **SP-7** e
 la sonda S3; il confinamento del worker (decisione 13) e la terza quota (decisione 9) restano
 **registrati**. Le fonti F1–F9 in [`riferimenti.md`](riferimenti.md). ✅ **Rimando del 2026-09-05, nella riga del perimetro negativo:** la destinazione di una cattura è **decisa** — nella knowledge base come artefatto, la run la vede come riferimento (decisione 7 dei gesti, chiusa dal disegno della knowledge base).
+⚠️ **Rimandi del 2026-10-02, in testa all'ADR:** la cattura è l'unico caso in cui un fotogramma uscirebbe, oggi non esce, e l'eccezione la decide il 12 con un ADR suo; SP-7 ha misurato — S1 non passa, S2 e S3 sì — e che cosa ne segue per il tracciatore lo decide il 12; il 2 legge già una porta e ha il timbro di build; il messaggio IPC con la mano è del 12; il trigger di ADR-0009 apre una run — audit del 2026-09-30.
 
 **0040 — Dove vivono i dati, e che cosa salva il programma.** **Modifica ADR-0022 in tre punti** — la riga
 «artefatti», le guide, la conseguenza sulla base di conoscenza —, e lo stato di 0022 resta `Accepted`. I **dati del
@@ -592,8 +593,8 @@ sistema:** su Windows la pipe nasce con un descrittore che dà accesso al solo S
 proprietario della pipe col proprio; su Linux il socket è un file in `$XDG_RUNTIME_DIR`, che il core verifica chiusa
 agli altri prima di legarlo — assente o aperta, il core non parte —, e un socket rimasto da un crollo si toglie solo
 se nessun core vivo risponde. L'account atteso è **consegnato** al trasporto, come il nome e il tetto: il rifiuto si
-prova con un account solo. ⚠️ **Fuori dal confine**, come in ADR-0023: un processo che gira come l'account. Lo
-costruisce P06 del terzo audit; il capo della GUI nasce con la shell.
+prova con un account solo. ⚠️ **Fuori dal confine**, come in ADR-0023: un processo che gira come l'account. Il
+capo del core è costruito — P06 del terzo audit, integrato il 2026-10-02: rimando del 2026-10-03 —; il capo della GUI nasce con la shell.
 
 ---
 
@@ -777,7 +778,7 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 | ❌ **riscrivere `tracciabilita.md` da zero** | le funzionalità sono già mappate, e **quante** lo dice il comando nel riquadro in testa a [`tracciabilita.md`](tracciabilita.md): si **aggiorna** — riletta alla chiusura del sotto-progetto 1 il 2026-09-03, e si riaggiorna a ogni sotto-progetto chiuso |
 | ❌ **ri-cercare lo stato dell'arte già tracciato** | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
 | ❌ **rifare gli spike SP-5, SP-6, SP-7 e SP-8** | esiti, versioni e comandi in `spikes/RISULTATI.md` — coi **seed** per SP-5 e SP-6, che SP-7 e SP-8 non hanno; per SP-7 e SP-8 i protocolli congelati in `spikes/gesti/PROTOCOLLO.md` e `spikes/gui-shell/PROTOCOLLO.md` |
-| ❌ **rifare le misure da M-1 a M-11** | tutte chiuse, con comandi, versioni e sonde. M-9 sta per intero in ADR-0036, **M-10 e M-11 in ADR-0037**. L'unica aperta era **M5** (senza trattino) ✅ **misurata da SP-8 il 2026-09-10** su Windows, ma come **proxy** — la memoria condivisa dell'integrata di un'altra macchina, da rimisurare su quella di ADR-0002 — e la metà Linux è l'innesco: entrambe scritte in ADR-0029 |
+| ❌ **rifare le misure da M-1 a M-11** | tutte chiuse, con comandi, versioni e sonde. M-9 sta per intero in ADR-0036, **M-10 e M-11 in ADR-0037**. L'unica aperta era **M5** (senza trattino) ✅ **misurata da SP-8 il 2026-09-10** su Windows, ma come **proxy** — la memoria condivisa dell'integrata di un'altra macchina, da rimisurare sulla RTX 5080 della §0.3 del disegno del kernel — e la metà Linux è l'innesco: entrambe scritte in ADR-0029 |
 | ❌ **riaprire le due decisioni della §7.3** | prese dopo aver misurato. Riaprirle richiede una misura nuova, non un'opinione |
 | ❌ **riaprire la copertura della §8** | la §8 è **spec**, e il vincolo globale 1 del piano della chiusura vieta di toccarla: le righe si leggono, non si ri-giudicano. ⚠️ **RICHIAMO DEL 2026-09-03: il sotto-progetto 1 l'ha riaperta una volta**, e per decisione del **proprietario** — la via **A**, voce `E10` dell'errata del [piano della chiusura](superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md) — col vincolo **sospeso** per il solo compito 3bis e per le sole §8.3 e §8.4. Riaprirla di nuovo richiede la stessa decisione |
 | ❌ **riaprire F3, F6, F5, F1a, F2, F7** | chiuse, con i limiti dichiarati |
@@ -850,7 +851,7 @@ vi compare è onorato.** Misurati uno per uno contro il codice il 2026-08-27, **
 | 9 | riga per riga, **cosa sale da `spikes/rust/` e cosa resta** | §2.5 |
 | 10 | ogni regola nuova porta **due** sonde e un caso in `tests/compile_fail/` con il suo `.stderr` — da **leggere**, non da rigenerare in blocco | §7.1.4 · gotcha #25 |
 | 11 | **nessuna decisione legge un parametro che non le è stato consegnato**. In sotto-progetto 1 i default sono **letterali in `daemon`** | §2.8 · ADR-0034 |
-| 12 | il record durevole è un **enum di versione**, ogni campo ha un **indice esplicito**, un campo nuovo è facoltativo con indice nuovo, un indice **si ritira e non si riusa mai** | §4.9 · ADR-0036 |
+| 12 | il record durevole è un **enum di versione**, ogni campo ha un **indice esplicito**, un campo nuovo è facoltativo con indice nuovo **se è un'aggiunta** — una specie nuova porta anche un `kind` nuovo, D20 —, un indice **si ritira e non si riusa mai** | §4.9 · ADR-0036 |
 | 13 | la porta `journal` scambia **byte**, non record tipizzati: la codifica vive in `kernel` | §4.1 · §4.9.3 · §7.3.1 |
 | 14 | ⛔ al **primo record scritto**, i suoi byte entrano nel repository come **oracolo**, con la mappa `indice → nome → valore atteso`. **Non si rigenerano** | §4.9.4 · gotcha #25 |
 | 15 | il **canale worker** usa `minicbor`, la porta `process` scambia **byte**, ogni frame **dichiara la propria lunghezza** e la decodifica verifica i byte consumati, e ogni `Vec<u8>` porta l'**annotazione di stringa di byte** | §6.10 · ADR-0037 · gotcha #34, #35 |

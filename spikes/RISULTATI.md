@@ -34,7 +34,7 @@ due app sono state **installate** dagli installatori NSIS per utente e misurate 
 `gui-ipc/` com'è — righe JSON, `"lorem ipsum dolor sit amet"` su ogni riga, quindi markdown senza blocchi di codice.
 Le otto mosse, Q3, Q4, la CPU con la chat nascosta e la VRAM a pagina intera: **col proprietario il 2026-09-10**, qui sotto.
 
-**La macchina:** CPU `Intel(R) Core(TM) i7-14700HX`, GPU `Intel(R) UHD Graphics`, `NVIDIA GeForce RTX 4060 Laptop GPU` — la webview sull'integrata, come dice `api=` nelle righe M3 (richiamo E9 del protocollo: non è la macchina di ADR-0002), WebView2 `152.0.4191.66`, il Chromium di Electron `Chrome/152.0.7977.78`.
+**La macchina:** CPU `Intel(R) Core(TM) i7-14700HX`, GPU `Intel(R) UHD Graphics`, `NVIDIA GeForce RTX 4060 Laptop GPU` — la webview sull'integrata, come dice `api=` nelle righe M3 (richiamo E9 del protocollo: non è la macchina di ADR-0002 — ⚠️ **richiamo del 2026-10-03:** ADR-0002 non nomina nessuna macchina, e quella di riferimento, RTX 5080 da 16 GB, sta nella §0.3 del [disegno del kernel](../docs/superpowers/specs/2026-08-06-kernel-design.md); audit del 2026-09-30, AUD-594), WebView2 `152.0.4191.66`, il Chromium di Electron `Chrome/152.0.7977.78`.
 
 | Misura | Criterio | Electron — corsa 1; corsa 2 | Tauri — corsa 1; corsa 2 |
 |---|---|---|---|
@@ -252,12 +252,12 @@ risultato perso.
 | Criterio | Comando | Output osservato | Divergenza dall'attesa |
 |---|---|---|---|
 | **T1** | `cargo test --test compile_fail` | `error[E0308]: mismatched types … expected &Instruction, found &Untrusted`. **Provato non vacuo**: rendendo compilabile la violazione il test passa a `FAILED`, ripristinandola torna `ok` | il piano prevedeva questo esito; confermato |
-| **T2** | ricerca testuale su `src/` | una sola funzione, `Untrusted::promote_to_instruction`. I campi delle due struct non sono pubblici: nessun'altra via di costruzione dall'esterno | nessuna |
+| **T2** | ricerca testuale su `src/` | una sola funzione, `Untrusted::promote_to_instruction`. I campi delle due struct non sono pubblici: nessun'altra via di costruzione dall'esterno. ⛔ **RICHIAMO DEL 2026-10-03:** falso alla lettera — `Instruction::new(String)` è pubblico, e `Instruction::new(u.as_str().to_string())` porta il testo non fidato nel canale delle istruzioni senza `unsafe`; `promote_to_instruction` è l'unico percorso **nominato**, non l'unico. Che cosa ne segua per il verdetto T4 di questa tabella è la scelta aperta su AUD-681; audit del 2026-09-30, AUD-681 | nessuna |
 | **T3** | `cargo test --test boundary` | `summarize(&Untrusted) -> Untrusted`: la firma **impone** l'ereditarietà, non la raccomanda | nessuna |
 | **T4** | `cargo build` con `#![forbid(unsafe_code)]` + `#[allow(unsafe_code)]` locale | `error[E0453]: allow(unsafe_code) incompatible with previous forbid`. **`forbid` non è scavalcabile per riga**, a differenza di `deny` | nessuna. Per la regola di decisione del protocollo è `passa`, non `parziale`: il divieto è del compilatore |
 | **T5** | `cargo build` | la compilazione dell'intero progetto è essa stessa il controllo: non esiste un sito d'uso che si possa dimenticare di controllare | nessuna |
 | **T6 (a)** lint | `cargo clippy -- -D clippy::disallowed_methods -D clippy::disallowed_types` | ferma `SystemTime::now`; **`cargo build` da solo NON la ferma**. Il divieto vive in `clippy.toml`, è configurabile e disattivabile con `#[allow]` | — |
-| **T6 (b)** compilatore | `cargo build -p kernel_core` su una crate `#![no_std]` | `error[E0433]: cannot find module or crate 'std'`. Non è un lint: è ciò che il compilatore ha caricato. Provato in **entrambe** le direzioni | — |
+| **T6 (b)** compilatore | `cargo build -p kernel_core` su una crate `#![no_std]` | `error[E0433]: cannot find module or crate 'std'`. Non è un lint: è ciò che il compilatore ha caricato. Provato in **entrambe** le direzioni. ⚠️ **RICHIAMO DEL 2026-10-03:** la sonda nominava `std::fs`; una riga sola, `extern crate std;`, rimette `std` nella portata della crate, e una chiamata a `std::fs` **compila** — misurato il 2026-10-03, `rustc 1.95.0`. Il divieto non si zittisce con un `#[allow]`, ma si scavalca per sito; nel prodotto lo coglie il cancello senza OS, `scripts/gate-no-os.sh`, con `E0463` su `x86_64-unknown-none`. Audit del 2026-09-30, AUD-587 | — |
 
 **Nota strutturale su T6.** In Rust entrambi i meccanismi sono a **granularità di
 crate**, non di modulo. Conseguenza architetturale, non dettaglio: il kernel dovrebbe
@@ -293,7 +293,8 @@ misurare il tempo di parete proprio per provare che il tempo virtuale non ha att
 Si è dovuto scrivere `#[allow(clippy::disallowed_methods)]` su quel test. È la prova,
 su un caso reale e non ipotetico, che il meccanismo (a) è **disattivabile per sito** —
 mentre `forbid` e `no_std` non lo sono. Il confine forte in Rust c'è, ma va scelto:
-non è quello di default.
+non è quello di default. ⚠️ **RICHIAMO DEL 2026-10-03:** `no_std` lo è, con `extern crate std;` — vedi T6 (b) qui
+sopra; audit del 2026-09-30, AUD-587.
 
 ### SP-6 · Go — eseguito il 2026-08-06, go1.26.5
 

@@ -9,6 +9,28 @@
 > sostengono, e forzarla su un argomento sarebbe contro il metodo di questo repository.
 > ✅ **RICHIAMO DEL 2026-09-10:** chiusa con **SP-8** — la *Decision* qui sotto; l'avviso resta com'era, perché è la storia di questa decisione.
 
+> ⚠️ **Rimando del 2026-10-03 — cinque punti si leggono con ciò che il sotto-progetto 2 ha costruito e non ha
+> costruito, e con la macchina di riferimento.** Audit del 2026-09-30. **La decisione — Electron — è invariata.**
+>
+> - **«la macchina di ADR-0002»** — nella *Decision* e sotto la tabella. ADR-0002 decide il sistema operativo e il
+>   confine, e non nomina nessuna macchina: quella di riferimento — RTX 5080, 16 GB — sta nella §0.3 del
+>   [disegno del kernel](../superpowers/specs/2026-08-06-kernel-design.md). AUD-594.
+> - **M5, «da rimisurare là»** — sotto la tabella. SP-8 l'ha presa il 2026-09-10 come proxy, sulla memoria condivisa
+>   dell'integrata, dove la dedicata è zero per costruzione. Quando e chi la rimisuri sulla macchina di riferimento non
+>   è scritto in nessuna casa: è la scelta aperta su AUD-592. AUD-592.
+> - **P3, «che la parte 2 del piano misura»** — sotto la tabella. La parte 2 è eseguita e il 2 è chiuso il 2026-09-22,
+>   ma P3 non l'ha rimisurato: il piano partiva coi numeri in mano, e la SPA non ha una scena 3D — `gui/package.json`
+>   non dipende da `three`. Chi chiude P3 è la scelta aperta su AUD-591. AUD-591.
+> - **Q3, il rimedio http(s) «da misurare nella parte 2»** — nella riga Q3 e fra le *Negative*. La parte 2 non l'ha
+>   misurato: la SPA porta due comandi e non tre — `gui/src/frame/BigTab.ts`, D58 —, perché la finestra a parte ha
+>   bisogno del guscio, e in `gui/` un guscio non c'è. La misura passa al **guscio vero**, che il
+>   [disegno del design system](../superpowers/specs/2026-09-22-design-system-design.md) assegna al sotto-progetto
+>   **10**. AUD-154, AUD-590.
+> - **Q1, chi decodifica `bincode`** — nella riga Q1 e fra le *Negative*. È deciso — il processo principale Node, con
+>   `bincode-ts` — e **non costruito**: nella parte 2 nessuno decodifica, e la voce col chiusore *«il guscio»* vive solo
+>   nel piano eseguito. Se il ponte e il decodificatore arrivino col guscio del 10 o prima, col 3, che porta i primi
+>   token del core vero, è la scelta aperta su AUD-593. AUD-593.
+
 ## Context
 
 [ADR-0027](0027-stack-della-gui.md) decide che la GUI è un'**interfaccia web**, per G7.

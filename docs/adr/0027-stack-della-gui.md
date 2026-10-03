@@ -14,6 +14,27 @@
 > incompleta secondo il metodo del repository. Il perimetro è stato ristretto a ciò
 > che le misure sostengono davvero.
 
+> ⚠️ **Rimando del 2026-10-03 — il guscio è deciso, e P3 e P4 si leggono con le misure venute dopo.** Audit del
+> 2026-09-30. **Nessuna riga è superata: la decisione — un'interfaccia web — è invariata.**
+>
+> - **Il guscio** — il perimetro qui sopra, *«ancora aperto»*: [ADR-0029](0029-guscio-della-gui.md) è `Accepted` dal
+>   2026-09-10, **Electron**, con SP-8. AUD-153.
+> - **P3** — la sua riga nella tabella, la *Positive* *«P1–P4 sono soddisfatti con margine su tre criteri su quattro»*,
+>   la *Negative* sul margine e il primo *Follow-up*. SP-8 l'ha rimisurato col rendering vero, M4 di ADR-0029: **non
+>   passa** su nessuno dei due gusci, e la sola scena `three` a riposo sta già vicino o sopra la soglia prima di
+>   qualunque messaggio — O2 della sezione SP-8 di [`spikes/RISULTATI.md`](../../spikes/RISULTATI.md). Il *Follow-up*
+>   *«la leva non è la GUI ma la frequenza di aggiornamento decisa dal core»* è smentito: ADR-0029 mette la leva nella
+>   **SPA** — un tetto di fps, o il rendering a richiesta —, e il flusso dei messaggi pesa anch'esso (O2), quindi la
+>   frequenza del core è una seconda leva, non l'unica. Chi rimisuri P3 sulla SPA, che oggi non ha una scena 3D, non
+>   è scritto: è la scelta aperta su AUD-591. AUD-004, AUD-035, AUD-152.
+> - **P4** — la sua riga nella tabella. Il prototipo prova che il core **sopravvive** alla gui e la **riaccetta**, non
+>   che non se ne accorga: dopo la caduta resta fermo in `accept()`, bloccante per default in `interprocess`, finché
+>   una gui nuova non si collega, e caduta e riapertura si registrano nello stesso giro, quindi sullo stesso messaggio,
+>   il 606, qualunque sia stata l'attesa; la cadenza ancorata all'orario recupera poi il ritardo a raffica, quindi i
+>   10 000 ms non distinguono un core che prosegue da uno che aspetta. Il prodotto non eredita il blocco:
+>   `crates/platform/src/ipc.rs` ascolta con `ListenerNonblockingMode::Accept`. I dettagli accanto alla corsa 2 di
+>   [`spikes/GUI-REQUISITI.md`](../../spikes/GUI-REQUISITI.md). AUD-729, AUD-544.
+
 ## Context
 
 La GUI non ha incognite bloccanti: [ADR-0004](0004-topologia-di-processo.md) la rende

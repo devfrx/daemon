@@ -36,6 +36,12 @@ sarebbe burocrazia, non rigore.
 | C6 | Unità concorrenti **native** del linguaggio, in contesa, producono la stessa traccia a parità di seed | ≥3 unità native, ordine di acquisizione registrato, **100 esecuzioni** stesso seed | 100 tracce byte-identiche |
 | **C7** | L'**I/O durevole** è iniettabile, e un crash al confine di persistenza è riproducibile | il «giornale» dello spike scrive attraverso un'interfaccia sostituita da un doppio; il seed sceglie il punto di crash | traccia identica a parità di seed, **crash incluso**; nessuna chiamata diretta al filesystem nel codice sotto test |
 
+⚠️ **Richiamo del 2026-10-03 — C1–C7 sono i criteri di SP-5, e la stessa lettera nomina altre cose.** C0, C5 e C6 della
+§8.6.3 della [spec del sotto-progetto 1](../docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) e di
+[`porta-di-qualita.md`](../docs/porta-di-qualita.md) sono **contro-sonde** di `scripts/check-docs.sh`, e `C-1`, col
+trattino, è la voce 33 delle aperte del Traguardo 5 in quel file: una sigla C fuori da qui si legge col documento che la
+usa. Audit del 2026-09-30, AUD-528.
+
 ### Perché C7 esiste
 
 V29 elenca **quattro** cose iniettabili: tempo, casualità, **I/O**, scheduling. C1–C6

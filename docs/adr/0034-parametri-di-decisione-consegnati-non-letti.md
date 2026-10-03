@@ -4,6 +4,15 @@
 - **Date:** 2026-08-07
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-10-03 — la campagna che fa variare i parametri col seme non esiste.** La *Positive* *«La DST
+> può far variare i parametri col seme»*, con lo scenario di RK-1, e la *Negative* *«Il controllo che copre quel buco è
+> la campagna»* descrivono il controllo 2 della §2.8.4 della
+> [spec del sotto-progetto 1](../superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md), e quel controllo non è stato
+> costruito: ogni campagna costruisce `Parameters` con costanti del banco —
+> `grep -n 'Parameters::new(' crates/simulator/tests/*.rs`. Il buco della costante nascosta lo tengono soltanto test a
+> esempi, per alcuni parametri; come chiuderlo è la scelta aperta su AUD-711. Audit del 2026-09-30, AUD-711.
+> **Nessuna riga della decisione è superata.**
+
 ## Context
 
 [ADR-0021](0021-simulazione-deterministica-e-iniettabilita.md) rende iniettabili

@@ -5,6 +5,14 @@
 - **Deciders:** proprietario del progetto
 - **Nasce da:** i finding AUD-685 e AUD-688 del [terzo audit](../audit-2026-09-30.md)
 
+> ⚠️ **Rimando del 2026-10-03 — il capo del core è costruito.** `platform::ipc`: `Account::of_this_process`,
+> `channel_of_this_account` e `LocalSocketIpc::bound(channel, account, numbers, max_body)`, con le sonde delle due
+> direzioni — `this_account_gets_in_three_times_in_a_row` in `crates/platform/tests/ipc_contract_real.rs`, e il rifiuto
+> di un altro account in fondo a `crates/platform/src/ipc.rs` —; la metà Linux la prova la CI. Il capo della GUI resta
+> della shell. E la misura del 2026-10-02: anche una regola `GRGW` fa entrare tre client di fila, quindi l'«accesso
+> pieno» del punto 4 non è l'unica maschera che regge la creazione delle istanze, che il punto 4 porta come la sua
+> ragione. Audit del 2026-09-30, AUD-685. **Il testo della decisione non si riscrive.**
+
 ## Context
 
 Il core apre un canale locale, la porta `ipc` di [ADR-0035](0035-porta-verso-i-worker-e-lettura-di-i4.md), e la GUI

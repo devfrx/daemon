@@ -13,6 +13,13 @@
 > mutuamente esclusive, e fingere il contrario sarebbe disonesto. Nessuna riga è superata; il
 > meccanismo arriva col profilo, che nel codice non esiste ancora.
 
+> ⚠️ **Rimando del 2026-10-03 — il permesso `0600` non rende vera la frase che questo ADR vuole in interfaccia.** Il
+> rimando del 2026-08-18, in fondo, chiude dicendo che si aggiunge *«il permesso che rende vera la frase»*: non la
+> rende vera. Vale solo su Unix e alla creazione del file — su Windows il file prende la sicurezza della sua cartella
+> —, e nessun permesso protegge un disco letto fuori dal sistema, che è ciò che coprono le chiavi dell'OS. La
+> cifratura a riposo è del sotto-progetto **15**; che cosa dicano il filo e l'interfaccia fino ad allora è la scelta
+> aperta su AUD-686. Audit del 2026-09-30, AUD-686. **Il testo della decisione resta com'è.**
+
 ## Context
 
 Tre requisiti strutturali del progetto entrano in tensione diretta con la cifratura:

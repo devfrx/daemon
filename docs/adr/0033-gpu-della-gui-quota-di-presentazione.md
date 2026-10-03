@@ -4,6 +4,32 @@
 - **Date:** 2026-08-07
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-10-03 — M4 e M5 sono arrivate con SP-8, e quattro punti di questo ADR si leggono con loro.**
+> Audit del 2026-09-30. **Nessuna riga è superata: la quota di presentazione sottratta, con la concessione tenuta dal
+> core, è invariata.**
+>
+> - **M5** — il punto 5 della *Decision*, le *Negative* *«RK-1 si stringe…»* e *«La quota si tara su un numero che oggi
+>   non esiste»*, il primo *Follow-up*. SP-8 l'ha presa il 2026-09-10, ma come **proxy**: sul portatile, con la webview
+>   sull'integrata, dove la VRAM dedicata è zero per costruzione — [ADR-0029](0029-guscio-della-gui.md). Il parametro
+>   resta aperto fino alla misura sulla macchina di riferimento, la RTX 5080 della §0.3 del
+>   [disegno del kernel](../superpowers/specs/2026-08-06-kernel-design.md): quando e chi è la scelta aperta su AUD-592,
+>   e che cosa dica il proxy del default — `PRESENTATION_QUOTA` in `crates/daemon/src/main.rs` — la scelta aperta su
+>   AUD-199. AUD-592, AUD-199.
+> - **L'ipotesi E** — fra le alternative e nei *Follow-up*: *«P3 è già a 21,43 %»*, *«P3 ha 3,57 punti di margine»*.
+>   Erano i numeri del prototipo senza rendering, [ADR-0027](0027-stack-della-gui.md). Rimisurato col rendering vero —
+>   M4 di ADR-0029 —, P3 **non passa** su nessuno dei due gusci, e la sola scena a riposo sta già vicino o sopra la
+>   soglia: il margine non c'è più. E resta da misurare, a partire da qui. AUD-159, AUD-004.
+> - **La quota audio** — nell'alternativa C: *«il worker audio detiene una concessione permanente e non
+>   prelazionabile»*. Oggi un worker audio non esiste: la radice di composizione chiede all'avvio le due concessioni
+>   permanenti, audio e presentazione, e ne lascia cadere il gettone — `build_the_arbiter` in
+>   `crates/daemon/src/main.rs` —; la prenotazione resta nei conti dell'arbitro. Chi ne sia il titolare quando arriva la
+>   Voce, l'8, è la scelta aperta su AUD-200, e vale anche per AUD-203.
+> - **«misurato in P4, se ne accorge al messaggio 606»** — nel punto 3. Il prototipo prova che il core sopravvive alla
+>   gui e la riaccetta, non che se ne accorga senza fermarsi: il rimando del 2026-10-03 in testa ad ADR-0027 dice
+>   perché. Nel prodotto la morte della gui arriva alla porta `ipc` come `IpcError::Disconnected` e fa scattare
+>   `on_disconnect` di `kernel::client`; la riconciliazione la tiene `crates/simulator/tests/gui_death_campaign.rs`.
+>   AUD-729.
+
 ## Context
 
 [I2](0004-topologia-di-processo.md#invarianti) stabilisce che la GPU ha un solo

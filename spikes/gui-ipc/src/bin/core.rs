@@ -49,6 +49,17 @@ fn main() -> std::io::Result<()> {
 
             // G3 — la gui si può riaprire. Il core torna ad accettare senza
             // interrompere il proprio lavoro: prova una volta, senza bloccarsi.
+            //
+            // ⚠️ RICHIAMO DEL 2026-10-03 — falso, e con lui il «non aspetta» qui sopra. Il
+            // listener nasce senza `.nonblocking(...)`, e in `interprocess` il default è
+            // `Neither`, cioè `accept` bloccante; `incoming.next()` è
+            // `Some(self.listener.accept())`, quindi qui il core si ferma finché una gui nuova
+            // non si collega. Caduta e riapertura si registrano nello stesso giro, quindi sullo
+            // stesso `seq`; il braccio «non riaperta» in fondo si raggiunge solo con un errore di
+            // `accept`, e l'`expect("nessun client")` in testa non può scattare; la cadenza
+            // ancorata qui sotto recupera poi il ritardo a raffica. La corsa prova che il core
+            // sopravvive e riaccetta, non che non aspetti. Audit del 2026-09-30, AUD-544,
+            // AUD-729.
             if let Some(Ok(nuova)) = incoming.next() {
                 conn = nuova;
                 collegata = true;

@@ -81,6 +81,8 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 > ✅ **Aggiornata il 2026-10-03** — audit del 2026-09-30, AUD-646, AUD-513, AUD-514: la cifratura reale e la ritenzione del giornale hanno la sede **15**, *«Dati a riposo: cifratura e ritenzione»* nella [roadmap](roadmap.md); progress e notifiche dei lavori lunghi il 2 non li ha costruiti, e la loro sede è la scelta **E228** del proprietario.
 >
 > ✅ **Aggiornata il 2026-10-03** — audit del 2026-09-30, AUD-023, AUD-027, AUD-031, AUD-032, AUD-042: la contabilità, il ritentativo, i parametri nel record di routing e il tetto della run non sono nel kernel — la §6.2 e le righe `V8`, `V16`, `V17` e `V24` della §8.3 della [spec del sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) —, e le loro sette righe sono 🔶 con la sede del 3.
+>
+> ✅ **Aggiornata il 2026-10-03** — audit del 2026-09-30, AUD-512, AUD-517, AUD-007: la riga «Accessibilità» dice che nel browser vero `axe` giudica, della cornice, la sola Panoramica, e che il dock non lo giudica nessuna prova; «Dataset dai fallimenti» è 🔶 — la promozione dei fallimenti prima della potatura arriva con la ritenzione, il **15**, e l'anello 4 che li legge con gli Agenti; la «Cattura con un gesto» porta il richiamo all'eccezione che decide il **12**.
 
 ---
 
@@ -218,7 +220,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Tracciamento delle mani — 21 punti, stato continuo | 📋 | Gesti |
 | Gesti di comando | 📋 | Gesti |
 | Manipolazione di pannelli e menu con le mani | 📋 | GUI + Gesti |
-| Cattura con un gesto | 📋 | Gesti — la destinazione è **decisa il 2026-09-04**: nello spazio della knowledge base come file, la run la vede come riferimento (decisione 7 del disegno dei gesti, chiusa dal [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md)) |
+| Cattura con un gesto | 📋 | Gesti — la destinazione è **decisa il 2026-09-04**: nello spazio della knowledge base come file, la run la vede come riferimento (decisione 7 del disegno dei gesti, chiusa dal [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md)). ⚠️ **Richiamo del 2026-10-03:** la destinazione regge; la cattura è l'unico caso in cui un fotogramma uscirebbe dal worker, oggi non esce, e l'eccezione la decide il **12** col proprietario, con un ADR suo — il rimando del 2026-10-02 in testa ad [ADR-0039](adr/0039-telecamera-come-sorgente-di-percezione.md); audit del 2026-09-30, AUD-007 |
 | Indicatore di telecamera accesa | 📋 | GUI |
 
 ## 7. Multimodalità e generazione
@@ -258,7 +260,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Avvio automatico e daemon in background | 🔶 | ADR-0004 · implementazione → L3 |
 | Packaging e aggiornamenti | 📋 | L3 |
 | Estensibilità e plugin | ✅ | ADR-0003 |
-| Accessibilità | 🔶 | nel **2** e nel **14**, il design system — ⚠️ **RICHIAMO DEL 2026-09-28:** era ✅, e la legenda dà a ✅ le fondamenta *nel kernel*, mentre queste stanno nella GUI: cambia la riga, non la legenda (N-2 di E235 del piano della parte 2; la (e) del [disegno del design system](superpowers/specs/2026-09-22-design-system-design.md)) · `axe-core` sui pannelli montati (`gui/src/a11y.test.ts`, l'aiutante in `gui/src/testing/axe.ts`) e, nel browser vero col contrasto della pagina disegnata, sulla pagina kit e sulla cornice (`gui/src/kit/kit.browser.test.ts`, `gui/src/frame/frame.browser.test.ts`); il contrasto AA dei token per famiglie, nei due temi (`gui/src/tokens/contrast.test.ts`); il movimento ridotto e l'alto contrasto (`gui/src/tokens/tokens.browser.test.ts`); le regioni `role="status"` presenti prima del loro testo (`gui/src/components/BaseStatus.vue`); la tastiera (`gui/src/frame/moveActive.ts`, `gui/src/frame/keys.test.ts`, `gui/src/frame/dock.browser.test.ts` — la mossa col `dockview` vero, e il nucleo e la striscia che non si muovono — e `gui/src/frame/frame.test.ts` — il filo dei tasti in `Frame.vue` —, e le frecce della Panoramica in `gui/src/frame/Overview.vue`) — nel passo web del cancello |
+| Accessibilità | 🔶 | nel **2** e nel **14**, il design system — ⚠️ **RICHIAMO DEL 2026-09-28:** era ✅, e la legenda dà a ✅ le fondamenta *nel kernel*, mentre queste stanno nella GUI: cambia la riga, non la legenda (N-2 di E235 del piano della parte 2; la (e) del [disegno del design system](superpowers/specs/2026-09-22-design-system-design.md)) · `axe-core` sui pannelli montati (`gui/src/a11y.test.ts`, l'aiutante in `gui/src/testing/axe.ts`) e, nel browser vero col contrasto della pagina disegnata, sulla pagina kit e sulla Panoramica (`gui/src/kit/kit.browser.test.ts`, `gui/src/frame/frame.browser.test.ts`) — sul dock no: `axe` vi trova tre difetti che nessuna prova guarda, nella tabella *«Che cosa la porta NON controlla, di questo lavoro»* di [`porta-di-qualita.md`](porta-di-qualita.md); il contrasto AA dei token per famiglie, nei due temi (`gui/src/tokens/contrast.test.ts`); il movimento ridotto e l'alto contrasto (`gui/src/tokens/tokens.browser.test.ts`); le regioni `role="status"` presenti prima del loro testo (`gui/src/components/BaseStatus.vue`); la tastiera (`gui/src/frame/moveActive.ts`, `gui/src/frame/keys.test.ts`, `gui/src/frame/dock.browser.test.ts` — la mossa col `dockview` vero, e il nucleo e la striscia che non si muovono — e `gui/src/frame/frame.test.ts` — il filo dei tasti in `Frame.vue` —, e le frecce della Panoramica in `gui/src/frame/Overview.vue`) — nel passo web del cancello |
 | Internazionalizzazione (i18n) | 🔶 | la metà GUI nel 2: `vue-i18n` con `gui/src/locales/it.json`, e la regola `no-raw-text` di `gui/eslint.config.js` nel passo web del cancello — il meccanismo, una lingua · la metà Voce → Voce |
 | Comportamento offline | ✅ | §7 · ADR-0019 |
 | Impostazioni e profili di configurazione | 🔶 | profili §2/§3 · pannello: `gui/src/panels/Settings.vue` nel 2, col cambio di policy VRAM — la funzione `vram-policy` del registro, dai messaggi `Invoke` e `Policy` · il resto del pannello → GUI |
@@ -286,7 +288,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Determinismo/replay riproducibile | ✅ | §4 + §8 (seed) |
 | Hook sul ciclo di vita | 🔶 | trigger e anelli §5 · politica → Agenti |
 | Classificatore di sicurezza delle azioni | 🔶 | si realizza come **sensore** §5 · politica → Agenti |
-| Dataset dai fallimenti | ✅ | §7 promozione + §8 |
+| Dataset dai fallimenti | 🔶 | §8 · la suite di regressione, coi semi della DST (V31) · §7 · la promozione dei fallimenti prima della potatura, seguito di ADR-0018, con la ritenzione → **15** · l'anello 4 che li legge (§5) → Agenti |
 | Analisi dei costi per run e per sub-agente | 🔶 | §3 · ADR-0011 · la contabilità al passo → Conversazione |
 
 ### Conversazione, conoscenza e UX

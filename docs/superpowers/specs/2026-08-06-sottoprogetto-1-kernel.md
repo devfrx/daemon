@@ -3,14 +3,10 @@
 - **Data:** 2026-08-06
 - **Sotto-progetto:** 1. Dipende da 0, 0b, 0c ([roadmap](../../roadmap.md))
 - **Stato:** §0–§8 approvate. ⚠️ **Riaperta il 2026-08-07 su sette voci** trovate
-  rileggendo la tracciabilità — elenco, ordine e propedeuticità in
-  [HANDOFF](../../HANDOFF.md#prima-cosa-da-fare). Chiuse: **F3** (§2.8, ADR-0034), **F6**
-  (§5.1), **F5** (§2.3.1), **F1a** — la dichiarazione della porta verso i worker (§2.3.1,
-  [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md)) — e **F2 con F7**,
-  l'evoluzione del formato durevole (§4.9,
-  [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md)). Restano, in
-  ordine: **F1b** (progetto della porta, §5–§6), poi **F4**; poi la §8, una volta sola; poi
-  il piano.
+  rileggendo la tracciabilità. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30,
+  AUD-380, AUD-395, AUD-649: lo stato delle sette voci, con la sezione che ciascuna ha
+  prodotto, e quello del sotto-progetto li dice la [roadmap](../../roadmap.md), e qui non si
+  ripetono.
 
 Questa spec **non ri-decide l'architettura**: la spec del kernel dice *cosa* il sistema
 fa e *perché*, e gli ADR dicono con quali alternative scartate. Qui si dice *quali crate
@@ -59,7 +55,7 @@ Il perimetro negativo è l'artefatto più prezioso di questa sezione, come lo er
 | Non costruisce | Perché |
 |---|---|
 | nessuna capacità L2 | [ADR-0001](../../adr/0001-architettura-a-kernel-con-capacita-paritarie.md): prima il kernel deve esistere |
-| nessuna interfaccia grafica | è il sotto-progetto 2, e [ADR-0029](../../adr/0029-guscio-della-gui.md) è ancora `Proposed` |
+| nessuna interfaccia grafica | è il sotto-progetto 2, col guscio deciso in [ADR-0029](../../adr/0029-guscio-della-gui.md). ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-153, AUD-396: ADR-0029 è `Accepted` dal 2026-09-10, Electron, con SP-8 |
 | nessun adattatore verso provider reali | serve una chiave, una rete e SP-4; e [ADR-0020](../../adr/0020-nessun-modello-nel-percorso-decisionale-del-kernel.md) garantisce che il kernel sia testabile **senza** chiamare un modello |
 | nessun worker Python | [ADR-0028](../../adr/0028-ecosistema-dei-worker-ml.md) ne fissa il linguaggio, non ne chiede l'esistenza ora |
 | nessuno spike chiuso | SP-1, SP-2, SP-3 e SP-4 richiedono modelli e GPU reali |
@@ -90,7 +86,7 @@ errore di questa sezione, non una semplificazione.
 | § del kernel | Entra | Si scaglia | Regola |
 |---|---|---|---|
 | **§1** architettura di processo | core, ciclo di vita dei worker, **IPC lato core** | il processo `gui` | **A** — Q3 e Q4 sono DST, e senza il confine di processo non c'è nulla da simulare. Lo schema IPC è definito lato core ([ADR-0029](../../adr/0029-guscio-della-gui.md)), quindi non attende il guscio |
-| **§2** arbitro GPU | tutta: ammissione, corsie, ciclo della concessione, revoca, due policy | la taratura dei profili reali (SP-1, SP-2) | **A** — Q2 e I2 sono il cuore della DST. I valori dei profili sono parametri, non impianto |
+| **§2** arbitro GPU | tutta: ammissione, corsie, ciclo della concessione, revoca, due policy | la taratura dei profili reali (SP-1, SP-2) | **A** — Q2 e I2 sono il cuore della DST. I valori dei profili sono parametri, non impianto. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-603: il segnale «riduci occupazione» della §5.1 non è entrato, e resta fuori per regola **C** — ha un consumatore solo quando un lavoro `batch` gira su un worker —: lo costruisce l'8, che chiude SP-2 ([design/02](../../design/02-arbitrato-gpu.md)) |
 | **§3** gateway | il **decisore**: risoluzione del routing, filtro dei vincoli, catena, contabilità, record risolto | gli adattatori dei provider reali | **A** per il decisore (Q13 è una proprietà su *qualunque* catena) · **C** per gli adattatori. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-023, AUD-027: la **contabilità** non è entrata — il record di routing porta `model`, `evaluated` e `degraded`, nessun token né costo (`RoutingDetail` in `crates/kernel/src/record.rs`) —, e si costruisce col primo che chiama un modello, B (3): §6.2 |
 | **§4** persistenza e run durevoli | giornale write-ahead, riconciliazione, classi di effetto, confini di autonomia, modello dello stato durevole | la **ricomposizione della proiezione** | **A** — Q5 è crash-injection ai confini di persistenza, ed è ciò che giustifica il simulatore · **C** per la ricomposizione: non ha consumatore finché nessuno chiama un modello. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-031, AUD-032: i **confini di autonomia** non sono entrati — non esistono la run durevole, il suo tetto di passi, tempo e costo, né la sospensione in `AttesaUmano`, e il limite di giri dell'esecutore è un'altra cosa (§8.3, riga `V8`) —, e arrivano con la run, col 3 |
 | **§5** harness | il **contratto** del sensore e l'anello di verifica, con sensore finto; e la **dichiarazione delle sorgenti dell'anello 3**, con la porta da cui entrano | i sensori reali, il registro delle guide, l'**anello 4**, e il **registro dei trigger** dell'anello 3 | **A** — Q10 si verifica con un doppio · **B** — le sorgenti dell'anello 3 vanno dichiarate ora, §0.4.3 · **C** — RK-5 dice di rivedere il contratto **dopo** il secondo sensore reale; l'anello 4 legge ricorrenze che esistono solo quando qualcosa gira, e il registro dei trigger non ha consumatore finché nessuna capacità parte da un evento |
@@ -238,7 +234,7 @@ Non sono ri-derivazioni: sono buchi, ciascuno già documentato come tale.
 |---|---|---|---|
 | 1 | ✅ **La GPU usata dalla GUI non è arbitrata** — [ADR-0033](../../adr/0033-gpu-della-gui-quota-di-presentazione.md): quota di presentazione sottratta, concessione tenuta dal **core** | lacuna aperta, [HANDOFF](../../HANDOFF.md) e [roadmap](../../roadmap.md): I2 è verificato solo sui worker | §5 |
 | 2 | ✅ **Motore di persistenza** — [ADR-0032](../../adr/0032-motore-di-persistenza.md): `redb`, con backend nostro | [§10.6](2026-08-06-kernel-design.md#106-cosa-resta-a-un-adr-successivo): la roadmap dice che blocca **l'implementazione**. Il discriminante era il requisito 4, **I/O iniettabile**: misurato, e solo `redb` lo espone | §4 |
-| 3 | **Dove vive l'esecutore delle attività concorrenti** | conseguenza del vincolo 3 di ADR-0026: la crate del kernel è `#![no_std]`, e va **misurato** se un runtime deterministico di ecosistema può starci dentro o debba stare accanto | §2 |
+| 3 | ✅ **Dove vive l'esecutore delle attività concorrenti** — nel `kernel`, decisa in §2.4 senza ADR | conseguenza del vincolo 3 di ADR-0026: la crate del kernel è `#![no_std]`, e va **misurato** se un runtime deterministico di ecosistema può starci dentro o debba stare accanto | §2 |
 | 4 | ✅ **Le dipendenze del kernel sono parte del confine I3** — [ADR-0031](../../adr/0031-dipendenze-del-kernel-parte-del-confine.md) | non previsto quando la §0 è stata approvata: emerge da una **misura**, registrata in §1.4.1. `no_std` impedisce di *nominare* `std`, non di *raggiungere* l'OS attraverso una dipendenza | §1 |
 | 5 | ✅ **I parametri di decisione sono consegnati, non letti** — [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md) | **non previsto**: emerge dalla riapertura del 2026-08-07, rileggendo `tracciabilita.md` con la domanda del meccanismo. V29 rende sostituibile ciò che il mondo *risponde*, non i **parametri** con cui il kernel è configurato | §2.8 |
 | 6 | ✅ **La porta verso i worker, e la lettura di «singolo» in I4** — [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) | **non previsto**: è la voce **F1** della stessa riapertura. La §2.3 non aveva nessuna porta per *parlare* con un worker, e `design/01` la descriveva già con un verbo in più | §2.3.1 · §5–§6 |
@@ -249,8 +245,9 @@ Non sono ri-derivazioni: sono buchi, ciascuno già documentato come tale.
 > ⚠️ **La riga 8 è stata aggiunta il 2026-08-08.** Mancava: ADR-0037 è una decisione presa
 > **dentro** questo sotto-progetto, con lo stesso criterio di ammissione delle righe 4, 5, 6
 > e 7 — non prevista quando la §0 fu approvata, ed emersa da una misura. La catena datata di
-> §0.7 si ferma a sei perché è stata scritta prima; ora sono **sette** le decisioni ✅ e
-> **otto** le righe, con la n. 3 ancora aperta.
+> §0.7 si ferma a sei perché è stata scritta prima.
+>
+> ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-398: ogni riga della tabella è una decisione presa, e il conto lo dà la tabella. La n. 3 è decisa in §2.4, senza ADR (§0.7, condizione 5), dopo la misura della §2.4.3 che il capoverso «Sulla n. 3» qui sotto chiedeva: l'esecutore vive nel `kernel`, `Executor` in `crates/kernel/src/executor.rs`.
 
 Ciascuna nasce **dentro** la sezione che la richiede, non in coda: una decisione staccata
 dal contesto che la motiva è la stessa cosa che ADR-0028 ha dovuto ratificare a
@@ -298,7 +295,7 @@ Il sotto-progetto 1 è chiuso quando **tutte** queste sono vere, non quando il c
 | 1 | ogni V in perimetro ha un controllo che gira in automatico |
 | 2 | ogni controllo statico **è stato visto fallire** su una violazione deliberata, e poi tornare verde — gotcha #14: un controllo mai visto fallire non è un controllo |
 | 3 | ogni Q in perimetro è verificato col metodo che [design/08](../../design/08-strategia-di-test.md) gli assegna, non con un altro |
-| 4 | ogni difetto trovato in simulazione conserva il proprio **seed** come caso di regressione permanente (V31) |
+| 4 | ogni difetto trovato in simulazione conserva il proprio **seed** come caso di regressione permanente (V31). ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-383, AUD-384: si legge con la §3.4 e col rimando del 2026-08-08 di [ADR-0021](../../adr/0021-simulazione-deterministica-e-iniettabilita.md): a diventare regressione permanente è la **proprietà** che il difetto violava, e il seme entra nell'elenco versionato di [`semi-dst.md`](../../semi-dst.md) come punto di ripartenza per indagare, non come oracolo. È la lettura con cui la §7.3 del [disegno della chiusura](2026-09-02-sottoprogetto-1-chiusura-design.md) l'ha giudicata soddisfatta |
 | 5 | **gli ADR della §0.5 sono scritti**, ciascuno con le proprie `Negative (accettate)`. ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-067 — questa condizione diceva «i SEI ADR» e la sua catena datata si fermava ad ADR-0036: la §0.5 ha OTTO righe e SETTE decisioni con ADR — 0031…0037 — e i sette file esistono in `docs/adr/`.** Così com'era scritta era **soddisfatta senza ADR-0037**, cioè la definizione di «fatto» del sotto-progetto poteva dirsi vera lasciando fuori la voce più recente. ⚠️ **La nota della §0.5 VEDEVA il problema e lo lasciava dov'era** — *«la catena datata di §0.7 si ferma a sei perché è stata scritta prima»* — e la §0.1, ricontata il 2026-08-08, dice già **sette**: due affermazioni vive nella stessa §0 che si contraddicono. ✅ **Il numerale è TOLTO e non riallineato a sette**, ed è la cura invece della svista: una condizione di chiusura che porta un conto cresce con la §0.5 e nessun controllo la lega a quella tabella. Il conto lo dà la §0.5, e la catena datata resta qui sotto come **storia**: erano tre fino al 2026-08-07, poi quattro con [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md), cinque con [ADR-0035](../../adr/0035-porta-verso-i-worker-e-lettura-di-i4.md), sei con [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md) e sette con [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md). La riga 3 resta l'unica decisione della §0.5 senza ADR — vive in §2.4 |
 | 6 | `roadmap.md`, `tracciabilita.md`, lo stato degli spike e `HANDOFF.md` sono aggiornati **nello stesso passaggio** |
 | 7 | `bash scripts/check-docs.sh` esce verde |
@@ -318,7 +315,7 @@ Il sotto-progetto 1 è chiuso quando **tutte** queste sono vere, non quando il c
 
 | | |
 |---|---|
-| **Codice** | interamente in **inglese**: nomi di crate, moduli, tipi, funzioni, commenti nel sorgente |
+| **Codice** | interamente in **inglese**: nomi di crate, moduli, tipi, funzioni, messaggi d'uscita, commenti nel sorgente |
 | **Documentazione** | in **italiano** |
 | **Riferimenti al codice dentro la documentazione** | in **inglese**, con il nome esatto del sorgente |
 
@@ -326,6 +323,8 @@ Il costo accettato: fra la parola di un ADR («l'arbitro») e il nome nel codice
 c'è una traduzione, che va tenuta a mente leggendo. Il beneficio: il codice non stona con
 un ecosistema che è interamente in inglese, e non nasce un dialetto misto — che è la
 condizione peggiore delle due.
+
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-400: la riga **Codice** comprende i **messaggi d'uscita**, e la regola vale anche per gli script di servizio, per l'estensione del proprietario del 2026-08-08 (§8.6.3). Restano italiane le parole che `scripts/check-docs.sh` cerca nei documenti — `verificato qui`, `parziale`, `rimandato`, `non controllato` e l'intestazione «Difende» —: sono contenuto della documentazione, non messaggi.
 
 ### 1.1 Perché la crate è l'unità che conta
 
@@ -344,10 +343,12 @@ ricorda di rispettarlo.
 | Crate | Libreria standard | Possiede | Cosa il compilatore le vieta |
 |---|---|---|---|
 | **`kernel`** | **no** — `no_std` + `alloc` | tutta la logica: arbitro, giornale, decisioni di routing, confine dei tipi, macchine a stati, e **la decisione** di quale attività far avanzare | l'OS, l'orologio, `HashMap`, `unsafe` |
-| **`platform`** | sì | le implementazioni **reali** dei tratti dichiarati dal kernel: filesystem, orologio, rete, processi, confinamento livello 2 | — |
+| **`platform`** | sì | le implementazioni **reali** delle porte che il kernel dichiara — quali esistono oggi lo dice la §3.1 —, e, col 5, il confinamento di livello 2 di [ADR-0025](../../adr/0025-confinamento-a-livelli.md) (§0.4, riga §10) | — |
 | **`secrets`** | sì | l'**unico** punto che tocca il portachiavi dell'OS | — |
 | **`simulator`** | **no** — `no_std` + `alloc` | le implementazioni **finte** degli stessi tratti: orologio virtuale, RNG seminato, I/O in memoria, guasti scelti dal seed | come `kernel` |
 | **`daemon`** (binario) | sì | il cablaggio **di produzione**: monta `platform`, avvia l'esecutore, ospita il server IPC, e **produce i parametri risolti** che consegna al kernel (§2.8) | — |
+
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-368, AUD-382, AUD-388, AUD-401: la cella di `platform` è una regola e non un elenco: quali porte implementa lo dicono il richiamo del 2026-10-02 della §3.1 e il comando nel doc di `crates/platform/src/lib.rs`. L'orologio non è una porta: sta su `reactor`, per la decisione D2 del piano del Traguardo 2, scritta nel doc di `crates/kernel/src/ports/reactor.rs`. E il confinamento di livello 2 non è una porta del kernel: il kernel lo richiede, la piattaforma lo implementa ([ADR-0025](../../adr/0025-confinamento-a-livelli.md)).
 
 ```mermaid
 flowchart BT
@@ -429,7 +430,7 @@ La colonna che conta è l'ultima. Gotcha #13: **un lint non è il compilatore.**
 
 | Regola | Da | Meccanismo | Forza |
 |---|---|---|---|
-| il kernel non **nomina** `std` | I3, V28 | `#![no_std]` | **compilatore** — `E0433`, misurato in entrambe le direzioni |
+| il kernel non **nomina** `std` | I3, V28 | `#![no_std]` | **compilatore** — `E0433`, misurato in entrambe le direzioni. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-587: `#![no_std]` non si zittisce con un `#[allow]`, ma `extern crate std;` scritto nella crate rimette `std` nella sua portata, e la crate compila: misurato il 2026-10-03, `rustc 1.95.0`. La regola la regge il cancello senza OS, `scripts/gate-no-os.sh`, dove la stessa riga dà `E0463` su `x86_64-unknown-none` (§7.3.2), provato con quella violazione nella §7.2 del [disegno della chiusura](2026-09-02-sottoprogetto-1-chiusura-design.md) |
 | il kernel non **raggiunge** l'OS attraverso una dipendenza | I3, V28, [ADR-0031](../../adr/0031-dipendenze-del-kernel-parte-del-confine.md) | allow-list sul grafo **transitivo** di `kernel` e `simulator` — §1.4.1; le voci sono in §6.1.1, il meccanismo in §7 | test — **`no_std` non lo copre**, misurato. §6.8.2 aggiunge un controllo strutturale più forte, ma **non sufficiente** |
 | niente `unsafe` nel kernel | ADR-0026 | `#![forbid(unsafe_code)]` | **compilatore** — `E0453`, non scavalcabile per riga |
 | niente `HashMap` nominato nel kernel e nel simulatore | V29 | conseguenza gratuita di `no_std`: `HashMap` vive in `std`, non in `alloc` | **compilatore**, a costo zero — ma vale la riga 2: una dipendenza può portarne uno |
@@ -511,14 +512,16 @@ Non si assumono. Se una va diversamente, il grafo cambia **prima** che vi si scr
 | **cinque crate invece di una** | più manifesti, compilazione più lenta, e spostare codice fra crate costa più che spostarlo fra moduli |
 | **`no_std` è scomodo** | niente `HashMap`, niente `std::thread`, nessuna comodità della libreria standard: ogni cosa va sostituita o fatta passare da un tratto. Si paga a ogni riga di `kernel` e di `simulator`, non una volta sola |
 | **`kernel` resta una crate grande** | non si spezza: i divieti forti sono per crate, e spezzare moltiplica i posti in cui dimenticare gli attributi. Il costo è che i confini interni sono tenuti dai moduli, cioè più deboli |
-| **tre regole restano controllo esterno, non compilatore** | l'**allow-list** di ADR-0031, V25 e V34. Un controllo si cancella, `no_std` no. Detto invece che sperato. ⚠️ **Ricontato sulla colonna «Forza» il 2026-08-08:** diceva «due» e ometteva proprio l'allow-list, cioè quella che §1.4.1 chiama *«l'altra metà del confine»* I3 e che ADR-0031 dichiara **la più debole delle quattro** |
+| **tre regole restano controllo esterno, non compilatore** | l'**allow-list** di ADR-0031, V25 e V34. Un controllo si cancella, `no_std` no. Detto invece che sperato. ⚠️ **Ricontato sulla colonna «Forza» il 2026-08-08:** diceva «due» e ometteva proprio l'allow-list, cioè quella che §1.4.1 chiama *«l'altra metà del confine»* I3 e che ADR-0031 dichiara **la più debole delle quattro**. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-587: anche `no_std` si scavalca, con `extern crate std;` scritto nella crate (§1.4, prima riga), e a reggere la regola è il cancello senza OS, che si cancella come gli altri controlli |
 
 ---
 
 ## 2. Il substrato iniettabile
 
 È la sezione da cui dipende ogni firma delle successive. **Nessuna delle sue scelte poggia
-su una previsione**: le tre misure che la sostengono sono in §2.6, con comandi e versioni.
+su una previsione**: le tre misure che la sostengono sono in §2.6, con le versioni e gli esiti.
+
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-652: i comandi non sono registrati, e i prototipi su cui le misure girarono erano usa-e-getta, fuori dal repository (§2.6): le cifre della §2.6 e della §2.4.3 restano come esiti datati, e dal repository non si rifanno.
 
 ### 2.0 Cosa vuol dire iniettabile
 
@@ -652,6 +655,8 @@ Un risvegliatore su misura — il biglietto «quando è pronto, chiama me» — 
 costruibile dentro il kernel**: richiede `unsafe`, e `#![forbid(unsafe_code)]` lo rifiuta.
 Misurato, §2.6.
 
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-040: vale per `Waker::from_raw`, l'unica via che la §2.6 ha misurato. Con `alloc::task::Wake` e `Waker::from(Arc<T>)` un risvegliatore su misura si costruisce **senza** `unsafe`: compila in una crate `#![no_std]` e `#![forbid(unsafe_code)]`, per l'host e per `x86_64-unknown-none` — misurato il 2026-10-03, `rustc 1.95.0`. La regola qui sotto è quindi **disciplina, non compilatore**, e nessun controllo la sorveglia; l'esecutore usa `Waker::noop()` (`crates/kernel/src/executor.rs`), e un'attività che si sospendesse altrove si scoprirebbe bloccata a tempo d'esecuzione (§2.7). La decisione K-1 del 2026-08-18 ([`porta-di-qualita.md`](../../porta-di-qualita.md)) non si riapre: oggi nulla chiede un risvegliatore.
+
 Quindi l'esecutore deve sapere da sé chi può avanzare, e può saperlo a una condizione:
 
 > **Un'attività del kernel si sospende solo su una primitiva dell'esecutore o su una porta.**
@@ -701,7 +706,7 @@ non si incassa**, e il conto è misurato:
 | crate nel grafo di `kernel` | **55**, fra cui `getrandom` e `rand` | **0** |
 | ADR-0031 | la lista nasce con 55 voci da valutare | la lista nasce **vuota** |
 | chi decide l'ordine | il runtime, sostituito a compilazione | **il kernel**, sempre, anche fuori dai test |
-| codice da scrivere | poco | l'esecutore — nel prototipo misurato ~40 righe |
+| codice da scrivere | poco | l'esecutore — nel prototipo misurato ~40 righe. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-652: la cifra non ha misura — la §2.6 non registra nessun conto di righe, il prototipo non è nel repository, e [ADR-0031](../../adr/0031-dipendenze-del-kernel-parte-del-confine.md) ne scrive ~30 —: è una stima |
 
 `getrandom` è la riga decisiva: una sorgente di casualità **seminata dall'OS** dentro il
 kernel, cioè il gotcha #12 in una forma che nessun elenco di «chiamate OS» mostrerebbe.
@@ -744,6 +749,8 @@ fra cui `tokio`, `mio`, `socket2`, `windows-sys`, `getrandom`, `rand`.
 | costruire un `Waker` su misura | ❌ `E0133: call to unsafe function Waker::from_raw is unsafe` |
 
 L'ultima riga **forza** la regola §2.4.1: non è una preferenza di design.
+
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-040: l'ultima riga prova la sola via `Waker::from_raw`. Con `alloc::task::Wake` un risvegliatore su misura compila senza `unsafe` (§2.4.1), e la regola è una scelta di disegno che tiene la disciplina, non il compilatore.
 
 La prima versione di questa sonda usava un controllo di non-vacuità sbagliato («task0 due
 volte di fila»), che capita per caso una volta su tre. Registrato perché è il gotcha #14
@@ -969,8 +976,8 @@ scadenza futura**.
 
 #### 3.2.1 La trappola, trovata sbattendoci contro
 
-`advance()` deve considerare **solo le scadenze future**, e deve poter rispondere «non c'è
-niente da avanzare».
+`Reactor::wait_until` deve considerare **solo le scadenze future**, e deve poter rispondere
+«non c'è niente da avanzare».
 
 La prima stesura prendeva il minimo di *tutte* le scadenze registrate. Le voci dei task già
 conclusi restano nella mappa con un istante ormai passato: il minimo cadeva lì, l'orologio
@@ -981,8 +988,10 @@ Due conseguenze, entrambe adottate:
 
 | | |
 |---|---|
-| `advance()` filtra le scadenze **strettamente future** e restituisce `false` se non ce ne sono | un avanzamento nullo non deve mai essere dichiarato riuscito |
+| `wait_until(deadline)` risponde `None` se la scadenza non è **strettamente futura** e nessun evento è pronto, e l'esecutore gli consegna solo scadenze strettamente future | un avanzamento nullo non deve mai essere dichiarato riuscito |
 | l'esecutore ha una **guardia sul numero di giri** | un blocco deve manifestarsi come errore, non come attesa infinita. Un test che non finisce non dice nulla |
+
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-375: i nomi sono quelli del sorgente — `Reactor::wait_until(deadline) -> Option<Monotonic>` in `crates/kernel/src/ports/reactor.rs`, il cui doc porta questa trappola, e la sua chiamata nell'esecutore, in `crates/kernel/src/executor.rs`.
 
 #### 3.2.2 Perché qui si ottiene ciò che `synctest` prometteva a metà
 
@@ -1316,9 +1325,11 @@ devono confondersi — e **un passo in dubbio non è potabile** finché non è r
 > ⚠️ **L'obbligo è quindi scritto accanto al metodo**, in `crates/kernel/src/ports/journal.rs`:
 > la spazzata di ritenzione vive nel kernel e **può** decodificare, quindi dovrà consultare
 > `steps_in_doubt` e saltare ciò che quello restituisce invece di poggiare sulla guardia della
-> porta. **Chi le chiude:** il traguardo che porta la ritenzione, insieme alla decisione
-> sull'impronta. Le voci aperte stanno in
+> porta. **Chi le chiude:** il sotto-progetto 15, con la funzione d'impronta che sceglie il
+> 13. Le voci aperte stanno in
 > [`porta-di-qualita.md`](../../porta-di-qualita.md).
+>
+> ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-563: la ritenzione la porta il sotto-progetto 15, *«Dati a riposo: cifratura e ritenzione»*, e la funzione d'impronta la sceglie il 13, il primo che la usa: la [roadmap](../../roadmap.md).
 
 ### 4.6 I due livelli di crash
 
@@ -1413,7 +1424,7 @@ quel giudizio è giusto là e rovesciato qui.
 |---|---|---|
 | 1 | il tipo del record è un **enum di versione**: «un record senza versione» non è esprimibile | **livello 1**, la stessa mossa con cui V5 è salita al compilatore (§7.4.4 punto 3) |
 | 2 | ogni campo porta un **indice esplicito**, scritto nel tipo | misurato: è l'indice a comprare il risultato, e costa **un byte su ventisei** |
-| 3 | un campo nuovo è **facoltativo** e prende un **indice nuovo** | misurato ✅ in coda, in mezzo e in direzione inversa |
+| 3 | un campo nuovo è **facoltativo** e prende un **indice nuovo** | misurato ✅ in coda, in mezzo e in direzione inversa. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-168: vale per le **aggiunte**; una specie nuova entra con una variante nuova di `kind` **e** il dettaglio in un campo nuovo, mai l'uno senza l'altro (D20, gotcha #90) — il rimando del 2026-10-03 in testa ad [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md) |
 | 4 | un indice **si ritira e non si riusa mai**: il buco resta | misurato: il buco ✅, il riuso ⛔ **silenzio sbagliato** |
 | 5 | un cambiamento **non additivo** apre una **versione nuova**; il lettore dispaccia e converte | è la sola cosa che l'indice non compra |
 | 6 | la **codifica vive in `kernel`**, e la porta `journal` scambia **byte** | §4.9.3 — ⚠️ **aggiunta all'elenco il 2026-08-08**: la regola c'era, ma solo come prosa nella sottosezione seguente, mentre ADR-0036 la numera. Due documenti che condividono l'indice devono condividerlo per intero, o «regola 6» risolve in uno solo |
@@ -1502,7 +1513,7 @@ proverebbe nulla: è il gotcha #14 applicato al banco invece che al controllo.
 | Costo | |
 |---|---|
 | **il grafo di build del kernel cresce da due voci a sette** | e porta `syn` per la prima volta. Superficie di supply chain a tempo di compilazione: non può violare V29 a runtime (§7.3.1), ma va rivista invece che subita |
-| **il kernel porta due serializzatori** | con requisiti opposti. È coerente, e sono due grafi da guardare invece di uno. ⚠️ **RICHIAMO DEL 2026-08-27, finding AUD-033:** la cella diceva *«uno per artefatto»*, e la corrispondenza **non esiste dal 2026-08-08** — [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) dà a `minicbor` **anche** il canale `process`, quindi gli artefatti sono **tre** e i serializzatori **due**. Il numerale è **tolto e non riallineato**: la casa unica del conteggio è la tabella a tre righe del compendio |
+| **il kernel porta due serializzatori** | con requisiti opposti. È coerente, e sono due grafi da guardare invece di uno. ⚠️ **RICHIAMO DEL 2026-08-27, finding AUD-033:** la cella diceva *«uno per artefatto»*, e la corrispondenza **non esiste dal 2026-08-08** — [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) dà a `minicbor` **anche** il canale `process`, quindi gli artefatti sono **tre** e i serializzatori **due**. Il numerale è **tolto e non riallineato**: la casa unica del conteggio è la tabella a tre righe del compendio. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-169: con tre artefatti su due serializzatori l'argomento dei requisiti opposti cade dal lato che conta — il richiamo del 2026-08-27 in ADR-0036 —, e la ripartizione non la decide il solo requisito di evoluzione: decide anche il pari ([ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md), e la tabella a tre righe della §4 del compendio) |
 | **ogni campo di ogni record durevole porta un indice** | si paga a ogni riga, non una volta. Un byte sul filo, un'annotazione in più nella scrittura |
 | **la regola 4 è una disciplina** | «un indice non si riusa mai» non è imponibile dal compilatore. La regge un controllo di livello 2, cancellabile |
 | **i byte congelati sono un oracolo rigenerabile** | la difesa è che la rigenerazione **si legge nel diff**, non che sia impossibile. Stessa forza e stessa debolezza del gotcha #25 |
@@ -1540,7 +1551,7 @@ contare solo la VRAM.
 | Asse | Rappresentazione | Meccanismo |
 |---|---|---|
 | **VRAM** | MiB **interi**, in un tipo proprio | ammissione |
-| **calcolo** | tre corsie ordinate — **non** un numero | ordinamento + segnale «riduci occupazione» |
+| **calcolo** | tre corsie ordinate — **non** un numero | ordinamento + segnale «riduci occupazione». ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-603: il segnale non è costruito — la direzione core → worker non ha nessun messaggio, `crates/kernel/src/wire/worker.rs` —, e lo costruisce l'8, che chiude SP-2 ([design/02](../../design/02-arbitrato-gpu.md)) |
 
 Due scelte di rappresentazione, entrambe con un motivo:
 
@@ -1590,12 +1601,14 @@ Al totale vale il trattamento che ADR-0005 dà alla riserva —
 | | |
 |---|---|
 | `totale` è **dichiarato** | nessuna porta nuova, nessuna dipendenza dal driver in `platform` adesso |
-| l'occupazione reale si **misura e si registra** | con il meccanismo di §5.2.2, che esiste già |
+| l'occupazione reale si **misura e si registra** | con il meccanismo di §5.2.2, che nasce col primo worker sulla GPU |
 | uno scarto sistematico è **un difetto del parametro** | non un incidente — è la stessa postura di ADR-0005 |
 
 ⚠️ **Il costo, dichiarato:** un `totale` sbagliato produce sovra-ammissione, cioè **Q2 che
 cede per un errore di configurazione invece che di codice**. La mitigazione è la misura
 del picco, non una verifica a priori che qui non esiste.
+
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-198: del picco oggi esiste la sola variante di filo `FromWorker::VramPeak` (`crates/kernel/src/wire/worker.rs`), che nessun worker manda e nessun record porta. La misura e la registrazione nascono col primo worker sulla GPU ([design/02](../../design/02-arbitrato-gpu.md)), e fino ad allora la mitigazione di un `totale` sbagliato non c'è.
 
 **Le strutture dell'arbitro sono `BTreeMap` e `Vec`.** Non è una preferenza: `HashMap`
 vive in `std`, che la crate `kernel` non nomina — quindi il divieto del gotcha #12 è qui
@@ -1658,7 +1671,7 @@ ripete. Quattro punti che la traduzione in tipi aggiunge:
 |---|---|---|
 | 1 | `Rifiutata` e `InCoda` sono **esiti distinti** (V4) | l'esito è a **tre vie**, non un «ha funzionato sì/no». Un requisito d'interfaccia diventa una firma: chi chiama è obbligato a distinguerli |
 | 2 | la finestra di validità di `Concessa` vive sull'asse **monotonic** | nessuna decisione dell'arbitro legge il wall time. Un orologio che torna indietro non può scadere una concessione |
-| 3 | `InRevoca` **non esiste** per i profili non prelazionabili | reso **non rappresentabile** invece che controllato a runtime: la transizione non è costruibile per un profilo con `preemptible = false` |
+| 3 | `InRevoca` **non esiste** per i profili non prelazionabili | reso **non rappresentabile** invece che controllato a runtime: la transizione non è costruibile per un profilo con `preemption: Preemption::Never`. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-390, AUD-403: il nome è quello del sorgente, `Preemption::Never` in `crates/kernel/src/arbiter/resource.rs`, come nella tabella della §5.2 |
 | 4 | `Forzata` — uccidere è sempre lecito | poggia su I1 e I5: nessun worker possiede stato. Passa dalla porta `process`, §5.6 |
 
 #### 5.3.1 Perché i numeri di M-7 restano validi senza rimisurare
@@ -1722,6 +1735,8 @@ l'arbitro applica a ciò che schedula**, e il compositor non lo schedula lui.
 La quota audio è sottratta **e** ha un titolare: il worker audio detiene una concessione
 permanente e non prelazionabile. È il gotcha #4 — *la sottrazione non è un'esenzione*.
 
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-404, AUD-200: nel codice nessuna quota è una sottrazione (§5.1), e un worker audio non esiste. La radice di composizione chiede all'avvio le due concessioni permanenti, audio e presentazione, e ne lascia cadere il gettone — `build_the_arbiter`, in `crates/daemon/src/main.rs` —: la prenotazione resta nei conti dell'arbitro. Il worker audio arriva con l'8, e come riceva la sua concessione è la scelta aperta su AUD-200.
+
 Ma per questo consumo **non c'è nessuno che possa chiedere**: chi alloca è il compositor, che non ha un percorso di
 richiesta. Una quota sottratta senza titolare lascerebbe I2 falso.
 
@@ -1748,7 +1763,7 @@ Cosa resta, e ha valore:
 | # | |
 |---|---|
 | 1 | quella VRAM **non si alloca a nessun altro** |
-| 2 | il picco reale si misura e si registra, con il meccanismo di §5.2.2 |
+| 2 | il picco reale si misura e si registra, con il meccanismo di §5.2.2. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-198: il meccanismo non è costruito — la misura e la registrazione del picco arrivano col primo worker sulla GPU (§5.1) —, e oggi questa riga non c'è |
 | 3 | il rischio residuo è dichiarato invece che scoperto |
 
 #### 5.5.3 Il valore della quota è non misurato
@@ -1760,6 +1775,8 @@ SP-3: **default conservativo, dichiarato come non misurato**.
 
 La misura è **M5** (§5.8), agganciata a M1–M4 di
 [ADR-0029](../../adr/0029-guscio-della-gui.md).
+
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-411: M5 è stata presa da SP-8 come **proxy**, e il numero sulla macchina di riferimento non c'è ancora: §5.8.2.
 
 #### 5.5.4 Cosa questa sezione esporta verso ADR-0029
 
@@ -1798,11 +1815,13 @@ motivo.
 
 | Proprietà | Porta dove si inietta | Requisito |
 |---|---|---|
-| la somma delle concessioni non supera **mai** il budget allocabile | `reactor` — interlacciamento delle richieste concorrenti | **Q2** · I2 |
+| la somma delle concessioni non supera **mai** il budget allocabile | `rng` — l'interlacciamento delle richieste concorrenti lo sceglie l'esecutore con le estrazioni della porta: `SeededRng` in campagna, `SequentialRng` in produzione (§2.4, §3.3) | **Q2** · I2 |
 | nessun processo è `Attiva` senza concessione valida | `process` — kill in istanti arbitrari | **I2** · Q4 |
 | **la GUI muore tenendo una concessione discrezionale** → la somma torna alla linea di base | `ipc` | **Q3**, esteso |
 | una transizione di policy interrotta lascia un passo riconciliabile | `journal` | Q5 · V6 |
 | una concessione scaduta non resta allocata | `reactor` — avanzamento dell'orologio virtuale | V1 |
+
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-402: la prima riga nomina la porta da cui l'interlacciamento passa davvero; se la regola della §8.2.2 valga anche per `rng` — e quindi lo stato di `Q2` — è la scelta aperta su AUD-402.
 
 #### 5.7.1 La non-vacuità, che qui è obbligatoria
 
@@ -1828,7 +1847,7 @@ che il test sia passato.
 |---|---|---|
 | **M-7** | quanto costa una decisione dell'arbitro | ✅ **già eseguita** — §2.6, con i cinque limiti dichiarati. **Non si rifà** |
 | **M-6** | `BTreeMap`/`Vec` bastano alle strutture del kernel | ✅ **chiusa qui** — vedi sotto |
-| **M5** | quanta VRAM prende la presentazione | ⬜ **non misurata, e dichiarata tale** |
+| **M5** | quanta VRAM prende la presentazione | lo stato vive in [ADR-0029](../../adr/0029-guscio-della-gui.md) e qui non si ripete: §5.8.2 |
 
 #### 5.8.1 M-6 è chiusa dall'esistenza di M-7
 
@@ -1850,6 +1869,8 @@ aperta solo per le strutture che introdurrà la §6.
 | **Output** | il valore della quota, **e** un discriminante per ADR-0029 |
 | **Soglia** | se quota audio + quota presentazione non lasciano spazio a TRELLIS2 al profilo minimo accettabile → scatta **RK-1**, in una forma più severa di quella prevista: la mutua esclusività non è fra un LLM caldo e un render, ma **fra l'interfaccia e un render** |
 
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-411, AUD-592: M5 l'ha presa SP-8 il 2026-09-10, accanto a M1–M4 di [ADR-0029](../../adr/0029-guscio-della-gui.md), ma come **proxy**: su un'altra macchina, con la webview sull'integrata. Dell'**Output** è arrivato il discriminante per ADR-0029 — Electron —, e il valore della quota no: quando e chi la rimisura sulla macchina di riferimento è la scelta aperta su AUD-592, e che cosa dica il proxy del default la scelta aperta su AUD-199.
+
 #### 5.8.3 Cosa deliberatamente non si misura
 
 | Non misurato | Perché |
@@ -1864,7 +1885,7 @@ aperta solo per le strutture che introdurrà la §6.
 |---|---|
 | **per la GUI, I2 è più debole in natura** | il rifiuto verso il compositor non è esecutivo. Non mitigabile con la tecnica: si dichiara |
 | **VRAM sprecata a GUI chiusa** | identico al costo già accettato per la quota audio, e con la stessa mitigazione: un profilo senza interfaccia porta la quota a zero |
-| **RK-1 si stringe di una quantità ignota** | la sua soglia era scritta su un budget che non contava la GUI. Di quanto lo dirà M5, ed è l'innesco osservabile del rischio |
+| **RK-1 si stringe di una quantità ignota** | la sua soglia era scritta su un budget che non contava la GUI. Di quanto lo dirà M5, ed è l'innesco osservabile del rischio. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-592: M5 c'è come proxy (§5.8.2), e la misura sulla macchina di riferimento è la scelta aperta su AUD-592 |
 | **il consumatore 3 è lavoro reale** | concessione revocabile verso un processo che può morire in qualsiasi istante: riconciliazione sulla disconnessione IPC, più uno scenario DST |
 | **due strutture per il profilo invece di una** | il prezzo di rendere `cold_start` irraggiungibile dal percorso decisionale (§5.2.1) |
 | **la contesa di calcolo resta indiretta** | ADR-0005 lo dichiarava già: far ridurre l'occupazione ai `batch` non è una garanzia forte. Questa sezione non lo migliora, e SP-2 resta la sua verifica |
@@ -1919,6 +1940,8 @@ di essere vuota.
 > sul requisito opposto. Il kernel porta due serializzatori perché i suoi artefatti hanno
 > requisiti opposti — §4.9.1. ⚠️ *«due artefatti»* è **tolto** il 2026-08-27: sono tre
 > (AUD-033), e l'argomento non dipendeva dal numero.
+>
+> ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-169: con tre artefatti su due serializzatori l'argomento dei requisiti opposti cade dal lato che conta — il richiamo del 2026-08-27 in [ADR-0036](../../adr/0036-evoluzione-del-formato-durevole-del-giornale.md) —, e la ripartizione non la decide il solo requisito di evoluzione: decide anche il pari ([ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md), e la tabella a tre righe della §4 del compendio).
 
 > ⚠️ **La scelta è stata verificata sul _secondo_ capo del filo — aggiunto il 2026-08-08**
 > con [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md). M-1 aveva
@@ -1968,6 +1991,8 @@ diverga in silenzio. Ed è la stessa postura di
 [ADR-0025](../../adr/0025-confinamento-a-livelli.md): meglio rifiutare che funzionare a
 metà.
 
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-694: il timbro vede i **valori**, non i tipi — un cambiamento che lascia uguale la codifica di ogni valore non lo muove —, e il limite è dichiarato nel doc di `stamp_set`, in `crates/kernel/src/wire/ipc.rs`.
+
 #### 6.1.3 Gli identificativi sono progressivi, non generati
 
 §2.2 dichiara che l'elenco dei consumatori di casualità nel kernel è **vuoto**, e lo
@@ -1986,6 +2011,8 @@ insidiosa.
 [ADR-0027](../../adr/0027-stack-della-gui.md) lascia un follow-up esplicito: se P3 con
 rendering vero superasse il 25 %, *«la leva non è la GUI ma la frequenza di aggiornamento
 decisa dal core: aggregare o campionare è una scelta di kernel.»*
+
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-035: SP-8 ha rimisurato P3 col rendering vero — M4 di [ADR-0029](../../adr/0029-guscio-della-gui.md) —, e P3 non passa, con la sola scena a riposo già vicino o sopra la soglia. La leva prima è la SPA, la frequenza decisa dal core è una seconda leva, e la forma della porta che questa sezione vuole non preclusa resta valida: il rimando del 2026-10-03 in testa ad [ADR-0027](../../adr/0027-stack-della-gui.md).
 
 Non si costruisce ora — sarebbe YAGNI. Ma la forma della porta **non deve precluderlo**:
 il core decide *quando* emettere, la GUI non tira. È già così per costruzione (design/01:
@@ -2148,6 +2175,8 @@ ricalcolabile, mai autorevole di per sé**.
 | salute dei provider | §6.2 |
 | permessi, strumenti sospesi | §6.6 |
 
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-057: oggi lo stato si deriva da due ingressi, `vram_exhausted` dall'arbitro e `routing_degraded`, il fallback dichiarato di [ADR-0012](../../adr/0012-equivalenza-del-fallback-e-fallimento-chiuso.md) che la tabella non nomina, in `crates/kernel/src/degradation.rs`. Connettività e salute dei provider arrivano col 3, permessi e strumenti sospesi col 4 ([design/07](../../design/07-osservabilita-e-degrado.md)).
+
 L'arbitro è già un ingresso nominato da ADR-0019; ciò che è **nuovo** è la §5, che ha aggiunto un consumatore
 revocabile, e «il viewer 3D è in pausa durante un render» è **esattamente** una
 condizione che cambia cosa l'utente può fare — quindi si dichiara (V27).
@@ -2202,6 +2231,8 @@ perché:
 > giornale — letto nell'altro verso. **§6.1.1 non si riapre**: il kernel porta due
 > serializzatori perché i suoi artefatti hanno requisiti opposti, ed è la coerenza, non la
 > duplicazione. ⚠️ *«due artefatti»* è **tolto** il 2026-08-27: sono tre (AUD-033).
+>
+> ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-169: con tre artefatti su due serializzatori l'argomento dei requisiti opposti cade dal lato che conta — `minicbor` serve il giornale, che deve evolvere, e il canale `process`, che vi rinuncia: il richiamo del 2026-08-27 in ADR-0036 —, e la ripartizione non la decide il solo requisito di evoluzione: decide anche il pari ([ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md), e la tabella a tre righe della §4 del compendio). Il `bincode` dell'IPC regge su quella gamba.
 
 > ⚠️ **La _domanda_ di questa misura era incompleta, e se ne è accorta solo il 2026-08-08**
 > — [ADR-0037](../../adr/0037-criterio-del-pari-per-il-formato-dei-canali.md). «Esiste un
@@ -2309,8 +2340,8 @@ ha aperto. Il problema è che oggi questo è un commento, e un commento non regg
 La forma della porta la scioglie così:
 
 > **Ogni byte che risale è coperto da una _ricevuta_, e le ricevute le emette solo
-> un'istruzione.** Un frame che nessuna ricevuta copre non ha modo di essere nominato:
-> non è un dato, è un **guasto**.
+> un'istruzione.** Un frame che nessuna ricevuta copre non è un dato, è un **guasto** — e
+> chi ne nomina uno riceve `UnsolicitedFrame`.
 
 È il **quarto uso** del dispositivo di §6.3.1, e conviene vederlo nella stessa tabella:
 
@@ -2321,7 +2352,7 @@ La forma della porta la scioglie così:
 | eseguire una richiesta | una **prova di conformità** | il filtro dei vincoli, e nessun altro: non ha un costruttore pubblico |
 | **leggere da un worker** | una **ricevuta** | ⚠️ chi implementa `Worker`, quando riceve un'istruzione; il costruttore è pubblico |
 
-⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-028: la terza colonna dice chi conia ciascun gettone, e quale è non falsificabile lo dice la §6.3.2. La frase in grassetto qui sopra la tiene l'implementazione, che risponde `UnsolicitedFrame` a una ricevuta che non ha mai emesso, e non il compilatore.
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-028, AUD-405: la terza colonna dice chi conia ciascun gettone, e quale è non falsificabile lo dice la §6.3.2. La frase in grassetto qui sopra la tiene l'implementazione, che risponde `UnsolicitedFrame` a una ricevuta che non ha mai emesso, e non il compilatore: `SingleReceipt::new` e `StreamReceipt::new` sono pubblici, e il doc dei due costruttori, in `crates/kernel/src/ports/process.rs`, lo dichiara. Della ricevuta il compilatore tiene la **forma** — leggere pretende una ricevuta, e una singola si consuma —, non la provenienza.
 
 La prima frase di `design/01` resta vera **alla lettera**, e la seconda diventa un caso
 della prima: il worker audio tiene aperta una ricevuta di flusso per tutta la propria
@@ -2337,13 +2368,15 @@ o qualcuno li giornala per diligenza.
 
 | Operazione | Cosa fa | Cosa impone |
 |---|---|---|
-| `avvia(concessione, descrittore) → Worker` | avvia il processo | senza concessione **non compila** — §5.6, invariata |
-| `Worker::istruisci_uno(frame) → RicevutaSingola` | un'istruzione con **una** risposta | l'unico modo di parlare è **un oggetto `Worker`**, e l'avvio ne restituisce uno. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-028: il tipo non distingue quello dell'avvio da un'implementazione scritta altrove (§6.3.2) |
-| `Worker::istruisci_flusso(frame) → RicevutaFlusso` | un'istruzione con un **flusso** di risposte | idem — ed è **l'istruzione** a dichiarare quale delle due |
-| `Worker::leggi_uno(RicevutaSingola) → Frammento` | una risposta sola | **consuma** la ricevuta: leggere due volte non compila |
-| `Worker::leggi_prossimo(&mut RicevutaFlusso)` | il frame successivo | resta aperta finché il worker dichiara la fine, o il core chiude |
-| `Worker::chiudi(RicevutaFlusso)` | chiude il flusso | |
-| `Worker::uccidi(self)` | uccide, ed è **sempre lecito** (§5.3, punto 4) | **consuma il `Worker`**: istruire dopo l'uccisione non compila |
+| `Process::start(grant, descriptor) → Started<Self::Handle>` | avvia il processo: `Running(handle)`, o `Rejected { grant, error }`, che riporta indietro la concessione di un avvio fallito | senza concessione **non compila** — §5.6, invariata |
+| `Worker::instruct_one(frame) → Result<SingleReceipt, ProcessError>` | un'istruzione con **una** risposta | l'unico modo di parlare è **un oggetto `Worker`**, e l'avvio ne restituisce uno. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-028: il tipo non distingue quello dell'avvio da un'implementazione scritta altrove (§6.3.2) |
+| `Worker::instruct_stream(frame) → Result<StreamReceipt, ProcessError>` | un'istruzione con un **flusso** di risposte | idem — ed è **l'istruzione** a dichiarare quale delle due |
+| `Worker::read_one(SingleReceipt) → Result<Frame, ProcessError>` | una risposta sola | **consuma** la ricevuta: leggere due volte non compila |
+| `Worker::read_next(&mut StreamReceipt) → Result<Option<Frame>, ProcessError>` | il frame successivo | resta aperta finché il worker dichiara la fine, o il core chiude |
+| `Worker::close(StreamReceipt) → Result<(), ProcessError>` | chiude il flusso | |
+| `Worker::kill(self) → Killed` | uccide, ed è **sempre lecito** (§5.3, punto 4): `Killed { grant, outcome }` riporta la concessione fuori da ogni `Result` | **consuma il `Worker`**: istruire dopo l'uccisione non compila |
+
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-373, AUD-389, AUD-406, AUD-416: i nomi e le forme sono quelli del sorgente, `crates/kernel/src/ports/process.rs`; `Started` e `Killed`, con la concessione che torna da un avvio fallito e da un'uccisione, sono le forme della §2.3 del [disegno del Traguardo 6](2026-08-28-sottoprogetto-1-traguardo-6-altri-meccanismi-design.md).
 
 **Due tipi di ricevuta e non un enum a due rami.** Costa una funzione di lettura in più, e
 compra che *«una risposta singola diventi un flusso»* non sia **esprimibile** — cioè
@@ -2352,10 +2385,10 @@ rappresentabile invece che controllato a runtime.
 
 > ⛔ **Corretto il 2026-08-08: le istruzioni sono due, non una.** La tabella aveva una sola
 > riga — `istruisci(frame) → Ricevuta` — con un tipo `Ricevuta` che non compare in nessun'altra
-> firma, mentre le tre letture prendono `RicevutaSingola` e `RicevutaFlusso`. Le uscite erano
+> firma, mentre le tre letture prendono `SingleReceipt` e `StreamReceipt`. Le uscite erano
 > due, ed erano **entrambe** contro la decisione: o `Ricevuta` è l'enum a due rami che il
 > paragrafo qui sopra dichiara di aver comprato con una funzione in più, oppure non esisteva
-> **nessun modo di ottenere una `RicevutaFlusso`** — cioè il flusso audio, che è la ragione
+> **nessun modo di ottenere una `StreamReceipt`** — cioè il flusso audio, che è la ragione
 > per cui la §6.10 esiste. Con due punti d'ingresso è **l'istruzione** a dichiarare la forma
 > della risposta, che è dove la decisione va presa: chi manda un'istruzione sa se si aspetta
 > una risposta o un flusso. Costa **due** funzioni in più invece di una — il costo dichiarato
@@ -2398,7 +2431,7 @@ arriva dal worker, in un messaggio progettato qui. Nasce sotto la regola di §4.
 | # | Livello | Meccanismo | Sonda — *deve scattare* | Contro-sonda — *deve restare verde* |
 |---|---|---|---|---|
 | 1 | **1 — compilatore** | si parla a un worker solo con un oggetto `Worker`. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-028: l'avvio ne restituisce uno, e il tipo non lo distingue da un'implementazione scritta altrove (§6.3.2) | parlargli senza `Worker` → non compila | col `Worker` → compila |
-| 2 | **1 — compilatore** | `uccidi` consuma il `Worker` | istruire dopo `uccidi` → non compila | istruire prima → compila |
+| 2 | **1 — compilatore** | `kill` consuma il `Worker` | istruire dopo `kill` → non compila | istruire prima → compila |
 | 3 | **1 — compilatore** | leggere pretende una ricevuta | leggere senza ricevuta → non compila | con la ricevuta → compila |
 | 4 | **1 — compilatore** | una ricevuta singola si consuma | leggere due volte dalla stessa → non compila | leggerne una → compila |
 | 5 | **2 — controllo esterno** | i byte consumati sono pari alla lunghezza dichiarata | frame troncato, o con coda dopo l'ultimo elemento → fallisce | frame esatto → verde |
@@ -2584,6 +2617,8 @@ caso ha il proprio `.stderr`.
 >
 > La rigenerazione è un **atto deliberato e si legge nel diff**, esattamente come aggiungere
 > una voce alla lista di ADR-0031. È il **gotcha #25**.
+>
+> ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-076: mai `TRYBUILD=overwrite`. Un oracolo si rigenera uno alla volta, per la via in cinque passi del gotcha #25 — il vecchio salvato fuori da git, lo stantio cancellato, il rilancio che scrive `wip/` dal compilatore, il `diff -u` letto, lo spostamento a mano —, come dice la testa di `crates/kernel/tests/compile_fail.rs`.
 
 ### 7.2 Le evidenze di M-3
 
@@ -2761,6 +2796,8 @@ complementare**:
 | Coglie | una crate **nuova** che entra, anche innocua | una crate **già in lista** che raggiunge l'OS per una via non prevista — l'unificazione delle feature |
 | Messaggio d'errore | ✅ **nomina il rimbalzo**: `X unty <- kernel -> bincode -> unty` | ❌ `target is not supported` — **non dice chi l'ha tirata dentro** |
 
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-587: il cancello senza OS coglie anche lo scavalcamento diretto, `extern crate std;` scritto in una crate vincolata, che `#![no_std]` non rifiuta (§1.4, prima riga; provato nella §7.2 del [disegno della chiusura](2026-09-02-sottoprogetto-1-chiusura-design.md)). Se un giorno lo si smantella, quella difesa va rimpiazzata.
+
 > **La lista è la diagnosi, il cancello è la prova.** Sostituire la prima con il secondo
 > lascia un controllo che dice «no» senza dire perché.
 
@@ -2849,8 +2886,8 @@ quella «semplificazione» prima che qualcuno la applichi.
 
 | Difende | Cosa **non** deve compilare | Contro-sonda |
 |---|---|---|
-| **Q9** · I6 · V20 | `Untrusted` assegnato a `Instruction` — **regola A** | la promozione dichiarata compila |
-| **Q9** · I6 · V20 | una **via di conversione `From`/`Into`** da `Untrusted` a `Instruction` — **regola B**. La direzione è **una sola**, e il richiamo qui sotto dice perché | la promozione dichiarata, che pretende la porta `journal`, compila |
+| **Q9** · I6 · V19 | `Untrusted` assegnato a `Instruction` — **regola A** | la promozione dichiarata compila |
+| **Q9** · I6 · V19 | una **via di conversione `From`/`Into`** da `Untrusted` a `Instruction` — **regola B**. La direzione è **una sola**, e il richiamo qui sotto dice perché | la promozione dichiarata, che pretende la porta `journal`, compila |
 | **Q2** · §5.1 | MiB assegnati a millisecondi | ciascuno con sé stesso |
 | **V29** · §2.1 | tempo monotonic assegnato a wall time, **e wall time assegnato a un istante di decisione** — la §2.1 dice *«scambiarli non compila»*, che è simmetrico | ciascuno accettato dal proprio |
 | **V29** · §2.1 | una **via di conversione `From`/`Into`** fra i due tempi | i due accessori, nominati entrambi esplicitamente, compilano |
@@ -2865,9 +2902,11 @@ quella «semplificazione» prima che qualcuno la applichi.
 | **V29** · §2.8 · ADR-0034 | il kernel che **nomina un default**: `Parameters::default()` non esiste — §2.8.2 regola 2 | costruirli con `new`, consegnando ogni campo, compila |
 | **V3** | una **seconda policy attiva**: il valore consegnato ne porta una sola | con una policy sola compila, e la transizione resta un passo giornalato (§5.4) |
 | **Q14** · §4.9 | un **record durevole senza versione**: il tipo è un enum di versione — §4.9.2 regola 1 | il record che dichiara la propria versione compila |
-| **I2** · §6.10 | **istruire un worker dopo `uccidi`**: l'uccisione **consuma** il `Worker` — §6.10.2 | istruirlo prima dell'uccisione compila |
+| **I2** · §6.10 | **istruire un worker dopo `kill`**: l'uccisione **consuma** il `Worker` — §6.10.2 | istruirlo prima dell'uccisione compila |
 | **I5** · §6.10 | **leggere due volte dalla stessa ricevuta singola**: la lettura la consuma — §6.10.2 | leggerne una compila |
 | **Q9** · I6 · V20 · §4.9 | un **payload non fidato scritto senza la propria etichetta**: il campo esiste e non ha default — **regola D4 del piano del Traguardo 3** | un record che dichiara la propria etichetta compila, in entrambi i valori |
+
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-366: le regole A e B tengono `V19` — il tipo distinto e la conversione esplicita, nella definizione della [spec del kernel](2026-08-06-kernel-design.md) (§6.4) —; `V20`, l'eredità dell'etichetta, la tengono la riga `Q9 · I6 · V20 · §4.9` per il giornale e, per `summarize`, un test a esempi: la riga `V20` della §8.3.
 
 > ⛔ **Una riga aggiunta il 2026-08-10, eseguendo il Traguardo 3 — ed è un controllo _nuovo_.**
 > Chiude la via **A4** di `crates/kernel/src/boundary.rs`: scrivere testo esterno nel giornale,
@@ -2895,6 +2934,8 @@ quella «semplificazione» prima che qualcuno la applichi.
 > `crates/kernel/tests/record_shape.rs`. ⚠️ **L'argomento per intero — la ricetta a due righe,
 > e ciò che nessuno dei due casi copre — sta in `trust_has_no_default.rs`**, dove serve a chi ci
 > sbatte contro, e non è ripetuto qui.
+>
+> ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-648: dal 2026-09-01 `record_without_trust_label.rs` costruisce il record col costruttore per specie, `RecordV1::intent`, con tre argomenti su quattro, e il suo oracolo è `E0061`: tiene la **firma** che pretende l'etichetta, non il campo. Togliere il campo da `RecordV1` rompe il corpo del costruttore e l'intera crate smette di compilare, un rosso più forte del caso; il perché sta nel richiamo datato in fondo al caso.
 >
 > 📌 **Conteggi ricontati sulla tabella, non dedotti** — gotcha #31: il blocco C passa da
 > diciotto a **diciannove** righe, e i test del catalogo da ventitré a **ventiquattro**. La
@@ -3252,7 +3293,7 @@ di confinamento, la sua dichiarazione per azione, e la sua registrazione nel gio
 > argomento**, e il test di compilazione fallita si scrive lì. La §8 lo registra con il
 > sotto-progetto che lo chiude.
 
-#### 7.4.6 I test di contratto — due porte adesso, due dopo
+#### 7.4.6 I test di contratto
 
 La §3.7 dichiara il punto cieco con parole proprie: **«la finta non è la vera»**. Senza test
 di contratto, Q4 e Q5 sono provati contro una finzione — la DST dimostra che il kernel si
@@ -3315,7 +3356,7 @@ La §8 registra quali porte hanno la suite e quali no, con il sotto-progetto che
 | **i test di compilazione fallita crescono con ogni tipo** | §2.5 lo prevedeva; il catalogo ne conta ormai **ventiquattro** — **cinque** nel blocco B e **diciannove** nel C — e ciascuno ha un `.stderr` da leggere (gotcha #25). ⚠️ **Ricontato una quarta volta il 2026-08-10**, eseguendo il Task 2 del Traguardo 3: diceva «ventitré, cinque e diciotto», ed era il ritratto di prima della riga dell'**etichetta di fiducia**. ⛔ E questa volta il comando è cambiato insieme al numero: si delimita **per intestazione** (`#### 7.4.1` → `#### 7.4.2`) e non per numero di riga, perché un intervallo assoluto che non pesca più nulla darebbe **zero senza sollevare niente** — gotcha #26. I due comandi stanno in [`riferimenti.md`](../../riferimenti.md). ⚠️ **Ricontato sulla tabella il 2026-08-08**: diceva «una dozzina, tre e nove», ed era il ritratto di **prima** di ADR-0034, ADR-0036 e §6.10.5. ⚠️ **Ricontato di nuovo il 2026-08-09**, eseguendo il Traguardo 2: diceva «diciannove, cinque e quattordici», ed era il ritratto di prima delle **tre righe nuove** del blocco C — arrivate una per compito, ai Task 1, 2 e 3. ⚠️ **Ricontato una terza volta il 2026-08-09**, chiudendo la voce della **regola B**: diceva «ventidue, cinque e diciassette», ed era il ritratto di prima che il caso del Task 9 avesse la propria riga. Un ritratto di conteggi si riconta, non si deduce — gotcha #31 |
 | **due voci non sono provate in nessuna direzione** | V25 · Q20 e V34 · Q24: il loro controllo non esiste, e la §7.4.2 lo dichiara. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-025 |
 | **V31 resta debole per natura** | l'automatismo protegge la proprietà, non il seme: §3.4 |
-| **i test di contratto sono lavoro reale** | due suite ora, due rimandate. È il prezzo per non provare Q4 e Q5 contro una finzione |
+| **i test di contratto sono lavoro reale** | le suite di conformità, dove esistono — quali, e con quali limiti, lo dice la §7.4.6. È il prezzo per non provare Q4 e Q5 contro una finzione. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-418: il conto delle suite vive nella §7.4.6, e qui non si ripete |
 
 ### 7.5 La cadenza: cosa gira quando
 
@@ -3392,7 +3433,7 @@ di un piano agentico, qualità percepita di voce e mesh, ergonomia dell'interfac
 | il **tempo di parete** dell'arbitro come non-regressione | M-7 dichiara che il massimo per operazione è dominato dal rumore dello scheduler di Windows. Un cancello su un numero rumoroso si impara a ri-lanciare finché non passa | i numeri di M-7 come **limite superiore**; Q1 lo chiude SP-2 |
 | la **percentuale di copertura** del codice | il criterio di questo progetto è «ogni V ha un controllo», non «l'X % delle righe». Una copertura alta con invarianti non verificate è la falsa sicurezza peggiore | la tabella della **§8** |
 | che una crate ammessa non faccia nulla di indesiderato | ADR-0031 lo dichiara: *«limita la superficie, non la certifica»* | la giustificazione scritta, e chi la legge |
-| che `platform` si comporti come `simulator` su **tutte** le porte | solo due ne hanno entrambe le implementazioni qui (§7.4.6) | contratto su `journal` e `reactor`; le altre in §8 come rimandate |
+| che `platform` si comporti come `simulator` su **tutte** le porte | non tutte hanno entrambe le implementazioni, e la suite di `ipc` gira sul solo trasporto vero (§7.4.6) | la suite di conformità dove la vera e la finta esistono entrambe (§7.4.6); le altre porte nella §8. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-418 |
 | lo **stile** del codice | non difende nessun V, quindi la regola 1 di §7.1.1 lo esclude | `clippy` come igiene, **fuori** dalla porta |
 | Q6 · Q11 · Q12 · Q16 | non hanno consumatore in questo sotto-progetto. ⚠️ dal 2026-08-07 la riga della §0.6 ne elenca **cinque**: vi si è aggiunto **Q21**, per la correzione di §8.5.1 | la §8, con il sotto-progetto che li chiude |
 
@@ -3670,8 +3711,8 @@ disallineano (§7.4.4, caso 2).
 | V16 | il record di routing non contiene mai credenziali; **nomi di provider e parametri sì** | ⏳ rimandato | ⛔ **Ri-giudicato il 2026-08-08, e lo stato torna a `parziale`.** La metà **positiva** — il record *deve* portare nomi di provider e parametri — è verificata qui: è il record **risolto** di §6.2, con lo stesso test a esempi su giornale sintetico che rende ✅ V15 e Q14. La metà **negativa** resta vacua: nessuna credenziale attraversa il sistema in questo perimetro (`secrets` esiste, nessun adattatore la usa), quindi un controllo proverebbe l'assenza di una cosa che non c'è — gotcha #17, e resta vero. ⚠️ **Il declassamento di §8.5.3.1 era corretto sulla metà che aveva davanti, e la metà positiva non ce l'aveva**: la formulazione in questa colonna era troncata. Vedi §8.5.5. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-039, AUD-041: nessuna delle due metà è verificata qui. Il record che `gateway::dispatch` scrive porta il nome del modello, i candidati offerti e il degrado — `RoutingDetail` in `crates/kernel/src/record.rs` —, e nessun provider, parametro o destinazione: `the_dispatch_journals_the_RESOLVED_decision_and_not_a_reference_to_it` rilegge quei tre campi. Le due metà arrivano col primo adattatore di provider | B (3) |
 | V17 | ritentativo e cambio di candidato restano dentro lo stesso passo | ⏳ rimandato | nessun controllo qui: il ritentativo e il cambio di candidato non esistono — `gateway::resolve` sceglie un candidato, `gateway::dispatch` ne giornala la decisione e non apre passi, e il record non porta i tentativi (§6.2) —, e `a_passing_sensor_writes_a_verdict_and_opens_nothing` e `a_failing_verdict_opens_a_new_step_and_carries_the_detail`, in `crates/kernel/tests/sensor_ring.rs`, esercitano `V14`: un verdetto su un output che esiste. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-042: la via *«nessun output → stesso passo»* del discriminante di §6.2 arriva col primo adattatore di provider, il primo che produce un errore transitorio | B (3) |
 | V18 | un errore di vincolo nomina **quale** vincolo | ⏳ rimandato | nessun controllo qui: il filtro non nomina il vincolo — `GatewayError` ha la sola variante `NoConformingCandidate`, senza dati, e `Conforming` porta il degrado come booleano (`crates/kernel/src/gateway/mod.rs`) —, e `a_data_constraint_with_no_candidate_FAILS_CLOSED` e `a_quality_constraint_with_no_candidate_DEGRADES_AND_SAYS_SO` asseriscono la variante e il booleano; **che l'interfaccia lo mostri** nemmeno. ⛔ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-387: l'innesco A è scattato col 2, che non manda richieste al gateway: un errore di vincolo arriva all'interfaccia quando qualcuno chiama un modello, col 3 ([stella polare della GUI](2026-09-07-direzione-gui-design.md), tabella della Chat, riga 5). ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-003, AUD-016, AUD-030, AUD-043: il nome del vincolo si costruisce col primo che chiama un modello, nel kernel e nell'interfaccia insieme | B (3) |
-| V19 | tipo distinto per il contenuto esterno, conversione esplicita e giornalata | ✅ verificato qui | la conversione riceve la porta `journal` come argomento: gettone di livello 1 (§6.5, §7.4.1 B) | — |
-| V20 | l'etichetta di non-fidatezza è ereditaria attraverso ogni trasformazione | ✅ verificato qui | test di compilazione fallita, livello 1 (§7.4.1 C). ⚠️ le trasformazioni esistenti oggi sono poche: ogni trasformazione nuova porta il proprio caso in `tests/compile_fail/` (§2.5) | — |
+| V19 | tipo distinto per il contenuto esterno, conversione esplicita e giornalata | ✅ verificato qui | la conversione riceve la porta `journal` come argomento: gettone di livello 1 (§6.5, §7.4.1 B) · il tipo distinto, e nessuna via `From`/`Into` da `Untrusted` a `Instruction`: le regole A e B, livello 1 (§7.4.1 C) | — |
+| V20 | l'etichetta di non-fidatezza è ereditaria attraverso ogni trasformazione | ✅ verificato qui | test di compilazione fallita, livello 1: la riga `Q9 · I6 · V20 · §4.9` di §7.4.1 C — un payload non fidato non si scrive nel giornale senza la propria etichetta · per `summarize`, l'unica trasformazione del testo che esiste, il test a esempi `a_derived_value_is_still_untrusted` in `crates/kernel/tests/boundary_promotion.rs`, la cui annotazione di tipo non compila se `summarize` restituisce `Instruction`. ⚠️ le trasformazioni esistenti oggi sono poche: ogni trasformazione nuova porta il proprio caso in `tests/compile_fail/` (§2.5), e `summarize` non ne ha uno. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-366: le regole A e B di §7.4.1 C tengono `V19` | — |
 | V21 | un permesso vale per la tripla concessa e per la sessione corrente | ⚠️ parziale | test a esempi sulla **forma** del permesso e sulla sua registrazione nel giornale (§6.6): una tripla concessa non copre una tripla diversa. Il mediatore, i preset e il ciclo di approvazione sono scaglionati per regola C | C (4) |
 | V22 | nessuna descrizione di strumento concede permessi | ⏳ rimandato | non esistono strumenti MCP: regola C (§0.4, §6) | C (4) |
 | V23 | la provenienza del contenuto è visibile in interfaccia | ✅ verificato qui | ogni pezzo del flusso porta la propria provenienza — `data-provenance` e l'etichetta in parole in `gui/src/panels/Chat.vue`, e il blocco si chiude al cambio di provenienza in `gui/src/stores/stream.ts` —: test a esempi in `gui/src/panels/chat.test.ts` e in `gui/src/stores/stream.test.ts`, nel passo web del cancello. ⛔ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-407: l'ha costruita il sotto-progetto 2, chiuso il 2026-09-22 | — |
@@ -3697,7 +3738,7 @@ disallineano (§7.4.4, caso 2).
 | Q1 | voce sotto i 600 ms con job GPU pesante | ⏳ rimandato | il metodo di `design/08` è una **misura end-to-end**, che richiede voce e carico reali. §7.6.2 lo dichiara già: il tempo di parete dell'arbitro non è un cancello, perché è un numero rumoroso | **SP-2** (spike, dentro 8) |
 | Q2 | zero OOM | ✅ verificato qui | campagna DST dell'arbitro, la proprietà 1 di §5.7 in `crates/simulator/tests/arbiter_campaign.rs`: l'arbitro è quello vero, l'interlacciamento lo sceglie l'esecutore col seme di `SeededRng`, e il tempo viene da `VirtualReactor`, la porta che ha la suite di conformità (§8.2.2) · sonda negativa esplicita: si concede oltre il budget, la campagna fallisce e nomina il seme (§5.7.1). ⛔ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-402: l'interlacciamento non passa dal `reactor`, quindi non ne eredita la suite; lo stato resta | — |
 | Q3 | crash della GUI durante una run | ⚠️ parziale | il metodo di `design/08` — la GUI muore a un'operazione scelta dal seme — gira: le concessioni tornano (§5.7, proprietà 3, `crates/simulator/tests/gui_death_campaign.rs`), e la stessa prova tiene l'attività che ascolta la GUI (`crates/simulator/tests/serving_campaign.rs`). Mancano la terza metà del metodo, *«col 3 la run prosegue»*, perché una run non esiste, e una suite che tenga contro il trasporto vero le finte in cui si inietta la morte (§8.2.2). ⛔ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-387, AUD-407, AUD-408, AUD-409: il trasporto vero e la suite di `ipc` ci sono dal sotto-progetto 2, ma la suite gira sul solo trasporto (D82) | una run prosegue senza la GUI (3) · la conformità delle finte: la scelta aperta su AUD-409 |
-| Q4 | kill di un worker in qualsiasi istante | ⚠️ parziale | la DST inietta su `process` il kill, in un istante scelto dal seme — `crates/simulator/tests/worker_kill_campaign.rs`, la proprietà 2 di §5.7 —, e nessun guasto del dialogo: i quattro di §3.3 arrivano col primo worker vero · la vita del worker è al compilatore — parlargli pretende un `Worker`, leggere pretende una **ricevuta**, `uccidi` consuma il `Worker` (§7.4.1 B e C) · sul filo, i byte consumati devono pareggiare la lunghezza dichiarata (§7.4.2, gotcha #34). ⚠️ **Riletta il 2026-08-08 con F1b:** non esiste un worker reale contro cui provare la conformità della finta, e col dialogo ciò che manca alla suite è cresciuto — anche il **filo**, non solo il ciclo di vita (§7.4.6). **Lo stato non cambia**. ⛔ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-392: nessuna campagna inietta oggi un guasto del dialogo. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-028: il compilatore pretende un `Worker`, e non lo distingue da quello che l'avvio ha restituito (§6.3.2) | E (12) |
+| Q4 | kill di un worker in qualsiasi istante | ⚠️ parziale | la DST inietta su `process` il kill, in un istante scelto dal seme — `crates/simulator/tests/worker_kill_campaign.rs`, la proprietà 2 di §5.7 —, e nessun guasto del dialogo: i quattro di §3.3 arrivano col primo worker vero · la vita del worker è al compilatore — parlargli pretende un `Worker`, leggere pretende una **ricevuta**, `kill` consuma il `Worker` (§7.4.1 B e C) · sul filo, i byte consumati devono pareggiare la lunghezza dichiarata (§7.4.2, gotcha #34). ⚠️ **Riletta il 2026-08-08 con F1b:** non esiste un worker reale contro cui provare la conformità della finta, e col dialogo ciò che manca alla suite è cresciuto — anche il **filo**, non solo il ciclo di vita (§7.4.6). **Lo stato non cambia**. ⛔ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-392: nessuna campagna inietta oggi un guasto del dialogo. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-028: il compilatore pretende un `Worker`, e non lo distingue da quello che l'avvio ha restituito (§6.3.2) | E (12) |
 | Q5 | riavvio del core a metà run, nessun effetto rieseguito | ✅ verificato qui | DST con crash-injection su `journal`, suite di conformità presente, **e** il livello 2 dentro il motore: M-8, 12 punti scattati, 12/12 riaperti coerenti (§4.6). ⚠️ **Rafforzato il 2026-08-08 con ADR-0036:** la porta `journal` scambia **byte** e la codifica vive in `kernel` (§4.9.3), quindi il crash cade **dentro** la scrittura e la campagna esercita davvero codifica e decodifica — prima le avrebbe scavalcate | — |
 | Q6 | contesto esaurito | ⏳ rimandato | il metodo è una proprietà su ricomposizioni ripetute, e la ricomposizione è scaglionata (§0.6) | G (13) |
 | Q7 | tetto di passi, tempo o costo superato | ⏳ rimandato | il metodo di `design/08` è un test a esempi sulla transizione ad `AttesaUmano`, e la transizione non esiste: `grep -rni attesaumano crates/ --include=*.rs`, e lo stesso comando con `awaiting`, non rendono niente. ⛔ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-410: nessun controllo qui (§8.1.3) | una run entra in `AttesaUmano` (3) |
@@ -3708,7 +3749,7 @@ disallineano (§7.4.4, caso 2).
 | Q12 | difetto ricorrente che diventa una proposta | ⏳ rimandato | l'**anello 4 non esiste**: è scaglionato per regola C (§0.4, §5), e senza di lui non c'è niente che emetta la proposta che il metodo verifica. ⚠️ **Motivazione corretta il 2026-08-08:** diceva *«legge ricorrenze che esistono solo quando qualcosa gira»*, ma il metodo di `design/08` è un **giornale sintetico con ricorrenza** — la ricorrenza si costruisce senza far girare niente, come per Q14. A mancare è l'anello, non il dato | C (4) |
 | Q13 | nessun candidato non conforme viene mai eseguito, **per qualunque catena** | ✅ verificato qui | **gettone di conformità**: un candidato non filtrato non è esprimibile come argomento di un'esecuzione. Livello 1 (§6.3.1, §7.4.1 B). ⚠️ il gettone prova la provenienza, non la correttezza del filtro: §6.3.2. ⛔ **Divergenza da `design/08`, registrata il 2026-08-08 invece che nascosta:** il metodo assegnato è una **verifica di proprietà** su catene generate; qui la proprietà è resa **non esprimibile**, che è più forte — una proprietà provata su N catene lascia scoperta la N+1, un tipo no. È la stessa mossa di §5.3 punto 3. Sostituire un metodo con uno più forte resta una sostituzione, e §8.1.3 pretende che si dica | — |
 | Q14 | ricostruire con cosa è stato eseguito un passo di sei mesi fa | ✅ verificato qui | il record di routing è **risolto** e giornalato col passo (§6.2): test a esempi su un giornale sintetico. La proprietà è strutturale — il record non rimanda alla configurazione, quindi non dipende da essa. ⚠️ **Il meccanismo è cresciuto il 2026-08-07 con ADR-0036**, e senza di esso «sei mesi fa» era una promessa: il record **dichiara la propria versione** — enum di versione al compilatore (§7.4.1 C) — e i **byte congelati** con la mappa `indice → nome → valore atteso` provano che un giornale scritto oggi si rilegge domani (§7.4.2, §4.9.4). ⛔ Vale il limite di §4.9.4: il compilatore prova che una versione è **dichiarata**, non che sia quella **giusta**. Un campo aggiunto dopo — il passo padre di un fork, §4.9.5 — è **facoltativo con un indice nuovo**, quindi non rompe la rilettura | — |
-| Q15 | un'istruzione trovata nei dati non autorizza | ⚠️ parziale | la metà **statica** è qui: §7.4.1 C, **le due** righe Q9·I6·V20 — la regola A (`Untrusted` dove è attesa un'`Instruction`) e la regola B (nessuna via `From`/`Into`) — più il gettone `journal` sulla conversione (§7.4.1 B, V19). ⚠️ **Riletta il 2026-08-09:** la cella diceva «riga» al singolare, ed era vera finché la riga era una; dal richiamo di §7.4.1 sono due, e la seconda è quella che vede il ponte di conversione. **Lo stato non cambia** · la metà a esempi — *l'obbligo di autorizzazione* — richiede il mediatore e il ciclo di approvazione, scaglionati per regola C | C (4) |
+| Q15 | un'istruzione trovata nei dati non autorizza | ⚠️ parziale | la metà **statica** è qui: §7.4.1 C, **le due** righe Q9·I6·V19 (2026-10-03, audit del 2026-09-30, AUD-366) — la regola A (`Untrusted` dove è attesa un'`Instruction`) e la regola B (nessuna via `From`/`Into`) — più il gettone `journal` sulla conversione (§7.4.1 B, V19). ⚠️ **Riletta il 2026-08-09:** la cella diceva «riga» al singolare, ed era vera finché la riga era una; dal richiamo di §7.4.1 sono due, e la seconda è quella che vede il ponte di conversione. **Lo stato non cambia** · la metà a esempi — *l'obbligo di autorizzazione* — richiede il mediatore e il ciclo di approvazione, scaglionati per regola C | C (4) |
 | Q16 | descrizione MCP cambiata dopo l'approvazione | ⏳ rimandato | il metodo è un test di contratto contro un server MCP finto, e non esistono strumenti (§0.6) | C (4) |
 | Q17 | un segreto compare in contenuto in uscita | ⏳ rimandato | lato kernel: §7.4.2, riga V34 · Q24 — solo `secrets` raggiunge il portachiavi, livello 2 provato in due direzioni · **il canary è scaglionato** (§0.4, §6) e non c'è contenuto in uscita da controllare. ⛔ **Precisato il 2026-08-08, perché la cella si attribuiva un merito altrui:** il metodo che `design/08` assegna a Q17 è il **canary a esempi**, e **non ne gira niente**; il controllo di livello 2 qui accreditato è quello che `design/08` assegna a **Q24**. Resta ⚠️ e non ⏳ perché è esattamente la classe di §0.6 — *«verificato solo lato kernel»* — che §8.1.1 dichiara essere una delle due ragioni per cui il quarto stato esiste ⛔ **DECLASSATA DA ⚠️ A ⏳ IL 2026-08-27, finding AUD-026:** la metà *«lato kernel»* era **la riga V34 · Q24**, e quel livello 2 **non esiste** — quindi non resta niente di verificato qui, e la ragione scritta sopra (*«resta ⚠️ perché è la classe di §0.6»*) cade con la propria premessa. ⚠️ **Il capoverso del 2026-08-08 NON si riscrive**: è un verbale, e diceva già il vero su `design/08` | B (3) |
 | Q18 | perdita della rete | ⏳ rimandato | il metodo di `design/08` — DST con iniezione del guasto di rete, che verifica il degrado dichiarato **prima** del primo fallimento — non gira: `simulator` non ha un doppio di `network` (§3.1), nessuna campagna tocca la rete, e in `Degradation` la connettività non ha un campo (`crates/kernel/src/degradation.rs`). ⛔ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-710, AUD-714: nessun controllo qui | B (3) |

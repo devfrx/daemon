@@ -81,7 +81,7 @@ il cui metodo di determinazione è già deciso.
 | Q18 | Perdita della rete durante l'uso | il sistema **dichiara** cosa resta disponibile; non fallisce azione per azione |
 | Q19 | Capire cosa è andato storto in una run di 4 ore | trace gerarchico navigabile, ricavato dal giornale |
 | Q20 | Dati che lasciano la macchina | nessuno per default: esportazione opt-in, un solo punto di uscita |
-| Q21 | Ripristino da backup su una macchina nuova | torna tutto l'irriproducibile; indici e pesi si ricostruiscono; i segreti si re-inseriscono — **dichiarato al momento del backup**, non del ripristino |
+| Q21 | Ripristino da backup su una macchina nuova | torna tutto l'irriproducibile; indici e pesi si ricostruiscono; i segreti si re-inseriscono — **dichiarato al momento del backup**, non del ripristino. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-367: si legge con [ADR-0040](../../adr/0040-dove-vivono-i-dati-e-che-cosa-salva-il-programma.md): torna l'irriproducibile **del programma** — il giornale, la configurazione, i router —; i file del proprietario, la root e le zone di lavoro coi file che le run vi producono, non sono nel backup del programma: li salvano i backup del proprietario e git, e il backup lo dichiara quando viene creato |
 | Q22 | Un passo modifica file e va annullato | l'ambito torna allo stato precedente al passo, senza dipendere da git |
 | Q23 | Esecuzione di codice generato o di un comando | avviene almeno al **livello 2** di confinamento; se non disponibile, **non parte** |
 | Q24 | Un componente diverso dal gestore dei segreti tenta di leggere una credenziale | non esiste alcun percorso per farlo — verificabile staticamente |
@@ -169,7 +169,7 @@ esse; una violazione richiede un ADR, non una deroga.
 |---|---|---|
 | V1 | Nessun lavoro tocca la GPU senza concessione valida | §3 gateway, ogni capacità L2 |
 | V2 | Ogni tipo di lavoro GPU deve avere un profilo di risorsa dichiarato | ogni capacità L2 |
-| V3 | La policy attiva è una sola e proviene dal profilo di configurazione | §3, §4 |
+| V3 | La policy attiva è una sola e proviene dal profilo di configurazione. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-056: si legge col rimando del 2026-09-08 in testa ad [ADR-0006](../../adr/0006-due-policy-vram-come-oggetti-distinti.md): dal profilo il **default**, dal giornale la policy **corrente** | §3, §4 |
 | V4 | `Rifiutata` e `InCoda` sono esiti distinti e vanno distinti anche in interfaccia | §7, GUI |
 
 ### 2.3 Domande aperte, con il metodo per chiuderle
@@ -226,7 +226,7 @@ durevoli su una latenza già dominata dalla chiamata al modello.
 | V15 | Ogni richiesta dichiara i propri vincoli, anche quando coincidono con i default | ogni capacità |
 | V16 | Il record di routing non contiene mai credenziali; nomi di provider e parametri sì | §6 |
 | V17 | Ritentativo e cambio di candidato restano dentro lo stesso passo | §4, capacità Agenti |
-| V18 | Un errore di vincolo non soddisfatto deve nominare **quale** vincolo | §7, GUI |
+| V18 | Un errore di vincolo non soddisfatto deve nominare **quale** vincolo. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-364: oggi l'errore non lo nomina — `GatewayError` ha la sola variante `NoConformingCandidate`, senza dati, in `crates/kernel/src/gateway/mod.rs` —, e il nome si costruisce col primo che chiama un modello, col 3: la riga `V18` della §8.3 della [spec del sotto-progetto 1](2026-08-06-sottoprogetto-1-kernel.md) | §7, GUI |
 
 ### 3.5 Il costo che questa sezione introduce
 
@@ -405,6 +405,8 @@ strumento. È l'unico varco, e viene chiuso su tre lati:
 | tempo | impronta fissata: cambia → **sospeso** (difesa contro il *rug pull*) |
 | autorità | una descrizione **non concede permessi**: quelli vengono solo dalla tripla |
 
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-365: *«l'unica»* e *«l'unico varco»* si leggono col richiamo del 2026-08-27 in [ADR-0015](../../adr/0015-descrizioni-degli-strumenti-fissate-all-approvazione.md). Anche le skill dichiarative di [ADR-0003](../../adr/0003-estensibilita-solo-mcp-e-skill-dichiarative.md) — guide, per la §0.6 qui sopra e per [ADR-0009](../../adr/0009-guide-sensori-e-anelli-sono-meccanismi-di-kernel.md) — sono contenuto di terzi che entra nel canale che influenza il comportamento. Se le difese di questa tabella valgano anche per loro non è deciso: è la voce AUD-004 del [rapporto del 2026-08-27](../../audit-2026-08-27.md), del proprietario.
+
 ### 6.4 Vincoli che la §6 impone alle sezioni successive
 
 | # | Vincolo | Colpisce |
@@ -422,7 +424,7 @@ Nessuno di questi è tecnico. Sono i tre punti in cui il capitolo cede.
 | # | Falla | Mitigazione |
 |---|---|---|
 | 1 | **L'utente approva per stanchezza** | preset (`auto-approva sicuri` di default) riducono il volume; non lo azzerano |
-| 2 | Un **segreto incollato a mano** in chat non attraversa il gestore e aggira l'escalation | candidato sensore in §7: rilevare segreti in chiaro nell'input |
+| 2 | Un **segreto incollato a mano** in chat non attraversa il gestore e aggira l'escalation | candidato sensore in §7: rilevare segreti in chiaro nell'input. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-643: la §7 non contiene il sensore — la valutazione che i *Follow-up* di [ADR-0016](../../adr/0016-permessi-granulari-e-default-dei-vincoli-sui-dati.md) chiedono non è stata fatta —, e la falla resta aperta, dichiarata anche in [design/06](../../design/06-permessi-e-confine-dei-dati.md). Chi valuta il sensore — col 3, che porta il gestore dei segreti e il canary ([tracciabilità](../../tracciabilita.md)), o in un'altra sede — è la scelta aperta su AUD-643 |
 | 3 | Il **canary copre i segreti noti**, non dati sensibili generici | nessuna: è una rete, non un muro, e va presentata come tale |
 
 Scriverli qui è la mitigazione principale: una falla dichiarata è una falla che
@@ -507,7 +509,9 @@ reale — candidato naturale per una metrica dell'anello 4.
 [ADR-0021](../../adr/0021-simulazione-deterministica-e-iniettabilita.md).
 
 **Struttura:** [Strategia di test](../../design/08-strategia-di-test.md), con la mappa
-completa Q1–Q20 → metodo di verifica.
+completa dei Q → metodo di verifica: `scripts/check-docs.sh` rifiuta un Q delle spec che
+vi manchi (V30). ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-363: la mappa
+copre ogni Q della §0.4, e il conto lo dà la tabella, non questa riga.
 
 ### 8.1 In sintesi
 
@@ -554,7 +558,7 @@ vincolante prima che venga erosa per comodità.
 | V28 | Nessun modello nel percorso decisionale del kernel; verificabile staticamente | tutto il kernel |
 | V29 | Tempo, casualità, I/O, scheduling **e i parametri di decisione** sono iniettabili — requisito di costruzione | tutto il kernel, ADR sul linguaggio |
 | V30 | Ogni requisito Q ha un metodo di verifica dichiarato **prima** dell'implementazione | ogni sezione |
-| V31 | Ogni difetto trovato in simulazione conserva il proprio seed come caso di regressione | §5, anello 4 |
+| V31 | Ogni difetto trovato in simulazione conserva il proprio seed come caso di regressione. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-383: si legge col rimando del 2026-08-08 di [ADR-0021](../../adr/0021-simulazione-deterministica-e-iniettabilita.md): il seme è un punto di ripartenza per indagare, e a entrare nella suite di regressione è la **proprietà** che il difetto violava ([`semi-dst.md`](../../semi-dst.md)) | §5, anello 4 |
 
 > ✅ **`V29` si allarga ai parametri di decisione — richiamo del 2026-08-08.** Non è una
 > decisione nuova: [ADR-0034](../../adr/0034-parametri-di-decisione-consegnati-non-letti.md) ha deciso
@@ -597,7 +601,7 @@ timore, non un rischio gestito.
 
 | ID | Rischio | Impatto | Innesco osservabile | Risposta |
 |---|---|---|---|---|
-| RK-1 | TRELLIS2 non lascia margine utile su 16 GB | policy LOCALE con LLM caldo impossibile | picco misurato > ~14 GB al profilo minimo accettabile (SP-1) | dichiarare la **mutua esclusività** in interfaccia; il default REMOTA la rende poco impattante |
+| RK-1 | TRELLIS2 non lascia margine utile su 16 GB | policy LOCALE con LLM caldo impossibile | picco misurato > ~14 GB al profilo minimo accettabile (SP-1). ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-592: la soglia si stringe delle due quote, audio e presentazione ([ADR-0033](../../adr/0033-gpu-della-gui-quota-di-presentazione.md)), e il valore della seconda aspetta M5 sulla macchina di riferimento: la scelta aperta su AUD-592. Vale anche per la soglia di SP-1 (§9.2) | dichiarare la **mutua esclusività** in interfaccia; il default REMOTA la rende poco impattante |
 | RK-2 | Ridurre l'occupazione dei job `batch` non basta per Q1 | voce degradata durante i render | p95 > 600 ms con `batch` attivo (SP-2) | **sospendere** il `batch` mentre si parla; costo: render più lenti |
 | RK-3 | L'iniettabilità non è praticabile nel linguaggio scelto | DST impossibile → Q2/Q4/Q5 non verificabili | il prototipo SP-5 non riproduce l'esecuzione per seed | **cambiare linguaggio** — per questo lo spike precede l'ADR |
 | RK-4 | Il confine dei tipi non è applicabile staticamente | I6 scende da garanzia a convenzione | il prototipo SP-6 non impedisce l'assegnazione | cambiare linguaggio, oppure accettare verifica per lint dedicato e **dichiararlo** |
@@ -611,6 +615,9 @@ timore, non un rischio gestito.
 | RK-12 | Il kernel-first allontana il primo valore utile | abbandono del progetto | — | accettato in ADR-0001; mitigazione: il kernel è **sottile per costruzione** |
 | RK-13 | Il fail-closed fa fallire più richieste | frustrazione | tasso di fallimento per vincolo | V18: nominare **quale** vincolo (§3.5) |
 | RK-14 | Crescita del giornale | disco pieno | dimensione su disco | ritenzione a livelli (ADR-0018) |
+| RK-15 | Dipendenze native dei worker fuori dal nostro controllo — CUDA, driver, ruote binarie compilate contro versioni specifiche | l'inferenza locale si rompe senza che il nostro codice sia cambiato | un worker che fallisce dopo un aggiornamento del driver o di CUDA, a codice e ambiente invariati | accettato in [ADR-0028](../../adr/0028-ecosistema-dei-worker-ml.md); mitigazione: l'ambiente Python come **artefatto versionato** — il follow-up di ADR-0028 per il 9 e il 10 —, che fissa le ruote e non il driver |
+
+⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-588, AUD-589: RK-15 è il rischio che le *Negative* di [ADR-0028](../../adr/0028-ecosistema-dei-worker-ml.md) chiedono di registrare qui.
 
 ### 9.2 Gli spike
 

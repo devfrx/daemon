@@ -1,9 +1,12 @@
 //! The gateway decisor (§6.2) and the proof of conformance (§6.3).
 //!
-//! ⛔ NO MODEL IS INVOKED FROM HERE, AND NONE EVER WILL BE (ADR-0020): the kernel routes, filters
-//! and journals; the provider adapters are staged out of this milestone by rule C of §0.4. What
-//! that buys is written in ADR-0020 itself — the kernel is testable end to end with no model in
-//! existence, and this file is where that stops being a slogan.
+//! ⛔ NO MODEL DECIDES HERE (ADR-0020): the kernel routes, filters and journals by rules, and a
+//! model invoked THROUGH the kernel hands back opaque data, never a judgement this decisor acts
+//! on. The provider adapters are staged out of this milestone by rule C of §0.4, and with them
+//! the decision of WHERE the call to a provider will live: `dispatch` says what it does not do.
+//! ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-548. What that buys is written in
+//! ADR-0020 itself — the kernel is testable end to end with no model in existence, and this file
+//! is where that stops being a slogan.
 //!
 //! ⛔ THE CHAIN IS DELIVERED PER CALL AND NOT HELD IN `Parameters`, and the choice is written
 //! rather than left to be inferred. ADR-0034 forbids the kernel to READ a parameter it was not
@@ -205,7 +208,10 @@ pub fn resolve(
 ///
 /// ⛔ WHAT IS NOT HERE, AND IT IS STAGED RATHER THAN MISSING: the call to a provider. The
 /// adapters are rule C of §0.4 — there is no provider to call — and the trigger is written here
-/// rather than in prose elsewhere: THE FIRST PROVIDER ADAPTER. ⚠️ A deadline written in prose
+/// rather than in prose elsewhere: THE FIRST PROVIDER ADAPTER. WHERE the call will live -- in this
+/// module, behind the `network` port, or outside the kernel -- is staged with it and is not
+/// decided here: ADR-0020 rules out a model in the decision path, not a call passing through.
+/// ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-548. ⚠️ A deadline written in prose
 /// has nothing that makes it fire (gotcha #77), so this one is not a promise: what this function
 /// does today is the whole of what it claims to do.
 pub fn dispatch<J: Journal>(

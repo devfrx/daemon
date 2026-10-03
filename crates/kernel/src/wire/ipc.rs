@@ -5,8 +5,9 @@
 //! thing §6.7 asks two messages for. And typing the direction would buy nothing at the port:
 //! `send` takes `&[u8]` and `receive` returns `Vec<u8>`, so the boundary sees no type at all.
 //! ⚠️ THE COST, stated: nothing stops a caller from encoding a `Verdict` and sending it UP.
-//! Today there is no such caller -- the transport is staged out (open item 5) -- and the day
-//! there is one, the guard that pays for itself is on the composition side, not here.
+//! The transport exists -- `platform::ipc::LocalSocketIpc` -- and the guard that pays for itself
+//! is on the receiving side, not here: `crate::serving` reads a core -> gui variant that arrives
+//! upward and ignores it. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-549.
 //!
 //! ⛔ THE SCHEMA MINTS NO IDENTIFIERS, AND THE ONE IT CARRIES IS THE JOURNAL'S (§6.1.3).
 //! `StepSummary::step`, inside `IpcMessage::Steps`, is the step number the journal wrote:
@@ -47,9 +48,11 @@
 //! false too -- `platform::ipc::LocalSocketIpc` is the real transport now, and the command that
 //! counts the implementations is the one written there, not this prose.
 //!
-//! ✅ AND THE OTHER HALF DID ARRIVE: the BUILD STAMP of §6.1.2 exists as of today,
-//! `crate::wire::ipc::build_stamp` over `stamp_set`. "Until it exists, NOTHING REFUSES A STALE
-//! GUI" above is now false, and the handshake that uses it is task 7 of the same plan.
+//! ✅ AND THE OTHER HALF DID ARRIVE, the same day: the BUILD STAMP of §6.1.2 is
+//! `crate::wire::ipc::build_stamp` over `stamp_set`, and since 2026-09-18 the handshake of
+//! `crate::serving` compares it and answers a stale gui with `IpcMessage::StaleBuild` -- so
+//! "Until it exists, NOTHING REFUSES A STALE GUI" above is false. ⚠️ RECALL OF 2026-10-03 --
+//! audit of 2026-09-30, AUD-061.
 
 use alloc::string::String;
 use alloc::vec::Vec;
@@ -122,8 +125,10 @@ use crate::time::Millis;
 /// `Ord` because a derive addable later in one line "is a convenience, not the entry door of
 /// whoever comes"; the precedent that argues for keeping is the one on the ports themselves,
 /// where callers are empty by construction and the criterion cannot tell dead from not-yet.
-/// This channel has no transport yet (open item 5), so both readings are live and the choice
-/// is the owner's.
+/// The channel has its transport and its core now, and the core does not serve `Request` (D5):
+/// the consumer of this type -- whatever turns it into a `ResourceProfile`, with the 3D pillar --
+/// does not exist, so the criterion still cannot tell dead from not-yet, both readings are live,
+/// and the choice is the owner's. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-549.
 #[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
 pub struct GrantRequest {
     pub reserved_vram: Mib,

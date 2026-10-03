@@ -19,8 +19,9 @@
 // auto-discover, so `kernel` neither compiles it alone nor warns about an unused macro (D82) --
 // `journal_contract.rs` next door IS a target only because it also holds a test of its own.
 
-/// What every implementation must answer. The macro takes a constructor so each crate hands
-/// over its own.
+/// What every implementation must answer. The macro takes a constructor, and the one crate that
+/// hands one over is `platform` -- D82, above. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30,
+/// AUD-081.
 macro_rules! ipc_contract_suite {
     ($build:expr) => {
         #[test]

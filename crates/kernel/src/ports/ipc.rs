@@ -51,12 +51,14 @@
 //! STAMP of §6.1.2" above is A DEADLINE WRITTEN IN PROSE (gotcha #77), and this is the run in
 //! which it falls due. Nothing ever went red for it, and nothing could have: a sentence about
 //! a future milestone has no oracle.
-//! ⚠️ WHAT IS CORRECTED IS THE *WHEN* AND NOT THE *WHAT*. The paragraph above stays because it
-//! is the only place that says what the stamp IS; its TRIGGER, and what it costs to live
-//! without it meanwhile, live beside the schema in `crate::wire::ipc` -- ONE house, so that the
-//! two cannot drift apart.
+//! ⚠️ WHAT IS CORRECTED IS THE *WHEN* AND NOT THE *WHAT*, and the paragraph above stays for
+//! the *WHAT*.
 //! ✅ THE SCHEMA HALF DID ARRIVE, and in the format named: `crate::wire::ipc` carries
-//! `IpcMessage` over the envelope of `crate::framing`.
+//! `IpcMessage` over the envelope of `crate::framing`. ✅ AND THE STAMP ARRIVED WITH
+//! SUB-PROJECT 2, beside the schema: `crate::wire::ipc::BuildStamp` says what it IS,
+//! `crate::wire::ipc::build_stamp` computes it, and the handshake of `crate::serving` refuses a
+//! gui that carries another one with `IpcMessage::StaleBuild`. ⚠️ RECALL OF 2026-10-03 -- audit
+//! of 2026-09-30, AUD-061.
 //!
 //! ⛔ The port exchanges BYTES, like `journal` and `process`. The schema lives in
 //! `kernel` and the simulator therefore exchanges bytes too, so the DST campaign really
@@ -82,8 +84,10 @@
 //! schedule the same correction again" (E89 of the sub-project 2 plan).
 //! They buy that the signatures are IMPLEMENTABLE
 //! FROM OUTSIDE THE CRATE and callable; they do NOT buy that they are the right signatures, and
-//! neither is the conformance suite, which compares two implementations against ONE contract and
-//! is born with the real channel.
+//! neither does the conformance suite: `crates/kernel/tests/contract/ipc.rs`, expanded by
+//! `crates/platform/tests/ipc_contract_real.rs` against the real transport ONLY (D82), holds that
+//! transport to ONE contract and compares no fake with it. ⚠️ RECALL OF 2026-10-03 -- audit of
+//! 2026-09-30, AUD-408, AUD-081.
 //!
 //! ⛔ DATED RECALL, 2026-09-02, MILESTONE 6 TASK 9 -- THE PARAGRAPH ABOVE SAID "ONE TEST, the
 //! same one that holds `filesystem` and `network`", AND IT NAMED "the client that DIES WHEN THE
@@ -187,10 +191,11 @@ use alloc::vec::Vec;
 ///   its value. The fake is what settled it: written first, it needed no getter.
 /// - `Ord`/`PartialOrd` -- the argument FOR is that gotcha #12 bans `HashMap` and pushes
 ///   toward `BTreeMap`, which demands `Ord`. It does not survive the #46 test, which is the
-///   one that matters on a port with no implementation: an outside implementation is not
-///   BLOCKED without it -- a table plus `==` works, as every other fake here does -- and
-///   unlike a missing accessor or constructor, `Ord` can be added later by anyone, in one
-///   line, breaking nothing. That is a convenience, not the entry door of whoever comes.
+///   one that matters for whoever implements this port from outside: an outside implementation
+///   is not BLOCKED without it -- a table plus `==` works, as every other fake here does and as
+///   `platform::ipc::LocalSocketIpc` does -- and unlike a missing accessor or constructor, `Ord`
+///   can be added later by anyone, in one line, breaking nothing. That is a convenience, not the
+///   entry door of whoever comes. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-550.
 /// - `Hash` -- worse than unused, and refused for the reason `Path` and `StepId` refuse it:
 ///   its consumer is `HashMap`, which `tests/compile_fail/hashmap_in_kernel.rs` forbids
 ///   outright. ⛔ A DERIVE THAT ENABLES THE FORBIDDEN THING IS WORSE THAN ONE NOBODY CALLS: it
@@ -237,8 +242,16 @@ pub enum IpcError {
     /// identifier was never issued" are the same thing seen from the core -- THERE IS NOBODY
     /// THERE -- and neither one gives the core a different move to make.
     Disconnected,
-    /// The message did not decode, or the bytes consumed did not equal the declared
-    /// length. Same reasoning as `process` -- gotcha #34.
+    /// The peer sent a frame the transport will not take. In `platform::ipc::LocalSocketIpc`
+    /// that is a declared length past the cap it is delivered, and from then on every `receive`
+    /// from that client answers this: the state is PERMANENT.
+    ///
+    /// ⛔ IT IS NOT THE DECODING, which this port never does: it hands over whole frames. A body
+    /// that does not decode, or whose bytes consumed do not equal the declared length -- the rule
+    /// of gotcha #34, the one `ProcessError::MalformedFrame` keeps on its own port -- is a
+    /// `crate::framing::WireError`, answered by `crate::wire::ipc::IpcMessage::decode` inside the
+    /// core, and `crate::serving` absorbs it without going through this type. ⚠️ RECALL OF
+    /// 2026-10-03 -- audit of 2026-09-30, AUD-059, AUD-060.
     ///
     /// ⚠️ DISTINCT FROM `Disconnected` ON PURPOSE: a peer that talks nonsense is still there.
     /// Collapsing the two would have the core tear down a live gui over one bad frame.

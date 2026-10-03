@@ -891,12 +891,17 @@ impl RecordV1 {
         &self.payload
     }
 
-    /// Why the record was written, in OUR words — chosen at authoring time, never at runtime.
+    /// Why the record was written, in OUR words — chosen at authoring time, never at runtime, on
+    /// every road a caller writes IN SOURCE. A record decoded from bytes carries whatever they
+    /// say: that is road A4 of `crate::boundary`. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30,
+    /// AUD-553.
     pub fn reason(&self) -> &str {
         &self.reason
     }
 
-    /// Our own structured half, present exactly for the species that declare one.
+    /// Our own structured half, present exactly for the species that declare one IN SOURCE. A
+    /// record decoded from bytes may carry another, or none — road A4 of `crate::boundary`.
+    /// ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-553.
     pub fn detail(&self) -> Option<&Detail> {
         self.detail.as_ref()
     }
@@ -912,10 +917,12 @@ impl RecordV1 {
 ///
 /// ⚠️ EVERY OTHER FIELD STAYS READABLE, deliberately and for the reason the length stays on
 /// `Untrusted`: a failed `assert_eq!` has to remain diagnostic. `kind`, `effect`, `trust`,
-/// `reason` and `detail` are the kernel's own vocabulary — nobody outside chose them — and they
-/// are exactly what one wants to read when a record comes back wrong. Only the payload is
-/// somebody else's, and the list above is the whole of it: the numeral is gone rather than
-/// realigned, because it has already aged twice.
+/// `reason` and `detail` are the kernel's own vocabulary IN SOURCE — nobody outside chose them on
+/// any road a caller writes; a record decoded from bytes is road A4 of `crate::boundary`, and
+/// what printing it opens is that file's A3 — and they are exactly what one wants to read when a
+/// record comes back wrong. Only the payload is somebody else's, and the list above is the whole
+/// of it: the numeral is gone rather than realigned, because it has already aged twice.
+/// ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-553.
 ///
 /// ⛔ DATED RECALL, 2026-08-18 — FINDING P-1. That sentence was true of three fields out of four
 /// and FALSE OF `reason`, which the CALLER chooses. `promote` took a `&str`, so
@@ -962,18 +969,23 @@ impl RecordV1 {
 /// ⚠️ THAT SENTENCE SAID "THE OTHER THREE" UNTIL 2026-08-10 and is dated rather than quietly
 /// renumbered: `reason` arrived at index 4 that day, and it is on THIS side of the line on
 /// purpose. It is the text the caller wrote to justify the record; printing it discloses
-/// nothing nobody chose, and hiding it would leave a failed assertion unable to say what the
-/// record was for.
+/// nothing nobody chose IN SOURCE, and hiding it would leave a failed assertion unable to say
+/// what the record was for. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-553.
 ///
-/// ⛔ AND `detail` IS PRINTED, WHICH IS THE D25 AND NOT AN OVERSIGHT. The field carries OUR
-/// bytes by construction (D20), so printing it opens no road A3; NOT printing it would give
+/// ⛔ AND `detail` IS PRINTED, WHICH IS THE D25 AND NOT AN OVERSIGHT. On every road a caller
+/// writes IN SOURCE the field carries OUR bytes by construction (D20), so printing such a record
+/// opens no road A3; one decoded from bytes carries whatever they say in every text field of its
+/// `Detail`, and this impl prints them whole — the road `crate::boundary` declares open under A3
+/// (errata `E101`, `E120`). NOT printing it would give
 /// `RecordV1` a second hidden field that nobody decided to hide, against the half this doc calls
 /// "the one that gets forgotten" — a `Debug` that hid everything would pass the assertion below
 /// and leave a failed `assert_eq!` on a record saying nothing at all. ✅ AND SINCE 2026-09-01 THE
 /// GUARANTEE IS THE TYPE AND NOT ONLY DISCIPLINE, exactly as for `reason`: the fields are
-/// private, so index 5 is reachable only through a species constructor, and only the species
-/// that declare a `Detail` take one. ⚠️ THE SENTENCE HERE READ "DISCIPLINE AND NOT TYPE … which
+/// private, so IN SOURCE index 5 is reachable only through a species constructor, and only the
+/// species that declare a `Detail` take one; from bytes, `Record::decode` reaches it — road A4.
+/// ⚠️ THE SENTENCE HERE READ "DISCIPLINE AND NOT TYPE … which
 /// is AUD-050 in a second place" until that day, and the second place is shut with the first.
+/// ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-553.
 ///
 /// ⚠️ Pinned by `the_debug_of_a_record_does_not_print_the_payload`, because a closed road that
 /// no test holds is a road that reopens the day somebody puts `Debug` back in the derive list

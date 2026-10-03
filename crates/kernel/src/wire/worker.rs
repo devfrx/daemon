@@ -3,8 +3,11 @@
 //! ⛔ THIS TAKES THE MECHANICS OF `record.rs` AND NOT ITS DISCIPLINE, and §6.10.3 says it in
 //! as many words: no version enum, no register of retired indices, NO FROZEN BYTES. I4 gives
 //! up versioning, and what stands in its place is the build stamp of §6.1.2 -- which this
-//! milestone deliberately does NOT build (§3.4). Until it exists, NOTHING REFUSES A STALE
-//! PEER, and the trigger is the first real worker process (§0.2).
+//! milestone deliberately did NOT build (§3.4), and which sub-project 2 built for the `ipc`
+//! channel alone: `crate::wire::ipc::build_stamp` is computed over THAT channel's canonical set
+//! and checked at its handshake. THIS channel has neither a stamp nor a handshake, so here
+//! NOTHING REFUSES A STALE PEER, and the trigger is the first real worker process (§0.2).
+//! ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-061.
 //!
 //! ⛔ ONE DIRECTION ONLY, worker -> core, AND THE OTHER IS A DECLARED NON-CONSTRUCTION.
 //! Nothing written imposes a core -> worker message today: `instruct_one` and
@@ -69,8 +72,10 @@ pub enum FromWorker {
 
     /// The VRAM peak the work actually reached (§5.2.2).
     ///
-    /// ⚠️ IT IS THE ONE FIELD THIS CHANNEL PUTS INTO THE JOURNAL, and there it is subject to
-    /// §4.9 -- optional, new index. Here it is not: this schema has no version enum at all.
+    /// ⚠️ IT IS THE ONE FIELD THIS CHANNEL WILL PUT INTO THE JOURNAL, the day the first worker on
+    /// the GPU sends it -- today nothing produces it, and no field of the record holds a peak --
+    /// and there it will be subject to §4.9: optional, new index. Here it is not: this schema has
+    /// no version enum at all. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-198.
     #[n(1)]
     VramPeak(#[n(0)] Mib),
 }

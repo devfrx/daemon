@@ -79,9 +79,10 @@ use platform::rng::SequentialRng;
 /// - ABOVE anything legitimate. The reference scenario — three activities of four steps
 ///   each — takes NINE turns, so the limit clears it by FOUR orders of magnitude.
 /// - It catches a block that DOES NOT WAIT in far less than a second: the top row is the
-///   whole ceiling in about fifteen milliseconds. Those are the two failures
+///   whole ceiling in about fifteen milliseconds. Those are the two SPINNING failures
 ///   `RunError::TurnLimitReached` documents — an activity that yields for ever, and one that
-///   re-registers an elapsed deadline. Both spin, so both land there.
+///   re-registers an elapsed deadline. Both spin, so both land there. ⚠️ RECALL OF 2026-10-03 --
+///   audit of 2026-09-30, AUD-058.
 /// - ⚠️ AND IT DOES NOT BOUND THE CLOCK for an activity that keeps going back to sleep on
 ///   deadlines still in the FUTURE. That run is not spinning, it is waiting; it still ends,
 ///   because the turns still run out, but at whatever wall time its waits add up to. The
@@ -174,10 +175,14 @@ const JOURNAL_PATH: &str = "journal.redb";
 
 /// Where the LAYOUT ARCHIVE lives, in production — the seventh port's store.
 ///
-/// ⛔ A SECOND FILE AND NOT A SECOND TABLE IN THE JOURNAL, and the difference is ADR-0022: the
-/// journal is authoritative state and is BACKED UP AND ENCRYPTED; a window layout is neither. It is
-/// also what lets the layout archive fail to open WITHOUT stopping the start-up (decision 35),
-/// which sharing a file with the journal would make impossible.
+/// ⛔ A SECOND FILE AND NOT A SECOND TABLE IN THE JOURNAL, and the difference is ADR-0022: it
+/// separates archives by nature, and gives the journal -- authoritative state -- a policy of its
+/// own, ENCRYPTED and with its payloads PRUNED (ADR-0018), while the window layout belongs to the
+/// configuration, in clear and permanent; both go in the backup. ⚠️ THAT IS THE POLICY, NOT
+/// TODAY: encryption at rest and retention are sub-project 15's and the backup sub-project 11's,
+/// so both files are plain `redb` files for now. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30,
+/// AUD-020. It is also what lets the layout archive fail to open WITHOUT stopping the start-up
+/// (decision 35), which sharing a file with the journal would make impossible.
 ///
 /// ⚠️ RELATIVE TO THE WORKING DIRECTORY, exactly as `JOURNAL_PATH` is and declared for the same
 /// reason: where a per-user data directory belongs is a decision no ADR has taken, and inventing one

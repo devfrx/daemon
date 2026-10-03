@@ -26,10 +26,10 @@
 // this case's; and a SECOND constructor under another name is not called here, so this case
 // cannot see it — the review closes that road, as it does for `two_policies_at_once.rs`.
 //
-// ⚠️ THE LIMIT, declared before anyone discovers it: this proves that the executor RECEIVES
-// its parameters, not that it has no others hidden inside as constants. The compiler cannot
-// forbid a constant. That hole is covered — only for the parameters the campaign actually
-// varies — by the level 2 check of §2.8.4, and it is NOT a proof of absence.
+// ⚠️ THE LIMIT, declared before anyone discovers it: this proves that the executor RECEIVES its
+// parameters, not that it has no others hidden inside as constants. The compiler cannot forbid a
+// constant, and no level 2 check of §2.8.4 sees one either: no campaign varies a parameter, and
+// example tests pin only some values. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-711.
 //
 // ⚠️ AND THE ORACLE NEXT DOOR WILL GO `mismatch` THE DAY `Executor::new` GAINS AN ARGUMENT OR
 // LOSES ONE OTHER THAN `parameters`: rustc quotes the arity and the signature verbatim. That

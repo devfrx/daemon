@@ -204,11 +204,12 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
     /// grep cannot see (E62, E118). ⚠️ NO TALLY IN THAT CLAUSE EITHER: the first draft wrote "the
     /// ONLY caller", two lines under a sentence refusing tallies.
     ///
-    /// ⛔ AND THE HOLE IS DECLARED RATHER THAN LEFT GREEN (E120): nothing in the gate builds or
-    /// runs the fake core until `scripts/gate-gui.sh` arrives with TASK 15, so until then this is
-    /// a `pub` element of `kernel` with ZERO callers inside the gate and ZERO coverage -- the
-    /// gate is green WITHOUT LOOKING at it. That is exactly the condition `crate::boundary`
-    /// exists to refuse, carried on purpose and with a date on it.
+    /// ⛔ AND WHAT KEEPS IT INSIDE THE GATE IS `scripts/gate-gui.sh`, which `scripts/gate.sh`
+    /// runs: it builds the fake core and runs its tests -- `the_tokens_arrive_untrusted` drives
+    /// the faucet through this accessor -- so this `pub` element of `kernel` has its callers and
+    /// its coverage in the gate, outside the workspace, where `cargo test --workspace` alone would
+    /// be green WITHOUT LOOKING at it (E120). ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30,
+    /// AUD-549.
     ///
     /// ⚠️ NOT A DOOR INTO THE DISPATCH. Nothing that branches on an INCOMING message may use
     /// this: the dispatch is `serve`, in one place, and a second one in the fake core is exactly

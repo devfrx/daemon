@@ -81,7 +81,9 @@ impl Parameters {
         self.arbiter_id
     }
 
-    /// How many turns the executor may take before declaring a block.
+    /// How many turns the executor may take before it ends the run with
+    /// `RunError::TurnLimitReached` -- whose doc says what reaching it means, and what the
+    /// shipped binary delivers. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-058.
     ///
     /// A block must show up as an error, never as an infinite wait: a test that never ends
     /// says nothing (§3.2.1).
@@ -100,7 +102,10 @@ impl Parameters {
     ///
     /// ⚠️ THE COST, DECLARED BY §5.1 ITSELF: a wrong total produces over-admission -- Q2
     /// giving way through a configuration error rather than a code one. The mitigation is
-    /// the measured peak of §5.2.2, not an a-priori check that does not exist here.
+    /// the measured peak of §5.2.2, not an a-priori check that does not exist here -- ⚠️ and the
+    /// peak does not exist today either: it is only a variant of the worker wire,
+    /// `crate::wire::worker::FromWorker::VramPeak`, that nothing sends, so the mitigation arrives
+    /// with the first worker on the GPU. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-198.
     ///
     /// ⛔ IT IS THE ONLY ONE OF THE THREE ADDENDS THAT IS DELIVERED, and that is a declared
     /// divergence from the letter of §5.1 rather than an omission. The audio quota and the

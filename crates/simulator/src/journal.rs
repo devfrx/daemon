@@ -184,12 +184,15 @@ impl Journal for MemoryJournal {
 
     fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError> {
         // ⛔ THE FIRST RECORD OF THE STEP, WHICH IS THE INTENT, AND IT IS A DECISION RATHER
-        // THAN A PROPERTY OF `find`. `read_back` exists for reconciliation, which re-reads a
-        // step IN DOUBT — one that carries an intent and no outcome — and on such a step the
-        // first record and the last are the same record, so the choice only shows itself on a
-        // COMPLETE step. There it shows in favour of the intent: the intent is the record that
-        // says WHAT THE STEP WAS, and hiding it behind its own outcome would leave a resumed
-        // run able to read what happened and no longer able to read what it had set out to do.
+        // THAN A PROPERTY OF `find`. `read_back` is declared for re-reading ONE step by name, and
+        // the caller it waits for is whoever acts on a step IN DOUBT of a run — one that carries
+        // an intent and no outcome: the reconciliation that exists,
+        // `kernel::reconcile::steps_in_doubt`, reads with `replay` and never calls it. On such a
+        // step the first record and the last are the same record, so the choice only shows
+        // itself on a COMPLETE step. There it shows in favour of the intent: the intent is the
+        // record that says WHAT THE STEP WAS, and hiding it behind its own outcome would leave a
+        // resumed run able to read what happened and no longer able to read what it had set out
+        // to do. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-653.
         //
         // ⚠️ AND THE SECOND IMPLEMENTATION WILL NOT MEET THIS BY ITSELF: a `redb` table keyed
         // by step identity returns — or worse, keeps — the LAST write. ✅ THE CONFORMANCE

@@ -379,10 +379,12 @@ impl Process for SpawningProcess {
 // THE `ipc` FAKE
 // ============================================================================================
 
-/// A fake gui, and §3.1 asks it for one property no other fake in this file has: it CAN DIE,
-/// when the seed decides. The others refuse when they are asked something wrong; this one has
-/// to stop existing WHILE THE CORE IS HOLDING ITS IDENTIFIER, because that disappearance is
-/// the only event ADR-0033 gives the core to reconcile on.
+/// A fake gui, with one property no other fake in this file has: it CAN DIE -- when a test calls
+/// `dies`, because no seed moves it here. The client §3.1 asks for, the one that dies at an
+/// operation drawn from the seed, is `simulator::ipc::DyingGui`. The others refuse when they are
+/// asked something wrong; this one has to stop existing WHILE THE CORE IS HOLDING ITS
+/// IDENTIFIER, because that disappearance is the only event ADR-0033 gives the core to reconcile
+/// on. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-557.
 struct FakeGui {
     /// Clients that have connected and are not accepted yet. `accept` NEVER BLOCKS, so
     /// "nobody is waiting" has to be an ordinary answer rather than a wait.
@@ -427,9 +429,11 @@ impl FakeGui {
         self.clients[position].queued.push(message.to_vec());
     }
 
-    /// ⛔ THE SEED DECIDES (§3.1), and nothing warns the core. There is no call the port
-    /// makes to ask a client to die and no notification when one does: the gui is
-    /// SACRIFICIAL, so the core finds out by being REFUSED the next time it speaks.
+    /// ⛔ THE TEST DECIDES, by calling this -- the seed decides in `simulator::ipc::DyingGui`,
+    /// not here -- and nothing warns the core. There is no call the port makes to ask a client
+    /// to die and no notification when one does: the gui is SACRIFICIAL, so the core finds out
+    /// by being REFUSED the next time it speaks. ⚠️ RECALL OF 2026-10-03 -- audit of
+    /// 2026-09-30, AUD-557.
     fn dies(&mut self, client: ClientId) {
         let position = self.row_of(client);
         self.clients[position].alive = false;

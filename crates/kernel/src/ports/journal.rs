@@ -10,6 +10,10 @@
 //! | `replay`    | re-reads EVERYTHING, in write order, to discover the names       |
 //! | `prune`     | drops the records of a RECONCILED step — see its LIMITS below    |
 //!
+//! ⚠️ THE `read_back` ROW STATES A PURPOSE, NOT A CONSUMER: the reconciliation that exists,
+//! `crate::reconcile::steps_in_doubt`, reads with `replay` alone, and no production code calls
+//! `read_back`. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-653.
+//!
 //! ⛔ THE PORT EXCHANGES BYTES, not typed records (ADR-0036). The encoding of the record
 //! lives in `kernel` and §4.9 states its rule. Two consequences this table does not
 //! show: the SIMULATOR EXCHANGES BYTES, so the DST campaign really exercises encoding
@@ -32,10 +36,12 @@
 //! crash the kernel does not know the names — its memory is exactly what it lost — so with
 //! `read_back` alone the set is not discoverable.
 //!
-//! ⚠️ AND THE SIGNATURE IS STILL A HYPOTHESIS while this line is being read: the reconciliation
-//! is written NEXT, and it is the first caller that will put it under strain. If it turns out
-//! cramped or insufficient there, it changes HERE — bending the caller to a signature decided
-//! too early is the mistake this rule exists to prevent.
+//! ⚠️ AND `read_back`'S SIGNATURE IS STILL A HYPOTHESIS: the reconciliation was written and reads
+//! with `replay` alone, so nothing has put that signature under strain. It stays a hypothesis
+//! until its first caller -- the candidate is whoever acts on a step in doubt of a run, with
+//! sub-project 3 -- and if it turns out cramped or insufficient there, it changes HERE — bending
+//! the caller to a signature decided too early is the mistake this rule exists to prevent.
+//! ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-653.
 //!
 //! ⚠️ `note` ARRIVED ON 2026-08-10 TOO, AND IT IS THE SAME RULE PAYING OUT A SECOND TIME. The
 //! port did not grow because somebody foresaw a use: it grew because `Untrusted::promote` — the

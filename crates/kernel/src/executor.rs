@@ -45,12 +45,20 @@ use crate::time::Monotonic;
 /// Why a run stopped without finishing.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum RunError {
-    /// The turn limit was reached. A BLOCK MUST SHOW UP AS AN ERROR, never as an infinite
-    /// wait: a test that never ends says nothing (§3.2.1).
+    /// The delivered turn limit was reached, and the run stopped there. A BLOCK MUST SHOW UP AS
+    /// AN ERROR, never as an infinite wait: a test that never ends says nothing (§3.2.1).
     ///
-    /// It is the backstop for every way an activity can fail to progress under its own
-    /// power — a loop that yields for ever, or one that keeps re-registering a deadline the
-    /// clock has already passed. Both are slow loops, and both end here.
+    /// ⚠️ WHAT REACHES IT IS NOT ONLY A BLOCK, and what follows is what is known, not a
+    /// partition: the two SPINNING failures it was written for — a loop that yields for ever,
+    /// and one that keeps re-registering a deadline the clock has already passed —; an activity
+    /// that keeps going back to sleep on deadlines still in the FUTURE, which ends here at
+    /// whatever wall time its waits add up to; an activity with no exit, `crate::serving::serve`,
+    /// for which this is the EXPECTED end of every round under a finite limit; and a limit of
+    /// zero, which ends the run before the first poll. ⛔ AND THE SHIPPED BINARY DOES NOT REACH
+    /// IT: `daemon` delivers `u64::MAX` (decision A of §5 of the sub-project 2 design), so this
+    /// backstop holds in the benches and the campaigns, which hand a finite limit, and the guard
+    /// of production is the OS watchdog of sub-project 10. ⚠️ RECALL OF 2026-10-03 -- audit of
+    /// 2026-09-30, AUD-058.
     TurnLimitReached,
     /// The reactor was asked to advance to an instant STRICTLY IN THE FUTURE and refused.
     /// The `reactor` contract forbids that: `wait_until` returns `None` only when there is
@@ -187,9 +195,10 @@ impl Sleep {
     /// owes an activity whose wait is already over.
     ///
     /// ⚠️ THE COST, declared: an activity that re-registers a past deadline on every poll
-    /// never blocks the clock, but never progresses either. It ends as
+    /// never blocks the clock, but never progresses either. Under a finite limit it ends as
     /// `RunError::TurnLimitReached` — "a slow loop", which is the accurate diagnosis and the
-    /// reason the turn limit exists.
+    /// reason the turn limit exists; what the shipped binary delivers instead is on that variant.
+    /// ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-058.
     pub fn until(&self, deadline: Monotonic) {
         self.until.set(Some(deadline));
     }

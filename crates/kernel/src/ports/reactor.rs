@@ -9,9 +9,12 @@
 //!
 //! Separating them is what lets the simulator be deterministic WITHOUT REIMPLEMENTING THE
 //! LOGIC: it makes the wait instantaneous while the decision stays the real one. In
-//! simulation "what is ready" and "how much time passes" are both decided BY THE SEED, and
-//! that is how time becomes virtual (C3). Everything the campaign exercises on this side of
-//! the boundary is therefore the production code, not a rehearsal of it.
+//! simulation the clock jumps to the deadline it is asked for --
+//! `simulator::reactor::VirtualReactor` holds no seed -- and the seed reaches the ORDER among the
+//! ready activities through the executor's `Rng`: that is how time becomes virtual (C3).
+//! External readiness has no producer yet, see `wait_until`. ⚠️ RECALL OF 2026-10-03 -- audit of
+//! 2026-09-30, AUD-402. Everything the campaign exercises on this side of the boundary is
+//! therefore the production code, not a rehearsal of it.
 //!
 //! ⚠️ THE TWO CLOCKS LIVE ON THIS PORT, AND THAT DOES NOT CREATE A SEVENTH FAMILY (decision
 //! D2 of the milestone 2 plan). Reading a clock IS I/O, and `reactor` is the port of time
@@ -29,9 +32,11 @@
 use crate::time::{Monotonic, WallTime};
 
 /// The port of time and readiness. `platform` implements it against the OS; `simulator`
-/// implements the same trait against a virtual clock governed by the seed (§2.4). The
-/// conformance suite of §7.4.6 runs against BOTH, and is the reason the trait says what it
-/// says instead of describing one of them.
+/// implements the same trait against a virtual clock that moves only when nobody can work, and
+/// holds no seed -- the seed governs the executor's order among the ready, not this clock (§2.4,
+/// §3.1). ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-402. The conformance suite of
+/// §7.4.6 runs against BOTH, and is the reason the trait says what it says instead of
+/// describing one of them.
 pub trait Reactor {
     /// The current monotonic instant. This is what DECISIONS read.
     fn now(&self) -> Monotonic;
@@ -66,7 +71,11 @@ pub trait Reactor {
     /// conformance suite that Tasks 6 and 7 run against both implementations — §7.4.6 calls
     /// the `reactor` one "the most important: the validity of the DST rests there" — and,
     /// one level up, the executor's own turn limit, so that a block shows up as an error and
-    /// never as an endless wait.
+    /// never as an endless wait. ⚠️ THAT NET HOLDS WHERE THE LIMIT IS FINITE -- the benches and
+    /// the campaigns -- AND NOT IN THE SHIPPED BINARY, which is handed `u64::MAX` (decision A of
+    /// §5 of the sub-project 2 design): there the guard is the OS watchdog of sub-project 10, and
+    /// `RunError::TurnLimitReached` says the rest. ⚠️ RECALL OF 2026-10-03 -- audit of
+    /// 2026-09-30, AUD-058.
     ///
     /// ⚠️ Readiness is the OTHER HALF of this port's contract, and it has no producer yet:
     /// nothing in this milestone generates external events, so today every wait that returns
@@ -113,9 +122,11 @@ pub trait Reactor {
     /// that "adding an argument to a signature with zero callers is mechanical — regola B
     /// does not apply, so C does". This is that case, and what makes it so is a RELATION rather
     /// than a count: EVERY call site and EVERY implementation of `wait_until` lives inside this
-    /// workspace -- the five members of the root `Cargo.toml` -- so there is no external
-    /// consumer, and widening the return is a COMPILE ERROR at each one and a silent change at
-    /// none. And NO DURABLE ARTEFACT carries its shape, which is the half the contrast is
+    /// REPOSITORY -- in the five members of the root `Cargo.toml`, and in `gui/fake-core`, which
+    /// that manifest excludes and `scripts/gate-gui.sh` builds and tests on a lockfile of its own
+    /// -- so there is no external consumer, and widening the return is a COMPILE ERROR at each
+    /// one and a silent change at none. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-063.
+    /// And NO DURABLE ARTEFACT carries its shape, which is the half the contrast is
     /// about: ADR-0036 rule 3, where a new field must be optional and take a new index
     /// precisely because bytes already written cannot be recompiled.
     ///
@@ -125,19 +136,28 @@ pub trait Reactor {
     /// simulator suites have added call sites since, without this line being reread. A count of
     /// callers is the specimen case of a figure that rots at the next commit, so what replaces
     /// it is the relation that holds however many arrive -- the cure gotcha #68 asks for, and
-    /// the one AUD-009 applied to the gate's `cargo` sites. The figures, if ever needed:
+    /// the one AUD-009 applied to the gate's `cargo` sites. On 2026-08-28, over `crates/` alone,
     /// `grep -rn '\.wait_until(' --include=*.rs crates/ | wc -l` and the same for
-    /// `'impl Reactor for'`; on 2026-08-28 they answered 12 and 11.
+    /// `'impl Reactor for'` answered 12 and 11. The census that sees EVERY site walks `gui/` too,
+    /// drops the lines that only quote it, and anchors the impl, generic and path-qualified ones
+    /// included:
+    /// `grep -rn '\.wait_until(' --include=*.rs crates/ gui/ | grep -vE '^[^:]+:[0-9]+:[[:space:]]*//'`
+    /// and `grep -rnE '^ *impl(<[^>]*>)? *([A-Za-z_]+::)*Reactor for' --include=*.rs crates/ gui/`.
+    /// ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-063.
     ///
     /// ⚖️ THE OTHER TWO CLAUSES WERE MEASURED, NOT ASSUMED, and both hold: the root manifest
-    /// lists five members and nothing outside them, and `Record` carries NO time field at all,
-    /// so nothing durable is shaped by this return. ⛔ AND "MECHANICAL" IS NOW MEASURED TOO,
+    /// lists five members and EXCLUDES `gui` -- where the one site outside them lives,
+    /// `gui/fake-core` -- and `spikes`, which holds none; and `Record` carries NO time field at
+    /// all, so nothing durable is shaped by this return. ⛔ AND "MECHANICAL" IS NOW MEASURED TOO,
     /// which is what "not by hope" above demands: widening the return to `Option<(Monotonic,
     /// u32)>` and running `cargo check --locked --workspace --all-targets --keep-going` gives
     /// `error[E0308]` at `crates/kernel/src/executor.rs` and ZERO `unused`/`unreachable`
     /// warnings -- nothing degrades quietly. ⚠️ THE OTHER SITES ARE HIDDEN BEHIND THAT FIRST
     /// WALL and the run cannot count them, because dependents are not checked until the lib
     /// compiles: the breakage is LOUD, and its full width is not measurable in one pass.
-    /// Mutation applied, checked, and revoked with `git diff` at zero lines.
+    /// Mutation applied, checked, and revoked with `git diff` at zero lines. ⚠️ AND THAT RUN DOES
+    /// NOT REACH `gui/fake-core`, which no `--workspace` command walks: its site breaks in
+    /// `scripts/gate-gui.sh`, at `cargo test --locked --manifest-path gui/fake-core/Cargo.toml` --
+    /// loud as well, in a gate of its own. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-063.
     fn wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic>;
 }

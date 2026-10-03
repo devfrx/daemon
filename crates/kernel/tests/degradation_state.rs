@@ -83,7 +83,10 @@ fn profile(name: &'static str, vram: u64) -> ResourceProfile {
 ///
 /// ⛔ `dispatch` DOES NOT DO THIS, and the asymmetry is the point: the gateway is handed a
 /// `StepId` and has no allocator for one, so a mechanism that minted the intent of a step it does
-/// not own would be inventing an identity the port assigns.
+/// not own would be inventing an identity its caller owns -- the port assigns none, and in
+/// production `kernel::serving::Core` mints step identities from the core's one counter,
+/// `kernel::numbering::Progressive`. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-062,
+/// AUD-070.
 fn open_the_step(journal: &mut MemoryJournal, step: StepId) {
     let intent = Record::V1(RecordV1::intent(
         EffectClass::Idempotent,

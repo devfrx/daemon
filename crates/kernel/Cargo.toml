@@ -59,6 +59,11 @@ publish.workspace = true
 #   2. I4 renounces versioning and this channel is private, so the format is frozen BY DESIGN.
 #      A finished library is what such a channel wants. And ADR-0031 exists to keep the graph
 #      inside I3 SMALL: adopting the fork grows the shipped graph by one net node.
+#      ⚠️ "THE FORMAT" READS AS bincode 2's ENCODING RULES, which a finished library does not
+#      change -- NOT AS the schema of the channel, which I4 leaves free to change: its fixtures are
+#      REGENERATED, never frozen (`gui/schema/fixtures/ipc_v1.map`), and the build stamp refuses
+#      a stale peer. Frozen bytes are the journal's discipline (ADR-0036), the opposite artefact.
+#      ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-053.
 #   3. Staying leaves DECLARED debt -- this note, gotcha #64, the register entry. Adopting
 #      would create a NEW and SILENT one: compatibility measured TODAY over five cases, a
 #      single maintainer, and no check anywhere that would tell us if a later release broke
@@ -69,10 +74,10 @@ publish.workspace = true
 #   5. THE ROOT OF C-1 IS NOT THIS CRATE. What C-1 named is the HOLE BETWEEN TWO CRITERIA:
 #      nobody asks how the library at OUR end is doing. Swapping this one library cures ONE
 #      crate and leaves the hole open for the other seven. The cure at the root is entry X-3
-#      of the 2026-08-27 audit -- no advisory scanning at all -- and it is still open.
-# ⚠️ SO THE RESIDUE IS NAMED AND NOT SETTLED: X-3 stays open and belongs to the owner, because
-# adding a step to the gate is global constraint 7. Naming it is part of this decision, never
-# a substitute for it.
+#      of the 2026-08-27 audit -- no advisory scanning at all -- whose state lives in that
+#      audit's table of open entries, not here.
+# ⚠️ SO THE RESIDUE IS NAMED, and naming it is part of this decision, never a substitute for
+# it. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-054, AUD-055.
 # The sources, each with its consultation date and what it says, live in ONE house --
 # docs/riferimenti.md, section on decision 5 (C-1) -- and M-12 is there too.
 bincode = { version = "2", default-features = false, features = ["alloc", "derive"] }

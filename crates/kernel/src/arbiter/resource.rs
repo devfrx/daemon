@@ -93,7 +93,10 @@ impl Mib {
 }
 
 /// The three compute lanes of §5.1 and design/02. NOT a number: contention on compute is
-/// governed by ORDER plus a "reduce your footprint" signal, never by an amount.
+/// governed by ORDER plus a "reduce your footprint" signal, never by an amount. ⚠️ THE SIGNAL
+/// DOES NOT EXIST YET: no core -> worker message carries it (`crate::wire::worker`), and it is
+/// built by sub-project 8, which closes SP-2. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30,
+/// AUD-603.
 ///
 /// ⛔ `Ord` IS WRITTEN BY HAND, FROM AN EXPLICIT KEY, and that is the decision rather than
 /// ceremony. A DERIVED `Ord` follows the order in which the variants are DECLARED, so
@@ -118,7 +121,10 @@ pub enum ComputeClass {
     /// GRANT rather than subtracted from the budget -- a subtraction without a holder
     /// leaves I2 false for that consumer (ADR-0033, gotcha #4).
     Realtime,
-    /// Chat and the foreground agent. Served before `Batch`.
+    /// Chat and the foreground agent. Tried before `Batch` -- `promote` serves the lanes from the
+    /// best, `ask_back` reclaims from the worst -- and full precedence is an open item (design/02,
+    /// and `E50` and `E51` of the milestone 5 errata). ⚠️ RECALL OF 2026-10-03 -- audit of
+    /// 2026-09-30, AUD-010.
     Interactive,
     /// 3D render, indexing, background runs. May wait indefinitely.
     Batch,

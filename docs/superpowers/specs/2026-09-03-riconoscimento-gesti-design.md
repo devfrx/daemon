@@ -27,11 +27,12 @@ decisione in append, nella §3.
 
 📌 **Metodo.** Ogni affermazione porta la sua specie — **verificata** (letta nel sorgente o in una
 fonte primaria, con la data), **dedotta**, o **assunta** — e le tre sono separate nella §6. Le
-affermazioni sul sorgente sono state lette il 2026-09-03 contro `066008a`, e il codice non è
+affermazioni sul sorgente sono state lette il 2026-09-03 contro `066008a`, e quel giorno il codice non era
 cambiato dalla consegna: `git diff --stat c8e234e..HEAD -- crates/ scripts/ Cargo.lock Cargo.toml
-rust-toolchain.toml docs/adr/` non rende nulla. I comandi stanno accanto alle affermazioni e **si
+rust-toolchain.toml docs/adr/` non rendeva nulla. I comandi stanno accanto alle affermazioni e **si
 rilanciano**, non si citano: le cifre invecchiano al primo commit che tocca ciò che misurano, i
-comandi no.
+comandi no. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-445: dopo, il codice è cambiato, e lo stesso comando,
+rilanciato, lo misura: ciò che il disegno dice verificato vale alla data in cui lo ha letto.
 
 **Le regole di questo lavoro, decise dal proprietario**
 
@@ -93,9 +94,9 @@ allargato dalla **ri-revisione** dell'ondata, che ne aveva contate sei su dieci.
 | 7 | dove finisce la **cattura** con un gesto | ✅ **presa il 2026-09-04** dal brainstorming della knowledge base, sotto accettazione condizionata. ⚠️ Questa cella diceva *«⏳ aperta, dipendenza dichiarata»* | **nella knowledge base**: la cattura atterra come file in un gruppo dello spazio, il router segue, la run riceve il **riferimento** — [disegno della knowledge base](2026-09-04-knowledge-base-design.md), risposta 7 e regola 4 della §2.3 | *solo nella run, poi decide l'assistente*: due posti per un file, e una foto dimenticata non è nella mappa; *entrambe*: idem |
 | 8 | dove vivono i **worker Python** nel repo | ✅ decisa, sotto accettazione condizionata | **`workers/` alla radice**, fuori da `crates/`, con un lockfile Python per worker | dentro `crates/`: Cargo tratta `crates/` come workspace, e un pacchetto non Rust lì confonde il cancello e ADR-0031 |
 | 9 | la **terza quota** nella formula di ADR-0005 | ⏳ registrata, non presa | si apre quando esiste un **tracciatore su GPU** | aggiungerla oggi, a zero: sfoggio (§2.1) |
-| 10 | dove si **salva l'interruttore** della telecamera fra un avvio e l'altro | ⏳ registrata, non presa | l'**archivio dei parametri** (ADR-0034, ADR-0022), che non esiste: la chiude chi lo costruisce | — |
+| 10 | dove si **salva l'interruttore** della telecamera fra un avvio e l'altro | ⏳ registrata, non presa | l'**archivio dei parametri** (ADR-0034, ADR-0022), che non esiste: la chiude chi lo costruisce. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-441: l'archivio dei parametri non esiste ancora, e quale sotto-progetto lo costruisca è la scelta aperta su AUD-162, nel [rapporto dell'audit](../../audit-2026-09-30.md). La settima porta, `custody`, è l'archivio della configurazione di ADR-0022 nel suo pezzo minimo, e custodisce ciò che il kernel non legge per decidere: leggervi l'interruttore sarebbe la domanda di ADR-0034 che la testa di `crates/kernel/src/ports/custody.rs` lascia aperta | — |
 | 11 | la **posizione nella roadmap** della capacità | ✅ decisa, sotto accettazione condizionata | una riga nuova, il **sotto-progetto 12 «Gesti»**, che dipende da 2 e 3; Voce dipende anche da 12 (§5.1) | dentro il sotto-progetto 8, Voce: lo rimandava per una ragione — SP-2 — che non riguarda i gesti |
-| 12 | se la **posizione dei pannelli** sopravvive a un riavvio | ⏳ registrata, non presa | configurazione, archivio di ADR-0022, che non esiste: la chiude chi lo costruisce | — |
+| 12 | se la **posizione dei pannelli** sopravvive a un riavvio | ✅ **presa il 2026-09-07** dalla [stella polare della GUI](2026-09-07-direzione-gui-design.md), domanda 4 | **sì**: la disposizione vive nel core, nell'archivio della configurazione di ADR-0022, e il sotto-progetto 2 ne ha costruito il pezzo minimo — la settima porta, `custody`, con la sola chiave `CustodyKey::Layout`, che la custodisce senza leggerla per decidere: `crates/kernel/src/ports/custody.rs`. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-441, AUD-442, AUD-446 | *rimandare l'archivio*: si riordina e si perde tutto al riavvio; *il browser della GUI*: escluso da I1 |
 | 13 | il **confinamento** del worker telecamera — ⚠️ **non era nella consegna**: trovata il 2026-09-03 verificando la coerenza del disegno contro ADR-0025 | ⏳ registrata, non presa | ADR-0028 rende **obbligatorio il confine di processo**; se quel processo debba essere anche **ristretto** — il livello 2 di ADR-0025 — nessun ADR lo decide, e nel codice non c'è dove dirlo: `WorkerDescriptor` è byte opachi e nel kernel non esiste un tipo di confinamento (`grep -rn -i confinement crates/kernel/src`). La chiude il sotto-progetto 12, col proprietario, quando avvia il primo worker vero | — |
 
 ---
@@ -118,7 +119,7 @@ allargato dalla **ri-revisione** dell'ondata, che ne aveva contate sei su dieci.
 | il vocabolario dei gesti, e quali funzioni sono gestuali | il sotto-progetto della capacità, il 12 — decisione 2 |
 | menu virtuali e pannelli mossi con le mani | le **forme** nel sotto-progetto 2, la **logica** nella capacità |
 | dove finisce la foto catturata | il brainstorming 2, la knowledge base — decisione 7. ✅ **Decisa il 2026-09-04**: nella knowledge base, la run la vede — riga 7 della tabella delle decisioni |
-| la strada «un evento apre una run» | chi la costruisce per primo, la voce o i gesti — con la decisione 11 è il **12** (§5.3) |
+| la strada «un evento di percezione apre un passo» (ADR-0011) | chi la costruisce per primo, la voce o i gesti — con la decisione 11 è il **12** (§5.3). ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-440, AUD-444: è la strada della §5.3; un gesto non apre una run, che la apre solo la wake word — decisione 3 |
 
 ### 1.3 Che cosa esclude
 
@@ -155,9 +156,12 @@ questo repository porta, riempita leggendo `scripts/check-docs.sh` e `scripts/ga
 
 **Il punto che scioglie quasi tutti: il core non dorme mai. Dorme la run.** Il core vive a lungo,
 anche senza GUI (ADR-0004); i worker always-on vivono sotto di lui. La wake word non «sveglia il
-programma»: **apre una run** (ADR-0011, corollario). Un gesto fa lo stesso se è un gesto di
-**comando**; un gesto di **manipolazione** — un pinch che sposta un pannello — non apre nulla: è
-presentazione, lo consuma la GUI, e non tocca mai il giornale, come i frammenti audio.
+programma»: **apre una run** (ADR-0011, corollario). Un gesto di **comando** non apre una run: apre un **passo** nella
+run aperta — la run la apre solo la wake word, decisione 3 —; un gesto di **manipolazione** — un pinch che sposta un
+pannello — non apre nulla: è presentazione, lo consuma la GUI, e non tocca mai il giornale, come i frammenti audio.
+⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-439, AUD-440, AUD-444, AUD-448, AUD-449: il gesto di comando come lo vogliono la
+decisione 3, [ADR-0039](../../adr/0039-telecamera-come-sorgente-di-percezione.md) e il rimando del 2026-09-03 in testa ad
+[ADR-0011](../../adr/0011-routing-risolto-e-giornalato-per-richiesta.md).
 
 | Buco | Che cosa dice già l'architettura | Che cosa resta da decidere |
 |---|---|---|
@@ -186,7 +190,7 @@ I comandi stanno accanto alle affermazioni, e si rilanciano.
 |---|---|
 | il worker | Python, always-on, sotto il core come sarà il microfono (ADR-0028). **Possiede la telecamera**; i fotogrammi non escono mai. MediaPipe su **CPU**: su Windows, in Python, la GPU non c'è (F2, e F9 lo conferma — §7) |
 | il canale | il porto `process` (ADR-0035): **una** `instruct_stream` all'avvio, poi `read_next` per tutta la vita, come il worker audio descritto nella doc del porto. Ogni frame dichiara la propria lunghezza, `minicbor` (§6.10 della spec, ADR-0037) |
-| le due specie di evento | lo **stato continuo della mano** (21 punti per mano, pinch derivato, a N Hz) e il **gesto discreto** (nome, confidenza). Sono **eventi, non passi** (ADR-0011): niente giornale |
+| le due specie di evento | lo **stato continuo della mano** (21 punti per mano, coordinate intere, a N Hz) e il **gesto discreto** (`kind`, un enum chiuso, e `confidence`, un intero). Sono **eventi, non passi** (ADR-0011): niente giornale. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-447: la forma sul filo è quella della §2.2 — il gesto è un enum chiuso e non un nome, perché nessun testo dal worker arriva a una decisione (§2.3) —; il pinch si ricava dai punti (§6.3) |
 | il core | li **smista**: la manipolazione va alla GUI con `Ipc::send`, transitoria, **campionata alla frequenza che il core decide** (§6.1.4 della spec); un gesto di **comando** prende **la strada della wake word** (ADR-0011) e solo lì nasce un passo |
 | la concessione | da **zero MiB**, `Preemption::Never`, chiesta come le due permanenti di ADR-0033. **La formula di ADR-0005 non cambia** |
 | «riservato» | spegne anche la telecamera (richiamo ad ADR-0023) |
@@ -197,7 +201,7 @@ I comandi stanno accanto alle affermazioni, e si rilanciano.
 | Prima diceva | Ora dice | Perché |
 |---|---|---|
 | «terza concessione permanente, oggi zero» come **terza quota** nella formula | **niente terza quota**: concessione da zero MiB come ogni worker; la formula resta | aggiungere oggi una quota che vale zero è **sfoggio** (criterio 5); il porto pretende comunque una concessione, quindi la forma minima c'è già. La terza quota si apre **quando esiste un tracciatore su GPU**: decisione 9 |
-| «il gesto di comando diventa un **trigger** (ADR-0009)» | prende **la strada della wake word** (ADR-0011) | il trigger di ADR-0009 è l'innesco dell'**anello di verifica**; il posto giusto per «un evento apre un passo» è il corollario di ADR-0011. **E quella strada non esiste ancora nel codice**: la costruisce chi arriva primo, e con la decisione 11 è il sotto-progetto 12 (§5.3) — dipendenza dichiarata, non buco dell'approccio |
+| «il gesto di comando diventa un **trigger** (ADR-0009)» | prende **la strada della wake word** (ADR-0011) | il trigger di ADR-0009 è l'innesco dell'**anello di verifica**; il posto giusto per «un evento apre un passo» è il corollario di ADR-0011. **E quella strada non esiste ancora nel codice**: la costruisce chi arriva primo, e con la decisione 11 è il sotto-progetto 12 (§5.3) — dipendenza dichiarata, non buco dell'approccio. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-173: il trigger di ADR-0009 apre una run da un evento — l'anello 3 di [design/04](../../design/04-anelli-e-sensori.md), *«l'insieme dei modi in cui l'anello 1 può partire»*, e la §0.4.3 della [spec del sotto-progetto 1](2026-08-06-sottoprogetto-1-kernel.md) —, e il motivo si legge così: il gesto di comando non apre una run (decisione 3), apre un passo nella run aperta, il corollario di ADR-0011; la decisione non cambia — ADR-0039, rimando del 2026-10-02 |
 | «il core smista alla GUI» (dedotto) | **verificato**: `Ipc::send` è chiamato dal core quando decide, e campionare è una leva del kernel — doc di modulo di `crates/kernel/src/ports/ipc.rs` | la **latenza** resta **non misurata**: SP-7, domanda S2 |
 
 **I due scartati, a confronto** — il perché per esteso nella sezione *«Vicoli ciechi»*:
@@ -219,8 +223,8 @@ I comandi stanno accanto alle affermazioni, e si rilanciano.
 | la concessione | segue la vita del worker: entra con `Process::start(grant, descriptor)`, torna con `Killed.grant` ad `Arbiter::release`. Con la telecamera opt-in (decisione 4) si chiede all'**accensione**, non all'avvio del core | già così nel porto `process`: `grep -n -E '^\s*(pub trait\|fn )' crates/kernel/src/ports/process.rs` |
 | il canale in su | `FromWorker` guadagna due varianti — lo stato della mano (21 punti per mano, coordinate **intere**) e il gesto (`kind`: enum chiuso `#[cbor(index_only)]`, `confidence`: intero) — a indici nuovi `#[n(2)]` e `#[n(3)]`, sotto le regole di §6.10 | `crates/kernel/src/wire/worker.rs`, che oggi ha `Fragment` a `#[n(0)]` e `VramPeak` a `#[n(1)]` |
 | il canale in giù | la prima istruzione vera del canale, «traccia le mani», mandata una volta con `instruct_stream`; oggi la direzione core → worker **non ha nessun messaggio**, e la testa del file lo dichiara come non-costruzione col grilletto *«il primo processo worker vero»* | stesso file |
-| il core | legge `read_next`, campiona alla frequenza che riceve come **parametro consegnato** (ADR-0034: un campo nuovo di `Parameters`, che oggi ne ha tre — `grep -n -A4 'pub struct Parameters' crates/kernel/src/parameters.rs` — letterale in `daemon`), manda alla GUI con `Ipc::send`; un gesto di **comando** prende la strada della wake word (ADR-0011) | il **primo lettore di produzione di una porta**: `grep -rn 'read_next\|\.receive(\|\.accept(' crates/kernel/src crates/daemon/src crates/platform/src` trova solo commenti e la firma del tratto |
-| verso la GUI | una variante nuova di `IpcMessage` con la mano campionata; **si definisce quando la GUI esiste** (sotto-progetto 2), perché prima non ha destinatario — la regola già scritta per la revoca in testa a `crates/kernel/src/wire/ipc.rs`: *«a revocation needs an ADDRESSEE, and until milestone 2 of the subproject there is nobody to tell»* | `crates/kernel/src/wire/ipc.rs` |
+| il core | legge `read_next`, campiona alla frequenza che riceve come **parametro consegnato** (ADR-0034: un campo nuovo di `Parameters` — i suoi campi li elenca `sed -n '/pub struct Parameters/,/^}/p' crates/kernel/src/parameters.rs` — letterale in `daemon`), manda alla GUI con `Ipc::send`; un gesto di **comando** prende la strada della wake word (ADR-0011). ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-438, AUD-443: i campi di `Parameters` li dà il comando, non una cifra; e dal sotto-progetto 2 la porta `ipc` la tiene `kernel::serving::Core`, che riceve e manda ogni messaggio del filo: come vi entri la mano campionata lo decide il 12 | il **primo lettore di produzione di una porta**: `grep -rn 'read_next\|\.receive(\|\.accept(' crates/kernel/src crates/daemon/src crates/platform/src` trova solo commenti e la firma del tratto. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-599, AUD-443, AUD-445: dal sotto-progetto 2 il codice di produzione legge una porta — `kernel::serving`, sulla porta `ipc`: il comando della cella oggi trova le sue chiamate ad `accept` e `receive` —, e il timbro di build esiste per il canale `ipc`, `crate::wire::ipc::build_stamp`; il ciclo che legge lo stream sarà il primo sulla porta `process` — ADR-0039, rimando del 2026-10-02 |
+| verso la GUI | una variante nuova di `IpcMessage` con la mano campionata; **si definisce quando la GUI esiste** (sotto-progetto 2), perché prima non ha destinatario — la regola già scritta per la revoca in testa a `crates/kernel/src/wire/ipc.rs`: *«a revocation needs an ADDRESSEE, and until milestone 2 of the subproject there is nobody to tell»*. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-178: la GUI esiste e il sotto-progetto 2 è chiuso, e `IpcMessage` non ha la variante con la mano; la definisce il sotto-progetto 12, il primo che ha un mittente — il [disegno del sotto-progetto 2](2026-09-06-sottoprogetto-2-gui-minima-design.md) gli dà «la mano come puntatore» —; la revoca che la riga prende a modello aspetta invece il 7, il richiamo del 2026-09-17 in testa a `crates/kernel/src/wire/ipc.rs` — ADR-0039, rimando del 2026-10-02 | `crates/kernel/src/wire/ipc.rs` |
 | «riservato» | nel codice non esiste: `grep -rni riservato crates/` non rende niente. Spegnere la telecamera è un richiamo ad ADR-0023, e il meccanismo arriva col profilo | ADR-0023 |
 | degrado | `Degradation` guadagna «telecamera assente o spenta» **solo quando il worker esiste**: la regola *«a field that is always `false` reads as "fine" rather than as "unknown"»* è già scritta in testa al tipo | `crates/kernel/src/degradation.rs` |
 
@@ -243,7 +247,7 @@ prima di leggerlo:
 | il canale worker ha una direzione sola, in su; in giù nessun messaggio, e il grilletto dichiarato è *«il primo processo worker vero»* | testa di `crates/kernel/src/wire/worker.rs` |
 | il timbro di build non esiste: niente rifiuta un worker stantio; e la §6.10.7 della spec fa reggere il timbro su un ambiente Python **nostro e versionato** — quindi il lockfile in `workers/` non è cosmesi | stessa testa; spec, §6.10.7 |
 | il reattore conosce solo il tempo (`now`, `wall_time`, `wait_until`): «pronto da leggere» per una pipe non c'è, e allargarlo è dichiarato meccanico nel file | `crates/kernel/src/ports/reactor.rs` |
-| nessun codice di produzione legge una porta: il ciclo che legge lo stream nasce con questo | il comando della riga «il core» in §2.2 |
+| nessun codice di produzione legge una porta: il ciclo che legge lo stream nasce con questo. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-599, AUD-445: dal 2 legge una porta `kernel::serving`, sulla porta `ipc`; per la porta `process` il ciclo nasce col 12 — ADR-0039, rimando del 2026-10-02 | il comando della riga «il core» in §2.2 |
 
 Non cambia l'approccio: è il **prezzo**, lo paga chi arriva primo fra voce e gesti — come la strada
 della wake word — e con la decisione 11 chi arriva primo è il sotto-progetto 12. Va scritto nell'ADR B
@@ -271,7 +275,7 @@ dell'approvazione e rilette oggi, coi comandi `grep -n -i quattro docs/adr/0001-
 | ADR nuovo | Decide | Negative (accettate) |
 |---|---|---|
 | **A — il registro delle funzioni del programma** | un registro unico di **strumenti interni** (il livello 1 di ADR-0025), meccanismo di kernel nella forma di ADR-0009: il kernel dà registrazione, invocazione, il permesso come tripla di ADR-0016 e il giornale; le capacità e la GUI portano le funzioni. **Molti invocatori** — agente, gesto, voce, click — **con lo stesso permesso**, e nessuna logica «solo per gesti». Un gesto è un evento di percezione: **informa, mai autorizza** (ADR-0014 per analogia). Un effetto irripetibile chiede conferma a qualunque invocatore (ADR-0016, già così), e **per default la conferma non è gestuale** (decisione 6). La manipolazione della GUI — pannelli, menu virtuali — è presentazione e **non passa dal registro**. Quali funzioni siano gestuali lo decide la capacità (decisione 2) | un meccanismo di kernel in più prima di ogni capacità; ogni funzione con effetto va dichiarata come tripla; lo stesso permesso pesa anche sulle funzioni banali invocate dalla GUI |
-| **B — la telecamera come sorgente di percezione always-on sotto il core** | la forma della §2 per intero. Più: telecamera **spenta per default**, e accenderla è una funzione del registro (decisione 4); **solo la wake word apre una run**, un gesto di comando entra come passo in una run aperta (decisione 3); «riservato» la spegne; il campo di `Degradation` nasce col worker. **Non-costruzioni dichiarate:** il messaggio alla GUI aspetta il sotto-progetto 2; la terza quota aspetta un tracciatore su GPU (decisione 9) | un processo Python su CPU finché la telecamera è accesa; un salto in più sulla manipolazione, misurato da SP-7; il conto del **primo worker** (§2.4); niente GPU su Windows per il tracciatore (F2, F9) |
+| **B — la telecamera come sorgente di percezione always-on sotto il core** | la forma della §2 per intero. Più: telecamera **spenta per default**, e accenderla è una funzione del registro (decisione 4); **solo la wake word apre una run**, un gesto di comando entra come passo in una run aperta (decisione 3); «riservato» la spegne; il campo di `Degradation` nasce col worker. **Non-costruzioni dichiarate:** il messaggio alla GUI aspetta il sotto-progetto 2; la terza quota aspetta un tracciatore su GPU (decisione 9). ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-178: il messaggio alla GUI lo definisce il 12, il primo che ha un mittente — ADR-0039, rimando del 2026-10-02 | un processo Python su CPU finché la telecamera è accesa; un salto in più sulla manipolazione, misurato da SP-7; il conto del **primo worker** (§2.4); niente GPU su Windows per il tracciatore (F2, F9) |
 
 ⛔ **Un ADR senza `Negative (accettate)` è incompleto** (`CLAUDE.md`): le due colonne di destra
 entrano negli ADR come sono, e il piano non le accorcia.
@@ -302,7 +306,10 @@ tutte e due rimandano qui.
 
 **ADR-0005 e ADR-0033 non cambiano**: la formula del budget resta a due quote sottratte, e la terza
 resta voce registrata — decisione 9. **ADR-0009 non cambia**: il trigger dell'anello di verifica non è
-la strada di un gesto di comando (§2.1, seconda correzione).
+la strada di un gesto di comando (§2.1, seconda correzione). ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30,
+AUD-173: il trigger di ADR-0009 apre una run da un evento — [design/04](../../design/04-anelli-e-sensori.md), anello 3;
+la §0.4.3 della spec —, e un gesto di comando non ne è la strada perché apre un passo in una run aperta; ADR-0009 non
+cambia — ADR-0039, rimando del 2026-10-02.
 
 ### 3.4 Le decisioni prese qui, e quelle registrate
 
@@ -328,7 +335,7 @@ righe M1–M5 di ADR-0029, il consumatore 1 della tabella di ADR-0033 e il forma
 |---|---|---|
 | la mano sullo schermo | la GUI **disegna la mano dai 21 punti**, in un livello sopra i pannelli; **niente video** (decisione 5) | il disegno è compositing della webview: sta **dentro la quota di presentazione**, nessuna concessione da chiedere — ADR-0033, consumatore 1 |
 | l'indicatore | un segno **sempre visibile** quando la telecamera è accesa; lo accende il **core** con un messaggio, la GUI non lo indovina | lo spirito di ADR-0023: *una falsa sicurezza è peggio di nessuna sicurezza* |
-| pannelli e menu | il sotto-progetto 2 costruisce pannelli e menu che si muovono con **qualunque puntatore**; la mano è un puntatore in più, e la aggiunge la capacità (pinch che trascina, menu virtuali). Solo stato di presentazione | ADR-0004: la GUI possiede solo presentazione. Il messaggio IPC con la mano si definisce da lì in poi, non prima (§2.2) |
+| pannelli e menu | il sotto-progetto 2 costruisce pannelli e menu che si muovono con **qualunque puntatore**; la mano è un puntatore in più, e la aggiunge la capacità (pinch che trascina, menu virtuali). Solo stato di presentazione | ADR-0004: la GUI possiede solo presentazione. Il messaggio IPC con la mano si definisce da lì in poi, non prima (§2.2). ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-178: il messaggio IPC con la mano lo definisce il 12, il primo che ha un mittente — ADR-0039, rimando del 2026-10-02 |
 | accessibilità | un gesto **non è mai l'unica strada**: ogni funzione gestuale si raggiunge anche da tastiera e click | G20; segue da «un registro, molti invocatori» (ADR A) |
 | ADR-0029 | **nessuna misura in più**; ma **M4** — «P3 con rendering vero» — deve includere la mano disegnata a 30 Hz quando la si lancia: P3 è già stretto, e quanto lo dice la tabella degli esiti di `spikes/GUI-REQUISITI.md`, riga P3 | ADR-0029 righe M1–M5; GUI-REQUISITI P3 |
 
@@ -350,7 +357,9 @@ versioni degli strumenti, la CPU della macchina e le evidenze, nella forma di SP
 ### 4.3 Registrata, non presa
 
 Se la posizione dei pannelli sopravvive a un riavvio — la decisione **12**: è configurazione, archivio
-di ADR-0022, che non esiste; la chiude chi costruisce l'archivio.
+di ADR-0022, che non esiste; la chiude chi costruisce l'archivio. ✅ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30,
+AUD-441, AUD-442, AUD-446: **presa il 2026-09-07** dalla stella polare della GUI e costruita dal sotto-progetto 2 — la
+riga 12 della tabella delle decisioni.
 
 ---
 
@@ -386,7 +395,7 @@ brainstorming 2 — ✅ **decisa il 2026-09-04**, riga 7 della tabella), indicat
 |---|---|
 | dove finisce la **cattura** (decisione 7) | il brainstorming 2, la knowledge base — ✅ **sciolta il 2026-09-04**: nella knowledge base, la run la vede (riga 7 della tabella delle decisioni) |
 | la strada «un evento di percezione apre un passo» (ADR-0011) | la costruisce il **12**, primo con una sorgente di percezione; la voce la riusa |
-| l'interruttore della telecamera e la posizione dei pannelli (decisioni 10 e 12) | l'archivio dei parametri, che nessun sotto-progetto colloca ancora — registrato |
+| l'interruttore della telecamera e la posizione dei pannelli (decisioni 10 e 12) | l'archivio dei parametri, che nessun sotto-progetto colloca ancora — registrato. ✅ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-441, AUD-442, AUD-446: la **12** è presa e costruita, e la disposizione non è un parametro ma un pacchetto custodito — la riga 12 della tabella delle decisioni, e [design/09](../../design/09-l0-fisico.md); dall'archivio dei parametri dipende la sola **10**, con la sua riga |
 | il timbro di build sui due canali (§6.1.2) | GUI col **2**, worker col **12**: i due grilletti già scritti in testa a `crates/kernel/src/wire/ipc.rs` e `crates/kernel/src/wire/worker.rs` |
 
 ### 5.4 Le voci che restano aperte
@@ -394,7 +403,9 @@ brainstorming 2 — ✅ **decisa il 2026-09-04**, riga 7 della tabella), indicat
 Tutte con un chiusore scritto nella tabella delle decisioni: la **2** (quali funzioni sono
 gestuali → la capacità), la **7** (la cattura → brainstorming 2 — ✅ **chiusa il 2026-09-04**, riga 7 della tabella), la **9** (la terza quota → un
 tracciatore su GPU), la **10** e la **12** (→ l'archivio dei parametri). **Nessuna sbarra il
-disegno**, né il piano.
+disegno**, né il piano. ✅ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-441, AUD-442, AUD-446: la **12** è
+chiusa — presa il 2026-09-07 e costruita dal sotto-progetto 2, riga 12 della tabella —; dall'archivio dei parametri
+dipende la sola **10**.
 
 ### 5.5 L'ordine di ciò che segue
 
@@ -415,7 +426,9 @@ ha approvato, con le spunte di oggi:
    F8 risalita a OpenMMLab e il motivo della chiusura di F9 — **entrambi letti scrivendo questo
    disegno**, §7; lo spike SP-7 in `spikes/` con l'esito in `spikes/RISULTATI.md`; la sonda S3 nel
    kernel; questo file nella §12 del compendio. Esecuzione con `superpowers:subagent-driven-development`.
-5. poi il brainstorming **distinto** della knowledge base; poi il sotto-progetto 2.
+5. ✅ poi il brainstorming **distinto** della knowledge base; poi il sotto-progetto 2. ✅ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30,
+   AUD-655: fatti tutti e due — lo stato lo dice la [roadmap](../../roadmap.md) —, e il prossimo passo vive solo nella
+   §6 del [compendio](../../COMPENDIO.md).
 
 ✅ **La Definizione di «fatto» dell'esecuzione — proposta dallo scrivente, APPROVATA il 2026-09-03 con
 la rilettura del disegno**, sotto la stessa accettazione condizionata. È l'elenco del punto 4 letto come
@@ -534,8 +547,8 @@ perché **F8 e F9 sono state rilette oggi** — le due righe che la consegna las
 | # | Voce | Perché è sua, e il consiglio |
 |---|---|---|
 | 1 | la tabella dei controlli per artefatto (§1.4) e la Definizione di «fatto» (§5.5) sono **aggiunte dello scrivente** | ✅ **Approvate il 2026-09-03 con la rilettura del disegno**, sotto accettazione condizionata: il piano le copia da qui. Il merito viene dalle sezioni approvate, la forma no, ed è per questo che erano portate al proprietario invece di essere date per approvate |
-| 2 | F8 più debole di come era scritta | nessuna decisione ne dipende oggi. Consiglio: **non** cercare ora una seconda alternativa a MediaPipe — sarebbe lavoro per una voce registrata (la 9), cioè sfoggio; si rimisura quando la voce si apre |
-| 3 | le decisioni **2, 7, 9, 10, 12**, aperte con un chiusore scritto | nessuna sbarra il disegno né il piano; restano nella tabella delle decisioni, in una casa sola. ✅ **Richiamo del 2026-09-05: la 7 è chiusa** — decisa il 2026-09-04 dal brainstorming della knowledge base, riga 7 della tabella delle decisioni |
+| 2 | F8 più debole di come era scritta | nessuna decisione ne dipende oggi. Consiglio: **non** cercare ora una seconda alternativa a MediaPipe — sarebbe lavoro per una voce registrata (la 9), cioè sfoggio; si rimisura quando la voce si apre. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-179: SP-7 ha misurato il 2026-09-04 che su questa CPU il tracciatore a due mani non ha margine sui 30 Hz — la §6.4 —; che cosa ne segua — una mano sola, una risoluzione o una frequenza più basse, o la via con la GPU, RTMPose su ONNX Runtime con la manutenzione rimisurata, e la terza quota della decisione 9 — lo decide il sotto-progetto 12 col proprietario — ADR-0039, rimando del 2026-10-02 |
+| 3 | le decisioni **2, 7, 9, 10, 12**, aperte con un chiusore scritto | nessuna sbarra il disegno né il piano; restano nella tabella delle decisioni, in una casa sola. ✅ **Richiamo del 2026-09-05: la 7 è chiusa** — decisa il 2026-09-04 dal brainstorming della knowledge base, riga 7 della tabella delle decisioni. ✅ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-441, AUD-442, AUD-446: **la 12 è chiusa** — presa il 2026-09-07 dalla stella polare della GUI e costruita dal sotto-progetto 2, riga 12 della tabella delle decisioni |
 | 4 | l'**etichetta di strato** della riga 12 della roadmap: la sezione approvata dice **L2**, ma la riga paga anche lavoro di kernel (§2.4), e la roadmap segna l'ulteriore strato quando c'è — la riga 9 è *«L1 est.»*, la 11 *«L0 + L3»* | una parola, presa **scrivendo la riga** nel piano. Consiglio: **«L2 + L1 est.»**, sulla forma delle righe 9 e 11 — se il proprietario non dice altro, il piano la scrive così |
 | 5 | la decisione **13**, il confinamento del worker telecamera | registrata; la chiude il sotto-progetto 12 col proprietario. Consiglio: **processo ristretto**, perché la telecamera è un dispositivo di privacy e ADR-0025 dice che un confinamento più debole non è un ripiego; ma non si decide prima che esista il primo worker, o sarebbe una previsione (gotcha #57) |
 | 6 | la sonda S3 **senza riga di catalogo** | registrata, come PL-1 e K-1/B-1: una riga nuova in §7.4 è spec, vincolo globale 7 |
@@ -550,7 +563,7 @@ perché **F8 e F9 sono state rilette oggi** — le due righe che la consegna las
 | approccio 2, tracciamento nella GUI | muore con la GUI (niente Jarvis a GUI chiusa), contraddice lo slot di ADR-0011, WebGL dentro la quota di presentazione, blocca il thread della UI (F5), la telecamera diventa stato di un processo sacrificabile |
 | ibrido: worker per l'always-on e GUI per la manipolazione | due tracciatori su una telecamera, due modelli, due codici: sfoggio |
 | la **terza quota** nella formula di ADR-0005, oggi | vale zero; il porto pretende già una concessione, quindi la forma minima esiste. Si apre con un tracciatore su GPU — decisione 9 |
-| il gesto di comando come **trigger di ADR-0009** | quel trigger innesca l'anello di verifica; il posto giusto è il corollario di ADR-0011 |
+| il gesto di comando come **trigger di ADR-0009** | quel trigger innesca l'anello di verifica; il posto giusto è il corollario di ADR-0011. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-173: il trigger di ADR-0009 apre una run da un evento — l'anello 3 di [design/04](../../design/04-anelli-e-sensori.md) e la §0.4.3 della spec del sotto-progetto 1 —, e il motivo si legge così: il gesto di comando non apre una run (decisione 3), apre un passo nella run aperta, il corollario di ADR-0011 — ADR-0039, rimando del 2026-10-02 |
 | il **video nella webview** | i 21 punti bastano a disegnare la mano; il video costerebbe una misura in più per ADR-0029 e una telecamera condivisa fra due processi — decisione 5 |
 | le finestre dell'**OS** | effetto OS, settima famiglia di porte: sotto-progetto 10, ADR suo |
 | la telecamera come **occhio** | B della prima domanda: i fotogrammi come contenuto non fidato nel gateway sono un'altra cosa, e si aggiungono dopo come capacità |
@@ -593,6 +606,12 @@ compito 9 del piano non la scrive.
 ✅ **RICHIAMO DEL 2026-09-04:** il piano è eseguito; la §6 del compendio porta il passo successivo, il brainstorming della knowledge base.
 
 ### Come si riprende — scritto alla chiusura della sessione del 2026-09-03, coi comandi
+
+✅ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-655: questa sezione è il **verbale** della chiusura del
+2026-09-03, non una consegna da eseguire: ogni suo passo è eseguito — il piano, scritto ed eseguito, lo dice la §5.5 —.
+Lo stato, le voci aperte e i comandi che porta sono di quel giorno: i comandi, ancorati a `HEAD`, oggi misurano altro; le
+decisioni aperte di oggi le dice la tabella delle decisioni, e il prossimo passo vive solo nella §6 del
+[compendio](../../COMPENDIO.md).
 
 ⚠️ **È il documento di consegna di questa sessione**, e sta qui e non in un file a parte perché il
 repo ha già la sua convenzione: lo stato vive in file **tracciati**, e chi riprende legge **questo**

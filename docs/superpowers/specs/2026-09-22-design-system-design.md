@@ -6,6 +6,11 @@ risposte del proprietario, la strada — **A**, le variabili CSS sono la verità
 diventano test. La quinta sessione dello stesso giorno lo ha scritto **sul posto**, dal diario. Chi riprende ha un disegno
 intero da tradurre in un **piano**, **dopo** che il proprietario lo ha riletto in questa forma: *«Come si riprende»*, in fondo.
 
+✅ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-669, AUD-672: il disegno è stato tradotto nel
+[piano](../plans/2026-09-23-design-system.md), eseguito, e il 14 è chiuso — lo stato lo dice la [roadmap](../../roadmap.md) —;
+il prossimo passo vive solo nella §6 del [compendio](../../COMPENDIO.md), e *«Come si riprende»*, in fondo, è il verbale della
+chiusura del 2026-09-23.
+
 ⚠️ **RICHIAMO DEL 2026-09-23, alla scrittura del disegno:** questo file è nato il 2026-09-22 come **consegna dell'avvio**
 (`2a674cc`) ed è diventato il **diario** del brainstorming, aggiornato e committato a ogni risposta. È riscritto **allo stesso
 percorso**, perché il puntatore della §6 del [compendio](../../COMPENDIO.md) non cambi casa — com'è stato per i disegni dei
@@ -30,10 +35,12 @@ turno, la 15 con un mandato; tutte le altre con un clic sul consiglio. Questa se
 duplicazione, un fatto che non è più vero — ci si **ferma** e lo si dice, non si esegue.
 
 📌 **Metodo.** Ogni affermazione porta la sua specie — **verificata** (letta nel codice o in un documento, con la data),
-🔶 **dedotta**, o **assunta** — e i comandi stanno accanto alle affermazioni e **si rilanciano**, non si citano. Il codice non
-è cambiato dalla nascita del diario: `git log --oneline 2a674cc..HEAD -- . ':!docs'` non rende nulla, rilanciato il
-2026-09-23. I fatti del codice che il disegno usa sono stati **rilanciati** comunque, e dove il diario sbagliava lo dice
-*«Cosa questo disegno ha misurato»*: il merito approvato non è stato toccato.
+🔶 **dedotta**, o **assunta** — e i comandi stanno accanto alle affermazioni e **si rilanciano**, non si citano. Il 2026-09-23
+il codice non era cambiato dalla nascita del diario: `git log --oneline 2a674cc..HEAD -- . ':!docs'` non rendeva nulla.
+I fatti del codice che il disegno usa sono stati **rilanciati** comunque, e dove il diario sbagliava lo dice
+*«Cosa questo disegno ha misurato»*: il merito approvato non è stato toccato. ✅ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30,
+AUD-669, AUD-672: dopo, col piano, il codice è cambiato, e lo stesso comando, rilanciato, lo misura: ciò che il disegno
+dice verificato vale alla data in cui lo ha letto.
 
 ## Le risposte del proprietario, una per domanda
 
@@ -195,9 +202,9 @@ awk '/^\[data-theme="light"\] \{/{s=1} s&&/^\}/{exit} s' docs/superpowers/specs/
 | Regola | Da dove |
 |---|---|
 | i colori della tavola approvata sono **àncore esatte**; gli altri gradini si generano al **loro** tono, con tinta e croma interpolate in **OKLCH**; le tinte tenui si **mescolano** nel grigio caldo in **OKLab**, come `color-mix(in oklab, …)` | decisione 15: il proprietario ha approvato quei colori guardandoli, e una scala rigenerata da zero li avrebbe spostati tutti di poco |
-| ogni ruolo di **testo** a 4,5:1 su **ogni** fondo, nei due temi; il testo sul bordeaux e sugli stati a 4,5:1 | WCAG 2.2, 1.4.3 |
+| ogni ruolo di **testo** a 4,5:1 su **ogni** fondo, nei due temi; il testo sul bordeaux e sugli stati a 4,5:1. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-491, AUD-673: per **famiglie**, ciascun testo sui fondi della sua famiglia — il richiamo R1-8 in *«Due livelli»*, scelta A del proprietario —; la regola la scrive `families()` in `gui/src/tokens/contrast.test.ts` | WCAG 2.2, 1.4.3 |
 | **bordo forte, focus e segni** a 3:1 sui fondi | WCAG 2.2, 1.4.11 |
-| `--color-text-disabled` è **esente**, e `--color-border` è **decoro** | 1.4.3 esenta i componenti inattivi; un bordo che non serve a riconoscere un controllo non è un segno |
+| `--color-text-disabled` è **esente**, e `--color-border` è **decoro** | 1.4.3 esenta i componenti inattivi; un bordo che non serve a riconoscere un controllo non è un segno. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-673: esenti sono anche gli altri bordi di decoro, il velo e le ombre, ciascuno con la sua ragione nella prova del contrasto — `EXEMPT` in `gui/src/tokens/contrast.test.ts`, la casa che il proprietario ha scelto con **E5** del [piano](../plans/2026-09-23-design-system.md) |
 | gli **stati** — sopra, premuto, tenue — sono **colori espliciti**, non strati trasparenti | il test del contrasto sa giudicare un colore, non una trasparenza sopra un fondo che non conosce; gli strati di Material non sono presi |
 | il **velo** sotto i dialoghi è un ruolo, `--color-veil` | i due veli di oggi, scritti a mano e già diversi — `rgb(0 0 0 / 50%)` in `Confirm.vue` e `rgb(0 0 0 / 0.45)` in `Drawer.vue` — sono i soli colori fuori dai token: il ruolo li cura |
 
@@ -397,7 +404,10 @@ Il pulsante **«Moduli»** scende nella **striscia**, dov'è nella tavola dello 
 
 Oggi `frame/Band.vue` è una striscia da bordo a bordo, con la sola riga sotto, senza icona né titolo, e le schede la toccano: il
 dock ha 0 in alto (risposta 20). È una **divergenza dalla tavola approvata**, che ne disegna il messaggio — e l'esempio del `.msg`
-è il nostro, *«Il core non risponde»* —, come **E57** ed **E58** (**E60** del [piano](../plans/2026-09-23-design-system.md)).
+è il nostro, *«Il core non risponde»* —, come **E57** ed **E58** (**E60** del [piano](../plans/2026-09-23-design-system.md)). ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30,
+AUD-492: nelle tavole l'esempio del tono `stop` — l'errore, nella tavola dello stile — è il timbro diverso, coi testi di
+`gui/src/locales/it.json`, come i toni di E60; il core che non risponde è la fascia `warn` con «Riprova», e la GUI non
+riprova da sola — nessuna soglia inventata, la testa di `gui/src/stores/connection.ts`.
 
 | | |
 |---|---|
@@ -463,7 +473,7 @@ tavola dei token, la striscia della risposta 20. Quindi le tre sonde, e le prove
 
 | Dove | Che cosa | Da che cosa nasce |
 |---|---|---|
-| **senza browser**, nel `vitest` di oggi sotto jsdom | il **contrasto** di `gui/src/tokens/contrast.test.ts` allargato a **tutte** le coppie dei token, nei due temi, letti da `themes.css` e non ricopiati | la regola della (a) |
+| **senza browser**, nel `vitest` di oggi sotto jsdom | il **contrasto** di `gui/src/tokens/contrast.test.ts` allargato a **tutte** le coppie dei token, nei due temi, letti da `themes.css` e non ricopiati. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-491, AUD-673: allargato per **famiglie**, non a tutte le coppie — il richiamo R1-8 in *«Due livelli»*, nella (a) | la regola della (a) |
 | | la **mappa delle icone**: il nome è un tipo, e ogni voce disegna un'icona | la (b) |
 | | le **regole del kit**, nel linter | la (b) |
 | **nel browser vero**, sulla pagina kit e nei due temi | i **raggi concentrici** | `sonda-raggi.js` |
@@ -643,7 +653,7 @@ che ha scritto il disegno, la 28 e la 29 di quella che ha scritto il disegno di 
 | 10 | la tavola approvata **si aggiorna** coi caratteri scelti, e non nasce un secondo file | una tavola coi caratteri di Windows mentirebbe sullo stile di oggi, e le tavole nuove partono da lì; com'era sta nella storia di git, col comando nella risposta 8. Costo: chi cerca la tavola della risposta 4 la trova in `8c0bbe6` |
 | 11 | la tavola approvata porta anche le icone scelte, e con esse la **licenza di Lucide**, copiata parola per parola in testa al file | i disegni sono **copiati** nel file, e la licenza ISC chiede l'avviso *«in all copies»*; una parte delle icone viene da Feather, sotto MIT, e la licenza lo dice; il repository è pubblico. I caratteri invece non sono copiati: arrivano da jsDelivr. Costo: una cinquantina di righe in testa alla tavola |
 | 13 | la Panoramica approvata si salva **a sé**, [`panoramica.html`](2026-09-22-design-system-tavole/panoramica.html), accanto alla tavola dello stile e non dentro | la tavola dello stile mostra lo stile, la panoramica è un meccanismo della cornice; ma una tavola nel repository serve a chi riprende dall'altra macchina, dove lo scratchpad non c'è. Le sue sonde: raggi, testo che entra, cifre e icone, pulite nei due temi e a 1440 e 800 px; i campioni della sonda dei caratteri pensati per la Home **mancano** in questa tavola, e lì la prova vale solo per il testo tagliato, lo sbordare, il caricamento e le cifre. Costo: due file da tenere coerenti |
-| 14 | i nomi dei ruoli **proprietà prima** — `--color-bg-…`, `--color-text-…`, `--color-border-…` — invece dei nomi di oggi, `--ink` o `--surface` | un testo scritto con un fondo si vede dal nome, e il test del contrasto accoppia **ogni** `--color-text-*` con **ogni** `--color-bg-*` senza una lista a mano, che è la regola scritta in `contrast.test.ts`. Costo: il piano rinomina a macchina gli usi di oggi nei dodici componenti — quanti, lo dice il terzo comando delle sonde del censimento, più su; gli spazi `--space-1`…`--space-4` tengono nome e valore |
+| 14 | i nomi dei ruoli **proprietà prima** — `--color-bg-…`, `--color-text-…`, `--color-border-…` — invece dei nomi di oggi, `--ink` o `--surface` | un testo scritto con un fondo si vede dal nome, e il test del contrasto accoppia **ogni** `--color-text-*` con **ogni** `--color-bg-*` senza una lista a mano, che è la regola scritta in `contrast.test.ts`. Costo: il piano rinomina a macchina gli usi di oggi nei dodici componenti — quanti, lo dice il terzo comando delle sonde del censimento, più su; gli spazi `--space-1`…`--space-4` tengono nome e valore. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-490, AUD-491: il test accoppia per **famiglie**, perché ogni testo con ogni fondo alla lettera fallisce per costruzione — il richiamo R1-8 in *«Due livelli»*, nella (a), scelta A del proprietario —; senza una lista di coppie, ma con gli esenti per nome e una coppia aggiunta a mano, `--color-text` su `--color-bg-selection`: `families()` ed `EXEMPT` in `gui/src/tokens/contrast.test.ts` |
 | 15 | i valori della tavola approvata restano **àncore esatte**, e si generano solo i gradini che mancano | il proprietario ha approvato quei colori guardandoli; una scala rigenerata da zero li avrebbe spostati tutti di poco. Costo: le scale non hanno gradini a passo fisso |
 | 16 | il **monospazio** è quello del sistema — `ui-monospace`, Cascadia Mono, Consolas | un terzo carattere nel programma, come Geist Mono, sarebbe una dipendenza nuova, ed è del proprietario: registrata e non presa. Costo: il codice nella chat si vede diverso su Linux |
 | 17 | i **generatori** restano nello scratchpad; nel repository va la **tavola**, che contiene per intero `base.css` e `themes.css` | è la regola di `CLAUDE.md` sulle misure, e il precedente di `gen_style_v*.py`. Costo: dall'altra macchina un gradino si ritocca a mano nella tavola, non rigenerandolo |
@@ -727,6 +737,11 @@ che ha scritto il disegno, la 28 e la 29 di quella che ha scritto il disegno di 
 ⛔ **Lo dice la §6 del [compendio](../../COMPENDIO.md), in un posto solo.**
 
 ### Come si riprende — scritto alla chiusura della sessione del 2026-09-23, coi comandi
+
+✅ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-669, AUD-671: questa sezione è il **verbale** della chiusura del
+2026-09-23, non una consegna da eseguire: ogni suo passo è eseguito — il piano è scritto ed eseguito, e il 14 è chiuso: lo
+stato lo dice la [roadmap](../../roadmap.md) —. Lo stato e i comandi che porta sono di quel giorno — ancorati a `HEAD`,
+oggi misurano altro —, e il prossimo passo vive solo nella §6 del [compendio](../../COMPENDIO.md).
 
 ⚠️ **È il documento di consegna di questa sessione**, e sta qui perché il repo tiene lo stato in file **tracciati**: chi
 riprende legge **questo** file per intero. Ogni riga è stata **riletta coi comandi** prima di essere scritta, non ricordata.

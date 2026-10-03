@@ -79,6 +79,8 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 > ✅ **Aggiornata il 2026-10-02** — audit del 2026-09-30, AUD-378, AUD-385, AUD-721: la ricomposizione, la proiezione da misurare e la proiezione ristretta hanno la sede **13**, che costruisce la proiezione prima del 3 (la condizione G della §8.2.1 della [spec del sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md)); la riga «Notifiche» dice le sue due metà; e la riga «Accessibilità» nomina i due banchi della tastiera che mancavano.
 >
 > ✅ **Aggiornata il 2026-10-03** — audit del 2026-09-30, AUD-646, AUD-513, AUD-514: la cifratura reale e la ritenzione del giornale hanno la sede **15**, *«Dati a riposo: cifratura e ritenzione»* nella [roadmap](roadmap.md); progress e notifiche dei lavori lunghi il 2 non li ha costruiti, e la loro sede è la scelta **E228** del proprietario.
+>
+> ✅ **Aggiornata il 2026-10-03** — audit del 2026-09-30, AUD-023, AUD-027, AUD-031, AUD-032, AUD-042: la contabilità, il ritentativo, i parametri nel record di routing e il tetto della run non sono nel kernel — la §6.2 e le righe `V8`, `V16`, `V17` e `V24` della §8.3 della [spec del sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) —, e le loro sette righe sono 🔶 con la sede del 3.
 
 ---
 
@@ -101,10 +103,10 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Preferenze di provider (OpenRouter) | ✅ | §3 · vincoli della richiesta |
 | Routing per compito/costo | ✅ | §3 · politica di routing |
 | Structured output e constrained decoding | 🔶 | sensore §5 (ADR-0013) + adattatori §3 · provider reale → Conversazione |
-| Contabilità token e costi | ✅ | §3 · ADR-0011 |
-| Avvisi e tetti di spesa | ✅ | §3 + §4 · V8 |
+| Contabilità token e costi | 🔶 | §3 · ADR-0011 · token e costo attribuiti al passo → Conversazione |
+| Avvisi e tetti di spesa | 🔶 | §3 + §4 · V8 · la spesa e il suo tetto → Conversazione |
 | Selettore di modello per compito | ✅ | §3 · profili |
-| Parametri di generazione configurabili | ✅ | §3 · record di routing |
+| Parametri di generazione configurabili | 🔶 | §3 · record di routing · i parametri nel record → Conversazione |
 | Catalogo e download modelli locali | 📋 | Gestione modelli locali |
 | Indicatore di stato modello | 📋 | GUI |
 
@@ -173,7 +175,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Valutazione degli agenti | 📋 | Agenti — esplicitamente **fuori** dal kernel (§8) |
 | Regole e vincoli di progetto | 🔶 | guide §5 · registro delle guide → **13** |
 | Agenti in parallelo isolati | 🔶 | sub-run §4 · isolamento su disco → Coding |
-| Limiti di autonomia configurabili | ✅ | §4 · V8 |
+| Limiti di autonomia configurabili | 🔶 | §4 · V8 · il tetto della run, che la sospende in `AttesaUmano` → Conversazione |
 
 ## 5. Coding
 
@@ -285,7 +287,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Hook sul ciclo di vita | 🔶 | trigger e anelli §5 · politica → Agenti |
 | Classificatore di sicurezza delle azioni | 🔶 | si realizza come **sensore** §5 · politica → Agenti |
 | Dataset dai fallimenti | ✅ | §7 promozione + §8 |
-| Analisi dei costi per run e per sub-agente | ✅ | §3 · ADR-0011 |
+| Analisi dei costi per run e per sub-agente | 🔶 | §3 · ADR-0011 · la contabilità al passo → Conversazione |
 
 ### Conversazione, conoscenza e UX
 
@@ -314,7 +316,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Funzionalità | | Sede |
 |---|---|---|
 | Zero-Data-Retention selettivo | ✅ | §3 ADR-0012 + §6 ADR-0016 (escalation) |
-| Fatturazione a stream interrotto | ✅ | §3 · ADR-0011 |
+| Fatturazione a stream interrotto | 🔶 | §3 · ADR-0011 · il costo di uno stream interrotto → Conversazione |
 | Politica di routing come oggetto versionato | ✅ | §3 · ADR-0011 |
 | Canary per esfiltrazione dati | 🔶 | §6 · ADR-0016 · canary → Conversazione |
 | Modalità di permessi a più livelli | 🔶 | preset §6 · implementazione → Agenti |
@@ -337,7 +339,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Funzionalità | | Sede |
 |---|---|---|
 | Prompt history ricercabile | 📋 | Conversazione |
-| Auto-retry su errori transitori | ✅ | §3 · V17 |
+| Auto-retry su errori transitori | 🔶 | §3 · V17 · il ritentativo nello stesso passo → Conversazione |
 | Modalità «solo lettura»/dry-run | 🔶 | preset §6 + classi di effetto §4 · politica → Agenti |
 | Degrado esplicito quando manca la rete | ✅ | §7 · ADR-0019 |
 

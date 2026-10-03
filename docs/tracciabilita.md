@@ -77,6 +77,8 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 > ✅ **Aggiornata il 2026-09-28 con la riga «Accessibilità»**, dal compito 9 del [piano del design system](superpowers/plans/2026-09-23-design-system.md) — alla chiusura del sotto-progetto 14, come dice la riga sotto il titolo.
 >
 > ✅ **Aggiornata il 2026-10-02** — audit del 2026-09-30, AUD-378, AUD-385, AUD-721: la ricomposizione, la proiezione da misurare e la proiezione ristretta hanno la sede **13**, che costruisce la proiezione prima del 3 (la condizione G della §8.2.1 della [spec del sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md)); la riga «Notifiche» dice le sue due metà; e la riga «Accessibilità» nomina i due banchi della tastiera che mancavano.
+>
+> ✅ **Aggiornata il 2026-10-03** — audit del 2026-09-30, AUD-646, AUD-513, AUD-514: la cifratura reale e la ritenzione del giornale hanno la sede **15**, *«Dati a riposo: cifratura e ritenzione»* nella [roadmap](roadmap.md); progress e notifiche dei lavori lunghi il 2 non li ha costruiti, e la loro sede è la scelta **E228** del proprietario.
 
 ---
 
@@ -233,7 +235,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Libreria degli asset generati | 📋 | Generazione asset |
 | Cronologia e riproducibilità | ✅ | giornale §4 + record di routing §3 |
 | Coda dei job di generazione | ✅ | code §2 + run §4 |
-| Progress e notifiche per job lunghi | 🔶 | §7 + V9 · notifica all'utente → GUI minima |
+| Progress e notifiche per job lunghi | 🔶 | §7 + V9 · progress e notifica all'utente → sede da assegnare: il 3 o il 7, scelta del proprietario — **E228** del [disegno del design system](superpowers/specs/2026-09-22-design-system-design.md); il 2 non li ha costruiti |
 | Rimozione dello sfondo/preparazione input | 📋 | Generazione asset |
 
 ## 8. Sistema
@@ -244,7 +246,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Difese da prompt injection | ✅ | §6 · ADR-0014 |
 | Difesa da tool poisoning | 🔶 | §6 · ADR-0015 · ciclo di approvazione → Agenti |
 | Gestione segreti e credenziali | 🔶 | §10 · ADR-0023 — gestore unico · implementazione → Conversazione |
-| Storage e cifratura a riposo | 🔶 | layout §10 (ADR-0022) già rispettato · cifratura reale (ADR-0023) → sede da assegnare |
+| Storage e cifratura a riposo | 🔶 | layout §10 (ADR-0022) già rispettato · cifratura reale (ADR-0023) e ritenzione a livelli del giornale (ADR-0018), con la spazzata che chiama `Journal::prune` → **15** |
 | Backup ed export dei dati | 🔶 | §10 · ADR-0022 — solo l'irriproducibile · implementazione → Backup e ripristino |
 | Osservabilità e tracing locale | 🔶 | giornale §4 · proiezione trace §7 (ADR-0017) · nel 2 `gui/src/panels/Steps.vue` (i passi, dal messaggio `Steps`) e `gui/src/panels/Status.vue` (degrado, policy e ultimo verdetto: `Degradation`, `Policy`, `Verdict`), sul core finto · i passi delle run → Conversazione |
 | Logging | ✅ | §7 |

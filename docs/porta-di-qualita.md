@@ -533,7 +533,7 @@ nessuno.
 | Sonda | Dove | Cosa tiene |
 |---|---|---|
 | `asking_a_grant_back_marks_it_and_does_not_free_it_yet` | `src` | che chiedere indietro **marchi** e non prenda: `revoking()` sale a uno e `allocated()` non si muove |
-| `a_grace_that_ran_out_returns_the_reservation_to_the_budget` | `src` | che oltre la scadenza della grazia la prenotazione **torni** nel budget — la metà arbitro di `Forzata` (§6.5 del disegno) |
+| `a_grace_that_ran_out_returns_the_reservation_to_the_budget` | `src` | che oltre la scadenza della grazia la prenotazione **torni** nel budget — la metà arbitro di `Forzata` (§6.5 del disegno); l'altra metà, uccidere il processo, è la voce **35** delle voci aperte del Traguardo 5 |
 | `a_non_preemptible_grant_is_never_asked_back` | `src` | che un non prelazionabile non si chieda indietro. ⚠️ **Il residente è in corsia `Batch` e non in `Realtime`:** in `Realtime` la guardia sulla **corsia** lo scarterebbe prima che la sua prelazionabilità fosse guardata, e il meccanismo che il nome promette non girerebbe mai (gotcha **#74**). In `Batch`, strettamente sotto la corsia che chiede, a salvarlo può essere **solo** la guardia sulla grazia |
 | `only_lanes_below_the_asking_one_are_asked_back` | `src` | la contro-sonda per l'altra strada: un lavoro `Realtime` **prelazionabile** non viene sfrattato per uno `Interactive` |
 | `asking_back_stops_as_soon_as_the_need_is_covered` | `src` | che si fermi appena la stanza basta: *«ha fatto spazio»* è soddisfatto anche da chi revoca tutto e sfratta due lavori per sederne uno |
@@ -1514,17 +1514,21 @@ dopo la potatura, un passo potato e un passo **mai scritto** rispondono **entram
 a `read_back`, sono **entrambi assenti** da `replay`, e una **seconda** `prune` risponde
 `Err(Missing)` a tutti e due — indistinguibili in **tre** modi, su tutte e due. ⛔ **Non è chiusa,
 e la ragione è la decisione D7:** la distinzione piena vuole l'**impronta** e la **dimensione** che
-ADR-0018 chiede a un record potato, l'impronta vuole una funzione di hash, e nel kernel quella è una
-**voce nuova nella lista di ADR-0031** — un atto deliberato che nessuna misura ha preparato. ⚠️
+ADR-0018 chiede a un record potato, e l'impronta vuole una funzione di hash: nel kernel ce n'è già
+una scritta a mano, `build_stamp` in `crates/kernel/src/wire/ipc.rs`, ma è un'identità e il suo
+commento la dice la funzione sbagliata per una difesa; una resistente alle collisioni sarebbe una
+**voce nuova nella lista di ADR-0031**, un atto deliberato. La sceglie il **13**, che la usa per
+primo per le guide. ⚠️
 **La via che sembrava non costarla è stata MISURATA e cade:** lasciare la voce e svuotare il
 payload **funziona** — `Ok([])` contro `Err(Missing)`, conformità verde — ma `steps_in_doubt`
 risponde allora **`SuspendAndAsk`** su un passo riconciliato e potato, perché byte vuoti sono
 **indecifrabili** e un record indecifrabile rimette il passo in dubbio: il sistema si fermerebbe su
 **ogni** passo potato, **a ogni ripresa**. Una traccia che serva dev'essere leggibile dalla
 riconciliazione, cioè una decisione di **formato**, e i byte congelati la rendono un atto
-deliberato. **Chi la chiude:** il traguardo che porta la ritenzione, **insieme** alla decisione
-sull'impronta. Il limite è scritto anche accanto al codice, in tutte e due le implementazioni e nel
-blocco 7b.
+deliberato. **Chi la chiude:** il sotto-progetto **15**, *«Dati a riposo: cifratura e ritenzione»*,
+con la funzione d'impronta del **13**. Il limite è scritto anche accanto al codice, in tutte e due
+le implementazioni e nel blocco 7b. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-563,
+AUD-093: la sede è la riga 15 della [roadmap](roadmap.md), e chi sceglie l'impronta la riga 13.
 
 ⚠️ **VOCE APERTA 2 — la terza risposta di `prune` non è tenuta da nessuna promessa.** Le risposte
 sono **tre**: `Missing` per un passo mai scritto, `StepInDoubt` per uno aperto, `Ok` per uno
@@ -1535,7 +1539,7 @@ implementazioni; la prima è tenuta **solo** per il doppio in memoria, in
 divergere in silenzio. ⛔ **Non è un buco aperto dal Task 11** — prima di lui entrambe rifiutavano
 **ogni** potatura con `Missing` — e chiuderlo costa una promessa col proprio bugiardo, che nessuna
 misura chiede oggi. **Chi la chiude:** il primo consumatore di `prune`, cioè la spazzata di
-ritenzione.
+ritenzione del sotto-progetto **15** — ⚠️ **RICHIAMO DEL 2026-10-03**, audit del 2026-09-30, AUD-563.
 
 ⛔ **VOCE APERTA 3 — LE DUE NOZIONI DI «IN DUBBIO» DIVERGONO, E LA DIVERGENZA CADE DAL LATO CHE
 AUTORIZZA LA DISTRUZIONE.** Nata il **2026-08-27** chiudendo il finding **AUD-006** del secondo
@@ -1586,8 +1590,9 @@ l'`Ok(())` di oggi andrebbe **rossa il giorno in cui la spazzata chiude la cosa 
 aver avuto ragione — il gotcha **#73**: *una sonda che va cancellata per prendere una decisione è
 un voto contro il prenderla*. La suite di conformità non può chiuderla per la stessa ragione della
 porta, e lo **dichiara** nel blocco **7b** insieme alle altre due cose che non pinza. **Chi la
-chiude:** il traguardo che porta la **ritenzione**, lo stesso della VOCE APERTA 1 e per un motivo
-imparentato — entrambe aspettano che qualcuno **chiami** `prune`.
+chiude:** il sotto-progetto **15**, lo stesso della VOCE APERTA 1 e per un motivo imparentato —
+entrambe aspettano che qualcuno **chiami** `prune`. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-563,
+AUD-646: la sede è la riga 15 della [roadmap](roadmap.md).
 
 ⚠️ **Limiti dichiarati della copertura di `boundary` e dell'arm `Note`.** Delle due sonde della nota
 **una sola** vede entrambe le direzioni: `a_note_does_not_put_a_step_in_doubt` finisce con un
@@ -2275,6 +2280,7 @@ non una riga di tabella.
 | 32 | la transizione **`InCoda --> Annullata`** | la macchina a stati di [`design/02`](design/02-arbitrato-gpu.md), che la §5.3 della spec adotta come propria, dichiara che dalla coda si esce anche per **annullamento o scadenza**: nell'arbitro non esiste nessun meccanismo. `grep -rniE 'cancel|annull' --include=*.rs crates/kernel/src/` non ha **nessun** riscontro; gli unici punti che mutano `queues` sono `enqueue`, `promote` e `new`, e `collect_expired` fa `retain` **solo** su `held`. Un biglietto consegnato è quindi **immortale**, mentre `design/02` promette all'utente *«l'opzione di annullare»*. ⛔ **E la conseguenza ha già costato codice:** `StartupError::ReservedQuota` esiste nella radice di composizione perché la seconda quota permanente torna `Queued` e nessuno la servirà mai — un tampone per **un** caso, mentre il buco resta per ogni altro chiamante | il richiamo del 2026-08-27 accanto alla macchina a stati in [`design/02`](design/02-arbitrato-gpu.md), col rimando in [`design/01`](design/01-topologia-dei-processi.md) | il **proprietario**: la scelta è fra **costruire** l'annullamento e **togliere** la transizione dal diagramma, e nessuna delle due è dell'agente. Voce nata dal finding **AUD-044**, sull'**arretrato anonimo**: la §9 del disegno del Traguardo 5 apre con *«ogni riga ha un indirizzo»*, e questo ramo non stava né fra le cose fatte né fra quelle rimandate |
 | 33 | **C-1** | ✅ **CHIUSA il 2026-08-31, e la scelta è del proprietario: `bincode` 2.0.1 RESTA, §6.1.1 non si riapre.** ⛔ **Decisa contro l'evidenza e non attorno:** la compatibilità del fork è **misurata** (**M-12**) e **regge**, quindi il «no» non è un'omissione. Cinque ragioni, e l'ultima decide: ① l'avviso dice **non mantenuto**, non **rotto**, e nessuna versione corretta esiste perché il monte dichiara la 2.x **completa**; ② I4 rinuncia al versionamento e il canale è **privato**, quindi il formato è congelato **per disegno** — una libreria finita è ciò che quel canale chiede — mentre ADR-0031 esiste per tenere **piccolo** il grafo dentro I3, e il fork lo farebbe crescere di **una voce netta**; ③ restare lascia un debito **dichiarato**, adottare ne creerebbe uno **nuovo e silenzioso** — compatibilità misurata su pochi casi, manutentore solo, e **nessun controllo** che ci direbbe di una rottura futura; ④ *novità non è maturità*, e **RustSec non raccomanda il fork**: le alternative che l'avviso nomina sono cadute, ciascuna con la propria misura; ⑤ ⛔ **la radice di C-1 non è questa crate:** C-1 nomina il **buco fra due criteri** — nessuno chiede come stia la libreria al **nostro** capo — e sostituire **una** libreria cura una crate lasciando il buco aperto per le altre. ⚠️ **Il residuo è nominato e non chiuso:** la cura alla radice è la voce **X-3** dell'audit del 2026-08-27, *nessuna scansione degli avvisi*, e resta **del proprietario** perché aggiungere un passo al cancello è il vincolo globale 7; nominarla è **parte** di questa decisione, mai un suo sostituto ⚠️ **[C-S5-4]**. Le evidenze della misura stanno in [`riferimenti.md`](riferimenti.md), sezione C-1 | sezione della decisione 5 (C-1) di [`riferimenti.md`](riferimenti.md), che porta le fonti e i candidati; nota accanto alla voce in `crates/kernel/Cargo.toml`; gotcha **#64** di [`HANDOFF.md`](HANDOFF.md); riga *«schema IPC»* della §4 del [compendio](COMPENDIO.md) | il **proprietario**: §6.1.1 è **spec**, vincolo globale 7, decisione **D12** |
 | 34 | **E94** | ⛔ **`RoutingDetail` è una TERZA BOCCA della classe di AUD-050, nata col compito 6 del Traguardo 6.** `RecordV1::routing` è `pub`, `RoutingDetail` è `pub` **coi campi `pub`**: un chiamante qualunque mette una `String` calcolata a runtime in `model`, e il `Debug` scritto a mano la stampa **intera**, col `reason` ancora un letterale `'static` a posto — riprodotto da **fuori** la crate. ⚠️ **Non è un difetto oggi**: `Candidate::model` è `&'static str`, quindi per la via di produzione non entra niente; il buco è nel **tipo**. ⚠️ **`VerdictDetail` non è coinvolta**: `bool` e `u64`. ⛔ **Il compito 7 la TRIPLICA:** il suo `PermissionDetail` è dettato con **due** campi `String` pubblici ⚠️ **[C-S5-3]** | voce **E94** dell'errata del piano | il **proprietario**: è la decisione di AUD-050 su un tipo nuovo, e **costa meno prenderla PRIMA del compito 7** che dopo |
+| 35 | la metà **uccisione** di `Forzata` | [`design/02`](design/02-arbitrato-gpu.md) disegna `InRevoca --> Forzata : grazia scaduta, processo ucciso`. L'arbitro fa la sua metà — `collect_expired` riprende la riserva a grazia scaduta, e `promote` la riassegna —; uccidere il processo tocca a chi ne tiene il `Worker`, con `Worker::kill`, e nessun codice di produzione lo chiama: `grep -rn '\.kill(' crates --include=*.rs` rende solo righe sotto `tests/`, e un `Process` vero non esiste. Senza, il titolare revocato può ancora usare la VRAM che `promote` ha dato a un altro: oggi è latente, perché nessun worker vero gira | §6.5 e §9 del [disegno del Traguardo 5](superpowers/specs/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu-design.md), che la davano al Traguardo 6, chiuso senza farla; il richiamo del 2026-10-02 in [`design/02`](design/02-arbitrato-gpu.md) | il **primo worker che tiene una concessione revocabile** — corsia `interactive` o `batch` di `design/02`; la telecamera del 12 sta in `realtime`, che non si revoca. Voce nata dal finding **AUD-202** dell'audit del 2026-09-30 |
 
 ⚠️ **Fra le righe qui sopra ce ne sono il cui chiusore NON è il proprietario.** Lette sparse, sembrerebbero tutte in
 attesa del proprietario, che è il modo in cui una voce smette di essere aperta senza che nessuno l'abbia chiusa. Il

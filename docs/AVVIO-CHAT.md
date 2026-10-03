@@ -153,10 +153,11 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
   /superpowers:test-driven-development       quando comincerà il CODICE, che
                                              viene dopo il piano e non prima
   /anthropic-skills:repo-audit               se e quando si aprirà un audit
-                                             NUOVO. NON serve ora: quello
-                                             dell'11 agosto è chiuso otto su
-                                             otto, e quello del 27 è chiuso nei
-                                             propri finding dal 2026-08-28.
+                                             NUOVO. NON serve ora: i due
+                                             audit completi hanno eseguito le
+                                             loro decisioni, e le voci che ne
+                                             restano aperte stanno negli
+                                             indici della §6 del compendio.
                                              ⚠️ Questa cella diceva «quel che
                                              resta è eseguirne i rimedi»
 
@@ -168,16 +169,21 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
      cosa NON rifare (§8), i gotcha (§9 — quanti, lo dice il suo titolo),
      le trappole di check-docs.sh (§10), i vincoli sul primo commit (§11).
   3. docs/audit-2026-08-27.md — ⛔ SOLO DUE PEZZI: la tabella «Le voci aperte
-     che NON hanno un numero AUD» (le sole ancora aperte, in gran parte del
-     proprietario) e «La disciplina, in cinque passi» (il metodo con cui qui
-     si rimedia). I 73 finding sono TUTTI CHIUSI dal 2026-08-28 — quanti, lo
-     dice il comando in fondo alla §6 del compendio — e il «Dettaglio» si
-     apre UNA scheda per volta, quella del finding su cui stai lavorando.
+     che NON hanno un numero AUD» (in gran parte del proprietario) e «La
+     disciplina, in cinque passi» (il metodo con cui qui si rimedia). Quali
+     dei 73 finding siano chiusi lo dice la colonna «Stato», col comando in
+     fondo alla §6 del compendio, e il «Dettaglio» si apre UNA scheda per
+     volta, quella del finding su cui stai lavorando.
+     ⚠️ RICHIAMO DEL 2026-10-03 — audit del 2026-09-30, AUD-602: lo stato
+     dei 73 sta in una casa sola, la colonna «Stato».
      ✅ RICHIAMO DEL 2026-09-09, decisione 26: qui stava «SOLO FINO ALLA
      TABELLA DEI 73 FINDING», cioè tutta la testa; il testo com'era, coi
      richiami del 2026-09-01, è in docs/archivio/lettura-di-apertura-storico.md.
-     ⚠️ docs/audit-2026-08-11.md — 32 KB — NON si apre più: è chiuso otto
-     decisioni su otto, e ciò che insegnava è dentro il compendio.
+     ⚠️ docs/audit-2026-08-11.md non si legge all'apertura: le otto
+     decisioni sono eseguite, ciò che insegnava è dentro il compendio, e le
+     voci rimaste aperte stanno nella sua §9, che la §6 del compendio
+     indicizza. ⚠️ RICHIAMO DEL 2026-10-03 — audit del 2026-09-30, AUD-083,
+     AUD-084.
   ⚠️ In token costano ALMENO il triplo di quel che i KB suggeriscono: misurato,
      quattrocento righe del solo compendio pesano 25148 token. È un LIMITE INFERIORE, non un totale — §12.
      ⚠️ RICHIAMO DEL 2026-09-01: qui seguiva «e il compendio ne ha oltre
@@ -206,12 +212,15 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
        bash scripts/gate.sh
    e dice in un colpo se l'ambiente regge: deve stampare GATE GREEN.
 
-✅ I DUE AUDIT COMPLETI SONO CHIUSI NEI PROPRI FINDING — l'11 agosto otto
-   decisioni su otto, il 27 agosto tutti i suoi. ⚠️ MA IL SECONDO NON È
-   FINITO: restano le voci SENZA numero AUD, e la maggior parte sono
-   decisioni MIE. Quali e quante non è scritto qui — la loro tabella nel
-   rapporto è la casa unica, e un numeratore ricopiato qui invecchierebbe al
-   primo che chiudo: è la radice R3 dell'audit stesso.
+✅ I DUE AUDIT COMPLETI HANNO FATTO IL LORO LAVORO — l'11 agosto otto
+   decisioni su otto, il 27 agosto i rimedi dei suoi finding. ⚠️ MA NESSUNO
+   DEI DUE È FINITO: restano voci aperte, e la maggior parte sono decisioni
+   MIE. Quali e quante non è scritto qui — le case uniche sono la §9 del
+   primo rapporto, e del secondo la colonna «Stato» dei 73 e la tabella
+   delle voci SENZA numero AUD; un numeratore ricopiato qui invecchierebbe
+   al primo che chiudo: è la radice R3 dell'audit stesso.
+   ⚠️ RICHIAMO DEL 2026-10-03 — audit del 2026-09-30, AUD-083, AUD-084,
+   AUD-602: gli indici delle voci aperte stanno nella §6 del compendio.
    ⚠️ RICHIAMO DEL 2026-08-28, e questo blocco lo prescriveva a sé stesso
    («si riscrive quando l'audit si chiude»): diceva «ED È APERTO. LA SPECIE
    DEL LAVORO CHE VIENE È: RIMEDIO». Adesso la specie è CREATIVA, e il
@@ -277,12 +286,10 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
    indirizzo, quindi sono uno scaglionamento e non un arretrato), la metà del
    gotcha #51 che resta fuori, e semi-dst.md che NON HA UN CHIUDENTE.
    ⛔ La §5 dell'AUDIT teneva quelle della QUALITÀ, e le OTTO decisioni della
-   §8 sono ESEGUITE. ⚠️ MA LA §5 NON E' CHIUSA, e questa riga diceva di sì:
-   contate sul rapporto il 2026-08-21, CINQUE voci restano SENZA MARCA —
-   T-3, che è dichiarato ALTO, più S-3, A-3, K-4, PL-5 — oltre ai ~20 rilievi
-   minori. P-2 era la sesta, ed è chiusa lo stesso giorno; se le cinque siano
-   davvero minori NON L'HA MISURATO NESSUNO, ed è la stessa forma con cui P-2
-   è sopravvissuto. ⚠️ Più DUE residui registrati: l'asserzione 4b della
+   §8 sono ESEGUITE. ⚠️ MA LA §5 NON E' CHIUSA: le sue voci senza marca hanno
+   lo stato nella §9 del rapporto, voce per voce, e le aperte il loro
+   chiusore — RICHIAMO DEL 2026-10-03, audit del 2026-09-30, AUD-083,
+   AUD-084. ⚠️ Più DUE residui registrati: l'asserzione 4b della
    conformità reactor è IMPLICATA dalla 4a, quindi MUTA e non vacua, e le
    DIECI sonde permanenti dell'esecuzione non hanno riga di catalogo, perché
    la §7.4 è SPEC (vincolo globale 7). La tabella sta in porta-di-qualita.md.

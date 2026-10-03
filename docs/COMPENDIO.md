@@ -635,7 +635,7 @@ Qui resta lo stato di oggi: è l'unico posto dove vive il prossimo passo, e più
 mandato del 2026-09-09 che sfoltì la lettura, stanno in [`archivio/stato-storico.md`](archivio/stato-storico.md), parola
 per parola.
 
-📌 **La compressione di [`porta-di-qualita.md`](porta-di-qualita.md) è fatta, il 2026-09-24:** il file com'era sta intero in [`archivio/porta-di-qualita-storico.md`](archivio/porta-di-qualita-storico.md). ⏳ **La correzione delle contraddizioni** che la compressione ha segnato e non corretto — decisione 11 del [verbale degli sfoltimenti](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md) — la fa il **terzo audit**, nel pacchetto della radice R4: deciso dal proprietario al triage del 2026-10-01. La lista sta in fondo a quel file.
+📌 **La compressione di [`porta-di-qualita.md`](porta-di-qualita.md) è fatta, il 2026-09-24:** il file com'era sta intero in [`archivio/porta-di-qualita-storico.md`](archivio/porta-di-qualita-storico.md). ✅ **Le contraddizioni che aveva segnato** — decisione 11 del [verbale degli sfoltimenti](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md) — le ha corrette il **terzo audit**, radice R4, il 2026-10-04: ciascuna dove stava, col proprio richiamo. Il loro registro, e questa riga com'era, stanno in fondo allo stesso archivio.
 
 ⏭️ **IL PROSSIMO PASSO, IN TRE TEMPI. Uno: IL TERZO AUDIT COMPLETO**, aperto dal proprietario il 2026-09-30 — codice e
 documentazione, da testa a piedi, con la skill `repo-audit` — perché il pre-controllo del compito 2 del piano dei documenti

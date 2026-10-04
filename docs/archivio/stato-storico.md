@@ -4429,3 +4429,8 @@ E in coda alla stessa cella:
 
 📌 **La compressione di [`porta-di-qualita.md`](../porta-di-qualita.md) è fatta, il 2026-09-24:** il file com'era sta intero in [`archivio/porta-di-qualita-storico.md`](porta-di-qualita-storico.md). ✅ **Le contraddizioni che aveva segnato** — decisione 11 del [verbale degli sfoltimenti](../superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md) — le ha corrette il **terzo audit**, radice R4, il 2026-10-04: ciascuna dove stava, col proprio richiamo. Il loro registro, e questa riga com'era, stanno in fondo allo stesso archivio.
 
+## L'intestazione del compendio, com'era — archiviata il 2026-10-04, all'ondata 9 del terzo audit
+
+⚠️ **Vera il giorno in cui fu scritta.** Uscita dal compendio parola per parola, coi link riscritti per questa cartella.
+
+**Aggiornato il 2026-10-02**, con **ADR-0041** dal terzo audit — chi può parlare col core —: la sua voce in §5 e i totali. Questa riga com'era è in [`archivio/stato-storico.md`](stato-storico.md). Il contenuto di merito nuovo è la voce di ADR-0041. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.

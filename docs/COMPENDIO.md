@@ -17,7 +17,7 @@
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — il
 > comando in fondo alla §12 — e l'idea è già qui.
 
-**Aggiornato il 2026-10-02**, con **ADR-0041** dal terzo audit — chi può parlare col core —: la sua voce in §5 e i totali. Questa riga com'era è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Il contenuto di merito nuovo è la voce di ADR-0041. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+**Aggiornato il 2026-10-04**, coi rimandi del terzo audit in testa agli ADR, ciascuno con la sua riga nella voce in §5, e la regola R3 in §13; i tagli della P11 in archivio. Questa riga com'era è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
 
 ---
 

@@ -4374,3 +4374,58 @@ Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende 
 9. Il controllo di non intrusione, fuori dalle ondate: `git status --porcelain` vuoto.
 10. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per parola,
     la nuova al suo posto, e il commit, portato anche su `main` (C18).
+
+## Dal compendio, per il suo tetto — archiviati il 2026-10-04, decisione P11 del terzo audit
+
+Il compendio era a 869 byte dal tetto di `scripts/check-docs.sh`, e il pacchetto P07 del [terzo audit](../audit-2026-09-30.md) deve scriverci i rimandi di R3, all'ondata 9. Il proprietario ha scelto di fare posto spostando qui, parola per parola, ciò che il compendio portava ancora di storia, ogni taglio approvato da lui, invece di alzare il tetto. Qui sotto il testo com'era, coi link riscritti per questa cartella.
+
+### La §6, lo stato della spec e i sei traguardi del sotto-progetto 1, com'erano
+
+**Spec del kernel §0–§10 completa.** Spec del **sotto-progetto 1** con §0–§8 approvate,
+**riaperta su sette voci** — **tutte chiuse** — **§8 riallineata e chiusa il 2026-08-08**, e
+**audit sezione-contro-ADR passato**.
+
+### I sei traguardi del sotto-progetto 1
+
+| # | | |
+|---|---|---|
+| 1 | scheletro e porta di qualità | ✅ 2026-08-08 |
+| 2 | substrato iniettabile | ✅ 2026-08-10 |
+| 3 | giornale e formato durevole | ✅ 2026-08-10 |
+| 4 | simulatore DST — il guasto | ✅ 2026-08-11 |
+| 5 | arbitro GPU | ✅ 2026-08-25 |
+| 6 | gli altri meccanismi | ✅ 2026-09-02 |
+
+⚠️ **Nessun numeratore di compiti in questa tabella**, per costruzione: invecchierebbe a
+ogni compito. Il racconto di ciascun traguardo sta nel proprio piano, in
+[`superpowers/plans/`](../superpowers/plans/); i verbali di chiusura stanno in
+[`archivio/stato-storico.md`](stato-storico.md).
+
+### La cella del #51, nella tabella delle voci aperte della §6: la riga originale e la storia della sua correzione
+
+Nella prima colonna:
+
+> ⚠️ **La riga originale:** la durabilità attraverso la morte del processo non è osservabile da dentro il processo, e `Durability::None` lascia **sei test su sei verdi**
+
+Nella terza colonna, dopo «attraverso il `StorageBackend` che il Task 8 ha reso sostituibile.»:
+
+> ⛔ **QUESTA CELLA HA DETTO IL FALSO DAL BRAINSTORMING ALL'ESECUZIONE, e la correzione è del 2026-08-11, misurata due volte.** Diceva: *«con `Durability::None` `redb` non chiama `sync_data`, quindi un backend che conta le chiamate lo dice — una campagna che pretende «`sync_data` è scattato almeno una volta» diventa rossa appena la garanzia sparisce»*. **È falsa in entrambe le metà:** sotto quella mutazione `redb` chiama `sync_data` **sette volte all'apertura** e arriva a undici, perché **sei sync su sette nascono prima che esista un record** — `create_with_backend` nudo ne fa sei; e la forma *«almeno una volta»* è quindi **l'oracolo cieco per eccellenza**, verde proprio sotto la mutazione che esiste per cogliere.
+
+E in coda alla stessa cella:
+
+> ⚠️ E il difetto non era il numero ma la **previsione**: la cella fu scritta quando il backend cadente non esisteva — gotcha **#57**, *«una decisione presa prima che esistesse ciò di cui parla è una previsione, e si cita come se fosse una misura»*
+
+### La cella del `kind`, nella tabella delle voci aperte della §6: il richiamo del 2026-08-21
+
+> ⚠️ **RICHIAMO DEL 2026-08-21:** questa cella diceva *«la sonda copre l'unico scrittore che esiste, e l'aiutante nasce col secondo»*, e il secondo è arrivato col **Task 9** — `Arbiter::set_policy` — senza che nulla diventasse rosso. Gotcha **#77**.
+
+### La voce dei pesi di AVVIO-CHAT, nella tabella delle voci aperte della §6 — chiusa il 2026-09-09
+
+| | Dove è dichiarata | Chi la chiude |
+|---|---|---|
+| ⚠️ **i pesi scritti a mano sopravvivono nel messaggio di [`AVVIO-CHAT.md`](../AVVIO-CHAT.md)**, mentre la §12 dal 2026-08-28 li dà col comando: toglierli anche di là, lasciando il comando, chiuderebbe una classe di rilievi del ciclo di revisione del Task 11. **Registrata nel racconto del Task 11 (richiamo del 2026-08-28) e non presa**; fino al 2026-09-09 viveva solo in quel racconto | il racconto del Task 11, in [`archivio/stato-storico.md`](stato-storico.md) dal 2026-09-09, e il verbale delle misure in [`archivio/misure-dimensioni.md`](misure-dimensioni.md) | il **proprietario**: tocca il documento d'ingresso. ✅ **Chiusa il 2026-09-09, decisione 32 della stella polare della GUI:** il proprietario non incolla più il messaggio, che resta com'è e non è più lettura d'apertura |
+
+### La riga della compressione di `porta-di-qualita.md`, nel «Prossimo passo» della §6 — una cosa chiusa
+
+📌 **La compressione di [`porta-di-qualita.md`](../porta-di-qualita.md) è fatta, il 2026-09-24:** il file com'era sta intero in [`archivio/porta-di-qualita-storico.md`](porta-di-qualita-storico.md). ✅ **Le contraddizioni che aveva segnato** — decisione 11 del [verbale degli sfoltimenti](../superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md) — le ha corrette il **terzo audit**, radice R4, il 2026-10-04: ciascuna dove stava, col proprio richiamo. Il loro registro, e questa riga com'era, stanno in fondo allo stesso archivio.
+

@@ -228,6 +228,8 @@ l'effetto**, non detta l'implementazione.
 | la campagna può **variare le quote** senza toccare il kernel | in simulazione i profili li sceglie il banco: nessuna costante invisibile, gotcha **#28** |
 | una configurazione impossibile **si vede** | se `total_vram` è più piccolo delle due quote, la seconda richiesta torna `Refused`. La forma a sottrazione avrebbe dato budget zero **in silenzio** |
 
+⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-427, AUD-428, AUD-430: con le code per corsia la seconda quota torna `Queued`, e nessuno la servirà mai, perché nessuno rilascia una concessione permanente; `Refused` arriva solo a una quota più grande dell'intera macchina — `Arbiter::admit` in `crates/kernel/src/arbiter/mod.rs`, e la sonda `a_total_smaller_than_the_two_permanent_quotas_does_not_grant_the_second_one` in `crates/kernel/tests/arbiter_admission.rs`. La configurazione impossibile la rende visibile la radice di composizione: `reserve`, in `crates/daemon/src/main.rs`, trasforma ogni risposta che non sia `Granted` in `StartupError::ReservedQuota` e ferma l'avvio. Ciò che l'ammissione tiene ancora è che la seconda quota non prenda niente che la macchina non abbia.
+
 ⚠️ **La divergenza, registrata perché il proprietario possa ribaltarla vedendola.** La §5.1 dice
 *«i tre addendi sono parametri consegnati»*, e qui se ne consegna **uno**. Lo spirito è
 rispettato — l'arbitro non va a prendere nulla — la lettera no. Metterli tutti e tre in
@@ -366,12 +368,16 @@ ogni rilascio invaliderebbe quella misura.
 | la concessione torna nel budget alla scadenza della grazia | **5** |
 | il processo viene davvero ucciso | **6**, con `process` |
 
+⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-202: il Traguardo 6 si è chiuso senza farla; la costruisce il primo worker che tiene una concessione revocabile, voce 35 delle voci aperte del Traguardo 5 in [`porta-di-qualita.md`](../../porta-di-qualita.md).
+
 ### 6.6 Cosa l'arbitro non giornala qui
 
 ⬜ **Le concessioni non entrano nel giornale al Traguardo 5**, e non è pigrizia: §5.2.2 dice che
 ciò che si giornala al rilascio è il **picco misurato**, e che *«il numero lo misura il worker e
 risale dalla porta `process`»*. Nessun worker, nessun picco, niente da scrivere. Il campo nascerà
 sotto la regola di §4.9 — facoltativo, indice nuovo, e l'**indice 5 è libero**, misurato.
+
+⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-429, AUD-431: l'indice 5 di `RecordV1` è `detail` dal 2026-08-31, e quali indici siano presi lo dice `crates/kernel/src/record.rs`, non questa riga. La regola 3 della §4.9.2 vale per le aggiunte; una specie nuova di dato nostro entra con una variante nuova di `kind` e il proprio dettaglio, mai l'uno senza l'altro (D20, gotcha #90). Il picco non è costruito, e dove nasca lo decide chi lo costruisce, col primo worker sulla GPU ([design/02](../../design/02-arbitrato-gpu.md)).
 
 ---
 
@@ -472,7 +478,7 @@ confrontato insiemi vuoti.
 | l'**ordine** delle corsie, per nome | la chiave è esplicita apposta; la sonda la fissa |
 | **rilasciare** restituisce esattamente la riserva | è la metà d'arbitro delle proprietà 2 e 3 |
 | la coda promuove **per corsia**, non FIFO globale | è ciò che tiene validi i numeri di M-7 |
-| un `total_vram` più piccolo delle due quote → la seconda è **`Refused`** | la configurazione impossibile si vede invece di dare budget zero in silenzio |
+| un `total_vram` più piccolo delle due quote → la seconda è **`Refused`** | la configurazione impossibile si vede invece di dare budget zero in silenzio. ⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-427, AUD-430: la sonda asserisce `Queued`, e a far vedere la configurazione impossibile sono le due sonde della radice di composizione, `a_permanent_quota_that_only_queues_stops_the_start_up` e `a_permanent_quota_bigger_than_the_machine_stops_the_start_up` in `crates/daemon/src/main.rs` (§4.3) |
 
 ---
 
@@ -491,6 +497,8 @@ lasciare.
 | la **taratura** dei profili reali | SP-1, SP-2: sono parametri, non impianto | **spike** |
 | **M5**, il valore della quota di presentazione | richiede una GUI | **sotto-progetto 2** |
 | la riga di guasto `Q22`, caduta durante la conservazione di un file | serve ambiti e checkpoint, e non è l'arbitro | **Traguardo 5/6** |
+
+⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-202, AUD-029, AUD-431: il Traguardo 6 ha costruito il rilascio alla disconnessione della GUI — `kernel::client::ClientGrants`, provato da `crates/simulator/tests/gui_death_campaign.rs` — e la riga 5 di §6.10.5 — il prefisso di lunghezza in `crates/kernel/src/framing.rs`, e il controllo dei byte consumati in `crates/kernel/src/wire/worker.rs` —, e si è chiuso senza le altre righe che gli andavano. Chi uccide davvero il processo a grazia scaduta lo costruisce il primo worker che tiene una concessione revocabile, voce 35 delle voci aperte del Traguardo 5 in [`porta-di-qualita.md`](../../porta-di-qualita.md); il picco misurato arriva col primo worker sulla GPU ([design/02](../../design/02-arbitrato-gpu.md)); `Q22` è ⏳ nella §8.4 della [spec](2026-08-06-sottoprogetto-1-kernel.md), con l'innesco D (5). M5 l'ha presa SP-8 come proxy, e la misura sulla macchina di riferimento è la scelta aperta su AUD-592: la §5.8.2 della spec.
 
 ---
 

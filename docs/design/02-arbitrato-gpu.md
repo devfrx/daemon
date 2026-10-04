@@ -94,7 +94,7 @@ stateDiagram-v2
     Attiva --> Scaduta : finestra di validita chiusa
 
     InRevoca --> Rilasciata : rilascio entro il tempo di grazia
-    InRevoca --> Forzata : grazia scaduta, processo ucciso
+    InRevoca --> Forzata : grazia scaduta, processo ucciso (col il primo worker revocabile)
     InRevoca --> Scaduta : finestra di validita chiusa
 
     Rifiutata --> [*]
@@ -115,13 +115,14 @@ stateDiagram-v2
     end note
 ```
 
-⚠️ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-008, AUD-009 e AUD-190: la finestra di validità si
+⚠️ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-008, AUD-009, AUD-190 e AUD-202: la finestra di validità si
 apre quando la concessione nasce e vale in ogni stato — chiusa, l'arbitro riprende la riserva alla prima
 operazione che segue, anche a lavoro in corso o in revoca (`collect_expired`), e un rilascio dopo risponde
 `Released::AlreadyCollected`; l'avvio è `Process::start`, che l'arbitro non vede, e se fallisce
 `Started::Rejected` rende la concessione; a grazia scaduta la spazzata riprende la riserva, e uccidere il
-processo tocca a chi ne tiene il `Worker`, con `Worker::kill`: oggi nessuno lo fa, e chi lo costruisce lo dice
-AUD-202. Se l'arbitro debba sapere dell'avvio, e la finestra fermarsi lì, è la scelta aperta su AUD-201.
+processo tocca a chi ne tiene il `Worker`, con `Worker::kill`: oggi nessuno lo fa, e lo costruisce il primo worker che
+tiene una concessione revocabile — voce 35 delle voci aperte del Traguardo 5 in [`porta-di-qualita.md`](../porta-di-qualita.md).
+Se l'arbitro debba sapere dell'avvio, e la finestra fermarsi lì, è la scelta aperta su AUD-201.
 
 ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-044 — la transizione `InCoda --> Annullata` NON HA
 NESSUN MECCANISMO nell'arbitro, e fino a oggi non aveva nemmeno un indirizzo.** Misurato invece
@@ -243,10 +244,12 @@ e indipendente.
 dell'arbitro è *esecutivo*: il processo non parte. Verso il compositor **non lo è**:
 compone lo stesso. La quota è una **promessa di budget, non un'imposizione**.
 
-Il valore della quota non è misurato sulla macchina di ADR-0002: lo stato della sua misura, M5,
-vive in [ADR-0029](../adr/0029-guscio-della-gui.md) e qui non si ripete. ⚠️ **RICHIAMO DEL 2026-10-02** —
-audit del 2026-09-30, AUD-199: che cosa dica del default conservativo di ADR-0033 la misura presa come
-proxy è una scelta aperta.
+Il valore della quota non è misurato sulla macchina di riferimento, la RTX 5080 della §0.3 del
+[disegno del kernel](../superpowers/specs/2026-08-06-kernel-design.md): lo stato della sua misura, M5, vive in
+[ADR-0029](../adr/0029-guscio-della-gui.md) e qui non si ripete. ⚠️ **RICHIAMO DEL 2026-10-02** — audit del
+2026-09-30, AUD-199: che cosa dica del default conservativo di ADR-0033 la misura presa come proxy è una scelta
+aperta. ⚠️ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-594: la macchina di riferimento è quella del
+disegno del kernel.
 
 ### Contesa di calcolo
 
@@ -296,10 +299,12 @@ con effetti osservabili — non un cambio di flag.
 
 ⚠️ **RICHIAMO DEL 2026-09-08:** «determinata dal profilo di configurazione» si legge *il profilo dà
 il default, il giornale la corrente*: la policy attiva è la proiezione dell'ultima transizione che
-`Arbiter::set_policy` scrive come intento ed esito, e dal sotto-progetto 2 la transizione è una
-funzione del registro (ADR-0038) — l'etichetta della freccia qui sopra lo dice. Rimando in testa ad
+`Arbiter::set_policy` scrive, e dal sotto-progetto 2 la transizione è una funzione del registro
+(ADR-0038) — l'etichetta della freccia qui sopra lo dice. Rimando in testa ad
 [ADR-0006](../adr/0006-due-policy-vram-come-oggetti-distinti.md), decisione 17 della stella polare
-della GUI; il daemon che rilegge all'avvio è compito del piano del 2.
+della GUI. ⚠️ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-001, AUD-128, AUD-129 e AUD-281: la
+transizione è intento, una nota della specie `Policy` ed esito, e il daemon rilegge la nota all'avvio con
+`arbiter::policy_now`, dal sotto-progetto 2.
 
 Il "passaggio suggerito a OpenRouter durante i render" della mappa funzionale è
 esattamente questa transizione, offerta all'utente invece che imposta.

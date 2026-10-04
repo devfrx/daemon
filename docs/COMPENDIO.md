@@ -154,7 +154,7 @@ terze parti gira nel processo dell'applicazione.** Esistono esattamente due
 meccanismi: **server MCP** (processo esterno, permessi propri, revocabile) e **skill
 dichiarativa** (istruzioni e dati, **non** codice eseguibile, quindi nessun isolamento
 necessario). Coprono la sostanza di un marketplace di plugin senza il contratto
-pubblico da congelare e senza la superficie d'attacco.
+pubblico da congelare e senza la superficie d'attacco. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** il «nessun isolamento» della skill è contestato, e lo decide l'ADR del proprietario su AUD-004.
 
 **0004 — Topologia di processo.** Tre classi, non una di più.
 
@@ -182,14 +182,14 @@ prelazionabilità e tempo di rilascio fusi in `Preemption`, e `cold_start` vive 
 delle due divergenze sta nel **rimando datato in testa ad ADR-0005**, in una casa sola. **La
 quota VRAM dell'audio è sottratta dal budget all'avvio e non vi rientra**: un budget
 sottratto non può essere allocato per errore, mentre una priorità può essere rispettata
-tardi. Nessun degrado silenzioso.
+tardi. Nessun degrado silenzioso. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** la verifica del picco nasce col primo worker sulla GPU; la quota audio è una concessione, non un'esenzione.
 
 **0006 — Le due policy VRAM sono oggetti distinti.** Non due rami di un condizionale:
 **due oggetti che implementano la stessa interfaccia**, uno solo attivo, scelto dal
 profilo di configurazione. Il passaggio è una **transizione esplicita con effetti
 osservabili** — eviction, ricarica, notifica all'utente — **offerta** all'utente, non
 imposta. La duplicazione fra due policy è visibile e circoscritta; la deriva di un
-condizionale è invisibile e diffusa. Default: **OpenRouter, VRAM libera**. ⚠️ **Rimando del 2026-09-08, in testa all'ADR:** il profilo dà il **default**, la policy **corrente** è la proiezione del giornale — l'ultima transizione scritta da `Arbiter::set_policy`; il daemon la rilegge all'avvio, compito del piano del 2 — decisione 17 della stella polare della GUI.
+condizionale è invisibile e diffusa. Default: **OpenRouter, VRAM libera**. ⚠️ **Rimando del 2026-09-08, in testa all'ADR:** il profilo dà il **default**, la policy **corrente** è la proiezione del giornale — l'ultima transizione scritta da `Arbiter::set_policy`; il daemon la rilegge all'avvio, dal 2 — decisione 17 della stella polare della GUI. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** la rilegge `arbiter::policy_now`, dalla nota della specie `Policy`, e la cambia la funzione `vram-policy` del registro.
 
 **0007 — Giornale write-ahead e ripresa come riconciliazione.** Giornale
 **append-only**: l'intento di ogni passo è reso durevole **prima** dell'esecuzione,
@@ -204,7 +204,7 @@ la propria **classe**, e la classe determina la riconciliazione:
 | `irripetibile` | **sospendi e chiedi all'utente** |
 
 **Un effetto senza classe dichiarata è trattato come `irripetibile`**: davanti a un
-dubbio non risolvibile il sistema si ferma, non indovina.
+dubbio non risolvibile il sistema si ferma, non indovina. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** il default serve a una versione futura del record senza `effect`, e lo costruisce chi la scrive.
 
 **0008 — Il contesto è una proiezione dello stato durevole, non lo stato.** La finestra
 si compone dagli elementi durevoli a ogni passo, e la compattazione **ricalcola la
@@ -226,7 +226,7 @@ deliberatamente povero: `(artefatto) → (verdetto, dettaglio, costo)` — un co
 minimo si può allargare, uno ricco e sbagliato no. **Anello di miglioramento:** quando
 un problema si ripete **si migliora il controllo, non il prompt**; il kernel rileva la
 ricorrenza e **propone**, l'utente **approva**. Non si auto-modifica in silenzio. Le
-skill dichiarative di 0003 sono **guide**. ⚠️ **Rimando del 2026-09-05, in testa all'ADR:** registro delle guide e trigger si costruiscono nel sotto-progetto **13**, prima della prima capacità che inietta una guida; le due pretese della mappa — chiave di contesto (ambito, run, modello); provenienza e impronta, con «approvate ora» come proiezione del giornale — disegno della knowledge base.
+skill dichiarative di 0003 sono **guide**. ⚠️ **Rimando del 2026-09-05, in testa all'ADR:** registro delle guide e trigger si costruiscono nel sotto-progetto **13**, prima della prima capacità che inietta una guida; le due pretese della mappa — chiave di contesto (ambito, run, modello); provenienza e impronta, con «approvate ora» come proiezione del giornale — disegno della knowledge base. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** il trigger fa partire l'anello 1: apre una run da un evento.
 
 **0010 — La proiezione ha un budget di qualità, non una soglia di riempimento.** Budget
 target espresso come frazione della finestra, configurabile per modello. La
@@ -263,7 +263,7 @@ catena esaurita:
 | vincoli **su qualità e costo** (tetto di prezzo, modello preferito, latenza) | **degrado dichiarato**: procede avvisando |
 
 L'**indisponibilità di risorsa** è causa di fallback di prima classe: se l'arbitro GPU
-rifiuta o accoda, non è un errore. **Un ritentativo non è un passo nuovo.**
+rifiuta o accoda, non è un errore. **Un ritentativo non è un passo nuovo.** ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** l'errore del ramo chiuso nominerà il vincolo col 3 (V18).
 
 **0013 — La conformità allo schema è un verdetto di sensore, non un'eccezione.** La
 validazione dello schema è un **sensore computazionale**: un output non conforme
@@ -283,7 +283,7 @@ sanitizzazione:** non si tenta di rimuovere istruzioni dal testo.
 > fidato può *informare*, mai *autorizzare*.
 
 Conseguenza: ogni azione la cui **decisione** dipende da contenuto non fidato richiede
-la stessa autorizzazione che richiederebbe se l'utente non l'avesse chiesta.
+la stessa autorizzazione che richiederebbe se l'utente non l'avesse chiesta. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** il passaggio giornalato è `Untrusted::promote`, ma `Instruction::new` è pubblico: A1/A2, il pavimento della §6; come si presenta una conversione lo decide chi ne scrive il primo chiamante.
 
 **0015 — Le descrizioni degli strumenti sono fissate all'approvazione.** La descrizione
 si mostra **integralmente** all'utente all'approvazione — non solo il nome, ma il testo
@@ -303,7 +303,7 @@ dati lo dichiara il profilo, **ma qualunque richiesta il cui contenuto abbia
 attraversato il gestore dei segreti sale automaticamente alla classe più stretta**, e
 se non trova endpoint conforme fallisce chiuso. **Canary di esfiltrazione:** valori
 sentinella nel gestore dei segreti; la loro comparsa in uscita è un verdetto di sensore
-che blocca.
+che blocca. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** l'escalation nasce col gestore dei segreti; la «classe più stretta» e il sensore che ferma sono le scelte aperte AUD-586 e AUD-139.
 
 **0017 — Il giornale è la sorgente, il trace è una proiezione.** Trace, contabilità,
 metriche e dataset di regressione sono **proiezioni** del giornale. Si adotta il
@@ -319,7 +319,7 @@ risposte, output degli strumenti, trascrizioni) → finestra breve, poi **potati
 sostituiti con impronta e dimensione**. Artefatti → **riferimenti**, il contenuto vive
 sul filesystem. **La potatura è irreversibile e va dichiarata:** un payload assente e
 uno mai registrato non devono essere indistinguibili. **Un passo in dubbio non è mai
-potabile** finché non è riconciliato.
+potabile** finché non è riconciliato. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** la costruisce il 15, sostituzione sulla porta compresa; la funzione d'impronta la sceglie il 13.
 
 **0019 — Lo stato di degrado è un oggetto osservabile, non una collezione di errori.**
 Il core mantiene uno **stato di degrado corrente**, aggiornato dagli eventi
@@ -327,7 +327,7 @@ Il core mantiene uno **stato di degrado corrente**, aggiornato dagli eventi
 espone come oggetto osservabile. **Il principio: si dichiara prima, non si fallisce
 dopo** — l'utente deve sapere cosa è disponibile *prima* di tentare. Generalizza a
 tutto il sistema il «nessun degrado silenzioso» di ADR-0005: era una regola locale,
-diventa una proprietà del kernel. ⚠️ **Rimando del 2026-09-08, in testa all'ADR:** la lista degli eventi è **aperta** — il codice deriva già il fallback dichiarato di ADR-0012, la telecamera arriva con ADR-0039 — e a GPU satura resta viva anche la **GUI** (ADR-0033); il diagramma vivo è design/07.
+diventa una proprietà del kernel. ⚠️ **Rimando del 2026-09-08, in testa all'ADR:** la lista degli eventi è **aperta** — il codice deriva già il fallback dichiarato di ADR-0012, la telecamera arriva con ADR-0039 — e a GPU satura resta viva anche la **GUI** (ADR-0033); il diagramma vivo è design/07. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** ha una sorgente il solo arbitro; gli altri ingressi vengono col 3 e col 4.
 
 **0020 — Nessun modello nel percorso decisionale del kernel.** I modelli sono invocati
 *attraverso* il kernel e i loro esiti sono **dati opachi**, mai giudizi su cui il
@@ -360,7 +360,7 @@ suite sarebbe una falsa sicurezza. Rimando: ADR-0034 aggiunge il **secondo asse*
 
 I segreti sono esclusi perché **un backup che trasporta chiavi API è un vettore di
 fuga**, non una comodità. Quattro requisiti del motore di persistenza; il **quarto** —
-ogni operazione di I/O **iniettabile** — è quello che ha poi deciso ADR-0032. ⚠️ **Rimando del 2026-09-08, in testa all'ADR:** le **guide** sono file della cartella della knowledge base (disegno del 2026-09-04); la configurazione contiene i profili e, col 2, la **disposizione dei pannelli**, raggiunta dal kernel da una **settima porta** — stella polare della GUI, §2. ⚠️ **Rimando del 2026-09-30, in testa all'ADR:** **modificato in parte da ADR-0040** — la riga «artefatti», le guide e la conseguenza sulla base di conoscenza; il resto regge, e lo stato resta `Accepted`.
+ogni operazione di I/O **iniettabile** — è quello che ha poi deciso ADR-0032. ⚠️ **Rimando del 2026-09-08, in testa all'ADR:** le **guide** sono file della cartella della knowledge base (disegno del 2026-09-04); la configurazione contiene i profili e, dal 2, la **disposizione dei pannelli**, raggiunta dal kernel da una **settima porta** — stella polare della GUI, §2. ⚠️ **Rimando del 2026-09-30, in testa all'ADR:** **modificato in parte da ADR-0040** — la riga «artefatti», le guide e la conseguenza sulla base di conoscenza; il resto regge, e lo stato resta `Accepted`.
 
 **0023 — Cifratura a riposo con chiavi dell'OS, e gestore dei segreti unico.** Le
 chiavi le gestiscono le facility dell'OS, raggiunte dal modulo di piattaforma (I3); il
@@ -406,7 +406,7 @@ in Go lo scheduler appartiene al runtime e il determinismo è *fornito* solo den
 test, e misurato solo parzialmente; in TypeScript il controllo esiste solo rinunciando
 ad `async`/`await`, e senza parallelismo reale. ⚠️ **L'esito non era scontato:** i
 criteri erano fissati prima che i candidati esistessero, e la verifica su Go è stata
-eseguita per **falsificare** l'attesa. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** `extern crate std;` scavalca `no_std`, e nel prodotto lo coglie il cancello senza OS; la premessa di T2 è falsa, e T4 è la scelta aperta AUD-681; 0031 nomina 0026, ma non su `madsim`.
+eseguita per **falsificare** l'attesa. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** `extern crate std;` scavalca `no_std`, e nel prodotto lo coglie il cancello senza OS; la premessa di T2 è falsa, e T4 è la scelta aperta AUD-681; il compilatore tiene le vie delle regole A e B; V28 è parziale; 0031 nomina 0026, ma non su `madsim`.
 
 **0027 — La GUI è un'interfaccia web, non un toolkit nativo.** Ha deciso **G7 —
 artifacts o canvas con anteprima viva**: rendere contenuto arbitrario prodotto da un
@@ -445,7 +445,7 @@ nasce vuota**. ⚠️ `simulator` non aggiunge voci proprie **ma il suo grafo no
 dipende da `kernel`. **Perimetro:** `platform`, `secrets` e `daemon` **non** sono
 vincolati — è lì che l'I/O deve vivere. Oggi la lista contiene `bincode` 2.0.1 con
 `unty`, e `minicbor` 2.3.0. ⚠️ Il grafo **di build** è passato a sette voci, e per la
-prima volta il kernel porta `syn` a tempo di compilazione.
+prima volta il kernel porta `syn` a tempo di compilazione. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** le due frasi su `no_std` si leggono col rimando di 0026; le ~30 righe del prototipo sono una stima.
 
 **0032 — Motore di persistenza: `redb` 4.1.0, con il backend sotto il nostro
 controllo.** Usato con uno `StorageBackend` **scritto da noi** invece di quello su file
@@ -499,7 +499,7 @@ di trasporto e uno schema _per canale privato_** — nessun broker, nessun servi
 discovery, nessuna negoziazione, nessun versionamento. Ciò che I4 compra è che non
 esista un **contratto pubblico** da congelare, e nessuno dei due canali ha consumatori
 esterni. Il rifiuto di un pari stantio resta il **timbro di build**, identico sui due
-canali. **I4 si completa, non si riformula.** ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** l'esito B di M-1 non è scattato — il canale `process` è `minicbor` in `kernel`, ADR-0037 —, e il codice tratta il testo che la GUI sceglie come non fidato: scelta aperta AUD-005.
+canali. **I4 si completa, non si riformula.** ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** l'esito B di M-1 non è scattato — il canale `process` è `minicbor` in `kernel`, ADR-0037 —, e il codice tratta il testo che la GUI sceglie come non fidato: scelta aperta AUD-005; la ricevuta del dialogo col worker la tiene l'implementazione, non il compilatore.
 
 **0036 — L'evoluzione del formato durevole del giornale.** **Ogni record durevole
 dichiara la propria versione, e i suoi campi si identificano per indice esplicito.**
@@ -922,6 +922,7 @@ Per questo la sua completezza **non è lasciata alla buona volontà**:
 | ADR nuovo | una voce in **§5** — obbligatoria, la pretende lo script |
 | ADR superato | la voce resta e si marca; gli ADR sono **append-only** |
 | ADR **superato in parte** | la voce resta e riceve la riga del rimando; l'ADR nuovo ha la sua voce, che dice quali righe modifica — la forma di ADR-0040 su ADR-0022 |
+| una misura, una prova o un sotto-progetto **risponde a ciò che un ADR aspettava**, o cambia ciò che un ADR dice del codice | il rimando datato in testa a quell'ADR, e la sua riga nella voce in **§5** |
 | voce della riapertura chiusa | la tabella e l'ordine in **§6** |
 | gotcha nuovo | ⛔ **niente qui:** la casa è **una sola**, la sezione *«I gotcha»* di [`HANDOFF.md`](HANDOFF.md), e la §9 vi **rimanda** invece di copiare. |
 | **misura nuova** | le **fonti** e i **comandi** in `riferimenti.md`, la riga d'esito in `HANDOFF.md`, e le evidenze nell'ADR o nella sezione che la misura decide. ⛔ I prototipi restano nello scratchpad e si ripuliscono |

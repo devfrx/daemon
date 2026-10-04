@@ -17,6 +17,12 @@
 > diagrammi della [stella polare della GUI](../superpowers/specs/2026-09-07-direzione-gui-design.md)
 > (decisione 18). **Nessuna riga di questo ADR è superata.**
 
+> ⚠️ **Rimando del 2026-10-04 — degli ingressi di questo ADR, ha una sorgente il solo arbitro GPU.** Audit del
+> 2026-09-30. Il codice dichiara senza sorgente ogni ingresso della riga «aggiornato dagli eventi» tranne l'arbitro:
+> connettività e salute dei provider arrivano col sotto-progetto 3, permessi e strumenti sospesi col 4, come segna
+> [design/07](../design/07-osservabilita-e-degrado.md) — il doc di `Degradation` in
+> `crates/kernel/src/degradation.rs`. **Nessuna riga di questo ADR è superata.** AUD-057.
+
 ## Context
 
 Il sistema ha molte condizioni in cui funziona **parzialmente**: rete assente, GPU

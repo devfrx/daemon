@@ -4,6 +4,26 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-10-04 — che cosa del punto 1 tiene il compilatore, e chi decide il secondo follow-up.**
+> Audit del 2026-09-30. **Nessuna riga di questo ADR è superata.**
+>
+> - **«la conversione richiede un passaggio esplicito, e il passaggio è giornalato»**, nel punto 1. Il passaggio
+>   costruito è `Untrusted::promote`, che riceve la porta `journal` e scrive una nota sul passo di chi chiama
+>   (`crates/kernel/src/boundary.rs`). Ma `Instruction::new` è pubblico e prende qualunque `String`:
+>   `Instruction::new(untrusted.as_str().into())` porta testo esterno nel canale delle istruzioni senza che il
+>   giornale lo sappia. È la via **A1/A2**, che il doc di `Untrusted::promote` dichiara non chiudibile finché nulla
+>   distingue le fonti fidate — il prompt di sistema, ciò che l'utente scrive — dalle altre, e che la tabella delle
+>   voci aperte della §6 del [compendio](../COMPENDIO.md) tiene come pavimento. Un `Instruction` non certifica la
+>   provenienza: è il tipo che `Untrusted` non può prendere per assegnazione. AUD-137.
+> - **«Q9 diventa verificabile staticamente»**, fra le *Positive*. Lo è per le vie che le regole A e B di
+>   `crate::boundary` nominano; A1/A2, il `transmute` da una crate che ammette `unsafe` (A5) e un modulo figlio di
+>   `boundary` (A7) compilano, e le tiene la revisione — la cella Q9 della §8.4 della spec del sotto-progetto 1, col
+>   richiamo del 2026-10-03. AUD-036.
+> - **«Va deciso in §7 come si presenta una conversione esplicita»**, il secondo follow-up. La §7 è quella del
+>   [disegno del kernel](../superpowers/specs/2026-08-06-kernel-design.md), *Errori, degrado e osservabilità*, e
+>   non lo decide: lo decide chi scrive il primo chiamante di una conversione esplicita — oggi `Untrusted::promote`
+>   non ne ha nessuno in produzione. AUD-584.
+
 ## Context
 
 L'invariante I6 stabilisce che il contenuto non fidato non attraversa mai il confine

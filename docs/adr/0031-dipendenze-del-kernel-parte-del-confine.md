@@ -4,6 +4,20 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-10-04 — due frasi poggiano su una premessa che il rimando del 2026-10-03 in testa ad
+> [ADR-0026](0026-linguaggio-del-core.md) corregge, e una cifra non è misurata.** Audit del 2026-09-30. **La
+> decisione — la lista nominata, verificata sul grafo transitivo — è invariata, e nessuna riga è superata.**
+>
+> - **«la crate del kernel è `#![no_std]`, quindi `std::fs` produce `E0433`. Quell'affermazione è vera»**, nel
+>   *Context*: vale per la sola forma che nomina `std::fs`. `extern crate std;` scritto nella crate rimette `std`
+>   nella sua portata senza togliere `#![no_std]`, e la chiamata compila — la misura è nel rimando di ADR-0026 —;
+>   nel prodotto quella riga la coglie il cancello senza OS, `scripts/gate-no-os.sh`, con `E0463`.
+> - **«Un test si può cancellare; `#![no_std]` e `#![forbid(unsafe_code)]` no»**, nella prima *Negative*: per
+>   `#![no_std]` non è così, perché una riga lo scavalca senza cancellarlo, e a tenerlo è un controllo — il cancello
+>   qui sopra —, come per la lista di questo ADR. AUD-587.
+> - **«un esecutore che nel prototipo è ~30 righe»**, fra le *Positive*: la cifra non ha misura registrata, e la
+>   §2.4.3 della spec del sotto-progetto 1 ne scrive ~40, col richiamo del 2026-10-03. È una stima. AUD-652.
+
 ## Context
 
 [I3](0004-topologia-di-processo.md) stabilisce che il kernel non contiene codice

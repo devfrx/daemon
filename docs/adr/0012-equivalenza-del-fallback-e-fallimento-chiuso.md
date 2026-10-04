@@ -4,6 +4,14 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-10-04 — il messaggio che nomina il vincolo non è costruito.** Audit del 2026-09-30. La
+> prima *Negative* accetta il fallimento chiuso a una condizione, *«il messaggio deve dire quale vincolo non è stato
+> soddisfatto»*, e il decisore del Traguardo 6 non la porta ancora: `GatewayError::NoConformingCandidate` non ha
+> dati (`crates/kernel/src/gateway/mod.rs`), e il degrado si dichiara con un booleano, `Conforming::was_degraded`,
+> che il giornale porta in `RoutingDetail`. Il nome del vincolo si costruisce col primo che chiama un modello, il
+> sotto-progetto 3, nel kernel e nell'interfaccia insieme: la riga V18 della §8.3 della spec del sotto-progetto 1,
+> col richiamo del 2026-10-03. **Nessuna riga di questo ADR è superata.** AUD-135, AUD-136.
+
 ## Context
 
 Il fallback a catena — provare il modello o il provider successivo quando il primo

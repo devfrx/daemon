@@ -22,6 +22,12 @@
 > la decisione registrata dal rimedio di AUD-004 — resta del proprietario, con un ADR suo, prima
 > del 13.
 
+> ⚠️ **Rimando del 2026-10-04 — l'anello che la riga «Trigger» fa partire è l'anello 1.** Audit del 2026-09-30.
+> La riga dice *«l'anello parte da eventi»* senza nominarlo: è l'anello dell'agente, e un trigger **apre una run**
+> da un evento — l'anello 3 di [design/04](../design/04-anelli-e-sensori.md), *«l'insieme dei modi in cui l'anello 1
+> può partire»*, e la §0.4.3 della spec del sotto-progetto 1. **Nessuna riga di questo ADR è superata.** AUD-173,
+> AUD-177.
+
 ## Context
 
 Lo stato dell'arte 2026 tratta l'harness — cioè **tutto ciò che sta attorno al

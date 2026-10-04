@@ -31,6 +31,11 @@
 >   un'invocazione, giornalato sotto `Trust::Untrusted` (`crates/kernel/src/registry.rs`), e le stringhe della tripla
 >   che tornano con `Approve` (`crates/kernel/src/wire/ipc.rs`), che `kernel::serving` confronta con la tripla del
 >   registro invece di crederle. Quale lettura debba dire questo ADR è la scelta aperta su AUD-005. AUD-005.
+> - **«nessuno dei due richiede un meccanismo nuovo»** — nel rimando del 2026-08-08, in fondo, sui due gettoni. La
+>   **ricevuta** non è del compilatore: `SingleReceipt::new` e `StreamReceipt::new` sono pubblici, e una ricevuta
+>   mai emessa la rifiuta l'implementazione a tempo d'esecuzione, con `UnsolicitedFrame`
+>   (`crates/kernel/src/ports/process.rs`; §6.10.1 della spec, richiamo del 2026-10-03). Il compilatore ne tiene la
+>   forma, non la provenienza. AUD-405, aggiunto il 2026-10-04.
 
 ## Context
 

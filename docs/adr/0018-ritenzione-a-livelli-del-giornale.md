@@ -4,6 +4,20 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-10-04 — chi costruisce le regole di questo ADR, e che cosa chiede la prima oltre
+> all'impronta.** Audit del 2026-09-30. **Nessuna riga di questo ADR è superata.**
+>
+> - **Chi.** Le regole le costruisce il sotto-progetto **15** della [roadmap](../roadmap.md), *«Dati a riposo:
+>   cifratura e ritenzione»*; la funzione d'impronta la sceglie il **13**, che la usa per primo per le guide. Nel
+>   kernel c'è già un hash scritto a mano, `build_stamp`, che è un'identità e non una difesa: la *«voce nuova nella
+>   lista di ADR-0031»* del rimando del 2026-08-27, qui sotto, vale per una funzione resistente alle collisioni.
+>   AUD-093, AUD-563.
+> - **La sostituzione.** Sostituire un payload con impronta e dimensione lasciando la struttura vuole anche
+>   riscrivere un record: struttura e payload stanno nello stesso `RecordV1`, la porta `Journal` scambia byte che non
+>   decodifica (ADR-0036), e la sua sola operazione distruttiva, `prune`, toglie i record di un passo —
+>   `crates/kernel/src/ports/journal.rs`. La funzione di hash da sola non chiude la prima regola: come si
+>   sostituisce — un'operazione nuova della porta, o il payload in un record suo — lo decide il 15. AUD-144.
+
 ## Context
 
 [ADR-0011](0011-routing-risolto-e-giornalato-per-richiesta.md) ha lasciato aperta la

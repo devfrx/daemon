@@ -4,6 +4,25 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-10-04 — che cosa dei punti 2 e 4 è costruito, e due scelte aperte.** Audit del
+> 2026-09-30. **Nessuna riga di questo ADR è superata.**
+>
+> - **«le azioni fermate da un sensore»**, nel preset `autonomo` del punto 2. L'anello costruito — `run_the_ring`
+>   in `crates/kernel/src/sensor.rs` — fa rientrare un verdetto negativo come passo nuovo e non chiede a nessuno,
+>   come vogliono Q10 e il fratello [ADR-0013](0013-conformita-allo-schema-e-un-verdetto-di-sensore.md): un'azione
+>   che un sensore ferma per chiedere conferma non ha un meccanismo. Se a fermarla — e a fermare il canary del
+>   punto 5 prima che un contenuto esca — sia una guida che agisce prima, o una seconda conseguenza dell'anello
+>   accanto al passo correttivo, è la scelta aperta su AUD-139.
+> - **L'escalation automatica**, nel punto 4, non è costruita: la crate `secrets` non ha codice, nessun tipo del
+>   kernel segna il contenuto passato dal gestore dei segreti, e il kernel ha i soli vincoli sui dati `LocalOnly` e
+>   `NoRetention`, col fallimento chiuso di ADR-0012 (`crates/kernel/src/gateway/mod.rs`). Discende dal gestore dei
+>   segreti — [ADR-0023](0023-cifratura-a-riposo-e-gestore-dei-segreti.md), punto 4 — e nasce con lui: la riga V34
+>   della §8.3 della spec del sotto-progetto 1, innesco B (3). AUD-585.
+> - **«la classe più stretta»**, nello stesso punto, non è definita: le classi di ADR-0012 sono due, `Data` e
+>   `Quality`, distinte per l'esito a catena esaurita e non ordinate, e la classe è di un vincolo, non di una
+>   richiesta (`Constraint::class`). Quali vincoli sui dati prenda una richiesta che sale è la scelta aperta su
+>   AUD-586.
+
 ## Context
 
 Due questioni aperte convergono qui.

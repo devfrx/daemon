@@ -4,6 +4,26 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-10-04 — la verifica della riserva non è costruita, e la quota audio è una concessione.**
+> Audit del 2026-09-30. **Nessuna riga di questo ADR è superata.**
+>
+> - **«verificata dall'arbitro»**, nel punto 2. La verifica è la misura del picco — *«il picco reale viene misurato
+>   e registrato»* — e non è costruita: ne esiste la sola variante di filo `FromWorker::VramPeak`
+>   (`crates/kernel/src/wire/worker.rs`), che nessun worker manda e nessun record porta, e misura e registrazione
+>   arrivano col primo worker sulla GPU — §5.1 e §5.2.2 della spec del sotto-progetto 1, richiamo del 2026-10-03,
+>   AUD-198. La voce 27 delle voci aperte del Traguardo 6 in [`porta-di-qualita.md`](../porta-di-qualita.md),
+>   *«l'altra metà di ADR-0005»*, parla d'altro: di `compute_class` e `preemption`, che arriverebbero all'arbitro
+>   dal pari GUI senza controllo. AUD-127.
+> - **«sottratta dal budget allocabile»**, nel punto 3. La sottrazione **non è un'esenzione**: la quota è una
+>   concessione permanente e non prelazionabile, con un titolare, e I2 vale anche per lui — la regola di
+>   [design/02](../design/02-arbitrato-gpu.md) e della §5.5.1 della spec, gotcha #4. Il Traguardo 5 la realizza
+>   così: la radice di composizione chiede all'avvio due concessioni permanenti, la quota audio e quella di
+>   presentazione di [ADR-0033](0033-gpu-della-gui-quota-di-presentazione.md), e dei tre addendi della sua formula
+>   `Parameters` consegna al kernel il solo `total_vram` — §4.3 del
+>   [disegno del Traguardo 5](../superpowers/specs/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu-design.md).
+>   Oggi il gettone della quota audio la radice lo lascia cadere, e la riserva resta nei libri; come lo riceva il
+>   worker audio è la scelta aperta su AUD-200. AUD-582.
+
 ## Context
 
 Quattro pilastri paritari si contendono una sola GPU da 16 GB. L'arbitro è

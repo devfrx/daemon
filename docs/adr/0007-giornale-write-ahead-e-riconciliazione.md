@@ -4,6 +4,15 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-10-04 — il caso del default `irripetibile` è una versione futura del record, non una
+> passata.** Audit del 2026-09-30. Il rimando sotto il punto 4 colloca il default sul *«record scritto prima che la
+> classe esistesse»*: quel caso è **vuoto per costruzione**, perché `RecordV1` è la prima versione e porta `effect`
+> obbligatorio dal primo byte. Il caso vero è una versione **successiva** che tolga il campo: dovrà dichiarare
+> `Option<EffectClass>` con `#[cbor(default)]` e leggere `None` come `irripetibile`, e fino ad allora il meccanismo
+> è nominato e non costruito — il doc di `EffectClass` in `crates/kernel/src/record.rs`. Oggi un record che la build
+> non decodifica va comunque in `SuspendAndAsk`: `a_record_that_will_not_decode_is_treated_as_unrepeatable`.
+> **Il punto 4 regge, e nessuna riga è superata.** AUD-583.
+
 ## Context
 
 Q5 promette che il riavvio del core a metà di una run lunga riprenda senza

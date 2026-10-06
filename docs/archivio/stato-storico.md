@@ -5173,3 +5173,9 @@ inglese, la documentazione in italiano** (§1.0 della spec del sotto-progetto 1)
    non c'è niente da decidere, e sta dichiarata accanto alla frase con la
    misura. La §6 del compendio dice quali e perché.
 ```
+
+## L'intestazione del compendio, com'era — archiviata il 2026-10-06, all'ondata 10 del terzo audit
+
+⚠️ **Vera il giorno in cui fu scritta.** Uscita dal compendio parola per parola, coi link riscritti per questa cartella.
+
+**Aggiornato il 2026-10-04**, coi rimandi del terzo audit in testa agli ADR, ciascuno con la sua riga nella voce in §5, e la regola R3 in §13; i tagli della P11 in archivio. Questa riga com'era è in [`archivio/stato-storico.md`](stato-storico.md). Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.

@@ -17,7 +17,7 @@
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — il
 > comando in fondo alla §12 — e l'idea è già qui.
 
-**Aggiornato il 2026-10-04**, coi rimandi del terzo audit in testa agli ADR, ciascuno con la sua riga nella voce in §5, e la regola R3 in §13; i tagli della P11 in archivio. Questa riga com'era è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+**Aggiornato il 2026-10-06**, con P27 del terzo audit: le voci aperte di ADR-0029 nella §6, la §8 e la §12 al vero, i rimandi nelle voci 0023 e 0036. Questa riga com'era è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
 
 ---
 

@@ -5406,3 +5406,28 @@ Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende 
     `cherry-pick`, se la coda di `archivio/stato-storico.md` differisce fra i due rami, come da `7c5c2bd`; un commit
     che tocca un file che su `main` è diverso — il compendio, la porta, l'archivio — resta sul solo ramo, in un commit
     suo (C30).
+
+## Dal compendio, per il suo tetto — archiviati il 2026-10-06, all'ondata 11 del terzo audit (P11)
+
+Il compendio era a 288 byte dal tetto di `scripts/check-docs.sh`, e il pacchetto P25 del [terzo audit](../audit-2026-09-30.md) deve scriverci, all'ondata 11, le correzioni della §10 e della §11 e i rimandi di R3 nelle voci di ADR-0011 e ADR-0012: fra 600 e 900 byte, stimati sui testi dei residui e non misurati. Il proprietario ha approvato tre tagli, uno per uno, nella forma della P11: due copie e una storia chiusa, spostate qui parola per parola.
+
+### La frase su M5, nella riga «rifare le misure da M-1 a M-11» della §8 — una copia
+
+Lo stato di M5 vive nella §6, riga «M5 è un proxy», e nelle voci di ADR-0029 e ADR-0033. In coda alla seconda colonna, dopo «**M-10 e M-11 in ADR-0037**.»:
+
+> L'unica aperta era **M5** (senza trattino) ✅ **misurata da SP-8 il 2026-09-10** su Windows, ma come **proxy** — la memoria condivisa dell'integrata di un'altra macchina, da rimisurare sulla RTX 5080 della §0.3 del disegno del kernel — e la metà Linux è l'innesco: entrambe scritte in ADR-0029
+
+### Il primo capoverso della §11 — una storia chiusa
+
+La regola che lo seguiva — «resta davanti solo ciò che la tabella qui sotto nomina, e ogni vincolo che non vi compare è onorato» — dice lo stesso, al vero di oggi; la sottigliezza del bersaglio che si installa da solo sta nella §4 del compendio, e il gotcha #38 in [`HANDOFF.md`](../HANDOFF.md).
+
+✅ **I primi cinque sono onorati dal Traguardo 1** — cinque crate · `no_std` + `alloc` +
+`forbid` su `kernel` e `simulator` · `bincode` appuntato a `2` con la ragione accanto ·
+il bersaglio del cancello dichiarato in `rust-toolchain.toml` · `spikes/` fra gli
+`exclude`. ⚠️ Il quarto ha una sottigliezza misurata: gotcha **#38**.
+
+### La forma generale del #51, nella tabella delle voci aperte della §6 — una copia
+
+La lezione vive in [`riferimenti.md`](../riferimenti.md), alla misura T4-5-i. In coda alla terza colonna, dopo «il perimetro scritto in [`riferimenti.md`](../riferimenti.md).»:
+
+> 📌 **La forma generale, che vale oltre il caso:** un contatore che parte da un valore che **il soggetto sotto esame non ha prodotto** non è un oracolo su quel soggetto.

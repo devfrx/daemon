@@ -5604,3 +5604,9 @@ non deve accettare una cifra preceduta da `§` — non il documento.
 > riga**. Un code span che va a capo non protegge la parte sulla prima riga, perché il
 > delimitatore di chiusura sta sulla seconda. Gli esempi con una cifra **stanno su una riga
 > sola**, o si riformulano senza la cifra.
+
+## L'intestazione del compendio, com'era — archiviata il 2026-10-06, all'ondata 11 del terzo audit
+
+⚠️ **Vera il giorno in cui fu scritta.** Uscita dal compendio parola per parola, coi link riscritti per questa cartella.
+
+**Aggiornato il 2026-10-06**, con P27 del terzo audit: le voci aperte di ADR-0029 nella §6, la §8 e la §12 al vero, i rimandi nelle voci 0023 e 0036. Questa riga com'era è in [`archivio/stato-storico.md`](stato-storico.md). Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.

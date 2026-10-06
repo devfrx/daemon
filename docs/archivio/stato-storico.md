@@ -5431,3 +5431,176 @@ il bersaglio del cancello dichiarato in `rust-toolchain.toml` · `spikes/` fra g
 La lezione vive in [`riferimenti.md`](../riferimenti.md), alla misura T4-5-i. In coda alla terza colonna, dopo «il perimetro scritto in [`riferimenti.md`](../riferimenti.md).»:
 
 > 📌 **La forma generale, che vale oltre il caso:** un contatore che parte da un valore che **il soggetto sotto esame non ha prodotto** non è un oracolo su quel soggetto.
+
+## I blocchi tolti da HANDOFF.md, com'erano — archiviati il 2026-10-06, all'ondata 11 del terzo audit
+
+⚠️ **Veri il giorno in cui furono scritti.** Sette blocchi di [`HANDOFF.md`](../HANDOFF.md) a `5c9c40a`, che il pacchetto P25 del [terzo audit](../audit-2026-09-30.md) ha tolto, radice R4: erano copie di ciò che vive nel [compendio](../COMPENDIO.md) e nella [roadmap](../roadmap.md), o storia chiusa, e il file vivo rimanda ora alla casa unica. Parola per parola, coi link riscritti per questa cartella.
+
+### Il capoverso e la tabella dei vincoli sul primo commit di codice
+
+Righe 723–742 di `HANDOFF.md` a `5c9c40a`; tolte per AUD-109, AUD-091.
+
+Nessuna di queste righe è una decisione da prendere: sono decisioni **prese**, che il piano
+deve tradurre in passi. Raccolte qui perché cercarle una per una è il modo in cui se ne
+perde qualcuna.
+
+| # | Vincolo sul primo commit di codice | Da |
+|---|---|---|
+| 1 | **cinque crate**: `kernel` · `platform` · `secrets` · `simulator` · `daemon`. `kernel` non dipende da nessuna crate del progetto — è una riga del suo manifesto | §1.2 |
+| 2 | `kernel` e `simulator`: `#![no_std]` + `alloc` + `#![forbid(unsafe_code)]`. **`forbid`, non `deny`** | §1.4 · ADR-0026 |
+| 3 | il manifesto **appunta `bincode` a `2`**, con la ragione scritta accanto: la `3.0.0` è un `compile_error!` | §6.1.1 · gotcha #22 |
+| 4 | `rustup target add x86_64-unknown-none` è un **prerequisito dell'ambiente**, o la porta è rossa per il motivo sbagliato | §7.3.2 |
+| 5 | il [`clippy.toml`](../../spikes/rust/clippy.toml) di `spikes/rust/` **non sale**: a livello di workspace scatterebbe addosso a `platform` | §7.4.4 |
+| 6 | l'aiutante `passo_in_dubbio` dello spike **non sale così com'è**: restituisce un passo, ne servono un insieme | §4.3 · gotcha #20 |
+| 7 | il numero di semi della campagna breve è **fissato e versionato**, e il tempo di parete si stampa a ogni corsa | §7.5.3 |
+| 8 | la cadenza: livello 1 a ogni compilazione (non «gira»), livello 2 a ogni commit, DST profonda su ciclo lungo | §7.5.1 |
+| 9 | riga per riga, **cosa sale da `spikes/rust/` e cosa resta** | §2.5 |
+| 10 | ogni regola nuova porta **due** sonde e un caso in `tests/compile_fail/` con il suo `.stderr` — da **leggere**, non da rigenerare in blocco | §7.1.4 · gotcha #25 |
+| 11 | **nessuna decisione legge un parametro che non le è stato consegnato**: budget, quote, policy attiva, tetti. In sotto-progetto 1 i default sono letterali in `daemon` | §2.8 · ADR-0034 |
+| 12 | il record durevole è un **enum di versione**, e ogni campo porta un **indice esplicito**. Un campo nuovo è facoltativo con un indice nuovo; un indice **si ritira e non si riusa mai** | §4.9 · ADR-0036 |
+| 13 | la porta `journal` scambia **byte**, non record tipizzati: la codifica vive in `kernel`, e `minicbor` entra nella lista di ADR-0031 con la sua classe | §4.1 · §4.9.3 · §7.3.1 |
+| 14 | ⛔ al **primo record scritto**, i suoi byte entrano nel repository come oracolo, con la mappa `indice → nome → valore atteso`. **Non si rigenerano**: se cambiano è un cambio di formato | §4.9.4 · gotcha #25 |
+
+### La tabella dei traguardi
+
+Righe 868–875 di `HANDOFF.md` a `5c9c40a`; tolte per AUD-113, AUD-106.
+
+| # | Traguardo | Stato |
+|---|---|---|
+| **1** | scheletro e porta di qualità — le cinque crate e i controlli, **zero logica** | ✅ **eseguito il 2026-08-08**, `GATE GREEN` |
+| **2** | il substrato iniettabile — tempo, casualità, I/O, scheduling, l'esecutore, le sei porte | ✅ **eseguito il 2026-08-10**, `GATE GREEN`. [Piano](../superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) percorso **per intero, quattordici compiti su quattordici**, con `GATE GREEN` a ogni compito |
+| **3** | giornale e formato durevole — la porta a byte, l'enum di versione, **i byte congelati** | ✅ **eseguito il 2026-08-10**, `GATE GREEN`. [Piano](../superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) di dodici compiti in due parti: **dodici eseguiti**, `GATE GREEN` a tutti. ⚠️ **Ricontati una QUARTA volta il 2026-08-10, chiudendo il traguardo:** questa cella diceva *«undici eseguiti»*, e il **Task 12** è stato un **audit** — le righe che dettava di spostare erano già spostate, e ciò che mancava erano cinque conteggi di test nel registro, una riga di sonda (**J13**) mai entrata nella propria colonna, e tre condizioni stantie nella **Definizione di «fatto»**. Gotcha **#49** per la seconda volta, previsto dal compito stesso. ⚠️ **Ricontati una TERZA volta il 2026-08-10, chiudendo il Task 11:** questa cella diceva *«sei eseguiti»* e i Task 7, 8, 9, 10 e 11 erano chiusi e pushati — **Task 7** la promozione che scrive un record vero, **Task 8** `redb` e il backend nostro, **Task 9** la conformità contro l'implementazione vera, **Task 10** i **byte congelati**, **Task 11** `prune` che rifiuta un passo in dubbio (`cargo test --workspace --no-fail-fast` → **29 target, 152 test**). Resta il **Task 12**, il registro e la chiusura. ⛔ **E il conteggio dell'errata più sotto era fermo a ventisei: sono SETTANTASETTE**, in nove passate — ricontate sul piano il 2026-08-10, chiudendo il traguardo; questa cella diceva *«settanta in otto»*. Terza occorrenza del gotcha **#31** dentro questa cella. ⚠️ **Ricontati il 2026-08-10:** questa cella diceva *«due eseguiti»* ed era ferma al Task 2 mentre il Task 3 era chiuso e pushato — è il gotcha **#31** sul contatore di un contenitore che cresce, e chi lo muove è chi esegue il compito, non chi legge. Task 1 → `crates/kernel/src/record.rs`; Task 2 → la riga di catalogo dell'**etichetta di fiducia** col proprio caso negativo; Task 3 → il **doppio in memoria** (`crates/simulator/src/journal.rs`); **Task 4 e 5, eseguiti come uno solo** → la **suite di conformità** in una copia sola (`crates/kernel/tests/journal_contract.rs`, `cargo test -p kernel --test journal_contract` → **7 passed**) e `replay()` sulla porta; **Task 6** → la **riconciliazione** (`crates/kernel/src/reconcile.rs`, `cargo test -p kernel --test reconciliation` → **9 passed**), preceduta da un passo proprio che toglie a `Record::encode` un `Result` che non poteva essere `Err`. ⛔ **Un'errata in testa al piano, ventisei voci in tre passate** — sette dal Task 1, **quattordici** dai Task 4/5, **cinque** dal Task 6 e dal suo passo preliminare; a traguardo chiuso sono **settantasette in nove**. ⛔ **Tre non sono divergenze:** **E19** e **E22** sono **decisioni** del coordinatore — il secondo `intent` rifiutato, e la firma di `encode` che diventa `-> Vec<u8>` — ed **E25** è una domanda **riportata e non decisa**, la firma di `replay`. ⚠️ **Ricontate il 2026-08-10:** questa cella diceva *«diciassette voci — sette e **dieci**»*, sbagliato in **entrambi** i termini quando le voci erano E1…E18. ⛔ **Ed è la seconda volta nella stessa riga**, a una cella di distanza dal richiamo che riconta i compiti eseguiti: un conteggio si riconta **sulla tabella**, e chi lo scrive lo deduce dal proprio ricordo di averne aggiunte «una decina». Gotcha **#31** |
+| 4 | il simulatore DST — **il guasto**, non il tempo virtuale: quello è del Traguardo 2 | ✅ **eseguito il 2026-08-11, dieci compiti su dieci**, `GATE GREEN` a ciascuno, col **gotcha #51 chiuso nella metà chiudibile** e [`semi-dst.md`](../semi-dst.md) che nasce **vuoto e non dimenticato**. ⛔ **Un'errata in testa al piano, settanta voci in nove passate**, di cui **dodici decisioni** — e il pre-controllo ha trovato un difetto in **dieci compiti su dieci**; la più importante è **E52** — due righe dei **documenti di stato** dicevano il falso su come chiudere il #51, e lo dicevano **dal brainstorming**. Del Task 4: **il numero di semi non si massimizza** — il criterio è la **chiusura dello spazio degli esiti**, centonove insiemi in dubbio distinti chiusi al seme 1038, e duemila semi costano l'11 % del tetto; e **la guardia su quel criterio è stata adottata solo dopo aver misurato che non scattasse dove non deve**, su sei mescolamenti. La quarta è del Task 3 — **`C7b` guadagna un SECONDO oracolo di non-vacuità**, perché *«l'iniezione è avvenuta»* e *«c'era qualcosa da verificare»* sono due affermazioni e il piano ne teneva una: con un giornale che cade al primo byte, duecento semi su duecento cadono **e duecento confronti su duecento sono `[] == []`**. ⚠️ **Ed era il difetto chiuso per `C7a` un compito prima, reimportato:** chiuderlo in un posto non lo chiude nell'altro. La terza è del Task 2 — **`C7a` guadagna il proprio oracolo di non-vacuità**, perché *«nessun passo è in dubbio»* e *«lo scenario non ha scritto niente»* erano **lo stesso verde**, misurato con un giornale che cade alla scrittura zero. Le due del Task 1: `prune` **rifiutata dopo la caduta** — era l'unica operazione mutante fuori dalla guardia, mentre il doc prometteva *«ogni scrittura successiva è rifiutata»* e il limite dichiarato nominava le **sole letture** — e `the_same_seed_chooses_the_same_write` **dichiarata non falsificabile invece che tolta**. ⚠️ **Il pre-controllo ha trovato il difetto che non si vede leggendo**: la mutazione «il contatore avanza anche su una scrittura rifiutata» **sopravviveva a tutte e otto** le sonde dettate, perché nessuna faceva mai fallire una scrittura interna. ✅ **Brainstorming, disegno e piano tutti il 2026-08-11** — [il disegno](../superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) e il [piano](../superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md), **dieci compiti in tre parti**. ⚠️ Il titolo di questa cella diceva *«tempo virtuale, guasti, campagna, semi»*, e il tempo virtuale era eseguito da **due** traguardi: il Traguardo 4 non porta il determinismo, porta il guasto |
+| 5 | arbitro GPU — ammissione, corsie, concessione, le due policy | ✅ **CHIUSO il 2026-08-25, tredici compiti su tredici**, `GATE GREEN` a ciascuno. ⚠️ **Questa cella diceva «🔵 aperto … esecuzione in corso dal 2026-08-19»** mentre l'intestazione di QUESTO STESSO FILE lo dava chiuso — finding **AUD-002** del 2026-08-27, e il gotcha #68 nella sua forma peggiore: due case nello stesso documento. Aperto il 2026-08-18 — brainstorming chiuso, disegno e [piano](../superpowers/plans/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu.md) scritti, **tredici compiti in cinque parti**. ⛔ **A che punto sia NON è scritto qui:** il numeratore vive nella **§6 del [`COMPENDIO.md`](../COMPENDIO.md)**, in un posto solo — questa cella diceva `⬜` con sei compiti eseguiti, che è la stessa specie di difetto del finding **D-1** |
+| 6 | gli altri meccanismi — gateway, sensori, permessi, degrado, canale worker | ✅ **eseguito il 2026-09-02**, `GATE GREEN`. Il verbale di chiusura è la **§8 del disegno** del traguardo, e le voci che lascia aperte stanno in **una** tabella sola di [`porta-di-qualita.md`](../porta-di-qualita.md), con la colonna di chi le chiude |
+
+### La sotto-sezione «L'unica cosa aperta, e perché non blocca»
+
+Righe 1011–1015 di `HANDOFF.md` a `5c9c40a`; tolte per AUD-110.
+
+### L'unica cosa aperta, e perché non blocca
+
+| Aperta | Si chiude con | Blocca il sotto-progetto 1? |
+|---|---|---|
+| **guscio della GUI** (ADR-0029) ✅ **chiusa il 2026-09-10 con SP-8: Electron** — richiamo del 2026-10-03, audit del 2026-09-30, AUD-153 | cinque misure **M1–M5** su un frontend Vue minimo con scena 3D, sui due gusci | **no**: il sotto-progetto 1 è interamente Rust e non tocca la GUI |
+
+### La sezione «Le quattro proprietà che non si aggiungono dopo»
+
+Righe 1087–1104 di `HANDOFF.md` a `5c9c40a`; tolte per AUD-087.
+
+## Le quattro proprietà che non si aggiungono dopo
+
+Se le trascuri, la correzione non è una patch: è una riscrittura — o, per la quarta, una
+**migrazione**.
+
+| # | Proprietà | Da |
+|---|---|---|
+| 1 | Confine dei dati non fidati **nel sistema di tipi** | I6 · ADR-0014 |
+| 2 | Nessuna chiamata OS-specifica nel kernel | I3 · ADR-0002 |
+| 3 | **Iniettabilità** di tempo, casualità, I/O e scheduling — e dei **parametri di decisione**, che sono l'altro asse | V29 · ADR-0021 · **ADR-0034** |
+| 4 | Il **record durevole dichiara la propria versione**, e i suoi campi si identificano per **indice esplicito** | §4.9 · **ADR-0036** |
+
+⚠️ **La quarta è entrata il 2026-08-07**, ed è la sola il cui costo tardivo non è una
+riscrittura ma la **migrazione dell'unico archivio irriproducibile**. La sua finestra si
+chiude alla prima riga di codice che scrive un record — non a un traguardo di progetto.
+
+Più una quinta, di natura diversa ma altrettanto vincolante: **nessuna esecuzione di
+codice o comando sotto il livello 2 di confinamento** (V35 · ADR-0025).
+
+### La sezione «Cosa NON rifare»
+
+Righe 1271–1286 di `HANDOFF.md` a `5c9c40a`; tolte per AUD-114, e i residui di AUD-411, AUD-094, AUD-565, AUD-569.
+
+## Cosa NON rifare
+
+| | |
+|---|---|
+| ❌ ri-derivare l'architettura | è in **41 ADR**, ciascuno con alternative scartate e motivo |
+| ❌ riscrivere `tracciabilita.md` da zero | le funzionalità sono **già mappate**: si **aggiorna**, non si rigenera. ⛔ **Questa cella portava la cifra, e diceva «170» mentre la mappa dei documenti diceva «171»** — tolta e non riallineata, che è il gotcha **#68**: la cifra ha una casa sola, ed è la riga di `tracciabilita.md` più in basso. Finding **AUD-038** |
+| ❌ ri-cercare lo stato dell'arte già tracciato | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
+| ❌ rifare gli spike SP-5 e SP-6 | esiti, seed, versioni e comandi sono in [`../spikes/RISULTATI.md`](../../spikes/RISULTATI.md). I prototipi esclusi sono recuperabili dalla storia git, lo SHA è lì |
+| ❌ rifare le misure **M-1 · M-2 · M-3 · M-4 · M-5 · M-6 · M-7 · M-8 · M-9** | tutte chiuse, con comandi, versioni e sonde: M-1 §6.8 · M-2 §3.6 · M-3 §7.2 · M-4 e M-5 §2.6 · M-6 §5.8.1 · M-7 §2.6 · M-8 §4.7 · **M-9 in [ADR-0036](../adr/0036-evoluzione-del-formato-durevole-del-giornale.md)**, con la matrice, i sei ritrovamenti e le quattro divergenze. L'unica aperta è **M5** (senza trattino), e richiede una GUI |
+| ❌ riaprire le **due decisioni della §7.3** | erano le uniche domande che la §7 doveva prendere, e sono state prese dopo aver misurato. Riaprirle richiede una misura nuova, non un'opinione |
+| ❌ progettare una capacità L2 | prima il kernel deve esistere (ADR-0001) |
+| ⛔ **riscrivere il piano del Traguardo 1** | è il registro di ciò che fu osservato eseguendolo, e riscriverlo falsificherebbe la storia. Dove detta una cosa e il repository ne contiene un'altra, parla l'**errata in testa** — quattro voci, e la prima sono gli identificatori italiani |
+| ⛔ **«tradurre in italiano» qualcosa in `crates/` o in `scripts/`** | la §1.0 lo vieta, ed è già costato un traguardo intero da rifare — gotcha #40. Restano italiane **solo** le parole che `check-docs.sh` cerca dentro i documenti: `verificato qui`, `parziale`, `rimandato`, `non controllato`, e l'intestazione «Difende» del catalogo. Sono dati confrontati, non identificatori |
+| ⛔ **rigenerare in blocco gli `.stderr` di `compile_fail/`** | sono accoppiati al **grafo linkato**, non al solo sorgente del caso: due possono diventare rossi insieme per un motivo estraneo alla regola sotto test, ed è proprio il momento in cui rigenerare è più tentante. Gotcha #25, seconda occorrenza |
+| ❌ promuovere l'aiutante `passo_in_dubbio` dello spike | assume esecuzione sequenziale: con l'interlacciamento dà un **falso negativo**. Gotcha #20 |
+| ⚠️ fidarsi delle fonti senza data | l'ecosistema si muove a cadenza mensile; `riferimenti.md` riporta la data di consultazione |
+
+### Il capoverso della manutenzione alla chiusura di un sotto-progetto
+
+Righe 1338–1356 di `HANDOFF.md` a `5c9c40a`; tolte per AUD-108.
+
+Alla chiusura di ogni sotto-progetto, **nello stesso passaggio**: `roadmap.md`,
+`tracciabilita.md`, lo stato degli spike, `CLAUDE.md` se cambia **il modo di lavorare**, e
+questo file se emergono gotcha nuovi.
+
+⛔ **RICHIAMO DEL 2026-08-27, finding AUD-011 — la terza voce diceva *«`CLAUDE.md` se cambia il
+prossimo passo»*, ed è una voce di manutenzione SOPRAVVISSUTA alla cosa che manuteneva.**
+`CLAUDE.md` non porta più il prossimo passo — lo dichiara esso stesso (*«stanno nella §6 del
+compendio, non qui, o si disallineano»*) e `grep -c '⏭️' CLAUDE.md` dà **zero**. ⚠️ **Non è
+tolta ma RIALLINEATA, e la differenza va dichiarata:** [`roadmap.md`](../roadmap.md) la tolse il
+2026-08-25 perché lì era una voce **doppia**, mentre qui è l'**unica** riga che nomini
+`CLAUDE.md` — toglierla lascerebbe scoperto un dovere che esiste davvero, e la formulazione viva
+la scrive `CLAUDE.md` stesso: *«questo file se cambia il modo di lavorare»*.
+📌 *Una voce di manutenzione sopravvive alla cosa che manuteneva*, e nessun controllo la coglie:
+non è un numero stantio, è un **compito** stantio — chi lo esegue cerca in `CLAUDE.md` un
+puntatore tolto apposta, e nel caso peggiore **ce lo rimette**. È la **quarta** casa della stessa
+specie dopo le due di [`AVVIO-CHAT.md`](../AVVIO-CHAT.md) e quella di `roadmap.md`, e a mancare era
+il `grep` su **tutto** il repository invece che sui due file che si stavano toccando — radice
+**R1**. ⛔ **La domanda che le coglie, e va fatta a ogni chiusura:** *ciò che questa voce ordina
+di aggiornare esiste ancora?*
+
+### La sotto-sezione «Quattro trappole di `check-docs.sh`»
+
+Righe 1363–1410 di `HANDOFF.md` a `5c9c40a`; tolte per AUD-090, AUD-095, AUD-096, AUD-098, AUD-111.
+
+### Quattro trappole di `check-docs.sh`, da sapere prima di scrivere
+
+**1 · I conteggi.** La guardia confronta con la realtà **ogni** occorrenza di
+`<cifra> ADR`, `<cifra> ADR in stato ...` e `<cifra> decisioni architetturali` nei
+documenti di stato. Scrivere `2 ADR nuovi` la fa scattare, perché legge `2` come il
+totale. **Per i numeri piccoli si usano le parole** — «due ADR nuovi» — e le cifre si
+riservano ai conteggi veri. Gli esempi vanno nei code span, che la guardia ignora.
+
+⚠️ La guardia ha due punti ciechi **dichiarati**: un numero scritto a parole le è
+invisibile, e così pure `<cifra> decisioni` senza «architetturali». Entrambi hanno già
+prodotto conteggi stantii in questo repository.
+
+**2 · La numerazione delle sezioni.** Il controllo sui duplicati è **per file**, e il suo
+regex cattura `^#{2,3} <numero>`. Quindi `### 7.4.1` verrebbe letto come un duplicato di
+`### 7.4`. **Le sotto-sotto-sezioni si scrivono con `####`**, che il regex non cattura —
+verificato sulle §5, §6, §7 e §8, che ne hanno una decina ciascuna.
+
+**3 · Due tabelle della spec sono lette _per posizione_.** I controlli aggiunti dalla §8.6
+non fanno analisi del testo: contano le celle.
+
+| Tabella | Cosa lo script pretende |
+|---|---|
+| il **catalogo** §7.4.1 e §7.4.2 | l'**ultima** colonna è la contro-sonda, e la casella non è vuota. Una riga con meno celle dell'intestazione è un errore, non una scorciatoia tipografica — è così che è stata trovata la riga di V31 |
+| le tabelle **§8.3 e §8.4** | **cinque** colonne, con l'ID in prima, lo **stato** in terza e l'**innesco** in quinta. Una colonna aggiunta o spostata rompe entrambe le asserzioni |
+
+⚠️ **E i delimitatori sono intestazioni.** Il catalogo è delimitato da `#### 7.4.1` e
+`#### 7.4.3`, la copertura da `## 8.`. Rinumerarle non è un ritocco: senza la guardia di
+non-vacuità spegnerebbe i controlli **in verde** — gotcha #26. Con la guardia diventa un
+rosso che nomina il delimitatore mancante, ed è il comportamento voluto.
+
+**4 · Un falso positivo in attesa, se qualcuno allarga la lista dei file.** La guardia dei
+conteggi gira oggi su sei documenti di stato — `HANDOFF.md`, `roadmap.md`, `README.md`,
+`COMPENDIO.md`, `AVVIO-CHAT.md` e `CLAUDE.md`. In [`tracciabilita.md`](../tracciabilita.md)
+esistono righe come `§4 ADR-0008`, dove il regex leggerebbe `4 ADR` e pretenderebbe il
+totale: rosso per il motivo sbagliato, cioè gotcha #24. **Oggi non scatta**, perché quel
+file non è nella lista. Se un giorno servisse aggiungerlo, il rimedio è il **regex** — che
+non deve accettare una cifra preceduta da `§` — non il documento.
+
+> 📌 **Provata sul campo, per sbaglio, due volte.** Scrivendo questa riga l'esempio è finito
+> prima **fuori da un code span**, e poi dentro un code span **spezzato su due righe**: la
+> guardia è scattata entrambe le volte su `HANDOFF.md` stesso. È la conferma nella direzione
+> che conta — il controllo vede davvero il pattern — e insieme la dimostrazione della
+> trappola 1.
+>
+> ⚠️ **Il sotto-caso che non era scritto:** lo spogliamento dei code span è `sed` **riga per
+> riga**. Un code span che va a capo non protegge la parte sulla prima riga, perché il
+> delimitatore di chiusura sta sulla seconda. Gli esempi con una cifra **stanno su una riga
+> sola**, o si riformulano senza la cifra.

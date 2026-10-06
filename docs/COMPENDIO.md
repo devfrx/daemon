@@ -250,7 +250,7 @@ run interattiva di lunga durata. **Non esiste un percorso «chat» accanto a un 
 VAD, trascrizione continua — **non** è un passo: è una **sorgente di eventi** (anello
 3), non passa dal gateway, e giornalarla violerebbe Q1. La trascrizione che diventa un
 messaggio **apre** un passo; i frammenti audio che l'hanno prodotta no. Il costo si
-registra **anche per gli stream interrotti**. ⚠️ **Rimando del 2026-09-03, in testa all'ADR:** nell'inferenza percettiva entra il **tracciamento delle mani**; un gesto di comando apre un passo, i fotogrammi no — ADR-0039.
+registra **anche per gli stream interrotti**. ⚠️ **Rimando del 2026-09-03, in testa all'ADR:** nell'inferenza percettiva entra il **tracciamento delle mani**; un gesto di comando apre un passo, i fotogrammi no — ADR-0039. ⚠️ **Rimando del 2026-10-06, in testa all'ADR:** il record risolto porta il modello, i candidati offerti e il degrado; il resto arriva col primo che chiama un modello (3), §6.2 della spec.
 
 **0012 — L'equivalenza del fallback è definita dai vincoli, e sui dati si fallisce
 chiuso.** Un candidato che viola un vincolo della richiesta **non è un fallback: è una
@@ -263,7 +263,7 @@ catena esaurita:
 | vincoli **su qualità e costo** (tetto di prezzo, modello preferito, latenza) | **degrado dichiarato**: procede avvisando |
 
 L'**indisponibilità di risorsa** è causa di fallback di prima classe: se l'arbitro GPU
-rifiuta o accoda, non è un errore. **Un ritentativo non è un passo nuovo.** ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** l'errore del ramo chiuso nominerà il vincolo col 3 (V18).
+rifiuta o accoda, non è un errore. **Un ritentativo non è un passo nuovo.** ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** l'errore del ramo chiuso nominerà il vincolo col 3 (V18). ⚠️ **Rimando del 2026-10-06, in testa all'ADR:** il punto 1 scarta per i soli vincoli sui dati, e quelli di qualità ordinano i rimasti (`gateway::resolve`).
 
 **0013 — La conformità allo schema è un verdetto di sensore, non un'eccezione.** La
 validazione dello schema è un **sensore computazionale**: un output non conforme
@@ -800,11 +800,12 @@ Da sapere **prima** di scrivere, non dopo il rosso.
 | # | Trappola |
 |---|---|
 | **1** | **I conteggi.** Ogni occorrenza di `<cifra> ADR`, `<cifra> ADR in stato ...` e `<cifra> decisioni architetturali` nei documenti di stato è confrontata con la realtà. Scrivere `2 ADR nuovi` la fa scattare, perché legge il `2` come **totale**. ⚠️ **Per i numeri piccoli si usano le parole**; gli esempi vanno nei code span — e **il code span non deve andare a capo**, perché lo spogliamento è riga per riga. Punti ciechi dichiarati: un numero **a parole** è invisibile, e così `<cifra> decisioni` **senza** «architetturali» |
-| **2** | **La numerazione.** Il controllo sui duplicati è **per file** e cattura `^#{2,3} <numero>`, quindi `### 7.4.1` sarebbe letto come duplicato di `### 7.4`. **Le sotto-sotto-sezioni si scrivono con `####`** |
+| **2** | **La numerazione.** Nelle spec il controllo sui duplicati legge, **per file**, `^#{2,6} [0-9]+(\.[0-9]+)*`: ogni livello e il numero **intero**, quindi due intestazioni con lo stesso numero allo stesso livello sono un **rosso**, anche sotto genitori diversi — richiamo del 2026-10-06, audit del 2026-09-30, AUD-090 |
 | **3** | **Due tabelle sono lette _per posizione_.** Nel **catalogo §7.4** la contro-sonda è l'**ultima** colonna e non può essere vuota. In **§8.3 e §8.4** le colonne sono **cinque**, con lo stato in **terza** e l'innesco in **quinta**. ⛔ E i **delimitatori sono intestazioni** (`#### 7.4.1`, `#### 7.4.3`, `## 8.`): rinumerarle è un **rosso**, non un ritocco. ⚠️ **La sesta asserzione fa eccezione, e deliberatamente:** la colonna «Difende» del catalogo **non è sempre la prima** — nei blocchi A e C e in §7.4.2 lo è, nel **blocco B dei gettoni è la terza** — quindi si cerca per **intestazione**. Non «uniformarla» alle altre: un controllo posizionale giudicherebbe la colonna sbagliata su cinque righe |
 | **4** | **Un falso positivo in attesa.** La guardia dei conteggi gira su una lista fissa di documenti di stato. In `tracciabilita.md` esistono righe come `§4 ADR-0008`, dove il regex leggerebbe `4 ADR`. **Oggi non scatta**, perché quel file non è nella lista. Se servisse aggiungerlo, il rimedio è il **regex**, non il documento |
 | **6** | ⛔ **Il controllo dei link NON verifica i FRAMMENTI, e un'ancora pura è INVISIBILE — misurato il 2026-08-28 sulla pipeline vera.** Il passo estrae con `grep -o '](\([^)#]*\.md\)[^)]*)'` e poi taglia con `cut -d'#' -f1`: di un rimando *«file più ancora»* controlla **solo** il file, anche se l'ancora è inventata, e la forma **senza file** — la sola ancora, un rimando dentro lo stesso documento — **non viene nemmeno estratta**. 📌 **Quindi un'ancora è un rimando che nessun controllo difende**, e marcisce in silenzio quando un titolo cambia: una sezione si **nomina** invece di collegarla, oppure si accetta il rischio **sapendolo**. ⚠️ **Gli esempi qui sono scritti a parole per FORZA:** nella loro sintassi vera facevano **rosso il cancello** — `broken link: docs/COMPENDIO.md -> vero.md` — perché il controllo **non distingue un esempio da un rimando**, cugino della trappola **5** |
 | **5** | ⛔ **Il controllo dei link NON legge i file che git IGNORA — dal 2026-08-24.** Un `.md` dentro `.superpowers/`, `/scratch/` o `/tmp/` non è controllato, ed è **voluto**: prima lo era, e il verdetto del cancello dipendeva allora dalla **cartella di lavoro** invece che da ciò che si consegna. ⚠️ **La distinzione che conta, e non è la stessa cosa:** un file **non tracciato ma non ignorato** — un documento nuovo che nessuno ha ancora `git add`-ato — **è letto**, perché il cancello gira **prima** del commit ed è lì che il controllo serve. ⚠️ E il filtro **fallisce aperto**: se l'interrogazione a git non risponde si scandisce tutto. Gotcha **#80** |
+| **7** | ⛔ **Il controllo dei link vede SOLO i bersagli `.md`.** Un link a una cartella, a un sorgente o a un altro file non è mai verificato: dopo un'archiviazione quelli si controllano a mano. Audit del 2026-09-30, AUD-678 |
 
 ---
 
@@ -822,7 +823,7 @@ vi compare è onorato.** Misurati uno per uno contro il codice il 2026-08-27, **
 
 | # | Vincolo | Da |
 |---|---|---|
-| 1 | **cinque crate**: `kernel` · `platform` · `secrets` · `simulator` · `daemon`. `kernel` non dipende da nessuna crate del progetto | §1.2 |
+| 1 | **cinque crate**: `kernel` · `platform` · `secrets` · `simulator` · `daemon`. `kernel` non dipende da nessuna crate del progetto **nel grafo spedito** — richiamo del 2026-10-06, audit del 2026-09-30, AUD-091 | §1.2 |
 | 2 | `kernel` e `simulator`: `#![no_std]` + `alloc` + `#![forbid(unsafe_code)]`. ⚠️ **`forbid`, non `deny`** — `deny` è scavalcabile da un `#[allow]` locale | §1.4 · ADR-0026 |
 | 3 | il manifesto **appunta `bincode` a `2`**, con la ragione scritta accanto | §6.1.1 · gotcha #22 |
 | 4 | `rustup target add x86_64-unknown-none` è un **prerequisito dell'ambiente**, o la porta è rossa per il motivo sbagliato | §7.3.2 |

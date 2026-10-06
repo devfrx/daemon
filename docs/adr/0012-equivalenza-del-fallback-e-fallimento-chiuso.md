@@ -12,6 +12,14 @@
 > sotto-progetto 3, nel kernel e nell'interfaccia insieme: la riga V18 della §8.3 della spec del sotto-progetto 1,
 > col richiamo del 2026-10-03. **Nessuna riga di questo ADR è superata.** AUD-135, AUD-136.
 
+> ⚠️ **Rimando del 2026-10-06 — come il decisore legge i punti 1 e 2.** Audit del 2026-09-30. Il decisore del
+> Traguardo 6, `gateway::resolve` in `crates/kernel/src/gateway/mod.rs`, legge il punto 1 per i soli vincoli **sui
+> dati**, e il punto 2 come una **preferenza** fra i candidati rimasti: chi manca un vincolo di qualità resta in
+> riserva, e se nessuno li rispetta tutti si procede col primo che rispetta quelli sui dati, dichiarando il degrado.
+> È la lettura che tiene insieme i due punti — un candidato scartato prima della valutazione non potrebbe essere
+> quello con cui si degrada —, e [design/05](../design/05-gateway-inferenza.md) la disegna. **Nessuna riga di
+> questo ADR è superata.** AUD-233.
+
 ## Context
 
 Il fallback a catena — provare il modello o il provider successivo quando il primo

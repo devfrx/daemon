@@ -14,6 +14,13 @@
 > per decisione 3 del disegno **solo la wake word apre una run**: la cella *«può avviare una
 > run»* resta vera della voce, non del gesto. Nessuna riga è superata.
 
+> ⚠️ **Rimando del 2026-10-06 — che cosa porta oggi il record risolto.** Audit del 2026-09-30. Il record del
+> Traguardo 6, `RoutingDetail` in `crates/kernel/src/record.rs`, porta il **modello**, la *«catena di riserva
+> valutata»* come il numero dei candidati che la catena **offriva** — `evaluated`, voce `E59` dell'errata del piano
+> del Traguardo 6 — e il **degrado**; il resto della lista del punto 1 no, e quando arriva lo dice la §6.2 della
+> [spec del sotto-progetto 1](../superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md), col richiamo del
+> 2026-10-03. **Nessuna riga di questo ADR è superata.** AUD-234.
+
 ## Context
 
 Il gateway decide, per ogni chiamata a un modello: quale modello, quale destinazione

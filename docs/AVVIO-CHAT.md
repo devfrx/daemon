@@ -77,9 +77,8 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
      brainstorming e disegno ormai chiusi: era uno STATO, in un file che
      due righe più giù dichiara di non portarne. ⛔ A CHE PUNTO SIA quella sequenza NON è scritto qui: è
      uno STATO, e la §6 del compendio ne è la casa unica. Le voci aperte NON
-     lo sbarrano — quali, lo dice la tabella unica di
-     docs/porta-di-qualita.md, non nominata qui apposta perché un rimando
-     non può marcire.
+     lo sbarrano — quali siano, lo dicono gli indici della stessa §6.
+     ⚠️ RICHIAMO DEL 2026-10-06 — audit del 2026-09-30, AUD-082.
      ⚠️ RICHIAMO DEL 2026-08-28, LA TERZA NELLO STESSO GIORNO: qui stava
      «E SI COMINCIA DAL BRAINSTORMING, subito». Vero la mattina, falso la
      sera: cinque sezioni di disegno erano gia' approvate. TOLTO, non
@@ -206,8 +205,16 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
    cifra ricopiata marcisce. ⚠️ E questa riga la ricopiava lo stesso, due
    righe SOPRA la frase che lo vieta — gotcha #68. Tolta, non riallineata.
    Serve rustup: rust-toolchain.toml tira giù da sé la 1.95.0 e il bersaglio
-   x86_64-unknown-none, quindi non installare niente a mano. Su Windows serve
-   in più il linker MSVC (Visual Studio Build Tools), che rustup NON porta.
+   x86_64-unknown-none, quindi quelli non si installano a mano. Su Windows
+   serve in più il linker MSVC (Visual Studio Build Tools), che rustup NON
+   porta. E il cancello pretende strumenti che nessuno installa da sé:
+   · cargo-audit — il comando, con la versione, sta accanto al passo
+     `cargo audit` di scripts/gate.sh;
+   · Node, nell'intervallo di `engines.node` in gui/package.json: con
+     `engine-strict=true` in gui/.npmrc un Node fuori è rosso a `npm ci`;
+   · Google Chrome stabile, o `npx playwright install chrome`, per il
+     progetto `browser` di vitest, in scripts/gate-gui.sh.
+   ⚠️ RICHIAMO DEL 2026-10-06 — audit del 2026-09-30, AUD-562.
    Il primo comando utile è
        bash scripts/gate.sh
    e dice in un colpo se l'ambiente regge: deve stampare GATE GREEN.
@@ -280,35 +287,11 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
    compendio. Quel che serve qui è la domanda: IN QUALE ALTRO STATO DEL MONDO
    QUESTA ASSERZIONE RESTEREBBE VERDE?
 
-⚠️ LE QUESTIONI APERTE STANNO IN TRE POSTI, e non è un'incoerenza. La §6 del
-   compendio tiene quelle del PRODOTTO — nessuna è un difetto oggi, e per
-   ciascuna è scritto perché: le nove righe di guasto scoperte (hanno un
-   indirizzo, quindi sono uno scaglionamento e non un arretrato), la metà del
-   gotcha #51 che resta fuori, e semi-dst.md che NON HA UN CHIUDENTE.
-   ⛔ La §5 dell'AUDIT teneva quelle della QUALITÀ, e le OTTO decisioni della
-   §8 sono ESEGUITE. ⚠️ MA LA §5 NON E' CHIUSA: le sue voci senza marca hanno
-   lo stato nella §9 del rapporto, voce per voce, e le aperte il loro
-   chiusore — RICHIAMO DEL 2026-10-03, audit del 2026-09-30, AUD-083,
-   AUD-084. ⚠️ Più DUE residui registrati: l'asserzione 4b della
-   conformità reactor è IMPLICATA dalla 4a, quindi MUTA e non vacua, e le
-   DIECI sonde permanenti dell'esecuzione non hanno riga di catalogo, perché
-   la §7.4 è SPEC (vincolo globale 7). La tabella sta in porta-di-qualita.md.
-   ⛔ E il terzo posto è IL PIANO DEL TRAGUARDO 5, che ne porta due specie.
-   Dal proprio PRE-CONTROLLO, SETTE voci di cui TRE sono decisioni tue — un
-   nome di tipo a una lettera da uno che esiste già, una riga di catalogo che
-   vale per due regole, e due celle che nominano identificatori ITALIANI che
-   il traguardo fa esistere in inglese: toccano la SPEC, registrate non prese.
-   Dall'ESECUZIONE, altre SEI decisioni di disegno nell'errata — TRE sono
-   dichiarate NON TENUTE DA NESSUNA SONDA nel sorgente stesso, di proposito:
-   pinzarle congelerebbe la scelta che mettono davanti a te. ⛔ MA IL CONFINE,
-   o «dichiaro» diventa una scusa per non provare: si dichiara solo ciò che è
-   una SCELTA aperta. Se il doc accanto al codice AFFERMA già la cosa, quella
-   è una regola senza prova e si PINZA — al Task 9 due mutanti vivi sono
-   stati chiusi così, con due asserzioni in una sonda che esisteva già.
-   ⛔ E una QUARTA
-   frase è tenuta da un MUTANTE VIVO GARANTITO che NON è una politica aperta:
-   non c'è niente da decidere, e sta dichiarata accanto alla frase con la
-   misura. La §6 del compendio dice quali e perché.
+⚠️ LE QUESTIONI APERTE STANNO NEGLI INDICI CHE LA §6 DEL COMPENDIO ELENCA,
+   «Le voci ancora aperte, e dove vivono», ciascuna col suo chiusore. Qui
+   non si elencano né le voci né le loro case: un elenco ricopiato marcisce
+   nella casa che nessuno muove — gotcha #68.
+   ⚠️ RICHIAMO DEL 2026-10-06 — audit del 2026-09-30, AUD-082.
 
 ⚠️ Il compendio è una COMPRESSIONE, non una selezione: ci sono dentro tutte le
    decisioni, non quelle attinenti al compito di oggi. Sparisce il ragionamento

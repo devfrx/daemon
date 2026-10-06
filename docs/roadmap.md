@@ -3,7 +3,7 @@
 Piano generale del progetto. **Da aggiornare a ogni sotto-progetto chiuso**, insieme a
 [tracciabilità](tracciabilita.md).
 
-Ultimo aggiornamento: **2026-10-03**, con l'audit del 2026-09-30, AUD-563, AUD-093 e AUD-646: la riga del sotto-progetto **15**, la sua ragione nell'ordine, e la funzione d'impronta nella riga del 13.
+Ultimo aggiornamento: **2026-10-06**, con l'audit del 2026-09-30: *«Stato in una riga»* ridotta ai rimandi, le righe del 2 e del Traguardo 6, e il costo della quota di presentazione — i richiami accanto a ciascuna.
 ⚠️ **Questa riga diceva *«2026-08-11»*** mentre il file era stato toccato dopo, e **due**
 passate l'avevano vista senza prenderla — la ragione scritta era che quel ciclo non l'aveva
 resa falsa, e che la riga confonde *«quando l'ho scritto»* con *«a che cosa si riferisce»*.
@@ -24,122 +24,10 @@ con `git log -1 --format=%ad --date=short -- docs/roadmap.md` è una **riga di c
 > interfaccia web in **Vue 3**, worker ML in **Python**, guscio **Electron** —
 > [ADR-0029](adr/0029-guscio-della-gui.md), `Accepted` il 2026-09-10 con **SP-8**.
 >
-> **Sotto-progetto 1: §0–§8 approvate**, e la riapertura su sette voci è **tutta chiusa**.
-> ⛔ **Quali traguardi siano eseguiti, con che data e con quanti compiti, lo dice la TABELLA DEI
-> TRAGUARDI di questo file, più in basso** — qui si racconta **che cosa** ciascuno ha portato, non a
-> che punto sia la serie. ⚠️ **RICHIAMO DEL 2026-08-25 — questa sezione era la QUARTA casa dello
-> stato per traguardo dentro lo stesso file**, dopo la tabella dei sotto-progetti, quella dei
-> piani e quella dei traguardi: la chiusura del Traguardo 5 ne ha aggiornate **tre** e non questa,
-> e chi la leggeva concludeva che il quinto fosse fermo al **disegno**. ⛔ **L'enumerazione è
-> TOLTA, non estesa al quinto** — un elenco che si allunga a ogni chiusura è un numeratore scritto
-> a parole, e questa è la stessa correzione che il Punto di ripresa di [`HANDOFF.md`](HANDOFF.md)
-> ha ricevuto lo stesso giorno.
-> ✅ **Il Traguardo 1** ha portato il workspace alla radice con le cinque
-> crate, edition **2024**, `rust-toolchain.toml` che appunta **rustc 1.95.0** e il bersaglio
-> **`x86_64-unknown-none`**, e la **porta di qualità in un comando solo** —
-> `bash scripts/gate.sh`, sei controlli, **`GATE GREEN`**. ⛔ **Zero logica di prodotto**, ed
-> è deliberato. La mappa dei controlli è in [porta-di-qualita.md](porta-di-qualita.md).
-> La §7 porta la **porta di qualità**: ogni controllo dichiara il proprio
-> livello di forza — compilatore, controllo esterno, lint — e porta la sonda che deve
-> scattare *e* la contro-sonda che deve restare verde. **Il livello 3 è vuoto**: nessuna
-> invariante del kernel poggia su un lint. La §8 porta la **copertura**: ogni V e ogni Q
-> con il proprio stato, e ogni rimandato con il proprio **innesco**, preteso dallo script
-> e non dalla buona volontà. **Il livello ⛔ è vuoto**: nulla è lasciato deliberatamente
-> senza controllo.
->
-> ✅ **Le sette voci della riapertura sono tutte chiuse** (2026-08-08). Erano emerse
-> rileggendo [tracciabilita.md](tracciabilita.md) con la domanda *«di quale meccanismo di
-> kernel ha bisogno questa funzionalità, e la spec lo nomina?»*, e tre erano di classe
-> **B**, cioè non retrofittabili.
->
-> | Voce | Chiusa con |
-> |---|---|
-> | i parametri di decisione consegnati al kernel | [ADR-0034](adr/0034-parametri-di-decisione-consegnati-non-letti.md) · §2.8 |
-> | la provenienza del totale di VRAM | §5.1 |
-> | l'unico punto di uscita verso la rete | §2.3.1 |
-> | **F1a** — la porta verso i worker, che completa la riga di verifica di I4 | [ADR-0035](adr/0035-porta-verso-i-worker-e-lettura-di-i4.md) · §2.3.1 |
-> | **F2 con F7** — l'evoluzione del formato durevole del giornale | [ADR-0036](adr/0036-evoluzione-del-formato-durevole-del-giornale.md) · §4.9 |
-> | **F1b** — il progetto della porta `process`, e il formato di filo verso i worker | [ADR-0037](adr/0037-criterio-del-pari-per-il-formato-dei-canali.md) · §6.10 |
-> | **F4** — la collocazione dell'anello 3, che scritta si è spaccata in **C + B** | §0.4.3 |
->
-> ✅ **La §8 è chiusa** (2026-08-08), toccata una volta sola come previsto, e la spec è
-> passata per un **audit sezione-contro-ADR** — quaranta rilievi, **tutti chiusi**: l'ultimo
-> era la regola 1 del catalogo (§7.1.1), lasciata aperta perché era una decisione e chiusa
-> lo stesso giorno. ✅ **Il piano del Traguardo 1 è scritto ed eseguito**, e la spec non ha
-> voci aperte.
->
-> ✅ **Il Traguardo 2 — il substrato iniettabile** — piano percorso **per intero**,
-> `GATE GREEN` a ogni compito. ✅ **Le sei famiglie di porte sono complete** — `reactor` ·
-> `journal` · `filesystem` · `network` · `process` · `ipc` — e la §3.1 le dichiara esaustive.
-> ⚠️ **RICHIAMO DEL 2026-09-22 (E225):** vero alla chiusura del Traguardo 2; le famiglie sono **sette** dal
-> compito 4 del piano della parte 2 del sotto-progetto 2 — la settima è `custody` — e la §3.1 della spec del
-> sotto-progetto 1 la porta, col richiamo del 2026-09-17.
-> ✅ **Il Traguardo 3 — giornale e formato durevole** — piano in due parti,
-> `GATE GREEN` a tutti. ⚠️ **Questa riga diceva
-> «dieci eseguiti, si riprende dal Task 11»**, e la §6 del compendio era già a undici: è la
-> lezione della tredicesima misura: la §6 giusta **nasconde** gli altri documenti di stato.
-> ✅ **Il brainstorming del Traguardo 4 è chiuso il 2026-08-11** e il disegno è scritto:
-> [Traguardo 4 — il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md).
-> ✅ **E il piano è scritto lo stesso giorno**, dieci compiti in tre parti:
-> [Traguardo 4](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md).
-> ✅ **E il Traguardo 4** è stato percorso subagent-driven, con `GATE GREEN` a ciascun
-> compito. ⛔ **Il disegno aveva ristretto il traguardo su una
-> misura**: delle dieci righe di guasto della §3.3 **una sola** ha oggi il proprio soggetto,
-> quindi si è costruito **il motore** della DST e non tutte le finte — le altre nove hanno
-> ciascuna il proprio indirizzo fra i Traguardi 5 e 6. ⛔ **E il 2026-08-11 il repository ha
-> ricevuto il suo primo AUDIT COMPLETO** — [`audit-2026-08-11.md`](audit-2026-08-11.md): sedici
-> finding corretti e provati, il resto **aperto e assegnato al proprietario**, fra cui la suite di
-> conformità che prova **V6 solo su archivio vuoto** e due buchi che lasciavano il cancello verde
-> col confine caduto. ✅ **La prima delle otto decisioni è eseguita il 2026-08-17** — T-2 e T-1 —
-> **senza aggiungere nessuna promessa e senza toccare una riga di prodotto**: mancava lo *stato*
-> che distingue una guardia sbagliata, non il contratto. ✅ **E l'ottava il 2026-08-18** — G-5,
-> `--locked`: il `Cargo.lock` **tracciato** era un **effetto** del cancello e non un suo
-> **ingresso**, quindi `gate-deps.sh` misurava il grafo che `cargo` aveva appena inventato.
-> ⛔ **E qui il rapporto sbagliava al rovescio**, prezzandolo *«una riga»*: i siti `cargo` sono
-> **più d'uno e stanno su tutti e tre gli script** — la cifra è **tolta** il 2026-08-27 col finding
-> **AUD-009** e vive dove vive il comando, in [`riferimenti.md`](riferimenti.md). ✅ **E la sesta lo stesso giorno** — A-1, A-2, A-4, A-7: quattro
-> richiami datati, **nessuna decisione riaperta**. ✅ **E la quinta** — C-1, `bincode` non
-> mantenuto: **registrato**, non deciso, perché ha zero usi di produzione e la finestra si chiude
-> da sola al Traguardo 6. ✅ **E la quarta** — PL-1: il file del giornale nasceva **0644** su
-> Linux, meno dell'account che ADR-0023 promette; ora **0600**, con la sonda che gira sulla CI.
-> ✅ **E LE OTTO SONO CHIUSE il 2026-08-18, otto su otto.**
-> ✅ **E lo stesso giorno il brainstorming del Traguardo 5 è chiuso, e il disegno è scritto:**
-> [Traguardo 5 — il disegno](superpowers/specs/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu-design.md),
-> dodici sezioni. Il perimetro è **l'arbitro intero**, e si prova ciò che si può provare senza un
-> secondo meccanismo; le due proprietà della §5.7 che sembravano fuori portata sono **due metà**,
-> e la loro metà d'arbitro è **una sola**. ⛔ **E il disegno ha ricontato una cifra che due
-> documenti di stato davano sbagliata:** le righe di guasto che il Traguardo 5 eredita sono
-> **una**, più una condivisa — non cinque.
-> ✅ **E il Traguardo 5 ha portato l'arbitro GPU per intero:** il vocabolario della risorsa,
-> l'ammissione, le code per corsia, il ciclo della concessione, la revoca con la propria grazia,
-> le due policy VRAM, il cablaggio di produzione e la campagna DST dell'arbitro. ⛔ **Ciò che
-> lascia aperto sta in una tabella sola** — *«Le voci aperte del Traguardo 5»* di
-> [`porta-di-qualita.md`](porta-di-qualita.md), con la colonna di **chi le chiude**.
-> ⏭️ **Il prossimo passo sta nella §6 del [`COMPENDIO.md`](COMPENDIO.md), in un posto solo** —
-> qui non si ripete. ⚠️ **Questa riga lo riscriveva**, e ha detto *«scrivere il piano»*, poi
-> *«il brainstorming»*, poi *«eseguirlo»*, poi *«l'esecuzione dell'audit … ne restano tre»*.
-> **Tolta invece che corretta il 2026-08-18** — 25ª misura.
-> ✅ **Col Task 9 la porta `journal` ha la conformità contro _entrambe_ le implementazioni**,
-> tenuta a ogni commit e non misurata una volta sola.
-> ⛔ **E col Task 10 il formato durevole è CONGELATO:** i byte di **tre** record sono nel
-> repository, con una mappa che il banco rilegge, e **non si rigenerano mai** — se cambiano si
-> apre una versione nuova. Tre record e non uno perché i tre enum del formato hanno **otto**
-> varianti fra loro, e ciascuna è stata rinumerata per prova: **otto rossi su otto**.
-> ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-012 — qui c'era la decisione D6 data per APERTA, ed
-> è TOLTA invece che corretta**, come la riga del prossimo passo qui sopra e per la stessa
-> ragione. Diceva *«il Task 6 ha riportato indietro una domanda invece di deciderla … e chiuderla
-> cambia una porta condivisa»*: **D6 è chiusa dal proprietario il 2026-08-10** — `replay()` non
-> cambia e il `kind` resta nel record — e lo dicevano già **tre** case, fra cui la cella del
-> Traguardo 3 **ottanta righe più sotto in questo stesso file**. ⚠️ **La decisione non è
-> ricopiata qui**: una quarta casa è ciò che `CLAUDE.md` vieta, e il sorgente la porta per esteso
-> in `crates/kernel/src/reconcile.rs`. ⛔ **Ed è il gotcha #32 a rovescio, che è la parte da
-> ricordare:** quel gotcha teme che si riproponga un'idea già scartata; qui un documento di stato
-> ripropone come **domanda aperta** una decisione **presa**, e la sezione *«Stato in una riga»*
-> è esattamente quella che legge chi non leggerà il resto.
->
-> ✅ **La lacuna su I2 è chiusa**: [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md)
-> — quota di presentazione sottratta, con la concessione tenuta dal core. Il kernel non
-> ha più lacune aperte.
+> Lo stato di ciascun sotto-progetto lo dice la tabella dei **sotto-progetti**, qui sotto; quello dei piani, la tabella
+> dei **piani di implementazione**; quello dei traguardi del sotto-progetto 1, la tabella dei **traguardi**. Qui non si
+> racconta: una copia dello stato diverge (gotcha #68). Il prossimo passo sta nella §6 del [`COMPENDIO.md`](COMPENDIO.md),
+> in un posto solo. ⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, AUD-354, AUD-355, AUD-568, AUD-579.
 
 ## Il ciclo che seguiamo
 
@@ -163,7 +51,7 @@ flowchart LR
 | **0b** | **Kernel L0 fisico** (§10) — archivi, cifratura, backup, segreti, checkpoint, confinamento | L0 | ✅ **spec completa** | 0 |
 | **0c** | **Stack completo** — ADR-0026 core, ADR-0027 GUI, ADR-0028 worker ML | — | ✅ **deciso** | SP-5, SP-6 |
 | 1 | Implementazione del kernel + simulatore DST | L0 + L1 | ✅ **chiuso il 2026-09-03 contro la §0.7** della spec — il verbale è la §7 del [disegno della chiusura](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md). Lo stato per traguardo sta nella tabella dei traguardi di questo file, e il puntatore nella §6 del compendio: una casa sola ciascuno. ⚠️ **RICHIAMO DEL 2026-09-03:** questa cella portava il racconto dei sei traguardi e una voce *«registrata e non presa, del proprietario»* sul toglierlo; la §5.2 del disegno della chiusura, approvata dal proprietario, l'ha deciso — P-2 del piano | 0, 0b, 0c |
-| 2 | GUI minima — la cornice con `dockview`, il filo, la settima porta, il registro delle funzioni; Stato, Permessi, Passi, Impostazioni e la Chat sul core finto | — | ✅ **chiuso il 2026-09-22** — la Definizione di «fatto» del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md) | 1, ADR-0027 |
+| 2 | GUI minima — la cornice con `dockview`, il filo, la settima porta, il registro delle funzioni; Stato, Permessi, Passi, Impostazioni e la Chat — richiamo del 2026-10-06, audit del 2026-09-30, AUD-456 | — | ✅ **chiuso il 2026-09-22** — la Definizione di «fatto» del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md) | 1, ADR-0027 |
 | 3 | Conversazione | L2 | ⬜ | 1, 2, **13**, **15** — è la prima capacità che inietta una guida, assunzione dichiarata nella §6.5 del [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md): se non lo fosse, il 13 va comunque prima della prima che lo fa; il 15 nella stessa forma, deciso dal proprietario il 2026-10-01 |
 | 4 | Agenti | L2 | ⬜ | 3 |
 | 5 | Coding | L2 | ⬜ | 4, 0b |
@@ -256,7 +144,7 @@ qui sopra. L'elenco è **tolto**, non riallineato — precedenti **AUD-007** e *
 | **3** | giornale e formato durevole | ✅ **eseguito** il 2026-08-10, **dodici compiti su dodici**, `GATE GREEN` a tutti. [Piano](superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) **scritto il 2026-08-10**: la porta `journal` a byte con **due** implementazioni giudicate dalla stessa suite, il record come enum di versione, la **riconciliazione**, ✅ **i byte congelati** — nel repository dal Task 10, e non si rigenerano mai. ⚠️ **Questa cella ha detto *«il prossimo … da eseguire»* a nove compiti fatti e *«dieci su dodici»* a dodici**, ed è la lezione della tredicesima misura ripetuta due volte: la §6 del compendio giusta **nasconde** gli altri documenti di stato |
 | **4** | il simulatore DST — **il guasto** | ✅ **ESEGUITO il 2026-08-11, dieci compiti su dieci**, `GATE GREEN` a ciascuno. ⚠️ Questa cella diceva *«il prossimo, e resta da ESEGUIRE»* a traguardo chiuso, mentre le altre due tabelle dello stesso file lo davano per eseguito — la stessa cifra in tre tabelle, aggiornata in due. Audit del 2026-08-11. ✅ **Brainstorming, disegno e piano tutti il 2026-08-11** — [il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) e il [piano](superpowers/plans/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst.md), **dieci compiti in tre parti**. ⛔ Costruisce **il motore** della DST — giornale cadente, backend cadente, campagna, semi — e **non** le quattro finte mancanti, che nascono col meccanismo che le usa. ⚠️ Questa cella diceva *«tempo virtuale, iniezione dei guasti, la campagna, i semi»*: il **tempo virtuale è del Traguardo 2**, e con esso `C1`, `C2`, `C3` e la non-vacuità. Il `StorageBackend` su cui iniettare **esiste già**, ed è provato sostituibile da fuori la crate |
 | 5 | arbitro GPU | ✅ **ESEGUITO il 2026-08-25, tredici compiti su tredici**, `GATE GREEN` a ciascuno — aperto il 2026-08-18 con brainstorming chiuso, [disegno](superpowers/specs/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu-design.md) e [piano](superpowers/plans/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu.md) scritti lo stesso giorno, **tredici compiti in cinque parti**, esecuzione dal 2026-08-19. ⛔ **Il tredicesimo era un AUDIT e non una scrittura, e gran parte era già eseguita:** i riconteggi non hanno prodotto uno scarto, e ciò che mancava erano le **voci aperte in una tabella sola** — ora in [`porta-di-qualita.md`](porta-di-qualita.md), con la colonna di **chi le chiude**. ⛔ **Finché è durata, a che punto fosse NON era scritto qui, ed era il rimedio e non una svista:** questa cella ha detto *«esecuzione da fare»*, poi *«QUATTRO»*, poi *«CINQUE»*, ed è marcita **due volte in due giorni**. Il numeratore lo muoveva chi **eseguiva**, e chi eseguiva guardava la **§6 del compendio**, dove viveva in un posto solo — *una cifra che vive in più documenti si toglie, non si ricorregge* (`CLAUDE.md`). Ammissione, corsie, ciclo della concessione, le due policy. Il perimetro, gli artefatti col proprio controllo e le righe scoperte col proprio indirizzo stanno **nel disegno**, §0 e §9. ⚠️ **Questa cella diceva *«eredita CINQUE delle nove righe di guasto»*, e la cifra era sbagliata**: contate sulla §7 del disegno del Traguardo 4 sono **una**, più una condivisa. **Tolta, non ricorretta** — una cifra che vive in più documenti si toglie, e la cella rimanda alla fonte. ⛔ **E non porta il puntatore:** quello vive nella §6 del compendio, in un posto solo |
-| 6 | gli altri meccanismi | ✅ **ESEGUITO il 2026-09-02**, `GATE GREEN`: gateway, sensori, permessi, degrado, il canale worker. Eredita **le altre** righe di guasto, e quante sono lo dice la §7 del disegno del Traguardo 4. Il verbale di chiusura è la **§8 del disegno** del traguardo |
+| 6 | gli altri meccanismi | ✅ **ESEGUITO il 2026-09-02**, `GATE GREEN`: gateway, sensori, permessi, degrado, il canale worker. Non ha chiuso tutte le righe di guasto della §7 del disegno del Traguardo 4: quali restano, e con quale innesco, lo dice la §8.4 della [spec del sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) — richiamo del 2026-10-06, audit del 2026-09-30, AUD-029. Il verbale di chiusura è la **§8 del disegno** del traguardo |
 
 **Il codice si scrive in questo repository**, non altrove, e la domanda su *dove* è
 **chiusa dall'esecuzione**: il workspace delle cinque crate nasce **alla radice**, con
@@ -326,8 +214,10 @@ lascerebbe I2 falso.
 
 ⚠️ **Costo dichiarato:** verso il compositor il rifiuto dell'arbitro **non è esecutivo**.
 La quota è una promessa di budget, non un'imposizione, e per la GUI I2 vale in una forma
-più debole *in natura*. Il valore della quota è **non misurato**: lo chiude **M5**, e
-stringe **RK-1** di una quantità oggi ignota.
+più debole *in natura*. Il valore della quota lo dà **M5**, e di altrettanto si stringe **RK-1**: lo stato
+della misura vive in [ADR-0029](adr/0029-guscio-della-gui.md), e quando e chi la rimisuri sulla macchina di
+riferimento — la RTX 5080 della §0.3 del [disegno del kernel](superpowers/specs/2026-08-06-kernel-design.md) — è la
+scelta aperta AUD-592. ⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, AUD-199, AUD-592.
 
 ## Regola di manutenzione
 

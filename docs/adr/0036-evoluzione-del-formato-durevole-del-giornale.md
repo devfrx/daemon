@@ -19,6 +19,11 @@
 >   ferma invece di indovinare; una specie di `Detail` che non conosce la decodifica a `None`, in silenzio — per questo
 >   il `kind` cresce col dettaglio. Lo dicono `crates/kernel/src/record.rs` e la testa di
 >   `crates/kernel/tests/frozen_bytes.rs`. AUD-595.
+> - **«La §7.4.4 punto 3 smette di presupporre»** — fra le *Positive*. Il default `irripetibile` non discende da sé:
+>   la versione del record che toglierà `effect` dovrà dichiararlo — `Option<EffectClass>` con `#[cbor(default)]`, e
+>   `None` letto come `irripetibile` — e costruirlo; fino ad allora è nominato e non costruito, nel doc di
+>   `EffectClass` in `crates/kernel/src/record.rs` e nel rimando del 2026-10-04 in testa ad
+>   [ADR-0007](0007-giornale-write-ahead-e-riconciliazione.md). AUD-583, aggiunto il 2026-10-06.
 
 ## Context
 

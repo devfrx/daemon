@@ -18,7 +18,11 @@
 > rende vera. Vale solo su Unix e alla creazione del file — su Windows il file prende la sicurezza della sua cartella
 > —, e nessun permesso protegge un disco letto fuori dal sistema, che è ciò che coprono le chiavi dell'OS. La
 > cifratura a riposo è del sotto-progetto **15**; che cosa dicano il filo e l'interfaccia fino ad allora è la scelta
-> aperta su AUD-686. Audit del 2026-09-30, AUD-686. **Il testo della decisione resta com'è.**
+> aperta su AUD-686. Audit del 2026-09-30, AUD-686. In quale crate viva l'accesso alla chiave di cifratura —
+> `secrets`, l'unico punto che tocca il portachiavi (§1.2 della
+> [spec del sotto-progetto 1](../superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md), `crates/secrets/src/lib.rs`),
+> o `platform`, il modulo di piattaforma del punto 1 — è la scelta aperta su AUD-147, e serve prima del **15**.
+> AUD-147, aggiunto il 2026-10-06. **Il testo della decisione resta com'è.**
 
 ## Context
 

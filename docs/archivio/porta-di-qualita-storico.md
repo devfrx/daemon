@@ -19,6 +19,8 @@ mostrare **solo** righe con un link:
 diff <(git show c4ec042:docs/porta-di-qualita.md) <(awk '/^# La porta di qualità/{p=1} p' docs/archivio/porta-di-qualita-storico.md | tr -d '\r')
 ```
 
+⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, AUD-2259: dal 2026-10-04 il registro delle contraddizioni non sta più in fondo al file vivo ma in coda a questo archivio, nella sezione *«Il registro delle contraddizioni, e la riga del compendio che ne diceva lo stato, com'erano»* (C30 del [rapporto](../audit-2026-09-30.md)); il confronto qui sopra mostra perciò anche quel blocco, aggiunto in coda.
+
 ---
 
 # La porta di qualità — dove vive ogni controllo

@@ -344,7 +344,7 @@ ricorda di rispettarlo.
 |---|---|---|---|
 | **`kernel`** | **no** — `no_std` + `alloc` | tutta la logica: arbitro, giornale, decisioni di routing, confine dei tipi, macchine a stati, e **la decisione** di quale attività far avanzare | l'OS, l'orologio, `HashMap`, `unsafe` |
 | **`platform`** | sì | le implementazioni **reali** delle porte che il kernel dichiara — quali esistono oggi lo dice la §3.1 —, e, col 5, il confinamento di livello 2 di [ADR-0025](../../adr/0025-confinamento-a-livelli.md) (§0.4, riga §10) | — |
-| **`secrets`** | sì | l'**unico** punto che tocca il portachiavi dell'OS | — |
+| **`secrets`** | sì | l'**unico** punto che tocca il portachiavi dell'OS. ⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, AUD-147: la custodia della chiave della cifratura a riposo di [ADR-0023](../../adr/0023-cifratura-a-riposo-e-gestore-dei-segreti.md) — su Linux, dedotto, il Secret Service, cioè il portachiavi — e la crate che la tiene sono una scelta aperta | — |
 | **`simulator`** | **no** — `no_std` + `alloc` | le implementazioni **finte** degli stessi tratti: orologio virtuale, RNG seminato, I/O in memoria, guasti scelti dal seed | come `kernel` |
 | **`daemon`** (binario) | sì | il cablaggio **di produzione**: monta `platform`, avvia l'esecutore, ospita il server IPC, e **produce i parametri risolti** che consegna al kernel (§2.8) | — |
 
@@ -3188,10 +3188,11 @@ loro la forza di livello 1 e la visibilità di livello 2 (§7.1.3), e il gotcha 
 **Nessuna voce del catalogo è di livello 3.** Ogni invariante del kernel in perimetro è
 difesa dal compilatore o da un controllo esterno; nessuna da un lint.
 
-`clippy` continua a girare come igiene del codice, ma **non ha voce nella porta**: nessun V
-dipende da lui, e la regola 1 del criterio di ammissione (§7.1.1) dice che allora non entra.
-Distinguere l'igiene dalla porta tiene il significato della porta affilato — un rosso della
-porta è sempre un'invariante violata, mai uno stile discutibile.
+`clippy` **non gira nel cancello** — nessuno script lo lancia — e **non ha voce nella porta**:
+si lancia a mano, nessun V dipende da lui, e la regola 1 del criterio di ammissione (§7.1.1)
+dice che allora non entra. Distinguere l'igiene dalla porta tiene il significato della porta
+affilato — un rosso della porta è sempre un'invariante violata, mai uno stile discutibile.
+⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, R8, AUD-526: nessun passo si aggiunge, e la rete contro le regressioni che `clippy` vedrebbe resta assente, dichiarata.
 
 #### 7.4.4 Le tre voci che il catalogo ha ridotto invece di aggiungere
 
@@ -3256,6 +3257,8 @@ rischio è la dimenticanza di chi scrive, e la lascia dov'è il rischio di un da
 > **discende** dalla regola generale invece di essere un'eccezione non dichiarata: un campo
 > assente in una versione precedente è il caso ordinario, non un caso speciale della classe
 > di effetto. Il testo sopra resta com'era, perché era corretto quando è stato scritto.
+
+⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, AUD-583, per il paragrafo e per il rimando: il caso *«record scritto prima che la classe esistesse»* è **vuoto per costruzione** — `RecordV1` è la prima versione, con `effect` obbligatorio —, e il default non discende da sé dalla regola generale: lo costruirà la versione **successiva** che tolga il campo, dichiarando `Option<EffectClass>` con `#[cbor(default)]` e leggendo `None` come `Unrepeatable`. Oggi un record che la build non decodifica va in `SuspendAndAsk` — il doc di `EffectClass` in `crates/kernel/src/record.rs`, e il rimando del 2026-10-04 in testa ad [ADR-0007](../../adr/0007-giornale-write-ahead-e-riconciliazione.md).
 
 #### 7.4.5 Il quarto gettone si scaglia, e l'innesco si scrive
 
@@ -3376,7 +3379,7 @@ l'errore.
 | Quando | Cosa gira |
 |---|---|
 | **a ogni compilazione — cioè: sempre, senza essere un passo** | tutto il **livello 1**: `no_std` · `forbid` · i gettoni · i tipi che non si scambiano |
-| **a ogni commit** | allow-list sui due grafi · cancello senza OS · **attributi delle crate vincolate** · test di compilazione fallita · test a esempi · **campagna DST breve** · test di contratto · `check-docs.sh`. ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-073: gli attributi mancavano da questo elenco e da quello dei costi in §7.7.** `scripts/gate-attributes.sh` è il quinto passo di `scripts/gate.sh` e sostiene **due** righe del catalogo §7.4.2 — gli attributi delle crate vincolate e l'assenza di build script. ⚠️ **E la prima delle due è di ramo 1b:** cancellarla non spegne una regola, **invalida il fondamento del livello 1**, e una tabella della cadenza che non la nomina lascia credere che quel fondamento non abbia bisogno di girare. 📌 **La causa è il gotcha #68 dentro la stessa sezione:** le due righe di catalogo furono aggiunte il 2026-08-08 e il 2026-08-09 e la §7.4.2 fu aggiornata; questa tabella e quella di §7.7 sono **due terze case** dello stesso elenco, e **nessuna** delle sei asserzioni di `check-docs.sh` le lega al catalogo — quindi sono invecchiate in silenzio |
+| **a ogni commit** | i passi di `scripts/gate.sh`, uno per riga `run` — l'elenco è quello, e lo dà `grep -n '^run ' scripts/gate.sh` —: i controlli di livello 2 del catalogo, i test con la **campagna DST breve** (§7.5.2), e passi che il catalogo non ha. ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-073: gli attributi mancavano da questo elenco e da quello dei costi in §7.7.** `scripts/gate-attributes.sh` è un passo di `scripts/gate.sh` e sostiene **due** righe del catalogo §7.4.2 — gli attributi delle crate vincolate e l'assenza di build script. ⚠️ **E la prima delle due è di ramo 1b:** cancellarla non spegne una regola, **invalida il fondamento del livello 1**, e una tabella della cadenza che non la nomina lascia credere che quel fondamento non abbia bisogno di girare. 📌 **La causa è il gotcha #68 dentro la stessa sezione:** le due righe di catalogo furono aggiunte il 2026-08-08 e il 2026-08-09 e la §7.4.2 fu aggiornata; questa tabella e quella di §7.7 erano **due terze case** dello stesso elenco, e **nessuna** delle sei asserzioni di `check-docs.sh` le legava al catalogo — quindi sono invecchiate in silenzio. ⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, R8, AUD-381: l'elenco non si ricopia più qui né in §7.7, si rimanda alle righe `run` di `scripts/gate.sh` |
 | **su ciclo lungo** | **campagna DST profonda**: molti più semi, scenari più grandi |
 
 #### 7.5.2 La DST sta a ogni commit, e `design/08` si aggiorna
@@ -3434,7 +3437,7 @@ di un piano agentico, qualità percepita di voce e mesh, ergonomia dell'interfac
 | la **percentuale di copertura** del codice | il criterio di questo progetto è «ogni V ha un controllo», non «l'X % delle righe». Una copertura alta con invarianti non verificate è la falsa sicurezza peggiore | la tabella della **§8** |
 | che una crate ammessa non faccia nulla di indesiderato | ADR-0031 lo dichiara: *«limita la superficie, non la certifica»* | la giustificazione scritta, e chi la legge |
 | che `platform` si comporti come `simulator` su **tutte** le porte | non tutte hanno entrambe le implementazioni, e la suite di `ipc` gira sul solo trasporto vero (§7.4.6) | la suite di conformità dove la vera e la finta esistono entrambe (§7.4.6); le altre porte nella §8. ⛔ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-418 |
-| lo **stile** del codice | non difende nessun V, quindi la regola 1 di §7.1.1 lo esclude | `clippy` come igiene, **fuori** dalla porta |
+| lo **stile** del codice | non difende nessun V, quindi la regola 1 di §7.1.1 lo esclude | `clippy` lanciato **a mano**, **fuori** dalla porta: nessuno script lo lancia (§7.4.3). ⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, R8, AUD-526 |
 | Q6 · Q11 · Q12 · Q16 | non hanno consumatore in questo sotto-progetto. ⚠️ dal 2026-08-07 la riga della §0.6 ne elenca **cinque**: vi si è aggiunto **Q21**, per la correzione di §8.5.1 | la §8, con il sotto-progetto che li chiude |
 
 #### 7.6.3 La riga che chiude la sezione
@@ -3453,7 +3456,7 @@ essere utile pur restando in funzione.
 |---|---|
 | **la porta è lavoro prima di ogni valore visibile** | come il simulatore: è lo stesso RK-9, già accettato nella spec del kernel |
 | **tredici voci sono di livello 2** | cioè cancellabili. ADR-0031 lo dichiara per una sola; qui vale per tutte, e non è mitigabile — è la natura del livello, non un'omissione. ⚠️ **Ricontato sulla tabella §7.4.2 due volte il 2026-08-08**: diceva «nove» prima delle righe di ADR-0036 e ADR-0037, e «undici» prima della riga degli **attributi**, aggiunta eseguendo il Traguardo 1. ⚠️ **Terzo riconteggio il 2026-08-09**: diceva «dodici» prima della riga del **build script**, aggiunta chiudendo la lacuna che una revisione aveva misurato — sei controlli su sei verdi con un `build.rs` nel kernel |
-| **si paga a ogni commit, non una volta** | due grafi, un cancello, **gli attributi delle crate vincolate**, una campagna, due suite di contratto. ⚠️ **Voce aggiunta il 2026-08-27, finding AUD-073**, insieme alla gemella della tabella della cadenza in §7.5.1: il racconto sta lì, in una casa sola |
+| **si paga a ogni commit, non una volta** | ogni passo di `scripts/gate.sh`, cioè l'elenco della §7.5.1; e gli avvisi di sicurezza — `cargo audit` in `scripts/gate.sh`, `cargo audit` e `npm audit` in `scripts/gate-gui.sh` — vogliono la **rete** e possono andare rossi senza un commit, due costi dichiarati accanto a ciascuno. ⚠️ **Voce aggiunta il 2026-08-27, finding AUD-073**, insieme alla gemella della tabella della cadenza in §7.5.1: il racconto sta lì, in una casa sola. ⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, R8, AUD-381 |
 | **`cargo tree` è un'interfaccia per umani** | un cambio di formato rompe **due** controlli in una volta sola |
 | **il bersaglio senza OS è un prerequisito dell'ambiente** | su una macchina pulita la porta è rossa finché non lo si installa, e per il motivo sbagliato |
 | **la porta non prova la correttezza** | §7.6.3. Sposta il confine di ciò di cui ci si può fidare, non lo elimina |
@@ -3884,10 +3887,10 @@ decorazione. Questa ha rifiutato tre voci del catalogo e una riga della propria 
 **la prima volta che è stata applicata sul serio**, ed è la ragione per cui vale la pena
 scriverla come regola invece che come buona intenzione.
 
-⚠️ **Ciò che resta scoperto, e va detto:** lo script di §8.6 controlla che la casella del
-meccanismo sia **piena**, non che nomini davvero una voce della §7. Questa terza scoperta è
+⚠️ **Ciò che resta scoperto, e va detto:** lo script di §8.6 **non legge** la casella del
+meccanismo — né che sia piena, né che nomini davvero una voce della §7. Questa terza scoperta è
 venuta da una rilettura, non da un controllo automatico — e resta l'unico punto della §8
-che dipende da chi legge.
+che dipende da chi legge. ⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, R8, AUD-391: il limite sta nella §8.6.4.
 
 #### 8.5.4 Il catalogo non enumerava i cinque controlli della §6.10.5 — ✅ chiuso
 
@@ -3938,8 +3941,9 @@ vero contro cui provare la conformità della finta, e nessuno dei cinque lo forn
 
 **E ha ripagato una previsione, il che è il motivo per cui vale registrarlo.** La §8.5.3.1
 chiudeva dicendo che la §8.1.2 *«resta l'unico punto della §8 che dipende da chi legge»*,
-perché lo script controlla che la casella sia **piena**, non che nomini davvero una voce
-della §7. Il buco previsto si è ripresentato **il giorno dopo**, sulla sezione successiva. Il
+perché lo script **non legge** la casella del meccanismo — né che sia piena, né che nomini
+davvero una voce della §7 (⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, R8, AUD-391).
+Il buco previsto si è ripresentato **il giorno dopo**, sulla sezione successiva. Il
 rimedio non è irrigidire lo script — §8.6.4 spiega perché non può — ma sapere che questa è
 la classe di difetto che ricompare, e cercarla a ogni sezione nuova.
 
@@ -3994,7 +3998,7 @@ per riga, **otto** delle trentasette avevano perso un pezzo:
 | V | Cosa era caduto | Perché conta |
 |---|---|---|
 | **V16** | *«nomi di provider e parametri **sì**»* | è la metà **positiva** del vincolo, ed è **verificabile qui** |
-| **V5** | *«l'assenza vale `irripetibile`»* | senza, il caso «classe assente a runtime» — un record riletto da una versione precedente — resta senza regola |
+| **V5** | *«l'assenza vale `irripetibile`»* | senza, il caso «classe assente a runtime» — un record di una versione successiva senza il campo — resta senza regola. ⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, AUD-583: il richiamo gemello è nella §7.4.4, punto 3 |
 | **V36** | *«**non sono coperti dal checkpoint** e…»* | senza, un rollback che lascia intatto un file fuori ambito soddisfa la formulazione |
 | **V30** | *«**prima** dell'implementazione»* | è l'unica cosa che impedisce al metodo di essere ritagliato sul risultato |
 | **V25** | *«nessuna telemetria **lascia la macchina**»* | senza, vieta anche la **raccolta**, che V24 invece pretende: era un **allargamento**, non un taglio |
@@ -4042,7 +4046,9 @@ quarantatré kilobyte, e questa volta ha ribaltato un verdetto.
 
 Lo script oggi fa una cosa sola, in cinque modi diversi: **prende un elenco da un posto, un
 elenco da un altro, e segnala la differenza.** Quanti file ADR contro quante voci d'indice.
-Quali link puntano a file che non esistono. Quali Q non hanno un metodo in `design/08` —
+Quali link a un file `.md` puntano a file che non esistono — solo quelli: un link a una
+cartella o a un altro file non è letto (⚠️ **RICHIAMO DEL 2026-10-06** — audit del
+2026-09-30, R8, AUD-678). Quali Q non hanno un metodo in `design/08` —
 che è V30, ed è la stessa forma di controllo che questa sezione aggiunge.
 
 Le due estensioni non introducono un meccanismo nuovo: applicano quello che c'è a due
@@ -4173,6 +4179,8 @@ sonda si ferma invece di produrre il rosso di un'altra.
 | **C5** | `verificato qui` **con** un innesco: è lecito, non obbligatorio | ✅ verde — idem, con l'innesco di V1 portato da `—` ad `A (2)` |
 | **C6** | la spec intatta dopo la chiusura di §7.1.1: **trentaquattro** righe di catalogo, comprese le **quattro 1b** e le **cinque del blocco B** | ✅ verde — idem |
 
+⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, AUD-528: C0, C5 e C6 qui sono **contro-sonde** di `check-docs.sh`; i C1–C7 citati altrove in questa spec — per esempio «C6» nella §2.4.2 e «C1» nella riga `V29` della §8.3 — sono i criteri di SP-5 di [`spikes/PROTOCOLLO.md`](../../../spikes/PROTOCOLLO.md), che porta il richiamo gemello.
+
 > ⚠️ **C6 diceva «trentatré righe e tre 1b», ed è stato ricontato invece che ricopiato.** Oggi
 > sono **trentaquattro**, con **quattro** righe di ramo 1b: la §7.4.2 ha guadagnato la riga
 > degli attributi — gotcha #36 — dopo la campagna della sesta asserzione. I blocchi sono
@@ -4224,6 +4232,7 @@ Esito finale: **tredici sonde su tredici**, con il ripristino byte-identico.
 | che la contro-sonda **esista** davvero | verifica che la casella sia **piena**. Chi scrive `n/a` passa. È la stessa classe della riga di ADR-0031 — *«limita la superficie, non la certifica»* |
 | che lo **stato dichiarato sia vero** | uno stato è un giudizio nostro; lo script controlla che sia *espresso*, non che sia *giusto* |
 | che l'**innesco sia il sotto-progetto giusto** | §8.2.1 mette la condizione prima del numero proprio perché il numero non è verificabile |
+| che la casella del **meccanismo** delle tabelle §8.3 e §8.4 sia **piena** | lo script non la legge: legge lo stato e l'innesco, e conta le colonne (asserzione 5). Una riga col meccanismo vuoto passa verde — provato il 2026-10-06 rilanciando la passata `states` dello script su una copia della spec col meccanismo di `V2` svuotato. ⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, R8, AUD-391 |
 
 ⚠️ **La casella di V25 mostra dove passa il confine, ed è il caso da non «correggere».** Il
 suo contenuto è `⚠️ non esiste — vedi sotto`, nella sonda come nella contro-sonda, e
@@ -4274,7 +4283,7 @@ scrivere ✅ o a tacere, e sono i due modi in cui una rinuncia diventa invisibil
 | **tredici V e otto Q sono `parziale`** | è circa un terzo del totale, ed è il ritratto onesto di un sotto-progetto che costruisce il kernel senza nessuno dei suoi consumatori. Il rischio è che `parziale` diventi la casella comoda: l'innesco obbligatorio è l'unica difesa, ed è di livello 2. ⚠️ **Ricontato sulla tabella due volte il 2026-08-08**, non dedotto. Il ritratto pieno è **diciotto ✅ · tredici ⚠️ · sei ⏳** per i V e **nove · otto · sette** per i Q. ⛔ **La storia del numero, perché altrimenti sembra un ripensamento:** diceva «tredici» dal giorno in cui fu scritto; il primo riconteggio lo portò a «dodici», perché nessuno aveva ricontato dopo il declassamento di `V16` in §8.5.3.1; il secondo lo riporta a «tredici», perché `V16` è tornato `parziale` quando si è visto che il declassamento aveva giudicato una **formulazione troncata** (§8.5.5). Stesso numero, tre tabelle diverse: è il motivo per cui **si riconta**, invece di fidarsi di ciò che c'è scritto |
 | **gli inneschi invecchiano** | la condizione no, il numero fra parentesi sì. §8.2.1 sceglie quale delle due lo script può controllare — nessuna delle due — e quale un lettore può correggere: il numero |
 | **tre sezioni approvate sono state corrette** | §0.4, §0.6 e il **catalogo §7.4** — la riga V31 in §7.4.2, le tre nuove in §7.4.1, e il 2026-08-08 le **cinque** della §6.10.5 più il ritratto ricontato in §7.4.7 (§8.5.4) — per disallineamenti che questa tabella ha trovato. Il costo non è la correzione ma il precedente: una sezione approvata non è congelata, e ogni riapertura va **registrata** invece che applicata, §8.5 |
-| **una regola della §8 dipende da chi legge** | §8.1.2 — «il meccanismo nomina una voce della §7» — ha rifiutato tre voci del catalogo e una riga della tabella, e il giorno dopo altre **cinque** voci (§8.5.4), ma **nessuno script la applica**: lo script verifica che la casella sia piena, non che nomini davvero una voce. È l'unico punto della §8 nella condizione in cui era la §7.7.1 prima di questa sezione — ed è **la classe di difetto che ricompare**, non un incidente |
+| **una regola della §8 dipende da chi legge** | §8.1.2 — «il meccanismo nomina una voce della §7» — ha rifiutato tre voci del catalogo e una riga della tabella, e il giorno dopo altre **cinque** voci (§8.5.4), ma **nessuno script la applica**: lo script non legge la casella del meccanismo — né che sia piena, né che nomini davvero una voce (§8.6.4; ⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, R8, AUD-391). È l'unico punto della §8 nella condizione in cui era la §7.7.1 prima di questa sezione — ed è **la classe di difetto che ricompare**, non un incidente |
 | **lo script controlla la forma, non la sostanza** | §8.6.4. Sposta il confine di ciò di cui ci si può fidare, non lo elimina — è la stessa riga della §7.7 |
 
 ⚠️ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-407, AUD-410, AUD-712, AUD-714: le cifre della seconda riga sono il ritratto del 2026-08-08, e la tabella è cambiata dopo; il ritratto di oggi lo dà il comando del blocco **A** della §1.3 del [disegno della chiusura](2026-09-02-sottoprogetto-1-chiusura-design.md).

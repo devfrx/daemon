@@ -30,6 +30,11 @@ echo "== internal links =="
 # ⚠️ Asked ONCE, and it FAILS OPEN: with no work tree 'git check-ignore' writes nothing, the
 # set stays empty and every file is scanned, which is the behaviour of before this change. A
 # filter that failed closed would scan nothing and exit green -- gotcha #26.
+#
+# ⚠️ DECLARED LIMIT: ONLY LINKS WHOSE TARGET ENDS IN `.md` ARE CHECKED. The pattern below extracts
+# `](... .md ...)` and nothing else, so a link to a directory, to a source file (`.rs`, `.sh`,
+# `.toml`) or to any other file is never verified, and a broken one passes in silence -- the links
+# of an archived block included. RECALL OF 2026-10-06 -- audit of 2026-09-30, AUD-678.
 mds=$(find . -name '*.md' -not -path './.git/*' -not -path './docs/superpowers/plans/*')
 ignored=$'\n'$(printf '%s\n' "$mds" | git check-ignore --stdin 2>/dev/null)$'\n'
 broken=$(
@@ -209,6 +214,10 @@ echo "== §8: every V and every Q has a state, and the deferred ones have their 
 # mandatory trigger for «parziale» and «rimandato». The state is recognised by a WORD,
 # not by an emoji: byte-matching on emoji depends on the locale, and a red caused by the
 # locale is a red for the wrong reason.
+# ⚠️ DECLARED LIMIT: THE MECHANISM CELL IS NOT READ. Of the five columns only the state (c[4])
+# and the trigger (c[6]) are; the mechanism -- «Con quale controllo, e cosa manca», c[5] -- can
+# be emptied and nothing goes red, let alone check that it names an entry of §7 (§8.6.4).
+# RECALL OF 2026-10-06 -- audit of 2026-09-30, AUD-391.
 states=$(
   awk '
     function trim(s) {

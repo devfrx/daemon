@@ -6,8 +6,9 @@
 # there is no way to skip them or to put them off until tonight.
 #
 # ⛔ A red from this gate always means "invariant violated", never "questionable style".
-# `clippy` runs as code hygiene but has NO voice here: no V depends on it, and rule 1 of the
-# admission criterion (§7.1.1) says that in that case it does not get in.
+# `clippy` does NOT run in this gate -- no script launches it -- and has NO voice here: no V
+# depends on it, and rule 1 of the admission criterion (§7.1.1) says that in that case it does
+# not get in. It is run by hand. ⚠️ RECALL OF 2026-10-06 -- audit of 2026-09-30, AUD-526, AUD-679.
 # Level 3 of the catalogue is EMPTY, and that is a decision (§7.4.3).
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
@@ -20,11 +21,16 @@ run() {
   if "$@"; then :; else failures=$((failures + 1)); fi
 }
 
-# ⛔ `--locked` ON EVERY CARGO CALL OF THE GATE, and it is not tidiness: it makes Cargo.lock an
-# INPUT of the gate instead of a SIDE EFFECT of it. Without it the first cargo step re-resolves
-# and REWRITES the tracked lockfile, and `gate-deps.sh` -- which measures the transitive graph
-# against the ADR-0031 list -- then measures the graph cargo has just invented instead of the one
-# that was approved. .gitignore says the lockfile is versioned for exactly the opposite reason.
+# ⛔ `--locked` ON EVERY CARGO CALL OF THE GATE THAT RESOLVES THE GRAPH, and it is not tidiness: it
+# makes Cargo.lock an INPUT of the gate instead of a SIDE EFFECT of it. Without it the first cargo
+# step re-resolves and REWRITES the tracked lockfile, and `gate-deps.sh` -- which measures the
+# transitive graph against the ADR-0031 list -- then measures the graph cargo has just invented
+# instead of the one that was approved. .gitignore says the lockfile is versioned for exactly the
+# opposite reason.
+# ⚠️ THE ONE COMMAND WITHOUT THE FLAG IS `cargo audit`, below and in `gate-gui.sh`, and it is not
+# a hole: it has no `--locked` to pass -- it READS a lockfile (`--file`, default Cargo.lock) and
+# does not rewrite it, measured on 2026-10-06: `sha1sum Cargo.lock` the same before and after a
+# run. RECALL OF 2026-10-06 -- audit of 2026-09-30, AUD-343, AUD-637.
 #
 # MEASURED, not reasoned (finding G-5 of the 2026-08-11 audit): with `minicbor` removed from
 # crates/kernel/Cargo.toml, `gate-deps.sh` as it was came out `OK -- the two graphs match the two

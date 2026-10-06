@@ -8,12 +8,12 @@
 > Audit del 2026-09-30. **Nessuna riga di questo ADR è superata.**
 >
 > - **«verificata dall'arbitro»**, nel punto 2. La verifica è la misura del picco — *«il picco reale viene misurato
->   e registrato»* — e non è costruita: ne esiste la sola variante di filo `FromWorker::VramPeak`
->   (`crates/kernel/src/wire/worker.rs`), che nessun worker manda e nessun record porta, e misura e registrazione
->   arrivano col primo worker sulla GPU — §5.1 e §5.2.2 della spec del sotto-progetto 1, richiamo del 2026-10-03,
->   AUD-198. La voce 27 delle voci aperte del Traguardo 6 in [`porta-di-qualita.md`](../porta-di-qualita.md),
->   *«l'altra metà di ADR-0005»*, parla d'altro: di `compute_class` e `preemption`, che arriverebbero all'arbitro
->   dal pari GUI senza controllo. AUD-127.
+>   e registrato»*, col meccanismo della §5.2.2 della spec del sotto-progetto 1 — e non è costruita: ne esiste la sola
+>   variante di filo `FromWorker::VramPeak` (`crates/kernel/src/wire/worker.rs`), che nessun worker manda e nessun
+>   record porta, e misura e registrazione arrivano col primo worker sulla GPU — il richiamo del 2026-10-03 nella §5.1 e
+>   nella riga 2 della §5.5.2 della spec, AUD-198. Dal 2026-10-06 è la voce 36 delle voci aperte del Traguardo 5 in
+>   [`porta-di-qualita.md`](../porta-di-qualita.md); la voce 27 di quelle del Traguardo 6, *«la fiducia in
+>   `compute_class` e `preemption` dal pari GUI»*, parla d'altro. AUD-127.
 > - **«sottratta dal budget allocabile»**, nel punto 3. La sottrazione **non è un'esenzione**: la quota è una
 >   concessione permanente e non prelazionabile, con un titolare, e I2 vale anche per lui — la regola di
 >   [design/02](../design/02-arbitrato-gpu.md) e della §5.5.1 della spec, gotcha #4. Il Traguardo 5 la realizza

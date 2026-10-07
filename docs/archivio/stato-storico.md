@@ -6367,3 +6367,62 @@ Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende 
    tracciato, è dell'altra sessione del proprietario (P16).
 10. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per
     parola, la nuova al suo posto, e il commit su `main`, col push.
+
+## La consegna del terzo audit, com'era — archiviata il 2026-10-07, alla chiusura della sessione del perimetro del `lean-docs`
+
+Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende — scritto alla chiusura della sessione del 2026-10-07, a Fase 6 chiusa»*, parola per parola
+
+1. `git fetch --all --prune`, poi `git status -sb`. Si lavora su `main` (P17). Il ramo `repo-audit/20260930-1510` resta
+   su `origin`, coi suoi commit tutti nella storia di `main`: toglierlo è una scelta del proprietario, e nessuno l'ha
+   chiesta.
+2. Lo stato del run è in `.repo-audit/20260930-1510/`, **solo sulla macchina del run**, e serve ancora: il `ledger.json`
+   porta i bassi della P8 e gli esiti che le tabelle nominano. Nuovi della sessione: `fase6_tabelle.py`, che rigenera
+   *«I pacchetti»* e *«I finding»* in `fase6-tabelle.md` e controlla che ogni numero citato abbia la sua riga, e
+   `fase6_omonimi.py`, l'osservazione 8.
+3. **Fatto il 2026-10-07: la Fase 6.** La P18 e la P19; le sezioni *«Le scelte aperte»* — la tabella che stava nel
+   punto 7 —, *«Le osservazioni non prese»* — i punti 6 e 7 —, *«La copertura»*, *«L'affidabilità»*, *«La
+   documentazione di design»*, *«I pacchetti»* e *«I finding»*; la riga di questo rapporto nel [README](../README.md),
+   accanto ai due audit di prima. Nessun agente: la Fase 6 non ha costo di subagenti.
+4. **Il prossimo passo, nell'ordine della P19, ciascuno nelle sue sessioni:**
+   1. **il `lean-docs` sulle storie dei documenti vivi (R5)**, con la skill `lean-docs`: la storia in archivio, parola
+      per parola, e nel documento vivo la riga del richiamo. Non è un pacchetto di correzione. Fra le storie, i rinviati
+      di *«I finding»* (↪ lean-docs), e anche la §10 del disegno del 2, il verbale della chiusura del 2026-09-09
+      (AUD-660), i richiami di P23 in `porta-di-qualita.md` che superano la riga, nel gotcha #64 «⛔ APERTA» e il
+      titolo del richiamo del 2026-08-31 (correttore di P25), il richiamo del 2026-08-27 di ADR-0015, la cui frase
+      «nessuno dei quattro nomina l'altro» è vecchia due volte, perché ADR-0009 e ADR-0003 la nominano (esito di P07),
+      il verbale del 2026-08-11 in testa a `HANDOFF.md`, che nomina «la riga della tabella dei traguardi seicento righe
+      più sotto» (correttore di P25), nel README la cronaca dei piani nella tabella «Specifiche» (correttore di P27), e
+      il richiamo del 2026-08-25 sulla «quarta voce» della «Regola di manutenzione» di `docs/roadmap.md`, che parla di
+      un elenco che P30 ha tolto, la classe di AUD-546 e AUD-1762. ⚠️ Il compendio ha un tetto: prima di scriverci, il
+      margine — `wc -c docs/COMPENDIO.md` contro `ceiling=` in `scripts/check-docs.sh`.
+   2. **la P8**: la verifica dei bassi `da_verificare` contro i testi corretti, col costo detto prima — fra loro
+      AUD-2258, che porta una A/B, la sede della promozione dei fallimenti, e dopo la verifica torna al proprietario; i
+      bassi nati dalle riverifiche, da AUD-2229 ad AUD-2239, da AUD-2242 ad AUD-2251, da AUD-2254 ad AUD-2258 e da
+      AUD-2260 ad AUD-2269: di molti il residuo fatto da P30 è già la correzione, e la riverifica di P30 lo dice di
+      AUD-2260 e AUD-2265, il suo correttore di AUD-2245; fra loro AUD-2268 e AUD-2269, le due regressioni a cascata
+      che la riverifica di P30 ha trovato; e AUD-1304, la cui specie sta anche nel disegno del 2, *«La verifica»*. ⛔
+      **Come si compongono i lotti si decide nella sua sessione, prima del costo:** `lotto_verifica.py` si ferma sui
+      finding della Fase 2, cioè su quasi tutti i bassi, e `ledger.py da-verificare` cancellerebbe i lotti senza esito
+      (C41). Un basso confermato entra in un pacchetto: le regole del coordinatore fra un'ondata e l'altra stanno nella
+      consegna archiviata il 2026-10-07 alla chiusura della sessione dell'ondata 12, in
+      [`archivio/stato-storico.md`](stato-storico.md).
+   3. **il piano dei documenti della revisione della knowledge base**, coi pre-controlli riletti sul testo corretto,
+      come dice la §6 del compendio.
+
+   Fra un passo e l'altro, *«Le scelte aperte»* al proprietario, una alla volta, ciascuna con la sua A/B. Quando la §6
+   del compendio smetterà di nominare questo rapporto, la §12 ne prende la riga, come per quello del 2026-08-27, col
+   margine del tetto misurato prima; il README la porta dal 2026-10-07.
+5. Gli script si lanciano con `PYTHONUTF8=1`. ⛔ Non rilanciare `ledger.py da-verificare`: cancellerebbe i lotti senza
+   esito; né `ledger.py evidenze`: riscriverebbe `evidenze.json` sui testi già corretti (C41). ⛔
+   `componi_pacchetti.py --scrivi` e `valida_ondate.py` riscrivono tutte le specifiche: si lanciano solo prima di un
+   pacchetto nuovo. ⛔ `messaggi_ondata_2.py` … `messaggi_ondata_12.py` non si rilanciano: `origin` porta ora i commit
+   che riscrivevano, e ciascuno si ferma da sé. `archivia_p25.py`, `archivia_p27.py`, `archivia_p30.py`,
+   `passaggio_10_11.py`, `passaggio_11_12.py`, `verificati_12.py`, `residui_p30.py` e `nota_riverifica_12.py` si
+   fermano da sé se rilanciati. `prova_valida_ondate.py`, `prova_fatto.py` e `lotto_verifica.py` senza `--scrivi` si
+   rilanciano quando si vuole: lavorano su copie del run, o in memoria; e `decisioni_ondata_5.py` …
+   `decisioni_ondata_11.py` senza danno: ciò che è già fatto si salta. I `fase5_*.py` e i `fase6_*.py` non toccano il
+   repository, e si rilanciano quando si vuole.
+6. Il controllo di non intrusione: `git status --porcelain` non mostra niente dell'audit. `daemon_kit/`, non
+   tracciato, è dell'altra sessione del proprietario (P16).
+7. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per
+   parola, la nuova al suo posto, e il commit su `main`, col push.

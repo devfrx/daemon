@@ -612,14 +612,28 @@ awk '/^#### 7\.4\.1 /{ins=1} /^#### 7\.4\.2 /{ins=0}
      ins&&c&&/^\|/&&!/^\|-/&&!/^\| Difende/' \
   docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md | wc -l
 
-# quante ne dichiara implementate il registro
+# quante ne dichiara implementate il registro -- la misura del 2026-08-10; la completezza NON la prova
 grep -cE '^\| \*\*blocco C\*\*' docs/porta-di-qualita.md
 
 # e la controprova che nessun caso resti fuori dal registro
 for f in crates/kernel/tests/compile_fail/*.rs; do
   b=$(basename "$f"); grep -qF "$b" docs/porta-di-qualita.md || echo "ORFANO: $b"
 done
+
+# e lo stesso per i banchi, per PERCORSO e non per nome di base
+for f in crates/*/tests/*.rs; do grep -qF "$f" docs/porta-di-qualita.md || echo "ORFANO: $f"; done
 ```
+
+⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-621: contare le righe non prova la completezza del registro —
+il doppione dichiarato di `Q2 · §5.1` compensava la riga `V5` che mancava, e dal 2026-10-06, con `V5` nella tabella, il
+conteggio rende il catalogo più uno —; la prova è il **confronto per chiave** scritto sotto la tabella del livello 1 di
+[`porta-di-qualita.md`](porta-di-qualita.md), la sua casa sola.
+
+⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-638, AUD-631, AUD-632: il ciclo dei banchi va **per
+percorso**, perché per nome di base un sorgente omonimo lo maschera — la debolezza registrata in fondo alla sezione
+della compressione di `porta-di-qualita.md`. Il 2026-10-07 non rende niente; provato nelle due direzioni lo stesso giorno
+su una copia della porta senza `crates/kernel/tests/serving.rs`: per percorso esce orfano, per nome di base no. Se il
+ciclo diventi un passo del cancello è la scelta aperta su AUD-709: oggi è una ricetta a mano.
 
 | Domanda | Esito il 2026-08-10 |
 |---|---|
@@ -977,6 +991,10 @@ sull'intero corpo del tratto. 📌 Conta perché il **conteggio dei punti scatta
 non-vacuità** della campagna di livello 2: un metodo in meno sarebbe stato un oracolo più debole
 **senza che nulla lo dicesse**, ed è precisamente il gotcha **#48** — un banco che sbaglia
 mentre conferma.
+⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-422: il backend cadente cade alle operazioni che passano da
+`may_serve` — `len`, `read`, `set_len`, `sync_data`, `write` —, e `close` non cade mai, per la ragione scritta nel doc di
+`CrashingBackend` in `crates/platform/tests/engine_crash_consistency.rs`; i punti d'iniezione si contano su quelle
+operazioni, come misura T4-5-l.
 
 ### Le due misure che hanno corretto il disegno, prese **dopo** averlo scritto
 
@@ -1491,7 +1509,7 @@ come *«**Fix**: `--locked`»*, cioè una riga. Contati sul codice invece che su
 |---|---|---|
 | `--locked` esiste già da qualche parte? | `grep -rn -- "--locked\|--offline\|--frozen" scripts/ .github/` | ❌ **zero occorrenze** |
 | quanti siti `cargo` stanno nel percorso del cancello? | `grep -n "cargo" scripts/*.sh` | ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-009 — questa cella era FALSA il giorno in cui fu scritta, e il comando accanto non la produce.** Diceva *«**sei** — `gate.sh` ×4, `gate-no-os.sh` ×1, `gate-deps.sh` ×3»*, e la propria scomposizione somma **otto**; il comando restituisce 35 righe, comprese quelle dentro commenti e stringhe. La misura buona è la riga qui sotto |
-| quanti siti `cargo` **eseguibili** ha il cancello, e li passa **tutti** con `--locked`? | `grep -hE "(^\|[^'])cargo " scripts/gate.sh scripts/gate-no-os.sh scripts/gate-deps.sh \| grep -vE "^[[:space:]]*#"` per il primo conteggio, lo stesso più `\| grep -c -- --locked` per il secondo | **11** e **11**, il 2026-08-27 — `gate.sh` cinque, `gate-no-os.sh` uno, `gate-deps.sh` cinque. ⛔ **L'oracolo è l'UGUAGLIANZA, non l'undici:** una cifra assoluta non è un oracolo su un cancello che guadagna passi (gotcha **#31**, quinta forma), una relazione fra due misure dello stesso artefatto sì. ✅ **Provata nelle due direzioni**: su una copia fuori dal repository, aggiunto un `cargo build --workspace` senza il flag, i due conteggi divergono — **12** contro **11**. ⚠️ Il filtro esclude `cargo` preceduto da apice singolo, che è la forma in cui i tre script lo **nominano** dentro un messaggio d'errore invece di eseguirlo |
+| quanti siti `cargo` **eseguibili** ha il cancello, e li passa **tutti** con `--locked`? | `grep -hE "(^\|[^'])cargo " scripts/gate.sh scripts/gate-no-os.sh scripts/gate-deps.sh \| grep -vE "^[[:space:]]*#"` per il primo conteggio, lo stesso più `\| grep -c -- --locked` per il secondo | **11** e **11**, il 2026-08-27 — `gate.sh` cinque, `gate-no-os.sh` uno, `gate-deps.sh` cinque. ⛔ **L'oracolo è l'UGUAGLIANZA, non l'undici:** una cifra assoluta non è un oracolo su un cancello che guadagna passi (gotcha **#31**, quinta forma), una relazione fra due misure dello stesso artefatto sì. ✅ **Provata nelle due direzioni**: su una copia fuori dal repository, aggiunto un `cargo build --workspace` senza il flag, i due conteggi divergono — **12** contro **11**. ⚠️ Il filtro esclude `cargo` preceduto da apice singolo, che è la forma in cui i tre script lo **nominano** dentro un messaggio d'errore invece di eseguirlo. ⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-343, AUD-637: la misura qui sopra resta come misura di quel giorno; oggi gli script del cancello sono **quattro** e la relazione è un'altra — **ogni sito eseguibile senza `--locked` è un `cargo audit`**, perché `cargo audit` il flag non lo ha (`cargo audit --help`: solo `-f, --file`) e il lockfile lo legge soltanto. L'elenco dei siti senza il flag: `grep -hE "(^\|[^'])cargo " scripts/gate.sh scripts/gate-no-os.sh scripts/gate-deps.sh scripts/gate-gui.sh \| grep -vE "^[[:space:]]*#" \| grep -v -- --locked`, che il 2026-10-07 rende i due `cargo audit` di `gate.sh` e di `gate-gui.sh`; lo stesso seguito da `\| grep -vc 'cargo audit'` rende **0**. ✅ **Provata nelle due direzioni** il 2026-10-07, su una copia dei quattro script fuori dal repository: aggiunto `run "probe" cargo build --workspace` a `gate.sh`, rende **1**. E `sha1sum Cargo.lock gui/fake-core/Cargo.lock` è uguale prima e dopo una corsa di `cargo audit -n` su ciascuno, lo stesso giorno. È la prova a cui rimandano la cella N6 di [`porta-di-qualita.md`](porta-di-qualita.md) e la riga *«Una dipendenza si aggiunge in due passi»* di [`../CLAUDE.md`](../CLAUDE.md) |
 | `cargo tree` accetta `--locked`? | `cargo tree --locked -p kernel -e normal,no-proc-macro --prefix none` | ✅ exit 0 |
 | ADR-0031 dice qualcosa sul lockfile? | `grep -i "lock\|riproducib" docs/adr/0031-*.md` | ❌ **niente**: la ragione del lockfile versionato vive **solo** in `.gitignore` |
 | `cargo tree` scrive su `stderr` nello stato verde? | `err=$(cargo tree … 2>&1 1>/dev/null); echo ${#err}` | **0 byte** — ed è la misura che rende sicuro leggere lo stdout da solo |
@@ -1868,6 +1886,23 @@ qui**: `Waker::from_raw` è `unsafe` e `forbid(unsafe_code)` lo rifiuta, misurat
 chiude il `Drop`**, perché un distruttore che tiene `&Sleep` scrive lo stesso: caduta sul **merito**,
 non sul costo.
 
+⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-040, AUD-587: la misura M-5 vale per `Waker::from_raw`; con
+`alloc::task::Wake` e `Waker::from(Arc<T>)` un risvegliatore su misura compila **senza** `unsafe`, in una crate
+`#![no_std]` e `#![forbid(unsafe_code)]`, per l'host e per `x86_64-unknown-none` — §2.4.1 della spec. E nella stessa
+crate senza OS `extern crate std;` dà `E0463` sul bersaglio senza OS e **compila per l'host**: è la via che coglie
+`scripts/gate-no-os.sh`, livello 2 — §1.4 e §7.3.2 della spec. I due comandi, **dalla radice del repository** perché
+`rust-toolchain.toml` fissa il compilatore, coi sorgenti e l'uscita in una cartella di prova `D` fuori dal repository
+(*«le misure nello scratchpad»*); rifatti il 2026-10-07 con `rustc 1.95.0`:
+
+```bash
+printf '%s\n' '#![no_std]' '#![forbid(unsafe_code)]' 'extern crate alloc;' 'use alloc::{sync::Arc, task::Wake};' 'struct W;' 'impl Wake for W { fn wake(self: Arc<Self>) {} }' 'pub fn w() -> core::task::Waker { core::task::Waker::from(Arc::new(W)) }' > "$D/w.rs"
+rustc --edition 2024 --crate-type lib --out-dir "$D" "$D/w.rs" && rustc --edition 2024 --crate-type lib --target x86_64-unknown-none --out-dir "$D" "$D/w.rs" && echo BUILDS
+printf '%s\n' '#![no_std]' 'extern crate std;' > "$D/s.rs"
+rustc --edition 2024 --crate-type lib --target x86_64-unknown-none --out-dir "$D" "$D/s.rs" 2>&1 | grep -c 'error\[E0463\]'
+```
+
+Il primo rende `BUILDS`, il secondo `1`; lo stesso `s.rs` compilato senza `--target` esce `0` — la seconda direzione.
+
 ---
 
 ## Esecuzione dell'audit — la decisione 2 (P-1), 2026-08-18: le misure, coi comandi
@@ -2098,7 +2133,9 @@ nuova: non l'ingresso, l'USCITA.** Un `print` con una freccia su una console `cp
 `UnicodeEncodeError` **a metà del ciclo di scrittura**, lasciando `CLAUDE.md` applicato e gli
 altri sei no — cioè l'insieme applicato **a metà, con exit diverso da zero**, che è la forma di
 guasto peggiore per uno strumento che muta file. ✅ Ripristinato con `git checkout --`, lecito
-**solo** perché quei file non portavano lavoro non committato (dodicesima forma del #48), e lo
+**solo** perché quei file non portavano lavoro non committato (dodicesima forma del #48; ⚠️ **RICHIAMO DEL 2026-10-07** —
+audit del 2026-09-30: nemmeno su un file pulito il ripristino è neutro, ne riconverte i fine-riga — il gotcha **#83** di
+[`HANDOFF.md`](HANDOFF.md), che smentisce il #69 su questo punto), e lo
 script riparato in **due** punti, non uno: `sys.stdout.reconfigure(encoding="utf-8")`, **e**
 tutte le scritture spostate **prima** di qualunque `print`. 📌 La riga di metodo: *uno strumento
 che muta file non stampa nulla finché non ha finito di scrivere*.
@@ -2427,7 +2464,8 @@ python -c "import io,tiktoken; e=tiktoken.get_encoding('cl100k_base'); L=io.open
 
 ⛔ **Il file com'era sta intero in [`archivio/porta-di-qualita-storico.md`](archivio/porta-di-qualita-storico.md)**, e il
 vivo porta solo le unità vive, con la lista delle contraddizioni e l'indice *«Dove è finita ogni sezione di prima»* in
-fondo. Il mandato e le decisioni stanno nel
+fondo. ⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-2259: dal 2026-10-04 la lista delle contraddizioni sta
+in coda all'[archivio](archivio/porta-di-qualita-storico.md), e in fondo al vivo resta l'indice. Il mandato e le decisioni stanno nel
 [verbale](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md), sezione della sera del 2026-09-24. Prima e
 dopo, `cl100k_base`, limite inferiore, i byte coi fine-riga normalizzati a LF:
 
@@ -2452,6 +2490,9 @@ python -c "import io,subprocess,tiktoken; e=tiktoken.get_encoding('cl100k_base')
 nominare un sorgente omonimo — `crates/kernel/src/serving.rs` — fa sparire dall'elenco il banco
 `crates/kernel/tests/serving.rs`, che resta orfano. Misurato nelle due direzioni sul file riscritto: la riga col percorso
 del sorgente toglieva `serving.rs` dagli orfani, riscritta senza il percorso lo rimetteva. **Registrata, non presa.**
+⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-638: il registro di oggi nomina il banco, e il ciclo dei banchi
+per percorso sta accanto a quello dei casi, nella sezione dei comandi che ricontano il catalogo; se diventi un passo del
+cancello è la scelta aperta su AUD-709, e oggi è una ricetta a mano.
 
 ---
 

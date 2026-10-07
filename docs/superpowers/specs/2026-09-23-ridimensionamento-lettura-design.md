@@ -144,7 +144,7 @@ vere come verbale del loro giorno:
 
 | | Perché no, oggi |
 |---|---|
-| la correzione delle contraddizioni segnate | è la decisione 11: una sessione loro, che il proprietario non ha ancora collocato. La lista è in fondo a [`porta-di-qualita.md`](../../porta-di-qualita.md) |
+| la correzione delle contraddizioni segnate | è la decisione 11: una sessione loro, che il proprietario non ha ancora collocato. La lista è in fondo a [`porta-di-qualita.md`](../../porta-di-qualita.md). ✅ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, radice R4, pacchetto P23: la correzione è fatta il 2026-10-04, e la lista non sta più nel file vivo — è in coda al suo [archivio](../../archivio/porta-di-qualita-storico.md) |
 | comprimere anche `HANDOFF.md` e `riferimenti.md` | la decisione 8 diceva *«dopo, se regge»*: se e quando è del proprietario |
 | un'intestazione propria per le voci aperte **1**, **2** e **3** | stanno sotto il titolo di T-1 e T-2, che non le nomina; la riscrittura tiene le intestazioni di prima, e il codice le trova col loro numero |
 | la debolezza del ciclo degli orfani | cerca il nome di base, e un sorgente omonimo la acceca: la misura in [`riferimenti.md`](../../riferimenti.md) |

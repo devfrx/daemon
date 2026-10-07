@@ -278,7 +278,9 @@ per voce, leggendo, non per codice.
 Una sezione nuova in `archivio/stato-storico.md`: titolo `## Il racconto del Traguardo 6 —
 archiviato il <data>`, il riquadro «Verbale, non stato», il perché in due righe, il criterio di
 taglio «resta in §6 ciò che è vero adesso», le tre eccezioni, poi il blocco verbatim. I link
-relativi che contiene prendono **tutti** il prefisso `../`, e `check-docs.sh` lo verifica.
+relativi che contiene prendono **tutti** il prefisso `../`, e `check-docs.sh` lo verifica per i soli link a un file
+`.md`; quelli a una cartella o a un altro file si controllano a mano (⚠️ **RICHIAMO DEL 2026-10-07** — audit del
+2026-09-30, AUD-678).
 ⚠️ **RICHIAMO DEL 2026-09-02, scrivendo il piano:** qui stava *«sei il 2026-09-02»*, e il
 comando — il `grep` dei bersagli sul blocco estratto, **P-1** del piano — ne rende **otto**: la
 cifra veniva dalla consegna, misurata prima che la sua stessa riga entrasse nel blocco. **Tolta,

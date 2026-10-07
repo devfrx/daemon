@@ -1,5 +1,8 @@
-//! The two VRAM policies of ADR-0006. TWO OBJECTS WITH ONE INTERFACE, one active at a time,
-//! chosen by the configuration profile -- NOT two arms of a conditional.
+//! The two VRAM policies of ADR-0006. TWO OBJECTS WITH ONE INTERFACE, one active at a time --
+//! NOT two arms of a conditional. The configuration profile gives the DEFAULT one, and the
+//! journal the CURRENT one: `crate::arbiter::policy_now` re-reads the last transition, and today
+//! the default is named by the daemon's composition root -- the recall of 2026-09-08 at the head
+//! of ADR-0006. ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30, AUD-056.
 //!
 //! ⛔ THE REASON IS IN ADR-0006 AND IT IS ABOUT DRIFT: an `if` on the origin of the
 //! inference, planted in the middle of the admission, spreads invisibly as the admission

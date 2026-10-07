@@ -3,8 +3,9 @@
 //! ⛔ WHY A PORT AND NOT THE JOURNAL, IN ONE PARAGRAPH, because whoever reads this file is
 //! exactly who would ask. The journal keeps "the small part" for ever (ADR-0018): permissions,
 //! policy, approved guides -- SMALL DECISIONS. A panel layout is written dozens of times a day
-//! and would sit there for ever, encrypted and in the backup, and the retention milestone would
-//! owe it an exception written just for it. ADR-0022 had already decided that "configuration"
+//! and would sit there for ever, encrypted and in the backup, and sub-project 15's retention would
+//! owe it an exception written just for it (⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30,
+//! AUD-563). ADR-0022 had already decided that "configuration"
 //! is an archive of its own; THIS PORT IS THAT ARCHIVE, in its smallest form. The full argument
 //! is decision 15 of the GUI north star.
 //!

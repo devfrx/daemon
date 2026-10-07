@@ -384,10 +384,10 @@ senza che nulla lo dicesse.
 
 | | Perché non è decisa qui |
 |---|---|
-| **il numero di semi** della campagna breve e di quella profonda | va scelto **misurando** lo scenario vero, e lo scenario vero lo scrive il piano. Fissarlo adesso sarebbe un'ipotesi travestita da vincolo |
+| **il numero di semi** della campagna breve e di quella profonda | va scelto **misurando** lo scenario vero, e lo scenario vero lo scrive il piano. Fissarlo adesso sarebbe un'ipotesi travestita da vincolo. ⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30: **scelto** il 2026-08-11, misurando — la misura T4-4-f di [`riferimenti.md`](../../riferimenti.md) —, e la cifra vive nel banco, accanto a `SHORT_CAMPAIGN_SEEDS` in `crates/simulator/tests/dst_campaign.rs` |
 | **una guardia in `check-docs.sh`** che pretenda che ogni voce dell'elenco dei semi nomini un test esistente | è una **riga di catalogo nuova**, e quella è una decisione del proprietario. Un elenco di semi senza proprietà è l'artefatto che marcisce meglio di tutti — la proposta è scritta perché chi la riprende non debba riscoprirla |
 | **il checkpoint** | `replay()` carica tutto in memoria e le guardie di `FileJournal` sono scansioni: il rimedio noto è lo stesso per entrambi. ⛔ Resta chiuso dal **primo consumatore che misuri un giornale grande**, non da qui |
-| **le quattro finte mancanti** | nascono col meccanismo che le usa — §7. Il piano del Traguardo 4 **non le nomina** |
+| **le quattro finte mancanti** | nascono col meccanismo che le usa — §7. Il piano del Traguardo 4 **non le nomina**. ⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30: il numerale non regge più — dopo, sono nate quelle di `ipc` e di `custody` — e non si ricorregge (gotcha **#31**): quali manchino lo dice `grep -n '^pub mod' crates/simulator/src/lib.rs` contro la tabella della §3.1 della spec, e la regola resta la stessa |
 
 ---
 

@@ -277,10 +277,14 @@ pub trait Journal {
     /// 2026-08-10, not argued: a pruned step and one nobody ever wrote both answer
     /// `Err(Missing)` to `read_back`, are both absent from `replay`, and answer alike to a
     /// second `prune`. The distinction wants the FINGERPRINT and SIZE ADR-0018 asks a pruned
-    /// record to carry; a fingerprint wants a hash function, and in the kernel that is a NEW
+    /// record to carry, and a fingerprint wants a hash function. The kernel has one already,
+    /// written by hand — `crate::wire::ipc::build_stamp`, FNV-1a — and its own doc calls it an
+    /// identity and the WRONG FUNCTION for a defence; a collision-resistant one would be a NEW
     /// ENTRY IN THE LIST OF ADR-0031 — a deliberate act no measurement has prepared. Closed by
-    /// the milestone that brings retention, TOGETHER with the decision on the fingerprint
-    /// (decision D7 of the milestone-3 plan).
+    /// sub-project 15 (docs/roadmap.md, «Dati a riposo: cifratura e ritenzione»), whose
+    /// retention sweep is the first caller of this operation; the fingerprint function is
+    /// chosen by sub-project 13, which uses it first. Retention was left out by decision D7 of
+    /// the milestone-3 plan. ⚠️ RECALL OF 2026-10-07 — audit of 2026-09-30, AUD-563, AUD-093.
     /// ⚠️ THIS IS THE RESERVE `JournalError::StepInDoubt` SENDS ITS READER HERE FOR: until what
     /// a pruned step looks like afterwards is settled, there is no "already pruned" to name.
     ///

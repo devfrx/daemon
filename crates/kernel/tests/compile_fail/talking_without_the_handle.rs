@@ -1,4 +1,4 @@
-// §6.10.5 row 1: you talk to a worker ONLY with the object `start` returned. What you have
+// §6.10.5 row 1: you talk to a worker ONLY with a `Worker` -- `start` returns one (audit of 2026-09-30, AUD-028). What you have
 // BEFORE starting -- the grant and the descriptor -- is not it.
 //
 // ⛔ Names `kernel::` and declares no attributes of its own -- gotcha #39.

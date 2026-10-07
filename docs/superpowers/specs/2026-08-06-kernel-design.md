@@ -210,7 +210,7 @@ esse; una violazione richiede un ADR, non una deroga.
 | Inferenza generativa vs percettiva | solo la **generativa** passa dal gateway ed è un passo. Wake word, VAD e trascrizione continua sono **eventi** (anello 3), mai passi: giornalarle violerebbe Q1 |
 | Ritentativo vs passo nuovo | discriminante = **il modello ha prodotto output?** No → stesso passo. Sì, ma respinto da un sensore → passo nuovo, perché quell'output esiste, è stato pagato e deve restare visibile all'anello 4 |
 | Policy VRAM vs destinazione | V3 riguarda **cosa risiede in memoria**, non dove va la singola richiesta. In policy LOCALE una richiesta può finire su un provider remoto senza che la policy cambi |
-| Quota audio sottratta vs I2 | la sottrazione **non è un'esenzione**: il worker audio detiene una concessione *permanente e non prelazionabile*, non l'assenza di concessione |
+| Quota audio sottratta vs I2 | la sottrazione **non è un'esenzione**: il worker audio detiene una concessione *permanente e non prelazionabile*, non l'assenza di concessione. ⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-404: oggi la concessione è chiesta dalla radice di composizione all'avvio, che ne lascia cadere il gettone, e un worker audio non esiste — la §5.5.1 della [spec del sotto-progetto 1](2026-08-06-sottoprogetto-1-kernel.md), [design/02](../../design/02-arbitrato-gpu.md) e i rimandi in testa ad [ADR-0005](../../adr/0005-arbitrato-gpu-su-due-dimensioni.md) e ad [ADR-0033](../../adr/0033-gpu-della-gui-quota-di-presentazione.md); come la riceva il worker è la scelta aperta su AUD-200 |
 
 ### 3.3 Perché "tutto è una run" non è sovra-ingegnerizzazione
 
@@ -467,6 +467,10 @@ Fonti in [riferimenti.md](../../riferimenti.md).
 
 Sette delle otto classi di errore hanno già un meccanismo deciso in una sezione
 precedente. Nessuna richiede un percorso nuovo.
+
+⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-239: alla tabella qui sotto manca una classe, l'errore del
+provider che esclude il candidato e non la richiesta — moderazione o rifiuto —, col fallback al candidato successivo,
+§3 · ADR-0012; la sua riga sta nella tassonomia di [design/07](../../design/07-osservabilita-e-degrado.md), la casa viva.
 
 | Classe | Meccanismo | Deciso in |
 |---|---|---|

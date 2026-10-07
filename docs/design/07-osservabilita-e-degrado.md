@@ -34,6 +34,7 @@ richiede un percorso nuovo: è la verifica più forte che il design regga.
 |---|---|---|---|
 | **transitorio** | 5xx, limite di frequenza, timeout senza output | ritentativo nello stesso passo (col 3) | §3 · V17 |
 | **di risorsa** | VRAM insufficiente, GPU occupata | coda, oppure fallback al candidato successivo (col 3) | §2 · §3 |
+| **del candidato** | moderazione o rifiuto del provider — *«definitiva per il candidato»* in [design/05](05-gateway-inferenza.md) | fallback al candidato successivo, nello stesso passo (col 3) | §3 · ADR-0012 |
 | **di vincolo** | nessun endpoint conforme ai vincoli sui dati | **fallisce chiuso** | §3 · ADR-0012 |
 | **di autorizzazione** | permesso mancante, strumento sospeso (col 4) | sospende (col 3) e chiede | §6 |
 | **di verifica** | verdetto negativo di un sensore | rientra nell'anello, passo nuovo | §5 · V14 |
@@ -43,6 +44,10 @@ richiede un percorso nuovo: è la verifica più forte che il design regga.
 
 Solo l'ultima riga non ha un meccanismo di recupero, ed è corretto: un'invariante
 violata è un difetto del sistema, non una condizione da gestire.
+
+⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-239: la riga «del candidato» è l'errore che esclude il
+candidato e non la richiesta, e senza di lei *«Nessun errore richiede un percorso nuovo»* non reggeva; il contesto
+eccessivo non sta qui: lo porta prima dell'invio il compito 4 del piano della revisione della knowledge base, ER-25.
 
 ## Stato di degrado
 
@@ -58,7 +63,7 @@ flowchart LR
     S["STATO DI DEGRADO<br/>derivato, ricalcolabile<br/>mai autorevole di per se<br/>oggi: degradation_now, dal giornale"]
     S --> U["interfaccia:<br/>cosa e disponibile ORA<br/>la striscia e il modulo Stato"]
     S --> C["capacita (col 3 e seguenti):<br/>si adattano invece di fallire"]
-    S --> M["metrica (col il primo che la usa):<br/>quanto tempo in stato parziale"]
+    S --> M["metrica (col primo che la usa):<br/>quanto tempo in stato parziale"]
 
     classDef der fill:#0f766e,stroke:#134e4a,color:#fff
     class S der
@@ -94,7 +99,7 @@ flowchart LR
     J --> G["cio che la GUI mostra<br/>oggi i Passi · col 3 Attivita<br/>mai uno stato suo (I1)"]
     J --> T["trace (col 3)<br/>vocabolario OTel GenAI"]
     J --> C["contabilita (col 3)<br/>token, costi, tetti"]
-    J --> M["metriche (col il primo che le usa)<br/>latenza, esiti, qualita"]
+    J --> M["metriche (col primo che le usa)<br/>latenza, esiti, qualita"]
     J --> D["dataset di regressione dai fallimenti<br/>la promozione col 15<br/>l anello 4 che li legge col 4"]
 
     T -.->|"esportazione OPT-IN<br/>disattivata per default<br/>chi la costruisce: scelta aperta"| X["backend OTLP esterno"]
@@ -126,7 +131,7 @@ arriva col 4.
 |---|---|---|
 | **struttura** | identità, transizioni, esiti, routing, costi (col 3), verdetti, decisioni | lunga; è la parte piccola |
 | **payload** | prompt e risposte (col 3), output degli strumenti (col 4), trascrizioni (col 8) | finestra breve → potati, sostituiti da impronta e dimensione (col 15) |
-| **artefatti** | file prodotti (col il primo che produce un file) | **riferimenti**: il contenuto vive sul filesystem |
+| **artefatti** | file prodotti (col primo che produce un file) | **riferimenti**: il contenuto vive sul filesystem |
 
 | Regola | Motivo |
 |---|---|
@@ -142,7 +147,7 @@ sopravvive, il grezzo si sacrifica.
 | Elemento | Perché | Vincolo | Dove | Chi |
 |---|---|---|---|---|
 | stato di degrado corrente | si dichiara prima, non si fallisce dopo | V27 · G9 | la striscia, e il modulo Stato per intero | 2 |
-| permessi attivi nella sessione | un permesso concesso e dimenticato è indistinguibile da uno mai concesso | V21 · §6 · G10 | la striscia, se c'è una richiesta in attesa (`gui/src/panels/Strip.vue`); il modulo Permessi, con le triple concesse da questa finestra (`invoke.approved` in `gui/src/stores/invoke.ts`), vuote dopo un riavvio, e a parole che un permesso concesso prima resta concesso anche dopo un riavvio e lì non compare (`permissions.duration`) | 2 la richiesta in attesa e i sì di questa finestra; la lista del core: scelta aperta (AUD-140); il confine di sessione col 3 |
+| permessi attivi nella sessione | un permesso concesso e dimenticato è indistinguibile da uno mai concesso | V21 · §6 · G10 | la striscia, che porta sempre la voce dei permessi e dice se c'è una richiesta in attesa (`gui/src/panels/Strip.vue`; ⚠️ **richiamo del 2026-10-07** — audit del 2026-09-30); il modulo Permessi, con le triple concesse da questa finestra (`invoke.approved` in `gui/src/stores/invoke.ts`), vuote dopo un riavvio, e a parole che un permesso concesso prima resta concesso anche dopo un riavvio e lì non compare (`permissions.duration`) | 2 la richiesta in attesa e i sì di questa finestra; la lista del core: scelta aperta (AUD-140); il confine di sessione col 3 |
 | occupazione del contesto **per categoria** | senza misura è un'impressione | §5 · ADR-0010 · G11 | la striscia; per run, nella barra della chat | 3, col dato dal 13 |
 | costo corrente e distanza dal tetto | i tetti sospendono: l'utente deve vederli arrivare | §3 · V8 · G12 | la striscia, e il modulo Costi | 3 |
 | provenienza del contenuto | senza, si approva alla cieca | V23 · §6 · G13 | nel flusso, su ogni pezzo — non nella striscia | 2 |

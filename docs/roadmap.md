@@ -221,11 +221,9 @@ scelta aperta AUD-592. ⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-
 
 ## Regola di manutenzione
 
-Alla chiusura di ogni sotto-progetto si aggiornano, **nello stesso passaggio**:
-
-1. la tabella dei sotto-progetti qui sopra;
-2. le righe corrispondenti in [tracciabilita.md](tracciabilita.md);
-3. lo stato degli spike che quel sotto-progetto ha chiuso.
+Che cosa si aggiorna alla chiusura di un sotto-progetto — questo file compreso — lo dice la tabella
+*«Manutenzione della documentazione»* di [`../CLAUDE.md`](../CLAUDE.md), in una casa sola. ⚠️ **RICHIAMO DEL
+2026-10-07** — audit del 2026-09-30, AUD-108.
 
 ⛔ **RICHIAMO DEL 2026-08-25 — la quarta voce è TOLTA:** diceva *«`CLAUDE.md` alla radice, se
 cambia il «prossimo passo»»*, e `CLAUDE.md` **non porta più** il prossimo passo — lo dice esso

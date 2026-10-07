@@ -266,11 +266,14 @@ impl Journal for MemoryJournal {
         // pruned step and a step nobody ever wrote both answer `Err(Missing)` to `read_back`,
         // and both are absent from `replay`. The full distinction needs the FINGERPRINT and the
         // SIZE that ADR-0018 asks a pruned record to carry, and a fingerprint needs a hash
-        // function, which in the kernel is a NEW ENTRY IN THE LIST OF ADR-0031 — a deliberate
-        // act no measurement has prepared. It belongs to the milestone that brings retention
-        // (decision D7 of the milestone-3 plan), and it is carried as an OPEN ENTRY in
+        // function. The kernel's one, `kernel::wire::ipc::build_stamp`, is an identity and not a
+        // defence, so a collision-resistant one would be a NEW ENTRY IN THE LIST OF ADR-0031 — a
+        // deliberate act no measurement has prepared — and sub-project 13 chooses it. It belongs
+        // to sub-project 15 (docs/roadmap.md), left out of milestone 3 by decision D7 of its
+        // plan, and it is carried as an OPEN ENTRY in
         // `docs/porta-di-qualita.md` rather than as this comment alone, because a note is read
-        // and forgotten (gotcha #36).
+        // and forgotten (gotcha #36). ⚠️ RECALL OF 2026-10-07 — audit of 2026-09-30, AUD-563,
+        // AUD-093.
         self.entries.retain(|e| e.step != step);
         Ok(())
     }

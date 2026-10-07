@@ -9,6 +9,13 @@
 //! It is not a preference. A bespoke waker — the ticket saying "call me when I am ready" —
 //! is NOT BUILDABLE inside the kernel: `Waker::from_raw` is an unsafe function and
 //! `#![forbid(unsafe_code)]` refuses it. Measured in M-5: `E0133: call to unsafe function`.
+//! ⚠️ RECALL OF 2026-10-07 — audit of 2026-09-30, AUD-040: a bespoke waker IS buildable without
+//! `unsafe` — `impl alloc::task::Wake` plus `Waker::from(Arc<T>)` compiles in a `#![no_std]` +
+//! `#![forbid(unsafe_code)]` crate, for the host and for `x86_64-unknown-none` (measured
+//! 2026-10-03, rustc 1.95.0; the command is in docs/riferimenti.md, beside M-5); M-5 measured
+//! `Waker::from_raw` only. So "It is not a preference" does not hold: the rule is a design choice
+//! kept by discipline, nothing checks it, and K-1 is not reopened because nothing needs a waker
+//! today. The mirror of the recall in §2.4.1 of the spec.
 //!
 //! So the executor must know by itself who can advance, and it does because readiness has
 //! exactly two sources:
@@ -187,10 +194,12 @@ impl Sleep {
     /// activities ran would kill the whole run. That is a trap, not a property.
     ///
     /// 📌 §3.2.1 GOVERNS THE REACTOR, NOT THIS, and conflating the two is how the opposite
-    /// rule got written in the first place. What that section rules is that `advance()`
-    /// filters strictly future deadlines and returns false when there are none, because A
-    /// NULL ADVANCE MUST NEVER BE DECLARED SUCCESSFUL — a rule about the PORT refusing to
-    /// lie about the clock. It is honoured at the call site of `wait_until`, which is never
+    /// rule got written in the first place. What that section rules is that `wait_until`
+    /// answers `None` when the deadline is not strictly in the future and no event is
+    /// pending, because A NULL ADVANCE MUST NEVER BE DECLARED SUCCESSFUL — a rule about the
+    /// PORT refusing to lie about the clock (the section uses the source names since its recall
+    /// of 2026-10-03; ⚠️ RECALL OF 2026-10-07 — audit of 2026-09-30, AUD-375). It is honoured at
+    /// the call site of `wait_until`, which is never
     /// handed an instant that is not strictly ahead. It says nothing about what the executor
     /// owes an activity whose wait is already over.
     ///

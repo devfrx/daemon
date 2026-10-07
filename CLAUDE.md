@@ -55,7 +55,7 @@ Si invocano **prima** di qualsiasi risposta o esplorazione, quando si applicano 
 | `anthropic-skills:dev-communication` | governa la **conversazione** intorno al codice: cosa si decide da soli e cosa si porta al proprietario |
 | `anthropic-skills:session-resume` e `anthropic-skills:session-handoff` | per riprendere e per chiudere una sessione, con la regola di questo repository sulla consegna: la dice *«Manutenzione della documentazione»*, in fondo |
 | `superpowers:brainstorming` | prima di qualunque lavoro creativo, e **prima di entrare in plan mode** |
-| `superpowers:writing-plans` | per scrivere un piano. Le voci aperte **si sanno prima di scrivere**: a sbarrare è la colonna *«Chi la chiude»* di [`docs/porta-di-qualita.md`](docs/porta-di-qualita.md) — una voce il cui chiusore è **questo traguardo** o **il proprietario, prima** va chiusa o portata dal piano; le altre si conoscono e si dichiarano |
+| `superpowers:writing-plans` | per scrivere un piano. Le voci aperte **si sanno prima di scrivere**: a sbarrare è la colonna del chiusore di ciascun indice — quali siano gli indici lo dice la §6 del [compendio](docs/COMPENDIO.md), *«Dove vivono le voci aperte»* (audit del 2026-09-30) — e una voce il cui chiusore è **questo traguardo** o **il proprietario, prima** va chiusa o portata dal piano; le altre si conoscono e si dichiarano |
 | `superpowers:subagent-driven-development` | per **eseguire** un piano: un subagente fresco per compito, con revisione fra uno e l'altro — la modalità scelta dal proprietario. I subagenti con `model: "opus"` (`"sonnet"` per il lavoro meccanico), mai Fable; più di un subagente solo dopo aver detto il costo e avuto il sì |
 | `superpowers:test-driven-development` | per ogni riga di codice di prodotto |
 

@@ -3,9 +3,9 @@
 //
 // ⛔ IT NAMES A METHOD THAT DOES NOT EXIST, ON PURPOSE. Today that is `E0599`. The day
 // somebody adds it this case starts COMPILING and trybuild reports it as `error` rather than
-// through its oracle -- gotcha #42, the shape a bulk regeneration cannot disarm. The first
-// half, `admission_is_not_two_ways.rs`, fires as `E0004` and DOES rest on its oracle: the
-// two halves are complementary and neither is redundant.
+// through its oracle -- gotcha #42, the shape a bulk regeneration cannot disarm. The first half, `admission_is_not_two_ways.rs`,
+// fires by HOW the rule breaks: `error` without `Queued`, `mismatch` (`E0599`) without `Refused` or `Granted` -- and under all
+// three `tests/arbiter_admission.rs` stops compiling (docs/porta-di-qualita.md). Audit of 2026-09-30, AUD-705.
 //
 // ⛔ Names `kernel::` and declares no attributes of its own -- gotcha #39.
 fn main() {

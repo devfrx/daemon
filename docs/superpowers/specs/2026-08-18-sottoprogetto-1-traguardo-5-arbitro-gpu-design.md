@@ -235,6 +235,10 @@ l'effetto**, non detta l'implementazione.
 rispettato — l'arbitro non va a prendere nulla — la lettera no. Metterli tutti e tre in
 `Parameters` produrrebbe due campi che **nessuna decisione del kernel legge**, cioè superficie
 morta dentro il kernel: la stessa ragione per cui `Record::encode` ha perso il proprio `Result`.
+✅ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-630: dal richiamo del 2026-08-27 (AUD-071 del rapporto del
+2026-08-27) la §5.1 della [spec](2026-08-06-sottoprogetto-1-kernel.md) dice *«UNO dei tre addendi è un parametro
+consegnato: il totale»* e giudica la scelta del codice giusta nel merito; la riga 8 delle voci del Traguardo 5 di
+[`porta-di-qualita.md`](../../porta-di-qualita.md) è chiusa.
 
 ---
 
@@ -536,5 +540,5 @@ Eseguite il **2026-08-18** · Windows 11 · toolchain `1.95.0` appuntata da `rus
 |---|---|
 | ⚠️ **`Grant` ha un solo costruttore, e nulla lo controlla da dentro la crate.** `trybuild` compila i casi come crate separate: prova la direzione **da fuori**, non che domani nessuno aggiunga un `pub(crate)` accanto | il **proprietario** — sarebbe una riga di catalogo nuova, vincolo globale 7. **Registrata, non presa** |
 | ⚠️ **La contro-sonda di `Q8` dice *«la proiezione di presentazione lo legge»***, e la proiezione non esiste: a leggerlo sarà una **finta**. Prova la proprietà giusta — il campo è raggiungibile fuori dall'ammissione — con parole diverse da quelle della riga | il **proprietario**, se vuole riformulare la cella |
-| ⛔ **La cifra «cinque delle nove righe di guasto»** vive sbagliata in [`COMPENDIO.md`](../../COMPENDIO.md) e [`roadmap.md`](../../roadmap.md); il vero è **una**, più una condivisa. Nasce da una tabella diversa: la §5.7 ne ha esattamente **cinque**, ma sono le proprietà che la DST verifica, non le righe di guasto | il **proprietario**: `CLAUDE.md` prescrive di **toglierla**, non di ricorreggerla — una cifra che vive in più documenti si toglie |
-| ⚠️ **La divergenza su §5.1** — un parametro consegnato invece di tre | il **proprietario**, ribaltabile vedendola |
+| ⛔ **La cifra «cinque delle nove righe di guasto»** vive sbagliata in [`COMPENDIO.md`](../../COMPENDIO.md) e [`roadmap.md`](../../roadmap.md); il vero è **una**, più una condivisa. Nasce da una tabella diversa: la §5.7 ne ha esattamente **cinque**, ma sono le proprietà che la DST verifica, non le righe di guasto | il **proprietario**: `CLAUDE.md` prescrive di **toglierla**, non di ricorreggerla — una cifra che vive in più documenti si toglie. ✅ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30: **chiusa**, la cifra non vive più in nessuno dei due — `grep -c 'cinque delle nove' docs/COMPENDIO.md docs/roadmap.md` rende 0 e 0 |
+| ⚠️ **La divergenza su §5.1** — un parametro consegnato invece di tre | il **proprietario**, ribaltabile vedendola. ✅ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-630: **chiusa** — la §5.1 della spec dice dal 2026-08-27 che dei tre addendi uno solo è consegnato, il totale, e la riga 8 delle voci del Traguardo 5 della porta è chiusa |

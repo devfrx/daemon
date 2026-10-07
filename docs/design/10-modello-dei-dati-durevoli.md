@@ -195,8 +195,8 @@ erDiagram
   perché un suo record non si decodifica (`steps_in_doubt`, `SuspendAndAsk`) lo pota lo stesso, e
   saltarlo è un obbligo del chiamante, la spazzata del 15 — voce aperta 3 dello stesso file, e il doc
   di `Journal::prune`.
-  ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-021 e AUD-646: la regola due di ADR-0018
-  la porta la tiene con la propria nozione di dubbio, e il chiusore è il 15.
+  ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-021 e AUD-646: la porta tiene la regola due di
+  ADR-0018 con la propria nozione di dubbio, e il chiusore è il 15.
 - **La chiave della voce è progressiva e non si riusa**: un buco lasciato da `prune` resta un buco.
 - **I byte congelati sono uno per `RecordKind`**, con una mappa sola — `crates/kernel/tests/frozen/`;
   quanti, lo dice `ls crates/kernel/tests/frozen/*.cbor | wc -l`. Non si rigenerano: se cambiano, si

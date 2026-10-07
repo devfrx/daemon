@@ -40,8 +40,10 @@
 //! and reopening it belongs to the owner.
 //!
 //! ✅ AND THE OWNER RULED THE SAME DAY: `bincode` 2.0.1 STAYS, §6.1.1 IS NOT REOPENED -- with
-//! measure M-12 in hand rather than around it. The reasons live in ONE house, the `bincode`
-//! note in this crate's Cargo.toml; the entry is closed in docs/porta-di-qualita.md.
+//! measure M-12 in hand rather than around it. The reasons are written in the entry C-1,
+//! closed, of docs/porta-di-qualita.md, which names every other place that carries them -- the
+//! `bincode` note in this crate's Cargo.toml among them. ⚠️ RECALL OF 2026-10-07 -- audit of
+//! 2026-09-30.
 //! ⚠️ THIS FILE WAS THE HOUSE THAT RULING MISSED: the deciding commit touched five others and
 //! not this one, so the paragraph above said "the choice is not [made]" for a day after it was.
 //!

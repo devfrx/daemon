@@ -1,5 +1,6 @@
 //! The schema of the `ipc` channel. ⛔ OUTSIDE THE CRATE, like `framing` and `worker_wire`.
 
+use bincode::error::{AllowedEnumVariants, DecodeError};
 use kernel::arbiter::{ComputeClass, Mib, Preemption};
 use kernel::framing::{self, LENGTH_WIDTH, WireError};
 use kernel::time::Millis;
@@ -27,8 +28,8 @@ fn a_grant_request_survives_the_round_trip() {
 fn a_verdict_survives_the_round_trip() {
     // ⛔ THIS IS THE PROBE THAT EXERCISES THE DISCRIMINANT, and it is why §6.7 asks for TWO
     // messages rather than one: with a single message type the tag never varies, and a bug in
-    // how it is written or read would be invisible. Same shape as the journal freezing THREE
-    // records instead of one.
+    // how it is written or read would be invisible. Same shape as the journal freezing one
+    // record per variant instead of one. Audit of 2026-09-30, AUD-097.
     let message = IpcMessage::Verdict(Verdict::Refused {
         asked: Mib::new(4096),
         ceiling: Mib::new(1024),
@@ -118,65 +119,46 @@ fn a_truncated_body_in_an_honest_envelope_does_not_decode() {
     assert_eq!(IpcMessage::decode(&bytes), Err(WireError::Malformed));
 }
 
-/// How many variants `IpcMessage` has, in ONE place -- M-3 of the review of 2026-09-17.
+/// The name of the enum `T` and how many variants it has -- READ FROM THE TYPE, never written
+/// beside it. ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30, AUD-2228.
 ///
-/// ⚠️ THE `match` BELOW DOES NOT COVER THIS NUMBER, which is why it earns a name. Adding a
-/// variant makes the `match` a compile error, as its comment says; but once the new arm is
-/// written, indexing a `[bool; 14]` at 14 PANICS WITH `index out of bounds` instead of the
-/// message this probe knows how to give -- a red, but an illegible one, in the one place the
-/// file promised a legible one. The numeral used to sit in two lines that could drift apart.
-const VARIANTS: usize = 14;
-
-#[test]
-fn every_variant_is_in_the_canonical_set() {
-    // ⛔ THE GUARD THAT MAKES THE OTHER PROBES WORTH SOMETHING. A variant added to
-    // `IpcMessage` and forgotten in `stamp_set` would leave the fixtures short, the stamp
-    // unchanged, and every probe in this file GREEN -- the schema would have grown and
-    // nothing would say so. The `match` is exhaustive on purpose: adding a variant makes THIS
-    // a compile error, which is level 1 rather than a test at level 2.
-    //
-    // ⚠️ ONCE EACH, AND AT THE HEAD: the set OPENS with one message per variant, and the
-    // messages for the nested variants come after it -- the guard below this one. That head is
-    // what keeps every fixture already written at its index when a nested variant is appended.
-    let mut seen = [false; VARIANTS];
-    for message in stamp_set().into_iter().take(VARIANTS) {
-        let slot = match message {
-            IpcMessage::Hello(_) => 0,
-            IpcMessage::Accepted(_) => 1,
-            IpcMessage::StaleBuild(_) => 2,
-            IpcMessage::Degradation(_) => 3,
-            IpcMessage::Policy(_) => 4,
-            IpcMessage::Invoke(_) => 5,
-            IpcMessage::PermissionRequired(_) => 6,
-            IpcMessage::Approve { .. } => 7,
-            IpcMessage::Token { .. } => 8,
-            IpcMessage::Layout(_) => 9,
-            IpcMessage::SaveLayout(_) => 10,
-            IpcMessage::Steps(_) => 11,
-            IpcMessage::Request(_) => 12,
-            IpcMessage::Verdict(_) => 13,
-        };
-        assert!(!seen[slot], "slot {slot} appears twice in the canonical set");
-        seen[slot] = true;
+/// ⛔ A COUNT WRITTEN BY HAND IS A SECOND COPY OF A FACT THE TYPE CARRIES, and the two guards
+/// below cannot rest on one: the exhaustive `match` asks whoever adds a variant for an ARM, never
+/// for a raised number, so a variant added with its arm and forgotten in `stamp_set` would leave
+/// both guards counting the old variants, GREEN. Read from the type, it is a slot no message
+/// carries, and a red that names it.
+///
+/// ⚠️ WHAT IT RESTS ON, declared: bincode writes an enum as the INDEX of its variant, and the
+/// derive answers an index past the last with `DecodeError::UnexpectedVariant`, whose `allowed` is
+/// `AllowedEnumVariants::Range { min: 0, max }` with `max` the last index -- read in
+/// `bincode_derive` 2.0.1, `src/derive_enum.rs`. One byte below 251 is a whole index in the
+/// varint of `config::standard()`. ⛔ ANY OTHER ANSWER STOPS BOTH GUARDS HERE, IN WORDS: a bincode
+/// that answered differently is a red that says so, never a count of nothing.
+fn variants_of<T: bincode::Decode<()>>() -> (&'static str, usize) {
+    const PAST_THE_LAST: [u8; 1] = [250];
+    match bincode::decode_from_slice::<T, _>(&PAST_THE_LAST, bincode::config::standard()) {
+        Err(DecodeError::UnexpectedVariant {
+            type_name,
+            allowed: AllowedEnumVariants::Range { min: 0, max },
+            ..
+        }) => (type_name, *max as usize + 1),
+        Err(error) => panic!("index 250 did not answer with the range of the variants: {error:?}"),
+        Ok(_) => panic!("index 250 decoded: not an enum, or one with more than 250 variants"),
     }
-    let missing: Vec<usize> = (0..VARIANTS).filter(|i| !seen[*i]).collect();
-    assert!(missing.is_empty(), "variants missing from the head of stamp_set: {missing:?}");
 }
 
-/// One enum NESTED inside `IpcMessage`: how many variants it has, and which of them the canonical
-/// set carries -- the guard below.
-///
-/// ⚠️ THE COUNT IS WRITTEN ONCE, BESIDE THE NAME, for the reason `VARIANTS` gives: once a variant
-/// is added and its arm written, a slot past the count says so in words instead of panicking with
-/// `index out of bounds`.
-struct Nested {
+/// Which variants of ONE enum the canonical set carries -- the two guards below. A slot is the
+/// number a guard's arm gives its variant, in declaration order; past the count it says so in
+/// words instead of panicking with `index out of bounds`.
+struct Carried {
     name: &'static str,
     seen: Vec<bool>,
 }
 
-impl Nested {
-    fn new(name: &'static str, variants: usize) -> Self {
-        Nested {
+impl Carried {
+    fn of<T: bincode::Decode<()>>() -> Self {
+        let (name, variants) = variants_of::<T>();
+        Carried {
             name,
             seen: vec![false; variants],
         }
@@ -185,7 +167,8 @@ impl Nested {
     fn saw(&mut self, slot: usize) {
         assert!(
             slot < self.seen.len(),
-            "{}: slot {slot} is past the {} variants written beside its name -- raise the count",
+            "{}: slot {slot} is past its {} variants -- the arms number them from 0, in \
+             declaration order",
             self.name,
             self.seen.len()
         );
@@ -200,6 +183,48 @@ impl Nested {
 }
 
 #[test]
+fn every_variant_is_in_the_canonical_set() {
+    // ⛔ THE GUARD THAT MAKES THE OTHER PROBES WORTH SOMETHING. A variant added to
+    // `IpcMessage` and forgotten in `stamp_set` would leave the fixtures short, the stamp
+    // unchanged, and every probe in this file GREEN -- the schema would have grown and
+    // nothing would say so. The `match` is exhaustive on purpose: adding a variant makes THIS
+    // a compile error, which is level 1, and the count read from the type (`variants_of`) makes
+    // it a red until a message carrying it joins the set.
+    //
+    // ⚠️ THE WHOLE SET AND NOT ITS HEAD. The set opens with one message per variant, but a
+    // message added later goes at the END -- for a new variant as for a nested one, the doc of
+    // `stamp_set` -- so that every fixture already written keeps its index; a guard that read
+    // only the head would take the first nested message for a second `Policy`. ⚠️ RECALL OF
+    // 2026-10-07 -- audit of 2026-09-30, AUD-2228.
+    let mut variants = Carried::of::<IpcMessage>();
+    for message in stamp_set() {
+        variants.saw(match message {
+            IpcMessage::Hello(_) => 0,
+            IpcMessage::Accepted(_) => 1,
+            IpcMessage::StaleBuild(_) => 2,
+            IpcMessage::Degradation(_) => 3,
+            IpcMessage::Policy(_) => 4,
+            IpcMessage::Invoke(_) => 5,
+            IpcMessage::PermissionRequired(_) => 6,
+            IpcMessage::Approve { .. } => 7,
+            IpcMessage::Token { .. } => 8,
+            IpcMessage::Layout(_) => 9,
+            IpcMessage::SaveLayout(_) => 10,
+            IpcMessage::Steps(_) => 11,
+            IpcMessage::Request(_) => 12,
+            IpcMessage::Verdict(_) => 13,
+        });
+    }
+    let missing = variants.missing();
+    assert!(
+        missing.is_none(),
+        "variants missing from stamp_set -- append a message that carries each, then regenerate \
+         the fixtures:\n{}",
+        missing.unwrap_or_default()
+    );
+}
+
+#[test]
 fn every_variant_of_every_nested_enum_is_in_the_canonical_set() {
     // ⛔ THE SAME GUARD ONE LEVEL DOWN, AND WITHOUT IT THE STAMP IS BLIND TO A NESTED VARIANT.
     // bincode writes an enum as the INDEX of its variant and nothing else, so a variant no message
@@ -210,21 +235,22 @@ fn every_variant_of_every_nested_enum_is_in_the_canonical_set() {
     // (`every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record`).
     //
     // ⛔ EVERY `match` BELOW IS EXHAUSTIVE: a variant added to a nested enum is a compile error
-    // HERE, level 1, and then a red until a message carrying it joins `stamp_set`. ⛔ AND THE
-    // PAYLOADS ARE TAKEN APART FIELD BY FIELD, WITH NO `..`, which is what reaches the enum nobody
-    // has written yet: a field added to any of them stops this compiling, and whoever adds it
-    // decides here whether it is an enum the stamp must see. `BuildStamp` is the one payload left
-    // shut -- its field is private by design, and it is a `u64`.
+    // HERE, level 1, and then -- the count read from the type, `variants_of` -- a red until a
+    // message carrying it joins `stamp_set`. ⛔ AND THE PAYLOADS ARE TAKEN APART FIELD BY FIELD,
+    // WITH NO `..`, which is what reaches the enum nobody has written yet: a field added to any of
+    // them stops this compiling, and whoever adds it decides here whether it is an enum the stamp
+    // must see. `BuildStamp` is the one payload left shut -- its field is private by design, and
+    // it is a `u64`.
     //
     // ⚠️ ONE REPORT AND NOT ONE ASSERT PER ENUM, gotcha #14: one red names every missing slot.
-    let mut verdict = Nested::new("Verdict", 3);
-    let mut protection = Nested::new("Protection", 1);
-    let mut policy = Nested::new("PolicyName", 2);
-    let mut access = Nested::new("Access", 2);
-    let mut provenance = Nested::new("Provenance", 2);
-    let mut layout = Nested::new("LayoutState", 3);
-    let mut class = Nested::new("ComputeClass", 3);
-    let mut preemption = Nested::new("Preemption", 2);
+    let mut verdict = Carried::of::<Verdict>();
+    let mut protection = Carried::of::<Protection>();
+    let mut policy = Carried::of::<PolicyName>();
+    let mut access = Carried::of::<Access>();
+    let mut provenance = Carried::of::<Provenance>();
+    let mut layout = Carried::of::<LayoutState>();
+    let mut class = Carried::of::<ComputeClass>();
+    let mut preemption = Carried::of::<Preemption>();
 
     let access_slot = |operation: Access| match operation {
         Access::Read => 0,

@@ -151,12 +151,13 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              il sito indicato
   /superpowers:test-driven-development       quando comincerà il CODICE, che
                                              viene dopo il piano e non prima
-  /anthropic-skills:repo-audit               se e quando si aprirà un audit
-                                             NUOVO. NON serve ora: i due
-                                             audit completi hanno eseguito le
-                                             loro decisioni, e le voci che ne
-                                             restano aperte stanno negli
-                                             indici della §6 del compendio.
+  /anthropic-skills:repo-audit               se e quando si apre un audit:
+                                             quale sia in corso, e dove stanno
+                                             le voci che i chiusi lasciano
+                                             aperte, lo dice la §6 del
+                                             compendio, e qui non si ricopia.
+                                             ⚠️ RICHIAMO DEL 2026-10-07 —
+                                             audit del 2026-09-30.
                                              ⚠️ Questa cella diceva «quel che
                                              resta è eseguirne i rimedi»
 
@@ -283,8 +284,9 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
      «L'INIEZIONE È AVVENUTA» e «C'ERA QUALCOSA DA VERIFICARE» SONO DUE
      AFFERMAZIONI, e una prova che tiene solo la prima è VERDE avendo
      confrontato insiemi vuoti.
-   Il racconto per esteso — C7a, C7b, il ciclo di livello 2 — sta nella §6 del
-   compendio. Quel che serve qui è la domanda: IN QUALE ALTRO STATO DEL MONDO
+   Il racconto per esteso — C7a, C7b, il ciclo di livello 2 — sta in
+   docs/archivio/stato-storico.md (⚠️ RICHIAMO DEL 2026-10-07 — audit del
+   2026-09-30). Quel che serve qui è la domanda: IN QUALE ALTRO STATO DEL MONDO
    QUESTA ASSERZIONE RESTEREBBE VERDE?
 
 ⚠️ LE QUESTIONI APERTE STANNO NEGLI INDICI CHE LA §6 DEL COMPENDIO ELENCA,

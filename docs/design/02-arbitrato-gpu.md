@@ -63,7 +63,7 @@ propria `vram_riservata` misurata. La scelta del profilo è la scelta del punto 
 lavoro. Vedi SP-1 in §9 della spec.
 
 **La riserva è dichiarata dal richiedente, verificata dall'arbitro.** Il picco reale
-si misura durante l'esecuzione e si registra (col il primo worker sulla GPU): se supera la
+si misura durante l'esecuzione e si registra (col primo worker sulla GPU): se supera la
 riserva dichiarata, il profilo è sbagliato e va corretto. È così che la "stima di fit prima
 del caricamento" smette di essere un'illusione e diventa un dato che migliora nel tempo.
 ⚠️ **RICHIAMO DEL 2026-10-02** — audit del 2026-09-30, AUD-198: del picco oggi esiste la sola variante
@@ -94,7 +94,7 @@ stateDiagram-v2
     Attiva --> Scaduta : finestra di validita chiusa
 
     InRevoca --> Rilasciata : rilascio entro il tempo di grazia
-    InRevoca --> Forzata : grazia scaduta, processo ucciso (col il primo worker revocabile)
+    InRevoca --> Forzata : grazia scaduta, processo ucciso (col primo worker revocabile)
     InRevoca --> Scaduta : finestra di validita chiusa
 
     Rifiutata --> [*]

@@ -88,6 +88,13 @@ interpretabile una loro voce sono le proprie: `SHORT_CAMPAIGN_SEEDS` ed `EXPECTE
 prima, `SHORT_CAMPAIGN_SEEDS` e `KILL_HORIZON` nella seconda. ⛔ **L'elenco non guadagna righe:**
 nessuna delle due è fallita su un caso, e il verbale della chiusura lo dichiara.
 
+⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-559: la campagna del sotto-progetto 2,
+`crates/simulator/tests/serving_campaign.rs` (2026-09-19), sta anche lei nella **colonna di sinistra**: livello **1**,
+un caso si identifica con un **seme**. Le costanti che rendono interpretabile una sua voce sono le proprie, lette nel
+banco: `SHORT_CAMPAIGN_SEEDS` e `TURNS` per i due scenari, poi `OPERATIONS` ed `EXPECTED_DEATH_WORLDS` per la morte della
+GUI, `WRITES_PER_APPROVAL` ed `EXPECTED_CRASH_WORLDS` per la caduta del giornale. L'elenco non guadagna righe: non è
+fallita su un caso.
+
 ⚠️ **E il chiudente di questa pagina resta quello che il riquadro in fondo dichiara: non ce
 n'è uno.** Il Task 13 ha deciso **la riga**, non la **guardia**: pretendere che ogni voce nomini
 un test esistente sarebbe una riga di catalogo nuova in `scripts/check-docs.sh`, e quella è del

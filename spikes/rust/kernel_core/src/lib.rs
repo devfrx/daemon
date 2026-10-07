@@ -4,6 +4,10 @@
 //! parla con il sistema operativo: `std::fs`, `std::net`, `std::env`,
 //! `std::process`, `std::time::SystemTime`, `std::thread`. Non è un lint che si può
 //! disattivare per riga: è ciò che il compilatore ha caricato.
+//! ⚠️ RICHIAMO DEL 2026-10-07 — audit del 2026-09-30, AUD-587: con un `#[allow]` non si
+//! disattiva, ma una riga `extern crate std;` rimette `std` nella portata della crate e
+//! compila per l'host (misurato il 2026-10-03, e di nuovo il 2026-10-07, coi comandi in
+//! `docs/riferimenti.md`); nel prodotto la coglie `scripts/gate-no-os.sh`, livello 2.
 //!
 //! `alloc` restituisce `Vec`, `String`, `Box`, `BTreeMap` — cioè tutto il necessario
 //! a un kernel che fa logica pura e passa ogni effetto attraverso un tratto iniettato.

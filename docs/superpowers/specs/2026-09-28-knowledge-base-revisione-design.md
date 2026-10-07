@@ -193,7 +193,7 @@ che l'ha data — D10.
 | | |
 |---|---|
 | la **strada B** | la knowledge base resta una capacità L2 nel 6; il kernel non sa che cosa siano un router o un'area — ADR-0001 |
-| l'**ordine** | 2, poi 13, poi 3 — la decisione 16 del 2026-09-04; il 2 è chiuso, lo dice la sua riga in [`roadmap.md`](../../roadmap.md) |
+| l'**ordine** | 2, poi 13, poi 3 — la decisione 16 del 2026-09-04; il 2 è chiuso, lo dice la sua riga in [`roadmap.md`](../../roadmap.md). ⚠️ **Richiamo del 2026-10-07** — audit del 2026-09-30, R9: fra il 13 e il 3 sta il **15**, *«Dati a riposo: cifratura e ritenzione»*, e l'ordine è 2, 13, 15, 3 |
 | **AUD-004** | sbarra ancora il 13: l'ADR del proprietario sulle skill |
 | **nessuna sesta proprietà** della §3 del compendio | ⚠️ **dedotto**: ogni pezzo nuovo si aggiunge senza rifare ciò che c'è — un campo su un indice nuovo del giornale, ADR-0036; una variante nuova della porta, col richiamo datato alla spec. Il **vincolo d'ordine** resta, e il 13 cresce: la sezione 5 |
 
@@ -542,7 +542,7 @@ disegno, che resta la **casa unica** di chi costruisce che cosa. La lista non si
 | **10** 🆕 | **nessun cambio.** L'elenco gli dava la cartella dati e la cartella nascosta, K1 e K30; per la regola di D15 le porta chi le usa per primo, il 6 — ⚠️ **dedotto** | D15 |
 | **11** | il rimando ad ADR-0040 accanto ad ADR-0022; la dipendenza diventa **6, 9**: il 5 esce — ✅ la seconda domanda della 5.5 | D12; D15; ADR-0040 |
 | *«Backup dopo indici e pesi»* | la non-vacuità di 6 e 9 resta; cade *«serve inoltre il filesystem reale, che arriva con 5»*: la porta arriva a pezzi; l'interfaccia che dichiara le esclusioni al momento del backup è il punto 4 di ADR-0040 | D15; ADR-0040 |
-| *«Il primo valore utile»* 🆕 | *«1 + 2 + 3»* diventa *«1 + 2 + 13 + 3»*: il 13 sta prima del 3 dal 2026-09-04, e la riga non lo diceva già prima di questa revisione | la decisione 16 del 2026-09-04 |
+| *«Il primo valore utile»* 🆕 | *«1 + 2 + 3»* diventa *«1 + 2 + 13 + 3»*: il 13 sta prima del 3 dal 2026-09-04, e la riga non lo diceva già prima di questa revisione. ⚠️ **Richiamo del 2026-10-07** — audit del 2026-09-30, R9: anche il 15 sta prima del 3, e la riga della roadmap li porta già entrambi dal 2026-10-03 — *«Sotto-progetti 1 + 2 + 3, coi meccanismi che il 3 vuole prima — il 13 e il 15»* —, quindi il compito 5 la legge com'è (la voce d'errata del piano) | la decisione 16 del 2026-09-04 |
 
 ### 5.2 `tracciabilita.md`
 
@@ -606,7 +606,8 @@ e le tre righe della spec. **Dedotti:** la riga 10; la riga del primo valore; ch
 ### 5.6 Il perimetro del 13, riletto
 
 Lo dicono la **4.2** e la **1.8**, e qui non si ripete. Che cosa **non** porta: la lettura fuori da ogni zona e la domanda
-di fiducia — la 4.3. Che cosa non cambia: la strada B; l'ordine 2, 13, 3; **AUD-004 lo sbarra ancora**, e ha ora il caso
+di fiducia — la 4.3. Che cosa non cambia: la strada B; l'ordine 2, 13, 3, col 15 fra il 13 e il 3 (⚠️ **richiamo del
+2026-10-07** — audit del 2026-09-30, R9); **AUD-004 lo sbarra ancora**, e ha ora il caso
 di D9 scritto nel rimando di ADR-0015 — la 3.1.
 
 ### 5.7 La verifica chiesta dall'approvazione

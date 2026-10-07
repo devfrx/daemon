@@ -96,17 +96,22 @@ use crate::time::Millis;
 /// string, and NEITHER IS CHECKED AGAINST ANYTHING -- `reserved_vram`, by contrast, has to
 /// clear the ceiling in `admit`.
 ///
-/// ⛔ WHICH IS TO SAY THE OTHER HALF OF ADR-0005 HAS NO HOUSE YET: the reservation is
-/// "declared by the requester and VERIFIED BY THE ARBITER", and only the declaring half is
-/// built here. It is not exploitable today because THE CONSUMER DOES NOT EXIST -- nothing
+/// ⛔ AND IT IS NOT THE OTHER HALF OF ADR-0005, WHICH HAS A HOUSE OF ITS OWN. The reservation is
+/// "declared by the requester and VERIFIED BY THE ARBITER", and the verifying half is the peak
+/// "measured and recorded" of §5.2.2 -- row 36 of milestone 5's open items in
+/// docs/porta-di-qualita.md, closed by the first worker on the GPU, the one that sends
+/// `FromWorker::VramPeak`. The trust in these two fields is row 27 of milestone 6's. ⚠️ RECALL
+/// OF 2026-10-07 -- audit of 2026-09-30, AUD-127.
+///
+/// ⛔ THE TRUST IS NOT EXPLOITABLE TODAY because THE CONSUMER DOES NOT EXIST -- nothing
 /// turns a message into a `ResourceProfile`: `crate::serving` decodes every `IpcMessage` and does
 /// not serve `Request` (D5), and `a_request_reaches_neither_the_arbiter_nor_the_journal` in
 /// `crates/kernel/tests/serving.rs` holds that a request moves neither the arbiter's books nor the
 /// journal and earns no word on the wire, so it goes red the day one is served -- measured on
 /// 2026-10-02 by admitting one. ⚠️ RECALL OF 2026-10-02 -- audit of 2026-09-30, AUD-555.
-/// ⛔ THE TRIGGER IS THAT CONSUMER: the task that first
-/// decodes arriving bytes into a profile is where the verifying half is written and where its
-/// probe is born. ⚠️ NARROWING THE FIELDS HERE IS NOT THE SMALLER FIX: the three are what
+/// ⛔ THE TRIGGER IS THAT CONSUMER: the task that first decodes arriving bytes into a profile is
+/// where these two fields are checked and where the probe is born. ⚠️ NARROWING THE FIELDS HERE
+/// IS NOT THE SMALLER FIX: the three are what
 /// decision D16 of the milestone-6 plan and §6.2 of the design ask for, and cutting them would
 /// reopen a design decision to protect a caller that does not exist -- gotcha #46 from the
 /// wrong side.
@@ -117,9 +122,12 @@ use crate::time::Millis;
 /// on its own: `Debug` -- `E0277`, `IpcMessage` doesn't implement `Debug`, demanded by the
 /// `assert_eq!`s of `crates/kernel/tests/ipc_wire.rs`. `PartialEq` -- `E0369`, `==` cannot be
 /// applied. `Encode`/`Decode` are the schema itself.
-/// ⛔ `Eq` AND `Clone` HAVE NO CONSUMER, AND THAT IS MEASURED, NOT SUSPECTED: dropped one at a
-/// time, `cargo build --locked --workspace --tests` compiles with ZERO errors and ZERO
-/// warnings. They are here because they are the shape of `crate::wire::worker::FromWorker`,
+/// ⛔ `Eq` AND `Clone` HAVE ONE CONSUMER, THE DERIVE OF `IpcMessage` THAT CARRIES THIS TYPE:
+/// dropped from this type alone, one at a time, each stops `kernel` compiling with `E0277` on the
+/// `Request` variant -- measured on 2026-10-06 (`cargo build --locked -p kernel`), so the question
+/// below is the family's, `IpcMessage` with its payloads, and not this type's alone. ⚠️ RECALL OF
+/// 2026-10-07 -- audit of 2026-09-30. They are here because they are the shape of
+/// `crate::wire::worker::FromWorker`,
 /// which E33 of this task's errata pointed at, and pruning them is REGISTERED AND NOT TAKEN --
 /// the precedent that argues for pruning lives on `crate::ports::ipc::ClientId`, which refused
 /// `Ord` because a derive addable later in one line "is a convenience, not the entry door of
@@ -461,9 +469,11 @@ impl IpcMessage {
 /// writes an enum as the INDEX of its variant and nothing more. With one value per nested enum, a
 /// variant appended to `LayoutState` -- or two that no message carried, swapped -- changes no byte
 /// of this set, so neither a fixture nor the stamp, and a stale gui passes the handshake to fail on
-/// the first message it cannot read. ⚠️ THE NESTED ONES GO AT THE END, and so does any added
-/// later: every fixture already written keeps its index. ⚠️ RECALL OF 2026-10-02 -- audit of
-/// 2026-09-30, AUD-532 and AUD-694.
+/// the first message it cannot read. ⚠️ THE NESTED ONES GO AT THE END, and so does any message
+/// added later, for a new variant of `IpcMessage` as for a nested one: every fixture already
+/// written keeps its index. ⚠️ RECALL OF 2026-10-02 -- audit of 2026-09-30, AUD-532 and AUD-694.
+/// ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30, AUD-2228: both guards read the whole set, and
+/// how many variants each enum has they read from the type, never from a number written beside it.
 ///
 /// ⚠️ THE LIMIT, DECLARED: the stamp sees VALUES, not types. A change that leaves the encoding of
 /// every value here as it was changes no byte and no stamp -- an integer field widened is one,
@@ -575,8 +585,8 @@ pub fn stamp_set() -> Vec<IpcMessage> {
 /// peer that can forge one is already inside the process boundary. ⚠️ THE DAY THIS IS ASKED TO
 /// BE A DEFENCE IT IS THE WRONG FUNCTION, and the note is here rather than in the design
 /// because this is where someone would reach for it. ⛔ AND IT IS NOT ADR-0018's FINGERPRINT
-/// for pruned payloads, which remains a registered decision of the owner
-/// (`crate::ports::journal`, the doc of `prune`).
+/// for pruned payloads, whose function sub-project 13 chooses (`crate::ports::journal`, the doc
+/// of `prune`). ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30, AUD-563.
 ///
 /// ⚠️ THE LENGTH GOES IN TOO, not just the bytes: without it two adjacent messages could be
 /// re-split differently and hash the same.

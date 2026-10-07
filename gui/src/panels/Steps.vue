@@ -2,9 +2,10 @@
 import BaseList from "../components/BaseList.vue";
 import { useCore } from "../stores/core";
 
-// The Passi table of §1 of the north star, rows 1-3 and 14: a PROJECTION of the journal, re-read from the core (`Steps`
+// The Passi table of §1 of the north star: rows 1 and 14, and of rows 2 and 3 what row 1's summary carries -- each of
+// the three rows says in its recall what is missing. A PROJECTION of the journal, re-read from the core (`Steps`
 // replaces, it never appends). ⛔ THREE FIELDS AND NOT FIVE (P-89, D56): the wire's `StepSummary` carries the step, the
-// function and whether it closed; the row says so in words.
+// function and whether it closed. ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30, AUD-483.
 const core = useCore();
 </script>
 

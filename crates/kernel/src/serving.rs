@@ -17,7 +17,8 @@
 //!
 //! ⛔ THE WHOLE CORE SITS BEHIND ONE `RefCell` THE CALLER OWNS, which the tap of `gui/fake-core`
 //! shares (§7). That is sound here and it is NOT sound by luck: the executor polls ONE activity at
-//! a time and nothing inside a poll can reach the executor (§2.4.1), so two activities cannot be
+//! a time (§2.4.2; ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30) and nothing inside a poll can
+//! reach the executor, so two activities cannot be
 //! inside the cell at once -- PROVIDED no borrow is held across an `.await`. Every borrow in this
 //! file is taken and dropped inside one block, and the tapped round of `tests/serving.rs` is what
 //! holds it: a borrow that survived the `.await` panics there.
@@ -350,8 +351,12 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
         let id = self.clients[index].id;
         if stamp != build_stamp() {
             // ⛔ "THE CORE CLOSES" IS NOT AN OPERATION OF THE PORT (decision 22). What the core
-            // does is STOP LISTENING, so this client leaves the table: the gui does not start, says
-            // so (§6.1.2), exits by itself, and there is nobody left here to see it go.
+            // does is STOP LISTENING, so this client leaves the table: the gui does not start and
+            // says so (§6.1.2), and it does not exit -- the SPA stays, with the band that declares
+            // it and no retry (`gui/src/frame/Band.vue`), and no shell that could exit exists yet.
+            // ⚠️ THE TRANSPORT KEEPS ITS ENTRY WHILE THE CORE LIVES, because nobody names this
+            // client again: the limit is declared beside `drop_client` in `platform::ipc`.
+            // ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30.
             let _ = self.tell(id, &IpcMessage::StaleBuild(build_stamp()));
             return Outcome::Forget;
         }

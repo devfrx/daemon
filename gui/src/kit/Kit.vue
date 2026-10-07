@@ -11,6 +11,7 @@ import BaseRadioGroup from "../components/BaseRadioGroup.vue";
 import BaseStatus from "../components/BaseStatus.vue";
 import BaseTextField from "../components/BaseTextField.vue";
 import { ICONS, type IconName } from "../components/icons";
+import it from "../locales/it.json";
 import { isThemeChoice, watchTheme, type ThemeChoice } from "../tokens/theme";
 
 /**
@@ -49,6 +50,12 @@ const rows = [
   { what: "file · ~/note · leggi", when: "13:58" },
   { what: "rete · openrouter · usa", when: "13:41" },
 ];
+/**
+ * ⛔ THE ONE WORD OF THIS PAGE THAT IS NOT A SPECIMEN (D8): the scope of a grant is a FACT of the system -- who builds the
+ * session boundary -- and it changes with sub-project 3. So the window shows the phrase the shipped one shows, read from
+ * `it.json`, never a copy that would drift from it (gotcha #68). Audit of 2026-09-30.
+ */
+const scope = it.confirm.scope;
 </script>
 
 <template>
@@ -123,7 +130,7 @@ const rows = [
 
       <section class="kit-card">
         <BaseLabel icon="float" as="h2">Finestra</BaseLabel>
-        <BaseDialog title="Serve un permesso" description="Vale per questa tripla e resta concesso anche dopo un riavvio: il confine di sessione lo costruisce il sotto-progetto 3.">
+        <BaseDialog title="Serve un permesso" :description="scope">
           <template #trigger>
             <BaseButton data-kit="open-dialog">Apri la finestra</BaseButton>
           </template>

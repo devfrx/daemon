@@ -755,8 +755,10 @@ fn the_process_fake_refuses_where_it_must() {
         ProcessError::MalformedFrame
     );
 
-    // A receipt this worker never issued is a FAULT and not an empty answer (§6.10.1): the
-    // frame has no way of being named, so it is not data.
+    // A receipt this worker never issued is a FAULT and not an empty answer (§6.10.1): a frame
+    // no receipt covers is not data, and whoever names one gets `UnsolicitedFrame` -- the
+    // implementation refuses it at runtime, not the compiler, which is the honest form
+    // `crates/kernel/src/ports/process.rs` writes. Audit of 2026-09-30, AUD-405.
     //
     // ⛔ AND A REAL STREAM IS OPENED FIRST, which is the whole point of the line below.
     // Measured: without it this probe ran against an EMPTY stream table, where "this id is

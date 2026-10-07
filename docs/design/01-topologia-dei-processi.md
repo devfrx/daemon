@@ -18,7 +18,7 @@ flowchart TB
 
         gui["gui — client sottile<br/>0..1 istanze, effimero<br/>solo stato di presentazione<br/><br/>oggi la SPA, sul ponte finto<br/>il guscio: col 3 o col 10 (AUD-461)"]
 
-        core["core — daemon, 1 istanza singola<br/>vita lunga, indipendente dalla GUI<br/><br/>unico detentore dello stato autorevole<br/>arbitro GPU · gateway inferenza<br/>orchestratore agenti (col 3) · permessi · code"]
+        core["core — daemon, 1 istanza singola<br/>vita lunga, indipendente dalla GUI<br/><br/>unico detentore dello stato autorevole<br/>arbitro GPU · gateway inferenza<br/>orchestratore agenti (col 3 o col 4, scelta aperta) · permessi · code"]
 
         subgraph w["worker — 0..N, senza stato, uccidibili senza preavviso"]
             direction LR
@@ -51,6 +51,11 @@ Legenda dei colori: **blu** = detiene stato autorevole · **verde** = effimero e
 sacrificabile · **ambra** = sorgente di contenuto non fidato. Il segno «(col N)» è la regola 2 del
 [README](../README.md); le frecce doppie verso i worker si leggono con la tabella qui sotto: il dialogo
 è bidirezionale, ma a iniziativa del core.
+
+⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30: chi costruisce l'orchestratore degli agenti non è
+deciso. La [roadmap](../roadmap.md) dà gli Agenti al 4, le run arrivano col 3, e il codice nomina il chiusore
+per condizione — *«whoever builds the first orchestration cycle»*, in `crates/kernel/src/arbiter/mod.rs` —:
+il segno porta i due candidati, come vuole la regola 2 del README.
 
 ## Canali
 

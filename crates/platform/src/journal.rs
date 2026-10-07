@@ -628,9 +628,12 @@ impl Journal for FileJournal {
         // not be indistinguishable"; removing the rows makes them exactly that, MEASURED on
         // 2026-08-10: a pruned step and one nobody ever wrote both answer `Err(Missing)` to
         // `read_back` and are both absent from `replay`. The distinction needs the FINGERPRINT
-        // and SIZE of ADR-0018, a fingerprint needs a hash function, and in the kernel that is a
-        // NEW ENTRY in the list of ADR-0031. It belongs to the milestone that brings retention
-        // (decision D7), and it is carried as an OPEN ENTRY in `docs/porta-di-qualita.md`.
+        // and SIZE of ADR-0018, and a fingerprint needs a hash function: the kernel's one,
+        // `kernel::wire::ipc::build_stamp`, is an identity and not a defence, so a
+        // collision-resistant one would be a NEW ENTRY in the list of ADR-0031, and sub-project 13
+        // chooses it. It belongs to sub-project 15 (docs/roadmap.md), left out of milestone 3 by
+        // decision D7, and it is carried as an OPEN ENTRY in `docs/porta-di-qualita.md`.
+        // ⚠️ RECALL OF 2026-10-07 — audit of 2026-09-30, AUD-563, AUD-093.
         {
             let mut table = transaction
                 .open_table(RECORDS)

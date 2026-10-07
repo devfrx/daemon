@@ -67,8 +67,10 @@
 //! without a caller are held by `tests/ports_are_implementable.rs` — SIX fakes, because
 //! `process` needs two of them (`Worker` and `Process`), and calls that exercise each in both
 //! directions. It buys that the signatures compile FROM OUTSIDE THE CRATE and can be called;
-//! it does not buy that they are the right signatures, and it is not the conformance suite,
-//! which needs two implementations to compare.
+//! it does not buy that they are the right signatures, and it is not a conformance suite, which
+//! holds an implementation to the contract's promises -- the real one and the double where both
+//! exist, the real transport ONLY for `ipc` (D82, `crates/kernel/tests/contract/ipc.rs`).
+//! ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30.
 //!
 //! ⚠️ DATED RECALL, 2026-08-28 — FINDING AUD-054. The FIVE is still TRUE OF THAT FILE and is
 //! kept for it; what was false is reading the sentence as the whole account for `process`,
@@ -116,7 +118,10 @@
 //! at the first record written. ⚠️ THE LINE ENDED WITH "so nothing writes one yet" UNTIL
 //! 2026-08-10 and is dated rather than rewritten: `Untrusted::promote` writes one, and the frozen
 //! bytes are in the repository. The format IS settled now, and `crate::record` states on what
-//! terms it may still grow — optional fields at new indices, and nothing else.
+//! terms it may still grow — optional fields at new indices, and new species: a new species is
+//! a new `RecordKind` variant together with its `Detail`, never one without the other (D20), and
+//! the cost of a variant a build does not know is written in `crate::record`. ⚠️ RECALL OF
+//! 2026-10-07 — audit of 2026-09-30, AUD-595.
 //!
 //! ⚠️ `rng` IS DECLARED IN §2.2 AND LIVES IN `crate::rng`, NOT HERE. It is a source of
 //! non-determinism, not a family of I/O, and the asymmetry is deliberate rather than a

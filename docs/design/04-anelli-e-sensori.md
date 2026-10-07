@@ -19,7 +19,7 @@ provato dai banchi con un sensore finto —; il resto è deciso, e porta il segn
 |---|---|---|
 | Quando agiscono | prima dell'azione | dopo l'azione |
 | Cosa fanno | steer: orientano il comportamento | detect: rilevano lo scarto e permettono la correzione |
-| Nel nostro sistema | regole di progetto, convenzioni e **skill dichiarative** ([ADR-0003](../adr/0003-estensibilita-solo-mcp-e-skill-dichiarative.md)), tutte col 13; istruzioni d'uso degli strumenti (col 4) | linter e test (col 5), verifica delle citazioni (col 6), validazione mesh (col 7), revisione (col il primo che la usa) |
+| Nel nostro sistema | regole di progetto, convenzioni e **skill dichiarative** ([ADR-0003](../adr/0003-estensibilita-solo-mcp-e-skill-dichiarative.md)), tutte col 13; istruzioni d'uso degli strumenti (col 4) | linter e test (col 5), verifica delle citazioni (col 6), validazione mesh (col 7), revisione (col primo che la usa) |
 | Dove vivono | registro delle guide (col 13) → iniettate nella proiezione (col 13) | registro dei sensori (col 4) → verdetti nel giornale, oggi da `run_the_ring` |
 
 Il principio che li distingue: **una guida è probabilistica, un sensore è

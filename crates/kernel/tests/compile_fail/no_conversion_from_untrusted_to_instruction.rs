@@ -1,4 +1,4 @@
-// Catalogue §7.4.1 block C, row `Q9 · I6 · V20`, rule B: there is no `From`/`Into` path
+// Catalogue §7.4.1 block C, row `Q9 · I6 · V19` (audit of 2026-09-30, AUD-366), rule B: there is no `From`/`Into` path
 // from `Untrusted` to `Instruction`.
 //
 // ⛔ THIS IS THE ONLY GUARD THAT SEES THAT CONVERSION, and the word "only" is measured, not

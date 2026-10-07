@@ -98,7 +98,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Scarico per inattività (TTL) | 🔶 | meccanismo §2 · politica → Gestione modelli locali |
 | Caricamento su richiesta e pre-caricamento | 🔶 | meccanismo §2 · politica → Gestione modelli locali |
 | Tetto ai modelli residenti | ✅ | §2 · ammissione |
-| Stima di fit prima del caricamento | ✅ | §2 · riserva dichiarata, picco misurato |
+| Stima di fit prima del caricamento | 🔶 | §2 · riserva dichiarata, nel codice · picco misurato → il primo worker sulla GPU, che manda `FromWorker::VramPeak` (§5.1 della spec, richiamo del 2026-10-03; voce 36 delle voci del Traguardo 5 in [`porta-di-qualita.md`](porta-di-qualita.md)) — richiamo del 2026-10-07, audit del 2026-09-30, AUD-127 |
 | Ecosistema dei worker ML | ✅ | ADR-0028 · Python, con i costi dichiarati |
 | Routing locale/remoto con fallback | ✅ | §3 · ADR-0012 |
 | Fallback a catena tra modelli | ✅ | §3 · ADR-0012 |
@@ -317,7 +317,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 
 | Funzionalità | | Sede |
 |---|---|---|
-| Zero-Data-Retention selettivo | ✅ | §3 ADR-0012 + §6 ADR-0016 (escalation) |
+| Zero-Data-Retention selettivo | 🔶 | §3 ADR-0012 · il fallimento chiuso sui vincoli sui dati, nel codice · §6 ADR-0016, l'escalation, che discende dal gestore dei segreti (ADR-0023, punto 4) → Conversazione, innesco B (3) di V34 — rimando del 2026-10-04 in testa ad ADR-0016; richiamo del 2026-10-07, audit del 2026-09-30, AUD-585 |
 | Fatturazione a stream interrotto | 🔶 | §3 · ADR-0011 · il costo di uno stream interrotto → Conversazione |
 | Politica di routing come oggetto versionato | ✅ | §3 · ADR-0011 |
 | Canary per esfiltrazione dati | 🔶 | §6 · ADR-0016 · canary → Conversazione |

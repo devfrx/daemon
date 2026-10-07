@@ -46,7 +46,7 @@ use crate::ports::journal::{Journal, JournalError};
 ///
 /// ⚠️ `Rc` AND `Cell`, NOT AN ATOMIC: the core runs ONE activity at a time on one thread
 /// (§2.4.2, one decision at a time), so the cell is never touched by two at once. ⚠️ RECALL OF
-/// 2026-10-03 -- audit of 2026-09-30, AUD-045. And the compiler holds it -- `Rc` is
+/// 2026-10-03 -- audit of 2026-09-30. And the compiler holds it -- `Rc` is
 /// not `Send`, so a `Progressive` cannot be carried to a second thread, where a `Cell` would be
 /// the wrong tool.
 ///

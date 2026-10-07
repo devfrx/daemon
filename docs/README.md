@@ -17,7 +17,7 @@ nella §6 del [compendio](COMPENDIO.md). Qui non si ripetono: due copie divergon
 | [`COMPENDIO.md`](COMPENDIO.md) | ⛔ **l'unica lettura obbligatoria oltre a `CLAUDE.md`**: tutte le decisioni compresse, le invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo | *cosa è già deciso*, tutto, in un colpo solo |
 | [`audit-2026-08-11.md`](audit-2026-08-11.md) | ⛔ **il primo audit completo del repository** — codice, script, documenti, ADR, diagrammi. Copertura dichiarata, le quattro radici, i finding con causa radice e dimostrazione, cosa è **pulito**, e le otto decisioni del proprietario. ✅ **Le otto decisioni sono eseguite il 2026-08-18**; le voci della §5 rimaste aperte stanno nella sua **§9**, con chi le chiude — ⚠️ **RICHIAMO DEL 2026-10-03**, audit del 2026-09-30, AUD-084. ⚠️ **Questa cella lo dava APERTO e «il prossimo passo»**, con *«la 1 … la 8 e la 6»* e *«le tre righe barrate»* quando barrate erano otto: era ferma al 2026-08-18 e la riga qui sopra la smentiva **nello stesso file** — finding **AUD-001** del 2026-08-27. ⛔ **Il prossimo passo non si scrive più qui**, in nessuna forma: sta nella **§6 del [`COMPENDIO.md`](COMPENDIO.md)**, in un posto solo | *cosa fu trovato l'11 agosto*, e come si conduce un audit qui — **consultazione**, non arretrato |
 | [`audit-2026-08-27.md`](audit-2026-08-27.md) | ⛔ **il secondo audit completo** — 18 revisori in parallelo, ognuno smentito da un secondo, 98 finding proposti e **25 scartati**. Le **sette radici**, i **73** finding con causa radice e comando di riproduzione, e lo **stato di ciascuno**, nella colonna «Stato», che ne è la casa unica; aperte restano anche le **voci senza numero AUD**, in gran parte decisioni del proprietario — ⚠️ **RICHIAMO DEL 2026-10-03**, audit del 2026-09-30, AUD-602. ⚠️ **Si legge a finding, mai intero** | *come si rimedia* qui, e *cosa resta aperto* |
-| [`AVVIO-CHAT.md`](AVVIO-CHAT.md) | il messaggio da incollare all'inizio di una nuova sessione | *come si apre* una chat su questo repository |
+| [`AVVIO-CHAT.md`](AVVIO-CHAT.md) | il messaggio d'avvio di una sessione, e il perché di ogni sua riga: dal 2026-09-09 il proprietario non lo incolla più, e non è lettura d'apertura — la §12 del [compendio](COMPENDIO.md), decisione 32 della [stella polare](superpowers/specs/2026-09-07-direzione-gui-design.md); come si apre una sessione lo dice [`../CLAUDE.md`](../CLAUDE.md). ⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-107 | *perché* il messaggio d'avvio dice ciò che dice |
 | [`HANDOFF.md`](HANDOFF.md) | Gotcha, non rilitigabile, metodo, cosa non rifare — ⚠️ **a sezioni**, non per farsi un'idea | *come riprendere* senza rifare |
 | [`roadmap.md`](roadmap.md) | Sotto-progetti, ordine, stato, spike aperti | *a che punto siamo* e *cosa viene dopo* |
 | [`tracciabilita.md`](tracciabilita.md) | Mappa funzionale → sede di ogni funzionalità | *dove vive* ciò che è stato chiesto |
@@ -29,8 +29,9 @@ nella §6 del [compendio](COMPENDIO.md). Qui non si ripetono: due copie divergon
 | ⛔ [`superpowers/plans/`](superpowers/plans/) | i piani, uno per traguardo, ciascuno con l'**errata in testa** che dice dove il piano sbagliava. ⚠️ **Mancava da questa tabella**, aggiunto il 2026-08-10: è la cartella **da cui si riprende il lavoro** | *da dove si riparte*, e cosa il piano ha già sbagliato |
 | [`riferimenti.md`](riferimenti.md) | Fonti esterne consultate | *da dove viene* ciò che non abbiamo dedotto noi |
 
-`roadmap.md` e `tracciabilita.md` si aggiornano **alla chiusura di ogni
-sotto-progetto**, nello stesso passaggio.
+Che cosa si aggiorna, e quando, lo dice la tabella *«Manutenzione della documentazione»* di
+[`../CLAUDE.md`](../CLAUDE.md), in una casa sola. ⚠️ **RICHIAMO DEL 2026-10-07** — audit del
+2026-09-30, AUD-108.
 
 ## Regole della documentazione
 

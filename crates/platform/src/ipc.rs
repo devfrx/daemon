@@ -240,6 +240,15 @@ impl LocalSocketIpc {
 
     /// Removes the client from the table. The reader thread is not told: it ends by itself when
     /// the peer's end closes -- which, for a client dropped here, is the case already.
+    ///
+    /// ⚠️ THE DECLARED LIMIT: only `send` and `receive` call this, when they see the client gone.
+    /// A client the core FORGETS while it is still connected -- the one `kernel::serving` answers
+    /// with `IpcMessage::StaleBuild` and stops listening to -- is named by nobody again, so its
+    /// entry stays here while the core lives: the stream, the reader's channel and, while the
+    /// peer stays open, the reader thread. One per stale gui that knocks, and nothing goes red.
+    /// A close would be a fourth operation of the port, which decision 22 refused: the cost is
+    /// declared instead, as the module doc declares the poisoned client's. ⚠️ RECALL OF
+    /// 2026-10-07 -- audit of 2026-09-30.
     fn drop_client(&mut self, at: usize) {
         self.clients.remove(at);
     }

@@ -2574,7 +2574,7 @@ rifiuta: cancella `clippy` e non c'è **una sola** riga del catalogo che diventi
 
 | Livello | Meccanismo | Se cancelli il controllo | Se lo aggiri |
 |---|---|---|---|
-| **1 — compilatore** | `no_std` · `forbid(unsafe_code)` · una firma che pretende un gettone | **la regola resta**: la violazione continua a non compilare | non si può — `E0453` rifiuta anche un `#[allow]` locale |
+| **1 — compilatore** | `no_std` · `forbid(unsafe_code)` · una firma che pretende un gettone | **la regola resta**: la violazione continua a non compilare | non si può — `E0453` rifiuta anche un `#[allow]` locale. ⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-100: vero per `forbid` e per un `#[allow]`, non per `no_std`, che una riga `extern crate std;` scavalca compilando per l'host; a coglierla è il cancello senza OS, livello 2 — la §1.4 e la §7.3.2, col richiamo del 2026-10-03 (AUD-587) |
 | **2 — controllo esterno** | allow-list sul grafo · cancello senza OS · grafo delle crate | **la regola sparisce**: sotto non c'è nient'altro | si cancella il controllo |
 | **3 — lint** | `clippy.toml` | la regola sparisce | **una riga di permesso**, senza cancellare niente |
 

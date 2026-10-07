@@ -27,7 +27,7 @@ flowchart TB
         W["pagine web · ricerche (col 6)"]
         T["output degli strumenti (col 4)"]
         D["documenti · PDF · OCR (col 6)"]
-        F["file letti dall agente<br/>(col il primo che li legge)"]
+        F["file letti dall agente<br/>(col primo che li legge)"]
         M["descrizioni MCP (col 4)"]
         P["risposte dei provider (col 3)"]
         V["trascrizioni vocali (col 8)"]
@@ -103,7 +103,7 @@ stateDiagram-v2
 |---|---|
 | **strumento** | file, rete e strumento MCP `x` (col 4), shell (col 5); oggi `registry`, il registro delle funzioni |
 | **risorsa** | un percorso e un host (col 4), una allow-list di comandi (col 5); oggi `arbiter` |
-| **operazione** | lettura e scrittura, oggi `Read` e `Write`; esecuzione e uscita (col il primo strumento che ne ha bisogno) |
+| **operazione** | lettura e scrittura, oggi `Read` e `Write`; esecuzione e uscita (col primo strumento che ne ha bisogno) |
 
 | Preset (col 4) | Procede senza chiedere | Chiede |
 |---|---|---|
@@ -112,7 +112,7 @@ stateDiagram-v2
 | `autonomo` | quasi tutto | effetti `irripetibili` (§4) · azioni fermate da un sensore (AUD-139) |
 
 **Un'approvazione non si estende**: vale per la tripla concessa e per la sessione
-corrente (col 3), e un effetto `irripetibile` chiede a ogni invocazione (col il primo che ne ha uno).
+corrente (col 3), e un effetto `irripetibile` chiede a ogni invocazione (col primo che ne ha uno).
 `~/progetti/x` non implica `~/progetti/y`, e una sessione non implica la successiva.
 ⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, AUD-019, AUD-246 e AUD-606: oggi un'invocazione del registro
 delle funzioni senza la sua tripla torna `InvokeError::PermissionRequired`, e una tripla concessa vale per sempre —

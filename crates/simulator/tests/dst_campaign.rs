@@ -504,9 +504,10 @@ fn expected_doubt(trace: &Trace) -> Vec<u64> {
 /// both non-vacuity oracles — and the weaker of the two copies is the one that would have been
 /// called "the campaign that really runs". There is one body, and both entry points use it.
 ///
-/// ⚠️ IT PRINTS ITS WALL TIME, AND THE GATE COLLECTS IT SINCE 2026-08-11 -- step 7 of
-/// `scripts/gate.sh`, "DST campaigns -- wall time", re-runs this binary with `--nocapture` so the
-/// line is READ and not buffered. ⛔ RECALL OF 2026-08-28, FINDING AUD-028: this said "AND THE
+/// ⚠️ IT PRINTS ITS WALL TIME, AND THE GATE COLLECTS IT SINCE 2026-08-11 -- the step "DST
+/// campaigns -- wall time" of `scripts/gate.sh` re-runs this binary with `--nocapture` so the
+/// line is READ and not buffered (⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30: the step is
+/// named by its label, never by its place). ⛔ RECALL OF 2026-08-28, FINDING AUD-028: this said "AND THE
 /// GATE DOES NOT YET COLLECT IT ... written for the step the gate does not have yet", and it had
 /// been false for seventeen days. ⛔ AND THE RECALL EIGHTY-FIVE LINES DOWN ALREADY SAID THIS LINE
 /// HAD BEEN CORRECTED -- it did not exist yet, and that is the defect worth more than the count:
@@ -570,8 +571,9 @@ fn campaign(seeds: u64) -> (u64, usize) {
         largest = largest.max(doubts.len());
     }
 
-    // A MEASUREMENT, printed rather than guessed — run with `-- --nocapture`, which step 7 of
-    // `gate.sh` does on every commit since 2026-08-11. ⛔ RECALL OF 2026-08-28, AUD-028: this said
+    // A MEASUREMENT, printed rather than guessed — run with `-- --nocapture`, which the step
+    // "DST campaigns -- wall time" of `gate.sh` does on every commit since 2026-08-11 (⚠️ RECALL
+    // OF 2026-10-07 -- audit of 2026-09-30). ⛔ RECALL OF 2026-08-28, AUD-028: this said
     // "NOT visible under `gate.sh`, which captures it".
     //
     // ⚠️ WHAT `largest` IS AND WHAT IT IS NOT, because this line claimed to be what the seed list
@@ -661,8 +663,9 @@ fn campaign(seeds: u64) -> (u64, usize) {
 /// task 7 put the same line on the level-2 sweep in
 /// `crates/platform/tests/engine_crash_consistency.rs`, which until that day printed its counts and
 /// not its time — so the constraint was produced at one level of two and this paragraph did not
-/// know it. ⛔ SHOWING IT IS DONE TOO, SINCE 2026-08-11: task 9 added step 7 of `gate.sh`, "DST
-/// campaigns -- wall time", which re-runs the three campaign binaries with `--nocapture`, and
+/// know it. ⛔ SHOWING IT IS DONE TOO, SINCE 2026-08-11: task 9 added the step "DST campaigns --
+/// wall time" of `gate.sh` (⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30: named by its label,
+/// never by its place), which re-runs the three campaign binaries with `--nocapture`, and
 /// task 12 of milestone 5 gave it its third target. ⛔ RECALL OF 2026-08-28, AUD-028: this said
 /// "SHOWING it is what is still missing ... **TASK 9 adds the gate step that shows them**", in
 /// the PRESENT and the FUTURE tense, about work that had been finished for seventeen days.
@@ -681,8 +684,8 @@ fn campaign(seeds: u64) -> (u64, usize) {
 /// `#[test]` under `gate.sh`'s `cargo test --workspace` — which is also why the count above is
 /// chosen against a wall-clock budget instead of against how much sweeping would be nice.
 /// ⚠️ RECALL OF 2026-08-28, AUD-028, PERIMETER ADDED AND DECLARED: this said "the gate does not
-/// grow a seventh check for it", and `gate.sh` has SEVEN `run` steps of which the seventh is
-/// exactly that. The DECISION is untouched and still holds -- step 7 does not RUN the sweep, it
+/// grow a seventh check for it", and `gate.sh` had grown a step that is exactly that. The
+/// DECISION is untouched and still holds -- that step does not RUN the sweep, it
 /// re-runs it with `--nocapture` to SHOW the printed line; the running is still the ordinary
 /// `#[test]`. What is removed is the sentence that counted the gate's steps.
 #[test]

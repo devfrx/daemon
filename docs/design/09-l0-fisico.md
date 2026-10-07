@@ -32,7 +32,7 @@ flowchart TB
     end
     subgraph CHI["in chiaro"]
         C[("configurazione<br/>profili: il loro archivio,<br/>scelta aperta su AUD-162<br/>disposizione dei pannelli")]
-        A[("artefatti<br/>file prodotti (col il primo<br/>che produce un file)<br/>la cartella della knowledge base (col 6):<br/>router, foglie, guide, catture")]
+        A[("artefatti<br/>file prodotti (col primo<br/>che produce un file)<br/>la cartella della knowledge base (col 6):<br/>router, foglie, guide, catture")]
         I[("indici<br/>embedding, RAG (col 6)<br/>indice della mappa (col 6)")]
         M[("pesi dei<br/>modelli locali (col 9)")]
     end
@@ -55,7 +55,7 @@ flowchart TB
 | giornale | **sì**, col 15 — oggi in chiaro | sì | no | il kernel dalla porta `journal`; `redb` in `platform` (ADR-0032) |
 | segreti | **sì**, chiave propria, col 15 | **mai** | no, ma re-inseribili | la crate `secrets`, unico punto di lettura — vuota oggi, per decisione; il gestore col 3 |
 | configurazione: i profili e la disposizione dei pannelli | no | sì | no | **due vie**: i profili li legge il **daemon** via `platform` e li **consegna** al kernel, che non li legge mai (ADR-0034; oggi i default sono letterali nel daemon, e chi costruisce l'archivio dei profili è la scelta aperta su AUD-162); la **disposizione** dalla **settima porta**, custodita e mai letta per decidere |
-| artefatti prodotti (col il primo che produce un file) e, col 6, la cartella della knowledge base | no — sono già file dell'utente | sì | no | il kernel dalla porta `filesystem` (ambiti e checkpoint, ADR-0024); l'implementazione vera arriva a pezzi — chi costruisce che cosa lo dice la 4.2 del [disegno della revisione della knowledge base](../superpowers/specs/2026-09-28-knowledge-base-revisione-design.md) —, e chi conserva e ripristina le copie del checkpoint, il 5 o il 6, è la scelta aperta su AUD-500 e AUD-504 |
+| artefatti prodotti (col primo che produce un file) e, col 6, la cartella della knowledge base | no — sono già file dell'utente | sì | no | il kernel dalla porta `filesystem` (ambiti e checkpoint, ADR-0024); l'implementazione vera arriva a pezzi — chi costruisce che cosa lo dice la 4.2 del [disegno della revisione della knowledge base](../superpowers/specs/2026-09-28-knowledge-base-revisione-design.md) —, e chi conserva e ripristina le copie del checkpoint, il 5 o il 6, è la scelta aperta su AUD-500 e AUD-504 |
 | indici ed embedding e, col 6, l'indice della mappa | no | **no** | sì, dai documenti | la capacità (6) li costruisce e li rigenera; l'indice della mappa lo tiene il core e lo manda alla GUI via `ipc` |
 | pesi dei modelli locali | no | **no** | sì, riscaricabili | gestione dedicata (9) |
 
@@ -68,12 +68,12 @@ pesi riscaricabili non viene fatto; uno che trasporta chiavi API è un vettore d
 sezione esiste il solo giornale, in chiaro. Le chiavi arrivano col 15, e sono due — quella del giornale e quella
 propria dei segreti, come vogliono ADR-0022 e ADR-0023 —; il gestore dei segreti e i tre meccanismi che ne
 discendono col 3; i due profili col 15, e l'avvio automatico, la voce always-on e la telecamera ciascuno col proprio
-sotto-progetto, nella tabella più sotto. Il segno è la regola 2 del [README](../README.md).
+sotto-progetto, nella tabella più sotto, che dice quali di questi segni sono dedotti. Il segno è la regola 2 del [README](../README.md).
 
 ```mermaid
 flowchart LR
-    OS[("facility dell OS<br/>chiave mai esposta<br/>all applicazione")] -->|"via modulo<br/>di piattaforma (I3)"| K["chiave del giornale<br/>(col 15)"]
-    OS -->|"via modulo<br/>di piattaforma (I3)"| KS["chiave propria<br/>dei segreti (col 15)"]
+    OS[("facility dell OS<br/>chiave mai esposta<br/>all applicazione")] -->|"via modulo<br/>di piattaforma (I3),<br/>quale crate: AUD-147"| K["chiave del giornale<br/>(col 15)"]
+    OS -->|"via modulo<br/>di piattaforma (I3),<br/>quale crate: AUD-147"| KS["chiave propria<br/>dei segreti (col 15)"]
     K --> G[("giornale")]
     KS --> S[("segreti (col 3)")]
 
@@ -88,6 +88,8 @@ flowchart LR
 
 I tre meccanismi a destra **poggiano** sul punto unico di lettura: con credenziali leggibili da più
 punti nessuno dei tre sarebbe verificabile.
+⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-147: in quale crate stia il modulo di piattaforma che
+raggiunge le due chiavi è la scelta aperta su AUD-147, e le due frecce la nominano.
 
 ### Cosa significa davvero «cifrato a riposo», qui
 
@@ -105,7 +107,7 @@ suona più forte di quanto sia, e una falsa sicurezza è peggio di nessuna sicur
 
 ### La composizione mutuamente esclusiva
 
-| Profilo (col 15) | Chiave | Avvio automatico (col 10) | Voce always-on (col 8) | Telecamera (col 12) |
+| Profilo (col 15, dedotto) | Chiave | Avvio automatico (col 10, dedotto) | Voce always-on (col 8) | Telecamera (col 12) |
 |---|---|---|---|---|
 | **normale** *(default)* | facility dell'OS | ✅ | ✅ | ✅ — spenta per default, si accende dal registro |
 | **riservato** | passphrase all'avvio | ❌ | ❌ | ❌ |
@@ -114,6 +116,10 @@ Non si possono avere entrambe. Nel profilo riservato il sistema **rifiuta** di
 abilitare l'avvio automatico, non si limita a sconsigliarlo.
 ⚠️ La colonna della telecamera è del 2026-09-08: ADR-0039, col suo rimando ad ADR-0023 — «riservato»
 spegne anche la telecamera.
+⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30: i due segni **dedotti** non li scrive nessuna riga della
+[roadmap](../roadmap.md). I profili scelgono la chiave, e la cifratura con le chiavi dell'OS è del 15 (ADR-0023);
+l'avvio automatico sta nell'Integrazione OS, il 10, per la decomposizione L3 del [README](../README.md). Sono i
+candidati, finché la roadmap non fissa chi li costruisce.
 
 ## Checkpoint del filesystem
 
@@ -173,7 +179,7 @@ chi lo chiede non parte. Lo stesso segno sta sulla regola del livello, in fondo.
 | **0** | nessuno | — | no |
 | **1** | permessi applicativi (tripla §6) | il kernel media ogni accesso | **no** |
 | **2** | processo ristretto dell'OS | primitive di sistema (col 5) | sì |
-| **3** | macchina virtuale leggera | hypervisor (col il primo che esegue codice da un repository sconosciuto) | sì, anche a fuga dal kernel guest |
+| **3** | macchina virtuale leggera | hypervisor (col primo che esegue codice da un repository sconosciuto) | sì, anche a fuga dal kernel guest |
 
 ```mermaid
 flowchart TD
@@ -214,7 +220,9 @@ Perciò l'azione non parte — su una piattaforma non ancora supportata l'app no
   porta e la restituisce alla GUI, non la legge mai per decidere. Non è un parametro consegnato
   (ADR-0034): è ciò che la GUI gli affida — stella polare della GUI, decisioni 14 e 15 del 2026-09-08.
 - La **policy VRAM corrente non è configurazione**: è la proiezione del giornale, l'ultima
-  transizione che `Arbiter::set_policy` scrive come intento ed esito. Il profilo dà il **default**
+  transizione che `Arbiter::set_policy` scrive — intento, una nota della specie `Policy`, esito —, e
+  `arbiter::policy_now` rilegge la nota, mai il `reason` (⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30,
+  AUD-001; rimando del 2026-10-04 in testa ad ADR-0006). Il profilo dà il **default**
   (ADR-0006, rimando del 2026-09-08), che oggi è un letterale del daemon, `VramPolicy::Remote`. Il
   daemon la rilegge all'avvio con `arbiter::policy_now` e la consegna a `build_the_arbiter`; in
   produzione la cambia la funzione `vram-policy` del registro, che chiama `Arbiter::set_policy` da

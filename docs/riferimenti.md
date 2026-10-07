@@ -2517,6 +2517,34 @@ quella del metodo di `AVVIO-CHAT.md` nella §12 — le passate del 2026-09-24 av
 il perché della voce 0026 e la prova della voce 0036, che sono vivi; il richiamo di AUD-032 nella voce 0005 e i rimandi
 in testa agli ADR, che hanno già la forma della R5.
 
+### Il lotto 2 del `lean-docs` della R5, parte 1 — 2026-10-07: le storie di `HANDOFF.md`, fuori dai gotcha, in archivio
+
+⛔ **Non doppioni ma storie**: la R5 del [terzo audit](audit-2026-09-30.md), mirata come vuole la P20, su
+[`HANDOFF.md`](HANDOFF.md) senza la tabella dei gotcha — il lotto è grande, e il proprietario l'ha diviso in due il
+2026-10-07: la tabella dei gotcha è la parte 2. Ciò che una riga raccontava — che cosa diceva, chi l'ha trovato, come —
+sta in [`archivio/stato-storico.md`](archivio/stato-storico.md) parola per parola, nella sezione del lotto 2, parte 1,
+coi trentotto tagli; nel vivo resta la riga del richiamo, o il rimando alla sede viva, e la riga della data in testa
+rimanda all'archivio. I tagli il proprietario li ha approvati in una domanda sola. La prova che non manca niente: lo
+script della skill coi due file nel `--dopo`, senza àncore perse né link rotti; trentasette blocchi su trentasette, e la
+riga della data, uguali all'originale a meno dei link riscritti per la cartella e dei segni di citazione; il vivo uguale
+alla fotografia coi soli tagli, byte per byte; sei domande di controllo su sei — ha risposto il coordinatore, che è la
+prova più debole.
+
+📌 **Il verbale del 2026-10-07**, `cl100k_base`, limite inferiore — il tokenizzatore del comando in testa a
+[`CLAUDE.md`](../CLAUDE.md), sul solo `docs/HANDOFF.md`: da **123 499** a **117 470** token; da **382 844** a
+**364 953** byte in un albero CRLF, `wc -c docs/HANDOFF.md`. ⚠️ **La parte 2 è la tabella dei gotcha**, i due terzi del
+file.
+
+⚠️ **Visti e non presi, perché non sono storie di correzioni di questo file:** il consuntivo «Cosa la §8 ha incassato»,
+che AUD-545 nomina — è la mappa di che cosa la §8 della spec ha incassato, voce per voce, e la §12 del
+[compendio](COMPENDIO.md) vi manda chi deve modificare una sezione: archiviarlo cambierebbe quel rimando —; le sezioni
+delle voci chiuse — F1b, F4, F2, F3, F1a e F5, l'audit sezione-contro-ADR, «Cosa la §8 ha deciso», «Cosa la §7 ha
+deciso» —, verbali datati di decisioni, coi richiami già nella forma della R5; i resoconti dei Traguardi 1, 2 e 3 nel
+Punto di ripresa, cronaca di stato; le lezioni nelle tabelle dei lasciti, come «Trovata da una revisione che ha provato
+a rifarla» e la divergenza su I1, che sono la lezione stessa; le domande barrate di «Domande legittimamente aperte». Le
+cinque frasi vive che non dicono più il vero, segnate e non risolte, stanno nell'osservazione 10 del
+[rapporto](audit-2026-09-30.md).
+
 ## Riconoscimento gesti dalla telecamera — le fonti del disegno del 2026-09-03 (ADR-0038, ADR-0039)
 
 Consultate il **2026-09-03** scrivendo il

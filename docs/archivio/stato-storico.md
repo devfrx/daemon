@@ -6558,3 +6558,407 @@ apertura: le voci chiuse vi tengono la storia nella cella, e che cosa si legge a
    tracciato, è dell'altra sessione del proprietario (P16).
 8. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per
    parola, la nuova al suo posto, e il commit su `main`, col push.
+
+## Da HANDOFF.md, il `lean-docs` della R5 — archiviati il 2026-10-07, lotto 2, parte 1
+
+Il lotto 2 del `lean-docs` della R5 del [terzo audit](../audit-2026-09-30.md), parte 1, mirato come vuole la P20 del proprietario: le storie che [`HANDOFF.md`](../HANDOFF.md) teneva fuori dalla tabella dei gotcha — che cosa diceva, chi l'ha trovato, come —, da `HANDOFF.md` a `440b265`, parola per parola, coi link riscritti per questa cartella. Nel vivo resta la riga del richiamo — la data, ciò che è vero adesso, dove vive la storia — o il rimando alla sede viva. Ogni taglio approvato dal proprietario.
+
+### Il capoverso sull'ancora, sotto la riga della data — una storia
+
+Righe 4–6 di `HANDOFF.md` a `440b265`. Nel vivo resta la riga della data, che segue il file. Dopo «file (finding AUD-039), e qui non l'aveva seguito.»:
+
+> ⚠️ **L'ancora è stata corretta il 2026-08-27 e la DATA no**, perché era già giusta: a marcire
+> qui non è il *quando* ma il *a che cosa si riferisce*, ed è la metà che il rimedio del 2026-08-11
+> — *«sono due date»* — non aveva coperto. Stessa specie del finding **AUD-034** sul compendio.
+
+### Le storie della riga della data, in testa — tre storie
+
+Righe 13–31 di `HANDOFF.md` a `440b265`. Nel vivo resta la riga della data, che segue il file. Dopo «e senza rilitigare ciò che è già deciso.»:
+
+> ⚠️ **Questa riga diceva *«aggiornato il 2026-08-11»*** mentre il file era stato toccato
+> **diciassette volte** dopo — contate col comando, `git log --since=2026-08-12 -- docs/HANDOFF.md`,
+> non a memoria — perché confondeva *«quando l'ho scritto»* con *«a che traguardo si riferisce»*:
+> sono due date, e ora ci sono entrambe. È il gotcha **#31** sull'intestazione, alla **terza**
+> occorrenza sulla stessa riga.
+> ⚠️ **E c'è stata una QUARTA, trovata il 2026-08-25 e non cercata:** la riga diceva
+> *«2026-08-20»* mentre il file era stato toccato **dopo**, e quante volte lo dice
+> `git log --since=2026-08-21 -- docs/HANDOFF.md`. ⛔ **Il numero non è scritto qui, ed è la
+> lezione del ciclo di revisione che ha portato questa correzione:** un conteggio messo in pagina
+> è misurato **prima** del commit che lo sposta — e il commit che riallinea questa riga tocca
+> proprio il file che il comando conta. ⛔ **E il rimedio scritto nel 2026-08-11 — *«sono due
+> date»* — non ha impedito la ripetizione**, perché separa i due significati e non dice **chi**
+> riallinea la prima: chi tocca questo file per una riga di gotcha non si sente l'autore della sua
+> intestazione. È il gotcha **#68** — una regola scritta in un documento non vincola quel
+> documento — sulla riga che ospita il #31.
+> ⚠️ **Questa riga diceva «il 2026-08-10, alla chiusura del Traguardo 3» mentre il quarto era
+> eseguito** — e prima ancora «alla chiusura del Traguardo 2» con undici compiti del terzo chiusi
+> e pushati. È il gotcha **#31** sull'intestazione, che nessuno rilegge perché è la cornice e non
+> il contenuto, **alla seconda occorrenza sulla stessa riga**: trovata dall'audit del 2026-08-11.
+
+### La fine del capoverso su «senza voci aperte», nel Punto di ripresa — una storia
+
+Righe 39–40 di `HANDOFF.md` a `440b265`. Nel vivo resta «Le due letture divergono.» Dopo «una tabella sola» di [`porta-di-qualita.md`](../porta-di-qualita.md). Le due letture»:
+
+> divergono, e
+> la riga diceva solo la prima.
+
+### Il richiamo del 2026-08-25 e «Questa riga li ENUMERAVA», nel Punto di ripresa — due storie
+
+Righe 44–55 di `HANDOFF.md` a `440b265`. Nel vivo restano il rimando alla tabella dei traguardi della [roadmap](../roadmap.md) e quello alla §6 del compendio. Dopo «— richiamo del 2026-10-06, audit del 2026-09-30, AUD-113.»:
+
+> ⚠️ **RICHIAMO DEL 2026-08-25 — questa riga aggiungeva *«NON è scritto qui»***, cioè una
+> **clausola universale** su tutto il documento, e il documento la smentiva: il `grep` su
+> *«Traguardo N è eseguito»* dentro questo file restituisce più di una casa. ⛔ **Tolta, non
+> ristretta:** una clausola universale non si rende vera scrivendola meglio, e ciò che serviva
+> era il **rimando**, che regge da solo. Ciò che restava di **stantio** — l'elenco dei traguardi
+> eseguiti dentro *«In trenta secondi»*, fermo al quarto — è stato tolto lì, dove viveva.
+> ⚠️ **Questa riga li ENUMERAVA** — *«i Traguardi 1, 2, 3 e 4 sono eseguiti»* più *«e il
+> Traguardo 5 è IN ESECUZIONE»* — cioè teneva un elenco che si allunga a ogni chiusura, che
+> è un numeratore scritto a parole: **tolto, non esteso**, come la 25ª misura fece col
+> puntatore e la 45ª con la riga gemella di [`README.md`](../README.md). Un rimando non può
+> marcire; un elenco sì, e questo era già indietro di un traguardo il giorno in cui si è
+> chiuso il quinto. 
+
+### La cronaca del primo audit e delle sue otto decisioni, nel Punto di ripresa — una cronaca, e una copia del rapporto
+
+Righe 58–117 di `HANDOFF.md` a `440b265`. Il verbale di ogni decisione vive nel [rapporto](../audit-2026-08-11.md); nel vivo resta una riga che lo dice. Dopo «insieme alle voci che l'ultimo traguardo lascia aperte.»:
+
+> ⛔ **E lo stesso giorno il repository ha ricevuto il suo PRIMO AUDIT COMPLETO** — codice,
+> script del cancello, documenti di stato, ADR, diagrammi — con nove revisori paralleli in sola
+> lettura e ogni finding grave riverificato sul sorgente dal coordinatore. Il rapporto è
+> [`audit-2026-08-11.md`](../audit-2026-08-11.md). **Sedici finding sono stati corretti e provati
+> nella stessa sessione**; il resto è **aperto**, e la §8 del rapporto elenca le **otto decisioni**
+> che aspettano il proprietario.
+>
+> ✅ **E LA PRIMA DELLE OTTO È ESEGUITA IL 2026-08-17 — T-2 e T-1, il finding più grave.** La
+> suite di conformità del giornale provava **tre** promesse su nove — la 1, la 5 e la 8 — soltanto
+> nello stato in cui **ogni guardia plausibile passa**: archivio vuoto, o con **un passo solo**.
+> Chiuse con un **passante** in archivio, e la notizia è quanto è costato: **nessuna promessa
+> nuova, nessuna riga di prodotto toccata**. Le due implementazioni filtravano già per passo e la
+> porta lo dichiarava già — a mancare era lo **stato** che distingue una guardia sbagliata.
+> ⛔ **Quindi la §8 dell'audit prezzava male la decisione 1**, che dava per *«un'aggiunta al
+> contratto di una porta condivisa»*: il richiamo datato è in testa alla §5 del rapporto.
+> Bugiardi nuovi **J14 · J15 · J16**; sei mutazioni sulle implementazioni vere, **sei rosse su
+> sei**, ciascuna col messaggio della propria promessa; baseline **32 target, 177 passati**.
+>
+> ✅ **E LA SECONDA È ESEGUITA IL 2026-08-18 — G-5, `--locked` nel cancello.** Il `Cargo.lock`
+> **tracciato** era un **effetto** del cancello invece che un suo **ingresso**: un manifesto
+> derivato faceva ri-risolvere `cargo`, e `gate-deps.sh` misurava allora il grafo appena inventato
+> invece di quello approvato da ADR-0031. ⛔ **Riprodotto prima di correggere:** tolta una
+> dipendenza da `crates/kernel/Cargo.toml`, il controllo rispondeva **`OK`, exit 0** avendo
+> riscritto il lockfile di **−33 righe**. ⛔ **E il rapporto lo prezzava «una riga», al rovescio
+> della decisione 1:** i siti `cargo` sono **più d'uno e stanno su tutti e tre gli script** — la
+> cifra è **tolta** il 2026-08-27 col finding **AUD-009**, perché la sua scomposizione la smentiva
+> nella stessa riga, e vive dove vive il comando, in [`riferimenti.md`](../riferimenti.md) — più un
+> ramo d'errore
+> esplicito — senza, il rosso c'era comunque (i due grafi vuoti coincidono) ma diceva *«la query
+> era stretta»* invece di *«il lockfile è stantio»*. Sonde **N6** e **N7**; `GATE GREEN`,
+> **32 target, 177 passati**.
+>
+> ✅ **E LA SESTA IL 2026-08-18 — i quattro rimandi datati A-1, A-2, A-4, A-7**, con nessuna
+> decisione riaperta: cadono quattro **evidenze**, non quattro scelte. ⛔ **Due erano più larghi
+> del rapporto:** A-2 viveva in **due** case oltre ad ADR-0021 — il compendio e `design/08`, che
+> *si dichiara fonte di verità sulla porta di qualità* e ci ha tenuto una formulazione
+> falsificata per **dieci giorni** (radice **R1**) — e A-7 non era una frase imprecisa ma una
+> **previsione citata come misura**: `crates/daemon/src/main.rs` non nomina il giornale, quindi
+> *«la radice di composizione lo apre»* parla di codice **non ancora scritto** (gotcha **#57**).
+> 📌 **L'argomento regge, l'evidenza no** — ed è la forma in cui il richiamo è scritto.
+>
+> ✅ **E LA QUINTA lo stesso giorno — C-1**, e ciò che si esegue è la **registrazione**:
+> `bincode` 2.0.1 è coperto da **RUSTSEC-2025-0141**, `INFO`, non una vulnerabilità. ⛔ La notizia
+> è il **buco fra due criteri** — ADR-0037 chiede se il **pari** ha un lettore mantenuto, M-1 se
+> il **grafo** è accettabile per I3, e nessuno dei due se sia mantenuta la libreria del **nostro**
+> capo del filo. ✅ **Zero usi di produzione**, misurato: un commento e una sonda. Si **decide al
+> Traguardo 6**, e la registrazione vive accanto alla voce in `crates/kernel/Cargo.toml`.
+> ⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, AUD-579: deciso il 2026-08-31, `bincode` 2.0.1 resta, e
+> `IpcMessage::encode` in `crates/kernel/src/wire/ipc.rs` lo usa in produzione; la casa della decisione è la riga
+> «schema IPC» della §4 del [compendio](../COMPENDIO.md).
+>
+> ✅ **E LA QUARTA lo stesso giorno — PL-1, e la scelta è `0600` SUL FILE.** Il giornale nasceva
+> **0644** su Linux, cioè **meno** dell'account che ADR-0023 promette. ✅ **Misurato su Linux
+> vero** (WSL, umask 0022): `0o666` → **644**, `0o600` → **600**. ⛔ **Non la cartella**, che era
+> l'altra opzione: nessuno la crea, quindi la regola nominerebbe un chiamante che **non esiste** —
+> il difetto di A-7. ⛔ **E il difetto era invisibile sull'host**: Windows non ha il modo Unix,
+> quindi il rosso poteva uscire **solo sul secondo sistema** (gotcha #52). Il percorso `cfg(unix)`
+> è stato **type-checkato per Linux** prima del push; il valore lo misura la **CI**.
+> ✅ **E LE OTTO SONO CHIUSE IL 2026-08-18.** Il conteggio vive nella **§6 del compendio**, in un
+> posto solo: qui non si ripete, o diverge — ed è già divergito **quattro volte in questo file**.
+
+### «Questo blocco lo riscriveva» e la riga «seicento righe più sotto», nel Punto di ripresa — due storie
+
+Righe 120–129 di `HANDOFF.md` a `440b265`. Nel vivo resta il rimando alla §6 del compendio. Dopo «nella §6 del compendio, in un posto solo.»:
+
+>  ⛔ **Questo blocco lo riscriveva, ed è andato stantio tre
+> volte** — radice **R1**. Il rimedio non è ricorreggerlo: è **toglierlo**, che è la
+> prescrizione della 25ª misura — *decidere cosa TOGLIERE, non cosa accorciare* — e la ragione
+> per cui [`AVVIO-CHAT.md`](../AVVIO-CHAT.md) è l'unico documento che su questa riga non è **mai**
+> marcito: si rifiuta di nominare il prossimo passo, e lo dichiara.
+> ⚠️ **Questa riga diceva «quello che viene dopo è il brainstorming del piano del Traguardo 4»
+> a Traguardo 4 ESEGUITO**, e la riga della tabella dei traguardi seicento righe più sotto lo
+> dava già per chiuso: due affermazioni di stato **nello stesso file** che si contraddicevano.
+> Trovata dall'audit del 2026-08-11. ⚠️ E prima ancora nominava il solo Traguardo 1: è la
+> stessa specie di stantio che la tredicesima misura registrò per `roadmap.md`.
+
+### ADR-0029 `Proposed`, nel Punto di ripresa — la metà falsa, e il suo richiamo
+
+Righe 159–161 di `HANDOFF.md` a `440b265`. Nel vivo, ADR-0029 `Accepted` dal 2026-09-10. Dopo «Il testo integrale è nella tabella dei gotcha.»:
+
+> ✅ **Nessuna voce aperta resta nella spec.** L'unica decisione ancora `Proposed` del
+> progetto è **ADR-0029**, il guscio della GUI, che non tocca il sotto-progetto 1.
+> ✅ **RICHIAMO DEL 2026-09-10:** anche ADR-0029 è `Accepted` — Electron, con SP-8.
+
+### Le cifre dei test, nel Punto di ripresa — una storia
+
+Righe 182–191 di `HANDOFF.md` a `440b265`. Nel vivo resta la regola, col comando che dà il numero. Dopo «congelati sono nel repository e non si rigenerano.»:
+
+> ⚠️ **QUANTI BERSAGLI E QUANTI TEST NON È SCRITTO QUI, ed è la terza volta che
+> questa riga invecchia sullo stesso sito:** diceva *«29 target, 152 test»* al Traguardo 3, poi
+> *«32 e 171»* al Traguardo 4, poi *«dal 2026-08-17 **sono** 32 target e 177 test»* — e il
+> 2026-08-25, misurato con `cargo test --workspace --no-fail-fast --locked` aggregando le righe
+> `test result:`, erano **37 bersagli, 264 passate, 0 fallite, 2 ignorate**. ⛔ **Tolta, non
+> riallineata:** questa era la **terza** casa della cifra dei test e la sola al **presente** —
+> le altre due, la §6 del [`COMPENDIO.md`](../COMPENDIO.md) e il verde di riferimento di
+> [`porta-di-qualita.md`](../porta-di-qualita.md), portavano già `37 · 264 · 0 · 2`, e nessuno
+> aveva guardato questa. Le altre occorrenze di *«32 target, 177»* — due in questo file e altre
+> altrove — sono **verbali datati** e restano. 
+
+### Le copie del prossimo passo in fondo al Punto di ripresa — tre storie
+
+Righe 195–205 di `HANDOFF.md` a `440b265`. Nel vivo resta il rimando alla §6 del compendio. Dopo «tabella dei traguardi e alle questioni lasciate aperte.»:
+
+>  ⛔ **Questa riga lo riscriveva e portava
+> un conteggio proprio** — *«ne sono eseguite due … ne restano tre»* — falso dal 2026-08-18,
+> mentre altre tre righe di **questo stesso file** dicevano **tre**, **quattro** e **cinque**:
+> quattro case e **tre** valori distinti, nessuno vero. Tolto invece che corretto.
+> ⛔ **Questa riga diceva «il prossimo passo è il BRAINSTORMING del Traguardo 5» mentre due righe
+> settanta più su, dentro QUESTO STESSO FILE, dicevano «non il Traguardo 5»** — e non era sola:
+> altre due (nella «In trenta secondi» e in «Prima cosa da fare») dicevano lo stesso falso. È la
+> forma esatta del finding **D-1** dell'audit, che aveva corretto il **Punto di ripresa** e non le
+> tre gemelle: una correzione attraversa il punto in cui nasce, non gli altri — radice **R1**.
+> Trovate col `grep '⏭️'` invece che a memoria, il 2026-08-17.
+> ⚠️ E prima ancora diceva «scrivere il piano del Traguardo 4» a quel traguardo eseguito.
+
+### Lo stack «tranne il guscio», in «In trenta secondi» — la metà falsa, e il suo richiamo
+
+Righe 215–217 di `HANDOFF.md` a `440b265`. Nel vivo, lo stack deciso per intero. Dopo «comune. Spec del kernel §0–§10 completa, 41 ADR.»:
+
+> Stack deciso **tranne il guscio della GUI**: core in **Rust**, interfaccia web in **Vue 3**,
+> worker ML in **Python**; Tauri contro Electron è ancora aperto
+> ([ADR-0029](../adr/0029-guscio-della-gui.md), `Proposed`) e non blocca nulla.  ✅ **RICHIAMO DEL 2026-09-10:** chiuso — **Electron**, SP-8; lo stack è deciso per intero.
+
+### Il richiamo del 2026-08-25, in «In trenta secondi» — una storia
+
+Righe 223–228 di `HANDOFF.md` a `440b265`. Nel vivo resta il rimando alla tabella dei traguardi della [roadmap](../roadmap.md). Dopo «— richiamo del 2026-10-06, audit del 2026-09-30, AUD-113.»:
+
+>  ⚠️ **RICHIAMO DEL
+> 2026-08-25 — questo capoverso li ENUMERAVA uno per uno, dal primo al quarto, ciascuno con la
+> propria data e il proprio numeratore**: era la **seconda** casa dello stesso elenco in questo
+> file, e si fermava al Traguardo 4 il giorno in cui si è chiuso il quinto. **Tolto, non esteso**,
+> come il Punto di ripresa qui sopra — che però era stato corretto **solo lì**, ed è la radice
+> **R1**: una correzione attraversa il punto in cui nasce e non gli altri.
+
+### Le sei famiglie di porte, in «In trenta secondi» — la metà falsa, e il suo richiamo
+
+Righe 229–232 di `HANDOFF.md` a `440b265`. Nel vivo, le famiglie complete e quante, dal richiamo del 2026-09-22. Dopo «ha, che non si allunga a ogni chiusura:»:
+
+> ✅ **le sei famiglie di porte sono complete**
+> — `reactor` · `journal` · `filesystem` · `network` · `process` · `ipc` — e la §3.1 le dichiara
+> esaustive (⚠️ **RICHIAMO DEL 2026-09-22, E225:** sono **sette** dal compito 4 del piano della parte 2 del
+> sotto-progetto 2 — la settima è `custody` — e la §3.1 della spec del sotto-progetto 1 la porta)
+
+### La copia del prossimo passo, in «In trenta secondi» — tre storie
+
+Righe 238–241 di `HANDOFF.md` a `440b265`. Nel vivo resta il rimando alla §6 del compendio. Dopo «nella §6 del compendio, in un posto solo»:
+
+> : questa riga ne teneva una copia — *«ne restano cinque»* — falsa dal 2026-08-18.
+> ⛔ Questa riga diceva *«il brainstorming del Traguardo 5»*, una delle **tre** che lo dicevano in
+> questo file mentre il Punto di ripresa diceva il contrario — finding **D-1**, radice **R1**.
+> ⚠️ E prima ancora *«scrivere il piano del Traguardo 4»* — audit del 2026-08-11.
+
+### Il richiamo E232 ed E236, in «In trenta secondi» — una storia
+
+Righe 251–253 di `HANDOFF.md` a `440b265`. Nel vivo restano i rimandi alla §1 del compendio e alla Mappa dei documenti. Dopo «fondo a questo file ne porta le cartelle»:
+
+> (⚠️ **richiamo del 2026-09-22, E232:** qui stava *«vive in `../crates/`: cinque crate»*, falso dal compito 11; ed E236:
+> qui stava anche *«in un posto solo»*)
+
+### «sale col Traguardo 3», in «In trenta secondi» — una storia
+
+Riga 264 di `HANDOFF.md` a `440b265`. Nel vivo, il giornale salito col Traguardo 3. Dopo «`simulator` e `redb` col backend nostro in `platform`.»:
+
+>  ⚠️ **Questa riga diceva *«sale col Traguardo 3»***, al futuro.
+
+### La copia del prossimo passo, in «Prima cosa da fare» — tre storie
+
+Righe 269–275 di `HANDOFF.md` a `440b265`. Nel vivo resta il rimando alla §6 del compendio. Dopo «vive lì e solo lì, ed è deliberato»:
+
+> : questa sezione ne teneva una **copia**, e la copia è andata stantia **tre
+> volte** — finding **D-1** dell'audit, poi ancora il 2026-08-17 e il 2026-08-18.
+> ⛔ **L'ultima volta portava anche un conteggio proprio** — *«ne restano quattro»* — mentre altre
+> tre righe di questo file dicevano **tre**, **tre** e **cinque**: quattro case e **tre** valori
+> distinti, in un documento solo, ciascuno fermo alla decisione che l'aveva scritto.
+> ✅ **Tolta invece che corretta il 2026-08-18**, che è la 25ª misura — *decidere cosa TOGLIERE,
+> non cosa accorciare* — e il rimedio che il finding D-1 non aveva preso.
+
+### La riga «due righe di questi documenti erano FALSE», nella consegna del Traguardo 4 — una storia
+
+Riga 302 di `HANDOFF.md` a `440b265`. La lezione vive nel gotcha #57; il perché del delta, nella misura T4-5-h di [`riferimenti.md`](../riferimenti.md). Dopo «chiuderlo in un posto non lo chiude altrove»:
+
+> | ⛔ **due righe di questi documenti erano FALSE** | dicevano come chiudere il gotcha **#51**, e lo dicevano **dal brainstorming**: contare le chiamate a `sync_data` è cieco, perché **sei su sette nascono prima che esista un record**. Corrette con richiami datati. 📌 Il difetto non era il numero ma la **previsione** — gotcha **#57** |
+
+### Come si chiude il #51, nella consegna del Traguardo 4 — la frase falsa, e come si è visto
+
+Riga 316 di `HANDOFF.md` a `440b265`. Nel vivo, la forma giusta: il DELTA attraverso la scrittura; il perché, nella misura T4-5-h di [`riferimenti.md`](../riferimenti.md). Dopo «in [ADR-0032](../adr/0032-motore-di-persistenza.md) ⛔ come si chiude il #51»:
+
+>  — e questa riga ha detto il FALSO fino al 2026-08-11** | Diceva: *«con `Durability::None` `redb` non chiama `sync_data`: un backend che conta le chiamate lo rende osservabile»*. **Misurato falso:** sotto quella mutazione `redb` chiama `sync_data` **sette volte all'apertura**, perché **sei su sette nascono prima che esista un record**, e la forma *«almeno una volta»* resta **verde** proprio sotto la mutazione che dovrebbe cogliere. 
+
+### «Questa sezione diceva», sopra la decisione del Traguardo 3 — una storia
+
+Righe 322–325 di `HANDOFF.md` a `440b265`. La decisione è nel capoverso che segue, nel vivo. Dopo «esiste già ed è provato sostituibile da fuori.»:
+
+> ⚠️ **Questa sezione diceva «eseguire il piano del Traguardo 3» a undici compiti su dodici
+> eseguiti**, e il capoverso qui sotto è ciò che resta di quel testo: si tiene perché la decisione
+> che descrive è **stata presa e ha retto**, non perché ci sia ancora da eseguire.
+
+### Le cifre delle errata dei Traguardi 2 e 3 — una storia
+
+Righe 351–353 di `HANDOFF.md` a `440b265`. Nel vivo restano le cifre e la data del riconteggio. Dopo «cui nove decisioni — e non sono rifiniture.»:
+
+> ⚠️ **Questa riga diceva
+> *«quattro passate, quarantasei voci»* e nominava il solo Traguardo 2**: due cifre stantie e
+> un'errata intera assente, ricontate
+
+### Le vie chiuse del confine — una storia
+
+Riga 379 di `HANDOFF.md` a `440b265`. Nel vivo restano le vie chiuse e le aperte. Dopo «di chiusura è la firma, non una variante.»:
+
+> ⚠️ **Questa riga diceva «una sola è chiusa»**, ed era ferma a prima del Task 7: le
+
+### Il vincolo 14 speso — una storia
+
+Righe 415–416 di `HANDOFF.md` a `440b265`. Nel vivo restano i byte entrati col Task 10. Dopo «— tre record e una mappa in `crates/kernel/tests/frozen/`.»:
+
+>  ⚠️ **Questa riga
+> diceva *«proprio al piano che si sta per scrivere»***.
+
+### L'errata del Traguardo 3, nella tabella di ciò che ha lasciato — una storia
+
+Riga 904 di `HANDOFF.md` a `440b265`. Nel vivo restano le cifre e la data del riconteggio. Dopo «nove passate — ricontate sul piano il 2026-08-10»:
+
+> , ché questa cella diceva *«settanta in otto»*
+
+### «Questa riga diceva «tre»», sopra il dettaglio del Traguardo 3 — una storia
+
+Righe 908–912 di `HANDOFF.md` a `440b265`. Nel vivo resta la tabella che la riga introduceva. Dopo «completi in [`riferimenti.md`](../riferimenti.md), sezione «Esecuzione del Traguardo 3».»:
+
+> ⚠️ **Questa riga diceva «tre» a sei compiti eseguiti**, che è il gotcha **#31** sul contatore di
+> un contenitore che cresce, per la seconda volta in questa tabella — portata a **sette** il
+> 2026-08-10 chiudendo il Task 7, a **otto** lo stesso giorno chiudendo il Task 8, a **undici**
+> chiudendo il Task 11 dopo che i Task 9 e 10 l'avevano lasciata ferma, e a **dodici** alla
+> chiusura:
+
+### Il «due» tolto, nella riga di ADR-0018 del dettaglio del Traguardo 3 — una storia
+
+Riga 938 di `HANDOFF.md` a `440b265`. Nel vivo resta il rimando alle voci aperte di [`porta-di-qualita.md`](../porta-di-qualita.md), che le conta. Dopo «le voci aperte di [`porta-di-qualita.md`](../porta-di-qualita.md), che le conta.»:
+
+>  ⚠️ **Il «due» è TOLTO il 2026-08-27, non riallineato:** la chiusura della radice R2 ne ha aggiunta una terza, e un numeratore in un documento secondario invecchia a ogni voce nuova
+
+### La premessa del rilievo su M-2, nelle misure — una storia
+
+Riga 965 di `HANDOFF.md` a `440b265`. Nel vivo resta il richiamo con le sue tre ragioni; lo scenario col giornale lo dice anche la voce dei 25,8 µs fra le voci aperte della §6 del [compendio](../COMPENDIO.md). Dopo «rapporto fra le due, misurato oggi, è ~4×.»:
+
+>  ⚠️ **E la premessa con cui il rilievo era stato aperto era sbagliata:** lo scenario di M-2 **il giornale ce l'aveva già** — la §3.6 lo definisce con intento ed esito per passo, e la sua non-vacuità (*«11 cambi su 23 transizioni»*) implica **ventiquattro** voci di traccia. È la formula *«una corsa dello scenario minimo»* di [`design/08`](../design/08-strategia-di-test.md) a farla leggere come senza giornale.
+
+### Lo stato di M5, nelle misure — la metà falsa
+
+Riga 975 di `HANDOFF.md` a `440b265`. Nel vivo restano i richiami del 2026-09-22 e del 2026-10-03. Dopo «M5 quanta VRAM prende la presentazione della GUI»:
+
+> ⬜ **aperta e dichiarata tale** — richiede una GUI: sotto-progetto 2, accanto a M1–M4 di ADR-0029 
+
+### Le due cose di M-3 — una copia della spec, e una storia
+
+Righe 981–998 di `HANDOFF.md` a `440b265`. Vivono nella §7.2.3 e nella §7.2.4 della [spec del sotto-progetto 1](../superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md), sede unica. Dopo «sotto-progetto 1, che è la loro sede unica.»:
+
+>  Qui restano solo le due cose che non stanno lì.
+>
+> **1 · Una riga di questo documento era sbagliata, e va saputo.** HANDOFF affermava che
+> `cargo tree -e no-proc-macro` separa il grafo di runtime da quello totale.
+>
+> > ⛔ **Non li separa.** Da solo toglie i generatori di codice ma lascia dentro l'intero
+> > sottoalbero delle dipendenze **di sviluppo**, e con esso `windows-sys`. Su un workspace
+> > con `trybuild` — che il kernel avrà, §2.5 — restituisce **venti** crate invece di due.
+> > Il comando corretto è **`-e normal,no-proc-macro`**.
+>
+> **Perché M-3 non poteva accorgersene:** il suo workspace di prova non aveva dipendenze di
+> sviluppo, e senza quelle i due comandi danno la stessa risposta. La sonda **non poteva
+> falsificare l'affermazione** — gotcha #17 applicato a M-3 stessa. Riverificato il
+> 2026-08-07, con la contro-sonda che lo dimostra.
+>
+> **2 · La correzione che M-3 aveva imposto alla §6.1.1**, già applicata: `simulator` non
+> aggiunge voci proprie, ma la sua lista **non è vuota** — dipende da `kernel`, e la regola 2
+> è sul grafo *transitivo*. Scritto «resta vuota», misurato `bincode kernel unty`.
+
+### La riga di ADR-0029, nella tabella dello stack — la metà falsa, e la sua correzione
+
+Riga 1007 di `HANDOFF.md` a `440b265`. Nel vivo, la riga col guscio deciso. Dopo «non una scelta: i modelli hanno implementazioni Python»:
+
+> | **0029** | ⚠️ **guscio: aperto** — Tauri o Electron ✅ **chiuso il 2026-09-10: Electron** | **niente**: sono argomenti, non misure. È il motivo per cui era `Proposed`; poi **SP-8**, M1–M5 e Q1–Q4 |
+
+### La riga di `COMPENDIO.md`, nella Mappa dei documenti — una storia
+
+Riga 1261 di `HANDOFF.md` a `440b265`. Nel vivo resta la riga, senza la sua storia. Dopo «stato di oggi e il prossimo passo (§6).»:
+
+>  ⚠️ **Mancava da questa tabella**, ed è stato aggiunto il 2026-08-10: il file più importante del repository non compariva nella mappa che dice dove va cosa, pur essendo nominato dieci volte nella prosa qui intorno
+
+### La riga di `AVVIO-CHAT.md`, nella Mappa dei documenti — una storia
+
+Riga 1262 di `HANDOFF.md` a `440b265`. Nel vivo resta la riga, senza la sua storia. Dopo «GUI; richiamo del 2026-10-06, audit del 2026-09-30, AUD-107.»:
+
+>  ⚠️ Mancava anche questo |
+
+### La riga di `tracciabilita.md`, nella Mappa dei documenti — due storie
+
+Riga 1264 di `HANDOFF.md` a `440b265`. Nel vivo resta la riga, senza la sua storia. Dopo «comando nel riquadro in testa a quel file.»:
+
+>  ⚠️ **RICHIAMO DEL 2026-09-03:** la cifra è **tolta** e non riallineata — viveva qui e nel compendio, ed è la specie che il richiamo qui sotto già registra. ⚠️ Questa cella diceva *«170»*, cifra che l'audit del 2026-08-10 aveva già ricontata e corretta **nel compendio e non qui**: la stessa cifra in due posti con due valori, colta il 2026-08-11
+
+### La riga dei piani, nella Mappa dei documenti — una storia
+
+Riga 1270 di `HANDOFF.md` a `440b265`. Nel vivo resta la riga, senza la sua storia. Dopo «§6 del [compendio](../COMPENDIO.md), in un posto solo ciascuno.»:
+
+>  ⚠️ **RICHIAMO DEL 2026-08-21 — questa cella ne enumerava *«quattro»* e li elencava per nome, fermandosi al Traguardo 3 del 2026-08-10: ne mancavano **due**, il Traguardo 4 e il Traguardo 5. È **TOLTA e non riallineata**, perché un elenco che si allunga a ogni traguardo è un numeratore, e invecchia peggio di una cifra — non c'è nessun numero da riconoscere come stantio (`CLAUDE.md`, e la 45ª misura applicò la stessa correzione a [`README.md`](../README.md)).
+
+### La riga di `../gui/`, nella Mappa dei documenti — una storia
+
+Riga 1272 di `HANDOFF.md` a `440b265`. Nel vivo resta la riga, senza la sua storia. Dopo «crate fuori dal workspace; la prova è `scripts/gate-gui.sh`.»:
+
+>  ✅ **Riga aggiunta il 2026-09-22 (E232)**
+
+### La riga di `semi-dst.md`, nella Mappa dei documenti — una storia
+
+Riga 1275 di `HANDOFF.md` a `440b265`. Nel vivo resta la riga, senza la sua storia. Dopo «che una voce nomini un test che esiste»:
+
+>  — ⚠️ **RICHIAMO DEL 2026-10-03**: mancava da questa tabella, audit del 2026-09-30, AUD-602
+
+### La riga di `../scripts/gate.sh`, nella Mappa dei documenti — una storia
+
+Riga 1280 di `HANDOFF.md` a `440b265`. Nel vivo resta la riga, senza la sua storia. Dopo «· `gate-deps.sh` · `gate-attributes.sh` · `gate-gui.sh` · `check-docs.sh`.»:
+
+>  ✅ **Richiamo del 2026-09-22 (E232):** qui stava *«Sei controlli, e gli altri quattro script»* — la cifra è tolta, e `gate-gui.sh` è nato col compito 15 del piano della parte 2
+
+### La rilettura di `tracciabilita.md`, in «Come si aggiorna questo handoff» — la metà stantia, e il suo richiamo
+
+Righe 1289–1294 di `HANDOFF.md` a `440b265`. Nel vivo, il richiamo che dice ciò che è vero adesso. Dopo «che questa voce ordina di aggiornare esiste ancora?»:
+
+> Di [`tracciabilita.md`](../tracciabilita.md) è stato toccato **solo il riquadro in testa**,
+> che conta le voci della riapertura: nessuna funzionalità ha cambiato sede, e la regola dice
+> di aggiornare la tabella alla *chiusura* del sotto-progetto. Resta quindi da aggiornare
+> **quando il sotto-progetto 1 chiude**, non alla fine della §8.
+> ✅ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, AUD-572: riletta alla chiusura del 2026-09-03, e lo dice il
+> riquadro in testa a [`tracciabilita.md`](../tracciabilita.md).
+
+## La riga della data di HANDOFF.md, com'era — archiviata il 2026-10-07, al lotto 2 del `lean-docs` della R5
+
+⚠️ **Vera il giorno in cui fu scritta.** Uscita da [`HANDOFF.md`](../HANDOFF.md) parola per parola, coi link riscritti per questa cartella.
+
+Aggiornato il **2026-09-28**, con la **chiusura del sotto-progetto 14**, il design system — ⚠️ questa riga diceva **2026-08-28** dopo tre tocchi del 2026-09-01: la data segue il file (finding **AUD-039**), e qui non l'aveva seguito.

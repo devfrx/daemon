@@ -9,10 +9,12 @@
 //! ⚠️ THE WAITS ARE BOUNDED `yield_now` LOOPS AND NOT FIXED SLEEPS, except where the assertion is
 //! about something that has NOT arrived -- there an interval must elapse, and that one is named.
 //!
-//! ⛔ AND EVERY WAIT HAS A CEILING AND A `panic!`, the four on `receive` included: a regression of
+//! ⛔ AND EVERY WAIT HAS A CEILING AND A `panic!`, those on `receive` included: a regression of
 //! the transport must come out as a red that names what it waited for, never as a gate that hangs
 //! without a line (E5 and E6 of the sub-project 2 plan). ⚠️ RECALL OF 2026-10-02 -- audit of
-//! 2026-09-30, AUD-703.
+//! 2026-09-30, AUD-703. ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30, the re-verification of
+//! P24: which waits are on `receive` says
+//! `grep -n 'the_next_answer(&mut' crates/platform/tests/ipc_contract_real.rs`, never a count here.
 
 use std::io::Write;
 use std::path::PathBuf;

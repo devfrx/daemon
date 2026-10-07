@@ -5817,3 +5817,39 @@ Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende 
     `cherry-pick`, se la coda di `archivio/stato-storico.md` differisce fra i due rami, come da `7c5c2bd`; un commit
     che tocca un file che su `main` è diverso — il compendio, la porta, l'archivio — resta sul solo ramo, in un commit
     suo (C30).
+
+## Il blocco tolto da HANDOFF.md, com'era — archiviato il 2026-10-07, all'ondata 12 del terzo audit
+
+⚠️ **Vero il giorno in cui fu scritto.** Il corpo della sezione «Non rilitigabile» di [`HANDOFF.md`](../HANDOFF.md) a `222c913`, che il pacchetto P30 del [terzo audit](../audit-2026-09-30.md) ha tolto, radice R4: era una copia della §7 del [compendio](../COMPENDIO.md), e il file vivo rimanda ora alla casa unica. Parola per parola, coi link riscritti per questa cartella.
+
+### Il corpo della sezione «Non rilitigabile»
+
+Righe 1058–1084 di `HANDOFF.md` a `222c913`; tolte per l'osservazione (ix) dell'ondata 11, gotcha #68.
+
+41 ADR in stato `Accepted`. Rimetterne in discussione uno **richiede un ADR
+nuovo che lo superi** (`Superseded by`), non una conversazione. Le decisioni che
+è più probabile qualcuno voglia riaprire per comodità, e la ragione per cui non si fa:
+
+| Decisione | Se la riapri |
+|---|---|
+| I quattro pilastri sono **paritari**; nessuno ha accesso privilegiato al kernel (ADR-0001) | il kernel diventa il servo di un pilastro e gli altri tre restano cittadini di seconda classe per sempre |
+| **Tre** classi di processo, non quattro (ADR-0004) | la quarta si giustifica contro la tabella, o non si fa |
+| **Nessun codice di terzi in-process** (ADR-0003) | rientrano contratto pubblico da congelare e superficie d'attacco |
+| Default **OpenRouter, VRAM libera** (ADR-0006) | lo swap coordinato passa da eccezione a caso normale e cambia tutta la UX di attesa |
+| **Fail-closed** sui vincoli dei dati (ADR-0012) | la protezione torna a essere una preferenza |
+| Il **contesto è una proiezione**, non lo stato (ADR-0008) | le run lunghe tornano a perdere informazione in modo irreversibile |
+| **Nessun modello** nel percorso decisionale del kernel (ADR-0020) | un fallimento del kernel smette di essere sempre un difetto, e la DST diventa impossibile |
+| L'anello 4 **propone**, l'utente approva (ADR-0009) | il harness si auto-modifica in silenzio e diventa indebuggabile |
+| Il core è **Rust** (ADR-0026) | riaprirlo significa rifare SP-5 e SP-6, i cui esiti sono misurati e registrati con seed e versioni. Il criterio che ha deciso è lo **spareggio #1**, e discende da V29 e ADR-0021: **rimettere in discussione il linguaggio significa rimettere in discussione la DST**, non il linguaggio |
+| Le **dipendenze del kernel** sono parte del confine I3 (ADR-0031) | `no_std` blocca solo il *nominare* `std`. Misurato: una crate con `no_std` **e** `forbid(unsafe_code)` legge un file dal disco attraverso una dipendenza. Senza la lista, I3 è controllato su un lato solo |
+| Il motore è **`redb` con backend nostro** (ADR-0032) | il backend nostro non è un dettaglio: è il punto in cui il **livello 2** di crash diventa iniettabile. Prenderne uno con l'I/O non sostituibile rinuncia a metà della verifica |
+| L'**esecutore vive nel kernel** (§2.4) | prendere un runtime di ecosistema restituisce a lui l'ordine delle attività — cioè esattamente il controllo che lo spareggio #1 aveva comprato escludendo Go |
+| La **concessione di presentazione la tiene il core** (ADR-0033) | la scorciatoia tentante è «esentiamo la GUI e amen». Esentarla rende **I2 falso** e indebolisce Q2 in silenzio; darla in mano alla GUI crea una concessione che si perde ogni volta che la GUI muore — cioè in qualsiasi istante, per G3. Il titolare deve avere vita lunga, e l'unico che ce l'ha è il core |
+| Il controllo delle dipendenze misura **due grafi con rimedi opposti** (§7.3.1) | unificarli sembra una semplificazione e non lo è: insegna il riflesso «aggiungi alla lista» **anche per una violazione di I3**, dove aggiungere alla lista non è un rimedio ma la violazione scritta in un modulo. È così che un'invariante si degrada in scartoffia |
+| Il **cancello senza OS si aggiunge**, non sostituisce la lista (§7.3.2) | sembrano ridondanti e non lo sono: la lista coglie una crate **nuova**, il cancello una crate **già ammessa** che raggiunge l'OS per una via non prevista. E quando falliscono, **solo la lista dice il nome del colpevole** |
+| Il **livello 3 del catalogo è vuoto** (§7.4.3) | la tentazione è aggiungere un lint «tanto non costa niente». Costa: un rosso della porta deve significare sempre «invariante violata», mai «stile discutibile», o si impara a ignorarlo |
+| L'**innesco è obbligatorio** per `parziale` e `rimandato` (§8.1) | sembra burocrazia e non lo è: è l'unica cosa che impedisce a `parziale` di diventare la casella comoda in cui parcheggiare tutto. Toglierla riporta alla situazione che la §0.6 chiamava «rimandato tende a diventare dimenticato» — con in più una tabella che sembra dire il contrario |
+| La **guardia di non-vacuità** dei controlli nuovi (§8.6.2) | è il pezzo che sembra più togliibile e il solo che non si può togliere. Senza, basta rinumerare una sotto-sezione perché due controlli smettano di controllare **uscendo verdi**: gotcha #26. E il «miglioramento» sbagliato è metterci un numero atteso di righe, che diventa rosso quando la tabella cresce per un motivo legittimo |
+| I **parametri di decisione sono consegnati**, non letti (ADR-0034) | la scorciatoia tentante è «tanto il budget è 16 GB, scrivilo e basta». Una costante nel kernel **non fa scattare nessun controllo del catalogo §7**: si scopre solo quando qualcuno prova a farla variare in campagna e non può. È il gotcha #12 su un altro asse — e toglie alla DST l'unico modo di esplorare lo scenario di RK-1 |
+| Il **dialogo con un worker vive dentro `process`** (ADR-0035) | la scorciatoia tentante è «è tutto IPC, mettiamolo su `ipc`». Sembra un accorpamento e invece **spezza la vita di un worker fra due porte**: l'avvio pretende una concessione (§5.6), e se il dialogo passa da un'altra porta quella catena non copre più il parlare. Si perde il meccanismo che ha portato I2 dal test al **compilatore**, e lo si perde senza che nulla diventi rosso |
+| Il **formato del giornale è deciso a sé**, versione più indici (ADR-0036) | la scorciatoia tentante è «usiamo `bincode` anche per il giornale, tanto è già nella lista». Sarebbe importare in un artefatto che **deve** evolvere una decisione presa dove l'evoluzione era stata **rinunciata** (I4). E non è un'opinione: la misura dice che su un formato posizionale un campo *opzionale* aggiunto in coda **rende illeggibili i record vecchi**, e che togliere un campo li rilegge **in silenzio con byte non consumati**. La correzione tardiva non è una patch: è la migrazione dell'unico archivio irriproducibile |

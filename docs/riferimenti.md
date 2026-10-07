@@ -2496,6 +2496,22 @@ cancello è la scelta aperta su AUD-709, e oggi è una ricetta a mano.
 
 ---
 
+### Il lotto 1 del `lean-docs` della R5 — 2026-10-07: le storie del compendio in archivio
+
+⛔ **Non doppioni ma storie**: la R5 del [terzo audit](audit-2026-09-30.md), mirata come vuole la P20. Ciò che una riga
+raccontava — che cosa diceva, chi l'ha trovato, come — sta in [`archivio/stato-storico.md`](archivio/stato-storico.md)
+parola per parola, nella sezione del lotto 1, con la lista dei tagli; nel compendio resta la riga del richiamo, o il
+rimando alla sede viva. I sei tagli, il proprietario li ha approvati in una domanda sola, e il tetto resta com'è (P11).
+La prova che non manca niente: lo script della skill coi due file nel `--dopo`, senza àncore perse né link rotti; sei
+blocchi su sei, e la riga della data, uguali all'originale a meno dei link riscritti per la cartella; cinque domande di
+controllo su cinque — ha risposto il coordinatore, che è la prova più debole.
+
+📌 **Il verbale del 2026-10-07**, `cl100k_base`, limite inferiore: `docs/COMPENDIO.md` da **32 509** a **32 244** token,
+da **100 043** a **99 235** byte in un albero CRLF; il margine sotto il tetto da **309** a **1 117** byte, col comando
+`wc -c docs/COMPENDIO.md` contro `ceiling=` in `scripts/check-docs.sh`. ⚠️ **Le storie rimaste erano poche**: le
+passate di prima le avevano già tolte quasi tutte, e il grasso che resta è la tabella delle voci aperte della §6, che è
+del proprietario.
+
 ## Riconoscimento gesti dalla telecamera — le fonti del disegno del 2026-09-03 (ADR-0038, ADR-0039)
 
 Consultate il **2026-09-03** scrivendo il

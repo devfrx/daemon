@@ -6426,3 +6426,51 @@ Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende 
    tracciato, è dell'altra sessione del proprietario (P16).
 7. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per
    parola, la nuova al suo posto, e il commit su `main`, col push.
+
+## Dal compendio, il `lean-docs` della R5 — archiviati il 2026-10-07, lotto 1
+
+Il lotto 1 del `lean-docs` della R5 del [terzo audit](../audit-2026-09-30.md), mirato come vuole la P20 del proprietario: le storie che il compendio teneva ancora — che cosa diceva, chi l'ha trovato, come — parola per parola, coi link riscritti per questa cartella. Nel compendio resta la riga del richiamo — la data, ciò che è vero adesso, dove vive la storia — o il rimando alla sede viva. Ogni taglio approvato dal proprietario.
+
+### Il perché del terzo audit, nel primo tempo del prossimo passo della §6 — una copia del rapporto
+
+Vive nel [rapporto](../audit-2026-09-30.md), sezione *«Perché»*. Nella frase del primo tempo, dopo «con la skill `repo-audit`»:
+
+> — perché il pre-controllo del compito 2 del piano dei documenti
+> della revisione della knowledge base ha trovato affermazioni discrepanti, e *«la fonte dalla quale si attinge per il codice»*
+> deve essere veritiera e seguire i principi del proprietario.
+
+### Il richiamo del 2026-08-31 nella voce di ADR-0037 della §5 — una storia, e una copia della §4
+
+La decisione vive nella riga dello schema IPC della §4 del compendio. Nella tabella della voce 0037, riga `ipc`, dopo «§6.1.1 **confermata**, non riaperta.»:
+
+> ⛔ **RICHIAMO DEL 2026-08-31:** la misura **C-1** del Traguardo 6 ha trovato alternative **mantenute** al **nostro** capo del filo, e **M-12** ha misurato che una di esse mette gli **stessi byte** sul filo — e il proprietario ha **deciso il 2026-08-31 di NON riaprirla**, con quell'evidenza in mano: §6.1.1 resta **confermata**.
+
+### Il richiamo del 2026-09-03 nella riga «riaprire la copertura della §8» della §8 — una storia
+
+Nel compendio resta la regola: riaprirla richiede una decisione del proprietario. In coda alla seconda colonna, dopo «le righe si leggono, non si ri-giudicano.»:
+
+> ⚠️ **RICHIAMO DEL 2026-09-03: il sotto-progetto 1 l'ha riaperta una volta**, e per decisione del **proprietario** — la via **A**, voce `E10` dell'errata del [piano della chiusura](../superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md) — col vincolo **sospeso** per il solo compito 3bis e per le sole §8.3 e §8.4. Riaprirla di nuovo richiede la stessa decisione
+
+### Il richiamo del 2026-09-23 nella riga della direzione della GUI della §12 — un'eccezione scaduta
+
+Valeva per il brainstorming e il disegno del design system, chiusi col sotto-progetto 14 — la colonna «Stato» della [roadmap](../roadmap.md). In coda alla seconda colonna, dopo «da chi riprende il fronte GUI.»:
+
+> ⚠️ **Richiamo del 2026-09-23:** nel brainstorming del design system si legge **a pezzi**, e per intero prima di scriverne il disegno — decisione del proprietario, risposta 7 della [consegna](../superpowers/specs/2026-09-22-design-system-design.md)
+
+### La prima colonna della voce del portachiavi, nella tabella delle voci aperte della §6 — la metà falsa, e il suo richiamo
+
+Nel compendio resta la metà vera e la riga del richiamo; l'innesco vive nella colonna *Innesco* di §8.3 e §8.4 della spec. La prima colonna intera:
+
+> ⚠️ **il portachiavi non ha un chiudente scritto**: nessuno script verifica che solo `secrets` lo raggiunga, e nessuna riga dice chi lo farà. ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-026: la seconda metà è falsa da oggi** — la §8 della spec lo dice; la prima resta vera
+
+### Nella voce della regola di rimisura, nella tabella delle voci aperte della §6 — una storia
+
+La data vive nella seconda colonna della stessa riga. In coda alla prima colonna, dopo «**Registrata nel racconto del Task 10 e non presa**»:
+
+> ; fino al 2026-09-09 viveva solo in quel racconto
+
+## L'intestazione del compendio, com'era — archiviata il 2026-10-07, al lotto 1 del `lean-docs` della R5
+
+⚠️ **Vera il giorno in cui fu scritta.** Uscita dal compendio parola per parola, coi link riscritti per questa cartella.
+
+**Aggiornato il 2026-10-07**, con la Fase 6 del terzo audit: il prossimo passo della §6, nell'ordine della P19. Questa riga com'era è in [`archivio/stato-storico.md`](stato-storico.md). Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.

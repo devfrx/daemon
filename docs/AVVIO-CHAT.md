@@ -8,11 +8,9 @@ messaggio è il **modello**: un hash scritto qui nasce già vecchio di uno, perc
 che lo aggiorna lo contiene. È la stessa ragione per cui [`HANDOFF.md`](HANDOFF.md) non ne
 porta, e quella riga delega esplicitamente a qui.
 
-⚠️ **RICHIAMO DEL 2026-09-01: il blocco sul formato congelato diceva «TRE record», e il compito 6 del
-Traguardo 6 ha portato il quinto.** Il numerale è **tolto e non riallineato** — gotcha **#31**: quanti
-siano lo dice `ls crates/kernel/tests/frozen/*.cbor`, e un comando non marcisce.
+⚠️ **Richiamo del 2026-09-01** — quanti siano i record congelati lo dice `ls crates/kernel/tests/frozen/*.cbor`; com'era, in [`archivio/stato-storico.md`](archivio/stato-storico.md).
 
-⚠️ **RICHIAMO DEL 2026-09-30: il messaggio diceva `le 39 ADR`, e con ADR-0040 il totale è cambiato.** Il numerale è **tolto e non riallineato** — gotcha **#31**, e la risposta A del proprietario alla prima domanda della 6.1 del [disegno della revisione della knowledge base](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md): una cifra che vive in più documenti si toglie, non si ricorregge. Quanti siano lo dice `ls docs/adr/*.md`.
+⚠️ **Richiamo del 2026-09-30** — quanti siano gli ADR lo dice `ls docs/adr/*.md`; com'era, in [`archivio/stato-storico.md`](archivio/stato-storico.md).
 
 ⛔ **Prima questo campo portava un valore vero, e non ha funzionato.** È stato incollato
 tale e quale **due volte** — l'ultima vecchio di **quattro** commit — e due commit
@@ -52,12 +50,7 @@ Albero pulito, ramo pushato. Ultimo commit: <<< INCOLLA QUI: git log --oneline -
    la sequenza è brainstorming → disegno → piano → esecuzione, e a che punto
    sia lo dice la §6 del compendio, casa unica. Se è il BRAINSTORMING, viene
    subito dopo la lettura e fa DOMANDE, non proposte, e non è plan mode.
-   ⚠️ RICHIAMO DEL 2026-08-30: qui stava «IL BRAINSTORMING È L'ECCEZIONE, E
-   VIENE SUBITO DOPO LA LETTURA», con accanto la riga che rimanda alla §6 —
-   cioè una tappa NOMINATA e uno stato NEGATO nella stessa frase. Il
-   brainstorming del Traguardo 6 è chiuso e il piano è finito, quindi la
-   frase mandava a riaprire una tappa conclusa. TOLTA la tappa, tenuto il
-   rimando: era la stessa forma già corretta due volte in questo file.
+   ⚠️ RICHIAMO DEL 2026-08-30 — com'era, in docs/archivio/stato-storico.md.
 
 INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /superpowers:using-superpowers
@@ -65,49 +58,21 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
   /anthropic-skills:dev-communication   governa la conversazione intorno al codice
   ⛔ IL LAVORO CHE VIENE È CREATIVO, non rimedio: la sequenza è
      brainstorming → disegno → piano → esecuzione subagent-driven.
-     ⚠️ RICHIAMO DEL 2026-09-03: qui stava «si lavora a un TRAGUARDO
-     NUOVO», e la stessa promessa viveva nella cella di
-     /superpowers:brainstorming («è la PRIMA del traguardo nuovo»).
-     TOLTE tutt'e due per sottrazione: il sotto-progetto 1 è stato chiuso
-     quel giorno, e dopo di esso non c'è un traguardo — qual è il prossimo
-     passo lo dice la §6 del compendio, che resta la casa unica. Era di
-     nuovo uno STATO, in un file che dichiara di non portarne.
-     ⚠️ RICHIAMO DEL 2026-08-30: qui stava «si APRE un
-     traguardo nuovo», e il traguardo è aperto dal 2026-08-28 con
-     brainstorming e disegno ormai chiusi: era uno STATO, in un file che
-     due righe più giù dichiara di non portarne. ⛔ A CHE PUNTO SIA quella sequenza NON è scritto qui: è
+     ⚠️ RICHIAMI DEL 2026-08-28, DEL 2026-08-30 E DEL 2026-09-03 — com'era,
+     in docs/archivio/stato-storico.md.
+     ⛔ A CHE PUNTO SIA quella sequenza NON è scritto qui: è
      uno STATO, e la §6 del compendio ne è la casa unica. Le voci aperte NON
      lo sbarrano — quali siano, lo dicono gli indici della stessa §6.
      ⚠️ RICHIAMO DEL 2026-10-06 — audit del 2026-09-30, AUD-082.
-     ⚠️ RICHIAMO DEL 2026-08-28, LA TERZA NELLO STESSO GIORNO: qui stava
-     «E SI COMINCIA DAL BRAINSTORMING, subito». Vero la mattina, falso la
-     sera: cinque sezioni di disegno erano gia' approvate. TOLTO, non
-     riallineato — era la seconda casa di uno stato.
-     ⚠️ RICHIAMO DEL 2026-08-28, LA SECONDA NELLO STESSO GIORNO: qui stava
-     «MA NON PRIMA CHE TE LO DICA IO, e non prima che le decisioni che lo
-     sbarrano siano prese». E prima ancora diceva «NIENTE brainstorming,
-     e NIENTE plan mode: la specie del lavoro che viene è RIMEDIO di un audit
-     APERTO», e prescriveva di prendere un finding per volta. Era vero fino
-     al 2026-08-28 e adesso manderebbe nella direzione opposta a quella
-     giusta.
 
 E QUESTE QUANDO SERVIRANNO, NON PRIMA
   /superpowers:brainstorming                 va PRIMA di entrare in plan mode,
                                              sempre. ⛔ A che punto sia lo
                                              dice la §6, non questa cella
   /superpowers:writing-plans                 quando ci sarà un piano NUOVO da
-                                             scrivere. ⛔ RICHIAMO DEL 2026-08-30:
-                                             qui stava «MAI prima che le voci
-                                             aperte siano chiuse — che è la
-                                             condizione ancora NON soddisfatta»,
-                                             e contraddiceva la riga «le voci
-                                             aperte NON lo sbarrano» di dodici
-                                             righe piu' su. Radice R3, e a
-                                             cadere e' questa: la regola era
-                                             INSODDISFACIBILE — ci sono voci col
-                                             chiusore «nessuno finché nessuna
-                                             misura lo chiede» — e violata da due
-                                             piani su due, il Traguardo 4 e il 5.
+                                             scrivere. ⛔ RICHIAMO DEL 2026-08-30
+                                             — com'era, in
+                                             docs/archivio/stato-storico.md.
                                              Si SANNO prima di scrivere; a
                                              sbarrare e' la colonna «Chi la
                                              chiude» di
@@ -158,8 +123,6 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              compendio, e qui non si ricopia.
                                              ⚠️ RICHIAMO DEL 2026-10-07 —
                                              audit del 2026-09-30.
-                                             ⚠️ Questa cella diceva «quel che
-                                             resta è eseguirne i rimedi»
 
 LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
   1. CLAUDE.md
@@ -176,9 +139,8 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
      volta, quella del finding su cui stai lavorando.
      ⚠️ RICHIAMO DEL 2026-10-03 — audit del 2026-09-30, AUD-602: lo stato
      dei 73 sta in una casa sola, la colonna «Stato».
-     ✅ RICHIAMO DEL 2026-09-09, decisione 26: qui stava «SOLO FINO ALLA
-     TABELLA DEI 73 FINDING», cioè tutta la testa; il testo com'era, coi
-     richiami del 2026-09-01, è in docs/archivio/lettura-di-apertura-storico.md.
+     ✅ RICHIAMO DEL 2026-09-09, decisione 26: com'era,
+     in docs/archivio/lettura-di-apertura-storico.md.
      ⚠️ docs/audit-2026-08-11.md non si legge all'apertura: le otto
      decisioni sono eseguite, ciò che insegnava è dentro il compendio, e le
      voci rimaste aperte stanno nella sua §9, che la §6 del compendio
@@ -186,10 +148,7 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
      AUD-084.
   ⚠️ In token costano ALMENO il triplo di quel che i KB suggeriscono: misurato,
      quattrocento righe del solo compendio pesano 25148 token. È un LIMITE INFERIORE, non un totale — §12.
-     ⚠️ RICHIAMO DEL 2026-09-01: qui seguiva «e il compendio ne ha oltre
-     quattromila», scritto il 2026-08-21 su un file di 5287 righe. Lo
-     sfoltimento del 28 lo ha portato sotto le duemila, e la cifra e' rimasta
-     qui QUATTRO giorni, ricopiata da ogni sessione. TOLTA, non riallineata:
+     ⚠️ RICHIAMO DEL 2026-09-01 — com'era, in docs/archivio/stato-storico.md:
      quante righe abbia lo dice `wc -l docs/COMPENDIO.md`, e il rapporto
      token/riga che questa frase misura non dipende dalla lunghezza del file.
 
@@ -203,8 +162,7 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
 ⚠️ IL REPOSITORY CONTIENE CODICE RUST.
    ⛔ Quanti traguardi siano eseguiti e a che punto sia il prossimo lo dice la
    §6 del compendio, in un posto solo: qui non è scritto apposta, perché una
-   cifra ricopiata marcisce. ⚠️ E questa riga la ricopiava lo stesso, due
-   righe SOPRA la frase che lo vieta — gotcha #68. Tolta, non riallineata.
+   cifra ricopiata marcisce.
    Serve rustup: rust-toolchain.toml tira giù da sé la 1.95.0 e il bersaglio
    x86_64-unknown-none, quindi quelli non si installano a mano. Su Windows
    serve in più il linker MSVC (Visual Studio Build Tools), che rustup NON
@@ -229,9 +187,8 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
    al primo che chiudo: è la radice R3 dell'audit stesso.
    ⚠️ RICHIAMO DEL 2026-10-03 — audit del 2026-09-30, AUD-083, AUD-084,
    AUD-602: gli indici delle voci aperte stanno nella §6 del compendio.
-   ⚠️ RICHIAMO DEL 2026-08-28, e questo blocco lo prescriveva a sé stesso
-   («si riscrive quando l'audit si chiude»): diceva «ED È APERTO. LA SPECIE
-   DEL LAVORO CHE VIENE È: RIMEDIO». Adesso la specie è CREATIVA, e il
+   ⚠️ RICHIAMO DEL 2026-08-28 — com'era, in
+   docs/archivio/stato-storico.md. Adesso la specie è CREATIVA, e il
    rapporto si legge come VERBALE e DELEGA — il metodo, non il compito.
 
    ⛔ IL METODO RESTA, ED È LA PARTE CHE NON INVECCHIA. Vale per un rimedio,
@@ -248,8 +205,6 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
      IL SOGGETTO: sul secondo caso il riflesso «togli la cifra» produce una
      frase PEGGIORE, perché una frase vera di pochi diventa un universale
      falso su molti. Gotcha #87.
-   ⚠️ Una quarta riga diceva le stesse parole della prima ed è TOLTA, non
-      riscritta meglio — gotcha #76.
 
 ⛔ NON aprire docs/HANDOFF.md, la spec del sotto-progetto 1, né la cartella
    docs/adr/ «per farsi un'idea»: insieme pesano oltre mezzo megabyte — 812 KB
@@ -335,8 +290,7 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
     verificato, ed è lì che smette di guardare; e uno che dichiara UNA
     divergenza si legge come se le avesse dichiarate tutte.
   · E il banco con cui misuri sbaglia VERSO L'ATTESA — gotcha #48, il più
-    frequente del progetto. ⛔ Quante volte NON è scritto qui, ed è tolto e non
-    ricorretto: diceva TREDICI mentre la §12 ne registrava già QUATTORDICI, e un
+    frequente del progetto. ⛔ Quante volte NON è scritto qui: un
     conteggio che vive in due posti marcisce sempre in quello che non lo muove.
     Le forme misurate stanno nella §9 del compendio; qui basta il
     contro-verso: prova che la mutazione si sia APPLICATA, compila in un passo
@@ -376,31 +330,12 @@ SEI COSE CHE RIBADISCO, ANCHE SE STANNO NEI FILE
 
 Parti confermandomi cosa hai letto e qual è la tua lettura dello stato, e POI
 RIPRENDI DA DOVE LA §6 DICE.
-⛔ RICHIAMO DEL 2026-08-30: qui seguiva «: non c'è un piano da eseguire né uno
-   da scrivere, e il brainstorming è il primo passo del traguardo nuovo».
-   TOLTO, non riallineato: era di nuovo uno STATO in un file che due righe più
-   giù dichiara di non portarne, ed era falso in entrambe le metà — al
-   2026-08-30 il brainstorming era già chiuso e un piano ESISTEVA. È la terza
-   volta che questa riga porta uno stato e la terza che invecchia; stavolta
-   non c'è niente da riallineare perché non c'è più nessuna affermazione.
-   Gotcha #68.
-   ⚠️ E LA GIUSTIFICAZIONE QUI SOPRA PORTAVA A SUA VOLTA UNO STATO AL
-   PRESENTE — «un piano ESISTE, aperto e IN SCRITTURA» — che è invecchiato lo
-   stesso giorno, quando il piano è stato finito. Ancorata alla propria data:
-   dentro un verbale datato un fatto regge, al presente mente. Qual è lo stato
-   OGGI lo dice la §6, non questo richiamo.
-⛔ RICHIAMO DEL 2026-08-28: qui stava «POI APRI IL BRAINSTORMING», e il file
-   dichiara di sé, dodici righe più su, di NON nominare il prossimo passo.
-   Era una casa di troppo, ed è diventata falsa la sera stessa.
-⛔ RICHIAMO DEL 2026-08-28: qui stava «non parte finché non lo dico io, perché
-   ciò che lo sbarra sono decisioni MIE». Quale voce sbarri il traguardo è uno
-   STATO, e lo stato ha una casa sola: la tabella di docs/porta-di-qualita.md.
+⛔ RICHIAMI DEL 2026-08-28 E DEL 2026-08-30 — com'era, in
+   docs/archivio/stato-storico.md.
 I piani già eseguiti restano
 verbali, che si leggono a COMPITI e mai interi — e lo stesso vale per il
 «Dettaglio» del rapporto, che si legge a FINDING.
 ⚠️ Da dove ripartire lo dice la §6 del compendio, non questo messaggio.
-   ⛔ Questa riga diceva «lo dice il rapporto», ed era vera finché il compito
-   era rimediarlo.
 ```
 
 ---
@@ -409,36 +344,11 @@ verbali, che si leggono a COMPITI e mai interi — e lo stesso vale per il
 
 | | Prima | Adesso |
 |---|---|---|
-| il messaggio | ~9 KB | ✅ **LA SERIE HA GIRATO, e quanto pesa OGGI non è scritto qui:** lo rimisura la **§12 del compendio** a ogni passata, e questa cella ne teneva una seconda copia **ferma al 2026-08-18** — *«14,7 KB»* — che nessuna delle tre passate successive aveva mosso. **Tolta, non riallineata** (gotcha **#68**). La storia resta perché è storia: era 7,7 → 9,8 → 12,2 → 14,7 → 15,0 → 15,4 → 15,9 → **16,7 KB**, sette crescite e un solo fermo; poi il 2026-08-18, chiudendo l'audit, il blocco è **calato per la prima volta** — `16659 → 14947 byte`, **−10,3 %** — e la passata di coerenza dello stesso giorno lo ha riportato a **15014**, `+67 B` e una riga: la crescita più piccola mai registrata. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
-| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | ✅ **una FRAZIONE del corpus, e l'aggregato non vive più qui:** lo porta `CLAUDE.md`, in una casa sola. ⛔ **Tolto il 2026-08-27, non riallineato** — la cella diceva *«590 KB … e 622 con l'audit»*, e il terzo file è cambiato: l'audit dell'11 agosto è uscito dalla lettura obbligatoria, la **testa** di quello del 27 è entrata. Una cifra che vive in **cinque** case marcisce in quella che nessuno muove — gotcha **#31**, su questa riga per l'ennesima volta |
+| il messaggio | ~9 KB | ✅ **LA SERIE HA GIRATO, e quanto pesa OGGI non è scritto qui:** lo rimisura la **§12 del compendio** a ogni passata. La storia resta perché è storia: era 7,7 → 9,8 → 12,2 → 14,7 → 15,0 → 15,4 → 15,9 → **16,7 KB**, sette crescite e un solo fermo; poi il 2026-08-18, chiudendo l'audit, il blocco è **calato per la prima volta** — `16659 → 14947 byte`, **−10,3 %** — e la passata di coerenza dello stesso giorno lo ha riportato a **15014**, `+67 B` e una riga: la crescita più piccola mai registrata. ⛔ **Ha funzionato la prescrizione della 25ª misura, ed è la parte da ricordare:** *«decidere cosa TOGLIERE, non cosa accorciare»*. Tolto il blocco delle ventuno decisioni ribaltabili — che era un **rimando a due errata già scritte** ricopiato per esteso — e compresso a due righe il finding V6, che nel frattempo era **chiuso**. ⚠️ Ciò che si toglie è un **rimando duplicato** o una voce **chiusa**, mai una lezione: quelle si spostano nel compendio, dove chi legge le trova comunque |
+| lettura che ordinava | l'intero corpus, oltre mezzo megabyte | ✅ **una FRAZIONE del corpus, e l'aggregato non vive più qui:** lo porta `CLAUDE.md`, in una casa sola. |
 | decisioni note all'agente | tutte, dopo aver letto tutto | **tutte**, e senza aprire il resto del corpus |
 
-⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
-del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
-file mentre erano **192**, e il file che quella cifra descrive era cresciuto di ventitré
-kilobyte sotto di essa. ⛔ **E i punti di questo file sono CINQUE, non quattro — ricontati col
-`grep` su tutto il repository il 2026-08-11**, quando la cifra è passata a **207**: la
-diciassettesima misura del compendio scriveva *«uno in `CLAUDE.md` e quattro qui»*, ed è il
-gotcha **#31** applicato **all'elenco delle case** invece che alla cifra. Chi rimisura rifà anche
-quel conteggio, che costa un comando. Prima ancora dicevano
-*«24 KB, ~6k token»*: era vero quando il compendio pesava un terzo di oggi, e nessuno
-l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
-questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
-regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
-resta quello che conta, e le due cifre vive stanno in `CLAUDE.md` invece che qui — **tolte il
-2026-08-27**, perché il terzo file è cambiato e questa era la quinta casa. ⛔ **E il 2026-08-18 una passata ha trovato che il
-`grep` con cui si censiscono le case restituisce CANDIDATE e non case:** delle sei occorrenze di
-`353`, **due erano numeri di riga** — `COMPENDIO.md:353`, dentro la citazione del finding A-2 —
-e correggerle avrebbe rotto due riferimenti giusti. Gotcha **#70**, ed è il modo di fallire del
-rimedio che la ventesima misura prescrive contro il #31. ⛔ **E il 2026-08-18 il METODO ha rivelato un
-difetto che i numeri non mostravano: «`wc -c`» non dice QUALI byte, e questo repository si lavora
-da DUE macchine.** Su un albero CRLF `wc -c` conta un byte in più per riga, quindi nove celle
-della §12 sembravano stantie di 1–4 KB **su file non toccati da giorni**; tolti i CR, tutte e
-nove coincidevano. I pesi si misurano in **byte LF**, ed è una riga di metodo **registrata e non
-presa** — la ventottesima misura. ⚠️ **E le case sono state ricontate col
-`grep` il 2026-08-17, non riprese dal verbale precedente:** l'aggregato ne ha **quattro**,
-la cifra dei due file obbligatori **tre**, quella coi tre file **quattro** — la 25ª ne
-dichiarava sei per la seconda, ed è il gotcha **#31** applicato all'**elenco delle case**.
+⚠️ **Richiamo del 2026-08-27** — com'era, coi due numeri di destra e le loro correzioni, in [`archivio/stato-storico.md`](archivio/stato-storico.md). I pesi si misurano in **byte LF** — su un albero CRLF `wc -c` conta un byte in più per riga —, ed è una riga di metodo **registrata e non presa**: la ventottesima misura.
 
 Il messaggio lungo elencava undici letture «PER INTERO», fra cui **tutti** gli ADR, nove
 diagrammi e la spec del sotto-progetto 1, che oggi pesa **277 KB**. Non è che chiedesse
@@ -481,15 +391,6 @@ massima: era il ritratto di sei difetti su sei.
 > esattamente le specie viste fino a quel giorno, il che è il gotcha **#29** — la formulazione
 > più corta viene letta al posto di quella giusta, e qui la più corta era anche l'ultima vera.
 
-> 🔁 **Riletto il 2026-08-10, chiudendo il Traguardo 3 — e la cifra dei gotcha era stantia.**
-> Diceva *«cinquantaquattro»* mentre la §9 ne conta **cinquantasei**: il **#55** e il **#56** sono
-> nati col Task 11 e nessuno ha toccato questa riga. ⛔ **Ed è la voce che l'elenco qui sotto
-> nomina per prima fra quelle da aggiornare** — *«il numero dei gotcha quando §9 ne guadagna
-> uno»* — cioè la regola c'era, scritta in questo file, dodici righe più in basso. Un promemoria
-> non è un controllo, e la guardia dei conteggi di `check-docs.sh` sa contare gli **ADR** e non i
-> gotcha. ⚠️ Stessa passata: *«due traguardi eseguiti, e il terzo è il piano che stiamo per
-> eseguire»* diceva il falso a **tre** eseguiti.
-
 ⚠️ **Cosa aggiornare qui, e quando.** Il ramo se cambia; il peso dei due file
 obbligatori quando uno dei due cresce; i
 prerequisiti d'ambiente quando il repository comincia a richiedere uno strumento nuovo —
@@ -516,19 +417,6 @@ un valore da un documento non rilegge l'elenco che prescriveva di mantenerlo —
 cura che questo repository applica più spesso. ⚠️ **La quarta voce tolta da qui, lo SHA, è di
 specie diversa:** quel campo esiste ancora, e a mancare era il modo di tenerlo aggiornato. ⛔ **La domanda che le coglie, e va fatta a ogni chiusura:**
 *ciò che questa voce ordina di aggiornare esiste ancora?*
-
-> 🔁 **Rimisurato il 2026-08-10, chiudendo il Traguardo 3 — e la cella del messaggio era la
-> quarta cifra falsa di questo file.** Diceva **«~4 KB»**; misurato sul blocco fra le due
-> recinzioni, a HEAD era **6,2 KB in 104 righe**, cresciuto sotto la propria descrizione senza
-> che nessuno la rifacesse. ⚠️ **E questa passata l'ha fatto crescere ancora, a 7,7 KB in 127
-> righe**, per le sei cose che la chiusura del traguardo pretendeva: il costo in token come
-> limite inferiore, i pesi di ciò che non si apre, il **formato congelato**, le **cinque
-> decisioni** ribaltabili, le **dieci** questioni aperte, e `superpowers:brainstorming` spostata
-> fra quelle che servono **subito**. ⛔ **Il conto è stato pagato dove costava meno**, non
-> ignorato: le quattro specie di difetto di piano passano da ventidue righe a quindici, perché
-> il testo lungo vive ora in `CLAUDE.md` e nel gotcha **#49** e qui bastava l'elenco — la regola
-> è *rimandare invece di riscrivere*. 📌 **Il rapporto che questo file esiste per difendere non
-> si è mosso: 9,8 KB di messaggio che ordinano 242 KB di lettura, contro 689 di corpus.**
 
 📌 **Il percorso del repository ha due valori, e non è una svista da «sanare».** Si lavora
 su **due macchine**, e il campo le nomina entrambe: un percorso solo sembrava aggiornato e

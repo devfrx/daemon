@@ -7213,3 +7213,391 @@ apertura: le voci chiuse vi tengono la storia nella cella, e che cosa si legge a
    tracciato, è dell'altra sessione del proprietario (P16).
 9. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per
    parola, la nuova al suo posto, e il commit su `main`, col push.
+
+## Da roadmap.md, README.md e AVVIO-CHAT.md, il `lean-docs` della R5 — archiviati il 2026-10-07, lotto 3
+
+Il lotto 3 del `lean-docs` della R5 del [terzo audit](../audit-2026-09-30.md), mirato come vuole la P20 del proprietario: le storie che [`roadmap.md`](../roadmap.md), [`README.md`](../README.md) e [`AVVIO-CHAT.md`](../AVVIO-CHAT.md) tenevano — che cosa diceva una riga, chi l'ha trovato, come —, e nel README la cronaca dei piani della tabella «Specifiche», dai tre file a `fc43188`, parola per parola, coi link riscritti per questa cartella; le righe del messaggio d'avvio fra recinzioni, come stavano. Nel vivo resta la riga del richiamo — la data, ciò che è vero adesso, dove vive la storia —, o niente dove la riga dice già il vero. Ogni taglio approvato dal proprietario.
+
+### Le storie della riga della data, sotto di lei — due storie
+
+Righe 7–17 di `roadmap.md` a `fc43188`. Nel vivo restano la riga della data, che segue il file, e la cura strutturale, registrata e non presa. Dopo «di presentazione — i richiami accanto a ciascuna.»:
+
+> ⚠️ **Questa riga diceva *«2026-08-11»*** mentre il file era stato toccato dopo, e **due**
+> passate l'avevano vista senza prenderla — la ragione scritta era che quel ciclo non l'aveva
+> resa falsa, e che la riga confonde *«quando l'ho scritto»* con *«a che cosa si riferisce»*.
+> Sono **due date**, e ora ci sono entrambe: è lo stesso rimedio che l'intestazione di
+> [`HANDOFF.md`](../HANDOFF.md) porta dal 2026-08-11. ⛔ **E il rimedio non dice ancora CHI la
+> riallinea** — chi tocca questo file per una cella di tabella non si sente l'autore della sua
+> intestazione — quindi la prossima occorrenza è prevista, non esclusa: gotcha **#31** sulla
+> riga che ospita la data.
+> ⛔ **RICHIAMO DEL 2026-09-04 — la previsione si è avverata al PRIMO tocco successivo:** `afb123f`
+> ha chiuso la riga SP-7 lasciando questa riga al 2026-09-03, e a coglierlo è stata una **revisione**
+> e non chi ha toccato il file. Riallineata qui, come AUD-034 fece col compendio. 
+
+### Il richiamo del 2026-09-03, nella riga del sotto-progetto 1 — una storia
+
+Riga 53 di `roadmap.md` a `fc43188`. Nel vivo la riga del richiamo. Dopo «nella §6 del compendio: una casa sola ciascuno.»:
+
+>  ⚠️ **RICHIAMO DEL 2026-09-03:** questa cella portava il racconto dei sei traguardi e una voce *«registrata e non presa, del proprietario»* sul toglierlo; la §5.2 del disegno della chiusura, approvata dal proprietario, l'ha deciso — P-2 del piano
+
+### «Dieci compiti, si riprende dal Task 11», nella riga del piano del Traguardo 3 — una storia
+
+Riga 118 di `roadmap.md` a `fc43188`. Nel vivo resta la riga, che dice già il vero. Dopo «dodici compiti su dodici, GATE GREEN a tutti.»:
+
+> ⚠️ **Questa cella diceva «dieci compiti, si riprende dal Task 11»**, ed è la terza volta che invecchia qui: la §6 del compendio giusta **nasconde** gli altri documenti di stato. 
+
+### «Settanta in otto», nella riga del piano del Traguardo 3 — una storia
+
+Riga 118 di `roadmap.md` a `fc43188`. Nel vivo resta la riga, che dice già il vero. Dopo «in nove passate, di cui nove decisioni —»:
+
+> ⚠️ **questa cella diceva *«settanta in otto»***, ricontate sul piano il 2026-08-10 — 
+
+### «Sette decisioni», nella riga del piano del Traguardo 3 — una storia
+
+Riga 118 di `roadmap.md` a `fc43188`. Nel vivo resta la riga, che dice già il vero. Dopo «è sbagliato, una nota non è un esito.»:
+
+> ⚠️ **Questa cella diceva «sette decisioni»**, e sono **nove** — ricontate sull'errata invece che dedotte. 
+
+### «Da eseguire», nella riga del piano del Traguardo 3 — una storia
+
+Riga 118 di `roadmap.md` a `fc43188`. Nel vivo resta la riga, che dice già il vero. Dopo «non cambia e il kind resta nel record.»:
+
+> ⚠️ Questa cella diceva *«da eseguire»* a sei compiti fatti: è la lezione della tredicesima misura, la §6 del compendio giusta **nasconde** gli altri documenti di stato. 
+
+### Il richiamo del 2026-09-15, nella riga del piano della parte 2 del sotto-progetto 2 — una storia
+
+Riga 126 di `roadmap.md` a `fc43188`. Nel vivo la riga del richiamo, con la casa del conto. Dopo «Definizione di «fatto» coi comandi sta nel piano.»:
+
+>  ⛔ **RICHIAMO DEL 2026-09-15: qui stava *«sedici compiti, i primi due scritti»*, falso in ENTRAMBE le metà** — i compiti si sono spostati scrivendo (D21, D25, D47) e la cifra non è riallineata ma **tolta**: la casa unica è la tabella della posizione del piano, e a contarli è il comando, non una riga di questo file
+
+### Le correzioni del capoverso sotto la tabella dei piani — due storie
+
+Righe 134–138 di `roadmap.md` a `fc43188`. Nel vivo la riga del richiamo; il capoverso dice già che la casa unica è la tabella. Dopo «qui sopra, che ne è la casa unica.»:
+
+> ⚠️ Questa riga diceva *«quelli dal quarto in poi ancora no»* con il piano del quarto scritto **ed
+> eseguito** — audit del 2026-08-11. ⚠️ **RICHIAMO DEL 2026-09-03:** e diceva *«quello del sesto ancora
+> no»* mentre il piano del Traguardo 6 è scritto dal 2026-08-30 ed **eseguito**, ed è nella tabella
+> qui sopra. L'elenco è **tolto**, non riallineato — precedenti **AUD-007** e **AUD-046**, voce
+> **E18** dell'errata del piano della chiusura.
+
+### «Il prossimo … da eseguire», nella riga del Traguardo 3 — una storia
+
+Riga 144 di `roadmap.md` a `fc43188`. Nel vivo resta la riga, che dice già il vero. Dopo «dal Task 10, e non si rigenerano mai.»:
+
+>  ⚠️ **Questa cella ha detto *«il prossimo … da eseguire»* a nove compiti fatti e *«dieci su dodici»* a dodici**, ed è la lezione della tredicesima misura ripetuta due volte: la §6 del compendio giusta **nasconde** gli altri documenti di stato
+
+### «Il prossimo, e resta da ESEGUIRE», nella riga del Traguardo 4 — una storia
+
+Riga 145 di `roadmap.md` a `fc43188`. Nel vivo resta la riga, che dice già il vero. Dopo «dieci compiti su dieci, GATE GREEN a ciascuno.»:
+
+> ⚠️ Questa cella diceva *«il prossimo, e resta da ESEGUIRE»* a traguardo chiuso, mentre le altre due tabelle dello stesso file lo davano per eseguito — la stessa cifra in tre tabelle, aggiornata in due. Audit del 2026-08-11. 
+
+### «Tempo virtuale, iniezione dei guasti…», nella riga del Traguardo 4 — una storia, e il vero resta
+
+Riga 145 di `roadmap.md` a `fc43188`. Nel vivo resta che il tempo virtuale è del Traguardo 2. Dopo «mancanti, che nascono col meccanismo che le usa.»:
+
+> ⚠️ Questa cella diceva *«tempo virtuale, iniezione dei guasti, la campagna, i semi»*: il 
+
+### Il numeratore della riga del Traguardo 5 — una storia
+
+Riga 146 di `roadmap.md` a `fc43188`. Nel vivo resta la riga, che dice già il vero. Dopo «[porta-di-qualita.md](../porta-di-qualita.md), con la colonna di chi le chiude.»:
+
+> ⛔ **Finché è durata, a che punto fosse NON era scritto qui, ed era il rimedio e non una svista:** questa cella ha detto *«esecuzione da fare»*, poi *«QUATTRO»*, poi *«CINQUE»*, ed è marcita **due volte in due giorni**. Il numeratore lo muoveva chi **eseguiva**, e chi eseguiva guardava la **§6 del compendio**, dove viveva in un posto solo — *una cifra che vive in più documenti si toglie, non si ricorregge* (`CLAUDE.md`). 
+
+### «Eredita CINQUE delle nove righe di guasto», nella riga del Traguardo 5 — una storia
+
+Riga 146 di `roadmap.md` a `fc43188`. Nel vivo resta il rimando al disegno, §0 e §9. Dopo «proprio indirizzo stanno nel disegno, §0 e §9.»:
+
+> ⚠️ **Questa cella diceva *«eredita CINQUE delle nove righe di guasto»*, e la cifra era sbagliata**: contate sulla §7 del disegno del Traguardo 4 sono **una**, più una condivisa. **Tolta, non ricorretta** — una cifra che vive in più documenti si toglie, e la cella rimanda alla fonte. 
+
+### Il richiamo del 2026-08-25 sulla quarta voce, nella «Regola di manutenzione» — una storia, di un elenco che non c'è più
+
+Righe 228–233 di `roadmap.md` a `fc43188`. Nel vivo resta il rimando alla tabella di `CLAUDE.md`, col richiamo del 2026-10-07; la lezione vive in [`AVVIO-CHAT.md`](../AVVIO-CHAT.md), «Cosa aggiornare qui». Dopo «RICHIAMO DEL 2026-10-07 — audit del 2026-09-30, AUD-108.»:
+
+> ⛔ **RICHIAMO DEL 2026-08-25 — la quarta voce è TOLTA:** diceva *«`CLAUDE.md` alla radice, se
+> cambia il «prossimo passo»»*, e `CLAUDE.md` **non porta più** il prossimo passo — lo dice esso
+> stesso (*«stanno nella §6 del compendio — non qui, o si disallineano»*), e `grep -c '⏭️'`
+> su quel file dà **zero**. 📌 *Una voce di manutenzione sopravvive alla cosa che manuteneva*, e
+> nessun controllo la coglie: non è un numero stantio, è un **compito** stantio. È la stessa specie
+> che [`AVVIO-CHAT.md`](../AVVIO-CHAT.md) ha già registrato due volte, qui alla terza casa.
+
+### «APERTO e il prossimo passo», nella riga del primo audit — una storia
+
+Riga 18 di `README.md` a `fc43188`. Nel vivo resta la riga, che dice già il vero. Dopo «⚠️ RICHIAMO DEL 2026-10-03, audit del 2026-09-30, AUD-084.»:
+
+>  ⚠️ **Questa cella lo dava APERTO e «il prossimo passo»**, con *«la 1 … la 8 e la 6»* e *«le tre righe barrate»* quando barrate erano otto: era ferma al 2026-08-18 e la riga qui sopra la smentiva **nello stesso file** — finding **AUD-001** del 2026-08-27.
+
+### «Mancava da questa tabella», nella riga dei piani — una storia
+
+Riga 30 di `README.md` a `fc43188`. Nel vivo resta che è la cartella da cui si riprende il lavoro. Dopo «in testa che dice dove il piano sbagliava.»:
+
+> ⚠️ **Mancava da questa tabella**, aggiunto il 2026-08-10: è
+
+### La cronaca dei piani, nella riga della spec del sotto-progetto 1 della tabella «Specifiche» — la copia di un'altra casa, con due storie
+
+Riga 121 di `README.md` a `fc43188`. Nel vivo restano lo stato della spec, il rimando alla roadmap e la riga del richiamo; la cronaca era ferma al Traguardo 4, e la notarono il correttore e la riverifica di P27. Dopo «2026-08-08, poi audit sezione-contro-ADR passato. ✅ Spec completa»:
+
+> , e il [piano del Traguardo 1](../superpowers/plans/2026-08-08-sottoprogetto-1-traguardo-1-scheletro-e-porta.md) è **eseguito**. Anche il [piano del Traguardo 2](../superpowers/plans/2026-08-09-sottoprogetto-1-traguardo-2-substrato-iniettabile.md) è **eseguito** il 2026-08-10, **per intero**: quattordici compiti su quattordici, fra il 2026-08-09 e il 2026-08-10, con le **sei famiglie di porte complete**. ✅ Il [piano del **Traguardo 3**](../superpowers/plans/2026-08-10-sottoprogetto-1-traguardo-3-giornale-e-formato-durevole.md) è **scritto** il 2026-08-10 ed **eseguito** lo stesso giorno: **dodici compiti su dodici**, `GATE GREEN` a tutti. ⚠️ **Questa cella diceva «otto compiti su dodici, si riprende dal Task 9»** a traguardo chiuso. ✅ Col **Task 7** il kernel scrive il **primo record vero**: la porta guadagna `note()`, il record `RecordKind::Note` e il campo `reason`, e la via **A4** del confine dei dati non fidati si chiude a **livello 2**. ✅ Col **Task 8** nasce la **seconda implementazione** della porta `journal` — `redb` col **backend scritto da noi** in `platform` — con la chiave **progressiva della scrittura** e la prova, scritta da fuori la crate, che il confine dello `StorageBackend` è **davvero sostituibile**. ✅ Col **Task 10** i **byte congelati** — tre record e una mappa che il banco rilegge — e col **Task 11** `prune`, che rifiuta un passo **in dubbio** e accetta uno riconciliato. ✅ Del **Traguardo 4** brainstorming, disegno e piano sono tutti chiusi il 2026-08-11, **ed è ESEGUITO lo stesso giorno: dieci compiti su dieci**, `GATE GREEN` a ciascuno. ⚠️ **Questa cella ha detto «si deve ancora fare il brainstorming», poi «manca il piano», poi «resta da eseguire» — tre volte sbagliata, tutte e tre a traguardo più avanti di quanto dicesse**, e la terza contraddiceva la riga 16 dello stesso file. La terza l'ha trovata l'audit del 2026-08-11; l'avviso che questa cella già portava non è bastato a farla rileggere
+
+### Il richiamo del 2026-09-01 sui «TRE record», in testa — una storia
+
+Righe 11–13 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo la riga del richiamo, col comando che dà il conto. Dopo «porta, e quella riga delega esplicitamente a qui.»:
+
+> ⚠️ **RICHIAMO DEL 2026-09-01: il blocco sul formato congelato diceva «TRE record», e il compito 6 del
+> Traguardo 6 ha portato il quinto.** Il numerale è **tolto e non riallineato** — gotcha **#31**: quanti
+> siano lo dice `ls crates/kernel/tests/frozen/*.cbor`, e un comando non marcisce.
+
+### Il richiamo del 2026-09-30 sul totale degli ADR, in testa — una storia
+
+Riga 15 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo la riga del richiamo, col comando che dà il conto. Dopo «dice ls crates/kernel/tests/frozen/.cbor, e un comando non marcisce.»:
+
+> ⚠️ **RICHIAMO DEL 2026-09-30: il messaggio diceva `le 39 ADR`, e con ADR-0040 il totale è cambiato.** Il numerale è **tolto e non riallineato** — gotcha **#31**, e la risposta A del proprietario alla prima domanda della 6.1 del [disegno della revisione della knowledge base](../superpowers/specs/2026-09-28-knowledge-base-revisione-design.md): una cifra che vive in più documenti si toglie, non si ricorregge. Quanti siano lo dice `ls docs/adr/*.md`.
+
+### Il richiamo del 2026-08-30 sull'eccezione del brainstorming, nel messaggio — una storia
+
+Righe 55–60 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo la riga del richiamo. Dopo «DOMANDE, non proposte, e non è plan mode.»:
+
+```
+   ⚠️ RICHIAMO DEL 2026-08-30: qui stava «IL BRAINSTORMING È L'ECCEZIONE, E
+   VIENE SUBITO DOPO LA LETTURA», con accanto la riga che rimanda alla §6 —
+   cioè una tappa NOMINATA e uno stato NEGATO nella stessa frase. Il
+   brainstorming del Traguardo 6 è chiuso e il piano è finito, quindi la
+   frase mandava a riaprire una tappa conclusa. TOLTA la tappa, tenuto il
+   rimando: era la stessa forma già corretta due volte in questo file.
+```
+
+### I richiami del 2026-09-03 e del 2026-08-30 sulla specie del lavoro, nel messaggio — due storie
+
+Righe 68–78 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo una riga di richiamo per le quattro correzioni della stessa riga. Dopo «brainstorming → disegno → piano → esecuzione subagent-driven.»:
+
+```
+     ⚠️ RICHIAMO DEL 2026-09-03: qui stava «si lavora a un TRAGUARDO
+     NUOVO», e la stessa promessa viveva nella cella di
+     /superpowers:brainstorming («è la PRIMA del traguardo nuovo»).
+     TOLTE tutt'e due per sottrazione: il sotto-progetto 1 è stato chiuso
+     quel giorno, e dopo di esso non c'è un traguardo — qual è il prossimo
+     passo lo dice la §6 del compendio, che resta la casa unica. Era di
+     nuovo uno STATO, in un file che dichiara di non portarne.
+     ⚠️ RICHIAMO DEL 2026-08-30: qui stava «si APRE un
+     traguardo nuovo», e il traguardo è aperto dal 2026-08-28 con
+     brainstorming e disegno ormai chiusi: era uno STATO, in un file che
+     due righe più giù dichiara di non portarne. 
+```
+
+### I due richiami del 2026-08-28 sulla specie del lavoro, nel messaggio — due storie
+
+Righe 82–92 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo la riga di richiamo del taglio prima. Dopo «RICHIAMO DEL 2026-10-06 — audit del 2026-09-30, AUD-082.»:
+
+```
+     ⚠️ RICHIAMO DEL 2026-08-28, LA TERZA NELLO STESSO GIORNO: qui stava
+     «E SI COMINCIA DAL BRAINSTORMING, subito». Vero la mattina, falso la
+     sera: cinque sezioni di disegno erano gia' approvate. TOLTO, non
+     riallineato — era la seconda casa di uno stato.
+     ⚠️ RICHIAMO DEL 2026-08-28, LA SECONDA NELLO STESSO GIORNO: qui stava
+     «MA NON PRIMA CHE TE LO DICA IO, e non prima che le decisioni che lo
+     sbarrano siano prese». E prima ancora diceva «NIENTE brainstorming,
+     e NIENTE plan mode: la specie del lavoro che viene è RIMEDIO di un audit
+     APERTO», e prescriveva di prendere un finding per volta. Era vero fino
+     al 2026-08-28 e adesso manderebbe nella direzione opposta a quella
+     giusta.
+```
+
+### Il richiamo del 2026-08-30 nella riga di `writing-plans`, nel messaggio — una storia
+
+Righe 99–110 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo la riga del richiamo. Dopo «quando ci sarà un piano NUOVO da scrivere.»:
+
+```
+⛔ RICHIAMO DEL 2026-08-30:
+                                             qui stava «MAI prima che le voci
+                                             aperte siano chiuse — che è la
+                                             condizione ancora NON soddisfatta»,
+                                             e contraddiceva la riga «le voci
+                                             aperte NON lo sbarrano» di dodici
+                                             righe piu' su. Radice R3, e a
+                                             cadere e' questa: la regola era
+                                             INSODDISFACIBILE — ci sono voci col
+                                             chiusore «nessuno finché nessuna
+                                             misura lo chiede» — e violata da due
+                                             piani su due, il Traguardo 4 e il 5.
+```
+
+### «Questa cella diceva», nella riga di `repo-audit`, nel messaggio — una storia
+
+Righe 161–162 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo resta il richiamo del 2026-10-07. Dopo «⚠️ RICHIAMO DEL 2026-10-07 — audit del 2026-09-30.»:
+
+```
+                                             ⚠️ Questa cella diceva «quel che
+                                             resta è eseguirne i rimedi»
+```
+
+### Il richiamo del 2026-09-09 sulla lettura dell'audit, nel messaggio — una storia
+
+Righe 179–181 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo la riga del richiamo, che manda dove sta il testo com'era. Dopo «colonna «Stato». ✅ RICHIAMO DEL 2026-09-09, decisione 26:»:
+
+```
+qui stava «SOLO FINO ALLA
+     TABELLA DEI 73 FINDING», cioè tutta la testa; il testo com'era, coi
+     richiami del 2026-09-01, è in
+```
+
+### Il richiamo del 2026-09-01 sulle righe del compendio, nel messaggio — una storia
+
+Righe 189–192 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo la riga del richiamo, col comando che dà il conto. Dopo «un totale — §12. ⚠️ RICHIAMO DEL 2026-09-01»:
+
+```
+: qui seguiva «e il compendio ne ha oltre
+     quattromila», scritto il 2026-08-21 su un file di 5287 righe. Lo
+     sfoltimento del 28 lo ha portato sotto le duemila, e la cifra e' rimasta
+     qui QUATTRO giorni, ricopiata da ogni sessione. TOLTA, non riallineata:
+```
+
+### La riga che ricopiava i traguardi, nel messaggio — una storia
+
+Righe 206–207 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo resta la riga, che dice già il vero. Dopo «è scritto apposta, perché una cifra ricopiata marcisce.»:
+
+```
+ ⚠️ E questa riga la ricopiava lo stesso, due
+   righe SOPRA la frase che lo vieta — gotcha #68. Tolta, non riallineata.
+```
+
+### Il richiamo del 2026-08-28 nel blocco dei due audit, nel messaggio — una storia
+
+Righe 232–234 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo la riga del richiamo, e la specie di adesso. Dopo «nella §6 del compendio. ⚠️ RICHIAMO DEL 2026-08-28»:
+
+```
+, e questo blocco lo prescriveva a sé stesso
+   («si riscrive quando l'audit si chiude»): diceva «ED È APERTO. LA SPECIE
+   DEL LAVORO CHE VIENE È: RIMEDIO».
+```
+
+### La quarta riga tolta, nel metodo dei due audit, nel messaggio — una storia
+
+Righe 251–252 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo resta la riga, che dice già il vero. Dopo «diventa un universale falso su molti. Gotcha #87.»:
+
+```
+   ⚠️ Una quarta riga diceva le stesse parole della prima ed è TOLTA, non
+      riscritta meglio — gotcha #76.
+```
+
+### «TREDICI» e «QUATTORDICI», nella voce sul banco di misura, nel messaggio — una storia
+
+Righe 338–339 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo resta il perché la cifra non è scritta. Dopo «progetto. ⛔ Quante volte NON è scritto qui»:
+
+```
+, ed è tolto e non
+    ricorretto: diceva TREDICI mentre la §12 ne registrava già QUATTORDICI, e un
+```
+
+### I tre richiami in coda al messaggio — tre storie
+
+Righe 379–397 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo una riga di richiamo. Dopo «e POI RIPRENDI DA DOVE LA §6 DICE.»:
+
+```
+⛔ RICHIAMO DEL 2026-08-30: qui seguiva «: non c'è un piano da eseguire né uno
+   da scrivere, e il brainstorming è il primo passo del traguardo nuovo».
+   TOLTO, non riallineato: era di nuovo uno STATO in un file che due righe più
+   giù dichiara di non portarne, ed era falso in entrambe le metà — al
+   2026-08-30 il brainstorming era già chiuso e un piano ESISTEVA. È la terza
+   volta che questa riga porta uno stato e la terza che invecchia; stavolta
+   non c'è niente da riallineare perché non c'è più nessuna affermazione.
+   Gotcha #68.
+   ⚠️ E LA GIUSTIFICAZIONE QUI SOPRA PORTAVA A SUA VOLTA UNO STATO AL
+   PRESENTE — «un piano ESISTE, aperto e IN SCRITTURA» — che è invecchiato lo
+   stesso giorno, quando il piano è stato finito. Ancorata alla propria data:
+   dentro un verbale datato un fatto regge, al presente mente. Qual è lo stato
+   OGGI lo dice la §6, non questo richiamo.
+⛔ RICHIAMO DEL 2026-08-28: qui stava «POI APRI IL BRAINSTORMING», e il file
+   dichiara di sé, dodici righe più su, di NON nominare il prossimo passo.
+   Era una casa di troppo, ed è diventata falsa la sera stessa.
+⛔ RICHIAMO DEL 2026-08-28: qui stava «non parte finché non lo dico io, perché
+   ciò che lo sbarra sono decisioni MIE». Quale voce sbarri il traguardo è uno
+   STATO, e lo stato ha una casa sola: la tabella di docs/porta-di-qualita.md.
+```
+
+### «Lo dice il rapporto», nell'ultima riga del messaggio — una storia
+
+Righe 402–403 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo resta la riga, che dice già il vero. Dopo «dice la §6 del compendio, non questo messaggio.»:
+
+```
+   ⛔ Questa riga diceva «lo dice il rapporto», ed era vera finché il compito
+   era rimediarlo.
+```
+
+### La seconda copia del peso, nella riga «il messaggio» di «Perché è così corto» — una storia
+
+Riga 412 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo resta la riga, che dice già il vero. Dopo «rimisura la §12 del compendio a ogni passata»:
+
+> , e questa cella ne teneva una seconda copia **ferma al 2026-08-18** — *«14,7 KB»* — che nessuna delle tre passate successive aveva mosso. **Tolta, non riallineata** (gotcha **#68**)
+
+### «590 KB … e 622», nella riga «lettura che ordinava» di «Perché è così corto» — una storia
+
+Riga 413 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo resta la riga, che dice già il vero. Dopo «qui: lo porta CLAUDE.md, in una casa sola.»:
+
+>  ⛔ **Tolto il 2026-08-27, non riallineato** — la cella diceva *«590 KB … e 622 con l'audit»*, e il terzo file è cambiato: l'audit dell'11 agosto è uscito dalla lettura obbligatoria, la **testa** di quello del 27 è entrata. Una cifra che vive in **cinque** case marcisce in quella che nessuno muove — gotcha **#31**, su questa riga per l'ennesima volta
+
+### I due numeri di destra, sotto la tabella di «Perché è così corto» — le storie di numeri che non ci sono più
+
+Righe 416–441 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo la riga del richiamo, con la ventottesima misura, registrata e non presa. Dopo «tutte, e senza aprire il resto del corpus»:
+
+> ⚠️ **I due numeri di destra si rimisurano, e sono già stati falsi TRE volte.** ⛔ **La terza è
+> del 2026-08-10, chiudendo il Traguardo 3:** dicevano **165 KB** in **quattro** punti di questo
+> file mentre erano **192**, e il file che quella cifra descrive era cresciuto di ventitré
+> kilobyte sotto di essa. ⛔ **E i punti di questo file sono CINQUE, non quattro — ricontati col
+> `grep` su tutto il repository il 2026-08-11**, quando la cifra è passata a **207**: la
+> diciassettesima misura del compendio scriveva *«uno in `CLAUDE.md` e quattro qui»*, ed è il
+> gotcha **#31** applicato **all'elenco delle case** invece che alla cifra. Chi rimisura rifà anche
+> quel conteggio, che costa un comando. Prima ancora dicevano
+> *«24 KB, ~6k token»*: era vero quando il compendio pesava un terzo di oggi, e nessuno
+> l'aveva più rifatto. Poi hanno detto **88 KB** mentre erano **91**, ed è per questo che
+> questa riga è stata riscritta. È il gotcha **#31** — una cifra messa a sostegno di una
+> regola giusta non viene mai riverificata, perché nessuno dubita della regola. Il rapporto
+> resta quello che conta, e le due cifre vive stanno in `CLAUDE.md` invece che qui — **tolte il
+> 2026-08-27**, perché il terzo file è cambiato e questa era la quinta casa. ⛔ **E il 2026-08-18 una passata ha trovato che il
+> `grep` con cui si censiscono le case restituisce CANDIDATE e non case:** delle sei occorrenze di
+> `353`, **due erano numeri di riga** — `COMPENDIO.md:353`, dentro la citazione del finding A-2 —
+> e correggerle avrebbe rotto due riferimenti giusti. Gotcha **#70**, ed è il modo di fallire del
+> rimedio che la ventesima misura prescrive contro il #31. ⛔ **E il 2026-08-18 il METODO ha rivelato un
+> difetto che i numeri non mostravano: «`wc -c`» non dice QUALI byte, e questo repository si lavora
+> da DUE macchine.** Su un albero CRLF `wc -c` conta un byte in più per riga, quindi nove celle
+> della §12 sembravano stantie di 1–4 KB **su file non toccati da giorni**; tolti i CR, tutte e
+> nove coincidevano. I pesi si misurano in **byte LF**, ed è una riga di metodo **registrata e non
+> presa** — la ventottesima misura. ⚠️ **E le case sono state ricontate col
+> `grep` il 2026-08-17, non riprese dal verbale precedente:** l'aggregato ne ha **quattro**,
+> la cifra dei due file obbligatori **tre**, quella coi tre file **quattro** — la 25ª ne
+> dichiarava sei per la seconda, ed è il gotcha **#31** applicato all'**elenco delle case**.
+
+### Il riquadro «Riletto il 2026-08-10», sulla cifra dei gotcha — una storia
+
+Righe 484–491 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo niente: la cifra non vive più qui, e l'elenco «Cosa aggiornare qui» dice perché. Dopo «qui la più corta era anche l'ultima vera.»:
+
+> 🔁 **Riletto il 2026-08-10, chiudendo il Traguardo 3 — e la cifra dei gotcha era stantia.**
+> Diceva *«cinquantaquattro»* mentre la §9 ne conta **cinquantasei**: il **#55** e il **#56** sono
+> nati col Task 11 e nessuno ha toccato questa riga. ⛔ **Ed è la voce che l'elenco qui sotto
+> nomina per prima fra quelle da aggiornare** — *«il numero dei gotcha quando §9 ne guadagna
+> uno»* — cioè la regola c'era, scritta in questo file, dodici righe più in basso. Un promemoria
+> non è un controllo, e la guardia dei conteggi di `check-docs.sh` sa contare gli **ADR** e non i
+> gotcha. ⚠️ Stessa passata: *«due traguardi eseguiti, e il terzo è il piano che stiamo per
+> eseguire»* diceva il falso a **tre** eseguiti.
+
+### Il riquadro «Rimisurato il 2026-08-10», sulla cella del messaggio — una storia
+
+Righe 520–531 di `AVVIO-CHAT.md` a `fc43188`. Nel vivo niente: la cella rimanda alla §12 del compendio. Dopo «che questa voce ordina di aggiornare esiste ancora?»:
+
+> 🔁 **Rimisurato il 2026-08-10, chiudendo il Traguardo 3 — e la cella del messaggio era la
+> quarta cifra falsa di questo file.** Diceva **«~4 KB»**; misurato sul blocco fra le due
+> recinzioni, a HEAD era **6,2 KB in 104 righe**, cresciuto sotto la propria descrizione senza
+> che nessuno la rifacesse. ⚠️ **E questa passata l'ha fatto crescere ancora, a 7,7 KB in 127
+> righe**, per le sei cose che la chiusura del traguardo pretendeva: il costo in token come
+> limite inferiore, i pesi di ciò che non si apre, il **formato congelato**, le **cinque
+> decisioni** ribaltabili, le **dieci** questioni aperte, e `superpowers:brainstorming` spostata
+> fra quelle che servono **subito**. ⛔ **Il conto è stato pagato dove costava meno**, non
+> ignorato: le quattro specie di difetto di piano passano da ventidue righe a quindici, perché
+> il testo lungo vive ora in `CLAUDE.md` e nel gotcha **#49** e qui bastava l'elenco — la regola
+> è *rimandare invece di riscrivere*. 📌 **Il rapporto che questo file esiste per difendere non
+> si è mosso: 9,8 KB di messaggio che ordinano 242 KB di lettura, contro 689 di corpus.**
+
+## La riga della data di roadmap.md, com'era — archiviata il 2026-10-07, al lotto 3 del `lean-docs` della R5
+
+⚠️ **Vera il giorno in cui fu scritta.** Uscita da [`roadmap.md`](../roadmap.md) parola per parola, coi link riscritti per questa cartella.
+
+Ultimo aggiornamento: **2026-10-06**, con l'audit del 2026-09-30: *«Stato in una riga»* ridotta ai rimandi, le righe del 2 e del Traguardo 6, e il costo della quota di presentazione — i richiami accanto a ciascuna.

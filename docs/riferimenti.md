@@ -2574,6 +2574,38 @@ R5, anche dove la frase che correggono resta accanto — fra gli altri nel #25 e
 non porta storie, è la regola per i sorgenti, e la applica il lotto 6. La frase viva che non dice più il vero, segnata
 e non risolta, sta nell'osservazione 11 del [rapporto](audit-2026-09-30.md).
 
+### Il lotto 3 del `lean-docs` della R5 — 2026-10-07: le storie di `roadmap.md`, `README.md` e `AVVIO-CHAT.md` in archivio
+
+⛔ **Non doppioni ma storie**: la R5 del [terzo audit](audit-2026-09-30.md), mirata come vuole la P20, su
+[`roadmap.md`](roadmap.md), [`README.md`](README.md) e [`AVVIO-CHAT.md`](AVVIO-CHAT.md) — i ↪ AUD-546, AUD-580 e AUD-641,
+e nel README la cronaca dei piani della tabella «Specifiche», che il correttore e la riverifica di P27 avevano notato.
+Ciò che una riga raccontava della propria correzione — che cosa diceva, chi l'ha trovato, come — sta in
+[`archivio/stato-storico.md`](archivio/stato-storico.md) parola per parola, nella sezione del lotto 3, coi trentotto
+tagli; le righe del messaggio d'avvio fra recinzioni, come stavano. Nel vivo resta la riga del richiamo, o niente dove la
+riga dice già il vero, e la riga della data della roadmap rimanda all'archivio. I tagli il proprietario li ha approvati
+in una domanda sola. La prova che non manca niente: lo script della skill coi quattro file nel `--dopo`, senza
+riferimenti rotti e con un'àncora sola segnalata — il messaggio d'avvio intero, che il lotto accorcia dentro: le righe
+che restano sono nel vivo, quelle tolte nei blocchi dell'archivio —; trentasette blocchi su trentasette, e la riga della
+data, uguali all'originale a meno dei link riscritti per la cartella; i tre file vivi uguali alla fotografia coi soli
+tagli, byte per byte, e l'archivio uguale a quello di prima più la sola coda; sette domande di controllo su sette — ha
+risposto il coordinatore, che è la prova più debole.
+
+📌 **Il verbale del 2026-10-07**, `cl100k_base`, limite inferiore — il tokenizzatore del comando in testa a
+[`CLAUDE.md`](../CLAUDE.md), sui tre file, con `tiktoken` 0.13.0: da **32 731** a **27 519** token — `roadmap.md` da
+13 252 a 11 923, `README.md` da 7 050 a 6 311, `AVVIO-CHAT.md` da 12 429 a 9 285 —; da **101 091** a **85 193** byte in
+un albero CRLF, `wc -c docs/roadmap.md docs/README.md docs/AVVIO-CHAT.md`. Il conto prima e dopo è preso nella stessa
+sessione.
+
+⚠️ **Visti e non presi:** la cronaca dei piani nelle tabelle della roadmap — è il verbale dei piani, non la storia di
+una correzione della roadmap, e nessun finding la nomina —, e nella riga del piano del Traguardo 3 una frase scritta due
+volte di seguito, un difetto del testo; nella roadmap «Decisioni ancora da prendere» con le righe chiuse e «La lacuna su
+I2», che sono di AUD-1762, un basso che giudica la P8; nel README la riga del disegno del Traguardo 5, *«trovandovi
+sette cose»*; i richiami di una riga del terzo audit, già nella forma della R5; e in `AVVIO-CHAT.md` il perché delle
+righe con le sue prove — il campo dello SHA e i due incolli, le tre specie, la serie dei pesi del messaggio, la voce sul
+piano coi suoi tre riquadri, l'elenco «Cosa aggiornare qui» con le voci tolte —: sono la lezione della riga e il suo
+reperto, il confine della parte 2 del lotto 2. Le frasi vive che non dicono più il vero, segnate e non risolte, stanno
+nell'osservazione 12 del [rapporto](audit-2026-09-30.md).
+
 ## Riconoscimento gesti dalla telecamera — le fonti del disegno del 2026-09-03 (ADR-0038, ADR-0039)
 
 Consultate il **2026-09-03** scrivendo il

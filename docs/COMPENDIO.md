@@ -17,7 +17,7 @@
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — il
 > comando in fondo alla §12 — e l'idea è già qui.
 
-**Aggiornato il 2026-10-06**, con P25 del terzo audit: la trappola 2 della §10 e il vincolo 1 della §11 al vero, la trappola 7, i rimandi nelle voci 0011 e 0012; prima, tre tagli in archivio (P11). Questa riga com'era è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+**Aggiornato il 2026-10-07**, con la Fase 6 del terzo audit: il prossimo passo della §6, nell'ordine della P19. Questa riga com'era è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
 
 ---
 
@@ -620,12 +620,12 @@ per parola.
 ⏭️ **IL PROSSIMO PASSO, IN TRE TEMPI. Uno: IL TERZO AUDIT COMPLETO**, aperto dal proprietario il 2026-09-30 — codice e
 documentazione, da testa a piedi, con la skill `repo-audit` — perché il pre-controllo del compito 2 del piano dei documenti
 della revisione della knowledge base ha trovato affermazioni discrepanti, e *«la fonte dalla quale si attinge per il codice»*
-deve essere veritiera e seguire i principi del proprietario. Fa **analisi e correzioni**; la ricognizione e il piano sono
-**approvati** il 2026-09-30, e come si riprende lo dice la consegna nel suo [rapporto](audit-2026-09-30.md). ⛔ **Lo stato del
+deve essere veritiera e seguire i principi del proprietario. Fa **analisi e correzioni**; le sei fasi sono
+**chiuse** il 2026-10-07, e restano, nell'ordine della P19, il `lean-docs` (R5) e la P8: come si riprende lo dice la consegna nel suo [rapporto](audit-2026-09-30.md). ⛔ **Lo stato del
 run vive fuori da git, su una macchina sola**: la consegna dice quale.
 **Due: la REVISIONE DELLA KNOWLEDGE BASE**, chiesta dal proprietario il 2026-09-28 **prima** del 13 e dei modelli decisionali:
 brainstorming e [disegno](superpowers/specs/2026-09-28-knowledge-base-revisione-design.md) chiusi il 2026-09-29; il **piano dei
-documenti**, al suo [percorso](superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md), riprende **dopo l'audit**,
+documenti**, al suo [percorso](superpowers/plans/2026-09-29-knowledge-base-revisione-documenti.md), riprende **dopo il `lean-docs` e la P8**,
 coi pre-controlli riletti sul testo corretto — fin dove è arrivato lo dice la tabella della posizione del piano —; i ticket
 della [mappa del metodo](https://github.com/devfrx/daemon/issues/1) si alternano coi compiti a scelta del proprietario, e la
 [consegna del metodo](superpowers/specs/2026-09-30-metodo-decision-map-design.md) dice come si riprendono.

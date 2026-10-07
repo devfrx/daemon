@@ -6474,3 +6474,87 @@ La data vive nella seconda colonna della stessa riga. In coda alla prima colonna
 ⚠️ **Vera il giorno in cui fu scritta.** Uscita dal compendio parola per parola, coi link riscritti per questa cartella.
 
 **Aggiornato il 2026-10-07**, con la Fase 6 del terzo audit: il prossimo passo della §6, nell'ordine della P19. Questa riga com'era è in [`archivio/stato-storico.md`](stato-storico.md). Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+
+## La consegna del terzo audit, com'era — archiviata il 2026-10-07, alla chiusura della sessione del lotto 1 del `lean-docs`
+
+Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende — scritto alla chiusura della sessione del 2026-10-07, sera: il perimetro del `lean-docs`»*, parola per parola
+
+1. `git fetch --all --prune`, poi `git status -sb`. Si lavora su `main` (P17). Il ramo `repo-audit/20260930-1510` resta
+   su `origin`, coi suoi commit tutti nella storia di `main`: toglierlo è una scelta del proprietario, e nessuno l'ha
+   chiesta.
+2. Lo stato del run è in `.repo-audit/20260930-1510/`, **solo sulla macchina del run**, e serve alla P8: il
+   `ledger.json` porta i bassi della P8 e gli esiti che le tabelle nominano; `fase6_tabelle.py` rigenera *«I pacchetti»*
+   e *«I finding»* in `fase6-tabelle.md` e controlla che ogni numero citato abbia la sua riga, e `fase6_omonimi.py` è
+   l'osservazione 8.
+3. **Fatto il 2026-10-07, sera: il perimetro del `lean-docs`**, la P20 — mirato: i file che l'audit ha nominato, più il
+   compendio. Nessun file corretto, nessun agente.
+4. **Il prossimo passo: il `lean-docs` della R5, un lotto per sessione** — o più sessioni per un lotto grande —, con la
+   skill `lean-docs`, nell'ordine della tabella qui sotto. Non è un pacchetto di correzione. Il metodo è quello della R5
+   e delle passate del 2026-09-23 e 24, nel loro [verbale](../superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md):
+   niente si cancella; la storia — che cosa diceva, chi l'ha trovato, come — va in archivio parola per parola, coi link
+   riscritti per la cartella; nel documento vivo resta la riga del richiamo: la data, ciò che è vero adesso, dove vive la
+   storia. Comprimere non è correggere: una contraddizione in un'unità viva si segna e si elenca, e non si risolve — la
+   decisione 11 di quel verbale. L'ordine è il peso per la frequenza di lettura; e il piano della knowledge base, che
+   viene dopo, scrive in molti di questi file.
+
+| Lotto | File | Che cosa, oltre alle storie che la lettura trova | Prima di toccarlo |
+|---|---|---|---|
+| 1 | [`COMPENDIO.md`](../COMPENDIO.md) | si legge a ogni sessione, e il piano della knowledge base ci scrive; il margine del tetto: `wc -c docs/COMPENDIO.md` contro `ceiling=` in `scripts/check-docs.sh` | ogni taglio al proprietario in A/B, come vuole la §13 del compendio; la tabella delle voci aperte della §6 è sua, voce per voce |
+| 2 | [`HANDOFF.md`](../HANDOFF.md) | AUD-545 nel consuntivo, AUD-577, AUD-578; nel gotcha #64 «⛔ APERTA» e il titolo del richiamo del 2026-08-31 (correttore di P25); il verbale del 2026-08-11 in testa, che nomina «la riga della tabella dei traguardi seicento righe più sotto» (correttore di P25) | — |
+| 3 | [`roadmap.md`](../roadmap.md), [`README.md`](../README.md), [`AVVIO-CHAT.md`](../AVVIO-CHAT.md) | AUD-546, AUD-580, AUD-641; nel README la cronaca dei piani nella tabella «Specifiche» (correttore di P27); nella roadmap il richiamo del 2026-08-25 sulla «quarta voce» della «Regola di manutenzione», che parla di un elenco che P30 ha tolto, la classe di AUD-546 e AUD-1762 | — |
+| 4 | [`porta-di-qualita.md`](../porta-di-qualita.md), [`riferimenti.md`](../riferimenti.md) | AUD-639, le sezioni «Esecuzione dell'audit»; i richiami di P23 in `porta-di-qualita.md` che superano la riga | — |
+| 5 | la §8 della [spec del sotto-progetto 1](../superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md), la §10 del [disegno del 2](../superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), [ADR-0015](../adr/0015-descrizioni-degli-strumenti-fissate-all-approvazione.md) | AUD-651; AUD-660, il verbale della chiusura del 2026-09-09; il richiamo del 2026-08-27 di ADR-0015, la cui frase «nessuno dei quattro nomina l'altro» è vecchia due volte, perché ADR-0009 e ADR-0003 la nominano (esito di P07) | il sì del proprietario, file per file, col vincolo detto: la §8 la tiene ferma il vincolo globale 1 del piano della chiusura — la §8 del compendio —, gli ADR sono append-only e la skill li lascia fuori per default |
+| 6 | i commenti nei sorgenti | AUD-545: il gotcha #121 vuole la storia nell'errata, con un puntatore di una riga | è codice: il commit parte sul verde di `bash scripts/gate.sh`, da solo |
+
+Ogni lotto: la fotografia dei file da `git show HEAD:<file>` in `.lean-docs/prima/`, che `.git/info/exclude` già
+nasconde; la lettura per intero, e l'inventario delle storie; la destinazione in archivio — dove il file ne ha già una,
+quella: [`archivio/stato-storico.md`](stato-storico.md) per il compendio,
+[`archivio/porta-di-qualita-storico.md`](porta-di-qualita-storico.md) per la porta; dove non l'ha, la si chiede
+al proprietario prima di creare un file —; lo spostamento in Python, con `newline=""` e `os.replace` (gotcha #82), e i
+fine-riga rimisurati; la verifica: `misura.py` della skill col file vivo **e** l'archivio nel `--dopo`, ogni blocco
+archiviato confrontato con l'originale, le domande di controllo — risponde il coordinatore, che è la prova più debole, e
+lo si dichiara —, e `bash scripts/check-docs.sh`; il commit e il push. ⚠️ Lo stato di un ↪ nella tabella *«I finding»*
+la rigenera `fase6_tabelle.py` dal ledger: come lo si aggiorna si decide al primo ↪ che il `lean-docs` chiude.
+
+⛔ **Registrati, non presi (P20): gli altri documenti vivi.** Quali tengano storie lo dice per approssimazione questo
+comando, che conta le righe con le parole dei richiami e non le storie:
+
+```
+for f in $(find docs -name '*.md' -not -path 'docs/archivio/*' -not -path 'docs/superpowers/plans/*'); do printf '%s %s\n' "$(grep -c -i 'richiamo del\|diceva\|questa riga\|questa cella' "$f")" "$f"; done | sort -rn | head -25
+```
+
+Fra loro la tabella delle voci X del [rapporto del 2026-08-27](../audit-2026-08-27.md), che `CLAUDE.md` fa leggere a ogni
+apertura: le voci chiuse vi tengono la storia nella cella, e che cosa si legge all'apertura lo decide il proprietario.
+
+5. Dopo il `lean-docs`, nell'ordine della P19, ciascuno nelle sue sessioni:
+   1. **la P8**: la verifica dei bassi `da_verificare` contro i testi corretti, col costo detto prima — fra loro
+      AUD-2258, che porta una A/B, la sede della promozione dei fallimenti, e dopo la verifica torna al proprietario; i
+      bassi nati dalle riverifiche, da AUD-2229 ad AUD-2239, da AUD-2242 ad AUD-2251, da AUD-2254 ad AUD-2258 e da
+      AUD-2260 ad AUD-2269: di molti il residuo fatto da P30 è già la correzione, e la riverifica di P30 lo dice di
+      AUD-2260 e AUD-2265, il suo correttore di AUD-2245; fra loro AUD-2268 e AUD-2269, le due regressioni a cascata
+      che la riverifica di P30 ha trovato; e AUD-1304, la cui specie sta anche nel disegno del 2, *«La verifica»*. ⛔
+      **Come si compongono i lotti si decide nella sua sessione, prima del costo:** `lotto_verifica.py` si ferma sui
+      finding della Fase 2, cioè su quasi tutti i bassi, e `ledger.py da-verificare` cancellerebbe i lotti senza esito
+      (C41). Un basso confermato entra in un pacchetto: le regole del coordinatore fra un'ondata e l'altra stanno nella
+      consegna archiviata il 2026-10-07 alla chiusura della sessione dell'ondata 12, in
+      [`archivio/stato-storico.md`](stato-storico.md).
+   2. **il piano dei documenti della revisione della knowledge base**, coi pre-controlli riletti sul testo corretto,
+      come dice la §6 del compendio.
+
+   Fra un passo e l'altro, *«Le scelte aperte»* al proprietario, una alla volta, ciascuna con la sua A/B. Quando la §6
+   del compendio smetterà di nominare questo rapporto, la §12 ne prende la riga, come per quello del 2026-08-27, col
+   margine del tetto misurato prima; il README la porta dal 2026-10-07.
+6. Gli script si lanciano con `PYTHONUTF8=1`. ⛔ Non rilanciare `ledger.py da-verificare`: cancellerebbe i lotti senza
+   esito; né `ledger.py evidenze`: riscriverebbe `evidenze.json` sui testi già corretti (C41). ⛔
+   `componi_pacchetti.py --scrivi` e `valida_ondate.py` riscrivono tutte le specifiche: si lanciano solo prima di un
+   pacchetto nuovo. ⛔ `messaggi_ondata_2.py` … `messaggi_ondata_12.py` non si rilanciano: `origin` porta ora i commit
+   che riscrivevano, e ciascuno si ferma da sé. `archivia_p25.py`, `archivia_p27.py`, `archivia_p30.py`,
+   `passaggio_10_11.py`, `passaggio_11_12.py`, `verificati_12.py`, `residui_p30.py` e `nota_riverifica_12.py` si
+   fermano da sé se rilanciati. `prova_valida_ondate.py`, `prova_fatto.py` e `lotto_verifica.py` senza `--scrivi` si
+   rilanciano quando si vuole: lavorano su copie del run, o in memoria; e `decisioni_ondata_5.py` …
+   `decisioni_ondata_11.py` senza danno: ciò che è già fatto si salta. I `fase5_*.py` e i `fase6_*.py` non toccano il
+   repository, e si rilanciano quando si vuole.
+7. Il controllo di non intrusione: `git status --porcelain` non mostra niente dell'audit. `daemon_kit/`, non
+   tracciato, è dell'altra sessione del proprietario (P16).
+8. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per
+   parola, la nuova al suo posto, e il commit su `main`, col push.

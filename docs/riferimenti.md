@@ -2512,6 +2512,11 @@ da **100 043** a **99 235** byte in un albero CRLF; il margine sotto il tetto da
 passate di prima le avevano già tolte quasi tutte, e il grasso che resta è la tabella delle voci aperte della §6, che è
 del proprietario.
 
+⚠️ **Visti e non presi, perché non sono storie:** le due copie dell'avvertenza su §6.1.1, nella §4 e nella §8, e
+quella del metodo di `AVVIO-CHAT.md` nella §12 — le passate del 2026-09-24 avevano già lasciato la §4 e passato la §12;
+il perché della voce 0026 e la prova della voce 0036, che sono vivi; il richiamo di AUD-032 nella voce 0005 e i rimandi
+in testa agli ADR, che hanno già la forma della R5.
+
 ## Riconoscimento gesti dalla telecamera — le fonti del disegno del 2026-09-03 (ADR-0038, ADR-0039)
 
 Consultate il **2026-09-03** scrivendo il

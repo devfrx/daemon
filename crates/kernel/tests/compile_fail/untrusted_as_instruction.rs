@@ -1,4 +1,4 @@
-// Catalogue §7.4.1 block C, row `Q9 · I6 · V20`, rule A: `Untrusted` assigned to
+// Catalogue §7.4.1 block C, row `Q9 · I6 · V19` (audit of 2026-09-30, AUD-366), rule A: `Untrusted` assigned to
 // `Instruction` must NOT compile.
 //
 // ⛔ THIS GUARD IS BLIND TO A CONVERSION, AND IT WAS MEASURED HERE RATHER THAN ASSUMED. It

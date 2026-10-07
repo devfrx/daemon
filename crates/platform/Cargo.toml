@@ -36,6 +36,30 @@ redb = "4.1.0"
 # ignored lockfile, which is a different graph and not a divergence (E6 of the part-1 plan).
 interprocess = "2.4.4"
 
+# ⛔ WHO MAY OPEN THE CHANNEL IS ASKED OF THE SYSTEM, AND THAT WANTS A CALL `interprocess` DOES NOT
+# MAKE -- ADR-0041, points 4, 5 and 8, in `src/ipc.rs`. The three crates below were ALREADY in the
+# graph, under `interprocess` 2.4.4, at these very versions -- read in `Cargo.lock`, not from memory
+# -- so what this adds is three DIRECT edges and no new crate. ⚠️ Added in two steps, the rule of
+# `CLAUDE.md` from finding G-5: this manifest and both lockfiles in one commit.
+#
+# Windows: `windows-sys` asks the token of this process for its user's SID, and `widestring` carries
+# the security descriptor to `interprocess`, whose `SecurityDescriptor::deserialize` takes a
+# `U16CStr`. ⛔ THE FEATURES ARE NAMED HERE, every one this crate calls, rather than borrowed from
+# the ones `interprocess` turns on: a feature this crate needs and does not name builds only while
+# somebody else happens to name it.
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61.2", features = [
+    "Win32_Foundation",
+    "Win32_Security",
+    "Win32_Security_Authorization",
+    "Win32_System_Threading",
+] }
+widestring = "1.2.1"
+
+# Linux: `libc` for `geteuid`, the account the runtime directory must belong to.
+[target.'cfg(unix)'.dependencies]
+libc = "0.2.189"
+
 [dev-dependencies]
 # ⚠️ Needed by the CONFORMANCE SUITE, not by this crate: tests/reactor_contract_real.rs
 # `include!`s crates/kernel/tests/reactor_contract.rs, and that file builds a `VirtualReactor`

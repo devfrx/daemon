@@ -75,6 +75,14 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 > ✅ **Aggiornata il 2026-09-22 con le sedi dei pezzi della GUI costruiti dalla parte 2 del sotto-progetto 2**, dalla Definizione di «fatto» del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md) — alla chiusura del sotto-progetto, come dice la riga sotto il titolo.
 >
 > ✅ **Aggiornata il 2026-09-28 con la riga «Accessibilità»**, dal compito 9 del [piano del design system](superpowers/plans/2026-09-23-design-system.md) — alla chiusura del sotto-progetto 14, come dice la riga sotto il titolo.
+>
+> ✅ **Aggiornata il 2026-10-02** — audit del 2026-09-30, AUD-378, AUD-385, AUD-721: la ricomposizione, la proiezione da misurare e la proiezione ristretta hanno la sede **13**, che costruisce la proiezione prima del 3 (la condizione G della §8.2.1 della [spec del sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md)); la riga «Notifiche» dice le sue due metà; e la riga «Accessibilità» nomina i due banchi della tastiera che mancavano.
+>
+> ✅ **Aggiornata il 2026-10-03** — audit del 2026-09-30, AUD-646, AUD-513, AUD-514: la cifratura reale e la ritenzione del giornale hanno la sede **15**, *«Dati a riposo: cifratura e ritenzione»* nella [roadmap](roadmap.md); progress e notifiche dei lavori lunghi il 2 non li ha costruiti, e la loro sede è la scelta **E228** del proprietario.
+>
+> ✅ **Aggiornata il 2026-10-03** — audit del 2026-09-30, AUD-023, AUD-027, AUD-031, AUD-032, AUD-042: la contabilità, il ritentativo, i parametri nel record di routing e il tetto della run non sono nel kernel — la §6.2 e le righe `V8`, `V16`, `V17` e `V24` della §8.3 della [spec del sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md) —, e le loro sette righe sono 🔶 con la sede del 3.
+>
+> ✅ **Aggiornata il 2026-10-03** — audit del 2026-09-30, AUD-512, AUD-517, AUD-007: la riga «Accessibilità» dice che nel browser vero `axe` giudica, della cornice, la sola Panoramica, e che il dock non lo giudica nessuna prova; «Dataset dai fallimenti» è 🔶 — la promozione dei fallimenti prima della potatura arriva con la ritenzione, il **15**, e l'anello 4 che li legge con gli Agenti; la «Cattura con un gesto» porta il richiamo all'eccezione che decide il **12**.
 
 ---
 
@@ -90,17 +98,17 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Scarico per inattività (TTL) | 🔶 | meccanismo §2 · politica → Gestione modelli locali |
 | Caricamento su richiesta e pre-caricamento | 🔶 | meccanismo §2 · politica → Gestione modelli locali |
 | Tetto ai modelli residenti | ✅ | §2 · ammissione |
-| Stima di fit prima del caricamento | ✅ | §2 · riserva dichiarata, picco misurato |
+| Stima di fit prima del caricamento | 🔶 | §2 · riserva dichiarata, nel codice · picco misurato → il primo worker sulla GPU, che manda `FromWorker::VramPeak` (§5.1 della spec, richiamo del 2026-10-03; voce 36 delle voci del Traguardo 5 in [`porta-di-qualita.md`](porta-di-qualita.md)) — richiamo del 2026-10-07, audit del 2026-09-30, AUD-127 |
 | Ecosistema dei worker ML | ✅ | ADR-0028 · Python, con i costi dichiarati |
 | Routing locale/remoto con fallback | ✅ | §3 · ADR-0012 |
 | Fallback a catena tra modelli | ✅ | §3 · ADR-0012 |
 | Preferenze di provider (OpenRouter) | ✅ | §3 · vincoli della richiesta |
 | Routing per compito/costo | ✅ | §3 · politica di routing |
 | Structured output e constrained decoding | 🔶 | sensore §5 (ADR-0013) + adattatori §3 · provider reale → Conversazione |
-| Contabilità token e costi | ✅ | §3 · ADR-0011 |
-| Avvisi e tetti di spesa | ✅ | §3 + §4 · V8 |
+| Contabilità token e costi | 🔶 | §3 · ADR-0011 · token e costo attribuiti al passo → Conversazione |
+| Avvisi e tetti di spesa | 🔶 | §3 + §4 · V8 · la spesa e il suo tetto → Conversazione |
 | Selettore di modello per compito | ✅ | §3 · profili |
-| Parametri di generazione configurabili | ✅ | §3 · record di routing |
+| Parametri di generazione configurabili | 🔶 | §3 · record di routing · i parametri nel record → Conversazione |
 | Catalogo e download modelli locali | 📋 | Gestione modelli locali |
 | Indicatore di stato modello | 📋 | GUI |
 
@@ -116,8 +124,8 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Ricerca nello storico | 📋 | Conversazione |
 | System prompt, personas e profili | 🔶 | guide §5 · politica → Conversazione |
 | Memoria persistente | 🔶 | stato durevole §4 · politica → **6**: l'assistente scrive una nota quando giudica che vale, come scrittura giornalata, e il giornale resta la verità — risposta 5 del [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md) |
-| Gestione del contesto e compattazione | 🔶 | giornale §4 · ricomposizione della proiezione (ADR-0008, ADR-0010) → Conversazione |
-| Indicatore di riempimento contesto | 🔶 | misura §7 · proiezione da misurare → Conversazione |
+| Gestione del contesto e compattazione | 🔶 | giornale §4 · ricomposizione della proiezione (ADR-0008, ADR-0010) → **13** |
+| Indicatore di riempimento contesto | 🔶 | misura §7 · la proiezione da misurare → **13** · l'indicatore, nella striscia e nella barra della chat → Conversazione ([design/07](design/07-osservabilita-e-degrado.md)) |
 | Artifacts/canvas | 📋 | GUI |
 | Preview renderizzate | 📋 | GUI |
 | Allegati in chat | 📋 | Conversazione (+ etichettatura I6) |
@@ -151,7 +159,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 
 | Funzionalità | | Sede |
 |---|---|---|
-| Orchestrazione e sub-agenti | 🔶 | sub-run §4 · proiezione ristretta (ADR-0008) → Conversazione |
+| Orchestrazione e sub-agenti | 🔶 | sub-run §4 · proiezione ristretta (ADR-0008) → **13** |
 | Planning e decomposizione dei task | 🔶 | piano nello stato durevole §4 · politica → Agenti |
 | Modalità piano vs esecuzione | 🔶 | preset §6 · politica → Agenti |
 | Tool calling | 🔶 | schema §3 + permessi §6 · mediatore completo → Agenti |
@@ -169,7 +177,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Valutazione degli agenti | 📋 | Agenti — esplicitamente **fuori** dal kernel (§8) |
 | Regole e vincoli di progetto | 🔶 | guide §5 · registro delle guide → **13** |
 | Agenti in parallelo isolati | 🔶 | sub-run §4 · isolamento su disco → Coding |
-| Limiti di autonomia configurabili | ✅ | §4 · V8 |
+| Limiti di autonomia configurabili | 🔶 | §4 · V8 · il tetto della run, che la sospende in `AttesaUmano` → Conversazione |
 
 ## 5. Coding
 
@@ -212,7 +220,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Tracciamento delle mani — 21 punti, stato continuo | 📋 | Gesti |
 | Gesti di comando | 📋 | Gesti |
 | Manipolazione di pannelli e menu con le mani | 📋 | GUI + Gesti |
-| Cattura con un gesto | 📋 | Gesti — la destinazione è **decisa il 2026-09-04**: nello spazio della knowledge base come file, la run la vede come riferimento (decisione 7 del disegno dei gesti, chiusa dal [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md)) |
+| Cattura con un gesto | 📋 | Gesti — la destinazione è **decisa il 2026-09-04**: nello spazio della knowledge base come file, la run la vede come riferimento (decisione 7 del disegno dei gesti, chiusa dal [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md)). ⚠️ **Richiamo del 2026-10-03:** la destinazione regge; la cattura è l'unico caso in cui un fotogramma uscirebbe dal worker, oggi non esce, e l'eccezione la decide il **12** col proprietario, con un ADR suo — il rimando del 2026-10-02 in testa ad [ADR-0039](adr/0039-telecamera-come-sorgente-di-percezione.md); audit del 2026-09-30, AUD-007 |
 | Indicatore di telecamera accesa | 📋 | GUI |
 
 ## 7. Multimodalità e generazione
@@ -231,7 +239,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Libreria degli asset generati | 📋 | Generazione asset |
 | Cronologia e riproducibilità | ✅ | giornale §4 + record di routing §3 |
 | Coda dei job di generazione | ✅ | code §2 + run §4 |
-| Progress e notifiche per job lunghi | 🔶 | §7 + V9 · notifica all'utente → GUI minima |
+| Progress e notifiche per job lunghi | 🔶 | §7 + V9 · progress e notifica all'utente → sede da assegnare: il 3 o il 7, scelta del proprietario — **E228** del [disegno del design system](superpowers/specs/2026-09-22-design-system-design.md); il 2 non li ha costruiti |
 | Rimozione dello sfondo/preparazione input | 📋 | Generazione asset |
 
 ## 8. Sistema
@@ -242,17 +250,17 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Difese da prompt injection | ✅ | §6 · ADR-0014 |
 | Difesa da tool poisoning | 🔶 | §6 · ADR-0015 · ciclo di approvazione → Agenti |
 | Gestione segreti e credenziali | 🔶 | §10 · ADR-0023 — gestore unico · implementazione → Conversazione |
-| Storage e cifratura a riposo | 🔶 | layout §10 (ADR-0022) già rispettato · cifratura reale (ADR-0023) → sede da assegnare |
+| Storage e cifratura a riposo | 🔶 | layout §10 (ADR-0022) già rispettato · cifratura reale (ADR-0023) e ritenzione a livelli del giornale (ADR-0018), con la spazzata che chiama `Journal::prune` → **15** |
 | Backup ed export dei dati | 🔶 | §10 · ADR-0022 — solo l'irriproducibile · implementazione → Backup e ripristino |
 | Osservabilità e tracing locale | 🔶 | giornale §4 · proiezione trace §7 (ADR-0017) · nel 2 `gui/src/panels/Steps.vue` (i passi, dal messaggio `Steps`) e `gui/src/panels/Status.vue` (degrado, policy e ultimo verdetto: `Degradation`, `Policy`, `Verdict`), sul core finto · i passi delle run → Conversazione |
 | Logging | ✅ | §7 |
 | Hotkey globale, tray e clipboard | 📋 | L3 |
 | Automazione OS | 📋 | L3 |
-| Notifiche | 🔶 | V9 §4 · implementazione → L3 |
+| Notifiche | 🔶 | V9 §4 · la notifica in-app, con lo stato «aspetta te» di una run → Conversazione · la notifica di sistema → L3 |
 | Avvio automatico e daemon in background | 🔶 | ADR-0004 · implementazione → L3 |
 | Packaging e aggiornamenti | 📋 | L3 |
 | Estensibilità e plugin | ✅ | ADR-0003 |
-| Accessibilità | 🔶 | nel **2** e nel **14**, il design system — ⚠️ **RICHIAMO DEL 2026-09-28:** era ✅, e la legenda dà a ✅ le fondamenta *nel kernel*, mentre queste stanno nella GUI: cambia la riga, non la legenda (N-2 di E235 del piano della parte 2; la (e) del [disegno del design system](superpowers/specs/2026-09-22-design-system-design.md)) · `axe-core` sui pannelli montati (`gui/src/a11y.test.ts`, l'aiutante in `gui/src/testing/axe.ts`) e, nel browser vero col contrasto della pagina disegnata, sulla pagina kit e sulla cornice (`gui/src/kit/kit.browser.test.ts`, `gui/src/frame/frame.browser.test.ts`); il contrasto AA dei token per famiglie, nei due temi (`gui/src/tokens/contrast.test.ts`); il movimento ridotto e l'alto contrasto (`gui/src/tokens/tokens.browser.test.ts`); le regioni `role="status"` presenti prima del loro testo (`gui/src/components/BaseStatus.vue`); la tastiera (`gui/src/frame/moveActive.ts`, `gui/src/frame/keys.test.ts`, e le frecce della Panoramica in `gui/src/frame/Overview.vue`) — nel passo web del cancello |
+| Accessibilità | 🔶 | nel **2** e nel **14**, il design system — ⚠️ **RICHIAMO DEL 2026-09-28:** era ✅, e la legenda dà a ✅ le fondamenta *nel kernel*, mentre queste stanno nella GUI: cambia la riga, non la legenda (N-2 di E235 del piano della parte 2; la (e) del [disegno del design system](superpowers/specs/2026-09-22-design-system-design.md)) · `axe-core` sui pannelli montati (`gui/src/a11y.test.ts`, l'aiutante in `gui/src/testing/axe.ts`) e, nel browser vero col contrasto della pagina disegnata, sulla pagina kit e sulla Panoramica (`gui/src/kit/kit.browser.test.ts`, `gui/src/frame/frame.browser.test.ts`) — sul dock no: `axe` vi trova tre difetti che nessuna prova guarda, nella tabella *«Che cosa la porta NON controlla, di questo lavoro»* di [`porta-di-qualita.md`](porta-di-qualita.md); il contrasto AA dei token per famiglie, nei due temi (`gui/src/tokens/contrast.test.ts`); il movimento ridotto e l'alto contrasto (`gui/src/tokens/tokens.browser.test.ts`); le regioni `role="status"` presenti prima del loro testo (`gui/src/components/BaseStatus.vue`); la tastiera (`gui/src/frame/moveActive.ts`, `gui/src/frame/keys.test.ts`, `gui/src/frame/dock.browser.test.ts` — la mossa col `dockview` vero, e il nucleo e la striscia che non si muovono — e `gui/src/frame/frame.test.ts` — il filo dei tasti in `Frame.vue` —, e le frecce della Panoramica in `gui/src/frame/Overview.vue`) — nel passo web del cancello |
 | Internazionalizzazione (i18n) | 🔶 | la metà GUI nel 2: `vue-i18n` con `gui/src/locales/it.json`, e la regola `no-raw-text` di `gui/eslint.config.js` nel passo web del cancello — il meccanismo, una lingua · la metà Voce → Voce |
 | Comportamento offline | ✅ | §7 · ADR-0019 |
 | Impostazioni e profili di configurazione | 🔶 | profili §2/§3 · pannello: `gui/src/panels/Settings.vue` nel 2, col cambio di policy VRAM — la funzione `vram-policy` del registro, dai messaggi `Invoke` e `Policy` · il resto del pannello → GUI |
@@ -280,8 +288,8 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Determinismo/replay riproducibile | ✅ | §4 + §8 (seed) |
 | Hook sul ciclo di vita | 🔶 | trigger e anelli §5 · politica → Agenti |
 | Classificatore di sicurezza delle azioni | 🔶 | si realizza come **sensore** §5 · politica → Agenti |
-| Dataset dai fallimenti | ✅ | §7 promozione + §8 |
-| Analisi dei costi per run e per sub-agente | ✅ | §3 · ADR-0011 |
+| Dataset dai fallimenti | 🔶 | §8 · la suite di regressione, coi semi della DST (V31) · §7 · la promozione dei fallimenti prima della potatura, seguito di ADR-0018, con la ritenzione → **15** · l'anello 4 che li legge (§5) → Agenti |
+| Analisi dei costi per run e per sub-agente | 🔶 | §3 · ADR-0011 · la contabilità al passo → Conversazione |
 
 ### Conversazione, conoscenza e UX
 
@@ -309,8 +317,8 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 
 | Funzionalità | | Sede |
 |---|---|---|
-| Zero-Data-Retention selettivo | ✅ | §3 ADR-0012 + §6 ADR-0016 (escalation) |
-| Fatturazione a stream interrotto | ✅ | §3 · ADR-0011 |
+| Zero-Data-Retention selettivo | 🔶 | §3 ADR-0012 · il fallimento chiuso sui vincoli sui dati, nel codice · §6 ADR-0016, l'escalation, che discende dal gestore dei segreti (ADR-0023, punto 4) → Conversazione, innesco B (3) di V34 — rimando del 2026-10-04 in testa ad ADR-0016; richiamo del 2026-10-07, audit del 2026-09-30, AUD-585 |
+| Fatturazione a stream interrotto | 🔶 | §3 · ADR-0011 · il costo di uno stream interrotto → Conversazione |
 | Politica di routing come oggetto versionato | ✅ | §3 · ADR-0011 |
 | Canary per esfiltrazione dati | 🔶 | §6 · ADR-0016 · canary → Conversazione |
 | Modalità di permessi a più livelli | 🔶 | preset §6 · implementazione → Agenti |
@@ -333,7 +341,7 @@ tutte poggiano: ✅ significa «le fondamenta esistono», non «è fatto».
 | Funzionalità | | Sede |
 |---|---|---|
 | Prompt history ricercabile | 📋 | Conversazione |
-| Auto-retry su errori transitori | ✅ | §3 · V17 |
+| Auto-retry su errori transitori | 🔶 | §3 · V17 · il ritentativo nello stesso passo → Conversazione |
 | Modalità «solo lettura»/dry-run | 🔶 | preset §6 + classi di effetto §4 · politica → Agenti |
 | Degrado esplicito quando manca la rete | ✅ | §7 · ADR-0019 |
 

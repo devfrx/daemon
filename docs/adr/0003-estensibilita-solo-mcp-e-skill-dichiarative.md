@@ -4,6 +4,15 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-10-04 — la colonna «Isolamento» della skill dichiarativa è contestata, e la decisione non
+> è presa.** Audit del 2026-09-30. Il richiamo del 2026-08-27 in
+> [ADR-0015](0015-descrizioni-degli-strumenti-fissate-all-approvazione.md) — finding AUD-004 del secondo audit — dice
+> che *«nessuna esecuzione, quindi nessun isolamento necessario»* è il ragionamento che
+> [ADR-0014](0014-confine-dei-dati-non-fidati-nel-sistema-di-tipi.md) confuta: quel confine classifica per
+> **provenienza**, non per eseguibilità, e una skill è *«istruzioni e dati»* scritti da terzi. Se le difese di
+> ADR-0015 si estendano alle skill lo decide un ADR del proprietario, che sbarra il sotto-progetto 13; fino ad allora
+> la cella si legge come aperta. **Nessuna riga di questo ADR è superata.** AUD-125.
+
 ## Context
 
 La mappa funzionale elencava quattro meccanismi di estensione distinti — MCP, skill,

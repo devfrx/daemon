@@ -424,7 +424,8 @@ pub fn assert_journal_contract<J: Journal, F: Fn() -> J>(build: F) {
     // alike to a second `prune`. Pinning any post-state here would freeze the wrong one. The
     // limit is declared where the defect is — beside `prune` in both implementations — and
     // carried as an OPEN ENTRY in `docs/porta-di-qualita.md`, because a note is read and
-    // forgotten (gotcha #36). It belongs to the milestone that brings retention.
+    // forgotten (gotcha #36). It belongs to sub-project 15 (docs/roadmap.md). ⚠️ RECALL OF
+    // 2026-10-07 — audit of 2026-09-30, AUD-563.
     //
     // ⚠️ AND A SECOND THING THIS SUITE DOES NOT PIN, declared rather than left to be found:
     // `prune`'s THIRD answer, `Missing` for a step nobody ever wrote. Promises 7 and 7b hold the

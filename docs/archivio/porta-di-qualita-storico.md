@@ -19,6 +19,8 @@ mostrare **solo** righe con un link:
 diff <(git show c4ec042:docs/porta-di-qualita.md) <(awk '/^# La porta di qualità/{p=1} p' docs/archivio/porta-di-qualita-storico.md | tr -d '\r')
 ```
 
+⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, AUD-2259: dal 2026-10-04 il registro delle contraddizioni non sta più in fondo al file vivo ma in coda a questo archivio, nella sezione *«Il registro delle contraddizioni, e la riga del compendio che ne diceva lo stato, com'erano»* (C30 del [rapporto](../audit-2026-09-30.md)); il confronto qui sopra mostra perciò anche quel blocco, aggiunto in coda.
+
 ---
 
 # La porta di qualità — dove vive ogni controllo
@@ -5257,3 +5259,50 @@ del piano, del giorno in cui furono prese.
 | la metà **Windows** della CI — che `windows-latest` onori `rust-toolchain.toml` e che Git Bash vi lanci `gate.sh` | la dice solo la corsa su GitHub, e nessun comando locale (P-111): il criterio di chiusura del compito 16 manda a guardarla |
 | la prova **capo a capo** — la SPA nel guscio col core finto | *«fuori dal cancello di oggi, dichiarato»*, nella §8 del disegno del 2: il guscio non è di questo piano |
 | la **validità dei JSON** sotto `gui/src` | il lint li legge con `jsonc-eslint-parser` e nessuna regola li giudica — misurato il 2026-09-15, un `{ "a": 1, }` in `panels/views/` lascia `EXIT=0` (P-101); le tre viste le prova la sonda della cornice del compito 13 |
+
+## Il registro delle contraddizioni, e la riga del compendio che ne diceva lo stato, com'erano — archiviati il 2026-10-04, dal terzo audit
+
+⚠️ **Veri il giorno in cui furono scritti.** Il registro è la sezione *«Le contraddizioni registrate, e non risolte»* di [`porta-di-qualita.md`](../porta-di-qualita.md) com'era a `fa26cee`: il pacchetto P23 del terzo audit, radice R4, ha corretto ogni affermazione dove stava, col proprio richiamo, e l'ha tolta. La riga è quella della §6 del [compendio](../COMPENDIO.md) che ne diceva lo stato, riscritta lo stesso giorno. Parola per parola, coi link riscritti per questa cartella.
+
+📌 **La compressione di [`porta-di-qualita.md`](../porta-di-qualita.md) è fatta, il 2026-09-24:** il file com'era sta intero in [`archivio/porta-di-qualita-storico.md`](porta-di-qualita-storico.md). ⏳ **La correzione delle contraddizioni** che la compressione ha segnato e non corretto — decisione 11 del [verbale degli sfoltimenti](../superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md) — la fa il **terzo audit**, nel pacchetto della radice R4: deciso dal proprietario al triage del 2026-10-01. La lista sta in fondo a quel file.
+
+### Le contraddizioni registrate, e non risolte
+
+⛔ **Registrate il 2026-09-24, comprimendo, e non corrette:** il proprietario ha deciso che si comprime prima e si
+corregge dopo, in una sessione loro. Ogni riga è un'affermazione **viva** di questo file che il codice di oggi, o un'altra
+parte del repository, smentisce; il segno `⚠️ **[C-…]**` sta accanto all'affermazione. Le contraddizioni che stavano
+nella cronaca sono andate in archivio con lei, e lì restano vere come verbale del loro giorno.
+
+| Segno | Che cosa afferma questo file | Che cosa dice la prova |
+|---|---|---|
+| **C-S0-1** | la tabella dei passi di `gate.sh` ne conta **sette** | `grep -n '^run ' scripts/gate.sh` ne rende **nove**: mancano `dependency advisories` e `gui: fake core and SPA`, che la sezione del passo web nomina ✅ **Corretta il 2026-09-28** dal compito 9 del [piano del design system](../superpowers/plans/2026-09-23-design-system.md), dove scrive il browser: la tabella ha i nove passi (P-29, D21) |
+| **C-S0-2** | la conformità prova **V6 solo su un archivio vuoto**, voce aperta del proprietario | il gotcha **#63** di [`HANDOFF.md`](../HANDOFF.md) la dà **CHIUSA il 2026-08-17**, con un passante nei blocchi 1, 5 e 8a — la sezione «T-1 e T-2» di questo file |
+| **C-S1-1** | voce `E21`: `GrantId` riparte da zero per ogni `Arbiter`, e dare un'identità all'arbitro è del proprietario | `ArbiterId` esiste, consegnato in `Parameters`, e `release` confronta `Grant::issuer` prima dei libri (`crates/kernel/src/arbiter/mod.rs`); la riga **13** della tabella del Traguardo 5 dà `E21` ✅ **CHIUSA** (`c4cf942`) |
+| **C-S1-2** | voce `E30`: resta da disegnare il tipo esatto della risposta di `release`, e le forme scartate stanno accanto a `ReleaseError` | `pub enum Released { Now(Mib), AlreadyCollected }` e `release(…) -> Result<Released, ReleaseError>` in `crates/kernel/src/arbiter/mod.rs`, dove il doc dice che l'argomento **non** è ricopiato lì; righe **14** e **26** della tabella del Traguardo 5 ✅ **CHIUSE** |
+| **C-S1-3** | di `release`, *«nessun consumatore di produzione esiste»* | `crates/kernel/src/client.rs` chiama `arbiter.release(grant, now)` |
+| **C-S1-4** | la cella `Q8 · §5.2.1`: *«la regola è provata sull'argomento che la decisione prende davvero»* | la sezione del Task 5 dice che la chiamata **non partecipa** all'`E0609`, misurato cancellandola; il commento di `crates/kernel/tests/compile_fail/admission_reads_cold_start.rs` porta **entrambe** le frasi |
+| **C-S1-5** | cita il gotcha **#67** per *«un costruttore `pub(crate)` apre una strada»* | in `HANDOFF.md` il #67 è *«Una giustificazione scritta su un ELENCO di nomi si legge come verificata su tutti»*; `riferimenti.md` e il disegno del Traguardo 5 gli attribuiscono un'altra frase ancora |
+| **C-S1-9** | l'àncora *«con `expires_at > now` la finestra è semiaperta»* | `collect_expired` in `crates/kernel/src/arbiter/mod.rs` scrive `if held.expires_at <= now`: stessa semantica, l'àncora alla lettera non esiste più |
+| **C-S1-10** | l'oracolo di `grant_has_no_constructor.rs` cita la nota *«private field `id` that was not provided»* | `crates/kernel/tests/compile_fail/grant_has_no_constructor.stderr` dice *«private fields `id` and `issuer` that were not provided»* |
+| **C-S2-1** | `askable` è una chiusura e non un metodo perché, installato come `Held::askable_by`, il build stampa tre avvisi | il doc di `ask_back` in `crates/kernel/src/arbiter/mod.rs`: la misura è scaduta col chiamante di produzione del Task 8 (`E91`), il build stampa **zero** avvisi, e a tenere la chiusura è che cattura `below` (`E99`) |
+| **C-S2-2** | `ReleaseError::UnknownGrant` ha **tre** cause, e a grazia scaduta `release` risponde `Err(UnknownGrant)` | `UnknownGrant` significa ora **una** cosa, e una concessione propria già riscossa risponde `Ok(Released::AlreadyCollected)` (`crates/kernel/src/arbiter/mod.rs`); riga **14** del Traguardo 5, `E30` ✅ **CHIUSA** |
+| **C-S2-4** | *«una regola scritta in un commento e tenuta da niente è un'intenzione»*, citata come gotcha **#42** | in `HANDOFF.md` il #42 è il caso `compile_fail` che scatta come `mismatch` e che una rigenerazione in blocco disarma |
+| **C-S2-6** | `Preemption::Never` è esercitata in **due** casi `compile_fail` | `grep -l 'Preemption::Never' crates/kernel/tests/compile_fail/*.rs` ne rende di più |
+| **C-S2-7** | il costo dell'opzione ② di `E94` comprende i chiamanti di `Parameters::new` che `E18` ha contato | `grep -rn "Parameters::new(" crates --include=*.rs` ne rende molti di più: la cifra del costo è datata |
+| **C-S2-8** | `set_policy` **non ha nessun chiamante di produzione**, e il grafo di produzione non transita mai | il modulo `kernel::serving` chiama `arbiter.set_policy` dentro l'attività `serve`, che il daemon lancia; il grafo **legge** la policy dal giornale con `arbiter::policy_now` in `crates/daemon/src/main.rs` |
+| **C-S2-9** | ciò che compra `policy()` restano i **banchi** | lettore di produzione: il modulo `kernel::serving`, `match self.arbiter.policy()` |
+| **C-S2-10** | la sonda `the_production_graph_assembles_and_the_executor_runs_to_completion`, e l'elenco delle sonde del `daemon` | la sonda si chiama oggi `the_production_graph_assembles_and_the_serving_activity_takes_the_turns` (`9ba48e2`), e `crates/daemon/src/main.rs` porta sonde che l'elenco non nomina |
+| **C-S2-11** | i rami d'errore di `main` sono **tre**, e senza attività il corpo dell'esecutore non gira mai | `enum StartupError` in `crates/daemon/src/main.rs` ha sei varianti, `EXECUTOR_TURN_LIMIT` vale `u64::MAX` con un'attività lanciata, e il commento in `main` dice che `run()` non può rispondere `Ok(())` |
+| **C-S3-4** | le righe che il passo delle campagne DST stampa | `scripts/gate.sh` lancia oggi **sei** campagne, quindi le righe sono di più |
+| **C-S3-6** | `M9` è un **mutante vivo** dichiarato e non pinzato, perché la sonda congelerebbe la scelta che `E30` mette davanti al proprietario | `E30` è chiusa (riga **14** del Traguardo 5); il doc di `crates/kernel/src/arbiter/mod.rs` dice spesa la pretesa di `E30`, e `a_grant_of_this_arbiter_released_after_its_window_is_not_an_error` in `crates/kernel/tests/arbiter_admission.rs` asserisce `Ok(Released::AlreadyCollected)`. ⚠️ **Dedotto, non misurato:** sotto `M9` quel rilascio risponderebbe `Now(…)`, quindi `M9` oggi morirebbe |
+| **C-S4-1** | le **dieci** sonde permanenti dell'audit, in tre case | la tabella consolidata ne nomina di più; il «dieci» torna solo contando **una sonda per voce** |
+| **C-S4-3** | P-1 elenca ciò che resta aperto di A3 e dice chiusa *«la strada che si prende senza accorgersene»* | il doc di `crates/kernel/src/boundary.rs` (richiamo di AUD-050) dice che l'elenco mancava la strada più larga, `RecordV1` coi campi `pub`, chiusa il 2026-09-01 nella sezione «`AUD-050` chiuso a LIVELLO 1»; P-1 non vi rimanda |
+| **C-S4-4** | *«Tre moduli di test vivono in `src/`»* | sono **quattro**: anche `crates/platform/src/ipc.rs`, dal 2026-09-17 — `git grep -n -F "#[cfg(test)]" -- 'crates/*/src/**'` |
+| **C-S4-5** | i due casi `compile_fail` di `PermissionDetail`, nominati solo in forma abbreviata | il ciclo degli orfani di [`riferimenti.md`](../riferimenti.md), rilanciato, li dà **orfani** tutti e due: il nome per esteso non compare in questo file |
+| **C-S4-6** | le righe **23**, **24** e **25** della tabella del Traguardo 6 nominano la nona passata, la tabella della domanda di classe e il riquadro del compito 7 | le voci stanno in «La passata INDIPENDENTE sul perimetro del compito 5», in «La crescita, enum per enum» e in «Il rilievo del coordinatore, trovato rimediando» |
+| **C-S5-1** | *«`clippy` gira come igiene del codice»* | nessuno script lo esegue: è la voce **X-2** dell'[audit del 2026-08-27](../audit-2026-08-27.md), aperta |
+| **C-S5-2** | le voci aperte del Traguardo 3 vivono nella tabella *«Cosa il Traguardo 3 lascia aperto»* della §6 del compendio | quella tabella sta dal 2026-09-09 in [`archivio/stato-storico.md`](stato-storico.md) |
+| **C-S5-3** | riga **34** della tabella del Traguardo 5, `E94`, aperta | la sezione «`E94` — la TERZA bocca della classe di AUD-050: `RoutingDetail`, chiusa il 2026-09-01» la dice chiusa, e il comando delle voci aperte del Traguardo 5 la elenca |
+| **C-S5-4** | riga **33**, C-1: il residuo **X-3** resta aperto e del proprietario | l'[audit del 2026-08-27](../audit-2026-08-27.md) dà **X-3 CHIUSA il 2026-09-22**, dal compito 16 del piano della parte 2 |
+| **C-S5-5** | riga **16** della tabella del Traguardo 6, `E41`: la riga dei fine-riga di `CLAUDE.md` nomina `sed -i` | dal 2026-09-23 la riga di `CLAUDE.md` dice *«uno strumento che tocca file»*: forse la voce è chiusa nei fatti. **Da verificare**, non certa |
+| **C-S5-6** | la tabella del Traguardo 6 sta *«in fondo al file»*, e il suo comando si ferma alla riga 29 perché *«questa sezione è l'ultima del file»* | dopo di lei vengono la sonda S3 (2026-09-04), il passo web (2026-09-22) e queste due sezioni; la ragione della riga 29 — un rimando, che non ha un chiusore — resta vera |

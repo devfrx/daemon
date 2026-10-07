@@ -20,8 +20,11 @@ fn main() {
     let _ = dispatch(unfiltered, StepId::new(1), &mut journal);
 }
 
-// ⛔ IT REPORTS BY THE ORACLE AND NOT BY COMPILING, which is the WEAKER shape (gotcha #42), so
-// the pair matters: `conforming_has_no_constructor.rs` beside it fires the strong way. Whoever
-// widens this row reads both.
+// ⛔ IT REPORTS BY THE ORACLE AND NOT BY COMPILING, which is the WEAKER shape (gotcha #42), and
+// `conforming_has_no_constructor.rs` beside it does the same on the roads that forge a token
+// from outside — measured, and declared in that case. Whoever widens this row reads every case
+// of it — `conforming_has_no_constructor.rs` and `conforming_fields_are_private.rs` beside it —
+// and reads every regeneration of their oracles by hand. ⚠️ RECALL OF 2026-10-07 -- audit of
+// 2026-09-30, AUD-696.
 //
 // ⛔ Names `kernel::` and declares no attributes of its own — gotcha #39.

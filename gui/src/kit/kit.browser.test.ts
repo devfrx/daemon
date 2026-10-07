@@ -4,10 +4,12 @@ import { afterEach, describe, expect, it } from "vitest";
 import { nextTick } from "vue";
 
 import "../tokens";
+import it_ from "../locales/it.json";
 import { contrastJudged, violations } from "../testing/axe";
 import { computed, concentricRadii, firstFamily, fits, iconsCentred } from "../testing/probes";
 
 import Kit from "./Kit.vue";
+import kitSource from "./Kit.vue?raw";
 
 // ⛔ THE KIT PAGE IN THE INSTALLED CHROME (design system, section (f)): the probes of the boards, on the real pieces.
 
@@ -187,3 +189,20 @@ for (const theme of ["light", "dark"] as const) {
     });
   });
 }
+
+describe("the kit page's words", () => {
+  it("shows the permission window with the phrase of `confirm.scope`, and keeps no copy of it (gotcha #68)", async () => {
+    // ⛔ THE ONE KIT WORD THAT IS NOT A SPECIMEN (D8 of the design-system plan): the scope of a grant is a FACT of the
+    // system -- who builds the session boundary -- and it changes with sub-project 3. The window that ships says it
+    // from `it.json`, and so does this page. Audit of 2026-09-30.
+    await kit("light");
+    document.querySelector<HTMLButtonElement>('[data-kit="open-dialog"]')?.click();
+    await nextTick();
+    await nextTick();
+    const description = document.querySelector(".base-dialog .description");
+    expect(description).not.toBeNull();
+    expect((description as Element).textContent?.trim()).toBe(it_.confirm.scope);
+    // ⛔ AND THE PAGE DOES NOT SPELL IT: the equality above holds with a copy too, until the day the two drift apart.
+    expect(kitSource.includes(it_.confirm.scope), "Kit.vue spells the phrase of `confirm.scope`").toBe(false);
+  });
+});

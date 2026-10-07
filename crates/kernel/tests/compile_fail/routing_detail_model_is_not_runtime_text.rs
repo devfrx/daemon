@@ -13,7 +13,7 @@
 //!
 //! ⛔ A GUARD IS WORTH WHAT ITS CONSTRUCTOR IS WORTH, which is AUD-050's own argument landing on
 //! a second type: sealing `RecordV1` shut the roads INTO `RecordV1`, never the road into a
-//! `Detail` that carries text of its own. Every species that grows one owes the same signature.
+//! `Detail` that carries text of its own. Such a species owes the signature AND one case per text.
 
 fn main() {
     // Text computed at runtime, from bytes that could have come from anywhere.

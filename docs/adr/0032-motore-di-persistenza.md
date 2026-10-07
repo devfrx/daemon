@@ -4,6 +4,22 @@
 - **Date:** 2026-08-07
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-10-03 — il livello 2 di crash non ha seme, e il suo oracolo confronta il contenuto.** Audit del
+> 2026-09-30. Due righe di questo ADR descrivono il livello 2 come era previsto e non come è costruito:
+>
+> - **la colonna «Fa» del backend cadente**, nella tabella della *Decision* — *«cade a un'operazione scelta dal
+>   seme»*. Il punto di caduta lo sceglie **chi chiama** — `CrashingBackend`, in
+>   `crates/platform/tests/engine_crash_consistency.rs` —, e la campagna li percorre **tutti**, da
+>   `OPERATIONS_TO_OPEN` alla saturazione: esaustiva, deterministica, **senza seme**. Il seme è del livello 1, e perché
+>   al livello 2 la parola non si usa lo dice [`semi-dst.md`](../semi-dst.md). Il rimando del 2026-08-11, in fondo,
+>   corresse il *dove* di quella riga e non il *come*. AUD-155, AUD-156, AUD-157.
+> - **la *Negative* «l'oracolo del crash conta i record … dimostrata su 12 punti»**. Non è più il costo in vigore: a
+>   ogni punto fino alla saturazione la campagna pretende che ciò che si rilegge sia un **prefisso** di ciò che è stato
+>   scritto, record per record e byte per byte — `written.starts_with(&back)` —; la profondità corta gira a ogni
+>   commit, la profonda è `#[ignore]`, del ciclo lungo. AUD-156.
+>
+> **Nessuna riga della decisione è superata**: il motore resta `redb` 4.1.0, col backend nostro.
+
 ## Context
 
 La [§10.6 della spec del kernel](../superpowers/specs/2026-08-06-kernel-design.md) fissa

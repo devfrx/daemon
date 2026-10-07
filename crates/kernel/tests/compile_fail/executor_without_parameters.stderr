@@ -1,15 +1,15 @@
-error[E0061]: this function takes 4 arguments but 2 arguments were supplied
-  --> tests/compile_fail/executor_without_parameters.rs:59:21
+error[E0061]: this function takes 4 arguments but 3 arguments were supplied
+  --> tests/compile_fail/executor_without_parameters.rs:73:21
    |
-59 |     let _executor = Executor::new(StubRng, StubReactor);
-   |                     ^^^^^^^^^^^^^---------------------- two arguments of type `Parameters` and `&Sleep` are missing
+73 |     let _executor = Executor::new(StubRng, StubReactor, &sleep);
+   |                     ^^^^^^^^^^^^^                       ------ argument #3 of type `Parameters` is missing
    |
 note: associated function defined here
   --> src/executor.rs
    |
    |     pub fn new(rng: R, reactor: C, parameters: Parameters, sleep: &'a Sleep) -> Self {
    |            ^^^
-help: provide the arguments
+help: provide the argument
    |
-59 |     let _executor = Executor::new(StubRng, StubReactor, /* Parameters */, /* &Sleep */);
-   |                                                       ++++++++++++++++++++++++++++++++
+73 |     let _executor = Executor::new(StubRng, StubReactor, /* Parameters */, &sleep);
+   |                                                         +++++++++++++++++

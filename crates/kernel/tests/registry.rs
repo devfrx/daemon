@@ -142,6 +142,13 @@ fn the_note_carries_the_registered_name_the_invoker_and_the_argument() {
     // is a different road: the name proves the REGISTERED one reached the record and not the
     // arriving text, the code proves `Invoker::code` was consulted, and the payload proves the
     // argument did NOT end up in the structured half.
+    //
+    // ⛔ AND THE ARGUMENT'S LABEL WITH IT, because the label is what says, once the bytes are
+    // re-read from the archive, that the peer's argument is not an instruction (I6, ADR-0014).
+    // Measured on 2026-10-02 in both directions: with `noted` writing `Trust::Instruction` this
+    // probe goes red, and before it read the label every bench that touches the note — here,
+    // `serving`, `frozen_bytes`, `record_shape`, `reconciliation`, and `simulator`'s
+    // `serving_campaign` — stayed green over that mutation. Audit of 2026-09-30, AUD-691.
     let mut journal = MemoryJournal::new();
     let registry = a_registry();
 
@@ -178,13 +185,20 @@ fn the_note_carries_the_registered_name_the_invoker_and_the_argument() {
             detail.function().to_string(),
             detail.invoker(),
             body.payload().to_vec(),
+            body.trust(),
         ));
     }
 
-    let (function, invoker, payload) = seen.expect("the invocation note must be in the archive");
+    let (function, invoker, payload, trust) =
+        seen.expect("the invocation note must be in the archive");
     assert_eq!(function, "set-policy");
     assert_eq!(invoker, 0, "the gui's code, from `Invoker::code`");
     assert_eq!(payload, b"local".to_vec(), "the argument travels in the payload");
+    assert_eq!(
+        trust,
+        kernel::record::Trust::Untrusted,
+        "the payload is the argument the peer chose, so it travels under the label that says so"
+    );
 }
 
 #[test]

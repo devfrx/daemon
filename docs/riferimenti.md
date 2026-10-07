@@ -77,13 +77,14 @@ misurano configurazioni diverse.**
 ## Linguaggio del core — SP-5 e SP-6 (ADR-0026)
 
 Fonti consultate il **2026-08-06**, sugli strumenti realmente installati su questa
-macchina. Sono verifiche dirette, non articoli: il comando e la sua versione sono la
+macchina — l'ultima riga della tabella il **2026-10-03**. Sono verifiche dirette, non articoli: il comando e la sua versione sono la
 fonte, e sono riproducibili.
 
 | Verifica | Comando | Dato ottenuto | Dove entra |
 |---|---|---|---|
 | runtime deterministici Rust | `cargo search madsim` · `cargo search turmoil` | `madsim` 0.2.34 · `madsim-tokio` 0.2.30 (sostituto di tokio) · `turmoil` 0.7.2 | [`spikes/CANDIDATI.md`](../spikes/CANDIDATI.md), SP-5 su Rust |
 | semantica di `testing/synctest` | `go doc testing/synctest` su go1.26.5 | orologio finto per bolla; il tempo avanza solo a **quiescenza** (ogni goroutine *durably blocked*); **`sync.Mutex`, `sync.RWMutex`, I/O e chiamate di sistema sono esclusi testualmente**; nessuna promessa di ordine totale deterministico | [`spikes/CANDIDATI.md`](../spikes/CANDIDATI.md) · criterio **C6** del protocollo |
+| `extern crate std;` dentro una crate `#![no_std]`, misurata il **2026-10-03** con `rustc` 1.95.0 | una crate di libreria usa-e-getta nello scratchpad — `#![no_std]`, la riga, e una funzione che chiama `std::fs::metadata` —: `cargo build`, poi `cargo build --target x86_64-unknown-none`; e la stessa crate senza la riga, `cargo build` | con la riga **compila** sull'host, e per `x86_64-unknown-none` dà `E0463`, *«can't find crate for `std`»*; senza la riga dà `E0433` già sull'host | il rimando del 2026-10-03 in testa ad [ADR-0026](adr/0026-linguaggio-del-core.md) — audit del 2026-09-30, AUD-587 |
 
 **Correzione tracciata.** La formulazione diffusa «`synctest` dà scheduling
 deterministico» è più forte di quanto la documentazione dichiari: il contratto è la
@@ -611,14 +612,28 @@ awk '/^#### 7\.4\.1 /{ins=1} /^#### 7\.4\.2 /{ins=0}
      ins&&c&&/^\|/&&!/^\|-/&&!/^\| Difende/' \
   docs/superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md | wc -l
 
-# quante ne dichiara implementate il registro
+# quante ne dichiara implementate il registro -- la misura del 2026-08-10; la completezza NON la prova
 grep -cE '^\| \*\*blocco C\*\*' docs/porta-di-qualita.md
 
 # e la controprova che nessun caso resti fuori dal registro
 for f in crates/kernel/tests/compile_fail/*.rs; do
   b=$(basename "$f"); grep -qF "$b" docs/porta-di-qualita.md || echo "ORFANO: $b"
 done
+
+# e lo stesso per i banchi, per PERCORSO e non per nome di base
+for f in crates/*/tests/*.rs; do grep -qF "$f" docs/porta-di-qualita.md || echo "ORFANO: $f"; done
 ```
+
+⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-621: contare le righe non prova la completezza del registro —
+il doppione dichiarato di `Q2 · §5.1` compensava la riga `V5` che mancava, e dal 2026-10-06, con `V5` nella tabella, il
+conteggio rende il catalogo più uno —; la prova è il **confronto per chiave** scritto sotto la tabella del livello 1 di
+[`porta-di-qualita.md`](porta-di-qualita.md), la sua casa sola.
+
+⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-638, AUD-631, AUD-632: il ciclo dei banchi va **per
+percorso**, perché per nome di base un sorgente omonimo lo maschera — la debolezza registrata in fondo alla sezione
+della compressione di `porta-di-qualita.md`. Il 2026-10-07 non rende niente; provato nelle due direzioni lo stesso giorno
+su una copia della porta senza `crates/kernel/tests/serving.rs`: per percorso esce orfano, per nome di base no. Se il
+ciclo diventi un passo del cancello è la scelta aperta su AUD-709: oggi è una ricetta a mano.
 
 | Domanda | Esito il 2026-08-10 |
 |---|---|
@@ -963,7 +978,7 @@ prodotto codice:** hanno deciso **il perimetro** e corretto **una collocazione**
 | **D4-1** | l'ambiente regge, **prima** di toccare qualsiasi cosa | `bash scripts/gate.sh` | `GATE GREEN`, sei controlli su sei. L'unico avviso è `awaiting approval: docs/adr/0029-guscio-della-gui.md`, che è lo stato atteso |
 | **D4-2** | ⛔ **`redb` 4.1.0 supporta `no_std`?** | `grep -n '^#!\[no_std\]' $REDB/src/lib.rs` e `grep '^\[features\]' -A4 $REDB/Cargo.toml` nella cache del registro | ❌ **no.** Nessun `#![no_std]`; le sole feature sono `cache_metrics` e `logging`. **È la misura che ha corretto ADR-0032** |
 | **D4-3** | la superficie di `redb::StorageBackend` | `awk '/pub trait StorageBackend/,/^}/' $REDB/src/db.rs` | **sei** metodi: `len`, `read`, `set_len`, `sync_data`, `write` obbligatori — tutti `-> std::result::Result<_, std::io::Error>` — e **`close`** con implementazione predefinita |
-| **D4-4** | esiste un backend in memoria già pronto? | `grep -rn 'InMemoryBackend' $REDB/src/` | ✅ **sì**, `pub struct InMemoryBackend(RwLock<Vec<u8>>)`. Il backend cadente lo **avvolge** invece di riscrivere l'archiviazione |
+| **D4-4** | esiste un backend in memoria già pronto? | `grep -rn 'InMemoryBackend' $REDB/src/` | ✅ **sì**, `pub struct InMemoryBackend(RwLock<Vec<u8>>)`. ⛔ **Ma il backend cadente non lo usa**, e la ragione è **D4-10**, qui sotto: tiene il proprio buffer dietro un `Arc`. ⚠️ **Richiamo del 2026-10-03** — audit del 2026-09-30, AUD-345 |
 | **D4-5** | la lista chiusa del grafo **spedito** di `simulator`, letta nello script e non ricordata | `scripts/gate-deps.sh` | `bincode · kernel · minicbor · simulator · unty`, e la cura scritta per un intruso è ⛔ *«REMOVE the dependency. Adding it to the list is not a remedy»* |
 | **D4-6** | quali criteri di M-2 sono **già permanenti** nel repository | `grep -n 'fn ' crates/kernel/tests/executor_determinism.rs` | **C1, C2, C3** e la **non-vacuità** ci sono dal Traguardo 2. **C7a e C7b no** |
 | **D4-7** | quali finte della §3.1 esistono in `crates/simulator/src/` | lettura di `crates/simulator/src/lib.rs` | **tre su sette**: `VirtualReactor`, `SeededRng`, `MemoryJournal` — e quest'ultimo dichiara nel proprio doc *«THIS IS NOT THE FALLING DOUBLE»* |
@@ -976,6 +991,10 @@ sull'intero corpo del tratto. 📌 Conta perché il **conteggio dei punti scatta
 non-vacuità** della campagna di livello 2: un metodo in meno sarebbe stato un oracolo più debole
 **senza che nulla lo dicesse**, ed è precisamente il gotcha **#48** — un banco che sbaglia
 mentre conferma.
+⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-422: il backend cadente cade alle operazioni che passano da
+`may_serve` — `len`, `read`, `set_len`, `sync_data`, `write` —, e `close` non cade mai, per la ragione scritta nel doc di
+`CrashingBackend` in `crates/platform/tests/engine_crash_consistency.rs`; i punti d'iniezione si contano su quelle
+operazioni, come misura T4-5-l.
 
 ### Le due misure che hanno corretto il disegno, prese **dopo** averlo scritto
 
@@ -1025,7 +1044,7 @@ Commit `9597d22` (il tipo e le sue sonde) e `acda193` (il giro di correzione).
 | **T4-1-f** | mutazioni D e D′ — la guardia di `prune`, tolta e sbagliata | idem | ⛔ **asserzioni diverse**: riga **82** (`Err(Missing)` contro `Err(NotDurable)`) e riga **68** (`Err(NotDurable)` contro `Ok(())`). La sonda **distingue** i due difetti |
 | **T4-1-g** | la sonda nuova è non vacua? — provata **togliendo il blocco**, non un'asserzione | mutazione C attiva + corpo racchiuso in `/* … */` | ✅ **verde, dieci su dieci**: le altre nove sono **cieche** a C |
 | **T4-1-h** | il punto di caduta copre davvero tutte le scritture? | ricalcolo di xorshift64 **fuori dal repository**, cinquecento semi, otto scritture | ✅ **otto posizioni su otto**, `{61, 69, 66, 62, 63, 57, 58, 64}` — minimo **57**, massimo **69** |
-| **T4-1-i** | `cargo fmt` tocca file che nessuno stava modificando? | `cargo fmt --all -- --check` | ❌ **no**: **due** file, esattamente i due del compito. I quattro sorgenti CRLF del repository sono già puliti e rustfmt conserva i fine-riga del file — **G8** non è in gioco |
+| **T4-1-i** | `cargo fmt` tocca file che nessuno stava modificando? | `cargo fmt --all -- --check` | ❌ **no**: **due** file, esattamente i due del compito. I quattro sorgenti CRLF del repository sono già formattati, quindi il `--check` non li segnala — **G8** non è in gioco. ⚠️ **Richiamo del 2026-10-03:** il `--check` su file già formattati non dice che cosa il formattatore faccia ai fine-riga, e su un file CRLF da riformattare `rustfmt` li **normalizza**. Misurato con `rustfmt` 1.9.0 della toolchain 1.95.0, senza `rustfmt.toml` come in questo repository, su un file scritto con `fn main() {\r\n let x = 1;\r\n}\r\n`: `rustup run 1.95.0 rustfmt --edition 2024 f.rs`, poi `tr -cd '\r' < f.rs \| wc -c` — **3 → 0**, anche con `--config newline_style=Auto`; **3 → 3** solo con `newline_style=Windows`, o `Native` su Windows; e su un file CRLF già formattato `--check` esce 0 e la scrittura lo lascia a 3. La trappola sta in [`porta-di-qualita.md`](porta-di-qualita.md), *«Livello 3 — vuoto, e non è una svista»*. Audit del 2026-09-30, AUD-347 |
 
 ⛔ **La misura T4-1-h esiste per una ragione che vale oltre il caso.** La cifra *«da 57 a 69»*
 era stata prodotta da una revisione e **citata** nel commento della sonda prima che chiunque la
@@ -1060,6 +1079,8 @@ Eseguite il **2026-08-11** · Windows 11 · toolchain `1.95.0`. Commit `388ee53`
 | **T4-2-h** | costo per seme, nella forma di `C7b` | **0,0246 ms** — **meno**, perché col crash lo scenario si ferma prima |
 | **T4-2-i** | il pavimento | binario nudo **~8 ms**; `cargo test -p simulator --test dst_campaign` **~80 ms**. ⚠️ Una prima misura diceva **~50 ms** ed era un **artefatto dello strumento**: cronometrava attraverso Git Bash, quindi contava il `fork` della shell insieme al binario |
 | **T4-2-j** | il confronto di `C7b` può restare **ordinato** invece che insiemistico? | ✅ **sì, verde su duecento semi.** La ragione è strutturale: fra la scrittura sul giornale e il `push` sulla traccia **non c'è alcun `await`**, quindi archivio e traccia sono in lockstep |
+
+⚠️ **Richiamo del 2026-10-03 — i comandi.** Le mutazioni e i tempi di questa tabella vengono da prove fatte a mano nello scratchpad, che per regola non entrano nel repository: sono il verbale del 2026-08-11, e nessun comando li rifà da qui. Ciò che regge il banco lo tiene il banco, in `crates/simulator/tests/dst_campaign.rs`: le **ventiquattro** scritture di T4-2-a sono `WRITES_PER_RUN`, asserito da `the_scenario_really_writes_what_the_campaign_assumes` e da `c7a_without_a_crash_no_step_is_in_doubt`, e il confronto **ordinato** di T4-2-j lo asserisce la funzione `campaign` — `cargo test --locked -p simulator --test dst_campaign`. Audit del 2026-09-30, AUD-640.
 
 ⛔ **La misura T4-2-e esiste perché la lettura ovvia di C e D era sbagliata, ed è la lezione da
 portare via.** Le due mutazioni uccidono **la stessa** asserzione, il che somiglia al gotcha
@@ -1102,6 +1123,8 @@ dell'interlacciamento) e `0fd3ec8` (il giro di correzione).
 | **T4-3-j** | la guardia `contains` di `expected_doubt` scatta mai? | ❌ **mai** — strumentata con un `assert!`, verde su duecento semi |
 | **T4-3-k** | costo per corsa | **4,37 µs** in `--release`, **18,8 µs** in `debug`. ⛔ **Il cancello gira in `debug`**, quindi è la seconda che decide |
 | **T4-3-l** | peso del binario | **916 480 B**, contro 898 048 prima del commit — **+18 432 B, +2,05 %**. Le quattro sonde fanno **~13 ms** di lavoro vero, mentre l'avvio del processo su Windows ne costa **18**: la campagna costa **meno del `CreateProcess` che la lancia** |
+
+⚠️ **Richiamo del 2026-10-03 — i comandi.** Le mutazioni, le scale a cinquantamila semi, le distribuzioni, i tempi e il peso del binario vengono da prove fatte a mano nello scratchpad, che per regola non entrano nel repository: sono il verbale del 2026-08-11, e nessun comando li rifà da qui. Ciò che il banco rifà lo stampa `cargo test --locked -p simulator --test dst_campaign -- --nocapture` — i semi che cadono, l'insieme in dubbio più grande, dopo quanti semi compare un insieme di due —, oggi su `SHORT_CAMPAIGN_SEEDS` semi e non su duecento; e la non-vacuità che T4-3-g e T4-3-h hanno chiesto la tiene `largest > 1`, nella funzione `campaign` di `crates/simulator/tests/dst_campaign.rs`. Audit del 2026-09-30, AUD-640.
 
 ⛔ **La misura che vale più di tutte è la coppia T4-3-g / T4-3-h, e la lezione è generale.**
 Una campagna ha bisogno di **due** oracoli di non-vacuità, non di uno: *«l'iniezione è avvenuta»*
@@ -1146,6 +1169,8 @@ secondo agente** prima di essere scritta.
 | **T4-4-j** | la premessa che il conteggio delle scritture non dipenda dal seme | **zero deviazioni su duecentomila semi** |
 | **T4-4-k** | costo del binario col numero scelto | **~110 ms**, l'**11 %** del tetto dichiarato. Campagna profonda: **~4 s** |
 | **T4-4-l** | ⛔ i **25,8 µs** di M-2 sono confrontabili con qualcosa che esiste? | ❌ **no.** Lo scenario di oggi **senza** giornale costa **0,98 µs** in release, **26×** meno del pavimento dichiarato |
+
+⚠️ **Richiamo del 2026-10-03 — i comandi.** Le cifre che hanno scelto il numero di semi — T4-4-f, T4-4-g e T4-4-h — vivono nel banco, accanto a `SHORT_CAMPAIGN_SEEDS` e a `EXPECTED_DOUBT_SETS` in `crates/simulator/tests/dst_campaign.rs`, con la ricetta della misura delle sei costanti di mescolamento; il **109** lo tiene `assert_eq!(seen.len(), EXPECTED_DOUBT_SETS, …)`, e `cargo test --locked -p simulator --test dst_campaign -- --nocapture` lo ristampa. I tempi, gli archivi distinti e la scala a duecentomila semi vengono da prove fatte a mano nello scratchpad, che per regola non entrano nel repository: sono il verbale del 2026-08-11, e nessun comando li rifà da qui — e le cifre di tempo che il banco porta vengono da un'altra corsa dello stesso giorno, e non coincidono con queste. Audit del 2026-09-30, AUD-640.
 
 ⛔ **La lezione di T4-4-f e T4-4-g, ed è quella che vale oltre il caso: un tetto è un vincolo,
 non un bersaglio.** La regola del piano — *«il più grande multiplo di cento sotto il tetto»* —
@@ -1198,6 +1223,8 @@ Eseguite il **2026-08-11** · Windows 11 · toolchain `1.95.0` · `redb` 4.1.0. 
 | **T4-5-k** | quanto costa un'iniezione | **281 µs** in release, **3,63 ms** in debug. Il picco di memoria è **1,01 MiB** per punto, in RAM e non su disco |
 | **T4-5-l** | il rifiuto di allentare `OPERATIONS_TO_OPEN` a `>=` | ✅ **giustificato, e più di quanto il doc dicesse:** togliendo la guardia da ciascuna delle **cinque** operazioni, cinque su cinque vengono colte e **quattro su cinque solo da quel contatore** |
 
+⚠️ **Richiamo del 2026-10-03 — i comandi.** Le cifre che reggono il banco vivono nel banco, in `crates/platform/tests/engine_crash_consistency.rs`: le **23** operazioni dell'apertura, con le riaperture di T4-5-b, la caduta dentro l'apertura di T4-5-e e la guardia di T4-5-l, accanto a `OPERATIONS_TO_OPEN`, che `the_backend_falls_at_the_operation_it_was_told_to` asserisce; la saturazione **58** di T4-5-j accanto a `CrashingBackend` e a `SHORT_OPERATIONS_TO_SATURATION`, tenuta dai controlli `fired == points` e `truncated < points` della funzione `campaign`; la scala dei sync di T4-5-h accanto a `the_engine_really_syncs_and_that_is_what_closes_gotcha_51` — `cargo test --locked -p platform --test engine_crash_consistency`. Le altre righe vengono da prove fatte a mano nello scratchpad, che per regola non entrano nel repository: sono il verbale del 2026-08-11, e nessun comando le rifà da qui. Audit del 2026-09-30, AUD-640.
+
 ⛔ **T4-5-i è la misura che vale il compito, ed è stata presa scrivendo in anticipo la sonda del
 compito SUCCESSIVO.** Il piano voleva chiudere il #51 contando le chiamate a `sync_data`; il
 conteggio è dominato dall'apertura, quindi l'oracolo era **cieco** proprio alla perdita per cui
@@ -1239,6 +1266,8 @@ Eseguite il **2026-08-11** · Windows 11 · toolchain `1.95.0` · `redb` 4.1.0. 
 | **T4-6-f** | ⛔ la stessa, con `partial > 0` | **ROSSA**, e le altre tre asserzioni restano verdi: senza durabilità la scala **collassa a zero-o-tutto** — ventidue punti con zero record, sei con tre, **nessuno** con uno o due |
 | **T4-6-g** | la saturazione **dipende dalla durabilità** | senza, `redb` fa **meno I/O** e la saturazione scende da **58** a **~51**: `fired` passa da 35 a **28**. ⚠️ Con `fired > 0` la sonda sarebbe rimasta **verde** |
 | **T4-6-h** | l'intervallo `45..58` isolato | `truncated=0`, quindi `truncated > 0` **spara da sola** mentre `fired == points` resta verde: il secondo oracolo **non è ridondante**, provato in isolamento |
+
+⚠️ **Richiamo del 2026-10-03 — i comandi.** La riga T4-6-a la ristampa `cargo test --locked -p platform --test engine_crash_consistency -- --nocapture`, nella riga `DST L2 short`, e la scala di T4-6-b sta, come prosa, nel commento della funzione `campaign`. Le mutazioni di T4-6-c … T4-6-h — la durabilità tolta, la saturazione ricalcolata — vengono da prove fatte a mano nello scratchpad, che per regola non entrano nel repository: sono il verbale del 2026-08-11, e nessun comando le rifà da qui; ciò che hanno deciso lo tengono il controllo `partial > 0` di `campaign` e la sonda a delta `the_engine_really_syncs_and_that_is_what_closes_gotcha_51`, in `crates/platform/tests/engine_crash_consistency.rs`. Audit del 2026-09-30, AUD-640.
 
 ⛔ **Il perimetro del gotcha #51 — che cosa la sua chiusura compra, e che cosa NON compra.**
 Scritto per esteso perché la dichiarazione *«il #51 è chiuso»* finisce nei documenti di stato, e
@@ -1293,6 +1322,8 @@ Eseguite il **2026-08-11** · Windows 11 · toolchain `1.95.0` · `redb` 4.1.0. 
 | **T4-7-g** | le due campagne | breve: `records=3 points=35 fired=35 truncated=22 partial=17` in 126 ms · profonda: `records=30 points=197 fired=197 truncated=184 partial=179` in 1,35 s |
 | **T4-7-h** | ⛔ `partial > 0` regge a due profondità? | ✅ **sì:** con `Durability::None` la scala collassa a zero-o-tutto **anche a trenta record**, su **centosessantatré** punti. Non è un accidente dello scenario piccolo |
 | **T4-7-i** | la profonda con la saturazione **della breve** | ⛔ spara **`truncated < points`**, non `fired == points` |
+
+⚠️ **Richiamo del 2026-10-03 — i comandi.** Le cifre che hanno deciso la profondità vivono nel banco, in `crates/platform/tests/engine_crash_consistency.rs`: la saturazione per profondità, il costo dei record e lo spazzamento che non compra stati — T4-7-a, T4-7-b, T4-7-c — accanto a `DEEP_RECORDS` e a `DEEP_OPERATIONS_TO_SATURATION`, e i **pioli** di T4-7-d li tiene l'uguaglianza fra `rungs.len()` e `records + 1` della funzione `campaign`. Le due righe di T4-7-g le ristampa `cargo test --locked -p platform --test engine_crash_consistency -- --nocapture --include-ignored`. Le mutazioni e i tempi vengono da prove fatte a mano nello scratchpad, che per regola non entrano nel repository: sono il verbale del 2026-08-11, e nessun comando li rifà da qui. Audit del 2026-09-30, AUD-640.
 
 ⛔ **T4-7-c e T4-7-d insieme sono la ragione per cui la campagna profonda di livello 2 approfondisce
 lo SCENARIO e non lo spazzamento**, e la metrica che lo dimostra — i **pioli** — non era chiesta da
@@ -1478,7 +1509,7 @@ come *«**Fix**: `--locked`»*, cioè una riga. Contati sul codice invece che su
 |---|---|---|
 | `--locked` esiste già da qualche parte? | `grep -rn -- "--locked\|--offline\|--frozen" scripts/ .github/` | ❌ **zero occorrenze** |
 | quanti siti `cargo` stanno nel percorso del cancello? | `grep -n "cargo" scripts/*.sh` | ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-009 — questa cella era FALSA il giorno in cui fu scritta, e il comando accanto non la produce.** Diceva *«**sei** — `gate.sh` ×4, `gate-no-os.sh` ×1, `gate-deps.sh` ×3»*, e la propria scomposizione somma **otto**; il comando restituisce 35 righe, comprese quelle dentro commenti e stringhe. La misura buona è la riga qui sotto |
-| quanti siti `cargo` **eseguibili** ha il cancello, e li passa **tutti** con `--locked`? | `grep -hE "(^\|[^'])cargo " scripts/gate.sh scripts/gate-no-os.sh scripts/gate-deps.sh \| grep -vE "^[[:space:]]*#"` per il primo conteggio, lo stesso più `\| grep -c -- --locked` per il secondo | **11** e **11**, il 2026-08-27 — `gate.sh` cinque, `gate-no-os.sh` uno, `gate-deps.sh` cinque. ⛔ **L'oracolo è l'UGUAGLIANZA, non l'undici:** una cifra assoluta non è un oracolo su un cancello che guadagna passi (gotcha **#31**, quinta forma), una relazione fra due misure dello stesso artefatto sì. ✅ **Provata nelle due direzioni**: su una copia fuori dal repository, aggiunto un `cargo build --workspace` senza il flag, i due conteggi divergono — **12** contro **11**. ⚠️ Il filtro esclude `cargo` preceduto da apice singolo, che è la forma in cui i tre script lo **nominano** dentro un messaggio d'errore invece di eseguirlo |
+| quanti siti `cargo` **eseguibili** ha il cancello, e li passa **tutti** con `--locked`? | `grep -hE "(^\|[^'])cargo " scripts/gate.sh scripts/gate-no-os.sh scripts/gate-deps.sh \| grep -vE "^[[:space:]]*#"` per il primo conteggio, lo stesso più `\| grep -c -- --locked` per il secondo | **11** e **11**, il 2026-08-27 — `gate.sh` cinque, `gate-no-os.sh` uno, `gate-deps.sh` cinque. ⛔ **L'oracolo è l'UGUAGLIANZA, non l'undici:** una cifra assoluta non è un oracolo su un cancello che guadagna passi (gotcha **#31**, quinta forma), una relazione fra due misure dello stesso artefatto sì. ✅ **Provata nelle due direzioni**: su una copia fuori dal repository, aggiunto un `cargo build --workspace` senza il flag, i due conteggi divergono — **12** contro **11**. ⚠️ Il filtro esclude `cargo` preceduto da apice singolo, che è la forma in cui i tre script lo **nominano** dentro un messaggio d'errore invece di eseguirlo. ⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-343, AUD-637: la misura qui sopra resta come misura di quel giorno; oggi gli script del cancello sono **quattro** e la relazione è un'altra — **ogni sito eseguibile senza `--locked` è un `cargo audit`**, perché `cargo audit` il flag non lo ha (`cargo audit --help`: solo `-f, --file`) e il lockfile lo legge soltanto. L'elenco dei siti senza il flag: `grep -hE "(^\|[^'])cargo " scripts/gate.sh scripts/gate-no-os.sh scripts/gate-deps.sh scripts/gate-gui.sh \| grep -vE "^[[:space:]]*#" \| grep -v -- --locked`, che il 2026-10-07 rende i due `cargo audit` di `gate.sh` e di `gate-gui.sh`; lo stesso seguito da `\| grep -vc 'cargo audit'` rende **0**. ✅ **Provata nelle due direzioni** il 2026-10-07, su una copia dei quattro script fuori dal repository: aggiunto `run "probe" cargo build --workspace` a `gate.sh`, rende **1**. E `sha1sum Cargo.lock gui/fake-core/Cargo.lock` è uguale prima e dopo una corsa di `cargo audit -n` su ciascuno, lo stesso giorno. È la prova a cui rimandano la cella N6 di [`porta-di-qualita.md`](porta-di-qualita.md) e la riga *«Una dipendenza si aggiunge in due passi»* di [`../CLAUDE.md`](../CLAUDE.md) |
 | `cargo tree` accetta `--locked`? | `cargo tree --locked -p kernel -e normal,no-proc-macro --prefix none` | ✅ exit 0 |
 | ADR-0031 dice qualcosa sul lockfile? | `grep -i "lock\|riproducib" docs/adr/0031-*.md` | ❌ **niente**: la ragione del lockfile versionato vive **solo** in `.gitignore` |
 | `cargo tree` scrive su `stderr` nello stato verde? | `err=$(cargo tree … 2>&1 1>/dev/null); echo ${#err}` | **0 byte** — ed è la misura che rende sicuro leggere lo stdout da solo |
@@ -1570,6 +1601,8 @@ simulatore già scritto. Cade un argomento di comodità, non uno di merito.
 ---
 
 ## Esecuzione dell'audit — la decisione 5 (C-1), 2026-08-18: la fonte, e la misura del costo
+
+⛔ **Richiamo del 2026-10-03:** la scelta è fatta — `bincode` 2.0.1 resta e §6.1.1 non si riapre, deciso dal proprietario il 2026-08-31, con le ragioni nella voce **C-1** di [`porta-di-qualita.md`](porta-di-qualita.md) —, e lo schema del filo `ipc` esiste dal Traguardo 6, codificato con `bincode`: oggi il comando della misura del 2026-08-18 trova usi di produzione. Le frasi qui sotto che dicono la finestra, o la scelta, ancora aperte sono del 2026-08-18 e del 2026-08-31, prima della decisione. Audit del 2026-09-30, AUD-346.
 
 ⛔ **Ciò che si esegue è la REGISTRAZIONE, non la scelta**, ed è ciò che la §8 chiedeva.
 
@@ -1694,11 +1727,12 @@ adottare il fork:** restano il grafo che cresce, un manutentore solo, e il fatto
 fork la può rompere quando vuole, e nulla ce lo direbbe se non un banco che oggi non esiste.
 ✅ **E LA SCELTA È STATA FATTA LO STESSO GIORNO — `bincode` 2.0.1 RESTA** — con questa misura in mano e non al posto suo: le cinque ragioni vivono nella voce **C-1** di [`porta-di-qualita.md`](porta-di-qualita.md), in una casa sola. 📌 **Ciò che vale la pena ricordare di questa misura è che ha cambiato la domanda:** ha detto **sì** alla compatibilità e ha fatto emergere **due costi** che nessuno aveva contato, e sono quelli — non la compatibilità — ad aver deciso.
 
-⚖️ **DOVE SI FERMA, e perché fermarsi non è rimandare.** La misura è **fatta** ed è il prodotto
-del compito; ciò che manca è la **scelta**, che non è dell'agente: cambiare la voce tocca la
-tabella di **§6.1.1**, la lista di **§7.3.1** e la riga di `scripts/gate-deps.sh` sul grafo
-**transitivo**, cioè tre sezioni approvate. ⛔ **E il manifesto non è stato toccato**: nessun
-cambio di formato, nessuna voce nuova, nessun `Cargo.lock` rinfrescato.
+⚖️ **DOVE SI FERMAVA IL COMPITO, e perché fermarsi non era rimandare.** La misura è **fatta** ed è il
+prodotto del compito; la **scelta** non era dell'agente: cambiare la voce tocca la tabella di **§6.1.1**,
+la lista di **§7.3.1** e la riga di `scripts/gate-deps.sh` sul grafo **transitivo**, cioè tre sezioni
+approvate. ⛔ **E il compito non ha toccato la voce del manifesto**: nessun cambio di formato, nessuna
+voce nuova, nessun `Cargo.lock` rinfrescato. ⚠️ **Richiamo del 2026-10-03:** la scelta l'ha fatta il
+proprietario lo stesso giorno, nel capoverso qui sopra — audit del 2026-09-30, AUD-346.
 
 ⛔ **Un argomento che NON è stato usato, e va detto perché verrebbe in mente per primo:**
 *«tanto ora c'è `minicbor` nel kernel»*. Fu tentato il **2026-08-08** e la misura gli diede
@@ -1851,6 +1885,23 @@ qui**: `Waker::from_raw` è `unsafe` e `forbid(unsafe_code)` lo rifiuta, misurat
 **possedere la cella all'`Executor`** è più invasivo — firma pubblica e tutti i chiamanti — **e non
 chiude il `Drop`**, perché un distruttore che tiene `&Sleep` scrive lo stesso: caduta sul **merito**,
 non sul costo.
+
+⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-040, AUD-587: la misura M-5 vale per `Waker::from_raw`; con
+`alloc::task::Wake` e `Waker::from(Arc<T>)` un risvegliatore su misura compila **senza** `unsafe`, in una crate
+`#![no_std]` e `#![forbid(unsafe_code)]`, per l'host e per `x86_64-unknown-none` — §2.4.1 della spec. E nella stessa
+crate senza OS `extern crate std;` dà `E0463` sul bersaglio senza OS e **compila per l'host**: è la via che coglie
+`scripts/gate-no-os.sh`, livello 2 — §1.4 e §7.3.2 della spec. I due comandi, **dalla radice del repository** perché
+`rust-toolchain.toml` fissa il compilatore, coi sorgenti e l'uscita in una cartella di prova `D` fuori dal repository
+(*«le misure nello scratchpad»*); rifatti il 2026-10-07 con `rustc 1.95.0`:
+
+```bash
+printf '%s\n' '#![no_std]' '#![forbid(unsafe_code)]' 'extern crate alloc;' 'use alloc::{sync::Arc, task::Wake};' 'struct W;' 'impl Wake for W { fn wake(self: Arc<Self>) {} }' 'pub fn w() -> core::task::Waker { core::task::Waker::from(Arc::new(W)) }' > "$D/w.rs"
+rustc --edition 2024 --crate-type lib --out-dir "$D" "$D/w.rs" && rustc --edition 2024 --crate-type lib --target x86_64-unknown-none --out-dir "$D" "$D/w.rs" && echo BUILDS
+printf '%s\n' '#![no_std]' 'extern crate std;' > "$D/s.rs"
+rustc --edition 2024 --crate-type lib --target x86_64-unknown-none --out-dir "$D" "$D/s.rs" 2>&1 | grep -c 'error\[E0463\]'
+```
+
+Il primo rende `BUILDS`, il secondo `1`; lo stesso `s.rs` compilato senza `--target` esce `0` — la seconda direzione.
 
 ---
 
@@ -2082,7 +2133,9 @@ nuova: non l'ingresso, l'USCITA.** Un `print` con una freccia su una console `cp
 `UnicodeEncodeError` **a metà del ciclo di scrittura**, lasciando `CLAUDE.md` applicato e gli
 altri sei no — cioè l'insieme applicato **a metà, con exit diverso da zero**, che è la forma di
 guasto peggiore per uno strumento che muta file. ✅ Ripristinato con `git checkout --`, lecito
-**solo** perché quei file non portavano lavoro non committato (dodicesima forma del #48), e lo
+**solo** perché quei file non portavano lavoro non committato (dodicesima forma del #48; ⚠️ **RICHIAMO DEL 2026-10-07** —
+audit del 2026-09-30: nemmeno su un file pulito il ripristino è neutro, ne riconverte i fine-riga — il gotcha **#83** di
+[`HANDOFF.md`](HANDOFF.md), che smentisce il #69 su questo punto), e lo
 script riparato in **due** punti, non uno: `sys.stdout.reconfigure(encoding="utf-8")`, **e**
 tutte le scritture spostate **prima** di qualunque `print`. 📌 La riga di metodo: *uno strumento
 che muta file non stampa nulla finché non ha finito di scrivere*.
@@ -2411,7 +2464,8 @@ python -c "import io,tiktoken; e=tiktoken.get_encoding('cl100k_base'); L=io.open
 
 ⛔ **Il file com'era sta intero in [`archivio/porta-di-qualita-storico.md`](archivio/porta-di-qualita-storico.md)**, e il
 vivo porta solo le unità vive, con la lista delle contraddizioni e l'indice *«Dove è finita ogni sezione di prima»* in
-fondo. Il mandato e le decisioni stanno nel
+fondo. ⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-2259: dal 2026-10-04 la lista delle contraddizioni sta
+in coda all'[archivio](archivio/porta-di-qualita-storico.md), e in fondo al vivo resta l'indice. Il mandato e le decisioni stanno nel
 [verbale](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md), sezione della sera del 2026-09-24. Prima e
 dopo, `cl100k_base`, limite inferiore, i byte coi fine-riga normalizzati a LF:
 
@@ -2436,6 +2490,9 @@ python -c "import io,subprocess,tiktoken; e=tiktoken.get_encoding('cl100k_base')
 nominare un sorgente omonimo — `crates/kernel/src/serving.rs` — fa sparire dall'elenco il banco
 `crates/kernel/tests/serving.rs`, che resta orfano. Misurato nelle due direzioni sul file riscritto: la riga col percorso
 del sorgente toglieva `serving.rs` dagli orfani, riscritta senza il percorso lo rimetteva. **Registrata, non presa.**
+⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-638: il registro di oggi nomina il banco, e il ciclo dei banchi
+per percorso sta accanto a quello dei casi, nella sezione dei comandi che ricontano il catalogo; se diventi un passo del
+cancello è la scelta aperta su AUD-709, e oggi è una ricetta a mano.
 
 ---
 
@@ -2852,7 +2909,8 @@ script stavano nello scratchpad.
 Le fonti che la **scrittura** del [piano](superpowers/plans/2026-09-23-design-system.md) e la sua **revisione** hanno letto, il
 2026-09-23 e il 2026-09-24, quelle che le voci d'errata dell'**esecuzione** hanno letto fino al 2026-09-27, e le misure
 dell'esecuzione, coi comandi. Il fatto intero sta nella riga del piano che la
-tabella nomina: qui la provenienza, lì il merito — una casa ciascuno.
+tabella nomina: qui la provenienza, lì il merito — una casa ciascuno. L'ultima fonte su `dockview-core` l'ha
+letta una correzione dell'audit del 2026-09-30, il 2026-10-02, e il suo merito sta nel codice che nomina.
 
 ### Le fonti
 
@@ -2880,6 +2938,7 @@ tabella nomina: qui la provenienza, lì il merito — una casa ciascuno.
 | Playwright 1.63.0 installato: `lib/coreBundle.js`, senza finestra aggiunge `--hide-scrollbars` — `grep -n -- '--hide-scrollbars' gui/node_modules/playwright-core/lib/coreBundle.js` | 2026-09-26 | un'occhiata senza finestra non vede le barre di scorrimento: si lancia con `ignoreDefaultArgs: ["--hide-scrollbars"]` — E43 |
 | `dockview-core` 8.3.1 installato: `dist/package/main.esm.mjs` — `serialize()` della griglia scrive `maximizedNode: { location }`, gli indici dalla radice fino al gruppo ingrandito; e `dist/cjs/dockview/dockviewComponent.d.ts`, dove `SerializedDockview` non lo dichiara | 2026-09-27 | la miniatura di un gruppo ingrandito — E85 |
 | `dockview-core` 8.3.1 installato: `dist/package/main.esm.mjs` — `FloatingGroupService.add` dispone la griglia di un gruppo galleggiante da `watchElementResize`, cioè da un `requestAnimationFrame`, e `MINIMUM_DOCKVIEW_GROUP_PANEL_WIDTH` vale `100` — `grep -n -e 'MINIMUM_DOCKVIEW_GROUP_PANEL_WIDTH = ' -e 'return watchElementResize(gridview.element' gui/node_modules/dockview-core/dist/package/main.esm.mjs` | 2026-09-28 | il gruppo galleggiante largo 100 px fino al terzo fotogramma — E130 |
+| `dockview-core` 8.3.1 installato: `dist/dockview-core.noStyle.js` — `_doFromJSON` rifiuta un oggetto senza ramo alla radice prima di toccare la griglia, e quando un gruppo non si ricostruisce dopo averla svuotata la ripristina vuota e rilancia; `_doMoveGroupOrPanel`, con un gruppo di un solo pannello mandato verso un proprio lato, rimette il gruppo dov'era lungo l'asse del genitore, e attraverso l'asse lo toglie dalla griglia e lancia `Invalid grid element`; `locked` vieta solo il rilascio di un trascinamento — `canDisplayContentOverlay` e le sovrapposizioni di linguetta e d'intestazione —, mai `moveTo`. Lo rimisurano `npx vitest run --project browser src/frame/dock.browser.test.ts` e `npx vitest run --project jsdom src/frame/frame.test.ts`, da `gui/` | 2026-10-02 | `apply` in `gui/src/frame/dock.ts` (AUD-536, AUD-543) e `moveActive` in `gui/src/frame/moveActive.ts` (AUD-537, AUD-538, AUD-721) — audit del 2026-09-30 |
 | `gui/vite.config.ts`: il progetto `browser` con `optimizeDeps: { force: true }` (E24) — *«Forced re-optimization of dependencies»* a ogni corsa: `(cd gui && npx vitest run --project browser 2>&1 \| grep -c 'Forced re-optimization')` rende 1, due volte su due | 2026-09-28 | il segno che non distingueva la corsa caduta — E130 |
 
 ### Le misure dell'esecuzione
@@ -3253,9 +3312,19 @@ sullo stesso nome, e un giro `ping`/`pong`.
 |---|---|---|
 | di base | nessuno | due client entrano |
 | il SID dell'utente | `D:P(A;;GA;;;<SID dell'utente>)` | tre client di fila entrano |
+| il SID dell'utente, con lettura e scrittura generiche invece del controllo pieno | `D:P(A;;GRGW;;;<SID dell'utente>)` | tre client di fila entrano anche così: la scrittura generica porta, dunque, il diritto di creare le istanze dopo la prima; e lo stesso descrittore per il SID inventato qui sotto respinge, `PermissionDenied`, errore 5 — audit del 2026-09-30, AUD-688: misurato il 2026-10-02 e rifatto il 2026-10-03, nelle stesse condizioni |
 | gli ospiti | `D:P(A;;GA;;;BG)` | respinto: `PermissionDenied`, errore 5 |
-| un SID inventato | `D:P(A;;GA;;;S-1-5-21-1-2-3-1001)` | respinto: `PermissionDenied`, errore 5 |
+| un SID inventato — quello della sonda del rifiuto, `Account::another_than_this_one` in `crates/platform/src/ipc.rs` | `D:P(A;;GA;;;S-1-5-21-1-2-3-1001)` | respinto: `PermissionDenied`, errore 5 |
 | il proprietario visto dal client | di base, e quello del SID dell'utente | `GetSecurityInfo` con `SE_KERNEL_OBJECT` e `OWNER_SECURITY_INFORMATION`, sulla connessione del client, dà il SID dell'utente |
+
+## Le correzioni dell'audit del 2026-09-30 — le fonti, 2026-10-02
+
+Le fonti che una correzione dell'audit ha letto, quando nessuna sezione qui sopra è la loro: il merito sta nel
+codice che le cita, qui la provenienza.
+
+| Fonte | Letta | Per |
+|---|---|---|
+| `electron.d.ts` di `electron` 44.3.0, installato in `spikes/gui-shell/electron/node_modules/electron`: gli argomenti di `ipcRenderer.send` *«will be serialized with the Structured Clone Algorithm»*. Quell'algoritmo lancia `DataCloneError` su un Proxy, e la sonda di `gui/src/transport/fakeBridge.test.ts` lo misura su un `reactive` di Vue 3.5.42: `npx vitest run --project jsdom src/transport/fakeBridge.test.ts`, da `gui/` | 2026-10-02 | `Bridge.send` in `gui/src/transport/bridge.ts`: un messaggio passa per copia, quindi è un dato semplice — il ponte della §6a del [disegno del sotto-progetto 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), nel guscio di [ADR-0029](adr/0029-guscio-della-gui.md); audit del 2026-09-30, AUD-541 |
 
 ## Cosa NON abbiamo adottato, e perché
 

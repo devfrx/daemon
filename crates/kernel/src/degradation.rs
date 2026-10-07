@@ -15,11 +15,14 @@ use crate::record::{Detail, Record, RecordError, RecordKind};
 /// variation. "An interface that signals everything is indistinguishable from one that signals
 /// nothing."
 ///
-/// ⛔ TWO INPUTS OF ADR-0019 HAVE NO SOURCE IN THIS MILESTONE, and they are declared rather than
+/// ⛔ EVERY INPUT OF ADR-0019 BUT THE ARBITER HAS NO SOURCE YET, and each is declared rather than
 /// faked: CONNECTIVITY (§7 — `network` has no real implementation, §8.2.2) and PROVIDER HEALTH
-/// (§6.2 — the adapters are rule C). Their triggers are their implementations, and no field
-/// stands here waiting for them: a field that is always `false` reads as "fine" rather than as
-/// "unknown", which is the falsest of the two.
+/// (§6.2 — the adapters are rule C), with sub-project 3; PERMISSIONS and SUSPENDED TOOLS (§6.6 —
+/// the permission triple exists, and nothing here derives a degradation from it), with
+/// sub-project 4. The markers are design/07's, which draws the camera of ADR-0039 too, with
+/// sub-project 12. Their triggers are their implementations, and no field stands here waiting for
+/// them: a field that is always `false` reads as "fine" rather than as "unknown", which is the
+/// falsest of the two. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-057.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Degradation {
     /// The arbiter's books have reached the ceiling, with the limit of that declared beside the

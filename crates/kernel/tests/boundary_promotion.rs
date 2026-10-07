@@ -256,9 +256,11 @@ fn the_promotion_writes_through_note_and_the_record_says_note() {
     // ⚠️ WHY A PROBE AND NOT A HELPER, and the sentence is DATED because its premise expired.
     // It read "there is ONE writer in the kernel today ... the helper is born with the second
     // writer". The second writer landed on 2026-08-20 — `Arbiter::set_policy` — and nothing went
-    // red to say so. Today each writer has its own probe, this one and
-    // `a_policy_transition_writes_its_intent_before_its_outcome`, and whether to replace the two
-    // with one helper is the owner's: registered in `crate::reconcile`, not taken here.
+    // red to say so. Today the writers are the ones the census written in `crate::reconcile`
+    // lists, each with a probe of its own, named in the table of the writers of
+    // docs/porta-di-qualita.md; whether to replace them with one helper is the owner's:
+    // registered in `crate::reconcile`, not taken here. ⚠️ RECALL OF 2026-10-07 — audit of
+    // 2026-09-30, AUD-628.
     //
     // ⛔ AND BOTH HALVES ARE ASSERTED, WHICH THE FIRST DRAFT OF THIS TEST DID NOT DO. It claimed
     // the port half was "held by construction — `note` is the only operation whose guard admits

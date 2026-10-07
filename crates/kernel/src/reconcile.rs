@@ -20,14 +20,18 @@ pub enum Resolution {
     SuspendAndAsk,
 }
 
-/// One step that has an intent and no outcome.
+/// One step in doubt: an intent -- or a record this build cannot decode -- with no outcome this
+/// build reads after it (the `Err(_)` arm of `steps_in_doubt`). ⚠️ RECALL OF 2026-10-03 -- audit
+/// of 2026-09-30, AUD-217.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct InDoubt {
     pub step: StepId,
     pub resolution: Resolution,
 }
 
-/// Every step with an intent and no outcome, in the order the journal wrote them.
+/// Every step in doubt -- an intent, or a record this build cannot decode, with no outcome this
+/// build reads after it -- in the order the journal wrote them. ⚠️ RECALL OF 2026-10-03 -- audit
+/// of 2026-09-30, AUD-217.
 ///
 /// ⛔ IT RETURNS A SET AND NOT ONE STEP, and that is not defensive style. Measured on the
 /// spike: with interleaved execution ONE CRASH LEAVES SEVERAL STEPS IN DOUBT TOGETHER — seed

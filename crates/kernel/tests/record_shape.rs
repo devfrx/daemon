@@ -542,16 +542,18 @@ fn the_debug_of_a_record_does_not_print_the_payload() {
     //
     // ⛔ AND `reason` IS ON THE READABLE SIDE ON PURPOSE, which is the line that arrived with
     // index 4 on 2026-08-10: it is the text the CALLER wrote to justify the record, so printing
-    // it discloses nothing nobody chose — and hiding it would leave a failed assertion unable to
-    // say what the record was for. The payload is somebody else's; this is ours.
+    // it discloses nothing nobody chose IN SOURCE — and hiding it would leave a failed assertion
+    // unable to say what the record was for. The payload is somebody else's; this is ours.
     //
     // ⛔ AND `detail` IS ON THE READABLE SIDE TOO, WHICH IS THE D25, and it arrived with index 5.
-    // The field carries OUR structured bytes by construction (D20), so printing it
-    // opens no road A3; NOT printing it would have given `RecordV1` a SECOND hidden field that
-    // nobody decided to hide, which is the half this comment calls the forgotten one. ✅ AND SINCE
-    // 2026-09-01 THE GUARANTEE THAT INDEX 5 IS OURS IS THE TYPE and no longer only discipline —
-    // AUD-050 shut — because the fields are private and only the species that declare a `Detail`
-    // take one. That is written beside the field itself.
+    // On every road a caller writes IN SOURCE the field carries OUR structured bytes by
+    // construction (D20), so printing such a record opens no road A3; NOT printing it would have
+    // given `RecordV1` a SECOND hidden field that nobody decided to hide, which is the half this
+    // comment calls the forgotten one. ✅ AND SINCE 2026-09-01 THE GUARANTEE THAT INDEX 5 IS OURS
+    // IS THE TYPE IN SOURCE and no longer only discipline — AUD-050 shut — because the fields are
+    // private and only the species that declare a `Detail` take one. What a record decoded from
+    // bytes carries, and what printing it opens, is written on the `Debug` of `RecordV1` and in
+    // `kernel::boundary`, roads A3 and A4. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-553.
     //
     // ⚠️ AND THIS CLAUSE CARRIES NO DATE WHILE ITS SIBLING ABOVE DOES, which is deliberate and
     // not an oversight. It said "arrived on 2026-09-01", and `git log` dates every commit of the

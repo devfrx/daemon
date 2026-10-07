@@ -5,7 +5,10 @@ import { useCore } from "../stores/core";
 import { useInvoke } from "../stores/invoke";
 
 // The Permessi table of §1 of the north star, rows 1-3, 7-9 -- what sub-project 2 builds: the request in flight, the triples
-// THIS session approved, and the rule on duration. The window that answers is the frame's (`components/Confirm.vue`, D60).
+// THIS window approved, and the rule on duration. The window that answers is the frame's (`components/Confirm.vue`, D60).
+// ⚠️ THE LIST IS THE WINDOW'S AND NOT THE CORE'S (AUD-140 of the audit of 2026-09-30): the kernel keeps every yes, across a
+// restart too (`permission::is_granted` re-reads the whole journal), and no message carries its list to the gui yet -- so
+// the words say both, rather than a title that let a yes of yesterday, still granted, read as none.
 const core = useCore();
 const invoke = useInvoke();
 </script>

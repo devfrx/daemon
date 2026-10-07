@@ -9,9 +9,9 @@ Decisioni: [ADR-0020](../adr/0020-nessun-modello-nel-percorso-decisionale-del-ke
 ⚠️ **RICHIAMO DEL 2026-09-08 — la sezione 2 della passata sui diagrammi della stella polare della GUI.**
 Il diagramma dei due strati guadagna ciò che il kernel ha oggi e non nominava — l'esecutore, il degrado —
 ciò che arriva, «(col N)», e la **GUI** come seconda scatola dello strato deterministico: prove sulle
-fixture generate dal kernel, senza modello, con un passo suo nel cancello (col 2). Le suite di conformità
-sono nominate — **due** oggi — con la regola che le fa crescere; le campagne DST della tabella delle
-tecniche e della mappa sono le stesse **sei**; la riga Q3 dice ciò che la campagna di oggi prova e ciò che
+fixture generate dal kernel, senza modello, con un passo suo nel cancello. Le suite di conformità
+sono nominate con la regola che le fa crescere; le campagne DST della tabella delle
+tecniche e della mappa sono le stesse; la riga Q3 dice ciò che la campagna di oggi prova e ciò che
 arriva; lo **stato** di ogni Q resta nella §8.4 della spec, casa unica, e qui non si ricopia. Due frasi
 corrette: il «ciclo lungo» della DST profonda, che non esiste, e la valutazione del linguaggio, che
 ADR-0026 ha fatto. Una voce segnata «(col N)» è decisa e la costruisce il sotto-progetto N; «oggi» dice
@@ -19,17 +19,22 @@ che esiste nel codice. Il perché sta nella
 [stella polare](../superpowers/specs/2026-09-07-direzione-gui-design.md), sezione 2 della passata,
 decisione 18.
 
+⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, AUD-216, AUD-248, AUD-249, AUD-254, AUD-262, AUD-263,
+AUD-267, AUD-268, AUD-269, AUD-270, AUD-288 e AUD-609: il registro delle funzioni, la settima porta, la GUI col suo
+passo nel cancello e la prova di Q3 sull'attività che ascolta la GUI esistono, dal sotto-progetto 2; ogni altro
+pezzo deciso e non costruito porta il segno «(col N)» della regola 2 del [README](../README.md).
+
 ## I due strati, e dove passa il confine
 
 ```mermaid
 flowchart TB
     subgraph D["STRATO DETERMINISTICO — senza modello, a ogni commit: un fallimento e SEMPRE un difetto"]
         subgraph K["KERNEL"]
-            K1["esecutore · arbitro GPU · gateway · giornale<br/>permessi · tipi · sensori e anello · degrado<br/>registro delle funzioni e settima porta (col 2)<br/>registro delle guide, trigger, proiezione (col 13)"]
+            K1["esecutore · arbitro GPU · gateway · giornale<br/>permessi · tipi · sensori e anello · degrado<br/>registro delle funzioni e settima porta<br/>registro delle guide, trigger, proiezione (col 13)"]
             K2["statica · esempi · DST per seme · contratto<br/>veloci, riproducibili"]
             K1 --> K2
         end
-        subgraph G["GUI — presentazione (col 2)"]
+        subgraph G["GUI — presentazione"]
             G1["le fixture: i byte del kernel<br/>e il valore atteso, generati insieme"]
             G2["prove sulle fixture e accessibilita G20<br/>un passo suo nel cancello<br/>nessun modello: il core finto manda a tempo"]
             G1 --> G2
@@ -37,8 +42,8 @@ flowchart TB
     end
 
     subgraph C["CAPACITA L2 — strato probabilistico"]
-        C1["conversazione · conoscenza · agenti<br/>coding · voce e gesti · asset"]
-        C2["valutazione con giudice<br/>dataset curati, trace-based eval<br/>un fallimento puo essere variabilita"]
+        C1["conversazione (col 3) · conoscenza (col 6)<br/>agenti (col 4) · coding (col 5)<br/>voce (col 8) e gesti (col 12) · asset (col 7)"]
+        C2["valutazione con giudice (col 3 e seguenti)<br/>dataset curati, trace-based eval<br/>un fallimento puo essere variabilita"]
         C1 --> C2
     end
 
@@ -56,16 +61,20 @@ kernel**. Un fallimento del kernel non è mai variabilità — è un difetto. La
 nello strato deterministico anche se mostra l'uscita di un modello: la rende come testo
 non fidato (G13, ADR-0014) e non la giudica mai; le sue prove girano sulle **fixture**
 generate dal kernel — i byte e il valore atteso, insieme — senza modello, e un suo
-fallimento è un difetto come quelli del kernel (col 2, §4 e §6a del disegno del 2).
+fallimento è un difetto come quelli del kernel (§4 e §6a del disegno del 2).
 
 ## Le quattro tecniche
 
 | Tecnica | Verifica | Determinismo |
 |---|---|---|
-| **analisi statica** | I3 (nessuna chiamata OS nel kernel), I6/V19 (confine dei tipi), V5 (effetti classificati), V25 (un solo punto di uscita), V34 (lettura dei segreti), V35 (livello di confinamento), ADR-0020 | totale, a compilazione |
+| **analisi statica** | I3 (nessuna chiamata OS nel kernel), I6/V19 (confine dei tipi), V5 (effetti classificati); ADR-0020 (V28) per le **dipendenze**, con l'allow-list di ADR-0031, mentre nessun controllo vede le chiamate attraverso una porta iniettata (col 3); V25 (un solo punto di uscita, col 3), V34 (lettura dei segreti, col 3), V35 (livello di confinamento, col 5) | totale: al compilatore (livello 1) e nel cancello (livello 2) — §7.4 della spec del sotto-progetto 1 |
 | **test a esempi** | comportamenti puntuali, macchine a stati, tabelle di decisione | totale |
-| **simulazione deterministica (DST)** | concorrenza, crash, ripristino: I1, I2, I5; Q2, Q3, Q4, Q5, Q18, Q22 — le stesse sei righe che la mappa qui sotto marca **DST**. Ogni campagna è un bersaglio che il passo «DST campaigns» di `gate.sh` nomina **uno per uno**: una campagna nuova è anche una riga in quel passo, o il cancello la esegue senza mostrarne il tempo di parete | riproducibile **per seed** |
-| **test di contratto** | worker, server MCP, provider: dati stantii, risposte malformate, timeout. ⭐ E la **conformità fra l'implementazione reale di una porta e la sua finta** — è ciò che impedisce di provare Q4 e Q5 contro una finzione. Oggi le suite sono **due**, `journal` e `reactor`: scritte in `crates/kernel/tests/`, rieseguite sulle implementazioni vere di `platform` con `include!`. **Ogni porta guadagna la propria quando arriva l'implementazione vera**: `ipc` e la settima porta col 2, `network` col 3, `filesystem` col 5, `process` col primo worker vero (ADR-0039) | totale, con doppi |
+| **simulazione deterministica (DST)** | concorrenza, crash, ripristino: I1, I2, I5; Q2, Q3, Q4 — i guasti del dialogo col 12 —, Q5, Q18 (col 3), Q22 (col 5): le righe che la mappa qui sotto marca **DST**. Ogni campagna è un bersaglio che il passo «DST campaigns» di `gate.sh` nomina **uno per uno**: una campagna nuova è anche una riga in quel passo, o il cancello la esegue senza mostrarne il tempo di parete | riproducibile **per seed** |
+| **test di contratto** | worker (col 12), server MCP (col 4), provider (col 3): dati stantii, risposte malformate, timeout. ⭐ E la **conformità fra l'implementazione reale di una porta e la sua finta** — è ciò che impedisce di provare Q4 e Q5 contro una finzione. Le suite sono scritte in `crates/kernel/tests/` e rieseguite sulle implementazioni vere di `platform` con `include!`: quali porte le hanno lo dice `ls crates/platform/tests/*_contract_real.rs`, e quale Q ne eredita lo stato la §8.2.2 della spec del sotto-progetto 1. Quella di `ipc` gira sul solo trasporto vero, senza finte né bugiardi (D82 del piano della parte 2 del sotto-progetto 2): se una finta vada tenuta contro la vera è la scelta aperta su AUD-409. **Ogni porta guadagna la propria quando arriva l'implementazione vera**: `network` col 3, `filesystem` a pezzi dal 13 — chi costruisce che cosa lo dice la 4.2 del [disegno della revisione della knowledge base](../superpowers/specs/2026-09-28-knowledge-base-revisione-design.md) —, `process` col 12, il primo worker vero (ADR-0039) | totale, con doppi |
+
+⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, AUD-260, AUD-265, AUD-266, AUD-272, AUD-607, AUD-608, AUD-710
+e AUD-715: la tabella dice ciò che il codice tiene oggi, e ciò che è deciso e non costruito porta il segno «(col N)»,
+che per le righe V e Q è l'innesco della §8 della spec; le suite di conformità le conta il comando, non una cifra.
 
 ## Mappa requisito → metodo di verifica
 
@@ -76,7 +85,7 @@ anche *quanto costa* verificarlo, che è ciò che determina se verrà davvero fa
 |---|---|---|---|
 | Q1 | voce < 600 ms sotto carico GPU | misura end-to-end con job `batch` attivo, percentile su N campioni | misura → SP-2, poi non-regressione |
 | Q2 | zero OOM | proprietà: la somma delle concessioni non supera mai il budget, sotto richieste concorrenti casuali | **DST** |
-| Q3 | crash GUI durante una run | la GUI muore a un'operazione scelta dal seme, con la finta `DyingGui` del simulatore; proprietà: il core non perde nulla — oggi le concessioni tornano (§5.7, proprietà 3), col 2 la stessa prova sull'attività del daemon che ascolta la GUI, col 3 la run prosegue | **DST** |
+| Q3 | crash GUI durante una run | la GUI muore a un'operazione scelta dal seme, in una finta della porta `ipc`; proprietà: il core non perde nulla — oggi le concessioni tornano (§5.7, proprietà 3), anche nell'attività che ascolta la GUI, `kernel::serving::serve`; col 3 la run prosegue | **DST** |
 | Q4 | kill di un worker in qualsiasi istante | kill in punti arbitrari; proprietà: nessuna corruzione, nessuna perdita | **DST** |
 | Q5 | riavvio del core a metà run | crash iniettato a **ogni confine di persistenza**; proprietà: nessun effetto rieseguito | **DST + crash-injection** |
 | Q6 | contesto esaurito | ricomposizioni ripetute con budget ridotto; proprietà: gli elementi non sacrificabili sono sempre presenti | proprietà |
@@ -94,13 +103,15 @@ anche *quanto costa* verificarlo, che è ciò che determina se verrà davvero fa
 | Q18 | perdita di rete | iniezione del guasto; proprietà: lo stato di degrado è dichiarato **prima** del primo fallimento | **DST** |
 | Q19 | capire una run di 4 ore | giornale sintetico lungo; la proiezione trace è navigabile e completa | esempi |
 | Q20 | nessun dato lascia la macchina | statica (un solo punto di uscita) + test che verifica assenza di traffico a default | **statica** + esempi |
-| Q21 | ripristino da backup su macchina nuova | backup e ripristino su ambiente pulito; proprietà: nessun dato irriproducibile perso, e il messaggio pre-backup elenca le esclusioni | esempi + **contratto** |
+| Q21 | ripristino da backup su macchina nuova | backup e ripristino su ambiente pulito; proprietà: nessun dato irriproducibile **del programma** perso, e il messaggio pre-backup elenca le esclusioni, fra cui la root e le zone di lavoro del proprietario, che non sono nel backup del programma (ADR-0040, punti 3 e 4). ⚠️ **Richiamo del 2026-10-06** — audit del 2026-09-30, AUD-367: si legge con [ADR-0040](../adr/0040-dove-vivono-i-dati-e-che-cosa-salva-il-programma.md), come la riga Q21 della [spec del kernel](../superpowers/specs/2026-08-06-kernel-design.md) | esempi + **contratto** |
 | Q22 | annullare un passo che ha modificato file | dopo il rollback al passo N l'ambito è **byte-identico** allo stato precedente; crash iniettato durante la conservazione | **DST + crash-injection** |
 | Q23 | esecuzione sotto il livello 2 di confinamento | statica: nessun percorso di esecuzione senza livello richiesto. Più test negativo: con confinamento indisponibile l'azione **non parte** | **statica** + esempi |
 | Q24 | lettura di credenziali fuori dal gestore dei segreti | statica sui grafi di importazione e chiamata: nessun altro componente ha un percorso verso l'archivio dei segreti | **statica** |
 
-**Le quattro nuove sono statiche o di proprietà**, non a esempi: Q23 e Q24 sono
-proprietà strutturali, e verificarle a campione le renderebbe congetture.
+**Q23 e Q24 si provano anzitutto per costruzione**, con la statica: sono proprietà
+strutturali, e verificarle a campione le renderebbe congetture; il test negativo di Q23 si
+aggiunge alla statica, non la sostituisce. ⚠️ **Richiamo del 2026-10-06** — audit del
+2026-09-30, AUD-271: la frase dice ciò che dicono le righe Q23 e Q24.
 
 ⚠️ **Lo stato di ogni riga** — verificata, parziale, rimandata — **e chi la chiude** stanno
 nella **§8.4 della spec del sotto-progetto 1**, in una casa sola, col comando che li conta
@@ -131,8 +142,8 @@ dove esiste»**.
 |---|---|
 | Nessuna sezione della spec è «fatta» senza i test dei suoi requisiti | un requisito senza verifica è un'intenzione |
 | Ogni difetto trovato in simulazione **conserva il proprio seed** | ⛔ a entrare nella suite è la **proprietà** che quel difetto violava, **non il seed** — vedi il richiamo in fondo |
-| I fallimenti promossi dall'anello 4 (§5) entrano nella stessa suite | un artefatto, non due |
-| Analisi statica, test a esempi **e campagna DST breve** girano a **ogni commit**, e col 2 anche le prove della GUI, in un passo loro; la campagna DST **profonda** si lancia **a mano**. ⚠️ **Richiamo del 2026-09-08:** questa riga diceva *«la campagna DST profonda su cicli più lunghi»*, e quel ciclo **non esiste** — le due campagne profonde sono `#[ignore]` e nessun passo del cancello né della CI le lancia: è il vincolo 8 della §11 del compendio, aperto e del proprietario | «tieni la qualità a sinistra» (§5) |
+| I fallimenti promossi dall'anello 4 (§5, col 4) entrano nella stessa suite | un artefatto, non due |
+| Analisi statica, test a esempi **e campagna DST breve** girano a **ogni commit**, e anche le prove della GUI, in un passo loro (`scripts/gate-gui.sh`); la campagna DST **profonda** si lancia **a mano**. ⚠️ **Richiamo del 2026-09-08:** questa riga diceva *«la campagna DST profonda su cicli più lunghi»*, e quel ciclo **non esiste** — le due campagne profonde sono `#[ignore]` e nessun passo del cancello né della CI le lancia: è il vincolo 8 della §11 del compendio, aperto e del proprietario | «tieni la qualità a sinistra» (§5) |
 
 > ⭐ **La riga sulla cadenza è cambiata dopo una misura.** Diceva «DST su cicli più
 > lunghi», perché si dava per scontato che una campagna fosse cara. **M-2 l'ha smentito**:

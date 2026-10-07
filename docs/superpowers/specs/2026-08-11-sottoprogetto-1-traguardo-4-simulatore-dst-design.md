@@ -1,7 +1,7 @@
 # Traguardo 4 — il simulatore DST: il disegno
 
 - **Data:** 2026-08-11
-- **Stato:** disegno approvato, piano da scrivere
+- **Stato:** disegno approvato. Lo stato del traguardo lo dice la tabella dei traguardi della [roadmap](../../roadmap.md), e la chiusura è la §12. ⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-425, AUD-426
 - **Sostituisce:** niente. **Precisa:** la [§3 della spec del sotto-progetto 1](2026-08-06-sottoprogetto-1-kernel.md), che descrive il simulatore **finito**
 
 > 🎯 **A cosa serve questo file.** La §3 della spec dice **cosa** è il simulatore DST. Questo
@@ -51,9 +51,9 @@ difetto che non si vede rileggendo: non c'è niente da leggere.
 | # | Artefatto | Vive in | Chi lo esercita |
 |---|---|---|---|
 | **1** | `CrashingJournal` — il giornale che cade alla scrittura scelta dal seme | `crates/simulator/src/journal.rs` | la campagna di livello 1, più una sonda che prova che **cade davvero** al punto dichiarato |
-| **2** | `CrashingBackend` — il `redb::StorageBackend` che cade all'operazione scelta dal seme | ⛔ `crates/platform/tests/` — **un banco di prova, non `src/`**: vedi il richiamo del 2026-08-11 in §11 | la campagna di livello 2, più il **conteggio dei punti scattati** (§4.2) |
+| **2** | `CrashingBackend` — il `redb::StorageBackend` che cade all'operazione scelta dal seme | ⛔ `crates/platform/tests/` — **un banco di prova, non `src/`**: vedi il richiamo del 2026-08-11 in §11 | la campagna di livello 2, più il **conteggio dei punti scattati** (§4.2). ⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-157: il punto di caduta lo sceglie chi chiama, e la campagna li percorre tutti, senza seme, su un backend in memoria — la §12 lo registra |
 | **3** | la campagna di **livello 1** — riproducibilità e riconciliazione su N semi | `crates/simulator/tests/` | è essa stessa un controllo; la sua non-vacuità la tiene un **giornale che non cade mai** e uno che **cade sempre** |
-| **4** | la campagna di **livello 2** — riapertura dell'archivio dopo la caduta | `crates/platform/tests/` | idem, più l'asserzione che `sync_data` sia **scattato** |
+| **4** | la campagna di **livello 2** — riapertura dell'archivio dopo la caduta | `crates/platform/tests/` | idem, più l'asserzione che `sync_data` sia **scattato**. ⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-421: l'asserzione è un **delta** di `sync_data` attraverso una scrittura, non un «è scattato», e la tiene una sonda accanto alla campagna (§4.2) |
 | **5** | `C7a` — senza crash, **nessun** passo in dubbio | con la campagna di livello 1 | il bugiardo è un giornale che dichiara dubbi che non ci sono |
 | **6** | `C7b` — con crash, i passi in dubbio sono **quelli e solo quelli** | con la campagna di livello 1 | ⛔ confronto sull'**insieme**, mai sulla cardinalità — gotcha **#30** |
 | **7** | l'elenco versionato dei semi | `docs/` | ⛔ **niente lo esercita, ed è deliberato** — §6 |
@@ -135,6 +135,8 @@ A parole: *«iniettare un crash»* significa due cose diverse a seconda di **chi
 | **Cosa gira** | kernel `no_std` su finte pure | `FileJournal` vero, B-tree vero, I/O vero |
 | **Costo per corsa** | **25,8 µs** misurati in M-2 → migliaia di semi | I/O vero → **decine** di semi |
 | **Dove vive** | `crates/simulator/` | ⛔ `crates/platform/` |
+
+⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-423, AUD-157: i 25,8 µs di M-2 non sono confrontabili con nulla che esista oggi — T4-4-l in [`riferimenti.md`](../../riferimenti.md) —, e il numero di semi del livello 1 l'ha scelto la saturazione degli insiemi in dubbio distinti, T4-4-f, che `EXPECTED_DOUBT_SETS` tiene accanto a `SHORT_CAMPAIGN_SEEDS` in `crates/simulator/tests/dst_campaign.rs`. Il livello 2 non fa I/O vero e non ha semi: `FileJournal` e `redb` veri su un archivio in memoria, e la campagna percorre ogni punto d'iniezione — la §12.
 
 ### 2.2 ⛔ Dove vive il backend cadente — la collisione con ADR-0032
 
@@ -218,6 +220,8 @@ negativo con l'interlacciamento.
 | **dopo** | il test **riapre il database** sullo stato sopravvissuto |
 | **l'asserzione** | o ci sono i soli record confermati prima, **o tutti** — ⛔ mai uno stato parziale |
 
+⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-422, AUD-424: il backend cadente cade alle operazioni che passano da `may_serve` — `len`, `read`, `set_len`, `sync_data` e `write` —, e `close` non cade mai: `redb` lo chiama una volta sola, al `Drop` del `Database`, e un errore lì scatterebbe durante lo svolgimento invece che al punto d'iniezione. La ragione sta nel doc di `CrashingBackend`, in `crates/platform/tests/engine_crash_consistency.rs`, e i punti d'iniezione si contano su quelle operazioni.
+
 ### 3.4 Il riuso: si avvolge, non si duplica
 
 ✅ **Misurato leggendo il sorgente di `redb` 4.1.0**, non ricordato: `StorageBackend` ha
@@ -248,6 +252,8 @@ file dentro un processo **vivo**.
 `redb` **non chiama `sync_data`**. Quindi un backend che **conta** le chiamate lo dice: una
 campagna che pretende *«`sync_data` è scattato almeno una volta»* diventa **rossa** appena la
 garanzia sparisce.
+
+⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-421: anche con `Durability::None` `redb` chiama `sync_data`, già all'apertura, quindi la forma *«almeno una volta»* resta verde senza la garanzia. L'oracolo è il **delta** di `sync_data` attraverso una scrittura, e lo tiene `the_engine_really_syncs_and_that_is_what_closes_gotcha_51` in `crates/platform/tests/engine_crash_consistency.rs` — la §12.
 
 📌 È il gotcha **#54** applicato all'iniezione invece che alla mutazione — *«prima di
 concludere che qualcosa è invisibile dove lo vuoi invisibile, prova che sia osservabile da
@@ -325,6 +331,8 @@ per non lasciare.
 | morte della gui a metà run | `Q3` · I1 | **Traguardo 6** — con `ipc` implementata |
 | perdita della rete | `Q18` — degrado dichiarato prima | **Traguardo 6** — con lo stato di degrado |
 
+⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-022, AUD-029, AUD-392: gli indirizzi si leggono con la §8.4 della [spec del sotto-progetto 1](2026-08-06-sottoprogetto-1-kernel.md), che è la casa dello stato. L'interlacciamento l'ha iniettato il Traguardo 5, `crates/simulator/tests/arbiter_campaign.rs`; l'uccisione di un worker e la morte della gui il Traguardo 6, `worker_kill_campaign.rs` e `gui_death_campaign.rs` nella stessa cartella. Il Traguardo 6 si è chiuso senza le quattro righe del dialogo — risposta assente o tardiva, frame malformato, frame non sollecitato, morte a metà flusso —, che nessuna campagna inietta: arrivano col primo worker vero, l'innesco E (12) della riga `Q4`. Nessuna campagna inietta nemmeno la perdita della rete né la caduta durante la conservazione: `Q18` e `Q22` sono ⏳, con gli inneschi B (3) e D (5).
+
 ⚠️ **Nessuno di questi stati cambia** per effetto di questo documento: `Q4` resta `parziale`,
 e resterà tale finché non esiste un worker vero contro cui provare la conformità della finta.
 
@@ -336,10 +344,10 @@ e resterà tale finché non esiste un worker vero contro cui provare la conformi
 |---|---|
 | la §3 resta **coperta in parte** a fine traguardo | mitigato dalla §7: ogni riga ha un indirizzo |
 | ⚠️ **il banco di livello 2 non è riusabile da un'altra crate** | il codice di test **non attraversa i confini di crate**: `CrashingBackend` serve solo a `platform`, e nessuno lo chiede altrove. ⛔ **Questa riga dichiarava un costo diverso** — *«superficie pubblica di prova in `platform`»* — e quel costo **non si paga più**: vedi il richiamo del 2026-08-11 in §11 |
-| la campagna di livello 2 fa **I/O vero** | pochi semi, e il numero è **fissato e versionato** — vincolo 7 |
+| la campagna di livello 2 fa **I/O vero** | pochi semi, e il numero è **fissato e versionato** — vincolo 7. ⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-157: il punto di caduta lo sceglie chi chiama, e la campagna li percorre tutti, senza seme, su un backend in memoria — la §12 lo registra |
 | [ADR-0032](../../adr/0032-motore-di-persistenza.md) prende un **rimando** | è la seconda volta per quell'ADR, ed è il meccanismo previsto, non una deroga |
 | ⛔ **«la finta non è la vera» resta il punto cieco** | la §3.7 lo dichiara già. Il Traguardo 4 ne chiude **una parte** per il giornale — non tutto |
-| il numero di semi della campagna breve **frena il commit** | va scelto contro il pavimento misurato (25,8 µs per corsa **minima**), e rimisurato quando gli scenari crescono |
+| il numero di semi della campagna breve **frena il commit** | va scelto contro il pavimento misurato (25,8 µs per corsa **minima**), e rimisurato quando gli scenari crescono. ⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-423: i 25,8 µs non sono un pavimento — T4-4-l in [`riferimenti.md`](../../riferimenti.md) —, e il numero l'ha scelto la saturazione degli insiemi in dubbio distinti, T4-4-f: quando gli scenari crescono, si rimisura quella, che `EXPECTED_DOUBT_SETS` tiene in `crates/simulator/tests/dst_campaign.rs` |
 
 ---
 
@@ -366,6 +374,8 @@ dichiarava sei ed **aveva ragione**. Registrato invece che taciuto: il conteggio
 iniezione è l'oracolo della §4.2, quindi un metodo in meno sarebbe stato un oracolo più debole
 senza che nulla lo dicesse.
 
+⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-422, AUD-424: il metodo in meno c'è, ed è detto. `close` non cade mai, per la ragione scritta nel doc di `CrashingBackend`, e i punti d'iniezione si contano sulle altre operazioni — la §3.3.
+
 ---
 
 ## 10. Cosa questo documento lascia aperto
@@ -374,10 +384,10 @@ senza che nulla lo dicesse.
 
 | | Perché non è decisa qui |
 |---|---|
-| **il numero di semi** della campagna breve e di quella profonda | va scelto **misurando** lo scenario vero, e lo scenario vero lo scrive il piano. Fissarlo adesso sarebbe un'ipotesi travestita da vincolo |
+| **il numero di semi** della campagna breve e di quella profonda | va scelto **misurando** lo scenario vero, e lo scenario vero lo scrive il piano. Fissarlo adesso sarebbe un'ipotesi travestita da vincolo. ⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30: **scelto** il 2026-08-11, misurando — la misura T4-4-f di [`riferimenti.md`](../../riferimenti.md) —, e la cifra vive nel banco, accanto a `SHORT_CAMPAIGN_SEEDS` in `crates/simulator/tests/dst_campaign.rs` |
 | **una guardia in `check-docs.sh`** che pretenda che ogni voce dell'elenco dei semi nomini un test esistente | è una **riga di catalogo nuova**, e quella è una decisione del proprietario. Un elenco di semi senza proprietà è l'artefatto che marcisce meglio di tutti — la proposta è scritta perché chi la riprende non debba riscoprirla |
 | **il checkpoint** | `replay()` carica tutto in memoria e le guardie di `FileJournal` sono scansioni: il rimedio noto è lo stesso per entrambi. ⛔ Resta chiuso dal **primo consumatore che misuri un giornale grande**, non da qui |
-| **le quattro finte mancanti** | nascono col meccanismo che le usa — §7. Il piano del Traguardo 4 **non le nomina** |
+| **le quattro finte mancanti** | nascono col meccanismo che le usa — §7. Il piano del Traguardo 4 **non le nomina**. ⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30: il numerale non regge più — dopo, sono nate quelle di `ipc` e di `custody` — e non si ricorregge (gotcha **#31**): quali manchino lo dice `grep -n '^pub mod' crates/simulator/src/lib.rs` contro la tabella della §3.1 della spec, e la regola resta la stessa |
 
 ---
 

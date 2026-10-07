@@ -19,8 +19,10 @@
 //! grant is STILL VALID, which nothing can observe: `start` takes no `now` and asks the arbiter
 //! nothing, `GrantId` is private, and no API answers "is this grant still in the books?". So a
 //! worker CAN stay alive past its own window, and a probe that pinned that shut would be a vote
-//! against taking the decision that is still the owner's — `E30`/`E39` of milestone 5, gotcha
-//! #73. The counter below reports how often this campaign walked into it.
+//! against taking the decision that is still the owner's — row 26 of milestone 6's open items
+//! in docs/porta-di-qualita.md, "the temporal half of «concessione valida»", gotcha #73 (`E30`
+//! is closed since 2026-08-30, `9ecc13d`). ⚠️ RECALL OF 2026-10-07 — audit of 2026-09-30,
+//! AUD-561. The counter below reports how often this campaign walked into it.
 //!
 //! ⚠️ `FakeWorker` AND `FakeProcess` ARE COPIED from `crates/kernel/tests/worker_tokens.rs` —
 //! the CODE word for word, the docs abridged where they described that bench's subject rather
@@ -205,7 +207,7 @@ struct Tally {
     /// ⛔ KILLS THAT FOUND THE WORKER PAST ITS OWN WINDOW. It is COUNTED AND DECLARED, and it is
     /// NOT ASSERTED ON: the worker was still running while its reservation had already been swept
     /// back into the budget, which is the temporal half of "a valid grant" that nothing today can
-    /// observe. `E30`/`E39` of milestone 5 is the open voice, and it is the owner's; an assertion
+    /// observe. Row 26 of milestone 6's open items is the open voice, and it is the owner's; an assertion
     /// here would freeze the decision instead of reporting it (gotcha #73).
     past_the_window: u64,
 }
@@ -414,12 +416,12 @@ fn property_2_a_killed_worker_leaves_no_reservation_behind() {
     // ⚠️ PRINTED AND NOT ASSERTED, and the difference is the decision. `past_the_window` counts
     // the kills that found a worker STILL RUNNING with its reservation already swept back into
     // the budget — the temporal half of "a valid grant", which no API can observe today. It is
-    // the open voice `E30`/`E39` of milestone 5 and it belongs to the owner; a bar here would
+    // the open voice of row 26 of milestone 6's open items, and it belongs to the owner; a bar here would
     // freeze it (gotcha #73). What this line buys is that the day it becomes 0 or becomes
     // everything, a reader sees it.
     println!(
         "DST worker kills: {} kills over {SHORT_CAMPAIGN_SEEDS} seeds, {} inside the window, {} \
-         past it (E30 -- counted, not asserted), {} distinct outcomes, {elapsed:?}",
+         past it (the temporal half -- counted, not asserted), {} distinct outcomes, {elapsed:?}",
         tally.kills,
         tally.released_now,
         tally.past_the_window,

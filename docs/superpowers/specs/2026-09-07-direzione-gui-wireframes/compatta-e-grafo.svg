@@ -1,6 +1,6 @@
 <svg viewBox="0 0 680 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="t3 d3">
 <title id="t3">Wireframe della vista Compatta e del nucleo a pagina intera</title>
-<desc id="d3">A sinistra una finestrella sempre in primo piano con la rete viva, lo stato della voce e l'ultima notifica. A destra il grafo della knowledge base a pagina intera con ricerca, filtri, gruppi per router, dettaglio del nodo e funzioni del registro. Presentato il 2026-09-07 e approvato come mappa alla ripresa dello stesso giorno; lo stato vive nella tabella dei wireframe della stella polare.</desc>
+<desc id="d3">A sinistra una finestrella sempre in primo piano con la rete viva, lo stato della voce e l'ultima notifica. A destra il grafo della knowledge base a pagina intera con ricerca, filtri, gruppi per router, dettaglio del nodo e funzioni del registro. Presentato il 2026-09-07 e approvato come mappa alla ripresa dello stesso giorno; lo stato vive nella tabella dei wireframe della stella polare. Richiamo del 2026-10-03, audit del 2026-09-30 (AUD-487, AUD-476): ricerca, filtri, gruppi e struttura del pannello vengono dal disegno della knowledge base del 2026-09-04, e il disegno della revisione del 2026-09-29 li supera; che cosa vale lo dice la riga di questo wireframe nella tabella della stella polare.</desc>
 <style>
 svg{color:#2c2c2a;font-family:system-ui,sans-serif;background:#fff}
 .t{fill:#2c2c2a}.ts{fill:#5f5e5a}
@@ -23,7 +23,7 @@ svg{color:#2c2c2a;font-family:system-ui,sans-serif;background:#fff}
 <text x="8" y="268" class="ts" font-size="11">clic sulla rete: torna grande, sul nucleo</text>
 <text x="300" y="20" class="t" font-size="12">Nucleo · pagina intera: il grafo della knowledge base</text><text x="672" y="20" class="ts" font-size="11" text-anchor="end">6</text>
 <rect x="300" y="28" width="372" height="492" rx="8" fill="none" stroke="currentColor" stroke-opacity="0.6"/>
-<rect x="308" y="36" width="150" height="20" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.5"/><text x="316" y="50" class="ts" font-size="11">cerca sui nomi…</text>
+<rect x="308" y="36" width="150" height="20" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.5"/><text x="316" y="50" class="ts" font-size="11">cerca…</text>
 <rect x="464" y="36" width="48" height="20" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.35"/><text x="488" y="50" class="ts" font-size="11" text-anchor="middle">specie</text>
 <rect x="516" y="36" width="52" height="20" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.35"/><text x="542" y="50" class="ts" font-size="11" text-anchor="middle">cartella</text>
 <rect x="572" y="36" width="52" height="20" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.35"/><text x="598" y="50" class="ts" font-size="11" text-anchor="middle">etichetta</text>
@@ -58,6 +58,6 @@ svg{color:#2c2c2a;font-family:system-ui,sans-serif;background:#fff}
 <rect x="548" y="282" width="108" height="16" rx="3" fill="none" stroke="currentColor" stroke-opacity="0.45"/><text x="602" y="294" class="ts" font-size="11" text-anchor="middle">cancella</text>
 <text x="548" y="320" class="ts" font-size="11">ogni funzione: permesso</text><text x="548" y="334" class="ts" font-size="11">a tripla, giornalata,</text><text x="548" y="348" class="ts" font-size="11">checkpoint nell'ambito</text>
 <text x="548" y="380" class="t" font-size="11">integrità</text><text x="548" y="396" class="ts" font-size="11">2 orfani</text><text x="548" y="412" class="ts" font-size="11">1 collegamento rotto</text><text x="548" y="428" class="ts" font-size="11">il sensore li misura,</text><text x="548" y="442" class="ts" font-size="11">il pannello li mostra</text>
-<rect x="308" y="476" width="356" height="36" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.35"/><text x="316" y="491" class="ts" font-size="11">i collegamenti fanno la struttura, la posizione è solo un attributo del nodo</text><text x="316" y="505" class="ts" font-size="11">non tocca file, non tiene stato: se muore, non si perde niente</text>
+<rect x="308" y="476" width="356" height="36" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.35"/><text x="316" y="491" class="ts" font-size="11">richiamo 2026-10-03: ricerca, gruppi e struttura rivisti dalla revisione KB</text><text x="316" y="505" class="ts" font-size="11">non tocca file, non tiene stato: se muore, non si perde niente</text>
 <text x="8" y="534" class="ts" font-size="11">verde = trovato dalla ricerca · ambra = orfano o collegamento rotto · numero = sotto-progetto</text>
 </svg>

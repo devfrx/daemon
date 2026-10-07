@@ -4,6 +4,20 @@
 - **Date:** 2026-08-08
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-10-03 — questo ADR modifica in parte ADR-0035, e il sotto-progetto 2 ha deciso come la GUI
+> decodifica.** Audit del 2026-09-30.
+>
+> - Il canale `process` su `minicbor`, con la codifica in `kernel`, smentisce in
+>   [ADR-0035](0035-porta-verso-i-worker-e-lettura-di-i4.md) il rifiuto di `minicbor` *«rafforzato»* sui due canali, le
+>   giustificazioni di `bincode` *«da allargare»* e l'esito B di M-1: qui si diceva soltanto *«la domanda aperta di
+>   ADR-0035 si chiude»*. Le righe le nomina il rimando in testa a quell'ADR, il cui stato resta `Accepted`. AUD-006,
+>   AUD-163, AUD-164.
+> - *«la decisione di come la GUI decodificherà»*, nel perimetro negativo, *«è sotto-progetto 2»*: il 2 l'ha presa con
+>   SP-8 — Q1 di [ADR-0029](0029-guscio-della-gui.md), il processo principale Node con `bincode-ts` —, e il
+>   decodificatore non è costruito; chi lo costruisce è la scelta aperta su AUD-593.
+>
+> **Nessuna riga di questo ADR è superata.**
+
 ## Context
 
 [ADR-0035](0035-porta-verso-i-worker-e-lettura-di-i4.md) lascia una domanda aperta e

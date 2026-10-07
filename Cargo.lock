@@ -133,8 +133,11 @@ version = "0.0.0"
 dependencies = [
  "interprocess",
  "kernel",
+ "libc",
  "redb",
  "simulator",
+ "widestring",
+ "windows-sys",
 ]
 
 [[package]]

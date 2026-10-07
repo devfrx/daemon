@@ -73,7 +73,9 @@ function families(names: string[]) {
   return { texts, grounds, onPairs, marks, surfaces };
 }
 
-/** The roles no pair judges, each with its reason -- the design's (a), "I colori". */
+/** The roles no pair judges, each with its reason. ⛔ THIS IS THEIR ONE HOUSE, chosen by the owner with E5 of the
+ * design-system plan: the design's (a), "I colori", points here and lists none. ⚠️ RECALL OF 2026-10-07 -- audit of
+ * 2026-09-30. */
 const EXEMPT: Record<string, string> = {
   "color-text-disabled": "WCAG 1.4.3 exempts an inactive component",
   "color-border": "decoration: it is not what tells a control apart",

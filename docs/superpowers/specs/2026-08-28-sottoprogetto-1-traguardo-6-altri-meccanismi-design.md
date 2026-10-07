@@ -1,8 +1,9 @@
 # Traguardo 6 — gli altri meccanismi: il disegno
 
 ✅ **QUESTO DISEGNO È COMPLETO DAL 2026-08-30.** Tutte le sezioni sono **approvate** dal
-proprietario, una per volta, e la **§7** fissa la Definizione di «fatto» e chi la verifica. Chi
-riprende ha un disegno intero da tradurre in piano.
+proprietario, una per volta, e la **§7** fissa la Definizione di «fatto» e chi la verifica. Lo
+stato del traguardo lo dice la tabella dei traguardi della [roadmap](../../roadmap.md), e il verbale
+della chiusura è la §8. ⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-426.
 
 ⚠️ **RICHIAMO DEL 2026-08-30:** questo riquadro diceva *«QUESTO DISEGNO È IN CORSO»*, e prima
 ancora *«1–5»*, *«le 6 e 7»* e *«due da aprire»*. ⛔ **Il conteggio delle sezioni è TOLTO e non
@@ -139,7 +140,7 @@ Ogni riga porta la propria regola di §0.3, come la §0.4 pretende.
 | 5 | **§6.4, il contratto del sensore** | §6.2 ne ha bisogno: *«schema non conforme = verdetto di sensore»* |
 | 6 | **§6.2 + §6.3, decisore e gettone** | il gettone lo **emette il filtro dei vincoli**, che è dentro il decisore |
 | 7 | **§6.6, il permesso** | indipendente, ma §6.7 lo consuma |
-| 8 | **§6.7, il degrado** | **derivato**: arbitro (c'è), salute dei provider (6.2), permessi (6.6) |
+| 8 | **§6.7, il degrado** | **derivato**: arbitro (c'è), salute dei provider (6.2), permessi (6.6). ⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-057: il codice del traguardo lo deriva dall'arbitro e dal routing degradato di [ADR-0012](../../adr/0012-equivalenza-del-fallback-e-fallimento-chiuso.md) — `vram_exhausted` e `routing_degraded` in `crates/kernel/src/degradation.rs` —; i permessi non lo alimentano, e [design/07](../../design/07-osservabilita-e-degrado.md) li dà col 4 |
 | 9 | **`E152`** | le due proprietà di §5.7 mancanti si iniettano **in `process` e `ipc`**: esistono solo dopo 3 e 4 |
 | 10 | **la chiusura** | come al Traguardo 3 e al 5: è un **audit**, non una scrittura |
 
@@ -265,7 +266,7 @@ dei **libri**, non della salute del processo.
 |---|---|
 | `Parameters` guadagna un campo | tocca la radice di composizione e il banco. È il tipo che §2.8 pinza con **due** righe di catalogo — che sono **spec** |
 | `start` e `kill` cambiano firma | i chiamanti sono banchi; nessun consumatore di produzione. Censimento: `grep -rn "\.release(\|\.kill(\|\.start(" crates/ --include=*.rs` |
-| ⛔ **tre casi `compile_fail` toccati** | `instructing_after_the_kill.rs`, `reading_without_a_receipt.rs`, `reading_twice_from_one_receipt.rs`. I loro `.stderr` vanno **riletti uno per uno, mai rigenerati in blocco** — vincolo 10 della §11, gotcha **#25** |
+| ⛔ **tre casi `compile_fail` toccati** | `instructing_after_the_kill.rs`, `reading_without_a_receipt.rs`, `reading_twice_from_one_receipt.rs`. I loro `.stderr` vanno **riletti uno per uno, mai rigenerati in blocco** — vincolo 10 della §11, gotcha **#25**. ⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-434: i casi toccati li elenca `git diff --name-status c4cf942~1 5ef4fc3 -- crates/kernel/tests/compile_fail/`, che è l'intervallo dei commit del compito 1, e i tre nominati ne sono una parte — la riga 2 della §8.3 |
 | `ReleaseError` resta a **una** variante | e non è la forma ① scartata da `9a18f36`: lì una variante nuova lasciava tre cause in due caselle. Qui le cause **diventano** tre risposte |
 
 ---
@@ -503,6 +504,8 @@ Quindi: il **meccanismo** è dovuto per iscritto, il **vocabolario** no.
 | core → gui | **esito dell'ammissione**, a tre vie | ADR-0033: *«esito a tre vie»* — in codice `Admission` |
 | *(nessun messaggio)* | la **disconnessione** | §5.7 riga 3, iniettata sulla porta `ipc` |
 
+⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-434: sul filo non viaggiano né `Admission` né `ResourceProfile` — il primo conierebbe concessioni dai byte, il secondo non si decodifica —: la richiesta è `GrantRequest` e l'esito è `Verdict`, a tre vie e senza la concessione, in `crates/kernel/src/wire/ipc.rs`. Le righe 4 e 5 della §8.3.
+
 📌 **Uno per direzione, e sono ciò che rende NON VACUA la campagna del compito 9.** Perché
 quella proprietà dica qualcosa, la finta gui deve **tenere davvero** una concessione
 discrezionale prima di morire: senza la richiesta e l'esito il seme ucciderebbe un client che
@@ -567,6 +570,8 @@ grep -rn "impl Ipc" crates/ --include=*.rs
 restituisce **solo** la finta di un banco. Il buco si paga al sotto-progetto 2, ed è lo stesso
 innesco della voce **5**.
 
+⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-061: il timbro è arrivato col sotto-progetto 2 — `build_stamp` su `stamp_set`, in `crates/kernel/src/wire/ipc.rs` —, e dal 2026-09-18 la stretta di mano di `kernel::serving` lo confronta e risponde `StaleBuild` a una GUI stantia; il trasporto vero c'è, `LocalSocketIpc` in `crates/platform/src/ipc.rs`. Il buco resta sul solo canale worker, che non ha né timbro né stretta di mano: il doc di `crates/kernel/src/wire/worker.rs`.
+
 ### 6.5 Gli identificativi — la regola non ha un sito, oggi
 
 §6.1.3 dice che gli identificativi dello schema sono i **progressivi del giornale**, mai
@@ -588,6 +593,8 @@ rispettato»* sarebbe verde avendo confrontato insiemi vuoti — la forma che qu
 > può esercitare la regola: il primo messaggio che porterà un identificativo è il sito dove la
 > regola diventa reale, e dove nasce la sua sonda.
 
+⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-693: il sito c'è dal sotto-progetto 2 — `StepSummary::step` in `IpcMessage::Steps` è il progressivo del giornale —, e lo tiene `the_step_list_carries_the_journals_own_step_numbers` in `crates/kernel/tests/serving.rs`.
+
 ✅ **E l'allocatore di `StepId` resta non costruito**, com'era già registrato in
 `crates/kernel/src/ports/journal.rs`. ⚠️ La frase del doc di `ClientId` — *«chi implementa questa
 porta al Traguardo 6 attinge da QUEL contatore»* — invecchia **nel soggetto** e non
@@ -601,18 +608,18 @@ identici che divergono senza che nulla lo segnali.
 |---|---|
 | le tre firme della porta `ipc` | ⛔ **invariate**. `send`/`receive` continuano a scambiare `&[u8]`/`Vec<u8>` e **non** guadagnano un newtype come il `Frame` di `process`: il doc della porta dichiara le proprie firme *«aperte a un argomento misurato»*, e qui non c'è nessuna misura che lo chieda |
 | la questione aperta di `accept` | ⛔ **resta aperta**, e questa sezione non la chiude: il suo prezzo è **la firma**, non una variante in più, ed è scritto sulla porta |
-| `IpcError` | **due varianti**, invariate. `MalformedMessage` acquista finalmente un produttore: oggi il suo doc promette *«i byte consumati non uguagliano la lunghezza dichiarata»* e nessun codice lo produce |
+| `IpcError` | **due varianti**, invariate. `MalformedMessage` acquista finalmente un produttore: oggi il suo doc promette *«i byte consumati non uguagliano la lunghezza dichiarata»* e nessun codice lo produce. ⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-059, AUD-060: la decodifica e il controllo dei byte consumati stanno in `IpcMessage::decode`, che risponde `WireError` (`Incomplete`, `TrailingBytes`, `Malformed`; le sonde in `crates/kernel/tests/ipc_wire.rs`), e `kernel::serving` li assorbe; `IpcError::MalformedMessage` ha per solo produttore il tetto del trasporto sulla lunghezza dichiarata, e lo stato è permanente (D9, `crates/platform/src/ipc.rs`) |
 
 ### 6.7 Il controllo che esercita ciascun artefatto
 
 | Artefatto | Deve scattare | Deve restare verde |
 |---|---|---|
-| lunghezza dichiarata | frame **troncato** → `MalformedMessage` | frame intero → decodifica |
-| byte consumati uguali alla lunghezza | **coda** dopo l'ultimo elemento → `MalformedMessage` | esatto → decodifica |
+| lunghezza dichiarata | frame **troncato** → `MalformedMessage`. ⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-059, AUD-060: risponde `WireError`, non `MalformedMessage` — il richiamo della §6.6 | frame intero → decodifica |
+| byte consumati uguali alla lunghezza | **coda** dopo l'ultimo elemento → `MalformedMessage`. ⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-059, AUD-060: risponde `WireError`, non `MalformedMessage` — il richiamo della §6.6 | esatto → decodifica |
 | il corpo è un'enumerazione | ⛔ **lo esercitano i DUE messaggi**, non uno: con un tipo solo il discriminante non sarebbe provato — stessa forma per cui i byte congelati del giornale sono **tre** record e non uno | |
 | §5.7 riga 3 · **Q3 esteso** | la campagna DST del compito **9** | la somma torna alla linea di base |
 | «il core decide quando emettere» | ⛔ **nessuna sonda nuova**: lo tiene la **forma della porta** — non c'è una terza operazione, e il doc di `crates/kernel/src/ports/ipc.rs` lo argomenta già | |
-| §6.1.3, non coniare | ⛔ **nessun controllo, e dichiarato**: non c'è un sito (§6.5) | |
+| §6.1.3, non coniare | ⛔ **nessun controllo, e dichiarato**: non c'è un sito (§6.5). ⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-693: il sito e la sua sonda ci sono dal sotto-progetto 2 — il richiamo della §6.5 | |
 
 ⛔ **E LA FINTA CHE SERVE AL COMPITO 9 NON ESISTE — misurato, e la prima stesura di questa
 sezione affermava il contrario.** Il doc di `crates/kernel/src/ports/ipc.rs` dice che il banco
@@ -672,6 +679,8 @@ ripeterlo:** la Definizione di «fatto» di questo traguardo nasce **completa qu
 condizione 4 del Traguardo 5 diceva *«le **dodici** righe di catalogo»*, e il Task 13 ha dovuto
 ricontarle. Qui le condizioni **nominano la sezione**, e il conteggio lo fa chi chiude.
 
+⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-434: la condizione 8 ne porta uno, e l'esecuzione l'ha mosso — il richiamo nella sua riga.
+
 | # | Condizione |
 |---|---|
 | 1 | `bash scripts/gate.sh` → `GATE GREEN`, e la baseline **rimisurata** col comando, non citata |
@@ -681,7 +690,7 @@ ricontarle. Qui le condizioni **nominano la sezione**, e il conteggio lo fa chi 
 | 5 | **`E30`, `R6` ed `E21` sono chiuse insieme**, nelle forme della §2.3, e la sonda `a_grant_released_on_the_wrong_arbiter_is_an_error_and_not_a_silent_credit` è **ancora verde** — non cancellata (§2.2) |
 | 6 | il **vincolo 15** della §11 è onorato: il frame dichiara la propria lunghezza, la decodifica verifica i byte consumati, e l'annotazione di stringa di byte è **sul canale worker** |
 | 7 | la decisione **C-1** è presa con una **misura odierna** (§3.5); se il formato cambia, manifesto e `Cargo.lock` sono committati **insieme** e fuori dal cancello (finding **G-5**) |
-| 8 | i casi `compile_fail` nuovi e i **tre toccati** dalla §2.4 hanno il proprio `.stderr` **letto uno per uno**, mai rigenerato in blocco — vincolo 10 della §11 |
+| 8 | i casi `compile_fail` nuovi e i **tre toccati** dalla §2.4 hanno il proprio `.stderr` **letto uno per uno**, mai rigenerato in blocco — vincolo 10 della §11. ⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-434: i toccati sono quelli che elenca il comando del richiamo della §2.4, e i tre ne sono una parte — la riga 2 della §8.3 |
 | 9 | ⛔ **ogni non-costruzione dichiarata porta il proprio innesco**: il timbro di build (§3.4), il trasporto vero (voce **5**), la revoca verso la gui (§6.2) |
 | 10 | il registro [`porta-di-qualita.md`](../../porta-di-qualita.md) è riallineato, coi **conteggi ricontati** e non dedotti |
 | 11 | ⛔ **le voci che il traguardo lascia aperte stanno in UNA tabella sola, con la colonna di chi le chiude** — ed è la condizione che al Traguardo 5 il disegno aveva dimenticato |
@@ -825,6 +834,8 @@ tetto. Scritto eseguendo il **compito 10** del piano, che è un **audit** e non 
 
 ⚠️ **Il primo commit del traguardo è `c4cf942`, e la scelta si dichiara:** è il primo che tocca
 `crates/`; i due che lo precedono sono di sola documentazione — voce `E171`.
+
+⛔ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-654: un intervallo `A..B` esclude `A`, e `HEAD` si sposta, quindi i comandi di questo verbale si leggono sull'intervallo `c4cf942~1..c3eb19f`, dal genitore del primo commit del traguardo al commit che porta il verbale. Lì `git diff --name-only c4cf942~1..c3eb19f -- crates/ scripts/ Cargo.lock` rende 89 file, e i `.stderr` mossi della condizione 8 sono sette — `c4cf942` muove `parameters_have_no_default.stderr` —; le altre conclusioni — `Cargo.lock` fuori, `crates/platform/src/` e la spec intatti, sette casi nuovi — reggono uguali.
 
 ### 8.2 Le dodici condizioni della §7.2, rilette contro il codice
 

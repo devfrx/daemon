@@ -21,33 +21,20 @@
 //! the test bench's job, and the bench receives the resolved parameters exactly as this file
 //! produces them.
 //!
-//! # What a run with NO activities proves
+//! # What a run proves: the graph assembles, and the core serves for as long as it runs
 //!
-//! Nothing is spawned, and that is not a placeholder: there is no work to do yet. What the
-//! run claims is THE WHOLE GRAPH ASSEMBLES — the real `Rng`, the real `Reactor`, the real
-//! `Journal` on the disk, the arbiter holding the two permanent grants of ADR-0033, the
-//! delivered `Parameters` and the executor's `Sleep` cell fit together, and the executor runs
-//! to completion.
+//! The whole graph assembles — the real `SequentialRng`, the one real `SystemReactor` seen from
+//! two places, the real `FileJournal`, the real `LocalSocketIpc` on the channel of the account
+//! the core runs as, the layout archive open or not, the arbiter holding the two permanent grants
+//! of ADR-0033 on the policy the journal names — and ONE activity is spawned,
+//! `kernel::serving::serve`, which TAKES THE TURNS it is given: what a peer hearing its welcome is
+//! the only witness of. The executor never runs to completion, because `serve` is a `loop` with
+//! no exit and `Executor::run` ends only when no task is left: a run that ENDED would mean the
+//! core stopped serving. Besides that, the start-up says out loud each failure it can name — see
+//! `StartupError`.
 //!
-//! ⚠️ RECALL OF 2026-08-21, MILESTONE 5 TASK 10. This heading said "it is the ONE claim this
-//! binary can make today", and this task is what made that false: the start-up gained failures
-//! it can say out loud and did not have — the journal will not open, and either permanent quota
-//! of ADR-0033 does not get in — and each of them is a claim of its own. The sentence is
-//! REWRITTEN and not answered beside itself, which is finding A-2 of this project's audit.
-//!
-//! ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — THE HEADING ABOVE AND WHAT IT CLAIMS ARE FALSE
-//! FROM THIS TASK, and they are dated rather than answered underneath themselves, which is the
-//! same finding A-2 the paragraph above names. An activity IS spawned now —
-//! `kernel::serving::serve`, from `run_the_graph` — so there is work to do, there is no run "with
-//! NO activities", and the executor CANNOT run to completion, because `serve` is a `loop` with no
-//! exit and `Executor::run` is `while !self.tasks.is_empty()`: a run that ENDED would mean the
-//! core stopped serving.
-//!
-//! What the run claims INSTEAD: the whole graph assembles — the real `SequentialRng`, the one
-//! real `SystemReactor` seen from two places, the real `FileJournal`, the real `LocalSocketIpc`,
-//! the layout archive open or not, the arbiter holding the two permanent grants of ADR-0033 on
-//! the policy the journal names — and the serving activity TAKES THE TURNS it is given, which is
-//! what a peer hearing its welcome is the only witness of.
+//! ⚠️ RECALL OF 2026-10-02 — audit of 2026-09-30, AUD-050; the earlier history of this heading
+//! is E67 of the sub-project 2 plan.
 
 use std::cell::RefCell;
 use std::path::Path;
@@ -57,7 +44,7 @@ use kernel::arbiter::{
     RemotePolicy, ResourceProfile, VramPolicy,
 };
 use kernel::executor::{Executor, RunError, Sleep};
-use kernel::numbering::{self, Progressive};
+use kernel::numbering;
 use kernel::parameters::Parameters;
 use kernel::ports::custody::{Custody, CustodyError, CustodyKey};
 use kernel::ports::journal::JournalError;
@@ -65,7 +52,7 @@ use kernel::ports::reactor::Reactor;
 use kernel::serving::{self, Core};
 use kernel::time::{Millis, Monotonic, WallTime};
 use platform::custody::FileCustody;
-use platform::ipc::LocalSocketIpc;
+use platform::ipc::{self, Account, LocalSocketIpc};
 use platform::journal::{FileJournal, OpenError};
 use platform::reactor::SystemReactor;
 use platform::rng::SequentialRng;
@@ -92,9 +79,10 @@ use platform::rng::SequentialRng;
 /// - ABOVE anything legitimate. The reference scenario — three activities of four steps
 ///   each — takes NINE turns, so the limit clears it by FOUR orders of magnitude.
 /// - It catches a block that DOES NOT WAIT in far less than a second: the top row is the
-///   whole ceiling in about fifteen milliseconds. Those are the two failures
+///   whole ceiling in about fifteen milliseconds. Those are the two SPINNING failures
 ///   `RunError::TurnLimitReached` documents — an activity that yields for ever, and one that
-///   re-registers an elapsed deadline. Both spin, so both land there.
+///   re-registers an elapsed deadline. Both spin, so both land there. ⚠️ RECALL OF 2026-10-03 --
+///   audit of 2026-09-30, AUD-058.
 /// - ⚠️ AND IT DOES NOT BOUND THE CLOCK for an activity that keeps going back to sleep on
 ///   deadlines still in the FUTURE. That run is not spinning, it is waiting; it still ends,
 ///   because the turns still run out, but at whatever wall time its waits add up to. The
@@ -187,10 +175,14 @@ const JOURNAL_PATH: &str = "journal.redb";
 
 /// Where the LAYOUT ARCHIVE lives, in production — the seventh port's store.
 ///
-/// ⛔ A SECOND FILE AND NOT A SECOND TABLE IN THE JOURNAL, and the difference is ADR-0022: the
-/// journal is authoritative state and is BACKED UP AND ENCRYPTED; a window layout is neither. It is
-/// also what lets the layout archive fail to open WITHOUT stopping the start-up (decision 35),
-/// which sharing a file with the journal would make impossible.
+/// ⛔ A SECOND FILE AND NOT A SECOND TABLE IN THE JOURNAL, and the difference is ADR-0022: it
+/// separates archives by nature, and gives the journal -- authoritative state -- a policy of its
+/// own, ENCRYPTED and with its payloads PRUNED (ADR-0018), while the window layout belongs to the
+/// configuration, in clear and permanent; both go in the backup. ⚠️ THAT IS THE POLICY, NOT
+/// TODAY: encryption at rest and retention are sub-project 15's and the backup sub-project 11's,
+/// so both files are plain `redb` files for now. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30,
+/// AUD-020. It is also what lets the layout archive fail to open WITHOUT stopping the start-up
+/// (decision 35), which sharing a file with the journal would make impossible.
 ///
 /// ⚠️ RELATIVE TO THE WORKING DIRECTORY, exactly as `JOURNAL_PATH` is and declared for the same
 /// reason: where a per-user data directory belongs is a decision no ADR has taken, and inventing one
@@ -208,9 +200,12 @@ const LAYOUT_PATH: &str = "layout.redb";
 /// a fact of protocol living in one house with no index naming it is how a fact of protocol rots in
 /// silence.
 ///
-/// ⛔ A NAMESPACED NAME AND NOT A PATH: `LocalSocketIpc::bound` resolves it through
-/// `to_ns_name::<GenericNamespaced>()`, which is what makes ONE string work as a named pipe on
-/// Windows and as a local socket on Linux — the two systems of ADR-0002 behind one line.
+/// ⛔ A NAME AND NOT YET A PLACE, AND THE TWO SYSTEMS PUT IT IN DIFFERENT PLACES (ADR-0041):
+/// `platform::ipc::channel_of_this_account` makes it the pipe `\\.\pipe\harness-core` on Windows,
+/// and the socket file `$XDG_RUNTIME_DIR/harness-core` on Linux -- a file in the account's own
+/// runtime directory, because a name in the abstract namespace is one every account of the
+/// machine can open. So the shell has to resolve the same name THE SAME WAY, not merely open the
+/// same string. ⚠️ RECALL OF 2026-10-02 — audit of 2026-09-30, ADR-0041.
 ///
 /// ⚠️ THE `harness-` PREFIX IS THE ONE THE BENCHES ALREADY USE, so that a stray socket left behind
 /// by a crash is recognisable as ours by name alone.
@@ -226,9 +221,19 @@ const SOCKET_NAME: &str = "harness-core";
 /// ⚠️ THE SIZE IS NOT MEASURED AND IS DECLARED AS SUCH. The largest message that climbs this wire is
 /// the layout package — `toJSON()` of `dockview` plus the active view — and no such package exists
 /// yet to measure. What the value has to be is COMFORTABLY ABOVE that and FAR BELOW a memory
-/// problem, and a mebibyte is both. ⛔ ITS TRIGGER IS THE FIRST PACKAGE REFUSED: a `SaveLayout` that
-/// comes back `MalformedMessage` is this line being too small, not a broken peer, and the remedy is
-/// this literal rather than a loosening of the transport.
+/// problem, and a mebibyte is both.
+///
+/// ⛔ AND WHAT HAPPENS PAST IT IS SILENT, SO THIS LINE HAS NO TRIGGER ANYBODY CAN SEE. A `SaveLayout`
+/// over the cap does not come back as anything: the transport poisons that client (D9), and
+/// `kernel::serving` keeps it and answers nothing -- so the gui waits for a `Layout` that never
+/// comes, and is unheard for the rest of its session. Whether the overflow should be told, or the
+/// package capped before the transport, is the owner's: audit of 2026-09-30, AUD-051. Until then
+/// the remedy for a package that grows past this line is still this literal, and nothing will say
+/// when it is due. ⚠️ RECALL OF 2026-10-02 — same audit, AUD-051.
+///
+/// ⚠️ IT BOUNDS THE ENVELOPE AND NOT THE COUNTS INSIDE IT: a body well under this cap can still
+/// declare a container the decoder allocates before reading it. That limit, and the choice it
+/// waits on, are written once, beside `kernel::wire::ipc::IpcMessage::decode`.
 const MAX_BODY: usize = 1024 * 1024;
 
 /// How long the serving activity sleeps between turns (§5, ADR-0034).
@@ -257,6 +262,14 @@ const GUI_TICK: Millis = Millis::new(16);
 /// "the subtraction is not an exemption" (ADR-0005, gotcha #4) -- whereas a grant HAS a
 /// holder by construction. ADR-0033 says it in those words: "the core REQUESTS a permanent,
 /// non-preemptible presentation grant at start-up".
+///
+/// ⚠️ NEITHER NUMBER IS MEASURED, AND BOTH ARE DECLARED AS SUCH -- the declaration ADR-0033 and §5.5.3
+/// of the spec ask for, written where the value lives. The presentation quota is the conservative
+/// default ADR-0033 keeps until M5, the measurement it hooks to M1–M4 of ADR-0029; the audio quota
+/// is to be fixed once the real voice models are measured, a follow-up of ADR-0005. Where the two
+/// numbers come from: the milestone 5 plan dictated them as bare literals, with no measurement or
+/// source behind either. ⛔ THEIR TRIGGERS ARE THOSE TWO MEASUREMENTS, and the remedy is these two
+/// lines. ⚠️ RECALL OF 2026-10-02 — audit of 2026-09-30, AUD-547.
 const AUDIO_QUOTA: Mib = Mib::new(1_024);
 const PRESENTATION_QUOTA: Mib = Mib::new(768);
 
@@ -426,9 +439,8 @@ impl Custody for MaybeCustody {
 /// ABOVE IS ABOUT THE THIRD, WHICH IS UNCHANGED. The wiring grew three failures it can name and
 /// did not have: the journal will not replay at all, so the step number to carry on from cannot
 /// be found (`numbering::seeded_from`); it replays, and a record in it is not one this build can
-/// read, so the policy in force cannot be answered (ADR-0006, `policy_now`); and the local socket
-/// will not bind, which on both systems means somebody is already listening on that name — a
-/// SECOND core, which is exactly what a single-instance process must refuse to be.
+/// read, so the policy in force cannot be answered (ADR-0006, `policy_now`); and the channel will
+/// not open, whose causes the variant's own doc names.
 ///
 /// ⛔ THE FIRST TWO ARE TWO DIFFERENT FAULTS AND NOT ONE SAID TWICE, AND THE ORDER IS WHAT MAKES
 /// THEM SO. Both re-reads go through the same `Journal::replay`, so whichever runs FIRST takes
@@ -459,10 +471,15 @@ enum StartupError {
     /// BENCH THAT DOES. It stays because it is reachable in production; what is missing is the
     /// provocation, not the road.
     Numbering(JournalError),
-    /// The local socket would not bind. ⛔ ON BOTH SYSTEMS THE ORDINARY CAUSE IS A SECOND CORE
-    /// ALREADY LISTENING, and refusing is the point: `daemon` is the single instance of ADR-0004,
-    /// and two cores on one journal is the one thing the exclusive lock cannot catch, because the
-    /// second one never gets that far.
+    /// The channel would not open, and the error says why (ADR-0041). ⛔ ON BOTH SYSTEMS THE
+    /// ORDINARY CAUSE IS A SECOND CORE, and refusing is the point: `daemon` is the single instance
+    /// of ADR-0004, and two cores on one journal is the one thing the exclusive lock cannot catch,
+    /// because the second one never gets that far. On Windows that is the pipe's first instance
+    /// refused -- which is also what a name another account took first looks like, a cost ADR-0041
+    /// accepts; on Linux it is a live core answering on the socket. ⚠️ ON LINUX TWO MORE CAUSES ARE
+    /// ADR-0041's own: no `$XDG_RUNTIME_DIR`, and a runtime directory that is not the account's or
+    /// is open to others. And a system that will not name the account the core runs as stops the
+    /// start-up here too. ⚠️ RECALL OF 2026-10-02 — audit of 2026-09-30, ADR-0041.
     Ipc(std::io::Error),
 }
 
@@ -477,19 +494,26 @@ enum StartupError {
 /// ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — NO TEST CALLS IT ANY MORE, AND THE PARAGRAPH
 /// ABOVE IS DATED. It hands `u64::MAX`, so a probe calling it would HANG rather than fail (D28);
 /// every probe goes through `run_the_graph` with a limit of its own. What this function chooses —
-/// the four production literals and the socket name — is walked by nothing: declared, not
-/// covered. The sentence below about "the test that already existed" describes that day, not this.
+/// the four production literals and the socket name, and since ADR-0041 the account and the
+/// channel it asks the system for — is walked by nothing: declared, not covered. The sentence
+/// below about "the test that already existed" describes that day, not this.
 ///
 /// ⛔ THE PATH IS AN ARGUMENT, AND THAT IS NOT CAUTION. Handed a `FileJournal`, the test that
 /// already existed starts writing a REAL FILE; a fixed path in a shared directory is gotcha
 /// #52, and on Windows the clean-up of an open file fails silently, so the red would come out
 /// on Linux — the project's second system.
 fn run_the_production_graph(journal_path: &Path, layout_path: &Path) -> Result<(), StartupError> {
+    // ⛔ THE ACCOUNT AND THE CHANNEL ARE ASKED OF THE SYSTEM HERE, ONCE, AND HANDED DOWN (ADR-0041,
+    // point 8): `run_the_graph` binds what it is given, which is how every probe hands it a channel
+    // of its own -- and how the refusal of another account is provable with one account.
+    let account = Account::of_this_process().map_err(StartupError::Ipc)?;
+    let channel = ipc::channel_of_this_account(SOCKET_NAME).map_err(StartupError::Ipc)?;
     run_the_graph(
         Parameters::new(EXECUTOR_TURN_LIMIT, TOTAL_VRAM, ARBITER_ID, GUI_TICK),
         journal_path,
         layout_path,
-        SOCKET_NAME,
+        &channel,
+        &account,
     )
 }
 
@@ -507,6 +531,9 @@ fn run_the_production_graph(journal_path: &Path, layout_path: &Path) -> Result<(
 /// directory: two probes binding `SOCKET_NAME` at once make the second fail with "already in use",
 /// and `cargo test` runs them at once BY DEFAULT. Every probe hands its own name, built from
 /// `line!()` and the process id, exactly as `private_dir_for_line` does (P-55).
+/// ⚠️ RECALL OF 2026-10-02 — audit of 2026-09-30, ADR-0041: what is handed is now a CHANNEL and
+/// the ACCOUNT it is for -- a pipe on Windows, a socket file in a private directory on Linux -- and
+/// every probe builds its own with `channel_for_line`.
 ///
 /// ⚠️ NO PROBE HERE WATCHES A CLIENT DIE: this binary exposes no `Core`, so the wiring of
 /// `ClientGrants::on_disconnect` is held by the bench of task 7 and by the campaign of task 10, on
@@ -515,7 +542,8 @@ fn run_the_graph(
     parameters: Parameters,
     journal_path: &Path,
     layout_path: &Path,
-    socket_name: &str,
+    channel: &Path,
+    account: &Account,
 ) -> Result<(), StartupError> {
     // ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — THE JOURNAL HAS A CONSUMER NOW, and the comment
     // that stood here said it did not: "THE JOURNAL HAS NO CONSUMER IN THIS BINARY YET … The day
@@ -546,7 +574,11 @@ fn run_the_graph(
     // BOTH orders. ⛔ ITS TRIGGER IS THE ONE WRITTEN BESIDE `StartupError::Numbering`: the first
     // bench that can make a `FileJournal` refuse to replay. Until then this paragraph and review
     // are what hold it, and saying so is the point.
-    let steps = numbering::seeded_from(&journal).map_err(StartupError::Numbering)?;
+    //
+    // ⛔ AND THIS IS THE ONE COUNTER OF THE CORE (§3 of the sub-project 2 design): built HERE,
+    // ONCE, and every consumer below gets a `share` of it -- the transport numbers clients, the
+    // core numbers steps. The probe is `the_client_and_the_steps_draw_from_one_counter`.
+    let numbers = numbering::seeded_from(&journal).map_err(StartupError::Numbering)?;
 
     // ⛔ AND THE `unwrap_or` IS WHERE THE DEFAULT OF ADR-0006 LIVES — D27. `policy_now` answers an
     // `Option` because the kernel may not name a default (ADR-0034), and `None` means NOBODY EVER
@@ -558,7 +590,7 @@ fn run_the_graph(
 
     let arbiter = build_the_arbiter(parameters, policy)?;
 
-    let ipc = LocalSocketIpc::bound(socket_name, Progressive::starting_at(0), MAX_BODY)
+    let ipc = LocalSocketIpc::bound(channel, account, numbers.share(), MAX_BODY)
         .map_err(StartupError::Ipc)?;
 
     // ⚠️ THE DECLARATION ORDER IS LOAD-BEARING and swapping the two lines that carry a BORROW
@@ -574,7 +606,7 @@ fn run_the_graph(
         journal,
         MaybeCustody::open(layout_path),
         arbiter,
-        steps,
+        numbers,
         parameters,
     ));
     let clock = SharedClock { inner: &reactor };
@@ -740,8 +772,8 @@ fn main() {
         }
         Err(StartupError::Ipc(error)) => {
             stop(&format!(
-                "the channel {SOCKET_NAME} would not bind, and the usual cause is a core already \
-                 running: {error:?}"
+                "the channel {SOCKET_NAME} would not open, and the usual cause is a core already \
+                 running -- the error says which: {error:?}"
             ));
         }
     }
@@ -794,7 +826,9 @@ mod tests {
     // port -- so at the top of the file every one of these would be an `unused import`. The peer
     // of `a_peer_that_says` is the only thing here that speaks the wire.
     use kernel::framing;
-    use kernel::wire::ipc::{build_stamp, IpcMessage, LayoutState, PolicyName};
+    use kernel::wire::ipc::{
+        build_stamp, Access, Call, IpcMessage, LayoutState, PolicyName, Triple,
+    };
 
     // ⚠️ AND THE TWO BELOW ARE BENCH-ONLY FOR A DIFFERENT REASON: the binary never NAMES a
     // policy other than the default and never writes a record of its own, so they reach this file
@@ -804,6 +838,10 @@ mod tests {
     // ⚠️ `Journal` IS THE TRAIT AND NOT THE TYPE: `intent` is a method of the port, and the
     // binary itself never calls it -- it hands the journal over to `Core` and `Core` writes.
     use kernel::ports::journal::{Journal, StepId};
+    // ⚠️ AND A COUNTER OF ITS OWN IS BENCH-ONLY TOO: the binary builds the one counter with
+    // `numbering::seeded_from` and shares it, while the first core of
+    // `a_second_core_on_the_same_channel_stops_the_start_up` is a bare listener and needs one.
+    use kernel::numbering::Progressive;
 
     /// ⛔ A DIRECTORY OF ITS OWN PER CALL SITE, from `line!()`, and it is not caution: a
     /// fixed path in a shared directory is gotcha #52, measured at milestone 3. Windows
@@ -819,12 +857,36 @@ mod tests {
         dir
     }
 
-    /// ⛔ A NAME OF ITS OWN PER CALL SITE, and it is the socket twin of `private_dir_for_line`
-    /// (P-55). A socket name is machine-wide rather than directory-wide, so two probes sharing one
+    /// ⛔ A CHANNEL OF ITS OWN PER CALL SITE, and it is the socket twin of `private_dir_for_line`
+    /// (P-55). A channel is machine-wide rather than directory-wide, so two probes sharing one
     /// pass alone and fail together — the flakiest red there is — and `cargo test` runs them at
     /// once by default. The process id is in it because two `cargo test` invocations can overlap.
-    fn socket_name_for_line(line: u32) -> String {
-        format!("harness-daemon-{}-{}", std::process::id(), line)
+    ///
+    /// ⛔ ON LINUX IT IS A SOCKET FILE IN A DIRECTORY OF ITS OWN, CLOSED TO EVERY OTHER ACCOUNT:
+    /// `LocalSocketIpc::bound` refuses a directory others can enter (ADR-0041, point 5), and a probe
+    /// must not lean on the `$XDG_RUNTIME_DIR` of whatever machine runs it.
+    fn channel_for_line(line: u32) -> std::path::PathBuf {
+        let name = format!("harness-daemon-{}-{}", std::process::id(), line);
+        #[cfg(windows)]
+        {
+            std::path::PathBuf::from(format!(r"\\.\pipe\{name}"))
+        }
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let directory = std::env::temp_dir().join(name);
+            let _ = std::fs::remove_dir_all(&directory);
+            std::fs::create_dir_all(&directory).expect("a fresh directory for this channel");
+            std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(0o700))
+                .expect("the directory is closed to every other account");
+            directory.join("core")
+        }
+    }
+
+    /// The account every probe binds its channel for: the one it runs as, asked of the system as
+    /// `run_the_production_graph` asks it.
+    fn this_account() -> Account {
+        Account::of_this_process().expect("the system names the account this probe runs as")
     }
 
     /// How many messages the core sends after a valid `Hello` -- the welcome of sequence 1.
@@ -862,18 +924,20 @@ mod tests {
     /// EVER and a bare loop would hang the gate -- the worst red there is. Five seconds is not a
     /// tuning: it is an order of magnitude above any scheduling delay, and the panic names this line.
     fn a_peer_that_says(
-        name: String,
+        channel: std::path::PathBuf,
         said: Vec<IpcMessage>,
         wants: usize,
     ) -> std::thread::JoinHandle<Vec<IpcMessage>> {
         std::thread::spawn(move || {
-            use interprocess::local_socket::{prelude::*, GenericNamespaced, Stream};
+            use interprocess::local_socket::{prelude::*, GenericFilePath, Stream};
             use std::io::{Read, Write};
 
-            let ns = name.to_ns_name::<GenericNamespaced>().expect("a namespaced name");
+            // ⚠️ A PATH ON BOTH SYSTEMS: the pipe `\\.\pipe\…` on Windows, the socket file on
+            // Linux -- `GenericFilePath` takes either as it is, which is how the core binds it.
+            let name = channel.as_path().to_fs_name::<GenericFilePath>().expect("a channel name");
             let started = std::time::Instant::now();
             let mut stream = loop {
-                match Stream::connect(ns.clone()) {
+                match Stream::connect(name.clone()) {
                     Ok(stream) => break stream,
                     Err(error) => {
                         assert!(
@@ -966,7 +1030,8 @@ mod tests {
             Parameters::new(8, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
             &dir.join("journal.redb"),
             &dir.join("layout.redb"),
-            &socket_name_for_line(line!()),
+            &channel_for_line(line!()),
+            &this_account(),
         );
 
         match outcome {
@@ -1000,7 +1065,8 @@ mod tests {
             Parameters::new(8, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
             &path,
             &dir.join("layout.redb"),
-            &socket_name_for_line(line!()),
+            &channel_for_line(line!()),
+            &this_account(),
         );
 
         match outcome {
@@ -1028,7 +1094,8 @@ mod tests {
             Parameters::new(8, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
             &dir.join("no-such-directory").join("journal.redb"),
             &dir.join("layout.redb"),
-            &socket_name_for_line(line!()),
+            &channel_for_line(line!()),
+            &this_account(),
         );
 
         match outcome {
@@ -1208,7 +1275,8 @@ mod tests {
             Parameters::new(8, Mib::new(1_500), ARBITER_ID, Millis::new(0)),
             &dir.join("journal.redb"),
             &dir.join("layout.redb"),
-            &socket_name_for_line(line!()),
+            &channel_for_line(line!()),
+            &this_account(),
         );
 
         match outcome {
@@ -1235,7 +1303,8 @@ mod tests {
             Parameters::new(8, Mib::new(500), ARBITER_ID, Millis::new(0)),
             &dir.join("journal.redb"),
             &dir.join("layout.redb"),
-            &socket_name_for_line(line!()),
+            &channel_for_line(line!()),
+            &this_account(),
         );
 
         match outcome {
@@ -1270,17 +1339,18 @@ mod tests {
     #[test]
     fn the_graph_with_the_gui_stays_alive_past_a_hundred_thousand_turns() {
         let dir = private_dir_for_line(line!());
-        let name = socket_name_for_line(line!());
+        let channel = channel_for_line(line!());
 
         // ⚠️ THE PEER SPEAKS BEFORE THE RUN STARTS, and that is allowed: the listener exists from
         // `bound()` inside `run_the_graph`, and the helper retries the connect until it does.
-        let peer = a_peer_that_says(name.clone(), vec![IpcMessage::Hello(build_stamp())], 1);
+        let peer = a_peer_that_says(channel.clone(), vec![IpcMessage::Hello(build_stamp())], 1);
 
         let outcome = run_the_graph(
             Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
             &dir.join("journal.redb"),
             &dir.join("layout.redb"),
-            &name,
+            &channel,
+            &this_account(),
         );
 
         match outcome {
@@ -1316,7 +1386,7 @@ mod tests {
         let layout = dir.join("layout.redb");
         let package = b"{\"grid\":1}".to_vec();
 
-        let first = socket_name_for_line(line!());
+        let first = channel_for_line(line!());
         let saver = a_peer_that_says(
             first.clone(),
             vec![
@@ -1330,6 +1400,7 @@ mod tests {
             &journal,
             &layout,
             &first,
+            &this_account(),
         );
         let saved = saver.join().expect("the peer thread does not panic");
         assert!(
@@ -1339,13 +1410,14 @@ mod tests {
             "the core answers a save with what it now HOLDS (decision 13): {saved:?}"
         );
 
-        let second = socket_name_for_line(line!());
+        let second = channel_for_line(line!());
         let reader = a_peer_that_says(second.clone(), vec![IpcMessage::Hello(build_stamp())], WELCOME);
         let _ = run_the_graph(
             Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
             &journal,
             &layout,
             &second,
+            &this_account(),
         );
         let found = reader.join().expect("the peer thread does not panic");
         assert!(
@@ -1366,16 +1438,17 @@ mod tests {
     #[test]
     fn a_layout_archive_that_will_not_open_lets_the_core_start() {
         let dir = private_dir_for_line(line!());
-        let name = socket_name_for_line(line!());
+        let channel = channel_for_line(line!());
         // A directory that is not there: `FileCustody::open` fails, and `MaybeCustody` swallows it.
         let broken = dir.join("not-there").join("layout.redb");
 
-        let peer = a_peer_that_says(name.clone(), vec![IpcMessage::Hello(build_stamp())], WELCOME);
+        let peer = a_peer_that_says(channel.clone(), vec![IpcMessage::Hello(build_stamp())], WELCOME);
         let outcome = run_the_graph(
             Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
             &dir.join("journal.redb"),
             &broken,
-            &name,
+            &channel,
+            &this_account(),
         );
 
         match outcome {
@@ -1396,11 +1469,11 @@ mod tests {
     #[test]
     fn a_core_started_on_a_broken_archive_answers_unavailable_to_every_save() {
         let dir = private_dir_for_line(line!());
-        let name = socket_name_for_line(line!());
+        let channel = channel_for_line(line!());
         let broken = dir.join("not-there").join("layout.redb");
 
         let peer = a_peer_that_says(
-            name.clone(),
+            channel.clone(),
             vec![
                 IpcMessage::Hello(build_stamp()),
                 IpcMessage::SaveLayout(b"{\"grid\":1}".to_vec()),
@@ -1411,7 +1484,8 @@ mod tests {
             Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
             &dir.join("journal.redb"),
             &broken,
-            &name,
+            &channel,
+            &this_account(),
         );
 
         let heard = peer.join().expect("the peer thread does not panic");
@@ -1444,13 +1518,14 @@ mod tests {
         let layout = dir.join("layout.redb");
 
         // ⛔ THE FIRST DIRECTION: an EMPTY journal, and the welcome names the default of ADR-0006.
-        let first = socket_name_for_line(line!());
+        let first = channel_for_line(line!());
         let peer = a_peer_that_says(first.clone(), vec![IpcMessage::Hello(build_stamp())], WELCOME);
         let _ = run_the_graph(
             Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
             &journal,
             &layout,
             &first,
+            &this_account(),
         );
         let heard = peer.join().expect("the peer thread does not panic");
         assert!(
@@ -1475,13 +1550,14 @@ mod tests {
                 .expect("the transition is written");
         }
 
-        let second = socket_name_for_line(line!());
+        let second = channel_for_line(line!());
         let peer = a_peer_that_says(second.clone(), vec![IpcMessage::Hello(build_stamp())], WELCOME);
         let _ = run_the_graph(
             Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
             &journal,
             &layout,
             &second,
+            &this_account(),
         );
         let heard = peer.join().expect("the peer thread does not panic");
         assert!(
@@ -1498,27 +1574,88 @@ mod tests {
     /// instead of starting beside the first.
     ///
     /// ⚠️ NO THREAD AND NO RACE (R4-8): the first core is reduced to the one thing that matters, a
-    /// listener bound to the name and held for the whole probe. On Windows `interprocess` creates
-    /// the first instance with `FILE_FLAG_FIRST_PIPE_INSTANCE`, so a second `bound` on the name is
-    /// refused; on Linux the second bind is `EADDRINUSE`. Read in the crate's source, not assumed.
+    /// listener bound to the channel and held for the whole probe. On Windows `interprocess`
+    /// creates the first instance with `FILE_FLAG_FIRST_PIPE_INSTANCE`, so a second `bound` on the
+    /// name is refused -- read in the crate's source, not assumed. On Linux the second start finds
+    /// the first answering on the socket and stops before it binds (ADR-0041, point 6).
+    /// ⚠️ RECALL OF 2026-10-02 — audit of 2026-09-30, ADR-0041.
     #[test]
     fn a_second_core_on_the_same_channel_stops_the_start_up() {
         let dir = private_dir_for_line(line!());
-        let name = socket_name_for_line(line!());
-        let _first = LocalSocketIpc::bound(&name, Progressive::starting_at(0), MAX_BODY)
-            .expect("the first listener binds");
+        let channel = channel_for_line(line!());
+        let _first =
+            LocalSocketIpc::bound(&channel, &this_account(), Progressive::starting_at(0), MAX_BODY)
+                .expect("the first listener binds");
 
         let outcome = run_the_graph(
             Parameters::new(8, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
             &dir.join("journal.redb"),
             &dir.join("layout.redb"),
-            &name,
+            &channel,
+            &this_account(),
         );
 
         match outcome {
             Err(StartupError::Ipc(_)) => {}
             other => panic!("a second core on the same channel must stop at the bind: {other:?}"),
         }
+    }
+
+    /// ⛔ THE ONE COUNTER OF §3 OF THE SUB-PROJECT 2 DESIGN, HELD ON THE GRAPH THIS BINARY SHIPS:
+    /// the transport numbers the client and the core numbers the steps, and they draw from ONE
+    /// sequence. The two benches of the counter -- `crates/kernel/tests/numbering.rs` on the type,
+    /// `crates/platform/tests/ipc_contract_real.rs` on the transport -- hold the two pieces apart
+    /// and cannot see whether the composition root joins them; this is the probe that can.
+    ///
+    /// ⛔ WHAT IT READS IS THE WIRE, because the wire carries step numbers and not client ones. On
+    /// an empty journal the counter starts at zero; the peer is the first and only client, so it
+    /// takes zero, and nothing else takes a number before its `Approve` -- the welcome numbers
+    /// nothing. The invocation therefore opens step ONE, which the step list after it names. Two
+    /// counters would open step zero: MEASURED on 2026-10-02 against the wiring that handed the
+    /// transport a counter of its own, this probe saw `[0]`.
+    #[test]
+    fn the_client_and_the_steps_draw_from_one_counter() {
+        let dir = private_dir_for_line(line!());
+        let channel = channel_for_line(line!());
+        let triple = Triple {
+            tool: String::from(serving::POLICY_FUNCTION.permission.tool),
+            resource: String::from(serving::POLICY_FUNCTION.permission.resource),
+            operation: Access::Write,
+        };
+        let call = Call {
+            function: String::from(serving::POLICY_FUNCTION.name),
+            argument: String::from(VramPolicy::Local(LocalPolicy).name()),
+        };
+
+        // The welcome, then the two answers to an approval that runs: `Policy` and `Steps`.
+        let peer = a_peer_that_says(
+            channel.clone(),
+            vec![IpcMessage::Hello(build_stamp()), IpcMessage::Approve { triple, call }],
+            WELCOME + 2,
+        );
+        let _ = run_the_graph(
+            Parameters::new(WITH_A_PEER, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &dir.join("journal.redb"),
+            &dir.join("layout.redb"),
+            &channel,
+            &this_account(),
+        );
+
+        let heard = peer.join().expect("the peer thread does not panic");
+        let opened: Vec<u64> = heard
+            .iter()
+            .skip(WELCOME)
+            .filter_map(|said| match said {
+                IpcMessage::Steps(list) => Some(list.iter().map(|line| line.step)),
+                _ => None,
+            })
+            .flatten()
+            .collect();
+        assert_eq!(
+            opened,
+            [1],
+            "the client took 0, so the invocation opens 1 -- ONE counter for both: {heard:?}"
+        );
     }
 
     /// ⛔ THE ROAD INTO `StartupError::Policy`, AND IT IS THE ONE THAT CAN BE PROVOKED. The two
@@ -1552,7 +1689,8 @@ mod tests {
             Parameters::new(8, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
             &journal,
             &dir.join("layout.redb"),
-            &socket_name_for_line(line!()),
+            &channel_for_line(line!()),
+            &this_account(),
         );
 
         match outcome {

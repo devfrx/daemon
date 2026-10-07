@@ -12,6 +12,31 @@
 > è ciò che questo ADR decise, ma il totale accanto a cui lo disse — e quel totale vive in una casa
 > sola: `grep -c '^pub mod ' crates/kernel/src/ports/mod.rs`.
 
+> ⚠️ **Rimando del 2026-10-03 — modificato in parte da ADR-0037, e il canale `ipc` porta come non fidato il testo che la
+> GUI sceglie.** Audit del 2026-09-30. **La decisione sulla porta — `process` copre avvio, dialogo e uccisione — è
+> invariata, e lo stato resta `Accepted`.**
+>
+> - **Il formato del canale worker** — nella tabella delle prove documentali le righe di `minicbor` (*«rafforzato: due
+>   canali non versionati, stesso rifiuto»*) e di `bincode` (*«da allargare»*), e il discriminante 5 fra le
+>   alternative; nel perimetro negativo le righe del secondo serializzatore e del formato di filo; fra le *Negative*
+>   *«Tre giustificazioni da allargare»* e la domanda sul pari Python, *«Se la risposta è no, scatta l'esito B di M-1»*. M-10 ha risposto **no**, e l'esito B **non è
+>   scattato**: [ADR-0037](0037-criterio-del-pari-per-il-formato-dei-canali.md), regola 3 — un formato che il pari legge
+>   già —, ha messo il canale `process` su `minicbor`, con la codifica in `kernel`: §6.10.3 della spec,
+>   `crates/kernel/src/wire/worker.rs`. Il rifiuto di `minicbor` non vale per il canale worker, e le giustificazioni di
+>   `bincode` non si sono allargate: `bincode` serve il solo canale gui, ed è la riga di `minicbor` a crescere
+>   (§7.3.1). AUD-006, AUD-163, AUD-164.
+> - **«dalla gui arriva l'utente, cioè il canale fidato»** — il discriminante 2 e la seconda *Positive*. Il codice
+>   costruito col sotto-progetto 2 tratta come **non fidato per eredità**
+>   ([ADR-0014](0014-confine-dei-dati-non-fidati-nel-sistema-di-tipi.md)) il testo che la GUI sceglie: l'argomento di
+>   un'invocazione, giornalato sotto `Trust::Untrusted` (`crates/kernel/src/registry.rs`), e le stringhe della tripla
+>   che tornano con `Approve` (`crates/kernel/src/wire/ipc.rs`), che `kernel::serving` confronta con la tripla del
+>   registro invece di crederle. Quale lettura debba dire questo ADR è la scelta aperta su AUD-005. AUD-005.
+> - **«nessuno dei due richiede un meccanismo nuovo»** — nel rimando del 2026-08-08, in fondo, sui due gettoni. La
+>   **ricevuta** non è del compilatore: `SingleReceipt::new` e `StreamReceipt::new` sono pubblici, e una ricevuta
+>   mai emessa la rifiuta l'implementazione a tempo d'esecuzione, con `UnsolicitedFrame`
+>   (`crates/kernel/src/ports/process.rs`; §6.10.1 della spec, richiamo del 2026-10-03). Il compilatore ne tiene la
+>   forma, non la provenienza. AUD-405, aggiunto il 2026-10-04.
+
 ## Context
 
 La §2.3 della [spec del sotto-progetto 1](../superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md)

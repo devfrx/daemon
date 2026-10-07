@@ -19,9 +19,10 @@ import Permissions from "./Permissions.vue";
 import Settings from "./Settings.vue";
 import Status from "./Status.vue";
 import Steps from "./Steps.vue";
+import Strip from "./Strip.vue";
 
-/** The triple the `PermissionRequired` fixture carries -- the canonical set's ARBITRARY value
- * (task 3), not the registry's real triple: the fake replays fixtures and invents nothing. */
+/** The triple of the FIRST `PermissionRequired` fixture, the one `deliver` hands out -- the canonical set's ARBITRARY
+ * value (task 3), not the registry's real triple: the fake replays fixtures and invents nothing. */
 const TRIPLE_OF_THE_FIXTURE: Triple = { tool: "arbiter", resource: "policy", operation: "Write" };
 const t = i18n.global.t;
 
@@ -136,6 +137,57 @@ describe("Permessi", () => {
     await nextTick();
     expect(wrapper.find(".pending").exists()).toBe(false);
     expect(wrapper.find("ul").text()).toContain(words);
+  });
+
+  it("says what a yes is worth today: granted even after a restart, and no session the core does not build (AUD-140 of the audit of 2026-09-30)", () => {
+    wire();
+    const wrapper = mount(Permissions, { global: { plugins: [i18n] } });
+    const text = wrapper.text();
+    // ⛔ THE ORACLE IS THE KERNEL'S BEHAVIOUR, NOT A COPY OF THE LOCALE: `permission::is_granted` re-reads the whole
+    // journal, so a yes survives a restart (`permission.rs`, `registry.rs`), and row 2 of the Permessi table of the north
+    // star forbids promising the session until sub-project 3 builds it. The list is what THIS window approved
+    // (`invoke.ts`): a title that called it the session's let a yes of yesterday, still granted, read as none.
+    expect(text).toMatch(/anche dopo un riavvio/);
+    expect(text).not.toMatch(/(questa|quella) sessione/);
+  });
+});
+
+describe("la striscia", () => {
+  it("tells «not told» from «none», names the flags the core raised, and says whether a request waits (AUD-724 of the audit of 2026-09-30)", async () => {
+    const { bridge, core } = wire();
+    const wrapper = mount(Strip, { global: { plugins: [i18n] } });
+    const degradation = (): string => wrapper.findAll(".strip > span")[0]?.text() ?? "";
+    const permissions = (): string => wrapper.findAll(".strip > span")[1]?.text() ?? "";
+    const flags = (): string[] => wrapper.findAll(".warn").map((flag) => flag.text());
+    // ⛔ NOT TOLD IS NOT "NONE" (`core.ts`): before the core speaks, the dash -- the word for no degradation here would be
+    // a green light shown to a user who is not connected.
+    expect(degradation()).toContain("—");
+    expect(degradation()).not.toContain(t("strip.none"));
+    expect(flags()).toEqual([]);
+    expect(permissions()).toContain(t("strip.quiet"));
+    // The fixture: VRAM exhausted, routing not degraded -- one flag, in words.
+    bridge.deliver("Degradation");
+    await nextTick();
+    expect(flags()).toEqual([t("strip.vram")]);
+    expect(degradation()).not.toContain("—");
+    expect(degradation()).not.toContain(t("strip.none"));
+    // ⛔ THE HALVES THE FIXTURE CANNOT REACH (D46): both flags, then none -- typed messages to the store.
+    core.receive({ kind: "Degradation", value: { vram_exhausted: true, routing_degraded: true } });
+    await nextTick();
+    expect(flags()).toEqual([t("strip.vram"), t("strip.routing")]);
+    core.receive({ kind: "Degradation", value: { vram_exhausted: false, routing_degraded: false } });
+    await nextTick();
+    expect(flags()).toEqual([]);
+    expect(degradation()).toContain(t("strip.none"));
+    expect(degradation()).not.toContain("—");
+    // A request waits, then the window answers it.
+    bridge.deliver("PermissionRequired");
+    await nextTick();
+    expect(permissions()).toContain(t("strip.pending"));
+    expect(permissions()).not.toContain(t("strip.quiet"));
+    core.settled();
+    await nextTick();
+    expect(permissions()).toContain(t("strip.quiet"));
   });
 });
 
@@ -290,6 +342,31 @@ describe("the confirmation window", () => {
     await nextTick();
     expect(bridge.sent.at(-1)).toEqual({ kind: "Approve", triple: TRIPLE_OF_THE_FIXTURE, call: { function: "vram-policy", argument: "local" } });
     expect(core.pending).toBeNull();
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    wrapper.unmount();
+  });
+
+  it("says what a yes is worth today: the triple, granted even after a restart -- no session the core does not build (AUD-521, AUD-522 of the audit of 2026-09-30)", async () => {
+    const { bridge, invoke } = wire();
+    const wrapper = mount(Confirm, { global: { plugins: [i18n] }, attachTo: document.body });
+    invoke.send({ function: VRAM_POLICY.name, argument: VRAM_POLICY.argument.local });
+    bridge.deliver("PermissionRequired");
+    await nextTick();
+    await nextTick();
+    const scope = document.querySelector('[role="dialog"] .scope');
+    // ⛔ NON-VACUITY: the window is open, and its line on the scope is in it.
+    expect(scope?.textContent).toBe(t("confirm.scope"));
+    // ⛔ THE ONE LINE THE OWNER READS WHILE SAYING YES, held to the kernel and not to the locale: `permission::is_granted`
+    // re-reads the whole journal, so the yes survives a restart, and row 2 of the Permessi table of the north star forbids
+    // promising the session until sub-project 3 builds it.
+    expect(scope?.textContent).toMatch(/anche dopo un riavvio/);
+    expect(scope?.textContent).not.toMatch(/(questa|quella) sessione/);
+    const no = [...document.querySelectorAll('[role="dialog"] button')].find((b) => b.textContent?.trim() === t("confirm.no"));
+    (no as HTMLButtonElement).click();
+    // reka-ui unmounts DialogContent through its own dismissable layer: THREE ticks, measured (R13-3).
+    await nextTick();
+    await nextTick();
+    await nextTick();
     expect(document.querySelector('[role="dialog"]')).toBeNull();
     wrapper.unmount();
   });

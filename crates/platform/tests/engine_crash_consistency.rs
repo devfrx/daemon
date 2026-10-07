@@ -134,11 +134,15 @@ impl StorageBackend for CrashingBackend {
     }
 
     /// ⚠️ THE COUNTER MOVES BEFORE THE GUARD, and it is the ONLY method here that does. It is
-    /// deliberate: what the level-2 campaign will ask of this counter is *«was the engine ever
-    /// asked to make its writes durable?»* — the oracle that closes gotcha #51, because with
-    /// `Durability::None` `redb` never calls this at all. An attempt that the fall refuses is
-    /// still an attempt, and counting it after the guard would hide exactly the call the
-    /// campaign is looking for. `CountingBackend` counts in the same place, for the same reason.
+    /// deliberate: an attempt that the fall refuses is still an attempt, and counting it after
+    /// the guard would hide exactly the call a durability oracle is looking for.
+    /// `CountingBackend` counts in the same place, for the same reason.
+    ///
+    /// ⛔ AND WHAT THE ORACLE THAT CLOSES GOTCHA #51 ASKS OF THIS COUNTER IS A DELTA ACROSS A
+    /// WRITE, NOT A COUNT: even under `Durability::None` `redb` calls this already while OPENING,
+    /// so `syncs > 0` stays green under the very mutation the oracle exists to catch. The delta is
+    /// what `the_engine_really_syncs_and_that_is_what_closes_gotcha_51`, below, asserts.
+    /// RECALL OF 2026-10-06 — audit of 2026-09-30, AUD-702, AUD-421.
     fn sync_data(&self) -> Result<(), io::Error> {
         self.syncs.fetch_add(1, Ordering::Relaxed);
         if !self.may_serve() {
@@ -522,8 +526,10 @@ fn campaign(name: &str, records: u64, saturation: u64) {
     // ⛔ AND THE WALL TIME IS ON THIS LINE BECAUSE CONSTRAINT 7 OF §11 ASKS FOR IT — *printed on
     // every run, so that the slowdown becomes visible before it becomes a temptation*. It is the
     // only number here nobody can derive: the budget this campaign is sized against is one
-    // measurement on one machine, and a measurement taken once decays. `gate.sh` does not yet
-    // SHOW it — see `a_crashed_archive_reopens_in_a_coherent_state`.
+    // measurement on one machine, and a measurement taken once decays. `gate.sh` SHOWS it: its
+    // `DST campaigns -- wall time` step re-runs this binary with `--nocapture` — see
+    // `a_crashed_archive_reopens_in_a_coherent_state`. RECALL OF 2026-10-06 — audit of
+    // 2026-09-30, AUD-079, AUD-558.
     let elapsed = started.elapsed();
     println!(
         "{name}: records={records} points={points} fired={fired} truncated={truncated} \
@@ -630,8 +636,9 @@ fn a_crashed_archive_reopens_in_a_coherent_state() {
     //
     // ⚠️ CONSTRAINT 7 OF §11, THE HALF THIS FILE OWNS: the wall time is PRINTED on every run — see
     // the `println!` in `campaign`. The other half, a gate step that SHOWS it, was task 9's and is
-    // DONE since 2026-08-11: step 7 of `gate.sh` re-runs this binary with `--nocapture`, which is
-    // what the paragraph on the `DST` prefix, below, already says. ⛔ RECALL OF 2026-08-28, AUD-028: this
+    // DONE since 2026-08-11: the `DST campaigns -- wall time` step of `gate.sh` re-runs this binary
+    // with `--nocapture`, which is what the paragraph on the `DST` prefix, below, already says.
+    // ⛔ RECALL OF 2026-08-28, AUD-028: this
     // said "so today the line goes into a buffer nobody reads", CONTRADICTING THAT PARAGRAPH IN
     // THE SAME COMMENT BLOCK. One comment asserting both halves of a contradiction is worse than
     // either half alone: whichever a reader reaches first is confirmed by the file itself. The

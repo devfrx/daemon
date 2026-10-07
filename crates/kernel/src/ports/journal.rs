@@ -10,6 +10,10 @@
 //! | `replay`    | re-reads EVERYTHING, in write order, to discover the names       |
 //! | `prune`     | drops the records of a RECONCILED step — see its LIMITS below    |
 //!
+//! ⚠️ THE `read_back` ROW STATES A PURPOSE, NOT A CONSUMER: the reconciliation that exists,
+//! `crate::reconcile::steps_in_doubt`, reads with `replay` alone, and no production code calls
+//! `read_back`. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-653.
+//!
 //! ⛔ THE PORT EXCHANGES BYTES, not typed records (ADR-0036). The encoding of the record
 //! lives in `kernel` and §4.9 states its rule. Two consequences this table does not
 //! show: the SIMULATOR EXCHANGES BYTES, so the DST campaign really exercises encoding
@@ -32,10 +36,12 @@
 //! crash the kernel does not know the names — its memory is exactly what it lost — so with
 //! `read_back` alone the set is not discoverable.
 //!
-//! ⚠️ AND THE SIGNATURE IS STILL A HYPOTHESIS while this line is being read: the reconciliation
-//! is written NEXT, and it is the first caller that will put it under strain. If it turns out
-//! cramped or insufficient there, it changes HERE — bending the caller to a signature decided
-//! too early is the mistake this rule exists to prevent.
+//! ⚠️ AND `read_back`'S SIGNATURE IS STILL A HYPOTHESIS: the reconciliation was written and reads
+//! with `replay` alone, so nothing has put that signature under strain. It stays a hypothesis
+//! until its first caller -- the candidate is whoever acts on a step in doubt of a run, with
+//! sub-project 3 -- and if it turns out cramped or insufficient there, it changes HERE — bending
+//! the caller to a signature decided too early is the mistake this rule exists to prevent.
+//! ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-653.
 //!
 //! ⚠️ `note` ARRIVED ON 2026-08-10 TOO, AND IT IS THE SAME RULE PAYING OUT A SECOND TIME. The
 //! port did not grow because somebody foresaw a use: it grew because `Untrusted::promote` — the
@@ -60,14 +66,21 @@
 
 use alloc::vec::Vec;
 
-/// The identity of a step. It WILL BE progressive and assigned by the journal, NOT random:
-/// §2.2 chose that over random identifiers because it is deterministic by construction and
-/// readable in a trace.
+/// The identity of a step: progressive, NOT random -- §2.2 chose that over random identifiers
+/// because it is deterministic by construction and readable in a trace.
 ///
-/// ⚠️ THE FUTURE TENSE IS EXACT, AND TODAY NOTHING ASSIGNS ANYTHING. `new` is public, `intent`
-/// RECEIVES the identity from its caller, and this port declares no operation that allocates
-/// one; so "assigned by the journal" describes the design and not this file, and saying so is
-/// cheaper than a reader deducing a guarantee that is not here.
+/// ⚠️ §2.2 ALSO HAS IT "ASSIGNED BY THE JOURNAL", AND THIS PORT ASSIGNS NOTHING: TODAY THE CORE
+/// DOES. `new` is public, `intent` RECEIVES the identity from its caller, and this port declares
+/// no operation that allocates one -- nor will it until a second consumer asks: open item 6 of §9
+/// of the sub-project 2 design, confirmed A by the owner on 2026-09-09. Saying so is cheaper than
+/// a reader deducing a guarantee that is not here. Under `crates/*/src/` what mints step
+/// identities is `crate::serving::Core`, two per invocation, from the
+/// `crate::numbering::Progressive` handed to `Core::new` -- the ONE counter of the core, which the
+/// daemon seeds above every step this journal already holds (`crate::numbering::seeded_from`) and
+/// shares with the `ipc` transport, which numbers its clients from it; the other production `new`
+/// is `FileJournal::replay`, rebuilding one it has just read. ⚠️ RECALL OF 2026-10-02 -- audit of
+/// 2026-09-30, AUD-062, AUD-070: the core has minted them since 2026-09-18, and the two dated
+/// recalls below each describe their own day; and AUD-045: the counter is shared.
 ///
 /// ⚠️ RECALL OF 2026-08-21 — THIS SAID "the allocator arrives with milestone 3". Milestone 3
 /// closed on 2026-08-10 WITH the durable record and WITHOUT the allocator, and milestone 4
@@ -264,10 +277,14 @@ pub trait Journal {
     /// 2026-08-10, not argued: a pruned step and one nobody ever wrote both answer
     /// `Err(Missing)` to `read_back`, are both absent from `replay`, and answer alike to a
     /// second `prune`. The distinction wants the FINGERPRINT and SIZE ADR-0018 asks a pruned
-    /// record to carry; a fingerprint wants a hash function, and in the kernel that is a NEW
+    /// record to carry, and a fingerprint wants a hash function. The kernel has one already,
+    /// written by hand — `crate::wire::ipc::build_stamp`, FNV-1a — and its own doc calls it an
+    /// identity and the WRONG FUNCTION for a defence; a collision-resistant one would be a NEW
     /// ENTRY IN THE LIST OF ADR-0031 — a deliberate act no measurement has prepared. Closed by
-    /// the milestone that brings retention, TOGETHER with the decision on the fingerprint
-    /// (decision D7 of the milestone-3 plan).
+    /// sub-project 15 (docs/roadmap.md, «Dati a riposo: cifratura e ritenzione»), whose
+    /// retention sweep is the first caller of this operation; the fingerprint function is
+    /// chosen by sub-project 13, which uses it first. Retention was left out by decision D7 of
+    /// the milestone-3 plan. ⚠️ RECALL OF 2026-10-07 — audit of 2026-09-30, AUD-563, AUD-093.
     /// ⚠️ THIS IS THE RESERVE `JournalError::StepInDoubt` SENDS ITS READER HERE FOR: until what
     /// a pruned step looks like afterwards is settled, there is no "already pruned" to name.
     ///

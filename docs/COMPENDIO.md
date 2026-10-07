@@ -17,7 +17,7 @@
 > cartella `adr/` «per farsi un'idea». Insieme pesano **oltre mezzo megabyte** — il
 > comando in fondo alla §12 — e l'idea è già qui.
 
-**Aggiornato il 2026-10-02**, con **ADR-0041** dal terzo audit — chi può parlare col core —: la sua voce in §5 e i totali. Questa riga com'era è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Il contenuto di merito nuovo è la voce di ADR-0041. Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
+**Aggiornato il 2026-10-06**, con P25 del terzo audit: la trappola 2 della §10 e il vincolo 1 della §11 al vero, la trappola 7, i rimandi nelle voci 0011 e 0012; prima, tre tagli in archivio (P11). Questa riga com'era è in [`archivio/stato-storico.md`](archivio/stato-storico.md). Manutenzione, e perché questa riga è la più facile da lasciare indietro: §13.
 
 ---
 
@@ -154,7 +154,7 @@ terze parti gira nel processo dell'applicazione.** Esistono esattamente due
 meccanismi: **server MCP** (processo esterno, permessi propri, revocabile) e **skill
 dichiarativa** (istruzioni e dati, **non** codice eseguibile, quindi nessun isolamento
 necessario). Coprono la sostanza di un marketplace di plugin senza il contratto
-pubblico da congelare e senza la superficie d'attacco.
+pubblico da congelare e senza la superficie d'attacco. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** il «nessun isolamento» della skill è contestato, e lo decide l'ADR del proprietario su AUD-004.
 
 **0004 — Topologia di processo.** Tre classi, non una di più.
 
@@ -182,14 +182,14 @@ prelazionabilità e tempo di rilascio fusi in `Preemption`, e `cold_start` vive 
 delle due divergenze sta nel **rimando datato in testa ad ADR-0005**, in una casa sola. **La
 quota VRAM dell'audio è sottratta dal budget all'avvio e non vi rientra**: un budget
 sottratto non può essere allocato per errore, mentre una priorità può essere rispettata
-tardi. Nessun degrado silenzioso.
+tardi. Nessun degrado silenzioso. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** la verifica del picco nasce col primo worker sulla GPU; la quota audio è una concessione, non un'esenzione.
 
 **0006 — Le due policy VRAM sono oggetti distinti.** Non due rami di un condizionale:
 **due oggetti che implementano la stessa interfaccia**, uno solo attivo, scelto dal
 profilo di configurazione. Il passaggio è una **transizione esplicita con effetti
 osservabili** — eviction, ricarica, notifica all'utente — **offerta** all'utente, non
 imposta. La duplicazione fra due policy è visibile e circoscritta; la deriva di un
-condizionale è invisibile e diffusa. Default: **OpenRouter, VRAM libera**. ⚠️ **Rimando del 2026-09-08, in testa all'ADR:** il profilo dà il **default**, la policy **corrente** è la proiezione del giornale — l'ultima transizione scritta da `Arbiter::set_policy`; il daemon la rilegge all'avvio, compito del piano del 2 — decisione 17 della stella polare della GUI.
+condizionale è invisibile e diffusa. Default: **OpenRouter, VRAM libera**. ⚠️ **Rimando del 2026-09-08, in testa all'ADR:** il profilo dà il **default**, la policy **corrente** è la proiezione del giornale — l'ultima transizione scritta da `Arbiter::set_policy`; il daemon la rilegge all'avvio, dal 2 — decisione 17 della stella polare della GUI. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** la rilegge `arbiter::policy_now`, dalla nota della specie `Policy`, e la cambia la funzione `vram-policy` del registro.
 
 **0007 — Giornale write-ahead e ripresa come riconciliazione.** Giornale
 **append-only**: l'intento di ogni passo è reso durevole **prima** dell'esecuzione,
@@ -204,7 +204,7 @@ la propria **classe**, e la classe determina la riconciliazione:
 | `irripetibile` | **sospendi e chiedi all'utente** |
 
 **Un effetto senza classe dichiarata è trattato come `irripetibile`**: davanti a un
-dubbio non risolvibile il sistema si ferma, non indovina.
+dubbio non risolvibile il sistema si ferma, non indovina. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** il default serve a una versione futura del record senza `effect`, e lo costruisce chi la scrive.
 
 **0008 — Il contesto è una proiezione dello stato durevole, non lo stato.** La finestra
 si compone dagli elementi durevoli a ogni passo, e la compattazione **ricalcola la
@@ -226,7 +226,7 @@ deliberatamente povero: `(artefatto) → (verdetto, dettaglio, costo)` — un co
 minimo si può allargare, uno ricco e sbagliato no. **Anello di miglioramento:** quando
 un problema si ripete **si migliora il controllo, non il prompt**; il kernel rileva la
 ricorrenza e **propone**, l'utente **approva**. Non si auto-modifica in silenzio. Le
-skill dichiarative di 0003 sono **guide**. ⚠️ **Rimando del 2026-09-05, in testa all'ADR:** registro delle guide e trigger si costruiscono nel sotto-progetto **13**, prima della prima capacità che inietta una guida; le due pretese della mappa — chiave di contesto (ambito, run, modello); provenienza e impronta, con «approvate ora» come proiezione del giornale — disegno della knowledge base.
+skill dichiarative di 0003 sono **guide**. ⚠️ **Rimando del 2026-09-05, in testa all'ADR:** registro delle guide e trigger si costruiscono nel sotto-progetto **13**, prima della prima capacità che inietta una guida; le due pretese della mappa — chiave di contesto (ambito, run, modello); provenienza e impronta, con «approvate ora» come proiezione del giornale — disegno della knowledge base. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** il trigger fa partire l'anello 1: apre una run da un evento.
 
 **0010 — La proiezione ha un budget di qualità, non una soglia di riempimento.** Budget
 target espresso come frazione della finestra, configurabile per modello. La
@@ -250,7 +250,7 @@ run interattiva di lunga durata. **Non esiste un percorso «chat» accanto a un 
 VAD, trascrizione continua — **non** è un passo: è una **sorgente di eventi** (anello
 3), non passa dal gateway, e giornalarla violerebbe Q1. La trascrizione che diventa un
 messaggio **apre** un passo; i frammenti audio che l'hanno prodotta no. Il costo si
-registra **anche per gli stream interrotti**. ⚠️ **Rimando del 2026-09-03, in testa all'ADR:** nell'inferenza percettiva entra il **tracciamento delle mani**; un gesto di comando apre un passo, i fotogrammi no — ADR-0039.
+registra **anche per gli stream interrotti**. ⚠️ **Rimando del 2026-09-03, in testa all'ADR:** nell'inferenza percettiva entra il **tracciamento delle mani**; un gesto di comando apre un passo, i fotogrammi no — ADR-0039. ⚠️ **Rimando del 2026-10-06, in testa all'ADR:** il record risolto porta il modello, i candidati offerti e il degrado; il resto arriva col primo che chiama un modello (3), §6.2 della spec.
 
 **0012 — L'equivalenza del fallback è definita dai vincoli, e sui dati si fallisce
 chiuso.** Un candidato che viola un vincolo della richiesta **non è un fallback: è una
@@ -263,7 +263,7 @@ catena esaurita:
 | vincoli **su qualità e costo** (tetto di prezzo, modello preferito, latenza) | **degrado dichiarato**: procede avvisando |
 
 L'**indisponibilità di risorsa** è causa di fallback di prima classe: se l'arbitro GPU
-rifiuta o accoda, non è un errore. **Un ritentativo non è un passo nuovo.**
+rifiuta o accoda, non è un errore. **Un ritentativo non è un passo nuovo.** ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** l'errore del ramo chiuso nominerà il vincolo col 3 (V18). ⚠️ **Rimando del 2026-10-06, in testa all'ADR:** il punto 1 scarta per i soli vincoli sui dati, e quelli di qualità ordinano i rimasti (`gateway::resolve`).
 
 **0013 — La conformità allo schema è un verdetto di sensore, non un'eccezione.** La
 validazione dello schema è un **sensore computazionale**: un output non conforme
@@ -283,7 +283,7 @@ sanitizzazione:** non si tenta di rimuovere istruzioni dal testo.
 > fidato può *informare*, mai *autorizzare*.
 
 Conseguenza: ogni azione la cui **decisione** dipende da contenuto non fidato richiede
-la stessa autorizzazione che richiederebbe se l'utente non l'avesse chiesta.
+la stessa autorizzazione che richiederebbe se l'utente non l'avesse chiesta. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** il passaggio giornalato è `Untrusted::promote`, ma `Instruction::new` è pubblico: A1/A2, il pavimento della §6; come si presenta una conversione lo decide chi ne scrive il primo chiamante.
 
 **0015 — Le descrizioni degli strumenti sono fissate all'approvazione.** La descrizione
 si mostra **integralmente** all'utente all'approvazione — non solo il nome, ma il testo
@@ -303,7 +303,7 @@ dati lo dichiara il profilo, **ma qualunque richiesta il cui contenuto abbia
 attraversato il gestore dei segreti sale automaticamente alla classe più stretta**, e
 se non trova endpoint conforme fallisce chiuso. **Canary di esfiltrazione:** valori
 sentinella nel gestore dei segreti; la loro comparsa in uscita è un verdetto di sensore
-che blocca.
+che blocca. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** l'escalation nasce col gestore dei segreti; la «classe più stretta» e il sensore che ferma sono le scelte aperte AUD-586 e AUD-139.
 
 **0017 — Il giornale è la sorgente, il trace è una proiezione.** Trace, contabilità,
 metriche e dataset di regressione sono **proiezioni** del giornale. Si adotta il
@@ -319,7 +319,7 @@ risposte, output degli strumenti, trascrizioni) → finestra breve, poi **potati
 sostituiti con impronta e dimensione**. Artefatti → **riferimenti**, il contenuto vive
 sul filesystem. **La potatura è irreversibile e va dichiarata:** un payload assente e
 uno mai registrato non devono essere indistinguibili. **Un passo in dubbio non è mai
-potabile** finché non è riconciliato.
+potabile** finché non è riconciliato. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** la costruisce il 15, sostituzione sulla porta compresa; la funzione d'impronta la sceglie il 13.
 
 **0019 — Lo stato di degrado è un oggetto osservabile, non una collezione di errori.**
 Il core mantiene uno **stato di degrado corrente**, aggiornato dagli eventi
@@ -327,7 +327,7 @@ Il core mantiene uno **stato di degrado corrente**, aggiornato dagli eventi
 espone come oggetto osservabile. **Il principio: si dichiara prima, non si fallisce
 dopo** — l'utente deve sapere cosa è disponibile *prima* di tentare. Generalizza a
 tutto il sistema il «nessun degrado silenzioso» di ADR-0005: era una regola locale,
-diventa una proprietà del kernel. ⚠️ **Rimando del 2026-09-08, in testa all'ADR:** la lista degli eventi è **aperta** — il codice deriva già il fallback dichiarato di ADR-0012, la telecamera arriva con ADR-0039 — e a GPU satura resta viva anche la **GUI** (ADR-0033); il diagramma vivo è design/07.
+diventa una proprietà del kernel. ⚠️ **Rimando del 2026-09-08, in testa all'ADR:** la lista degli eventi è **aperta** — il codice deriva già il fallback dichiarato di ADR-0012, la telecamera arriva con ADR-0039 — e a GPU satura resta viva anche la **GUI** (ADR-0033); il diagramma vivo è design/07. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** ha una sorgente il solo arbitro; gli altri ingressi vengono col 3 e col 4.
 
 **0020 — Nessun modello nel percorso decisionale del kernel.** I modelli sono invocati
 *attraverso* il kernel e i loro esiti sono **dati opachi**, mai giudizi su cui il
@@ -360,7 +360,7 @@ suite sarebbe una falsa sicurezza. Rimando: ADR-0034 aggiunge il **secondo asse*
 
 I segreti sono esclusi perché **un backup che trasporta chiavi API è un vettore di
 fuga**, non una comodità. Quattro requisiti del motore di persistenza; il **quarto** —
-ogni operazione di I/O **iniettabile** — è quello che ha poi deciso ADR-0032. ⚠️ **Rimando del 2026-09-08, in testa all'ADR:** le **guide** sono file della cartella della knowledge base (disegno del 2026-09-04); la configurazione contiene i profili e, col 2, la **disposizione dei pannelli**, raggiunta dal kernel da una **settima porta** — stella polare della GUI, §2. ⚠️ **Rimando del 2026-09-30, in testa all'ADR:** **modificato in parte da ADR-0040** — la riga «artefatti», le guide e la conseguenza sulla base di conoscenza; il resto regge, e lo stato resta `Accepted`.
+ogni operazione di I/O **iniettabile** — è quello che ha poi deciso ADR-0032. ⚠️ **Rimando del 2026-09-08, in testa all'ADR:** le **guide** sono file della cartella della knowledge base (disegno del 2026-09-04); la configurazione contiene i profili e, dal 2, la **disposizione dei pannelli**, raggiunta dal kernel da una **settima porta** — stella polare della GUI, §2. ⚠️ **Rimando del 2026-09-30, in testa all'ADR:** **modificato in parte da ADR-0040** — la riga «artefatti», le guide e la conseguenza sulla base di conoscenza; il resto regge, e lo stato resta `Accepted`.
 
 **0023 — Cifratura a riposo con chiavi dell'OS, e gestore dei segreti unico.** Le
 chiavi le gestiscono le facility dell'OS, raggiunte dal modulo di piattaforma (I3); il
@@ -371,7 +371,7 @@ l'unico punto di lettura delle credenziali**, e da questo punto unico discendono
 meccanismi già decisi: mascheratura nel record di routing, escalation automatica dei
 vincoli sui dati, canary di esfiltrazione. **Profilo «riservato»** opzionale con
 passphrase, che **disattiva avvio automatico e voce always-on** — mutuamente esclusivi,
-e fingere il contrario sarebbe disonesto. ⚠️ **Rimando del 2026-09-03, in testa all'ADR:** il profilo «riservato» disattiva **anche la telecamera** — ADR-0039.
+e fingere il contrario sarebbe disonesto. ⚠️ **Rimando del 2026-09-03, in testa all'ADR:** il profilo «riservato» disattiva **anche la telecamera** — ADR-0039. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** il `0600` vale solo su Unix e alla creazione, e non protegge un disco letto fuori dal sistema; la cifratura è del **15**, e che cosa dica l'interfaccia fino ad allora la scelta aperta AUD-686; in quale crate viva l'accesso alla chiave, `secrets` o `platform`, la scelta aperta AUD-147.
 
 **0024 — Il checkpoint del filesystem copre ambiti dichiarati.** Un **ambito di
 lavoro** è un insieme di percorsi dichiarato esplicitamente; il checkpoint copre quelli
@@ -406,14 +406,14 @@ in Go lo scheduler appartiene al runtime e il determinismo è *fornito* solo den
 test, e misurato solo parzialmente; in TypeScript il controllo esiste solo rinunciando
 ad `async`/`await`, e senza parallelismo reale. ⚠️ **L'esito non era scontato:** i
 criteri erano fissati prima che i candidati esistessero, e la verifica su Go è stata
-eseguita per **falsificare** l'attesa.
+eseguita per **falsificare** l'attesa. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** `extern crate std;` scavalca `no_std`, e nel prodotto lo coglie il cancello senza OS; la premessa di T2 è falsa, e T4 è la scelta aperta AUD-681; il compilatore tiene le vie delle regole A e B; V28 è parziale; 0031 nomina 0026, ma non su `madsim`.
 
 **0027 — La GUI è un'interfaccia web, non un toolkit nativo.** Ha deciso **G7 —
 artifacts o canvas con anteprima viva**: rendere contenuto arbitrario prodotto da un
 modello con anteprima viva **richiede** un motore web, e un toolkit nativo dovrebbe
 incorporarne uno comunque, cioè pagare due stack invece di uno. Rinforzano G6 (viewer
 3D) e G20 (accessibilità: quella del web è la più matura). **Scelta a basso rischio per
-costruzione:** se fosse sbagliata, la GUI si riscrive **senza toccare il kernel**.
+costruzione:** se fosse sbagliata, la GUI si riscrive **senza toccare il kernel**. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** il guscio è deciso; col rendering vero P3 **non passa** (SP-8), la leva è la SPA e il flusso pesa anch'esso; P4 prova che il core sopravvive e riaccetta, non che non aspetti.
 
 **0028 — Worker ML in Python.** Non è una scelta: i modelli hanno implementazioni
 Python. L'ADR ne dichiara i costi. Ciò che un worker **non** contiene, e non è una
@@ -427,13 +427,13 @@ riposo e sotto streaming · dimensione del pacchetto · fps del viewer 3D e API 
 P3 con rendering vero · **M5**, VRAM a riposo e sotto carico 3D (aggiunta da ADR-0033).
 ⚠️ **L'innesco Linux:** al primo Linux vero si rimisurano M3 e M5; se M3 mostra la stessa API
 grafica sulle due piattaforme con Tauri, la decisione si **riapre con un ADR nuovo**.
-`dockview` resta, dopo le otto mosse.
+`dockview` resta, dopo le otto mosse. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** la parte 2 non ha misurato né P3 né il rimedio di Q3, che passa al guscio del **10**; M5 è un proxy; il decodificatore di Q1 non è costruito — scelte aperte AUD-591, AUD-592, AUD-593.
 
 **0030 — L'interfaccia si scrive in Vue 3, come SPA.** Ha deciso la **competenza del
 proprietario**, criterio **legittimo qui** perché nessuna invariante vincola la scelta
 e la GUI è l'artefatto più sacrificabile del sistema (in ADR-0026 non lo era). Per le
 componenti pesanti si preferiscono le librerie **agnostiche** rispetto al framework
-(`three`, `codemirror`) alle incapsulazioni Vue: sopravvivrebbero a un cambio.
+(`three`, `codemirror`) alle incapsulazioni Vue: sopravvivrebbero a un cambio. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** il guscio non è più aperto, è Electron.
 
 **0031 — Le dipendenze del kernel sono parte del confine I3.** Le crate che devono
 essere deterministiche e prive di OS — `kernel` e `simulator` — hanno una **lista
@@ -445,19 +445,19 @@ nasce vuota**. ⚠️ `simulator` non aggiunge voci proprie **ma il suo grafo no
 dipende da `kernel`. **Perimetro:** `platform`, `secrets` e `daemon` **non** sono
 vincolati — è lì che l'I/O deve vivere. Oggi la lista contiene `bincode` 2.0.1 con
 `unty`, e `minicbor` 2.3.0. ⚠️ Il grafo **di build** è passato a sette voci, e per la
-prima volta il kernel porta `syn` a tempo di compilazione.
+prima volta il kernel porta `syn` a tempo di compilazione. ⚠️ **Rimando del 2026-10-04, in testa all'ADR:** le due frasi su `no_std` si leggono col rimando di 0026; le ~30 righe del prototipo sono una stima.
 
 **0032 — Motore di persistenza: `redb` 4.1.0, con il backend sotto il nostro
 controllo.** Usato con uno `StorageBackend` **scritto da noi** invece di quello su file
 predefinito. Il backend nostro **non è un dettaglio**: è il punto in cui il requisito 4
 (I/O iniettabile) diventa reale. Due implementazioni: backend su file in `platform`
-(l'I/O vero) e backend **cadente in memoria** — cade a un'operazione scelta dal seme, ed è
+(l'I/O vero) e backend **cadente in memoria** — cade al punto che sceglie chi chiama, e la campagna li percorre tutti, senza seme: è
 **l'iniezione di livello 2**. ⛔ **Il cadente vive in `platform` e NON in `simulator`:**
 `redb` non ha `no_std`, i sei metodi di `StorageBackend` restituiscono `std::io::Error`, e il
 grafo spedito di `simulator` lo rifiuterebbe come **«I3 violated»**. I **due livelli di crash**
 hanno soggetti diversi — rimando datato in ADR-0032.
 `redb` vive in `platform`, quindi ADR-0031 non lo vincola: il kernel conosce solo la porta
-`journal`.
+`journal`. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** il livello 2 non ha seme, e il suo oracolo confronta il contenuto, a prefisso.
 
 **0033 — La GPU della GUI: quota di presentazione sottratta, concessione tenuta dal
 core.** Il consumo GPU della GUI si modella come **tre consumatori distinti**:
@@ -476,7 +476,7 @@ ha un titolare · **sopravvive alla GUI uccisa in qualsiasi istante**, quindi ne
 protocollo di liveness contro un processo progettato per morire · la quota non si
 libera a GUI chiusa, o la GUI riaperta andrebbe in OOM. Se la GUI muore tenendo una
 concessione ordinaria, il core se ne accorge dalla **disconnessione IPC** e riconcilia.
-**I2 si completa, non si riformula.**
+**I2 si completa, non si riformula.** ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** M5 è un proxy — scelte aperte AUD-592 e AUD-199 —; P3 non ha più margine, quindi E va misurata; il gettone audio la radice di composizione lo lascia cadere, e il titolare per l'8 è la scelta aperta AUD-200.
 
 **0034 — I parametri di decisione sono consegnati al kernel, non letti.** **Nessuna
 decisione del kernel legge un parametro che non le è stato consegnato.** Il kernel
@@ -488,7 +488,7 @@ ricava dall'archivio via `platform` e in simulazione lo riceve dal banco · la
 è un sistema di configurazione (niente formato, schema, validazione, ricarica a caldo),
 non è un registro a chiavi stringa, non è sostituzione a caldo generalizzata, e non
 decide il formato dell'archivio. In sotto-progetto 1 i default sono **letterali in
-`daemon`**.
+`daemon`**. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** la campagna che fa variare i parametri col seme non esiste — scelta aperta AUD-711.
 
 **0035 — La porta verso i worker, e cosa significa «singolo» in I4.** Il dialogo con un
 worker vive dentro la porta **`process`**, che copre **avvio, dialogo e uccisione** —
@@ -499,7 +499,7 @@ di trasporto e uno schema _per canale privato_** — nessun broker, nessun servi
 discovery, nessuna negoziazione, nessun versionamento. Ciò che I4 compra è che non
 esista un **contratto pubblico** da congelare, e nessuno dei due canali ha consumatori
 esterni. Il rifiuto di un pari stantio resta il **timbro di build**, identico sui due
-canali. **I4 si completa, non si riformula.**
+canali. **I4 si completa, non si riformula.** ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** l'esito B di M-1 non è scattato — il canale `process` è `minicbor` in `kernel`, ADR-0037 —, e il codice tratta il testo che la GUI sceglie come non fidato: scelta aperta AUD-005; la ricevuta del dialogo col worker la tiene l'implementazione, non il compilatore.
 
 **0036 — L'evoluzione del formato durevole del giornale.** **Ogni record durevole
 dichiara la propria versione, e i suoi campi si identificano per indice esplicito.**
@@ -520,15 +520,15 @@ dentro la scrittura**, e perché il costo misurato è piccolo. **Il controllo è
 non due, perché un registro separato sarebbe un secondo posto da tenere allineato e il
 primo che smette mente in silenzio. ⛔ **I byte congelati non si rigenerano:** se
 cambiano non è un aggiornamento, è un **cambio di formato**.
-✅ **Esistono dal 2026-08-10** — `crates/kernel/tests/frozen_bytes.rs` e `tests/frozen/` — e
-sono **tre** record, non uno: i tre enum `index_only` hanno **otto** varianti fra loro e un
-record solo ne fisserebbe tre. Le otto sono state rinumerate una per una: **otto rossi su otto**.
+✅ **Esistono dal 2026-08-10** — `crates/kernel/tests/frozen_bytes.rs` e `tests/frozen/` —: ogni
+variante dei tre enum `index_only` ha il suo record congelato, e un test che legge gli enum lo pretende;
+quanti, `ls crates/kernel/tests/frozen/*.cbor`. Rinumerate una per una il 2026-08-10, ciascuna diede un rosso.
 ✅ **E l'additività della regola 3 è MISURATA, non citata:** un campo facoltativo su un indice
 libero lascia i byte **identici** finché è `None` — `minicbor` tronca un `None` in coda invece
 di scrivere `null` — e li allunga di un byte quando è `Some`, che è la metà senza la quale il
 verde non proverebbe nulla (gotcha **#54**). ⛔ **La mappa è RILETTA dal banco**, non prosa:
 offset e byte di ogni riga devono ricostruire il `.cbor`, il che rende impossibile un
-segnaposto sopravvissuto al commit (gotcha #43).
+segnaposto sopravvissuto al commit (gotcha #43). ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** la regola 3 vale per le aggiunte — una specie nuova entra con un `kind` nuovo **e** il dettaglio, mai l'uno senza l'altro (D20) —; una variante ignota rende il record `Malformed` a una build vecchia, una specie di `Detail` ignota diventa `None` in silenzio. Il default `irripetibile` non discende da sé: lo dichiarerà e lo costruirà la versione del record che toglie `effect` (ADR-0007).
 
 **0037 — Il criterio del pari.** **Il formato di un canale privato si sceglie _anche_
 sull'ecosistema di chi lo legge, e la risposta si _misura per pari_.** M-1 chiedeva se il
@@ -546,7 +546,7 @@ parte, e P1 sembrava rispondervi pur avendo **due binari Rust** ai due capi.
 **misurata**, non accidentale, e non va «sanata». ⛔ E un decodificatore scritto e
 mantenuto **da noi** nel linguaggio del pari **non è una via**: è una seconda definizione
 dello schema, e misurato sbaglia **in silenzio** — un lettore ingenuo del varint ha
-restituito `251` al posto di `4096` senza sollevare nulla.
+restituito `251` al posto di `4096` senza sollevare nulla. ⚠️ **Rimando del 2026-10-03, in testa all'ADR:** modifica in parte ADR-0035, sul formato del canale worker; come decodifica la GUI l'ha deciso il 2, con Q1 di ADR-0029.
 
 **0038 — Il registro delle funzioni del programma.** **Un registro unico, molti invocatori,
 lo stesso permesso.** Il kernel dà registrazione, invocazione, il permesso come tripla di ADR-0016
@@ -555,8 +555,8 @@ Agente, gesto, voce e click passano dalla **stessa** porta con la **stessa** tri
 logica «solo per gesti» esiste. Un evento di percezione **informa, mai autorizza** (ADR-0014 per
 analogia); un effetto irripetibile chiede conferma a qualunque invocatore, e **per default la
 conferma non è gestuale**. La manipolazione della GUI — pannelli, menu — è presentazione e
-**non passa dal registro**. ⛔ **Nessun codice nasce con l'ADR:** il registro lo costruisce il
-primo invocatore, il click del sotto-progetto 2; quali funzioni siano gestuali lo decide il 12. ⚠️ **Rimando del 2026-09-05, in testa all'ADR:** la knowledge base registra le **CRUD** dei propri file e gruppi come funzioni del registro, spostamenti compresi; «aggiungi al contesto» ha **due invocatori**, il click e il modello — disegno della knowledge base.
+**non passa dal registro**. ⛔ **Nessun codice nacque con l'ADR:** il registro l'ha costruito il
+sotto-progetto 2, col click — rimando del 2026-10-03 —, ma niente impone ancora che una funzione nuova vi passi; quali siano gestuali lo decide il 12. ⚠️ **Rimando del 2026-09-05, in testa all'ADR:** la knowledge base registra le **CRUD** dei propri file e gruppi come funzioni del registro, spostamenti compresi; «aggiungi al contesto» ha **due invocatori**, il click e il modello — disegno della knowledge base.
 
 **0039 — La telecamera come sorgente di percezione always-on sotto il core.** Un worker Python
 **possiede** la telecamera e i fotogrammi **non escono mai**; al core arrivano **eventi** — lo
@@ -573,6 +573,7 @@ Concessione da **zero MiB**, `Preemption::Never`, chiesta all'**accensione**: la
 lettura — e lo paga il sotto-progetto **12**; la Voce riusa. Tre ipotesi le misurano **SP-7** e
 la sonda S3; il confinamento del worker (decisione 13) e la terza quota (decisione 9) restano
 **registrati**. Le fonti F1–F9 in [`riferimenti.md`](riferimenti.md). ✅ **Rimando del 2026-09-05, nella riga del perimetro negativo:** la destinazione di una cattura è **decisa** — nella knowledge base come artefatto, la run la vede come riferimento (decisione 7 dei gesti, chiusa dal disegno della knowledge base).
+⚠️ **Rimandi del 2026-10-02, in testa all'ADR:** la cattura è l'unico caso in cui un fotogramma uscirebbe, oggi non esce, e l'eccezione la decide il 12 con un ADR suo; SP-7 ha misurato — S1 non passa, S2 e S3 sì — e che cosa ne segue per il tracciatore lo decide il 12; il 2 legge già una porta e ha il timbro di build; il messaggio IPC con la mano è del 12; il trigger di ADR-0009 apre una run — audit del 2026-09-30.
 
 **0040 — Dove vivono i dati, e che cosa salva il programma.** **Modifica ADR-0022 in tre punti** — la riga
 «artefatti», le guide, la conseguenza sulla base di conoscenza —, e lo stato di 0022 resta `Accepted`. I **dati del
@@ -592,8 +593,8 @@ sistema:** su Windows la pipe nasce con un descrittore che dà accesso al solo S
 proprietario della pipe col proprio; su Linux il socket è un file in `$XDG_RUNTIME_DIR`, che il core verifica chiusa
 agli altri prima di legarlo — assente o aperta, il core non parte —, e un socket rimasto da un crollo si toglie solo
 se nessun core vivo risponde. L'account atteso è **consegnato** al trasporto, come il nome e il tetto: il rifiuto si
-prova con un account solo. ⚠️ **Fuori dal confine**, come in ADR-0023: un processo che gira come l'account. Lo
-costruisce P06 del terzo audit; il capo della GUI nasce con la shell.
+prova con un account solo. ⚠️ **Fuori dal confine**, come in ADR-0023: un processo che gira come l'account. Il
+capo del core è costruito — P06 del terzo audit, integrato il 2026-10-02: rimando del 2026-10-03 —; il capo della GUI nasce con la shell.
 
 ---
 
@@ -605,25 +606,7 @@ che ne è la **casa unica**, col comando in fondo a questa sezione (gotcha #68).
 senza numero AUD**, la cui tabella in quel file è la casa unica, in gran parte **decisioni del
 proprietario**. Che cosa se ne legge all'apertura lo dice `CLAUDE.md` (decisione 26 della stella polare).
 
-**Spec del kernel §0–§10 completa.** Spec del **sotto-progetto 1** con §0–§8 approvate,
-**riaperta su sette voci** — **tutte chiuse** — **§8 riallineata e chiusa il 2026-08-08**, e
-**audit sezione-contro-ADR passato**.
-
-### I sei traguardi del sotto-progetto 1
-
-| # | | |
-|---|---|---|
-| 1 | scheletro e porta di qualità | ✅ 2026-08-08 |
-| 2 | substrato iniettabile | ✅ 2026-08-10 |
-| 3 | giornale e formato durevole | ✅ 2026-08-10 |
-| 4 | simulatore DST — il guasto | ✅ 2026-08-11 |
-| 5 | arbitro GPU | ✅ 2026-08-25 |
-| 6 | gli altri meccanismi | ✅ 2026-09-02 |
-
-⚠️ **Nessun numeratore di compiti in questa tabella**, per costruzione: invecchierebbe a
-ogni compito. Il racconto di ciascun traguardo sta nel proprio piano, in
-[`superpowers/plans/`](superpowers/plans/); i verbali di chiusura stanno in
-[`archivio/stato-storico.md`](archivio/stato-storico.md).
+⚠️ **RICHIAMO DEL 2026-10-04** — il tetto del compendio, decisione P11 del [terzo audit](audit-2026-09-30.md): lo stato della spec del sotto-progetto 1 e la tabella dei suoi sei traguardi, tutti chiusi, sono in [`archivio/stato-storico.md`](archivio/stato-storico.md), parola per parola; lo stato per traguardo vive in [`roadmap.md`](roadmap.md).
 
 ### Il prossimo passo
 
@@ -633,8 +616,6 @@ Qui resta lo stato di oggi: è l'unico posto dove vive il prossimo passo, e più
 [`roadmap.md`](roadmap.md), e i verbali dei passi di mezzo li indica la §12. La tabella che lo elencava, e il verbale del
 mandato del 2026-09-09 che sfoltì la lettura, stanno in [`archivio/stato-storico.md`](archivio/stato-storico.md), parola
 per parola.
-
-📌 **La compressione di [`porta-di-qualita.md`](porta-di-qualita.md) è fatta, il 2026-09-24:** il file com'era sta intero in [`archivio/porta-di-qualita-storico.md`](archivio/porta-di-qualita-storico.md). ⏳ **La correzione delle contraddizioni** che la compressione ha segnato e non corretto — decisione 11 del [verbale degli sfoltimenti](superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md) — la fa il **terzo audit**, nel pacchetto della radice R4: deciso dal proprietario al triage del 2026-10-01. La lista sta in fondo a quel file.
 
 ⏭️ **IL PROSSIMO PASSO, IN TRE TEMPI. Uno: IL TERZO AUDIT COMPLETO**, aperto dal proprietario il 2026-09-30 — codice e
 documentazione, da testa a piedi, con la skill `repo-audit` — perché il pre-controllo del compito 2 del piano dei documenti
@@ -679,20 +660,24 @@ awk -F'|' 'NF>4{gsub(/^ +| +$/,"",$5); print $5}' docs/audit-2026-08-27.md | gre
 Il **racconto** di ogni voce aperta sta in [`archivio/stato-storico.md`](archivio/stato-storico.md), parola per parola,
 dal taglio 3 del 2026-09-09 (decisione 26 della stella polare della GUI): qui restano gli **indici**.
 
-📌 **Dove vivono le voci aperte.** Tre indici, e per i due del registro il comando che elenca le righe **non**
-chiuse — un elenco di nomi invecchierebbe alla prima che si chiude:
+📌 **Dove vivono le voci aperte.** Negli indici qui sotto, e per i due del registro il comando che elenca le righe
+**non** chiuse — un elenco di nomi invecchierebbe alla prima che si chiude:
 
 | Indice | Che cosa tiene |
 |---|---|
 | [`porta-di-qualita.md`](porta-di-qualita.md), *«Le voci aperte del Traguardo 5, in una tabella sola»* | le voci del Traguardo 5, con la colonna «chi la chiude» — ⚠️ alcune sono già **chiuse** dal Traguardo 6 e lo dicono nella **terza** colonna, non qui: il comando le salta |
 | lo stesso file, *«Le voci aperte del Traguardo 6, in una tabella sola»* | le voci del Traguardo 6, e chi le chiude — **non sempre il proprietario**, e lo dice la quinta colonna |
-| [`audit-2026-08-27.md`](audit-2026-08-27.md), *«Le voci aperte che NON hanno un numero AUD»* | X-1…X-4, in gran parte del proprietario: si legge all'apertura, lo prescrive `CLAUDE.md` |
-| la tabella qui sotto | le voci dei Traguardi 3 e 4, dei documenti e del modo di lavorare |
+| [`audit-2026-08-27.md`](audit-2026-08-27.md), *«Le voci aperte che NON hanno un numero AUD»* | X-1…X-4, in gran parte del proprietario: si legge all'apertura, lo prescrive `CLAUDE.md`; e dei 73 finding, quelli che la colonna «Stato» dice `aperto` |
+| [`audit-2026-08-11.md`](audit-2026-08-11.md), §9 | le voci del primo audit rimaste aperte, con chi le chiude |
+| il [disegno della chiusura](superpowers/specs/2026-09-02-sottoprogetto-1-chiusura-design.md), §7.8 | le voci della chiusura del sotto-progetto 1, con chi le chiude: chiuse quelle che la tabella e i richiami sotto di lei dicono chiuse |
+| la tabella qui sotto | le voci dei Traguardi 3 e 4, dei documenti, del modo di lavorare e delle sedi da assegnare |
 
 ```
 awk -F'|' '/^## .*LE VOCI APERTE DEL TRAGUARDO 5/{s=1} s&&/^## Cosa la porta NON controlla/{s=0} s&&/^\| [0-9]+ \|/&&$4!~/CHIUSA/{print $2": "$3}' docs/porta-di-qualita.md
 awk -F'|' '/^## .*LE VOCI APERTE DEL TRAGUARDO 6/{s=1} s&&/^\| +[0-9]+ \| +le voci \*\*ereditate/{s=0} s&&/^\| [0-9]+ \|/&&$4!~/CHIUSA/{print $2": "$3}' docs/porta-di-qualita.md
 ```
+
+⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-567, AUD-600, AUD-601, AUD-602: il primo audit e la chiusura del sotto-progetto 1 tengono voci aperte, e sono indici anche loro.
 
 ⛔ **Raccolte qui il 2026-08-10 perché chi riprende deve saperle PRIMA di scrivere, non
 trovandole.** Nessuna è un difetto oggi, e per ciascuna è scritto **perché**; erano sparse fra il
@@ -701,22 +686,32 @@ nessuno l'abbia chiusa.
 
 | | Dove è dichiarata | Chi la chiude |
 |---|---|---|
-| ⛔ **ADR-0018 è violata da entrambe le implementazioni:** un payload potato e uno mai registrato sono **indistinguibili in tre modi**. La via che non costa un'impronta è stata cercata e la misura la **uccide** — svuotare il payload fa rispondere `SuspendAndAsk` su **ogni** passo potato, a ogni ripresa | voce aperta 1 di [`porta-di-qualita.md`](porta-di-qualita.md), accanto a `prune` in tutte e due, e nel blocco **7b** della conformità | il traguardo della **ritenzione**, **insieme** alla decisione sulla funzione d'impronta — che è una voce nuova nella lista di ADR-0031 |
-| ⚠️ **la terza risposta di `prune` non è tenuta da nessuna promessa:** `Missing` per un passo mai scritto lo tiene **solo** il doppio in memoria, e la mutazione `M10` su `redb` **sopravvive all'intero workspace** | voce aperta 2 dello stesso file | il **primo consumatore** di `prune`, cioè la spazzata di ritenzione |
-| ⛔ **le due nozioni di «in dubbio» DIVERGONO, e la divergenza cade dal lato che AUTORIZZA la distruzione:** la porta chiede *quale operazione è stata chiamata*, `steps_in_doubt` chiede *cosa dicono i record* — e un record d'esito che la build non decodifica è in dubbio per il kernel e **potabile** per la porta. ✅ **Misurato il 2026-08-27 da fuori la crate, su entrambe:** `steps_in_doubt` risponde `[InDoubt { step: StepId(1), resolution: SuspendAndAsk }]` e `prune` risponde `Ok(())`. ⛔ **Non è chiudibile sulla porta**, che non decodifica (ADR-0036): l'obbligo è di **chi chiama**, e quel chiamante **non esiste ancora** — quanti ne abbia oggi lo dice la voce aperta, in una casa sola | voce aperta **3** di [`porta-di-qualita.md`](porta-di-qualita.md), l'obbligo accanto a `Journal::prune` in `crates/kernel/src/ports/journal.rs`, e la dichiarazione nel blocco **7b** della conformità | il traguardo della **ritenzione**, come la prima riga di questa tabella e per un motivo imparentato: entrambe aspettano che qualcuno **chiami** `prune`. Finding **AUD-006** |
+| ⛔ **ADR-0018 è violata da entrambe le implementazioni:** un payload potato e uno mai registrato sono **indistinguibili in tre modi**. La via che non costa un'impronta è stata cercata e la misura la **uccide** — svuotare il payload fa rispondere `SuspendAndAsk` su **ogni** passo potato, a ogni ripresa | voce aperta 1 di [`porta-di-qualita.md`](porta-di-qualita.md), accanto a `prune` in tutte e due, e nel blocco **7b** della conformità | il **15**, con la funzione d'impronta che sceglie il **13**: nel kernel c'è già un hash scritto a mano, `build_stamp`, ma il suo commento lo dice inadatto a una difesa |
+| ⚠️ **la terza risposta di `prune` non è tenuta da nessuna promessa:** `Missing` per un passo mai scritto lo tiene **solo** il doppio in memoria, e la mutazione `M10` su `redb` **sopravvive all'intero workspace** | voce aperta 2 dello stesso file | il **primo consumatore** di `prune`, cioè la spazzata di ritenzione del **15** |
+| ⛔ **le due nozioni di «in dubbio» DIVERGONO, e la divergenza cade dal lato che AUTORIZZA la distruzione:** la porta chiede *quale operazione è stata chiamata*, `steps_in_doubt` chiede *cosa dicono i record* — e un record d'esito che la build non decodifica è in dubbio per il kernel e **potabile** per la porta. ✅ **Misurato il 2026-08-27 da fuori la crate, su entrambe:** `steps_in_doubt` risponde `[InDoubt { step: StepId(1), resolution: SuspendAndAsk }]` e `prune` risponde `Ok(())`. ⛔ **Non è chiudibile sulla porta**, che non decodifica (ADR-0036): l'obbligo è di **chi chiama**, e quel chiamante **non esiste ancora** — quanti ne abbia oggi lo dice la voce aperta, in una casa sola | voce aperta **3** di [`porta-di-qualita.md`](porta-di-qualita.md), l'obbligo accanto a `Journal::prune` in `crates/kernel/src/ports/journal.rs`, e la dichiarazione nel blocco **7b** della conformità | il **15**, come la prima riga di questa tabella e per un motivo imparentato: entrambe aspettano che qualcuno **chiami** `prune`. Finding **AUD-006** |
 | ⛔ **`replay()` carica TUTTO in memoria**, e la copia dei byte è stata misurata a **tre** allocazioni per record, non una | doc di `replay` in `crates/kernel/src/ports/journal.rs`, ed **E25** dell'errata | il primo consumatore che misuri un giornale grande. Il rimedio noto è un **checkpoint**, lo stesso che pagherebbe anche le scansioni di `FileJournal` |
-| ✅ **CHIUSA NELLA METÀ CHIUDIBILE il 2026-08-11** — che la durabilità sia **chiesta** — e ⛔ **aperta nella lettera dell'enunciato: la MORTE del processo.** Ciò che si osserva è una chiamata a `sync_data` su un backend **nostro**, dentro un processo **vivo**; non sono osservati che la chiamata raggiunga il supporto, l'**ordine** fra `write` e `sync_data`, il commit di `prune`, né un modello di guasto in cui una scrittura non sincronizzata possa davvero **sparire** — misurato, a `falls_at = 45` il record si rilegge benché la caduta abbia rifiutato proprio il `sync_data` del suo commit. Il perimetro per esteso in [`riferimenti.md`](riferimenti.md). ⚠️ **La riga originale:** la durabilità attraverso la morte del processo non è osservabile da dentro il processo, e `Durability::None` lascia **sei test su sei verdi** | accanto al codice in `crates/platform/src/journal.rs`, gotcha **#51** | l'**iniezione di livello 2** del **Traguardo 4**, attraverso il `StorageBackend` che il Task 8 ha reso sostituibile. ⛔ **QUESTA CELLA HA DETTO IL FALSO DAL BRAINSTORMING ALL'ESECUZIONE, e la correzione è del 2026-08-11, misurata due volte.** Diceva: *«con `Durability::None` `redb` non chiama `sync_data`, quindi un backend che conta le chiamate lo dice — una campagna che pretende «`sync_data` è scattato almeno una volta» diventa rossa appena la garanzia sparisce»*. **È falsa in entrambe le metà:** sotto quella mutazione `redb` chiama `sync_data` **sette volte all'apertura** e arriva a undici, perché **sei sync su sette nascono prima che esista un record** — `create_with_backend` nudo ne fa sei; e la forma *«almeno una volta»* è quindi **l'oracolo cieco per eccellenza**, verde proprio sotto la mutazione che esiste per cogliere. ✅ **La forma giusta è un DELTA attraverso la scrittura** — il conteggio dopo la scrittura maggiore di quello dopo l'apertura — e da lì il #51 è **chiuso nella metà chiudibile**: vedi la §6 e il perimetro scritto in [`riferimenti.md`](riferimenti.md). 📌 **La forma generale, che vale oltre il caso:** un contatore che parte da un valore che **il soggetto sotto esame non ha prodotto** non è un oracolo su quel soggetto. ⚠️ E il difetto non era il numero ma la **previsione**: la cella fu scritta quando il backend cadente non esisteva — gotcha **#57**, *«una decisione presa prima che esistesse ciò di cui parla è una previsione, e si cita come se fosse una misura»* |
+| ✅ **CHIUSA NELLA METÀ CHIUDIBILE il 2026-08-11** — che la durabilità sia **chiesta** — e ⛔ **aperta nella lettera dell'enunciato: la MORTE del processo.** Ciò che si osserva è una chiamata a `sync_data` su un backend **nostro**, dentro un processo **vivo**; non sono osservati che la chiamata raggiunga il supporto, l'**ordine** fra `write` e `sync_data`, il commit di `prune`, né un modello di guasto in cui una scrittura non sincronizzata possa davvero **sparire** — misurato, a `falls_at = 45` il record si rilegge benché la caduta abbia rifiutato proprio il `sync_data` del suo commit. Il perimetro per esteso in [`riferimenti.md`](riferimenti.md). | accanto al codice in `crates/platform/src/journal.rs`, gotcha **#51** | l'**iniezione di livello 2** del **Traguardo 4**, attraverso il `StorageBackend` che il Task 8 ha reso sostituibile. ✅ **La forma giusta è un DELTA attraverso la scrittura** — il conteggio dopo la scrittura maggiore di quello dopo l'apertura — e da lì il #51 è **chiuso nella metà chiudibile**: vedi la §6 e il perimetro scritto in [`riferimenti.md`](riferimenti.md). |
 | ⚠️ **le guardie di `FileJournal` sono SCANSIONI**, ~56 ns per record, e `has_intent` si paga a ogni scrittura: supera il pavimento dell'`fsync` solo oltre ~26 000 record | doc di `FileJournal`, e le misure in [`riferimenti.md`](riferimenti.md) | nessuno **finché nessuna misura lo chiede**: il rimedio è lo stesso checkpoint, e due meccanismi per una misura sola si comprano quando la misura c'è |
 | ⛔ **le vie A1, A2, A5, A7 del confine dei dati non fidati** restano aperte | `crates/kernel/src/boundary.rs`, voce per voce | ⛔ **nessuno**, e ciascuna lo **dichiara**: non è un arretrato, è il **pavimento** |
 | ⚠️ **l'amplificazione dello spazio di `redb`**, misurata in M-8 su carico **sintetico** | §4.8 della spec | *«da rimisurare sul carico reale prima di congelare i parametri di ADR-0018»* |
-| ⚠️ **il `kind` del record e l'operazione della porta restano due verità indipendenti**, e nulla di livello 1 impedisce a uno scrittore futuro di farle divergere | `crates/kernel/src/reconcile.rs` | ✅ **chiusa come DECISIONE dal proprietario**, non come garanzia: **ciascuno** degli scrittori ha la propria sonda. ⚠️ **RICHIAMO DEL 2026-08-21:** questa cella diceva *«la sonda copre l'unico scrittore che esiste, e l'aiutante nasce col secondo»*, e il secondo è arrivato col **Task 9** — `Arbiter::set_policy` — senza che nulla diventasse rosso. Gotcha **#77**. Se l'aiutante vada costruito è **registrato e non preso**: è del proprietario |
+| ⚠️ **il `kind` del record e l'operazione della porta restano due verità indipendenti**, e nulla di livello 1 impedisce a uno scrittore futuro di farle divergere | `crates/kernel/src/reconcile.rs` | ✅ **chiusa come DECISIONE dal proprietario**, non come garanzia: **ciascuno** degli scrittori ha la propria sonda. Se l'aiutante vada costruito è **registrato e non preso**: è del proprietario |
 | ⚠️ **il registro non è sorvegliato** dalla guardia dei conteggi | il capoverso qui sopra | il **proprietario**: allargare la lista non basta, servirebbe un controllo diverso — **registrata, non presa** |
 | ⚠️ **il puntatore al prossimo passo non ha una guardia**: dal 2026-08-18 vive in un posto solo, ma **nulla impedisce** a un documento di ricominciare a riscriverlo domani — ed è già successo tre volte. ⛔ La forma meccanizzabile esiste e costa un comando: *fuori da `COMPENDIO.md`, ogni riga che porta `⏭️` deve nominare la §6* | il riquadro di chiusura qui sopra, e la 25ª misura della §12 | il **proprietario**: è una **riga di catalogo** nuova in `check-docs.sh`, cioè una sua decisione (vincolo globale 7) — **registrata, non presa**, come la guardia sui pesi e l'elenco dei semi |
 | ⚠️ **l'elenco dei semi non avrà un chiudente**, e sarà l'unico artefatto del Traguardo 4 senza: nessun controllo pretende che una sua voce **nomini un test esistente**, e un elenco di semi senza proprietà è l'artefatto che marcisce meglio di tutti | §10 del [disegno del Traguardo 4](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md) | il **proprietario**: sarebbe una riga di catalogo nuova in `check-docs.sh` — **registrata, non presa**, come la guardia sui pesi della §12 |
 | ⛔ **i 25,8 µs di M-2 sono citati in tre punti della SPEC, e la cifra è falsificata** — non è confrontabile con nulla che esista oggi: il prototipo non è nel repository, l'esecutore era un altro, il protocollo era un colpo singolo, e lo scenario **aveva** il giornale, contro la formula *«scenario minimo»* che lo fa leggere altrimenti. ✅ La conclusione che sostiene — *«migliaia di semi stanno dentro un secondo»* — **regge ed era per difetto** | richiami datati già scritti in [`HANDOFF.md`](HANDOFF.md), [`riferimenti.md`](riferimenti.md) e [`design/08`](design/08-strategia-di-test.md), col numero vivo. Restano le tre citazioni nella **spec del sotto-progetto 1** | il **proprietario**: la spec si approva sezione per sezione, e un richiamo datato lì è una sua decisione — **registrata, non presa** |
 | ⚠️ **il portachiavi non ha un chiudente scritto**: nessuno script verifica che solo `secrets` lo raggiunga, e nessuna riga dice chi lo farà. ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-026: la seconda metà è falsa da oggi** — la §8 della spec lo dice; la prima resta vera | riga di *«Cosa la porta NON controlla»* in [`porta-di-qualita.md`](porta-di-qualita.md), e le righe **V34**, **Q24** e **Q17** della §8 della spec | ✅ **ASSEGNATO il 2026-08-27** — le tre righe passano a ⏳ **rimandato** con innesco, sul precedente di **V16** (§8.5.3.1). ⚠️ **Quale innesco non si scrive qui**: la casa unica è la colonna *Innesco* di §8.3 e §8.4. ⛔ **E nel merito la voce resta aperta**: assegnare un innesco non è scrivere il controllo |
 | ⚠️ **una regola di rimisura scatta anche su un tocco che non muove nessuna cifra?** Il Task 9 del Traguardo 5 lasciò la regola *«il primo compito che tocca `crates/kernel/tests/arbiter_admission.rs` rimisura tutte le celle della campagna»*; il Task 10 lo toccò — righe di doc, nessuna sonda — e nessuna cella fu rimisurata. **Registrata nel racconto del Task 10 e non presa**; fino al 2026-09-09 viveva solo in quel racconto | il racconto del Task 10, in [`archivio/stato-storico.md`](archivio/stato-storico.md) dal 2026-09-09 | il **proprietario**: è il modo di lavorare, non il prodotto |
-| ⚠️ **i pesi scritti a mano sopravvivono nel messaggio di [`AVVIO-CHAT.md`](AVVIO-CHAT.md)**, mentre la §12 dal 2026-08-28 li dà col comando: toglierli anche di là, lasciando il comando, chiuderebbe una classe di rilievi del ciclo di revisione del Task 11. **Registrata nel racconto del Task 11 (richiamo del 2026-08-28) e non presa**; fino al 2026-09-09 viveva solo in quel racconto | il racconto del Task 11, in [`archivio/stato-storico.md`](archivio/stato-storico.md) dal 2026-09-09, e il verbale delle misure in [`archivio/misure-dimensioni.md`](archivio/misure-dimensioni.md) | il **proprietario**: tocca il documento d'ingresso. ✅ **Chiusa il 2026-09-09, decisione 32 della stella polare della GUI:** il proprietario non incolla più il messaggio, che resta com'è e non è più lettura d'apertura |
+| ⚠️ **il rimedio http(s) di Q3 non è misurato**: la finestra a parte vuole il guscio, e in `gui/` un guscio non c'è | il rimando del 2026-10-03 in testa ad [ADR-0029](adr/0029-guscio-della-gui.md) | il guscio vero, del **10** |
+| ⚠️ **P3 non è rimisurato** sulla SPA, che non ha una scena 3D | lo stesso rimando, e la riga P3 delle domande aperte di [`HANDOFF.md`](HANDOFF.md) | la scelta aperta AUD-591 |
+| ⚠️ **M5 è un proxy**: sulla macchina di riferimento, la RTX 5080 della §0.3 del disegno del kernel, non è misurata | i rimandi del 2026-10-03 in testa ad ADR-0029 e ad [ADR-0033](adr/0033-gpu-della-gui-quota-di-presentazione.md) | la scelta aperta AUD-592 |
+| ⚠️ **il ponte e il decodificatore di Q1** — il processo principale Node, con `bincode-ts` — sono decisi e non costruiti | il rimando del 2026-10-03 in testa ad ADR-0029 | la scelta aperta AUD-593 |
+| ⚠️ **progress e notifiche dei lavori lunghi non hanno una sede**: il 2 non li ha costruiti | la riga «Progress e notifiche per job lunghi» di [`tracciabilita.md`](tracciabilita.md), ed **E228** del [disegno del design system](superpowers/specs/2026-09-22-design-system-design.md) | il **proprietario**: il 3 o il 7 |
+
+⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-563, AUD-093, AUD-646, AUD-513, AUD-514: le prime tre righe hanno la sede 15 della [roadmap](roadmap.md), con la funzione d'impronta del 13; l'ultima è entrata qui.
+
+⚠️ **RICHIAMO DEL 2026-10-04** — il tetto del compendio, decisione P11 del [terzo audit](audit-2026-09-30.md): la voce dei pesi di [`AVVIO-CHAT.md`](AVVIO-CHAT.md), chiusa il 2026-09-09, e le storie delle celle del #51 e del `kind` sono in [`archivio/stato-storico.md`](archivio/stato-storico.md), parola per parola.
+
+⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, AUD-590, AUD-591, AUD-592, AUD-593: le quattro righe di ADR-0029 sono entrate qui.
 
 📌 **Il ritratto pieno si riconta OGNI VOLTA, e le cifre non stanno qui** — il 2026-09-02 erano
 già stantie in entrambe le tabelle. Il comando, che è il blocco **A** della §1.3 del
@@ -770,13 +765,13 @@ Rimettere in discussione un ADR `Accepted` **richiede un ADR nuovo che lo superi
 | ❌ **riscrivere `tracciabilita.md` da zero** | le funzionalità sono già mappate, e **quante** lo dice il comando nel riquadro in testa a [`tracciabilita.md`](tracciabilita.md): si **aggiorna** — riletta alla chiusura del sotto-progetto 1 il 2026-09-03, e si riaggiorna a ogni sotto-progetto chiuso |
 | ❌ **ri-cercare lo stato dell'arte già tracciato** | è in `riferimenti.md` con le fonti. Verificane semmai l'invecchiamento |
 | ❌ **rifare gli spike SP-5, SP-6, SP-7 e SP-8** | esiti, versioni e comandi in `spikes/RISULTATI.md` — coi **seed** per SP-5 e SP-6, che SP-7 e SP-8 non hanno; per SP-7 e SP-8 i protocolli congelati in `spikes/gesti/PROTOCOLLO.md` e `spikes/gui-shell/PROTOCOLLO.md` |
-| ❌ **rifare le misure da M-1 a M-11** | tutte chiuse, con comandi, versioni e sonde. M-9 sta per intero in ADR-0036, **M-10 e M-11 in ADR-0037**. L'unica aperta era **M5** (senza trattino) ✅ **misurata da SP-8 il 2026-09-10** su Windows, ma come **proxy** — la memoria condivisa dell'integrata di un'altra macchina, da rimisurare su quella di ADR-0002 — e la metà Linux è l'innesco: entrambe scritte in ADR-0029 |
+| ❌ **rifare le misure da M-1 a M-11** | tutte chiuse, con versioni, esiti e sonde, su prototipi fuori dal repository e per lo più senza il comando registrato — richiamo del 2026-10-06, audit del 2026-09-30, AUD-652. M-9 sta per intero in ADR-0036, **M-10 e M-11 in ADR-0037**. |
 | ❌ **riaprire le due decisioni della §7.3** | prese dopo aver misurato. Riaprirle richiede una misura nuova, non un'opinione |
 | ❌ **riaprire la copertura della §8** | la §8 è **spec**, e il vincolo globale 1 del piano della chiusura vieta di toccarla: le righe si leggono, non si ri-giudicano. ⚠️ **RICHIAMO DEL 2026-09-03: il sotto-progetto 1 l'ha riaperta una volta**, e per decisione del **proprietario** — la via **A**, voce `E10` dell'errata del [piano della chiusura](superpowers/plans/2026-09-02-sottoprogetto-1-chiusura.md) — col vincolo **sospeso** per il solo compito 3bis e per le sole §8.3 e §8.4. Riaprirla di nuovo richiede la stessa decisione |
 | ❌ **riaprire F3, F6, F5, F1a, F2, F7** | chiuse, con i limiti dichiarati |
 | ⛔ **riaprire §6.1.1** «tanto ora c'è `minicbor` nel kernel» | **tentato il 2026-08-08, e la misura ha dato torto**: i due canali privati non sono lo stesso problema, perché i loro **pari** sono diversi (ADR-0037, M-11). Riaprirla richiede una misura nuova sul pari, non un argomento di simmetria |
 | ⛔ **rigenerare i byte congelati del giornale** | se cambiano non è un aggiornamento, è un cambio di formato: si apre una versione nuova |
-| ❌ **progettare una capacità L2** | prima il kernel deve esistere |
+| ❌ **progettare una capacità L2** | prima che si apra il suo sotto-progetto, nell'ordine della [roadmap](roadmap.md) — richiamo del 2026-10-06, audit del 2026-09-30, AUD-094, AUD-565, AUD-569 |
 | ❌ **promuovere l'aiutante `passo_in_dubbio` dello spike** | assume esecuzione sequenziale: con l'interlacciamento dà un **falso negativo** (gotcha #20) |
 | ❌ **far salire `spikes/rust/clippy.toml`** nel workspace reale | a livello di workspace scatterebbe addosso a `platform` (§7.4.4) |
 | ⚠️ **fidarsi delle fonti senza data** | l'ecosistema si muove a cadenza mensile |
@@ -805,11 +800,12 @@ Da sapere **prima** di scrivere, non dopo il rosso.
 | # | Trappola |
 |---|---|
 | **1** | **I conteggi.** Ogni occorrenza di `<cifra> ADR`, `<cifra> ADR in stato ...` e `<cifra> decisioni architetturali` nei documenti di stato è confrontata con la realtà. Scrivere `2 ADR nuovi` la fa scattare, perché legge il `2` come **totale**. ⚠️ **Per i numeri piccoli si usano le parole**; gli esempi vanno nei code span — e **il code span non deve andare a capo**, perché lo spogliamento è riga per riga. Punti ciechi dichiarati: un numero **a parole** è invisibile, e così `<cifra> decisioni` **senza** «architetturali» |
-| **2** | **La numerazione.** Il controllo sui duplicati è **per file** e cattura `^#{2,3} <numero>`, quindi `### 7.4.1` sarebbe letto come duplicato di `### 7.4`. **Le sotto-sotto-sezioni si scrivono con `####`** |
+| **2** | **La numerazione.** Nelle spec il controllo sui duplicati legge, **per file**, `^#{2,6} [0-9]+(\.[0-9]+)*`: ogni livello e il numero **intero**, quindi due intestazioni con lo stesso numero allo stesso livello sono un **rosso**, anche sotto genitori diversi — richiamo del 2026-10-06, audit del 2026-09-30, AUD-090 |
 | **3** | **Due tabelle sono lette _per posizione_.** Nel **catalogo §7.4** la contro-sonda è l'**ultima** colonna e non può essere vuota. In **§8.3 e §8.4** le colonne sono **cinque**, con lo stato in **terza** e l'innesco in **quinta**. ⛔ E i **delimitatori sono intestazioni** (`#### 7.4.1`, `#### 7.4.3`, `## 8.`): rinumerarle è un **rosso**, non un ritocco. ⚠️ **La sesta asserzione fa eccezione, e deliberatamente:** la colonna «Difende» del catalogo **non è sempre la prima** — nei blocchi A e C e in §7.4.2 lo è, nel **blocco B dei gettoni è la terza** — quindi si cerca per **intestazione**. Non «uniformarla» alle altre: un controllo posizionale giudicherebbe la colonna sbagliata su cinque righe |
 | **4** | **Un falso positivo in attesa.** La guardia dei conteggi gira su una lista fissa di documenti di stato. In `tracciabilita.md` esistono righe come `§4 ADR-0008`, dove il regex leggerebbe `4 ADR`. **Oggi non scatta**, perché quel file non è nella lista. Se servisse aggiungerlo, il rimedio è il **regex**, non il documento |
 | **6** | ⛔ **Il controllo dei link NON verifica i FRAMMENTI, e un'ancora pura è INVISIBILE — misurato il 2026-08-28 sulla pipeline vera.** Il passo estrae con `grep -o '](\([^)#]*\.md\)[^)]*)'` e poi taglia con `cut -d'#' -f1`: di un rimando *«file più ancora»* controlla **solo** il file, anche se l'ancora è inventata, e la forma **senza file** — la sola ancora, un rimando dentro lo stesso documento — **non viene nemmeno estratta**. 📌 **Quindi un'ancora è un rimando che nessun controllo difende**, e marcisce in silenzio quando un titolo cambia: una sezione si **nomina** invece di collegarla, oppure si accetta il rischio **sapendolo**. ⚠️ **Gli esempi qui sono scritti a parole per FORZA:** nella loro sintassi vera facevano **rosso il cancello** — `broken link: docs/COMPENDIO.md -> vero.md` — perché il controllo **non distingue un esempio da un rimando**, cugino della trappola **5** |
 | **5** | ⛔ **Il controllo dei link NON legge i file che git IGNORA — dal 2026-08-24.** Un `.md` dentro `.superpowers/`, `/scratch/` o `/tmp/` non è controllato, ed è **voluto**: prima lo era, e il verdetto del cancello dipendeva allora dalla **cartella di lavoro** invece che da ciò che si consegna. ⚠️ **La distinzione che conta, e non è la stessa cosa:** un file **non tracciato ma non ignorato** — un documento nuovo che nessuno ha ancora `git add`-ato — **è letto**, perché il cancello gira **prima** del commit ed è lì che il controllo serve. ⚠️ E il filtro **fallisce aperto**: se l'interrogazione a git non risponde si scandisce tutto. Gotcha **#80** |
+| **7** | ⛔ **Il controllo dei link vede SOLO i bersagli `.md`.** Un link a una cartella, a un sorgente o a un altro file non è mai verificato: dopo un'archiviazione quelli si controllano a mano. Audit del 2026-09-30, AUD-678 |
 
 ---
 
@@ -817,11 +813,6 @@ Da sapere **prima** di scrivere, non dopo il rosso.
 
 Non sono decisioni da prendere: sono decisioni **prese**, che ogni piano deve tradurre in
 passi.
-
-✅ **I primi cinque sono onorati dal Traguardo 1** — cinque crate · `no_std` + `alloc` +
-`forbid` su `kernel` e `simulator` · `bincode` appuntato a `2` con la ragione accanto ·
-il bersaglio del cancello dichiarato in `rust-toolchain.toml` · `spikes/` fra gli
-`exclude`. ⚠️ Il quarto ha una sottigliezza misurata: gotcha **#38**.
 
 📌 **La regola: resta davanti solo ciò che la tabella qui sotto nomina, e ogni vincolo che non
 vi compare è onorato.** Misurati uno per uno contro il codice il 2026-08-27, **coi comandi**.
@@ -832,7 +823,7 @@ vi compare è onorato.** Misurati uno per uno contro il codice il 2026-08-27, **
 
 | # | Vincolo | Da |
 |---|---|---|
-| 1 | **cinque crate**: `kernel` · `platform` · `secrets` · `simulator` · `daemon`. `kernel` non dipende da nessuna crate del progetto | §1.2 |
+| 1 | **cinque crate**: `kernel` · `platform` · `secrets` · `simulator` · `daemon`. `kernel` non dipende da nessuna crate del progetto **nel grafo spedito** — richiamo del 2026-10-06, audit del 2026-09-30, AUD-091 | §1.2 |
 | 2 | `kernel` e `simulator`: `#![no_std]` + `alloc` + `#![forbid(unsafe_code)]`. ⚠️ **`forbid`, non `deny`** — `deny` è scavalcabile da un `#[allow]` locale | §1.4 · ADR-0026 |
 | 3 | il manifesto **appunta `bincode` a `2`**, con la ragione scritta accanto | §6.1.1 · gotcha #22 |
 | 4 | `rustup target add x86_64-unknown-none` è un **prerequisito dell'ambiente**, o la porta è rossa per il motivo sbagliato | §7.3.2 |
@@ -843,7 +834,7 @@ vi compare è onorato.** Misurati uno per uno contro il codice il 2026-08-27, **
 | 9 | riga per riga, **cosa sale da `spikes/rust/` e cosa resta** | §2.5 |
 | 10 | ogni regola nuova porta **due** sonde e un caso in `tests/compile_fail/` con il suo `.stderr` — da **leggere**, non da rigenerare in blocco | §7.1.4 · gotcha #25 |
 | 11 | **nessuna decisione legge un parametro che non le è stato consegnato**. In sotto-progetto 1 i default sono **letterali in `daemon`** | §2.8 · ADR-0034 |
-| 12 | il record durevole è un **enum di versione**, ogni campo ha un **indice esplicito**, un campo nuovo è facoltativo con indice nuovo, un indice **si ritira e non si riusa mai** | §4.9 · ADR-0036 |
+| 12 | il record durevole è un **enum di versione**, ogni campo ha un **indice esplicito**, un campo nuovo è facoltativo con indice nuovo **se è un'aggiunta** — una specie nuova porta anche un `kind` nuovo, D20 —, un indice **si ritira e non si riusa mai** | §4.9 · ADR-0036 |
 | 13 | la porta `journal` scambia **byte**, non record tipizzati: la codifica vive in `kernel` | §4.1 · §4.9.3 · §7.3.1 |
 | 14 | ⛔ al **primo record scritto**, i suoi byte entrano nel repository come **oracolo**, con la mappa `indice → nome → valore atteso`. **Non si rigenerano** | §4.9.4 · gotcha #25 |
 | 15 | il **canale worker** usa `minicbor`, la porta `process` scambia **byte**, ogni frame **dichiara la propria lunghezza** e la decodifica verifica i byte consumati, e ogni `Vec<u8>` porta l'**annotazione di stringa di byte** | §6.10 · ADR-0037 · gotcha #34, #35 |
@@ -868,7 +859,7 @@ Apri **un** file, quello che serve. Non la cartella.
 | ⛔ **il RICONOSCIMENTO GESTI** — la forma della telecamera nel kernel, il registro delle funzioni, le decisioni col loro chiusore, e per ogni artefatto il controllo che lo esercita; e come si è **eseguito**: i due ADR, i rimandi, la roadmap, SP-7 e la sonda S3 | il [disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) — ⚠️ **non è una spec** · il [piano](superpowers/plans/2026-09-03-riconoscimento-gesti.md), con l'errata in testa e la tabella della posizione — ⚠️ **a compiti, mai intero** |
 | ⛔ **la KNOWLEDGE BASE** — che cosa la mappa chiede al kernel e dove va: la strada B, i tre meccanismi del sotto-progetto 13 con le due pretese, le CRUD nel registro delle funzioni, il pannello col 6, le decisioni col loro chiusore, e per ogni artefatto il controllo che lo esercita; e come si è **eseguito** il piano dei documenti: i rimandi in testa a quattro ADR e nella riga di ADR-0039, la riga 13 in roadmap, le righe di tracciabilità, la decisione 7 dei gesti chiusa | il [disegno](superpowers/specs/2026-09-04-knowledge-base-design.md) — ⚠️ **non è una spec**, e **non disegna la capacità** · il [piano](superpowers/plans/2026-09-04-knowledge-base-documenti.md), con l'errata in testa e la tabella della posizione — ⚠️ **a compiti, mai intero** |
 | ⛔ **la direzione della GUI** — le viste, i moduli, la disposizione, il protocollo core ↔ GUI, e la tabella delle decisioni col loro chiusore | [`specs/2026-09-07-direzione-gui-design.md`](superpowers/specs/2026-09-07-direzione-gui-design.md) — ⚠️ **non è una spec**: è la stella polare, e si legge **per intero** da chi riprende il fronte GUI. ⚠️ **Richiamo del 2026-09-23:** nel brainstorming del design system si legge **a pezzi**, e per intero prima di scriverne il disegno — decisione del proprietario, risposta 7 della [consegna](superpowers/specs/2026-09-22-design-system-design.md) |
-| ⛔ **il perimetro della GUI minima** — che cosa il 2 costruisce e che cosa no, il filo, lo schema, il registro, il core finto, le prove e il cancello, le decisioni aperte col chiusore | [`specs/2026-09-06-sottoprogetto-2-gui-minima-design.md`](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) — ⚠️ **non è una spec**; la **§10** dice come si riprende |
+| ⛔ **il perimetro della GUI minima** — che cosa il 2 costruisce e che cosa no, il filo, lo schema, il registro, il core finto, le prove e il cancello, le decisioni aperte col chiusore | [`specs/2026-09-06-sottoprogetto-2-gui-minima-design.md`](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) — ⚠️ **non è una spec** — richiamo del 2026-10-06, audit del 2026-09-30, AUD-661: la §10 è un verbale |
 | ⛔ **come si è ESEGUITO il sotto-progetto 2** — la **parte 1**: SP-8, i due gusci misurati, ADR-0029 chiuso; la **parte 2**: il filo, la settima porta, il registro, il daemon, la SPA, il cancello web, X-1 e X-3, con l'errata in testa, la tabella della posizione e la **Definizione di «fatto»** | [parte 1](superpowers/plans/2026-09-09-sottoprogetto-2-parte-1-spike-del-guscio.md) · [parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md) — ⚠️ **a compiti, mai interi** |
 | ⛔ **il DESIGN SYSTEM**, il sotto-progetto 14 — i token a due livelli e i due temi, il kit dei pezzi di base con la pagina kit, il dock vestito, la cornice con la Panoramica e le viste col nome, le sonde che diventano prove nel browser vero, e per ogni artefatto il controllo che lo esercita; e come si è **eseguito**, con la Definizione di «fatto» coi comandi | il [disegno](superpowers/specs/2026-09-22-design-system-design.md) — ⚠️ **non è una spec** · il [piano](superpowers/plans/2026-09-23-design-system.md), con l'errata in testa e la tabella della posizione — ⚠️ **a compiti, mai intero** |
 | il **cosa** del kernel: §0–§10 | [`specs/2026-08-06-kernel-design.md`](superpowers/specs/2026-08-06-kernel-design.md) |
@@ -933,6 +924,7 @@ Per questo la sua completezza **non è lasciata alla buona volontà**:
 | ADR nuovo | una voce in **§5** — obbligatoria, la pretende lo script |
 | ADR superato | la voce resta e si marca; gli ADR sono **append-only** |
 | ADR **superato in parte** | la voce resta e riceve la riga del rimando; l'ADR nuovo ha la sua voce, che dice quali righe modifica — la forma di ADR-0040 su ADR-0022 |
+| una misura, una prova o un sotto-progetto **risponde a ciò che un ADR aspettava**, o cambia ciò che un ADR dice del codice | il rimando datato in testa a quell'ADR, e la sua riga nella voce in **§5** |
 | voce della riapertura chiusa | la tabella e l'ordine in **§6** |
 | gotcha nuovo | ⛔ **niente qui:** la casa è **una sola**, la sezione *«I gotcha»* di [`HANDOFF.md`](HANDOFF.md), e la §9 vi **rimanda** invece di copiare. |
 | **misura nuova** | le **fonti** e i **comandi** in `riferimenti.md`, la riga d'esito in `HANDOFF.md`, e le evidenze nell'ADR o nella sezione che la misura decide. ⛔ I prototipi restano nello scratchpad e si ripuliscono |

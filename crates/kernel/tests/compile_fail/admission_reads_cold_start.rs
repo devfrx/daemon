@@ -1,11 +1,11 @@
 // `Q8 · §5.2.1`: THE DECISION PATH cannot reach `cold_start`. `admit` receives a
 // `ResourceProfile`, which has no such field -- `E0609`.
 //
-// ⚠️ WHAT THIS CASE SAID AT TASK 3, written out because a comment that keeps its old tense
-// lies with authority: it declared itself "the FIRST HALF" and said the row was only
-// PARTIALLY covered, because what §5.2.1 forbids is not "a struct without a field" but THE
-// DECISION PATH reading one -- and no decision path existed. It does now, it is the call
-// below, and the row closes here.
+// ⚠️ WHAT THIS CASE HOLDS is that `ResourceProfile`, the type `admit` receives, has no field
+// `cold_start`: §5.2.1 forbids THE DECISION PATH reading it, and that path receives this type
+// and not `WorkDescriptor`, which carries the field. It does not hold that the call below reads
+// anything -- the next paragraph -- and docs/porta-di-qualita.md says the same. ⚠️ RECALL OF
+// 2026-10-07 -- audit of 2026-09-30, AUD-309.
 //
 // ⛔ THE CALL BELOW DOES NOT PARTICIPATE IN THE ERROR, and this paragraph used to claim it
 // did. `E0609` comes from the LITERAL plus the field access, and is raised with the call

@@ -59,9 +59,10 @@ fn records(journal: &MemoryJournal) -> Vec<(StepId, Record)> {
 /// Opens the step whose artefact is about to be judged, and answers what it wrote.
 ///
 /// ⛔ THE RING DOES NOT DO THIS, AND THE ASYMMETRY IS THE POINT: `run_the_ring` refuses to
-/// allocate the id of the step it opens on failure — `StepId` has no allocator and whether one
-/// arrives is the owner's — so it would be incoherent for it to mint the intent of a step it did
-/// not open either.
+/// allocate the id of the step it opens on failure — the `journal` port allocates none, by the
+/// owner's choice of 2026-09-09, and step numbers come from `kernel::numbering::Progressive`,
+/// handed to whoever mints them — so it would be incoherent for it to mint the intent of a step it
+/// did not open either. ⚠️ RECALL OF 2026-10-02 — audit of 2026-09-30, AUD-070.
 fn open_the_step(journal: &mut MemoryJournal, step: StepId) {
     let intent = Record::V1(RecordV1::intent(
         EffectClass::Idempotent,

@@ -1,107 +1,10 @@
 # Documentazione di progetto
 
-Assistente desktop locale — piattaforma a **quattro pilastri paritari** (conversazione e
-conoscenza, agenti e coding, voce, generazione asset) su kernel comune. ⚠️ **Questa riga ne
-elencava cinque dicendo «quattro»**: il raggruppamento è quello della §1 del compendio.
-
-**Lo stato per sotto-progetto lo dice la tabella dei sotto-progetti di [`roadmap.md`](roadmap.md); il
-prossimo passo, la §6 del [compendio](COMPENDIO.md).** ⚠️ **RICHIAMO DEL 2026-09-22 (E230): qui stava la «Fase
-corrente»** — *«il sotto-progetto 1 è ✅ chiuso il 2026-09-03 …»*, falsa dalla chiusura del 2 — ed è **tolta** invece di
-riscritta, perché invecchia a ogni chiusura (gotcha #68). ⚠️ **La coda di date che la «Fase
-corrente» portava è TOLTA e non riallineata:** diceva *«il 2026-08-08 e il 2026-08-10»* per
-quattro traguardi, ed era già sbagliata a sé stante —
-**questo stesso file** data il Traguardo 4 al **2026-08-11**, nel capoverso che ne annuncia il
-brainstorming. ⚠️ **RICHIAMO DEL 2026-08-25: qui c'era un NUMERO DI RIGA — *«la riga 16»* — e lo
-stesso commit che lo scriveva aveva inserito sei righe sopra di sé, spostando il bersaglio.**
-**Tolto e sostituito con un'àncora testuale:** un numero di riga dentro un documento vivo è un
-puntatore senza guardia, e lo stesso giorno la stessa cura ha tolto i **sette** rimandi per numero
-di riga della colonna *«Dove è dichiarata»* di [`porta-di-qualita.md`](porta-di-qualita.md), più la
-riga che li introduceva. Un elenco di date
-si allunga a ogni chiusura e non c'è nessun numero da riconoscere come stantio: le date, una
-per traguardo, stanno nella tabella dei traguardi di [`roadmap.md`](roadmap.md) e nella §6 del
-[`COMPENDIO.md`](COMPENDIO.md), e un rimando non può marcire.
-Dove vive il codice del prodotto lo dice la §1 del [compendio](COMPENDIO.md) (⚠️ **richiamo
-del 2026-09-22, E232:** qui stava *«vive in `../crates/` — cinque crate»*, falso dal compito 11, che ha portato la SPA
-in `gui/` — la cartella l'aveva aperta il compito 3, con `gui/schema/fixtures/`; ed E236: qui stava anche *«in un posto
-solo»*, che la cura di E232 aveva reso falso), e la porta di qualità gira con un comando solo, `bash scripts/gate.sh`. Il **Traguardo 3** — giornale e formato durevole — è chiuso con
-**dodici compiti su dodici**: il record come enum di versione, **due** implementazioni della
-porta `journal` tenute alle stesse nove promesse a ogni commit, la riconciliazione. ⛔ **Col
-Task 10 il formato durevole è CONGELATO:** i byte del record sono nel repository e non si
-rigenerano mai. ✅ **Il brainstorming del Traguardo 4 è chiuso il 2026-08-11** e il disegno è
-scritto: [Traguardo 4 — il disegno](superpowers/specs/2026-08-11-sottoprogetto-1-traguardo-4-simulatore-dst-design.md).
-✅ **E il Traguardo 4 è ESEGUITO lo stesso giorno**, dieci compiti su dieci, `GATE GREEN` a
-ciascuno: il simulatore porta ora **il guasto** — il giornale che cade, il backend cadente di
-`redb` scritto **da fuori la crate**, e due campagne con **soggetti diversi**, la riconciliazione
-del kernel e la coerenza del motore. ⛔ Il disegno aveva ristretto il traguardo su una misura —
-delle dieci righe di guasto della §3.3 **una sola** ha oggi il proprio soggetto — quindi si è
-costruito **il motore** della DST e non tutte le finte. ⛔ **E lo stesso giorno il repository ha
-ricevuto il suo primo AUDIT COMPLETO** — [`audit-2026-08-11.md`](audit-2026-08-11.md): sedici
-finding corretti e provati, il resto aperto. ✅ **La prima delle otto decisioni è eseguita il
-2026-08-17** — la conformità del giornale provava **tre** promesse solo su un archivio vuoto o a
-**un passo solo**; chiuse con un passante, senza promesse nuove. ✅ **E l'ottava il 2026-08-18** —
-G-5: `--locked` su tutti i siti `cargo` del cancello, così il `Cargo.lock` **tracciato** smette di
-essere un **effetto** del cancello e ne diventa un **ingresso**. ✅ **E la sesta lo stesso
-giorno** — A-1, A-2, A-4, A-7: quattro richiami datati su ADR e diagrammi, **nessuna decisione
-riaperta**, perché a cadere sono quattro **evidenze** e non quattro scelte. ✅ **E la quinta** —
-C-1: `bincode` è dichiarato **non mantenuto** (RUSTSEC-2025-0141, `INFO`), ha **zero** usi di
-produzione, e la registrazione vive accanto alla voce nel manifesto; si decide al Traguardo 6.
-✅ **E la quarta** — PL-1: il file del giornale nasceva **0644** su Linux, cioè **meno**
-dell'account che ADR-0023 promette; ora è **0600**, misurato su Linux vero.
-✅ **E LE OTTO SONO CHIUSE il 2026-08-18, otto su otto.**
-✅ **E lo stesso giorno il brainstorming del Traguardo 5 è chiuso, e il disegno è scritto:**
-[Traguardo 5 — il disegno](superpowers/specs/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu-design.md).
-Il perimetro è **l'arbitro intero**, e si prova ciò che si può provare senza un secondo
-meccanismo; `Grant` **si sposta** nel modulo dell'arbitro perché un modulo fratello non può
-costruirlo — `E0423`, misurato — e il traguardo **non crea righe di catalogo: ne tocca dodici**
-già scritte. ⚠️ **Questa riga diceva *«ne chiude dodici»***, e a chiusura il conteggio ricontato
-sulla §7.4 dice **undici chiuse e una dichiarata PARZIALE** — la riga della campagna DST, che
-resta parziale perché la §5.7 elenca cinque proprietà e la campagna dell'arbitro ne tiene tre.
-Le altre due si iniettano su `process` e `ipc`, cioè al **Traguardo 6**.
-⛔ **RICHIAMO DEL 2026-09-02: quella riga NON è più parziale, ed è il compito 9 del Traguardo 6 a
-chiuderla** — `E152`. Le due proprietà mancanti hanno la propria sonda: la **2** in
-`crates/simulator/tests/worker_kill_campaign.rs` e la **3** in
-`crates/simulator/tests/gui_death_campaign.rs`, che riconcilia con `kernel::client::ClientGrants`
-alla disconnessione. ⚠️ **Il periodo qui sopra resta perché è un verbale del 2026-08-18 e in
-quella data era vero**; ciò che è **falso adesso** è soltanto il presente *«resta parziale»*, e
-lo stato di oggi **non vive qui** — si legge nella §6 del compendio, e la riga di catalogo che
-questo periodo cita si legge in [`porta-di-qualita.md`](porta-di-qualita.md).
-✅ **E lo stesso giorno il [piano del Traguardo 5](superpowers/plans/2026-08-18-sottoprogetto-1-traguardo-5-arbitro-gpu.md)
-è scritto: tredici compiti in cinque parti.** Il pre-controllo del piano ha trovato **sette**
-cose leggendo il disegno contro il codice — gotcha **#58** — e tre sono per il proprietario:
-`WorkDescriptor` dista **una lettera** da `WorkerDescriptor`, che esiste già ed è un'altra cosa;
-la riga di catalogo `Q2 · §5.1` è **una** dove le regole sono **due**; e due celle del catalogo
-nominano **identificatori italiani** che il traguardo fa esistere in inglese.
-✅ **E IL TRAGUARDO 5 È ESEGUITO IL 2026-08-25, tredici compiti su tredici**, subagent-driven,
-`GATE GREEN` a ogni compito, dal 2026-08-19. ⛔ **Il tredicesimo era un AUDIT e non una
-scrittura**, e ciò che ha trovato è che gran parte era già eseguita: i riconteggi non hanno
-prodotto uno scarto con i documenti, e a mancare erano le **voci aperte in una tabella sola** —
-ora in [`porta-di-qualita.md`](porta-di-qualita.md), **con la colonna di chi le chiude**.
-⛔ **A CHE PUNTO FOSSE NON ERA SCRITTO QUI, ed era il rimedio e non una svista:** questa riga portava il
-numeratore — *«cinque compiti su tredici»* — **due righe sopra** la frase che dice *«qui non si
-ripetono, ed è la ragione per cui questa riga non è mai marcita»*. Era il gotcha **#68**, una
-regola che non vincola il documento che la ospita, e la cifra è **tolta invece che ricorretta**.
-⛔ **RICHIAMO DEL 2026-08-20 — E CON LA CIFRA ERA RIMASTO L'ELENCO, che è la stessa cosa scritta a
-parole.** Questa riga enumerava ciò che l'esecuzione aveva portato — *«il modulo `arbiter` con
-`Mib` … e le code per corsia»* — e la lista si **fermava al Task 6** con otto compiti chiusi:
-un numeratore in prosa invecchia come uno in cifre, e per giunta non si vede. **Tolto, non
-esteso**: la tabella dei compiti sta nella §6, in un posto solo.
-⚠️ **Quante e quali**, le cose da sapere prima di riprendere e le decisioni di disegno che
-aspettano il proprietario stanno nella **§6 del [`COMPENDIO.md`](COMPENDIO.md)**.
-⏭️ **Il prossimo passo sta nella §6 del [`COMPENDIO.md`](COMPENDIO.md), in un posto solo** — qui
-non si ripete. ⚠️ **Questa riga lo riscriveva**, e ha detto *«scrivere il piano»*, poi *«il
-brainstorming»*, poi *«eseguirlo»*, poi *«l'esecuzione dell'audit … ne restano tre»*: quattro
-formulazioni, l'ultima falsa dal 2026-08-18. **Tolta invece che corretta** — 25ª misura.
-⚠️ **Questa riga diceva «dieci compiti su dodici, si riprende dal Task 11»** a traguardo chiuso:
-è la lezione della tredicesima misura — la §6 del compendio giusta **nasconde** gli altri
-documenti di stato.
-
-⛔ **Non c'è ancora nessuna funzionalità utente, ed è deliberato.** Il Traguardo 1 non
-portava nemmeno logica: solo lo scheletro e i controlli, perché un cancello costruito **dopo**
-la logica è un cancello che nessuno ha mai visto fallire. Il Traguardo 2 ha portato il
-**substrato** — tempo, casualità, scheduling, l'esecutore, le **sei famiglie di porte** — che
-sono **meccanismi**, non funzionalità: il kernel non implementa niente per l'utente, fornisce
-ciò su cui le capacità poggeranno. Vale «spec prima del codice», e ⛔ **il codice è in
-inglese, la documentazione in italiano** (§1.0 della spec del sotto-progetto 1).
+Questo file è l'**indice** della documentazione. Il ritratto del progetto sta in [`../CLAUDE.md`](../CLAUDE.md),
+*«Cos'è questo progetto, in quattro righe»*; **lo stato per sotto-progetto** nella tabella dei sotto-progetti di
+[`roadmap.md`](roadmap.md), e quello per traguardo nella tabella dei traguardi dello stesso file; **il prossimo passo**
+nella §6 del [compendio](COMPENDIO.md). Qui non si ripetono: due copie divergono (gotcha #68).
+⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, AUD-121, AUD-579.
 
 > Se stai riprendendo il progetto, le letture obbligatorie sono **due**, e sono
 > [`../CLAUDE.md`](../CLAUDE.md) e [`COMPENDIO.md`](COMPENDIO.md). ⛔ **Non** `HANDOFF.md`,
@@ -112,28 +15,40 @@ inglese, la documentazione in italiano** (§1.0 della spec del sotto-progetto 1)
 | Percorso | Contiene | Risponde alla domanda |
 |---|---|---|
 | [`COMPENDIO.md`](COMPENDIO.md) | ⛔ **l'unica lettura obbligatoria oltre a `CLAUDE.md`**: tutte le decisioni compresse, le invarianti, lo stack, i gotcha, lo stato di oggi e il prossimo passo | *cosa è già deciso*, tutto, in un colpo solo |
-| [`audit-2026-08-11.md`](audit-2026-08-11.md) | ⛔ **il primo audit completo del repository** — codice, script, documenti, ADR, diagrammi. Copertura dichiarata, le quattro radici, i finding con causa radice e dimostrazione, cosa è **pulito**, e le otto decisioni del proprietario. ✅ **CHIUSO il 2026-08-18, otto su otto.** ⚠️ **Questa cella lo dava APERTO e «il prossimo passo»**, con *«la 1 … la 8 e la 6»* e *«le tre righe barrate»* quando barrate erano otto: era ferma al 2026-08-18 e la riga qui sopra la smentiva **nello stesso file** — finding **AUD-001** del 2026-08-27. ⛔ **Il prossimo passo non si scrive più qui**, in nessuna forma: sta nella **§6 del [`COMPENDIO.md`](COMPENDIO.md)**, in un posto solo | *cosa fu trovato l'11 agosto*, e come si conduce un audit qui — **consultazione**, non arretrato |
-| [`audit-2026-08-27.md`](audit-2026-08-27.md) | ⛔ **il secondo audit completo** — 18 revisori in parallelo, ognuno smentito da un secondo, 98 finding proposti e **25 scartati**. Le **sette radici**, i **73** finding con causa radice e comando di riproduzione, e lo **stato di ciascuno**. ✅ **CHIUSO nei suoi 73 finding il 2026-08-28**, e restano aperte le sole **voci senza numero AUD**, in gran parte decisioni del proprietario. ⚠️ **Si legge a finding, mai intero** | *come si rimedia* qui, e *cosa resta aperto* |
-| [`AVVIO-CHAT.md`](AVVIO-CHAT.md) | il messaggio da incollare all'inizio di una nuova sessione | *come si apre* una chat su questo repository |
+| [`audit-2026-08-11.md`](audit-2026-08-11.md) | ⛔ **il primo audit completo del repository** — codice, script, documenti, ADR, diagrammi. Copertura dichiarata, le quattro radici, i finding con causa radice e dimostrazione, cosa è **pulito**, e le otto decisioni del proprietario. ✅ **Le otto decisioni sono eseguite il 2026-08-18**; le voci della §5 rimaste aperte stanno nella sua **§9**, con chi le chiude — ⚠️ **RICHIAMO DEL 2026-10-03**, audit del 2026-09-30, AUD-084. ⚠️ **Questa cella lo dava APERTO e «il prossimo passo»**, con *«la 1 … la 8 e la 6»* e *«le tre righe barrate»* quando barrate erano otto: era ferma al 2026-08-18 e la riga qui sopra la smentiva **nello stesso file** — finding **AUD-001** del 2026-08-27. ⛔ **Il prossimo passo non si scrive più qui**, in nessuna forma: sta nella **§6 del [`COMPENDIO.md`](COMPENDIO.md)**, in un posto solo | *cosa fu trovato l'11 agosto*, e come si conduce un audit qui — **consultazione**, non arretrato |
+| [`audit-2026-08-27.md`](audit-2026-08-27.md) | ⛔ **il secondo audit completo** — 18 revisori in parallelo, ognuno smentito da un secondo, 98 finding proposti e **25 scartati**. Le **sette radici**, i **73** finding con causa radice e comando di riproduzione, e lo **stato di ciascuno**, nella colonna «Stato», che ne è la casa unica; aperte restano anche le **voci senza numero AUD**, in gran parte decisioni del proprietario — ⚠️ **RICHIAMO DEL 2026-10-03**, audit del 2026-09-30, AUD-602. ⚠️ **Si legge a finding, mai intero** | *come si rimedia* qui, e *cosa resta aperto* |
+| [`AVVIO-CHAT.md`](AVVIO-CHAT.md) | il messaggio d'avvio di una sessione, e il perché di ogni sua riga: dal 2026-09-09 il proprietario non lo incolla più, e non è lettura d'apertura — la §12 del [compendio](COMPENDIO.md), decisione 32 della [stella polare](superpowers/specs/2026-09-07-direzione-gui-design.md); come si apre una sessione lo dice [`../CLAUDE.md`](../CLAUDE.md). ⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-107 | *perché* il messaggio d'avvio dice ciò che dice |
 | [`HANDOFF.md`](HANDOFF.md) | Gotcha, non rilitigabile, metodo, cosa non rifare — ⚠️ **a sezioni**, non per farsi un'idea | *come riprendere* senza rifare |
 | [`roadmap.md`](roadmap.md) | Sotto-progetti, ordine, stato, spike aperti | *a che punto siamo* e *cosa viene dopo* |
 | [`tracciabilita.md`](tracciabilita.md) | Mappa funzionale → sede di ogni funzionalità | *dove vive* ciò che è stato chiesto |
 | [`porta-di-qualita.md`](porta-di-qualita.md) | Dove vive ogni controllo della porta, mappato riga per riga sul catalogo §7.4. Un comando solo: `bash scripts/gate.sh` | *cosa è sorvegliato*, da quale file, e con quali sonde |
+| [`semi-dst.md`](semi-dst.md) | I casi delle due campagne DST, ciascuno col test permanente della propria proprietà. ⚠️ **Non ha un chiudente**: nessuno script verifica che una voce nomini un test che esiste — ⚠️ **RICHIAMO DEL 2026-10-03**: mancava da questa tabella, audit del 2026-09-30, AUD-602 | *perché un seme non è un oracolo*, e come si identifica un caso in ciascuna campagna |
 | `adr/` | Architecture Decision Records | *perché* abbiamo deciso così |
 | `design/` | Diagrammi Mermaid della struttura | *com'è fatto* il sistema |
 | `superpowers/specs/` | Specifiche dei sotto-progetti | *cosa* costruiamo, prima di costruirlo |
 | ⛔ [`superpowers/plans/`](superpowers/plans/) | i piani, uno per traguardo, ciascuno con l'**errata in testa** che dice dove il piano sbagliava. ⚠️ **Mancava da questa tabella**, aggiunto il 2026-08-10: è la cartella **da cui si riprende il lavoro** | *da dove si riparte*, e cosa il piano ha già sbagliato |
 | [`riferimenti.md`](riferimenti.md) | Fonti esterne consultate | *da dove viene* ciò che non abbiamo dedotto noi |
 
-`roadmap.md` e `tracciabilita.md` si aggiornano **alla chiusura di ogni
-sotto-progetto**, nello stesso passaggio.
+Che cosa si aggiorna, e quando, lo dice la tabella *«Manutenzione della documentazione»* di
+[`../CLAUDE.md`](../CLAUDE.md), in una casa sola. ⚠️ **RICHIAMO DEL 2026-10-07** — audit del
+2026-09-30, AUD-108.
 
 ## Regole della documentazione
 
 1. Gli ADR sono **append-only**. Una decisione superata non si cancella: si marca
    `Superseded by ADR-XXXX` e se ne scrive una nuova.
 2. I diagrammi in `design/` descrivono lo stato **corrente**, mai la storia. Si
-   aggiornano nello stesso task che cambia il sistema, mai "dopo".
+   aggiornano nello stesso task che cambia il sistema, mai "dopo". Ciò che è **deciso e non
+   costruito** vi sta col segno **«(col N)»**: N è il sotto-progetto della [roadmap](roadmap.md)
+   che lo costruisce, o il primo che ne avrà bisogno quando la roadmap non lo fissa —
+   «(col primo …)» —; se chi lo costruisce è una scelta aperta, il segno porta i candidati e
+   il rimando alla scelta, mai un numero solo. Un pezzo senza segno esiste nel codice, e «oggi»
+   lo dice dove sta accanto a uno deciso. Il sotto-progetto N, quando costruisce, **toglie il
+   proprio «(col N)»** nello stesso task; in [design/10](design/10-modello-dei-dati-durevoli.md)
+   l'entità passa dal secondo diagramma al primo. ⚠️ **RICHIAMO DEL 2026-10-02** — audit del
+   2026-09-30, AUD-119 e AUD-122: il segno è la regola di tutti i file di `design/`, ed è nato
+   coi diagrammi del 2026-09-08, decisioni 16–18 della
+   [stella polare](superpowers/specs/2026-09-07-direzione-gui-design.md).
 3. Nessun sotto-progetto si implementa senza spec approvata.
 
 ## Indice delle decisioni
@@ -210,19 +125,21 @@ sotto-progetto**, nello stesso passaggio.
 | [Riconoscimento gesti — il disegno](superpowers/specs/2026-09-03-riconoscimento-gesti-design.md) | il riconoscimento gesti dalla telecamera | ⛔ **Non è una spec:** perimetro, forme e il controllo che esercita ciascun artefatto; le decisioni col loro chiusore; la §6.4 porta l'esito di SP-7 |
 | [Knowledge base — il disegno](superpowers/specs/2026-09-04-knowledge-base-design.md) | la knowledge base: che cosa chiede al kernel, e dove va | ⛔ **Non è una spec**, e **non disegna la capacità**: perimetro, la forma nel kernel, i rimandi in append, la GUI e il sotto-progetto 6 in due metà, le voci aperte col loro chiusore, e per ogni artefatto il controllo che lo esercita; il verdetto — nessuna sesta proprietà «che non si aggiunge dopo», ma un vincolo d'ordine: il sotto-progetto 13 prima del 3 |
 | [Stella polare della GUI](superpowers/specs/2026-09-07-direzione-gui-design.md) | la direzione della GUI | ⛔ **Non è una spec:** viste, moduli, disposizione, il protocollo core ↔ GUI, le decisioni col loro chiusore |
-| [Sotto-progetto 2 — il disegno](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) | GUI minima | ⛔ **Non è una spec:** perimetro, filo, schema, registro, core finto, prove e cancello; la §10 dice come si riprende. ✅ **RICHIAMO DEL 2026-09-22:** la parte 2 del piano è **eseguita** — la Definizione di «fatto» del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md), coi comandi |
+| [Sotto-progetto 2 — il disegno](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) | GUI minima | ⛔ **Non è una spec:** perimetro, filo, schema, registro, core finto, prove e cancello. ✅ **RICHIAMO DEL 2026-09-22:** la parte 2 del piano è **eseguita** — la Definizione di «fatto» del [piano della parte 2](superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md), coi comandi. ⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, AUD-658: la §10 è il verbale della chiusura, e il prossimo passo sta nella §6 del [compendio](COMPENDIO.md) |
 | [Design system — il disegno](superpowers/specs/2026-09-22-design-system-design.md) | il design system della GUI, il sotto-progetto 14 | ⛔ **Non è una spec:** il linguaggio visivo; i token e i due temi, il kit, il dock, la cornice, le voci registrate e le sonde che diventano test — le sezioni (a)–(f); per ogni artefatto il controllo che lo esercita, e le voci del proprietario ✅ **RICHIAMO DEL 2026-09-28:** il piano è **eseguito** — la Definizione di «fatto» del [piano](superpowers/plans/2026-09-23-design-system.md), coi comandi |
 
 ## Decomposizione del sistema
 
 | Livello | Blocco | Dipende da |
 |---|---|---|
-| **L0** | Fondamenta — processi, persistenza, configurazione, segreti, tracing, bus eventi, packaging | — |
+| **L0** | Fondamenta — processi, persistenza, configurazione, segreti, tracing, bus eventi | — |
 | **L1** | Arbitro risorse GPU · Gateway di inferenza | L0 |
 | **L2** | Conversazione · Conoscenza/RAG · Agenti · Coding · Voce · Generazione asset | L0, L1 |
-| **L3** | Integrazione OS — hotkey, tray, notifiche, daemon, offline, i18n, a11y | L0 |
+| **L3** | Integrazione OS — hotkey, tray, notifiche, daemon, offline, i18n, a11y, packaging | L0 |
 | **XX** | Sicurezza — **non è un livello**: è un vincolo che entra nel design di L0, L1 e L2 dal primo giorno | — |
 
-Le dipendenze sono rigide verso il basso: nessuna capacità di L2 si progetta prima
-che L0 e L1 siano stabili, perché tutte e sei negoziano con l'arbitro GPU e con il
-gateway di inferenza.
+Le dipendenze sono rigide verso il basso: tutte e sei le capacità di L2 negoziano con
+l'arbitro GPU e con il gateway di inferenza. Quando una capacità si progetta lo dice la §8
+del [compendio](COMPENDIO.md), riga *«progettare una capacità L2»*, e l'ordine dei
+sotto-progetti la [roadmap](roadmap.md). Il packaging sta in L3, come in ADR-0028, ADR-0032 e
+nella roadmap. ⚠️ **RICHIAMO DEL 2026-10-06** — audit del 2026-09-30, AUD-120, AUD-565.

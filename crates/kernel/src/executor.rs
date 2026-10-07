@@ -9,6 +9,13 @@
 //! It is not a preference. A bespoke waker — the ticket saying "call me when I am ready" —
 //! is NOT BUILDABLE inside the kernel: `Waker::from_raw` is an unsafe function and
 //! `#![forbid(unsafe_code)]` refuses it. Measured in M-5: `E0133: call to unsafe function`.
+//! ⚠️ RECALL OF 2026-10-07 — audit of 2026-09-30, AUD-040: a bespoke waker IS buildable without
+//! `unsafe` — `impl alloc::task::Wake` plus `Waker::from(Arc<T>)` compiles in a `#![no_std]` +
+//! `#![forbid(unsafe_code)]` crate, for the host and for `x86_64-unknown-none` (measured
+//! 2026-10-03, rustc 1.95.0; the command is in docs/riferimenti.md, beside M-5); M-5 measured
+//! `Waker::from_raw` only. So "It is not a preference" does not hold: the rule is a design choice
+//! kept by discipline, nothing checks it, and K-1 is not reopened because nothing needs a waker
+//! today. The mirror of the recall in §2.4.1 of the spec.
 //!
 //! So the executor must know by itself who can advance, and it does because readiness has
 //! exactly two sources:
@@ -45,12 +52,20 @@ use crate::time::Monotonic;
 /// Why a run stopped without finishing.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum RunError {
-    /// The turn limit was reached. A BLOCK MUST SHOW UP AS AN ERROR, never as an infinite
-    /// wait: a test that never ends says nothing (§3.2.1).
+    /// The delivered turn limit was reached, and the run stopped there. A BLOCK MUST SHOW UP AS
+    /// AN ERROR, never as an infinite wait: a test that never ends says nothing (§3.2.1).
     ///
-    /// It is the backstop for every way an activity can fail to progress under its own
-    /// power — a loop that yields for ever, or one that keeps re-registering a deadline the
-    /// clock has already passed. Both are slow loops, and both end here.
+    /// ⚠️ WHAT REACHES IT IS NOT ONLY A BLOCK, and what follows is what is known, not a
+    /// partition: the two SPINNING failures it was written for — a loop that yields for ever,
+    /// and one that keeps re-registering a deadline the clock has already passed —; an activity
+    /// that keeps going back to sleep on deadlines still in the FUTURE, which ends here at
+    /// whatever wall time its waits add up to; an activity with no exit, `crate::serving::serve`,
+    /// for which this is the EXPECTED end of every round under a finite limit; and a limit of
+    /// zero, which ends the run before the first poll. ⛔ AND THE SHIPPED BINARY DOES NOT REACH
+    /// IT: `daemon` delivers `u64::MAX` (decision A of §5 of the sub-project 2 design), so this
+    /// backstop holds in the benches and the campaigns, which hand a finite limit, and the guard
+    /// of production is the OS watchdog of sub-project 10. ⚠️ RECALL OF 2026-10-03 -- audit of
+    /// 2026-09-30, AUD-058.
     TurnLimitReached,
     /// The reactor was asked to advance to an instant STRICTLY IN THE FUTURE and refused.
     /// The `reactor` contract forbids that: `wait_until` returns `None` only when there is
@@ -179,17 +194,20 @@ impl Sleep {
     /// activities ran would kill the whole run. That is a trap, not a property.
     ///
     /// 📌 §3.2.1 GOVERNS THE REACTOR, NOT THIS, and conflating the two is how the opposite
-    /// rule got written in the first place. What that section rules is that `advance()`
-    /// filters strictly future deadlines and returns false when there are none, because A
-    /// NULL ADVANCE MUST NEVER BE DECLARED SUCCESSFUL — a rule about the PORT refusing to
-    /// lie about the clock. It is honoured at the call site of `wait_until`, which is never
+    /// rule got written in the first place. What that section rules is that `wait_until`
+    /// answers `None` when the deadline is not strictly in the future and no event is
+    /// pending, because A NULL ADVANCE MUST NEVER BE DECLARED SUCCESSFUL — a rule about the
+    /// PORT refusing to lie about the clock (the section uses the source names since its recall
+    /// of 2026-10-03; ⚠️ RECALL OF 2026-10-07 — audit of 2026-09-30, AUD-375). It is honoured at
+    /// the call site of `wait_until`, which is never
     /// handed an instant that is not strictly ahead. It says nothing about what the executor
     /// owes an activity whose wait is already over.
     ///
     /// ⚠️ THE COST, declared: an activity that re-registers a past deadline on every poll
-    /// never blocks the clock, but never progresses either. It ends as
+    /// never blocks the clock, but never progresses either. Under a finite limit it ends as
     /// `RunError::TurnLimitReached` — "a slow loop", which is the accurate diagnosis and the
-    /// reason the turn limit exists.
+    /// reason the turn limit exists; what the shipped binary delivers instead is on that variant.
+    /// ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-058.
     pub fn until(&self, deadline: Monotonic) {
         self.until.set(Some(deadline));
     }

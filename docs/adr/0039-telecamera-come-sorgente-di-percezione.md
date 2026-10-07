@@ -4,6 +4,46 @@
 - **Date:** 2026-09-03
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-10-02 — la cattura con un gesto è l'unico caso in cui un fotogramma uscirebbe dal worker:
+> oggi non esce, e l'eccezione la decide il sotto-progetto 12.** La regola della *Decision* — il worker possiede la
+> telecamera, e i fotogrammi **non escono mai** — vale oggi senza eccezioni, e nessuna riga dice per quale canale una
+> foto uscirebbe. L'**eccezione** — se e come una foto esca — la decide il sotto-progetto **12** col proprietario, con
+> un **ADR suo**; ⚠️ dedotto: tocca anche la riga dell'**occhio** nel perimetro negativo e la domanda *«una foto può
+> dare ordini?»* del *Context*. La **destinazione** resta decisa: la knowledge base, il rimando del 2026-09-05 nel
+> perimetro negativo. Decisione B del proprietario del 2026-10-01 — audit del 2026-09-30, AUD-007. **Nessuna riga di
+> questo ADR è superata.**
+
+> ⚠️ **Rimando del 2026-10-02 — SP-7, il sotto-progetto 2 e gli ADR fratelli dicono come si leggono oggi quattro punti
+> di questo ADR.** Audit del 2026-09-30.
+>
+> - **Le ipotesi di SP-7** — le *Negative* sulla latenza e sulle tre ipotesi —, misurate il 2026-09-04. **S1 `non passa`**:
+>   su questa CPU il tracciatore a due mani non ha margine sui 30 Hz, e il criterio cade su due corse. **S2 `passa`** sul
+>   proprio criterio, che misura il salto su `localhost`, mentre il costo vero sta a monte e una parte del giro non ha
+>   una spiegazione misurata; il proprietario, provandola: *«di base funziona»*. **S3 regge**: la sonda è nel cancello,
+>   nelle due direzioni. Le cifre in [`spikes/RISULTATI.md`](../../spikes/RISULTATI.md), sezione SP-7. La scelta
+>   *«MediaPipe Hand Landmarker su CPU»* della *Decision* poggiava su S1: che cosa ne segua — una mano sola, una
+>   risoluzione o una frequenza più basse, o la via con la GPU delle *Negative*, RTMPose su ONNX Runtime, con la terza
+>   quota della decisione 9 — lo decide il sotto-progetto **12** col proprietario. AUD-174, AUD-179, AUD-597, AUD-598.
+> - **Il conto del primo worker** — la sezione *«Costo dichiarato»* —. Dal sotto-progetto 2 il codice di produzione
+>   **legge una porta**: `kernel::serving`, sulla porta `ipc` —
+>   `grep -n -F -e '.accept(' -e '.receive(' crates/kernel/src/serving.rs` —; e il **timbro di build** della §6.1.2
+>   della spec esiste, `crate::wire::ipc::build_stamp`, con cui `kernel::serving` rifiuta una GUI stantia. Per la porta
+>   `process` il conto resta com'è scritto: nessuna implementazione di `Process` o `Worker` fuori dai banchi, nessun
+>   messaggio in giù, nessun timbro sul canale worker, un reattore che conosce solo il tempo. AUD-599.
+> - **Il messaggio IPC verso la GUI con la mano** — il perimetro negativo —. La GUI esiste e il sotto-progetto 2 è
+>   chiuso, e `IpcMessage` non ha la variante: la definisce il **12**, il primo che ha un mittente. Il disegno del
+>   sotto-progetto 2 gli dà già *«la mano come puntatore»*, e la riga del 12 nel seguito si legge con questo pezzo in
+>   più. La revoca, che la riga prende a modello, aspetta invece il 7: il richiamo del 2026-09-17 in testa a
+>   `crates/kernel/src/wire/ipc.rs`. AUD-178.
+> - **Il gesto di comando come trigger** — le *Alternative* —. Il trigger di
+>   [ADR-0009](0009-guide-sensori-e-anelli-sono-meccanismi-di-kernel.md) **apre una run** da un evento — l'anello 3 di
+>   [design/04](../design/04-anelli-e-sensori.md), *«l'insieme dei modi in cui l'anello 1 può partire»*, e la §0.4.3
+>   della spec del sotto-progetto 1 —, e il motivo della riga si legge così: il gesto di comando ne resta fuori perché
+>   **non apre una run** — la apre solo la wake word, decisione 3 — ma un passo nella run aperta, il corollario di
+>   ADR-0011. AUD-173.
+>
+> **Nessuna riga di questo ADR è superata:** i quattro punti si leggono così.
+
 ## Context
 
 Il proprietario vuole l'agente **dormiente e risvegliabile con la wake word**, e gesti *«stile

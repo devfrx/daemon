@@ -31,10 +31,10 @@ Il censimento è girato come **workflow**. Il proprietario dice di aver impostat
 | la frontiera | la dà il comando B, e non si ricopia qui: cambia a ogni ticket chiuso |
 | GitHub | `devfrx/daemon` è **pubblico**: mappa e ticket si vedono da fuori |
 | `gh` | la 2.101.0; `--parent` e `--blocked-by` alla creazione, `--add-blocked-by` alla modifica. La guida della skill dava incerto `--set-parent`: nel binario c'è `--parent` |
-| un tracker valutato prima? | **no**: *tracker*, *GitHub Issues*, *backlog*, *sub-issue* e *decision-map* non comparivano in `docs/` né in `CLAUDE.md`, il 2026-09-30 |
+| un tracker valutato prima? | **sì, e scartato**: il [disegno della chiusura del 1](2026-09-02-sottoprogetto-1-chiusura-design.md) candidava `anthropic-skills:decision-map` il 2026-09-02, e il [disegno dei gesti](2026-09-03-riconoscimento-gesti-design.md) l'ha scartata il 2026-09-03 con tre ragioni — il perimetro piccolo e noto dei gesti; GitHub Issues come **seconda casa** delle decisioni (gotcha #68); nessuno strumento GitHub da quella macchina —: `git grep -n -i -e decision-map -e 'github issues' a9e8265^ -- docs CLAUDE.md ':!docs/archivio'`. La terza è caduta — `gh` c'è, la riga sopra —; la seconda resta da pesare, e se portarla nei ticket della mappa lo decide il proprietario. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-509, AUD-510 |
 | il censimento | ✅ fatto: **114** decisioni del proprietario aperte — la sezione qui sotto |
 | la ricerca | ✅ fatta il 2026-09-30, nel [suo ticket](https://github.com/devfrx/daemon/issues/4): la risposta in breve nel commento, le fonti verificate in [`riferimenti.md`](../../riferimenti.md), nella sezione *«Il metodo con la decision map — ticket di decisione, ADR e documenti: la ricerca, 2026-09-30»* |
-| il piano dei documenti | **pre-controllato**, e si esegue **adesso**, un compito per sessione — fin dove, lo dice la tabella della posizione del piano —, deciso dal proprietario il 2026-09-30 nel [suo ticket](https://github.com/devfrx/daemon/issues/2); il puntatore della §6 del compendio, e la voce **ER-8** del piano col suo richiamo |
+| il piano dei documenti | **pre-controllato**, e si esegue **senza aspettare il metodo nuovo**, un compito per sessione — deciso dal proprietario il 2026-09-30 nel [suo ticket](https://github.com/devfrx/daemon/issues/2), con la voce **ER-8** del piano e il suo richiamo —: quando riprende lo dice la §6 del [compendio](../../COMPENDIO.md), e fin dove è arrivato la tabella della posizione del piano. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-511 |
 
 ```bash
 # A — il corpo della mappa
@@ -95,16 +95,19 @@ aperte, che citano la lista.
 ## Come si riprende
 
 ⛔ **Da sapere subito:** niente è a metà, e tutto è pushato. Il 2026-09-30 si sono chiusi due ticket della mappa: il piano
-dei documenti si esegue **adesso**, e la ricerca su ticket, ADR e documenti è fatta. Nessun ticket è assegnato. La
+dei documenti si esegue **senza aspettare il metodo nuovo**, e la ricerca su ticket, ADR e documenti è fatta. Nessun ticket è assegnato. La
 consegna di prima — le due sezioni riscritte — sta in [archivio](../../archivio/consegna-metodo-decision-map.md),
-parola per parola.
+parola per parola. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-511: quando il piano riprende lo dice la §6 del
+[compendio](../../COMPENDIO.md).
 
 1. La lettura d'apertura di `CLAUDE.md`; poi il **corpo della mappa** — il comando A —, dove *«Decisioni prese»* ha una
    riga per ticket chiuso.
-2. ▶️ **Il prossimo passo proposto: il compito che viene nel piano dei documenti** — la prima riga ⏳ della sua tabella della posizione, e il puntatore della §6 del compendio. Come si
+2. ▶️ **Il prossimo passo lo dice la §6 del [compendio](../../COMPENDIO.md)**, in un posto solo. Quando tocca al piano dei
+   documenti, il compito che viene è la prima riga ⏳ della sua tabella della posizione, e come si
    comincia lo dice il *«Come si riprende»* del [piano](../plans/2026-09-29-knowledge-base-revisione-documenti.md): la
    cartella del dispaccio, poi il costo detto al proprietario, e il suo sì. La sessione del compito legge anche la voce
-   **ER-8** dell'errata, col richiamo del 2026-09-30.
+   **ER-8** dell'errata, col richiamo del 2026-09-30. ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-511: il
+   passo non si ricopia qui.
 3. **Oppure un ticket della mappa**, a scelta del proprietario: la frontiera è il comando B. Alla chiusura del 2026-09-30
    erano *«Una decisione per sessione, sempre?»*, *«Come si combinano le cinque fasi con la mappa?»* e *«Le voci aperte
    nei documenti: che cosa diventa ticket, e che cosa resta?»*; gli ultimi due partono dalla ricerca — il suo commento

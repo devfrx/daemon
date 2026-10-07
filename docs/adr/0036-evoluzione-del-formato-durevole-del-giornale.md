@@ -4,6 +4,27 @@
 - **Date:** 2026-08-07
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-10-03 — la regola 3 vale per le aggiunte, e il formato cresce anche per varianti.** Audit del
+> 2026-09-30. **Nessuna regola è superata: si leggono con le due condizioni misurate dopo.**
+>
+> - **La regola 3, e la cella «direzione inversa» della matrice per `minicbor`.** Il ✅ vale per le **aggiunte**: i
+>   campi la cui assenza non cambia *che cosa il record è*. Misurato il 2026-08-30 — Parte D del Traguardo 6, decisione
+>   D20, gotcha #90 di [`HANDOFF.md`](../HANDOFF.md) —: se il campo nuovo porta la **sostanza di una specie nuova**, una
+>   build più vecchia decodifica il record, lo crede intero e butta la sostanza **in silenzio**. Una specie nuova entra
+>   quindi con una variante nuova di `kind` **e** il dettaglio in un campo nuovo, mai l'uno senza l'altro —
+>   `crates/kernel/src/record.rs`, sul campo `detail`. AUD-168.
+> - **Le varianti.** Le sei regole parlano di campi, e dal 2026-09-18 il formato è cresciuto per **varianti**:
+>   `Invocation` e `Policy`, in `RecordKind` e in `Detail`. Il costo di una variante sta accanto al codice: una build
+>   che non conosce una variante di un enum `index_only` decodifica il record come `Malformed`, e la riconciliazione si
+>   ferma invece di indovinare; una specie di `Detail` che non conosce la decodifica a `None`, in silenzio — per questo
+>   il `kind` cresce col dettaglio. Lo dicono `crates/kernel/src/record.rs` e la testa di
+>   `crates/kernel/tests/frozen_bytes.rs`. AUD-595.
+> - **«La §7.4.4 punto 3 smette di presupporre»** — fra le *Positive*. Il default `irripetibile` non discende da sé:
+>   la versione del record che toglierà `effect` dovrà dichiararlo — `Option<EffectClass>` con `#[cbor(default)]`, e
+>   `None` letto come `irripetibile` — e costruirlo; fino ad allora è nominato e non costruito, nel doc di
+>   `EffectClass` in `crates/kernel/src/record.rs` e nel rimando del 2026-10-04 in testa ad
+>   [ADR-0007](0007-giornale-write-ahead-e-riconciliazione.md). AUD-583, aggiunto il 2026-10-06.
+
 ## Context
 
 Il giornale ([ADR-0007](0007-giornale-write-ahead-e-riconciliazione.md)) è l'**unico

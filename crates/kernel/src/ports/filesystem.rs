@@ -10,9 +10,12 @@
 //! intentional and commit-grained.
 //!
 //! ⚠️ Implementation STAGED (§0.4): the real filesystem belongs to a later sub-project.
-//! The port is declared here because §3.1 declares the port list exhaustive and the
-//! simulator substitutes all of them -- a port added after the campaign means C1 was
-//! verified on a smaller world (gotcha #17).
+//! The port is declared here because §3.1 declares the port list exhaustive -- a port added
+//! after the campaign means C1 was verified on a smaller world (gotcha #17). ⚠️ AND THE
+//! SIMULATOR HAS NO DOUBLE OF IT: `simulator` holds those of `custody`, `ipc`, `journal`,
+//! `reactor` and `rng` (`grep -n '^pub mod' crates/simulator/src/lib.rs`), and this port's one
+//! fake lives in `tests/ports_are_implementable.rs`. ⚠️ RECALL OF 2026-10-03 -- audit of
+//! 2026-09-30, AUD-712.
 //!
 //! ⚠️ AND WHAT HOLDS THESE SIGNATURES TODAY IS ONE TEST, worth naming for what it is:
 //! `tests/ports_are_implementable.rs` writes a fake for this trait and calls it. It buys

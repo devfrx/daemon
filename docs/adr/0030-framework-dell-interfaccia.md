@@ -4,6 +4,11 @@
 - **Date:** 2026-08-06
 - **Deciders:** proprietario del progetto
 
+> ⚠️ **Rimando del 2026-10-03 — il guscio non è più aperto.** Il *Context* dice che
+> [ADR-0029](0029-guscio-della-gui.md) è *«ancora aperto»*: è `Accepted` dal 2026-09-10, **Electron**, con SP-8. Questa
+> decisione resta indipendente da quella, come dice; la riga di `@tauri-apps/api` fra le versioni vale per il guscio
+> scartato. Audit del 2026-09-30, AUD-153. **Nessuna riga di questo ADR è superata.**
+
 ## Context
 
 [ADR-0027](0027-stack-della-gui.md) decide che la GUI è un'interfaccia web.

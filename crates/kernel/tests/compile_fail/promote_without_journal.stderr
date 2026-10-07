@@ -1,15 +1,15 @@
-error[E0061]: this method takes 3 arguments but 0 arguments were supplied
-  --> tests/compile_fail/promote_without_journal.rs:16:37
+error[E0061]: this method takes 3 arguments but 2 arguments were supplied
+  --> tests/compile_fail/promote_without_journal.rs:18:37
    |
-16 |     let _promoted = from_a_web_page.promote();
-   |                                     ^^^^^^^-- three arguments of type `&mut _`, `StepId`, and `&'static str` are missing
+18 |     let _promoted = from_a_web_page.promote(StepId::new(1), "quoted by the user");
+   |                                     ^^^^^^^ -------------- argument #1 of type `&mut _` is missing
    |
 note: method defined here
   --> src/boundary.rs
    |
    |     pub fn promote<J: Journal>(
    |            ^^^^^^^
-help: provide the arguments
+help: provide the argument
    |
-16 |     let _promoted = from_a_web_page.promote(/* journal */, /* StepId */, /* &'static str */);
-   |                                             +++++++++++++++++++++++++++++++++++++++++++++++
+18 |     let _promoted = from_a_web_page.promote(/* journal */, StepId::new(1), "quoted by the user");
+   |                                             ++++++++++++++

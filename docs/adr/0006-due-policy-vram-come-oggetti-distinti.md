@@ -17,6 +17,16 @@
 > coordinatore e presa il 2026-09-08; il diagramma vivo è
 > [design/09](../design/09-l0-fisico.md). **Nessuna riga di questo ADR è superata.**
 
+> ⚠️ **Rimando del 2026-10-04 — la rilettura all'avvio è costruita, e la transizione porta la policy per specie.**
+> Audit del 2026-09-30. Nel rimando qui sopra il *«compito del piano del sotto-progetto 2»* è eseguito, e la sua
+> ragione — *«oggi `build_the_arbiter` riparte da `Remote` e nessuno chiama `set_policy` in produzione»* — non vale più:
+> il daemon rilegge la policy all'avvio con `arbiter::policy_now` e la consegna a `build_the_arbiter`, col default di
+> questo ADR — `VramPolicy::Remote` — nell'`unwrap_or` di `run_the_graph` (`crates/daemon/src/main.rs`); in
+> produzione la cambia la funzione `vram-policy` del registro, che chiama `Arbiter::set_policy` da `kernel::serving`.
+> E `set_policy` scrive, fra l'intento e l'esito, una nota della specie `Policy` col dettaglio `PolicyDetail`:
+> `policy_now` rilegge quella, mai il `reason`. La sonda è `the_policy_in_the_journal_is_the_one_the_arbiter_starts_on`.
+> **Nessuna riga di questo ADR è superata.** AUD-001, AUD-128, AUD-129, AUD-281, AUD-282.
+
 ## Context
 
 Il sistema ha due regimi di occupazione della GPU, e sono profondamente diversi:

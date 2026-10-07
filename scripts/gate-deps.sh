@@ -48,6 +48,10 @@ names() { sed 's/^[^a-zA-Z0-9_-]*//' | awk '{print $1}' | grep -E '^[A-Za-z0-9_-
 # beside a list of two is the shape this repository has already paid for five times (gotcha
 # #31): the list grows, the number stays, and the guard silently starts checking a union it
 # believes complete.
+# ⚠️ AND THIS LIST IS ONE OF THREE, ALL WRITTEN BY HAND: gate-no-os.sh names the same crates with
+# `-p`, gate-attributes.sh with `CONSTRAINED`, and NOTHING checks that the three agree -- a crate
+# that joins the constrained set goes into all three. RECALL OF 2026-10-06 -- audit of 2026-09-30,
+# AUD-684.
 CRATES="kernel simulator"
 expected_crates=$(printf '%s\n' $CRATES | wc -l)
 measured=0

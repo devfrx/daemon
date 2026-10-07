@@ -101,7 +101,7 @@ socket unix su Linux, stesso codice (G19).
 |---|---|---|---|
 | P1 | zero persi | **0 persi, 0 buchi** su 2000 attesi / 2000 ricevuti | ✅ |
 | P2 | < 100 ms | **10,21 ms** di picco · 0,363 ms medio | ✅ con margine ~10× |
-| P3 | < 25% di un core | **21,43 %** di picco · 8,05 % medio, su 46 campioni | ✅ **ma stretto** |
+| P3 | < 25% di un core | **21,43 %** di picco · 8,05 % medio, su 46 campioni | ✅ **ma stretto** ⛔ **RICHIAMO DEL 2026-10-03:** col rendering vero **non passa** — SP-8, M4 di [ADR-0029](../docs/adr/0029-guscio-della-gui.md), e la sola scena `three` a riposo sta già vicino o sopra la soglia, O2 di [`RISULTATI.md`](RISULTATI.md); audit del 2026-09-30, AUD-035 |
 | P4 | — | corsa 2 | — |
 
 Ripartizione osservata: `token` 1600 · `stato` 200 · `metriche` 200, in 10 001 ms.
@@ -124,6 +124,17 @@ sono perdita di messaggi: sono i messaggi emessi mentre la gui era morta. La
 distinzione conta, ed è il motivo per cui si misurano **i buchi nel progressivo** e non
 solo il conteggio: i buchi sono zero.
 
+⚠️ **RICHIAMO DEL 2026-10-03 — la corsa 2 prova che il core sopravvive alla gui e la riaccetta, non che non se ne
+accorga.** [`core.rs`](gui-ipc/src/bin/core.rs) ascolta senza `.nonblocking(...)`, e in `interprocess` il default è
+`accept` bloccante: dopo la caduta il core resta fermo in `incoming.next()` finché la gui #2 non si collega, e caduta e
+riapertura si registrano nello stesso giro, quindi sullo stesso messaggio, il 606, qualunque sia stata l'attesa; la
+cadenza ancorata all'orario recupera poi il ritardo a raffica, quindi «2000 messaggi in 10 000 ms» non distingue un core
+che prosegue da uno che aspetta. E dei «607 persi» 600 li aveva ricevuti la gui #1: quelli che nessuna gui ha letto sono
+sette, dal 600 al 606, e i buchi nel progressivo non possono vederli, perché ogni gui conta dal primo messaggio che
+riceve — `ultimo_seq` nasce vuoto in [`gui.rs`](gui-ipc/src/bin/gui.rs). Il prodotto non eredita il blocco:
+`crates/platform/src/ipc.rs` ascolta con `ListenerNonblockingMode::Accept`. Audit del 2026-09-30, AUD-729, AUD-544,
+AUD-680.
+
 ### Cosa questo prototipo NON ha misurato
 
 | Non misurato | Perché conta |
@@ -134,4 +145,7 @@ solo il conteggio: i buchi sono zero.
 
 Il margine su P2 (10 ms contro 100) lascia spazio al salto mancante. Il margine su P3
 (21,43 % contro 25 %) **non ne lascia**: va rimisurato con un rendering vero, ed è la
-prima cosa da controllare nel sotto-progetto 2.
+prima cosa da controllare nel sotto-progetto 2. ✅ **RICHIAMO DEL 2026-10-03:** rimisurato da SP-8 il 2026-09-10 col
+rendering vero, M4 di [ADR-0029](../docs/adr/0029-guscio-della-gui.md): **non passa**. Il sotto-progetto 2 non l'ha
+rimisurato sulla SPA, che non ha una scena 3D, e chi lo farà è la scelta aperta su AUD-591; audit del 2026-09-30,
+AUD-004.

@@ -1,7 +1,8 @@
-//! `DyingGui`: what only IT promises. What every `ipc` implementation promises is nobody's
-//! business yet — the port has no conformance suite and no real transport — and this type would
-//! not be held to one anyway: a gui that stops answering is a LIAR by construction, and gotcha
-//! #50 says a fake may break a contract when the test around it speaks about the breaking.
+//! `DyingGui`: what only IT promises. What every `ipc` implementation promises is the
+//! conformance suite's — `crates/kernel/tests/contract/ipc.rs`, expanded on the real transport
+//! alone (D82) — and this type is not held to it: a gui that stops answering is a LIAR by
+//! construction, and gotcha #50 says a fake may break a contract when the test around it speaks
+//! about the breaking. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-081.
 //!
 //! ⛔ IT IS THE BENCH `CrashingJournal` HAS AND THE MAP OF THE TASK DID NOT LIST, finding of the
 //! pre-check (`E156`). The campaign's own oracle proves the gui DIES; it does not prove it dies

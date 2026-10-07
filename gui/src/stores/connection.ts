@@ -17,6 +17,12 @@ export type Phase = "waiting" | "connected" | "stale";
  * ⛔ AND THERE IS NO TIMEOUT. Telling "not running" from "slow to answer" would take a number
  * nobody has measured ("no invented threshold", SP-7), and the gui does the same thing in both
  * cases: offer `retry`, which resends `Hello`.
+ *
+ * ⚠️ A THIRD CASE LANDS HERE, AND `retry` IS ITS ONLY WAY OUT: a core that cannot read its journal
+ * back answers `Hello` with nothing at all, because it cannot tell the degradation and will not
+ * call it clean (`greet` in `crates/kernel/src/serving.rs`). It does not come back to this gui by
+ * itself once the journal reads again: only a `Hello` sent after that is welcomed (AUD-530 of the
+ * audit of 2026-09-30).
  */
 export const useConnection = defineStore("connection", () => {
   const phase = ref<Phase>("waiting");

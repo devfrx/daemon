@@ -1,11 +1,12 @@
 //! The schema of the `ipc` channel. ⛔ OUTSIDE THE CRATE, like `framing` and `worker_wire`.
 
+use bincode::error::{AllowedEnumVariants, DecodeError};
 use kernel::arbiter::{ComputeClass, Mib, Preemption};
 use kernel::framing::{self, LENGTH_WIDTH, WireError};
 use kernel::time::Millis;
 use kernel::wire::ipc::{
-    build_stamp, stamp_set, Access, Call, GrantRequest, IpcMessage, LayoutState, PolicyName,
-    Protection, Provenance, Triple, Verdict,
+    build_stamp, stamp_set, Access, Call, DegradationReport, GrantRequest, IpcMessage, LayoutState,
+    PolicyName, PolicyReport, Protection, Provenance, StepSummary, Triple, Verdict,
 };
 
 fn a_request() -> GrantRequest {
@@ -27,8 +28,8 @@ fn a_grant_request_survives_the_round_trip() {
 fn a_verdict_survives_the_round_trip() {
     // ⛔ THIS IS THE PROBE THAT EXERCISES THE DISCRIMINANT, and it is why §6.7 asks for TWO
     // messages rather than one: with a single message type the tag never varies, and a bug in
-    // how it is written or read would be invisible. Same shape as the journal freezing THREE
-    // records instead of one.
+    // how it is written or read would be invisible. Same shape as the journal freezing one
+    // record per variant instead of one. Audit of 2026-09-30, AUD-097.
     let message = IpcMessage::Verdict(Verdict::Refused {
         asked: Mib::new(4096),
         ceiling: Mib::new(1024),
@@ -118,14 +119,68 @@ fn a_truncated_body_in_an_honest_envelope_does_not_decode() {
     assert_eq!(IpcMessage::decode(&bytes), Err(WireError::Malformed));
 }
 
-/// How many variants `IpcMessage` has, in ONE place -- M-3 of the review of 2026-09-17.
+/// The name of the enum `T` and how many variants it has -- READ FROM THE TYPE, never written
+/// beside it. ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30, AUD-2228.
 ///
-/// ⚠️ THE `match` BELOW DOES NOT COVER THIS NUMBER, which is why it earns a name. Adding a
-/// variant makes the `match` a compile error, as its comment says; but once the new arm is
-/// written, indexing a `[bool; 14]` at 14 PANICS WITH `index out of bounds` instead of the
-/// message this probe knows how to give -- a red, but an illegible one, in the one place the
-/// file promised a legible one. The numeral used to sit in two lines that could drift apart.
-const VARIANTS: usize = 14;
+/// ⛔ A COUNT WRITTEN BY HAND IS A SECOND COPY OF A FACT THE TYPE CARRIES, and the two guards
+/// below cannot rest on one: the exhaustive `match` asks whoever adds a variant for an ARM, never
+/// for a raised number, so a variant added with its arm and forgotten in `stamp_set` would leave
+/// both guards counting the old variants, GREEN. Read from the type, it is a slot no message
+/// carries, and a red that names it.
+///
+/// ⚠️ WHAT IT RESTS ON, declared: bincode writes an enum as the INDEX of its variant, and the
+/// derive answers an index past the last with `DecodeError::UnexpectedVariant`, whose `allowed` is
+/// `AllowedEnumVariants::Range { min: 0, max }` with `max` the last index -- read in
+/// `bincode_derive` 2.0.1, `src/derive_enum.rs`. One byte below 251 is a whole index in the
+/// varint of `config::standard()`. ⛔ ANY OTHER ANSWER STOPS BOTH GUARDS HERE, IN WORDS: a bincode
+/// that answered differently is a red that says so, never a count of nothing.
+fn variants_of<T: bincode::Decode<()>>() -> (&'static str, usize) {
+    const PAST_THE_LAST: [u8; 1] = [250];
+    match bincode::decode_from_slice::<T, _>(&PAST_THE_LAST, bincode::config::standard()) {
+        Err(DecodeError::UnexpectedVariant {
+            type_name,
+            allowed: AllowedEnumVariants::Range { min: 0, max },
+            ..
+        }) => (type_name, *max as usize + 1),
+        Err(error) => panic!("index 250 did not answer with the range of the variants: {error:?}"),
+        Ok(_) => panic!("index 250 decoded: not an enum, or one with more than 250 variants"),
+    }
+}
+
+/// Which variants of ONE enum the canonical set carries -- the two guards below. A slot is the
+/// number a guard's arm gives its variant, in declaration order; past the count it says so in
+/// words instead of panicking with `index out of bounds`.
+struct Carried {
+    name: &'static str,
+    seen: Vec<bool>,
+}
+
+impl Carried {
+    fn of<T: bincode::Decode<()>>() -> Self {
+        let (name, variants) = variants_of::<T>();
+        Carried {
+            name,
+            seen: vec![false; variants],
+        }
+    }
+
+    fn saw(&mut self, slot: usize) {
+        assert!(
+            slot < self.seen.len(),
+            "{}: slot {slot} is past its {} variants -- the arms number them from 0, in \
+             declaration order",
+            self.name,
+            self.seen.len()
+        );
+        self.seen[slot] = true;
+    }
+
+    /// The slots no message carried, as one line of the report -- `None` when every one is there.
+    fn missing(&self) -> Option<String> {
+        let missing: Vec<usize> = (0..self.seen.len()).filter(|slot| !self.seen[*slot]).collect();
+        (!missing.is_empty()).then(|| format!("  {}: slots {missing:?}", self.name))
+    }
+}
 
 #[test]
 fn every_variant_is_in_the_canonical_set() {
@@ -133,10 +188,17 @@ fn every_variant_is_in_the_canonical_set() {
     // `IpcMessage` and forgotten in `stamp_set` would leave the fixtures short, the stamp
     // unchanged, and every probe in this file GREEN -- the schema would have grown and
     // nothing would say so. The `match` is exhaustive on purpose: adding a variant makes THIS
-    // a compile error, which is level 1 rather than a test at level 2.
-    let mut seen = [false; VARIANTS];
+    // a compile error, which is level 1, and the count read from the type (`variants_of`) makes
+    // it a red until a message carrying it joins the set.
+    //
+    // ⚠️ THE WHOLE SET AND NOT ITS HEAD. The set opens with one message per variant, but a
+    // message added later goes at the END -- for a new variant as for a nested one, the doc of
+    // `stamp_set` -- so that every fixture already written keeps its index; a guard that read
+    // only the head would take the first nested message for a second `Policy`. ⚠️ RECALL OF
+    // 2026-10-07 -- audit of 2026-09-30, AUD-2228.
+    let mut variants = Carried::of::<IpcMessage>();
     for message in stamp_set() {
-        let slot = match message {
+        variants.saw(match message {
             IpcMessage::Hello(_) => 0,
             IpcMessage::Accepted(_) => 1,
             IpcMessage::StaleBuild(_) => 2,
@@ -151,18 +213,134 @@ fn every_variant_is_in_the_canonical_set() {
             IpcMessage::Steps(_) => 11,
             IpcMessage::Request(_) => 12,
             IpcMessage::Verdict(_) => 13,
-        };
-        assert!(!seen[slot], "slot {slot} appears twice in the canonical set");
-        seen[slot] = true;
+        });
     }
-    let missing: Vec<usize> = (0..VARIANTS).filter(|i| !seen[*i]).collect();
-    assert!(missing.is_empty(), "variants missing from stamp_set: {missing:?}");
+    let missing = variants.missing();
+    assert!(
+        missing.is_none(),
+        "variants missing from stamp_set -- append a message that carries each, then regenerate \
+         the fixtures:\n{}",
+        missing.unwrap_or_default()
+    );
+}
+
+#[test]
+fn every_variant_of_every_nested_enum_is_in_the_canonical_set() {
+    // ⛔ THE SAME GUARD ONE LEVEL DOWN, AND WITHOUT IT THE STAMP IS BLIND TO A NESTED VARIANT.
+    // bincode writes an enum as the INDEX of its variant and nothing else, so a variant no message
+    // of the set carries changes no byte when it appears: one appended to `LayoutState` -- or two
+    // that nobody carried, swapped -- left every fixture and the stamp as they were, and a stale
+    // gui would pass the handshake to fail on the first message it could not read. Every variant
+    // at every level is the rule the journal's frozen bytes already keep
+    // (`every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record`).
+    //
+    // ⛔ EVERY `match` BELOW IS EXHAUSTIVE: a variant added to a nested enum is a compile error
+    // HERE, level 1, and then -- the count read from the type, `variants_of` -- a red until a
+    // message carrying it joins `stamp_set`. ⛔ AND THE PAYLOADS ARE TAKEN APART FIELD BY FIELD,
+    // WITH NO `..`, which is what reaches the enum nobody has written yet: a field added to any of
+    // them stops this compiling, and whoever adds it decides here whether it is an enum the stamp
+    // must see. `BuildStamp` is the one payload left shut -- its field is private by design, and
+    // it is a `u64`.
+    //
+    // ⚠️ ONE REPORT AND NOT ONE ASSERT PER ENUM, gotcha #14: one red names every missing slot.
+    let mut verdict = Carried::of::<Verdict>();
+    let mut protection = Carried::of::<Protection>();
+    let mut policy = Carried::of::<PolicyName>();
+    let mut access = Carried::of::<Access>();
+    let mut provenance = Carried::of::<Provenance>();
+    let mut layout = Carried::of::<LayoutState>();
+    let mut class = Carried::of::<ComputeClass>();
+    let mut preemption = Carried::of::<Preemption>();
+
+    let access_slot = |operation: Access| match operation {
+        Access::Read => 0,
+        Access::Write => 1,
+    };
+    for message in stamp_set() {
+        match message {
+            IpcMessage::Hello(_) | IpcMessage::StaleBuild(_) => {}
+            IpcMessage::Accepted(value) => protection.saw(match value {
+                Protection::AsSystemAccount => 0,
+            }),
+            IpcMessage::Degradation(DegradationReport {
+                vram_exhausted: _,
+                routing_degraded: _,
+            }) => {}
+            IpcMessage::Policy(PolicyReport { policy: name, allocated: _, total: _ }) => {
+                policy.saw(match name {
+                    PolicyName::Remote => 0,
+                    PolicyName::Local => 1,
+                })
+            }
+            IpcMessage::Invoke(Call { function: _, argument: _ }) => {}
+            IpcMessage::PermissionRequired(Triple { tool: _, resource: _, operation }) => {
+                access.saw(access_slot(operation))
+            }
+            IpcMessage::Approve {
+                triple: Triple { tool: _, resource: _, operation },
+                call: Call { function: _, argument: _ },
+            } => access.saw(access_slot(operation)),
+            IpcMessage::Token { text: _, provenance: value } => provenance.saw(match value {
+                Provenance::Trusted => 0,
+                Provenance::Untrusted => 1,
+            }),
+            IpcMessage::Layout(state) => layout.saw(match state {
+                LayoutState::Package(_) => 0,
+                LayoutState::Nothing => 1,
+                LayoutState::Unavailable => 2,
+            }),
+            IpcMessage::SaveLayout(_) => {}
+            // ⚠️ A LOOP WITH NOTHING IN IT, and the pattern is the point: the compiler checks it
+            // whatever the vector holds, so a field added to `StepSummary` lands here too.
+            IpcMessage::Steps(steps) => {
+                for StepSummary { step: _, function: _, done: _ } in steps {}
+            }
+            IpcMessage::Request(GrantRequest {
+                reserved_vram: _,
+                compute_class,
+                preemption: value,
+            }) => {
+                class.saw(match compute_class {
+                    ComputeClass::Realtime => 0,
+                    ComputeClass::Interactive => 1,
+                    ComputeClass::Batch => 2,
+                });
+                preemption.saw(match value {
+                    Preemption::Never => 0,
+                    Preemption::After(_) => 1,
+                });
+            }
+            IpcMessage::Verdict(value) => verdict.saw(match value {
+                Verdict::Granted => 0,
+                Verdict::Queued => 1,
+                Verdict::Refused { asked: _, ceiling: _ } => 2,
+            }),
+        }
+    }
+
+    let all = [
+        &verdict,
+        &protection,
+        &policy,
+        &access,
+        &provenance,
+        &layout,
+        &class,
+        &preemption,
+    ];
+    let missing: Vec<String> = all.iter().filter_map(|nested| nested.missing()).collect();
+    assert!(
+        missing.is_empty(),
+        "variants of nested enums missing from stamp_set -- append a message that carries each, \
+         then regenerate the fixtures:\n{}",
+        missing.join("\n")
+    );
 }
 
 #[test]
 fn every_message_of_the_canonical_set_survives_the_round_trip() {
-    // ⚠️ ONE LOOP THAT COLLECTS RATHER THAN FOURTEEN ASSERTS IN A ROW -- gotcha #14 from the
-    // other side. A row of asserts stops at the first red and hides the other thirteen; a
+    // ⚠️ ONE LOOP THAT COLLECTS RATHER THAN ONE ASSERT PER MESSAGE IN A ROW -- gotcha #14 from
+    // the other side. A row of asserts stops at the first red and hides every one after it; a
     // loop that stops does the same. This one records every failure and reports them together,
     // so one red tells the whole story.
     let mut broken = Vec::new();
@@ -330,6 +508,27 @@ fn variant_name(message: &IpcMessage) -> &'static str {
     }
 }
 
+/// RULE 2 OF `variant_json` WHERE A `match` ARM HAS ALREADY TAKEN THE FIELDS APART: one member per
+/// binding, and its key is `stringify!` of the binding -- which IS the field's name, because the
+/// arm binds it by name. A field renamed in Rust stops the arm until the binding is renamed, and
+/// renaming the binding renames the key: nothing is left beside it to forget.
+macro_rules! json_members {
+    ($($field:ident: $encode:expr),+ $(,)?) => {
+        [$(format!("\"{}\":{}", stringify!($field), ($encode)($field))),+].join(",")
+    };
+}
+
+/// RULE 2 OF `variant_json` FOR A STRUCT: ONE exhaustive destructuring, with NO `..`, whose
+/// bindings are the object's members -- so a field renamed, added or removed in Rust stops the
+/// generator HERE (`E0026`, `E0027`) until the call names it, and naming it writes it, key and
+/// value. The struct comes in by its bare name: every one the wire has is imported at the top.
+macro_rules! json_struct {
+    ($value:expr, $struct:ident { $($field:ident: $encode:expr),+ $(,)? }) => {{
+        let $struct { $($field),+ } = $value;
+        format!("{{{}}}", json_members!($($field: $encode),+))
+    }};
+}
+
 /// The value a fixture carries, as JSON, for the sub-project 2 SPA to compare its own types
 /// against. ⛔ HAND-WRITTEN AND NOT A DEPENDENCY, for `build_stamp`'s two reasons plus one of
 /// its own: `serde_json` would want `Serialize` derives on SHIPPED wire types, or a mirror of
@@ -341,10 +540,26 @@ fn variant_name(message: &IpcMessage) -> &'static str {
 ///      round it, and the fixture would compare equal to a value it does not hold.
 ///   2. FIELD NAMES ARE RUST'S, verbatim and `snake_case`. Renaming them to the web's taste
 ///      would be a translation table, which is a second definition that drifts in silence --
-///      the very failure these fixtures exist to prevent.
+///      the very failure these fixtures exist to prevent. ⛔ HELD BY THE COMPILER AND NOT BY A
+///      LITERAL (AUD-726 of the audit of 2026-09-30): every named field reaches the JSON through
+///      `json_struct!` or `json_members!`, whose key IS the field's identifier. Measured on
+///      2026-10-02, when the keys were literals: `DegradationReport::vram_exhausted` renamed in
+///      the kernel, the two lines of this file that stopped compiling renamed with it, and the
+///      whole bench GREEN with `"vram_exhausted"` still in the JSON; now the same rename reaches
+///      the JSON, and `the_committed_fixtures_match_the_schema` is red until it is regenerated.
+///
+/// ⚠️ WHAT RULE 2 DOES NOT REACH, declared: the WORDS -- the tags `kind`, `state` and `verdict`,
+/// the names of the unit variants, and the keys of a tuple variant's payload (`value`, `bytes`,
+/// `grace_ms`) -- are no field of Rust. They are written here once, each beside an exhaustive
+/// `match`, and a variant RENAMED in Rust stops that `match` but keeps its old word unless the
+/// word is renamed with it.
 ///
 /// ⚠️ THE `match` IS EXHAUSTIVE for the reason `variant_name` gives: a variant added must be a
-/// compile error here, not a fixture that quietly never appears.
+/// compile error here, not a fixture that quietly never appears. ⛔ AND AN UNUSED BINDING IS AN
+/// ERROR HERE: a field added to a variant with named fields stops its arm until the pattern
+/// names it, and a name bound and never written into the JSON is the half of that fix that a
+/// warning would let pass.
+#[deny(unused_variables)]
 fn variant_json(message: &IpcMessage) -> String {
     match message {
         IpcMessage::Hello(stamp) => format!(r#"{{"kind":"Hello","value":"{}"}}"#, stamp.get()),
@@ -358,17 +573,19 @@ fn variant_json(message: &IpcMessage) -> String {
             format!(r#"{{"kind":"StaleBuild","value":"{}"}}"#, stamp.get())
         }
         IpcMessage::Degradation(report) => format!(
-            r#"{{"kind":"Degradation","value":{{"vram_exhausted":{},"routing_degraded":{}}}}}"#,
-            report.vram_exhausted, report.routing_degraded
+            r#"{{"kind":"Degradation","value":{}}}"#,
+            json_struct!(report, DegradationReport {
+                vram_exhausted: json_bool,
+                routing_degraded: json_bool,
+            })
         ),
         IpcMessage::Policy(report) => format!(
-            r#"{{"kind":"Policy","value":{{"policy":"{}","allocated":"{}","total":"{}"}}}}"#,
-            match report.policy {
-                PolicyName::Remote => "Remote",
-                PolicyName::Local => "Local",
-            },
-            report.allocated.get(),
-            report.total.get()
+            r#"{{"kind":"Policy","value":{}}}"#,
+            json_struct!(report, PolicyReport {
+                policy: json_policy_name,
+                allocated: json_mib,
+                total: json_mib,
+            })
         ),
         IpcMessage::Invoke(call) => format!(r#"{{"kind":"Invoke","value":{}}}"#, json_call(call)),
         IpcMessage::PermissionRequired(triple) => format!(
@@ -376,17 +593,12 @@ fn variant_json(message: &IpcMessage) -> String {
             json_triple(triple)
         ),
         IpcMessage::Approve { triple, call } => format!(
-            r#"{{"kind":"Approve","triple":{},"call":{}}}"#,
-            json_triple(triple),
-            json_call(call)
+            r#"{{"kind":"Approve",{}}}"#,
+            json_members!(triple: json_triple, call: json_call)
         ),
         IpcMessage::Token { text, provenance } => format!(
-            r#"{{"kind":"Token","text":{},"provenance":"{}"}}"#,
-            json_text(text),
-            match provenance {
-                Provenance::Trusted => "Trusted",
-                Provenance::Untrusted => "Untrusted",
-            }
+            r#"{{"kind":"Token",{}}}"#,
+            json_members!(text: json_text, provenance: json_provenance)
         ),
         IpcMessage::Layout(state) => format!(
             r#"{{"kind":"Layout","value":{}}}"#,
@@ -404,28 +616,21 @@ fn variant_json(message: &IpcMessage) -> String {
             r#"{{"kind":"Steps","value":[{}]}}"#,
             steps
                 .iter()
-                .map(|summary| format!(
-                    r#"{{"step":"{}","function":{},"done":{}}}"#,
-                    summary.step,
-                    json_text(&summary.function),
-                    summary.done
-                ))
+                .map(|summary| json_struct!(summary, StepSummary {
+                    step: json_u64,
+                    function: json_text,
+                    done: json_bool,
+                }))
                 .collect::<Vec<String>>()
                 .join(",")
         ),
         IpcMessage::Request(request) => format!(
-            r#"{{"kind":"Request","value":{{"reserved_vram":"{}","compute_class":"{}","preemption":{}}}}}"#,
-            request.reserved_vram.get(),
-            match request.compute_class {
-                ComputeClass::Realtime => "Realtime",
-                ComputeClass::Interactive => "Interactive",
-                ComputeClass::Batch => "Batch",
-            },
-            match request.preemption {
-                Preemption::Never => String::from(r#"{"kind":"Never"}"#),
-                Preemption::After(grace) =>
-                    format!(r#"{{"kind":"After","grace_ms":"{}"}}"#, grace.get()),
-            }
+            r#"{{"kind":"Request","value":{}}}"#,
+            json_struct!(request, GrantRequest {
+                reserved_vram: json_mib,
+                compute_class: json_compute_class,
+                preemption: json_preemption,
+            })
         ),
         IpcMessage::Verdict(verdict) => format!(
             r#"{{"kind":"Verdict","value":{}}}"#,
@@ -433,12 +638,63 @@ fn variant_json(message: &IpcMessage) -> String {
                 Verdict::Granted => String::from(r#"{"verdict":"Granted"}"#),
                 Verdict::Queued => String::from(r#"{"verdict":"Queued"}"#),
                 Verdict::Refused { asked, ceiling } => format!(
-                    r#"{{"verdict":"Refused","asked":"{}","ceiling":"{}"}}"#,
-                    asked.get(),
-                    ceiling.get()
+                    r#"{{"verdict":"Refused",{}}}"#,
+                    json_members!(asked: json_mib, ceiling: json_mib)
                 ),
             }
         ),
+    }
+}
+
+/// The encoders of the members, one per Rust type, each taking its value by reference, as a
+/// destructuring hands it over. ⛔ RULE 1 LIVES IN `json_u64`: a `u64` is a decimal STRING.
+fn json_u64(value: &u64) -> String {
+    format!("\"{value}\"")
+}
+
+fn json_mib(mib: &Mib) -> String {
+    json_u64(&mib.get())
+}
+
+fn json_bool(flag: &bool) -> String {
+    flag.to_string()
+}
+
+fn json_policy_name(policy: &PolicyName) -> String {
+    json_text(match policy {
+        PolicyName::Remote => "Remote",
+        PolicyName::Local => "Local",
+    })
+}
+
+fn json_access(operation: &Access) -> String {
+    json_text(match operation {
+        Access::Read => "Read",
+        Access::Write => "Write",
+    })
+}
+
+fn json_provenance(provenance: &Provenance) -> String {
+    json_text(match provenance {
+        Provenance::Trusted => "Trusted",
+        Provenance::Untrusted => "Untrusted",
+    })
+}
+
+fn json_compute_class(class: &ComputeClass) -> String {
+    json_text(match class {
+        ComputeClass::Realtime => "Realtime",
+        ComputeClass::Interactive => "Interactive",
+        ComputeClass::Batch => "Batch",
+    })
+}
+
+fn json_preemption(preemption: &Preemption) -> String {
+    match preemption {
+        Preemption::Never => String::from(r#"{"kind":"Never"}"#),
+        Preemption::After(grace) => {
+            format!(r#"{{"kind":"After","grace_ms":{}}}"#, json_u64(&grace.get()))
+        }
     }
 }
 
@@ -469,23 +725,18 @@ fn json_bytes(bytes: &[u8]) -> String {
 }
 
 fn json_triple(triple: &Triple) -> String {
-    format!(
-        r#"{{"tool":{},"resource":{},"operation":"{}"}}"#,
-        json_text(&triple.tool),
-        json_text(&triple.resource),
-        match triple.operation {
-            Access::Read => "Read",
-            Access::Write => "Write",
-        }
-    )
+    json_struct!(triple, Triple {
+        tool: json_text,
+        resource: json_text,
+        operation: json_access,
+    })
 }
 
 fn json_call(call: &Call) -> String {
-    format!(
-        r#"{{"function":{},"argument":{}}}"#,
-        json_text(&call.function),
-        json_text(&call.argument)
-    )
+    json_struct!(call, Call {
+        function: json_text,
+        argument: json_text,
+    })
 }
 
 #[test]
@@ -532,11 +783,12 @@ fn every_u64_reaches_the_json_as_a_decimal_string() {
     // and compare equal to itself (gotcha #51, which the step-6 prose cites of itself).
     //
     // ⚠️ AND THE LIMIT, DECLARED RATHER THAN HIDDEN: this list is kept BY HAND. It covers every
-    // arm of `variant_json` that renders a `u64` today, and nothing makes it grow on its own --
-    // a variant added tomorrow that carries one would come back green, UNWATCHED, while the name
-    // still says "every". WHOEVER ADDS A VARIANT WITH A `u64` ADDS ITS LINE HERE. A probe that
-    // walked the values instead would have to know which fields are `u64`, which is the schema
-    // stated a second time -- what ADR-0037 refuses and what the literal exists to avoid.
+    // message of the set that renders a `u64` today, and nothing makes it grow on its own -- a
+    // message added tomorrow that carries one would come back green, UNWATCHED, while the name
+    // still says "every". WHOEVER ADDS A MESSAGE WITH A `u64` TO THE SET -- a variant, or one of
+    // the nested ones at its end -- ADDS ITS LINE HERE. A probe that walked the values instead
+    // would have to know which fields are `u64`, which is the schema stated a second time -- what
+    // ADR-0037 refuses and what the literal exists to avoid.
     let set = stamp_set();
     let rule = "rule 1: every u64 is a decimal STRING";
     assert_eq!(
@@ -567,6 +819,26 @@ fn every_u64_reaches_the_json_as_a_decimal_string() {
     assert_eq!(
         variant_json(&set[13]),
         r#"{"kind":"Verdict","value":{"verdict":"Refused","asked":"4096","ceiling":"1024"}}"#,
+        "{rule}"
+    );
+    assert_eq!(
+        variant_json(&set[14]),
+        r#"{"kind":"Policy","value":{"policy":"Local","allocated":"14336","total":"16384"}}"#,
+        "{rule}"
+    );
+    assert_eq!(
+        variant_json(&set[19]),
+        r#"{"kind":"Request","value":{"reserved_vram":"1024","compute_class":"Realtime","preemption":{"kind":"After","grace_ms":"250"}}}"#,
+        "{rule}"
+    );
+    assert_eq!(
+        variant_json(&set[20]),
+        r#"{"kind":"Request","value":{"reserved_vram":"4096","compute_class":"Batch","preemption":{"kind":"After","grace_ms":"750"}}}"#,
+        "{rule}"
+    );
+    assert_eq!(
+        variant_json(&set[21]),
+        r#"{"kind":"Request","value":{"reserved_vram":"512","compute_class":"Interactive","preemption":{"kind":"Never"}}}"#,
         "{rule}"
     );
 }

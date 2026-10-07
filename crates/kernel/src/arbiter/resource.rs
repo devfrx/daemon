@@ -93,7 +93,10 @@ impl Mib {
 }
 
 /// The three compute lanes of §5.1 and design/02. NOT a number: contention on compute is
-/// governed by ORDER plus a "reduce your footprint" signal, never by an amount.
+/// governed by ORDER plus a "reduce your footprint" signal, never by an amount. ⚠️ THE SIGNAL
+/// DOES NOT EXIST YET: no core -> worker message carries it (`crate::wire::worker`), and it is
+/// built by sub-project 8, which closes SP-2. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30,
+/// AUD-603.
 ///
 /// ⛔ `Ord` IS WRITTEN BY HAND, FROM AN EXPLICIT KEY, and that is the decision rather than
 /// ceremony. A DERIVED `Ord` follows the order in which the variants are DECLARED, so
@@ -105,10 +108,14 @@ impl Mib {
 /// a grant (ADR-0005: the requester declares the reservation). ⚠️ ONE FORMAT AND NOT TWO,
 /// unlike `Mib`: nothing sends a compute class to a worker.
 ///
-/// ⚠️ AND THE DECLARATION ORDER NOW DECIDES SOMETHING ELSE, STATED AND NOT HELD: the wire tag
-/// is the declaration index, so reordering these variants moves the bytes -- and NOTHING HERE
-/// WOULD SAY SO, because §6.4 forbids this channel the frozen bytes that catch exactly that on
-/// the journal. What the hand-written `Ord` above buys is the other half, and it still buys
+/// ⚠️ AND THE DECLARATION ORDER NOW DECIDES SOMETHING ELSE: the wire tag is the declaration
+/// index, so reordering these variants moves the bytes. What says so is
+/// `the_committed_fixtures_match_the_schema`, in `crates/kernel/tests/ipc_wire.rs`: red on every
+/// fixture that carries a moved variant and on the stamp of the map -- measured on 2026-10-06
+/// with `Realtime` and `Interactive` swapped. ⚠️ BUT ITS RED ASKS FOR A REGENERATION, WHICH
+/// BLESSES THE REORDER: §6.4 forbids this channel the frozen bytes that would refuse it, as the
+/// journal's do. ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30. What the hand-written `Ord`
+/// above buys is the other half, and it still buys
 /// it: the arbiter's priorities come from `priority()`, so they do not follow the wire. ⛔ The
 /// peer that would notice lives OUTSIDE this workspace, which is the same asymmetry
 /// `crate::wire::worker` writes down for its own default attribute.
@@ -118,7 +125,10 @@ pub enum ComputeClass {
     /// GRANT rather than subtracted from the budget -- a subtraction without a holder
     /// leaves I2 false for that consumer (ADR-0033, gotcha #4).
     Realtime,
-    /// Chat and the foreground agent. Served before `Batch`.
+    /// Chat and the foreground agent. Tried before `Batch` -- `promote` serves the lanes from the
+    /// best, `ask_back` reclaims from the worst -- and full precedence is an open item (design/02,
+    /// and `E50` and `E51` of the milestone 5 errata). ⚠️ RECALL OF 2026-10-03 -- audit of
+    /// 2026-09-30, AUD-010.
     Interactive,
     /// 3D render, indexing, background runs. May wait indefinitely.
     Batch,
@@ -156,18 +166,18 @@ impl Ord for ComputeClass {
 /// disappear together: a non-preemptible profile that carries a grace time, and a
 /// preemptible one that has none.
 ///
-/// ⚠️ DIVERGENCE FROM THE LETTER OF §5.2, DECLARED. That table lists TWO fields --
-/// `preemptible: boolean` and `release_grace: duration` -- and this is ONE. The spirit of
-/// §5.3 point 3 is what forces it; the letter of §5.2 is what it costs. Registered in the
-/// errata of the milestone 5 plan so the owner can overturn it seeing it.
+/// ⛔ ONE FIELD, AND THE TABLE OF §5.2 SAYS SO: since 2026-08-27 (AUD-072 of that day's audit) it
+/// carries `preemption: Preemption`, and it judges the choice right on the merits. The spirit of
+/// §5.3 point 3 is what imposes it, and the entry `R4` of docs/porta-di-qualita.md is closed.
+/// ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30, AUD-619.
 ///
 /// ⛔ IT CARRIES THE `bincode` DERIVES BECAUSE THIS TYPE CROSSES A PRIVATE CHANNEL: it is the
 /// third field of `crate::wire::ipc::GrantRequest`. ⚠️ AND IT DRAGS `Millis` ONTO THE WIRE WITH
 /// IT, through `After(Millis)` -- which is why `crate::time::Millis` carries the same pair,
 /// with no message naming it directly.
 ///
-/// ⚠️ SAME STATED-AND-NOT-HELD COST AS `ComputeClass`: the tag is the declaration index, and
-/// §6.4 gives this channel no frozen bytes to notice a reorder.
+/// ⚠️ SAME COST AS `ComputeClass`: the tag is the declaration index, a reorder is seen by the
+/// regenerable fixtures only, and §6.4 gives this channel no frozen bytes to refuse it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, bincode::Encode, bincode::Decode)]
 pub enum Preemption {
     /// The arbiter never takes it back. ⚠️ NOT "permanent": a job that cannot be

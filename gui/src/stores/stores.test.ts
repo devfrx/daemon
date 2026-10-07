@@ -1,12 +1,20 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it } from "vitest";
 
+import { loadFixtures } from "../schema/fixtures";
 import type { IpcMessage } from "../schema/messages";
 import { createFakeBridge } from "../transport/fakeBridge";
 
 import { useConnection } from "./connection";
 import { useCore } from "./core";
 import { pack_, unpack, useLayout, type LayoutPack } from "./layout";
+
+/** The map the KERNEL wrote beside the fixtures: its last line is the build stamp, in hex. */
+const MAP = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "..", "..", "schema", "fixtures", "ipc_v1.map"), "utf8");
 
 beforeEach(() => {
   setActivePinia(createPinia());
@@ -22,9 +30,17 @@ describe("the connection", () => {
     expect(bridge.sent).toHaveLength(1);
     const sent = bridge.sent[0];
     expect(sent?.kind).toBe("Hello");
-    // ⛔ THE ORACLE IS NOT "a string": it is a DECIMAL string that round-trips through BigInt.
-    // "0x…" or a rounded Number would both be truthy and both wrong.
-    expect(sent?.kind === "Hello" && /^[0-9]+$/.test(sent.value)).toBe(true);
+    // ⛔ THE ORACLE IS THE MAP ITSELF, READ HERE (AUD-727 of the audit of 2026-09-30): the `stamp 0x…` line the kernel
+    // wrote, in decimal through `BigInt`. A test of the SHAPE -- digits only -- let through both wrong values `stamp.ts`
+    // warns about: the `hello` fixture's arbitrary value, and the stamp rounded by a `Number`.
+    const digits = /^stamp 0x([0-9a-fA-F]{16})$/m.exec(MAP)?.[1];
+    expect(digits, "ipc_v1.map carries no `stamp 0x…` line").toBeDefined();
+    const stamp = BigInt(`0x${digits}`).toString(10);
+    // ⛔ NON-VACUITY: neither wrong value is the stamp, so the equality below tells each of them from it.
+    const fixture = loadFixtures().find(({ message }) => message.kind === "Hello")?.message;
+    expect(fixture?.kind === "Hello" && fixture.value).not.toBe(stamp);
+    expect(String(Number(BigInt(stamp)))).not.toBe(stamp);
+    expect(sent?.kind === "Hello" && sent.value).toBe(stamp);
   });
 
   it("becomes connected on Accepted, and stale on StaleBuild", () => {
@@ -85,14 +101,17 @@ describe("the layout", () => {
   });
 
   it("keeps the default view on Nothing and on Unavailable", () => {
-    // ⛔ THE TWO CASES THE FIXTURES CANNOT REACH (D46): `stamp_set` carries ONE message per
-    // variant, so `deliver("Layout")` only ever delivers `Package`. The type system is what
-    // keeps this honest -- `LayoutState` has three variants and not one more.
-    for (const value of [{ state: "Nothing" }, { state: "Unavailable" }] as const) {
+    // ⛔ THE TWO FIXTURES THE KERNEL APPENDED FOR THEM (17-layout and 18-layout, the guard of the nested variants):
+    // `deliver("Layout")` hands out the FIRST fixture of a kind, the `Package`, so this probe reads them from the set
+    // instead of writing them by hand.
+    const others = loadFixtures().flatMap(({ message }) => (message.kind === "Layout" && message.value.state !== "Package" ? [message] : []));
+    // ⛔ NON-VACUITY: the two states, each once -- `LayoutState` has three variants and not one more.
+    expect(others.map((message) => message.value.state)).toEqual(["Nothing", "Unavailable"]);
+    for (const message of others) {
       setActivePinia(createPinia());
       const layout = useLayout();
-      layout.receive({ kind: "Layout", value });
-      expect(layout.state.state).toBe(value.state);
+      layout.receive(message);
+      expect(layout.state.state).toBe(message.value.state);
       expect(layout.view).toBe("home");
     }
   });
@@ -150,6 +169,63 @@ describe("the layout", () => {
     expect(layout.arrivals).toBe(1);
     expect(layout.view).toBe("compact");
     expect(layout.saved).toEqual({ view: "compact", layouts: { compact: theirs } });
+  });
+
+  /** The bytes of the n-th `SaveLayout` the store sent: what the core answers with when the write sticks. */
+  function sentBytes(bridge: ReturnType<typeof createFakeBridge>, index: number): number[] {
+    const message = bridge.sent[index];
+    if (message?.kind !== "SaveLayout") throw new Error(`no SaveLayout at ${index}`);
+    return message.value;
+  }
+
+  function held(bytes: number[]): IpcMessage {
+    return { kind: "Layout", value: { state: "Package", bytes } };
+  }
+
+  it("does not count the echo of an earlier save while a later one is in flight (D89, AUD-542 of the audit of 2026-09-30)", () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    // ⛔ TWO SAVES BEFORE THE FIRST ANSWER: a settle, then a theme chosen -- each `keep` sends at once.
+    const home = { marker: "home, moved" } as never;
+    layout.settle(home);
+    layout.chooseTheme("dark");
+    // The core answers each one, in order, with what it holds after it (decision 13).
+    layout.receive(held(sentBytes(bridge, 0)));
+    // ⛔ THE FIRST ANSWER IS OUR OWN SAVE COMING BACK, NOT A PACKAGE TO SHOW: shown, it took the theme back to `system`
+    // and the dock back to the first save, and the second answer, equal to the last bytes sent, was dropped.
+    expect(layout.arrivals).toBe(0);
+    expect(layout.theme).toBe("dark");
+    layout.receive(held(sentBytes(bridge, 1)));
+    expect(layout.arrivals).toBe(0);
+    expect(layout.saved).toEqual({ view: "home", layouts: { home }, theme: "dark" });
+    // And the next move starts from what the core holds: the theme stays.
+    const work = { marker: "work, moved" } as never;
+    layout.showView("work");
+    layout.settle(work);
+    expect(unpack({ state: "Package", bytes: sentBytes(bridge, 2) })).toEqual({ view: "work", layouts: { home, work }, theme: "dark" });
+  });
+
+  it("does count what the core holds after a write that did not stick, with a later save in flight, and then the later one (decision 13)", () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    const welcome = [...pack_({ view: "home", layouts: {} })];
+    layout.receive(held(welcome));
+    expect(layout.arrivals).toBe(1);
+    const first = { marker: "first move" } as never;
+    const second = { marker: "second move" } as never;
+    layout.settle(first);
+    layout.settle(second);
+    // ⛔ THE FIRST WRITE DID NOT STICK: the core answers with the package it still holds, and the gui shows it.
+    layout.receive(held(welcome));
+    expect(layout.arrivals).toBe(2);
+    expect(layout.saved).toEqual({ view: "home", layouts: {} });
+    // ⛔ AND THE SECOND STUCK: the core holds it now, and so must the gui. Read as our own echo, it was dropped, and the gui
+    // went on holding the old package -- the next settle would have written the second move away.
+    layout.receive(held(sentBytes(bridge, 1)));
+    expect(layout.arrivals).toBe(3);
+    expect(layout.saved).toEqual({ view: "home", layouts: { home: second } });
   });
 });
 

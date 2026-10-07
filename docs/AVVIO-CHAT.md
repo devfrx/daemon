@@ -77,9 +77,8 @@ INVOCA QUESTE SKILL PRIMA DI QUALSIASI RISPOSTA O ESPLORAZIONE
      brainstorming e disegno ormai chiusi: era uno STATO, in un file che
      due righe più giù dichiara di non portarne. ⛔ A CHE PUNTO SIA quella sequenza NON è scritto qui: è
      uno STATO, e la §6 del compendio ne è la casa unica. Le voci aperte NON
-     lo sbarrano — quali, lo dice la tabella unica di
-     docs/porta-di-qualita.md, non nominata qui apposta perché un rimando
-     non può marcire.
+     lo sbarrano — quali siano, lo dicono gli indici della stessa §6.
+     ⚠️ RICHIAMO DEL 2026-10-06 — audit del 2026-09-30, AUD-082.
      ⚠️ RICHIAMO DEL 2026-08-28, LA TERZA NELLO STESSO GIORNO: qui stava
      «E SI COMINCIA DAL BRAINSTORMING, subito». Vero la mattina, falso la
      sera: cinque sezioni di disegno erano gia' approvate. TOLTO, non
@@ -152,11 +151,13 @@ E QUESTE QUANDO SERVIRANNO, NON PRIMA
                                              il sito indicato
   /superpowers:test-driven-development       quando comincerà il CODICE, che
                                              viene dopo il piano e non prima
-  /anthropic-skills:repo-audit               se e quando si aprirà un audit
-                                             NUOVO. NON serve ora: quello
-                                             dell'11 agosto è chiuso otto su
-                                             otto, e quello del 27 è chiuso nei
-                                             propri finding dal 2026-08-28.
+  /anthropic-skills:repo-audit               se e quando si apre un audit:
+                                             quale sia in corso, e dove stanno
+                                             le voci che i chiusi lasciano
+                                             aperte, lo dice la §6 del
+                                             compendio, e qui non si ricopia.
+                                             ⚠️ RICHIAMO DEL 2026-10-07 —
+                                             audit del 2026-09-30.
                                              ⚠️ Questa cella diceva «quel che
                                              resta è eseguirne i rimedi»
 
@@ -168,16 +169,21 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
      cosa NON rifare (§8), i gotcha (§9 — quanti, lo dice il suo titolo),
      le trappole di check-docs.sh (§10), i vincoli sul primo commit (§11).
   3. docs/audit-2026-08-27.md — ⛔ SOLO DUE PEZZI: la tabella «Le voci aperte
-     che NON hanno un numero AUD» (le sole ancora aperte, in gran parte del
-     proprietario) e «La disciplina, in cinque passi» (il metodo con cui qui
-     si rimedia). I 73 finding sono TUTTI CHIUSI dal 2026-08-28 — quanti, lo
-     dice il comando in fondo alla §6 del compendio — e il «Dettaglio» si
-     apre UNA scheda per volta, quella del finding su cui stai lavorando.
+     che NON hanno un numero AUD» (in gran parte del proprietario) e «La
+     disciplina, in cinque passi» (il metodo con cui qui si rimedia). Quali
+     dei 73 finding siano chiusi lo dice la colonna «Stato», col comando in
+     fondo alla §6 del compendio, e il «Dettaglio» si apre UNA scheda per
+     volta, quella del finding su cui stai lavorando.
+     ⚠️ RICHIAMO DEL 2026-10-03 — audit del 2026-09-30, AUD-602: lo stato
+     dei 73 sta in una casa sola, la colonna «Stato».
      ✅ RICHIAMO DEL 2026-09-09, decisione 26: qui stava «SOLO FINO ALLA
      TABELLA DEI 73 FINDING», cioè tutta la testa; il testo com'era, coi
      richiami del 2026-09-01, è in docs/archivio/lettura-di-apertura-storico.md.
-     ⚠️ docs/audit-2026-08-11.md — 32 KB — NON si apre più: è chiuso otto
-     decisioni su otto, e ciò che insegnava è dentro il compendio.
+     ⚠️ docs/audit-2026-08-11.md non si legge all'apertura: le otto
+     decisioni sono eseguite, ciò che insegnava è dentro il compendio, e le
+     voci rimaste aperte stanno nella sua §9, che la §6 del compendio
+     indicizza. ⚠️ RICHIAMO DEL 2026-10-03 — audit del 2026-09-30, AUD-083,
+     AUD-084.
   ⚠️ In token costano ALMENO il triplo di quel che i KB suggeriscono: misurato,
      quattrocento righe del solo compendio pesano 25148 token. È un LIMITE INFERIORE, non un totale — §12.
      ⚠️ RICHIAMO DEL 2026-09-01: qui seguiva «e il compendio ne ha oltre
@@ -200,18 +206,29 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
    cifra ricopiata marcisce. ⚠️ E questa riga la ricopiava lo stesso, due
    righe SOPRA la frase che lo vieta — gotcha #68. Tolta, non riallineata.
    Serve rustup: rust-toolchain.toml tira giù da sé la 1.95.0 e il bersaglio
-   x86_64-unknown-none, quindi non installare niente a mano. Su Windows serve
-   in più il linker MSVC (Visual Studio Build Tools), che rustup NON porta.
+   x86_64-unknown-none, quindi quelli non si installano a mano. Su Windows
+   serve in più il linker MSVC (Visual Studio Build Tools), che rustup NON
+   porta. E il cancello pretende strumenti che nessuno installa da sé:
+   · cargo-audit — il comando, con la versione, sta accanto al passo
+     `cargo audit` di scripts/gate.sh;
+   · Node, nell'intervallo di `engines.node` in gui/package.json: con
+     `engine-strict=true` in gui/.npmrc un Node fuori è rosso a `npm ci`;
+   · Google Chrome stabile, o `npx playwright install chrome`, per il
+     progetto `browser` di vitest, in scripts/gate-gui.sh.
+   ⚠️ RICHIAMO DEL 2026-10-06 — audit del 2026-09-30, AUD-562.
    Il primo comando utile è
        bash scripts/gate.sh
    e dice in un colpo se l'ambiente regge: deve stampare GATE GREEN.
 
-✅ I DUE AUDIT COMPLETI SONO CHIUSI NEI PROPRI FINDING — l'11 agosto otto
-   decisioni su otto, il 27 agosto tutti i suoi. ⚠️ MA IL SECONDO NON È
-   FINITO: restano le voci SENZA numero AUD, e la maggior parte sono
-   decisioni MIE. Quali e quante non è scritto qui — la loro tabella nel
-   rapporto è la casa unica, e un numeratore ricopiato qui invecchierebbe al
-   primo che chiudo: è la radice R3 dell'audit stesso.
+✅ I DUE AUDIT COMPLETI HANNO FATTO IL LORO LAVORO — l'11 agosto otto
+   decisioni su otto, il 27 agosto i rimedi dei suoi finding. ⚠️ MA NESSUNO
+   DEI DUE È FINITO: restano voci aperte, e la maggior parte sono decisioni
+   MIE. Quali e quante non è scritto qui — le case uniche sono la §9 del
+   primo rapporto, e del secondo la colonna «Stato» dei 73 e la tabella
+   delle voci SENZA numero AUD; un numeratore ricopiato qui invecchierebbe
+   al primo che chiudo: è la radice R3 dell'audit stesso.
+   ⚠️ RICHIAMO DEL 2026-10-03 — audit del 2026-09-30, AUD-083, AUD-084,
+   AUD-602: gli indici delle voci aperte stanno nella §6 del compendio.
    ⚠️ RICHIAMO DEL 2026-08-28, e questo blocco lo prescriveva a sé stesso
    («si riscrive quando l'audit si chiude»): diceva «ED È APERTO. LA SPECIE
    DEL LAVORO CHE VIENE È: RIMEDIO». Adesso la specie è CREATIVA, e il
@@ -267,41 +284,16 @@ LEGGI QUESTI TRE FILE, POI FERMATI — e il TERZO non per intero
      «L'INIEZIONE È AVVENUTA» e «C'ERA QUALCOSA DA VERIFICARE» SONO DUE
      AFFERMAZIONI, e una prova che tiene solo la prima è VERDE avendo
      confrontato insiemi vuoti.
-   Il racconto per esteso — C7a, C7b, il ciclo di livello 2 — sta nella §6 del
-   compendio. Quel che serve qui è la domanda: IN QUALE ALTRO STATO DEL MONDO
+   Il racconto per esteso — C7a, C7b, il ciclo di livello 2 — sta in
+   docs/archivio/stato-storico.md (⚠️ RICHIAMO DEL 2026-10-07 — audit del
+   2026-09-30). Quel che serve qui è la domanda: IN QUALE ALTRO STATO DEL MONDO
    QUESTA ASSERZIONE RESTEREBBE VERDE?
 
-⚠️ LE QUESTIONI APERTE STANNO IN TRE POSTI, e non è un'incoerenza. La §6 del
-   compendio tiene quelle del PRODOTTO — nessuna è un difetto oggi, e per
-   ciascuna è scritto perché: le nove righe di guasto scoperte (hanno un
-   indirizzo, quindi sono uno scaglionamento e non un arretrato), la metà del
-   gotcha #51 che resta fuori, e semi-dst.md che NON HA UN CHIUDENTE.
-   ⛔ La §5 dell'AUDIT teneva quelle della QUALITÀ, e le OTTO decisioni della
-   §8 sono ESEGUITE. ⚠️ MA LA §5 NON E' CHIUSA, e questa riga diceva di sì:
-   contate sul rapporto il 2026-08-21, CINQUE voci restano SENZA MARCA —
-   T-3, che è dichiarato ALTO, più S-3, A-3, K-4, PL-5 — oltre ai ~20 rilievi
-   minori. P-2 era la sesta, ed è chiusa lo stesso giorno; se le cinque siano
-   davvero minori NON L'HA MISURATO NESSUNO, ed è la stessa forma con cui P-2
-   è sopravvissuto. ⚠️ Più DUE residui registrati: l'asserzione 4b della
-   conformità reactor è IMPLICATA dalla 4a, quindi MUTA e non vacua, e le
-   DIECI sonde permanenti dell'esecuzione non hanno riga di catalogo, perché
-   la §7.4 è SPEC (vincolo globale 7). La tabella sta in porta-di-qualita.md.
-   ⛔ E il terzo posto è IL PIANO DEL TRAGUARDO 5, che ne porta due specie.
-   Dal proprio PRE-CONTROLLO, SETTE voci di cui TRE sono decisioni tue — un
-   nome di tipo a una lettera da uno che esiste già, una riga di catalogo che
-   vale per due regole, e due celle che nominano identificatori ITALIANI che
-   il traguardo fa esistere in inglese: toccano la SPEC, registrate non prese.
-   Dall'ESECUZIONE, altre SEI decisioni di disegno nell'errata — TRE sono
-   dichiarate NON TENUTE DA NESSUNA SONDA nel sorgente stesso, di proposito:
-   pinzarle congelerebbe la scelta che mettono davanti a te. ⛔ MA IL CONFINE,
-   o «dichiaro» diventa una scusa per non provare: si dichiara solo ciò che è
-   una SCELTA aperta. Se il doc accanto al codice AFFERMA già la cosa, quella
-   è una regola senza prova e si PINZA — al Task 9 due mutanti vivi sono
-   stati chiusi così, con due asserzioni in una sonda che esisteva già.
-   ⛔ E una QUARTA
-   frase è tenuta da un MUTANTE VIVO GARANTITO che NON è una politica aperta:
-   non c'è niente da decidere, e sta dichiarata accanto alla frase con la
-   misura. La §6 del compendio dice quali e perché.
+⚠️ LE QUESTIONI APERTE STANNO NEGLI INDICI CHE LA §6 DEL COMPENDIO ELENCA,
+   «Le voci ancora aperte, e dove vivono», ciascuna col suo chiusore. Qui
+   non si elencano né le voci né le loro case: un elenco ricopiato marcisce
+   nella casa che nessuno muove — gotcha #68.
+   ⚠️ RICHIAMO DEL 2026-10-06 — audit del 2026-09-30, AUD-082.
 
 ⚠️ Il compendio è una COMPRESSIONE, non una selezione: ci sono dentro tutte le
    decisioni, non quelle attinenti al compito di oggi. Sparisce il ragionamento

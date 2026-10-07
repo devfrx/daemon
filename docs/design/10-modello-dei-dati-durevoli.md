@@ -103,13 +103,20 @@ tolta invece di riallineata.
 
 ## Deciso e non costruito, per sotto-progetto
 
+⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-287 e AUD-288: chi dichiara quale `AMBITO` lo dice la 4.2
+del [disegno della revisione della knowledge base](../superpowers/specs/2026-09-28-knowledge-base-revisione-design.md) —
+la cartella col 13, le zone di lavoro col 5 —, e chi conserva e ripristina le copie del `CHECKPOINT`, il 5 o il 6, è
+la scelta aperta su AUD-500 e AUD-504: la relazione col passo porta lo stesso segno del `CHECKPOINT`. `DISPOSIZIONE`
+esiste, dal sotto-progetto 2, e resta in questo diagramma finché il proprietario non decide dove disegnarla — E227,
+nella riga della tabella. Il segno è la regola 2 del [README](../README.md).
+
 ```mermaid
 erDiagram
     RUN ||--o{ STEP : "contiene (col 3) - passo, run, run padre (ADR-0011)"
     STEP ||--o{ ARTEFATTO : "produce, per riferimento (ADR-0008)"
-    STEP ||--o{ CHECKPOINT : "riferisce la versione prima del passo (ADR-0024, col 5)"
+    STEP ||--o{ CHECKPOINT : "riferisce la versione prima del passo (ADR-0024, col 5 o col 6 - AUD-500)"
     AMBITO ||--o{ CHECKPOINT : "copre solo i percorsi dichiarati"
-    AMBITO ||--o| CARTELLA_KB : "la cartella e un ambito dichiarato (col 6)"
+    AMBITO ||--o| CARTELLA_KB : "la cartella e un ambito dichiarato (col 13)"
     CARTELLA_KB ||--|{ NODO_KB : "contiene"
     NODO_KB }|--|| INDICE_MAPPA : "frecce router, gruppo, foglia, skill, router - segnali orfano e rotto (col 6)"
     DETAIL ||--o| GUIDA_APPROVATA : "specie nuova (col 13), dedotta"
@@ -126,11 +133,11 @@ erDiagram
         bytes percorso "un riferimento - il contenuto resta sul disco"
     }
     AMBITO {
-        arriva col_5 "la porta filesystem esiste gia - declare_scope, preserve, restore"
+        arriva col_13_e_col_5 "la cartella col 13, le zone di lavoro col 5 - declare_scope esiste gia"
         bytes percorsi "dichiarati - fuori da qui niente e coperto"
     }
     CHECKPOINT {
-        arriva col_5 "CheckpointId esiste gia nella porta"
+        arriva col_5_o_col_6 "scelta aperta su AUD-500 - CheckpointId esiste gia nella porta"
         u64 id PK "CheckpointId"
         u64 passo FK "il passo che stava per toccare il file"
         bytes percorso
@@ -145,7 +152,7 @@ erDiagram
         string impronta
     }
     DISPOSIZIONE {
-        arriva col_2 "la settima porta - custodita, mai letta per decidere"
+        esiste dal_2 "la settima porta - custodita, mai letta per decidere - dove disegnarla e aperto, E227"
         enum chiave PK "una variante oggi"
         bytes pacchetto "opaco - per il core solo byte"
     }
@@ -167,11 +174,11 @@ erDiagram
 
 | Entità | Chi la costruisce | Fonte | Verificato · dedotto |
 |---|---|---|---|
-| `INVOCATION_DETAIL` | 2 | §5 del [disegno del 2](../superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md): funzione, invocatore, argomento; l'invocatore ha una variante oggi, il 12 aggiunge il gesto con un indice nuovo | verificato; la forma dell'argomento la dice il disegno del 2 ✅ **costruita dal compito 6 del piano della parte 2, 2026-09-22** — passata al primo diagramma, con `POLICY_DETAIL` (compito 8), regola di questo file |
+| `INVOCATION_DETAIL` | 2 | §5 del [disegno del 2](../superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md): funzione, invocatore, argomento; l'invocatore ha una variante oggi, e il 12 aggiunge il gesto con un **codice** nuovo dell'invocatore, il prossimo libero (`Invoker::code`), nello stesso `u8` del record — non con un indice nuovo, come dice il richiamo del 2026-09-18 del disegno del 2. ⚠️ **Richiamo del 2026-10-03** — audit del 2026-09-30, AUD-289 | verificato; la forma dell'argomento la dice il disegno del 2 ✅ **costruita dal compito 6 del piano della parte 2, 2026-09-22** — passata al primo diagramma, con `POLICY_DETAIL` (compito 8), regola di questo file |
 | `DISPOSIZIONE` | 2 | stella polare §2, decisioni 14 e 15: due operazioni, una chiave, un pacchetto opaco | verificato ✅ **costruita dal compito 5 del piano della parte 2 — richiamo del 2026-09-22 (E227):** `FileCustody` su `redb` in `platform`, `MemoryCustody` in `simulator`. ⚠️ **Dove disegnarla resta APERTO:** la regola di questo file la passerebbe al primo diagramma, che è *«Il giornale»*, e la custodia non ne fa parte — decisione del proprietario, registrata in E227; fino ad allora resta nel secondo |
 | `RUN`, il passo padre | 3 | ADR-0011: passo → run → run padre; oggi `RunId` non esiste, solo `StepId` | verificato |
 | `ARTEFATTO` | il primo sotto-progetto che produce un file | ADR-0008 e ADR-0018: l'artefatto è un **riferimento**, il contenuto vive sul disco | fonte verificata; il «chi» **dedotto** dalla roadmap |
-| `AMBITO`, `CHECKPOINT` | 5 | ADR-0024, decisioni 1 e 2; la porta `filesystem` ha già `declare_scope`, `preserve` e `restore`, e `CheckpointId`; l'implementazione vera col 5 | verificato |
+| `AMBITO`, `CHECKPOINT` | 13 e 5 l'ambito; 5 o 6 le copie | ADR-0024, decisioni 1 e 2; la porta `filesystem` ha già `declare_scope`, `preserve` e `restore`, e `CheckpointId`; chi dichiara quale ambito — la cartella col 13, le zone di lavoro col 5 — lo dice la 4.2 del [disegno della revisione della knowledge base](../superpowers/specs/2026-09-28-knowledge-base-revisione-design.md); chi conserva e ripristina le copie, il 5 o il 6, è la scelta aperta su AUD-500 e AUD-504 | verificato |
 | `CARTELLA_KB`, `NODO_KB`, `INDICE_MAPPA` | 6 | [disegno della knowledge base](../superpowers/specs/2026-09-04-knowledge-base-design.md), §2.2 e §4.2: nodi, attributi, frecce, segnali; la cartella è un ambito dichiarato | verificato |
 | `GUIDA_APPROVATA` | 13 | ADR-0009 col rimando del 2026-09-05; disegno della knowledge base §2.2: «approvate ora» è una proiezione del giornale, «nella forma di `permission.rs`» | la forma è **dedotta**: provenienza e impronta come dettaglio di una nota |
 
@@ -183,7 +190,13 @@ erDiagram
   ha la propria sonda, e l'aiutante comune resta registrato e non preso.
 - **`prune` oggi cancella le voci del passo**, in entrambe le implementazioni; ADR-0018 vuole al
   loro posto impronta e dimensione — voce aperta 1 di [`porta-di-qualita.md`](../porta-di-qualita.md),
-  chiusore il traguardo della ritenzione. Un passo in dubbio non si pota (`StepInDoubt`).
+  chiusore il sotto-progetto 15. La porta rifiuta di potare un passo in dubbio **per le operazioni** —
+  un intento senza esito, `StepInDoubt` —; un passo con l'esito che la riconciliazione mette in dubbio
+  perché un suo record non si decodifica (`steps_in_doubt`, `SuspendAndAsk`) lo pota lo stesso, e
+  saltarlo è un obbligo del chiamante, la spazzata del 15 — voce aperta 3 dello stesso file, e il doc
+  di `Journal::prune`.
+  ⚠️ **RICHIAMO DEL 2026-10-03** — audit del 2026-09-30, AUD-021 e AUD-646: la porta tiene la regola due di
+  ADR-0018 con la propria nozione di dubbio, e il chiusore è il 15.
 - **La chiave della voce è progressiva e non si riusa**: un buco lasciato da `prune` resta un buco.
 - **I byte congelati sono uno per `RecordKind`**, con una mappa sola — `crates/kernel/tests/frozen/`;
   quanti, lo dice `ls crates/kernel/tests/frozen/*.cbor | wc -l`. Non si rigenerano: se cambiano, si

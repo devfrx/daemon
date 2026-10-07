@@ -73,7 +73,10 @@ fn profile(name: &'static str, reserved: Mib) -> ResourceProfile {
     }
 }
 
-/// A grant, obtained the only way there is. ⚠️ `Admission` has no `Debug`, so the `let … else`
+/// A grant, obtained from the admission. ⚠️ Not the only way: `Arbiter::promote` hands grants
+/// out too, and the one site that builds them is the private `Arbiter::issue` — the doc of
+/// `Grant` says so. ⚠️ RECALL OF 2026-10-07 — audit of 2026-09-30, AUD-344.
+/// ⚠️ `Admission` has no `Debug`, so the `let … else`
 /// is not a style — `expect` does not exist on it.
 fn granted(
     arbiter: &mut Arbiter,

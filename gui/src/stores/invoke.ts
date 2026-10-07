@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { computed, ref, toRaw } from "vue";
 
 import type { Call, IpcMessage, Triple } from "../schema/messages";
 import type { Bridge } from "../transport/bridge";
@@ -58,7 +58,9 @@ export const useInvoke = defineStore("invoke", () => {
     const triple = core.pending;
     const call = inFlight.value;
     if (triple === null || call === null) return false;
-    wire?.send({ kind: "Approve", triple, call });
+    // ⛔ THE RAW VALUES AND NOT THE STORES' PROXIES (AUD-541 of the audit of 2026-09-30): both are read out of reactive
+    // state, and a message crosses the bridge by copy (`Bridge.send`) -- a proxy does not survive the clone.
+    wire?.send({ kind: "Approve", triple: toRaw(triple), call: toRaw(call) });
     approved.value.push(triple);
     core.settled();
     return true;

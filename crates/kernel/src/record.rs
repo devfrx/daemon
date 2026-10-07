@@ -244,21 +244,35 @@ pub enum Trust {
 /// ⚠️ WHAT THE DISCIPLINE WAS WORTH IS MEASURED AND NOT GUESSED: while the pair was held by
 /// convention alone, errata `E73` and `E79` found the assertion missing in TWO production sites
 /// out of three, each a live mutant on the whole workspace.
+///
+/// ⛔ A SPECIES WHOSE DETAIL CARRIES TEXT OF ITS OWN OWES TWO THINGS, AND THE SECOND IS THE ONE
+/// THAT GETS FORGOTTEN: the `E94` signature — private fields, every text a `&'static str` on
+/// `new` — and ONE `compile_fail` CASE PER TEXT PARAMETER, named
+/// `<species>_detail_<field>_is_not_runtime_text.rs`. A signature without its case is a guard
+/// nobody sees firing: `InvocationDetail` arrived with the first and not the second, and with its
+/// `function` widened to `&str` every case of `tests/compile_fail/` stayed `ok` — gotcha #96, a
+/// guard follows the type it is written on and not the property. Audit of 2026-09-30, AUD-690.
+/// ⛔ SO EACH VARIANT BELOW SAYS WHAT TEXT OF ITS OWN IT CARRIES AND WHICH CASE HOLDS IT, and a
+/// new variant says the same when it is written: "none" is an answer, silence is not.
 #[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
 pub enum Detail {
-    /// A sensor verdict upon the step's artefact (§6.4).
+    /// A sensor verdict upon the step's artefact (§6.4). Text of its own: none.
     #[n(0)]
     Verdict(#[n(0)] VerdictDetail),
-    /// The resolved routing of the step (§6.2, ADR-0011).
+    /// The resolved routing of the step (§6.2, ADR-0011). Text of its own: `model`, held by
+    /// `tests/compile_fail/routing_detail_model_is_not_runtime_text.rs`.
     #[n(1)]
     Routing(#[n(0)] RoutingDetail),
-    /// The triple a permission was granted for (§6.6, ADR-0016).
+    /// The triple a permission was granted for (§6.6, ADR-0016). Text of its own: `tool` and
+    /// `resource`, held by `tests/compile_fail/permission_detail_tool_is_not_runtime_text.rs` and
+    /// `permission_detail_resource_is_not_runtime_text.rs`.
     #[n(2)]
     Permission(#[n(0)] PermissionDetail),
-    /// Who invoked which function of the registry (ADR-0038).
+    /// Who invoked which function of the registry (ADR-0038). Text of its own: `function`, held
+    /// by `tests/compile_fail/invocation_detail_function_is_not_runtime_text.rs`.
     #[n(3)]
     Invocation(#[n(0)] InvocationDetail),
-    /// Which VRAM policy the transition moved to (§5.4, ADR-0006).
+    /// Which VRAM policy the transition moved to (§5.4, ADR-0006). Text of its own: none.
     #[n(4)]
     Policy(#[n(0)] PolicyDetail),
 }
@@ -388,7 +402,7 @@ impl RoutingDetail {
 /// because a struct literal from ANY crate put a runtime `String` in a `Detail` and the
 /// hand-written `Debug` of `RecordV1` prints `detail` in full (D25). This type carries TWO text
 /// fields, so it would have been that mouth twice over. The rule `E94` states is the one obeyed
-/// here: every species that grows a `Detail` with text of its own owes the same signature.
+/// here, and it is written whole on `Detail`: the same signature, and one case per text.
 ///
 /// ⛔ THE QUALIFIER `RoutingDetail` CARRIES APPLIES HERE WORD FOR WORD, and it is not a hedge:
 /// this type derives `Decode` and `Record::decode` is `pub`, so BYTES build one without passing
@@ -545,8 +559,8 @@ impl InvocationDetail {
 ///
 /// ⚠️ NOT SEALED, AND THAT IS MEASURED RATHER THAN AN OVERSIGHT — the same sentence
 /// `VerdictDetail` carries: it holds ONE `bool`, so no runtime TEXT can enter through it, and the
-/// `E94` signature that `RoutingDetail` and `PermissionDetail` owe is owed by a type with a mouth.
-/// This one has none.
+/// `E94` signature every species with text of its own owes — see `Detail` — is owed by a type
+/// with a mouth. This one has none.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Encode, Decode)]
 #[cbor(array)]
 pub struct PolicyDetail {
@@ -697,6 +711,11 @@ pub struct RecordV1 {
 /// `Vec<u8>` a caller fills, and `trust` is still a parameter. The label describing the payload
 /// is the CALLER's statement, and no signature can check it — road A4 of `crate::boundary` is
 /// where that is declared, and it is unchanged.
+/// ⛔ SO WHAT HOLDS A PRODUCER'S LABEL IS A PROBE THAT READS IT BACK FROM THE ARCHIVE, one per
+/// producer: a producer whose bench never calls `trust()` writes a label nobody watches.
+/// Measured on `registry`'s invocation note, which went without until 2026-10-02: flipped to
+/// `Instruction`, it left green every bench that touches the note. Audit of 2026-09-30,
+/// AUD-691.
 impl RecordV1 {
     /// The INTENT of a step, made durable BEFORE the effect runs (ADR-0007).
     pub fn intent(
@@ -872,12 +891,17 @@ impl RecordV1 {
         &self.payload
     }
 
-    /// Why the record was written, in OUR words — chosen at authoring time, never at runtime.
+    /// Why the record was written, in OUR words — chosen at authoring time, never at runtime, on
+    /// every road a caller writes IN SOURCE. A record decoded from bytes carries whatever they
+    /// say: that is road A4 of `crate::boundary`. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30,
+    /// AUD-553.
     pub fn reason(&self) -> &str {
         &self.reason
     }
 
-    /// Our own structured half, present exactly for the species that declare one.
+    /// Our own structured half, present exactly for the species that declare one IN SOURCE. A
+    /// record decoded from bytes may carry another, or none — road A4 of `crate::boundary`.
+    /// ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-553.
     pub fn detail(&self) -> Option<&Detail> {
         self.detail.as_ref()
     }
@@ -893,10 +917,12 @@ impl RecordV1 {
 ///
 /// ⚠️ EVERY OTHER FIELD STAYS READABLE, deliberately and for the reason the length stays on
 /// `Untrusted`: a failed `assert_eq!` has to remain diagnostic. `kind`, `effect`, `trust`,
-/// `reason` and `detail` are the kernel's own vocabulary — nobody outside chose them — and they
-/// are exactly what one wants to read when a record comes back wrong. Only the payload is
-/// somebody else's, and the list above is the whole of it: the numeral is gone rather than
-/// realigned, because it has already aged twice.
+/// `reason` and `detail` are the kernel's own vocabulary IN SOURCE — nobody outside chose them on
+/// any road a caller writes; a record decoded from bytes is road A4 of `crate::boundary`, and
+/// what printing it opens is that file's A3 — and they are exactly what one wants to read when a
+/// record comes back wrong. Only the payload is somebody else's, and the list above is the whole
+/// of it: the numeral is gone rather than realigned, because it has already aged twice.
+/// ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-553.
 ///
 /// ⛔ DATED RECALL, 2026-08-18 — FINDING P-1. That sentence was true of three fields out of four
 /// and FALSE OF `reason`, which the CALLER chooses. `promote` took a `&str`, so
@@ -943,18 +969,23 @@ impl RecordV1 {
 /// ⚠️ THAT SENTENCE SAID "THE OTHER THREE" UNTIL 2026-08-10 and is dated rather than quietly
 /// renumbered: `reason` arrived at index 4 that day, and it is on THIS side of the line on
 /// purpose. It is the text the caller wrote to justify the record; printing it discloses
-/// nothing nobody chose, and hiding it would leave a failed assertion unable to say what the
-/// record was for.
+/// nothing nobody chose IN SOURCE, and hiding it would leave a failed assertion unable to say
+/// what the record was for. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-553.
 ///
-/// ⛔ AND `detail` IS PRINTED, WHICH IS THE D25 AND NOT AN OVERSIGHT. The field carries OUR
-/// bytes by construction (D20), so printing it opens no road A3; NOT printing it would give
+/// ⛔ AND `detail` IS PRINTED, WHICH IS THE D25 AND NOT AN OVERSIGHT. On every road a caller
+/// writes IN SOURCE the field carries OUR bytes by construction (D20), so printing such a record
+/// opens no road A3; one decoded from bytes carries whatever they say in every text field of its
+/// `Detail`, and this impl prints them whole — the road `crate::boundary` declares open under A3
+/// (errata `E101`, `E120`). NOT printing it would give
 /// `RecordV1` a second hidden field that nobody decided to hide, against the half this doc calls
 /// "the one that gets forgotten" — a `Debug` that hid everything would pass the assertion below
 /// and leave a failed `assert_eq!` on a record saying nothing at all. ✅ AND SINCE 2026-09-01 THE
 /// GUARANTEE IS THE TYPE AND NOT ONLY DISCIPLINE, exactly as for `reason`: the fields are
-/// private, so index 5 is reachable only through a species constructor, and only the species
-/// that declare a `Detail` take one. ⚠️ THE SENTENCE HERE READ "DISCIPLINE AND NOT TYPE … which
+/// private, so IN SOURCE index 5 is reachable only through a species constructor, and only the
+/// species that declare a `Detail` take one; from bytes, `Record::decode` reaches it — road A4.
+/// ⚠️ THE SENTENCE HERE READ "DISCIPLINE AND NOT TYPE … which
 /// is AUD-050 in a second place" until that day, and the second place is shut with the first.
+/// ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-553.
 ///
 /// ⚠️ Pinned by `the_debug_of_a_record_does_not_print_the_payload`, because a closed road that
 /// no test holds is a road that reopens the day somebody puts `Debug` back in the derive list

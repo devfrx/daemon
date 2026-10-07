@@ -2,10 +2,14 @@
 //! `FileBackend` the journal already uses.
 //!
 //! ⛔ ITS OWN FILE AND ITS OWN TABLE, NOT A SECOND TABLE IN THE JOURNAL'S. ADR-0022 separates
-//! archives BY NATURE and gives each its own policy: the journal is encrypted, pruned and in the
+//! archives BY NATURE and gives each its own policy: the journal's is encrypted, pruned and in the
 //! backup; this is the "configuration" archive -- NOT encrypted, in the backup, permanent. Two
-//! natures in one file would be one policy for both, and the retention milestone would owe this
-//! package an exception written just for it. That is decision 15 of the north star in full.
+//! natures in one file would be one policy for both, and sub-project 15, which brings encryption
+//! at rest and retention, would owe this package an exception written just for it. That is
+//! decision 15 of the north star in full. ⚠️ THOSE ARE THE POLICIES, NOT TODAY: neither the
+//! journal nor this archive is encrypted or pruned until sub-project 15, nor backed up until
+//! sub-project 11 -- both are plain `redb` files meanwhile. ⚠️ RECALL OF 2026-10-03 -- audit of
+//! 2026-09-30, AUD-020.
 //!
 //! ⚠️ AND IT IS THE SAME `FileBackend`, WHICH IS NOT A CONTRADICTION: the backend is the boundary
 //! at which level-2 faults are injected (ADR-0032 requirement 4), and sharing the TYPE is what

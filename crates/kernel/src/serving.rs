@@ -17,7 +17,8 @@
 //!
 //! ⛔ THE WHOLE CORE SITS BEHIND ONE `RefCell` THE CALLER OWNS, which the tap of `gui/fake-core`
 //! shares (§7). That is sound here and it is NOT sound by luck: the executor polls ONE activity at
-//! a time and nothing inside a poll can reach the executor (§2.4.1), so two activities cannot be
+//! a time (§2.4.2; ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30) and nothing inside a poll can
+//! reach the executor, so two activities cannot be
 //! inside the cell at once -- PROVIDED no borrow is held across an `.await`. Every borrow in this
 //! file is taken and dropped inside one block, and the tapped round of `tests/serving.rs` is what
 //! holds it: a borrow that survived the `.await` panics there.
@@ -81,7 +82,8 @@ pub const POLICY_FUNCTION: Function = Function {
 
 /// Where a known client has got to.
 enum Stage {
-    /// Connected, and it has not introduced itself. Only `Hello` is answered.
+    /// Connected, and not welcomed: it has not introduced itself, or its `Hello` came while the
+    /// degradation could not be told (`greet`). Only `Hello` is answered.
     Greeting,
     /// The stamp matched. From here the core sends the piece that CHANGES, and the gui does not
     /// pull (§6.1.4).
@@ -111,6 +113,8 @@ pub struct Core<I: Ipc, J: Journal, C: Custody> {
     arbiter: Arbiter,
     registry: Registry,
     grants: ClientGrants,
+    /// ⛔ A `share` OF THE CORE'S ONE COUNTER, which the transport numbers its clients from too
+    /// (`crate::numbering`): the composition root builds it once and hands each its share.
     steps: Progressive,
     clients: Vec<Client>,
     parameters: Parameters,
@@ -201,11 +205,12 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
     /// grep cannot see (E62, E118). ⚠️ NO TALLY IN THAT CLAUSE EITHER: the first draft wrote "the
     /// ONLY caller", two lines under a sentence refusing tallies.
     ///
-    /// ⛔ AND THE HOLE IS DECLARED RATHER THAN LEFT GREEN (E120): nothing in the gate builds or
-    /// runs the fake core until `scripts/gate-gui.sh` arrives with TASK 15, so until then this is
-    /// a `pub` element of `kernel` with ZERO callers inside the gate and ZERO coverage -- the
-    /// gate is green WITHOUT LOOKING at it. That is exactly the condition `crate::boundary`
-    /// exists to refuse, carried on purpose and with a date on it.
+    /// ⛔ AND WHAT KEEPS IT INSIDE THE GATE IS `scripts/gate-gui.sh`, which `scripts/gate.sh`
+    /// runs: it builds the fake core and runs its tests -- `the_tokens_arrive_untrusted` drives
+    /// the faucet through this accessor -- so this `pub` element of `kernel` has its callers and
+    /// its coverage in the gate, outside the workspace, where `cargo test --workspace` alone would
+    /// be green WITHOUT LOOKING at it (E120). ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30,
+    /// AUD-549.
     ///
     /// ⚠️ NOT A DOOR INTO THE DISPATCH. Nothing that branches on an INCOMING message may use
     /// this: the dispatch is `serve`, in one place, and a second one in the fake core is exactly
@@ -346,8 +351,12 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
         let id = self.clients[index].id;
         if stamp != build_stamp() {
             // ⛔ "THE CORE CLOSES" IS NOT AN OPERATION OF THE PORT (decision 22). What the core
-            // does is STOP LISTENING, so this client leaves the table: the gui does not start, says
-            // so (§6.1.2), exits by itself, and there is nobody left here to see it go.
+            // does is STOP LISTENING, so this client leaves the table: the gui does not start and
+            // says so (§6.1.2), and it does not exit -- the SPA stays, with the band that declares
+            // it and no retry (`gui/src/frame/Band.vue`), and no shell that could exit exists yet.
+            // ⚠️ THE TRANSPORT KEEPS ITS ENTRY WHILE THE CORE LIVES, because nobody names this
+            // client again: the limit is declared beside `drop_client` in `platform::ipc`.
+            // ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30.
             let _ = self.tell(id, &IpcMessage::StaleBuild(build_stamp()));
             return Outcome::Forget;
         }
@@ -356,16 +365,37 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
             Some(report) => report,
             // ⛔ AN UNKNOWN DEGRADATION IS NOT SENT AS "NOTHING IS DEGRADED", which is the silent
             // degradation ADR-0019 forbids and the argument `DegradationError` spells out. The wire
-            // has no third state for it: the gui is simply not told, and the sweep will tell it as
-            // soon as the journal reads again. ⚠️ REGISTERED AND NOT TAKEN: whether `Degradation`
-            // should gain an "unknown" the way `LayoutState` gained `Unavailable` (decision 35) is
-            // the owner's, and it is a variant on a wire that never retires one.
+            // has no third state for it, so NOTHING of the welcome goes out -- not even `Accepted`
+            // -- and the client stays in `Greeting`. ⛔ THE SWEEP DOES NOT MAKE UP FOR IT: D23
+            // re-reads the degradation only for a client already welcomed, and this one was not.
+            // What welcomes it is its NEXT `Hello`, which the gui sends from its `retry` -- it has
+            // no timeout (D48) -- and until then the gui waits. The probe is
+            // `a_hello_the_journal_cannot_answer_gets_nothing_until_the_next_hello`, in
+            // `tests/serving.rs`. ⚠️ REGISTERED AND NOT TAKEN: whether the core should finish this
+            // welcome by itself once the journal reads again, or `Degradation` should gain an
+            // "unknown" the way `LayoutState` gained `Unavailable` (decision 35), is the owner's.
+            // What the second would cost is a schema change in lockstep -- `IpcMessage`, the
+            // fixtures, the stamp and the gui's reader move together, because this wire renounces
+            // versioning (I4) -- not an index spent for ever. ⚠️ RECALL OF 2026-10-02 -- audit of
+            // 2026-09-30: AUD-530, AUD-531, AUD-071 and AUD-554 on the sweep, AUD-074 on the cost.
             None => return Outcome::Keep,
         };
 
+        // ⛔ THE PROTECTION IS NOT DELIVERED, decision D22 of the sub-project 2 plan: `Protection`
+        // has one variant, and a parameter that can take one value is dead surface inside
+        // `Parameters`. ⛔ THE TRIGGER, written beside the literal as the design asks and held by
+        // the compiler rather than by this sentence: the day `Protection` gains a second variant,
+        // the `match` below stops compiling, and the value becomes DELIVERED through `Parameters`
+        // -- what the core announces must be the protection the platform gives, never one picked
+        // here (ADR-0023). What the one variant promises today is in its own doc.
+        let protection = Protection::AsSystemAccount;
+        match protection {
+            Protection::AsSystemAccount => {}
+        }
+
         // The welcome, in the order sequence 1 of the north star fixes.
         for message in [
-            IpcMessage::Accepted(Protection::AsSystemAccount),
+            IpcMessage::Accepted(protection),
             IpcMessage::Degradation(told),
             IpcMessage::Policy(self.policy_report()),
             IpcMessage::Layout(self.layout()),
@@ -426,6 +456,9 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
                 }
                 match self.step_list() {
                     Some(steps) => self.tell(id, &IpcMessage::Steps(steps)),
+                    // ⚠️ NO LIST RATHER THAN AN EMPTY OR A SHORT ONE -- the argument is on
+                    // `step_list`, and the probe is
+                    // `after_the_welcome_an_unreadable_journal_sends_no_clean_report_and_no_list`.
                     None => Outcome::Keep,
                 }
             }
@@ -472,6 +505,9 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
     }
 
     /// D23: every turn, only while somebody is attending, and only when it CHANGED.
+    ///
+    /// ⚠️ A CLIENT STILL IN `Greeting` IS NOT ATTENDING, even one whose stamp matched: it was told
+    /// nothing to compare with, and what welcomes it is its next `Hello` -- see `greet`.
     fn sweep_degradation(&mut self, now: Monotonic) {
         if self.attending().is_empty() {
             // ⛔ A BOUND AND NOT AN OPTIMISATION: `degradation_now` re-reads the whole journal, and
@@ -480,6 +516,10 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
             return;
         }
         let Some(state) = self.degradation() else {
+            // ⛔ AN UNKNOWN DEGRADATION SAYS NOTHING, for `greet`'s reason: "nothing is degraded"
+            // would be the silent degradation ADR-0019 forbids, so every client keeps the last
+            // state it was told until the journal reads again. The probe is
+            // `after_the_welcome_an_unreadable_journal_sends_no_clean_report_and_no_list`.
             return;
         };
 
@@ -570,7 +610,10 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
     /// ⛔ `None` WHEN THE ARCHIVE CANNOT BE READ, and never a short list. An incomplete list read
     /// as complete is the same silent partial truth `is_granted` and `degradation_now` both refuse
     /// in their own words, arrived at here by the one road nobody guards: a record this build
-    /// cannot decode, skipped, would take a step out of the list the gui shows.
+    /// cannot decode, skipped, would take a step out of the list the gui shows. Both callers then
+    /// send no list at all; the probes are, in `tests/serving.rs`,
+    /// `a_welcome_whose_step_list_cannot_be_read_goes_out_without_one` and
+    /// `after_the_welcome_an_unreadable_journal_sends_no_clean_report_and_no_list`.
     fn step_list(&self) -> Option<Vec<StepSummary>> {
         let entries = self.journal.replay().ok()?;
         let mut list: Vec<StepSummary> = Vec::new();

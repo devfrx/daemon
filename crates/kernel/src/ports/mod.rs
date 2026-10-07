@@ -1,6 +1,9 @@
 //! The SEVEN families of ports (§2.3), and the number is not decoration: §3.1 declares this
-//! list EXHAUSTIVE — "there are no other points at which the world touches the kernel" —
-//! and the simulator substitutes ALL of them.
+//! list EXHAUSTIVE — "there are no other points at which the world touches the kernel" — and
+//! designs a double in the simulator for each. ⚠️ `simulator` holds the doubles of `custody`,
+//! `ipc`, `journal` and `reactor` -- and of `rng`, which lives outside this module --; the fakes
+//! of `filesystem`, `network` and `process` live in benches only: `grep -n '^pub mod'
+//! crates/simulator/src/lib.rs`. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-712.
 //!
 //! ⚠️ DATED RECALL, 2026-09-17, sub-project 2 task 4: THE NUMBER ABOVE WAS SIX UNTIL TODAY. The
 //! seventh family is `custody` -- it keeps the bytes the gui entrusts to the core and hands them
@@ -22,10 +25,13 @@
 //! | `reactor`    | §2.4        | milestone 2 — the executor needs it now  |
 //! | `journal`    | §4          | milestone 3                              |
 //! | `filesystem` | §4          | staged (§0.4)                            |
-//! | `process`    | §5.6, §6.10 | milestone 6                              |
+//! | `process`    | §5.6, §6.10 | milestone 6 (the port) · staged: the first real worker process (§0.2) |
 //! | `ipc`        | §6.1        | milestone 6 (the port) · sub-project 2, task 2 (`platform::ipc::LocalSocketIpc`, the real transport) |
 //! | `network`    | §2.3.1      | staged — the single exit point           |
 //! | `custody`    | GUI north star §2 | sub-project 2, task 5                    |
+//!
+//! ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-549: the `process` row says that
+//! milestone 6 brought the port and not its real implementation, which `platform` does not have.
 //!
 //! ⛔ THE TABLE IS THE DESIGN, NOT AN INVENTORY OF FILES — and with task 12 the two finally
 //! COINCIDE: this module declares SEVEN submodules, one per row. Two of them have a caller —
@@ -42,10 +48,11 @@
 //! that counts the whole is `grep -c "^pub mod " crates/kernel/src/ports/mod.rs`, SEVEN on
 //! 2026-09-17. ⛔ A LIST THAT OMITS A MEMBER IS GOTCHA #17 ARRIVING AS AN OMISSION RATHER THAN AS
 //! A DIGIT, which is why the count and the names moved together rather than the count alone.
-//! ⛔ AND THE TWO SENTENCES COUNT DIFFERENT SETS, SO BOTH HOLD: `ipc` has a real implementation
-//! and no caller yet, so the ports with NEITHER are `filesystem`, `network`, `process` and
-//! `custody`. ⚠️ `custody`'s FIRST CALLER ARRIVES WITH TASK 7 -- `Core::new`, which takes it BY
-//! VALUE -- so this line carries the date on which it stops being true, written before it does.
+//! ⛔ AND BOTH DATES FELL DUE ON 2026-09-18, WITH TASK 7: `crate::serving::Core` calls `ipc` and
+//! takes `custody` BY VALUE, and each has its real implementation in `platform` -- so the ports
+//! with NEITHER a caller nor an implementation are `filesystem`, `network` and `process`. Which
+//! ports `platform` implements is what `grep -n '^pub mod' crates/platform/src/lib.rs` prints.
+//! ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-549.
 //!
 //! ⚠️ AND THAT COINCIDENCE IS PRECISELY WHEN THE TABLE LOOKS DELETABLE, so the reason it stays
 //! is written here rather than left to be re-derived. Until `ipc` landed, the table was the
@@ -60,8 +67,10 @@
 //! without a caller are held by `tests/ports_are_implementable.rs` — SIX fakes, because
 //! `process` needs two of them (`Worker` and `Process`), and calls that exercise each in both
 //! directions. It buys that the signatures compile FROM OUTSIDE THE CRATE and can be called;
-//! it does not buy that they are the right signatures, and it is not the conformance suite,
-//! which needs two implementations to compare.
+//! it does not buy that they are the right signatures, and it is not a conformance suite, which
+//! holds an implementation to the contract's promises -- the real one and the double where both
+//! exist, the real transport ONLY for `ipc` (D82, `crates/kernel/tests/contract/ipc.rs`).
+//! ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30.
 //!
 //! ⚠️ DATED RECALL, 2026-08-28 — FINDING AUD-054. The FIVE is still TRUE OF THAT FILE and is
 //! kept for it; what was false is reading the sentence as the whole account for `process`,
@@ -109,17 +118,23 @@
 //! at the first record written. ⚠️ THE LINE ENDED WITH "so nothing writes one yet" UNTIL
 //! 2026-08-10 and is dated rather than rewritten: `Untrusted::promote` writes one, and the frozen
 //! bytes are in the repository. The format IS settled now, and `crate::record` states on what
-//! terms it may still grow — optional fields at new indices, and nothing else.
+//! terms it may still grow — optional fields at new indices, and new species: a new species is
+//! a new `RecordKind` variant together with its `Detail`, never one without the other (D20), and
+//! the cost of a variant a build does not know is written in `crate::record`. ⚠️ RECALL OF
+//! 2026-10-07 — audit of 2026-09-30, AUD-595.
 //!
 //! ⚠️ `rng` IS DECLARED IN §2.2 AND LIVES IN `crate::rng`, NOT HERE. It is a source of
 //! non-determinism, not a family of I/O, and the asymmetry is deliberate rather than a
-//! filing mistake: the simulator substitutes SEVEN things while §2.3 enumerates SIX, and
-//! §3.1 says so in those words. Repeated here so that nobody "fixes" the discrepancy by
+//! filing mistake: §3.1's list of what the simulator substitutes has SEVEN rows while §2.3
+//! enumerates SIX, and §3.1 says so in those words. ⚠️ RECALL OF 2026-10-03 -- audit of
+//! 2026-09-30, AUD-712. Repeated here so that nobody "fixes" the discrepancy by
 //! moving `rng` under this module, or by writing "seven families" in the line above.
 //! ✅ DATED RECALL, 2026-09-17 -- THE NUMBERS MOVED AND THE WARNING STANDS, WHICH IS THE WHOLE
 //! POINT OF DATING IT RATHER THAN REWRITING IT. A SEVENTH FAMILY ARRIVED -- `custody`, the
-//! layout the gui entrusts to the core (decision 15 of the GUI north star) -- so the simulator
-//! now substitutes EIGHT things while §2.3 enumerates SEVEN. ⛔ THE DISCREPANCY DID NOT CLOSE,
+//! layout the gui entrusts to the core (decision 15 of the GUI north star) -- so §3.1's list
+//! now has EIGHT rows while §2.3 enumerates SEVEN. ⚠️ RECALL OF 2026-10-03 -- audit of
+//! 2026-09-30, AUD-712: what the simulator holds today is in the head of this module.
+//! ⛔ THE DISCREPANCY DID NOT CLOSE,
 //! IT MOVED: `rng` is still declared in §2.2 and still lives in `crate::rng`, and moving it
 //! under this module is still the wrong fix.
 //! ⛔ AND "seven families" IS NOW WRITTEN IN THE LINE ABOVE -- BY THE OPENING SENTENCE OF THIS

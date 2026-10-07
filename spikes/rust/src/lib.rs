@@ -4,6 +4,13 @@
 //! il tentativo produce `E0453: allow(unsafe_code) incompatible with previous forbid`.
 //! È ciò che rende l'unica via di aggiramento — la transmutazione — vietata dal
 //! compilatore invece che da una convenzione.
+//!
+//! ⚠️ RICHIAMO DEL 2026-10-03 — la transmutazione non è l'unica via. `forbid(unsafe_code)` la
+//! vieta, ma `Instruction::new(String)` e `Untrusted::as_str()` sono pubblici, quindi
+//! `Instruction::new(u.as_str().to_string())` porta il testo non fidato nel canale delle
+//! istruzioni senza `unsafe`; e i moduli figli vedono i campi privati (`Instruction(u.0)`). Il
+//! kernel le dichiara vie A1/A2 e A7 di `crate::boundary`, non chiudibili. Audit del
+//! 2026-09-30, AUD-681.
 
 #![forbid(unsafe_code)]
 
@@ -37,6 +44,9 @@ impl Untrusted {
     }
 
     /// T2 — unico percorso di conversione. Nel kernel reale la chiamata è giornalata.
+    ///
+    /// ⚠️ RICHIAMO DEL 2026-10-03 — unico percorso NOMINATO, non l'unico: `Instruction::new`,
+    /// pubblico, ne apre un altro (la testa di questo file). Audit del 2026-09-30, AUD-681.
     pub fn promote_to_instruction(self, _motivo: &str) -> Instruction {
         Instruction(self.0)
     }

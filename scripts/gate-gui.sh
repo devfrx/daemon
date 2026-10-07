@@ -12,8 +12,10 @@
 set -euo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
-# ⛔ `--locked` FOR THE SAME REASON AS EVERY OTHER CARGO CALL OF THE GATE: the fake core's
-# `Cargo.lock` is committed (§8, global constraint 7), so it is an INPUT here and not a side effect.
+# ⛔ `--locked` FOR THE SAME REASON AS EVERY OTHER CARGO CALL OF THE GATE THAT RESOLVES THE GRAPH:
+# the fake core's `Cargo.lock` is committed (§8, global constraint 7), so it is an INPUT here and
+# not a side effect. `cargo audit`, further down, has no such flag and only reads the lockfile --
+# the block on `--locked` in `gate.sh`. RECALL OF 2026-10-06 -- audit of 2026-09-30, AUD-343.
 # ⚠️ AND THE FAKE CORE COMPILES IN ITS OWN `target/`, measured on 2026-09-15 with `cargo metadata`
 # (P-104): it is outside the workspace, so it rebuilds `kernel`, `platform` and `simulator` rather
 # than reusing `<root>/target`. That is the declared cost of §8, not a misconfiguration.
@@ -41,6 +43,20 @@ npm run build
 # non-vacuity guard -- a build that produced nothing would pass the second.
 test -f dist/index.html || { echo "dist/index.html is missing: the build produced nothing to check"; exit 1; }
 if [ -e dist/kit.html ] || grep -rlq 'kit-card' dist/assets; then echo "the kit page is in the package"; exit 1; fi
+# ⛔ THE FIRST LINE OF `src/main.ts`, PROVEN ON THE PACKAGE TOO (AUD-722 of the audit of 2026-09-30): `dockview`'s stylesheet
+# is imported FIRST, so that our tokens, after it, win where both style the dock -- and `vite build` writes the page's one
+# stylesheet in the order of the imports. So the package must OPEN with `dockview`'s first rule, whose selector is read
+# from the installed sheet and not written here. Imports inverted, the package opens with our fonts; the import dropped,
+# with something else: red either way. The probe of `main.ts` in `frame.browser.test.ts` cannot see this order -- that
+# file imports both sheets itself. The two `test` lines are the non-vacuity guards: a selector read, one sheet found.
+first=$(grep -m 1 -o '^[^{]*' node_modules/dockview/dist/styles/dockview.css | tr -d '[:space:]' || true)
+test -n "$first" || { echo "no first rule read in dockview's stylesheet: the order of the sheets would be checked against nothing"; exit 1; }
+sheets=(dist/assets/index-*.css)
+test "${#sheets[@]}" -eq 1 -a -f "${sheets[0]}" || { echo "the page has not exactly one stylesheet in the package: ${sheets[*]}"; exit 1; }
+case "$(head -c 400 "${sheets[0]}" | tr -d '[:space:]')" in
+  "$first{"*) ;;
+  *) echo "the package's stylesheet does not open with dockview's first rule ($first): main.ts must import dockview.css FIRST"; exit 1 ;;
+esac
 echo "-------- gui: probes"
 # ⛔ TWO PROJECTS, ONE AT A TIME (design system, task 2; E10 of its plan): jsdom, and the INSTALLED Chrome for
 # what only a layout engine can judge -- fonts, motion, radii, clipping, the contrast of the drawn page. One at a
@@ -59,7 +75,10 @@ echo "-------- gui: lint"
 npm run lint
 # ⛔ THE FAKE CORE'S OWN LOCKFILE IS AUDITED TOO (D83). It is seeded from the root's and pins the same
 # crates, but it is a SECOND lockfile, and the `cargo audit` of `gate.sh` reads the root's alone. Same
-# verdict expected on the same crates; a divergence between the two is task 12's comparison script.
+# verdict expected on the same crates. ⚠️ THAT THE TWO PIN THE SAME VERSIONS NOTHING IN THE GATE
+# CHECKS: there is no comparison script -- the comparison is a command in task 12's closing criteria
+# (D83), which nothing re-runs. RECALL OF 2026-10-06 -- audit of 2026-09-30, AUD-683: the entry
+# is in `docs/porta-di-qualita.md`, «Che cosa la porta NON controlla, di questa parte».
 #
 # ⛔ AFTER THE PROBES AND THE LINT, AND THAT IS THIS FILE'S OWN ORDERING RULE ("lint last" above): under
 # `set -e` a red here must not hide the build and the probes, and this check CAN go red without a

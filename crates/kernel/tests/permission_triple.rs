@@ -32,9 +32,11 @@ const READ_A: Permission = Permission {
 
 /// Opens the step the permission is granted upon, and answers nothing.
 ///
-/// ⛔ `grant` DOES NOT DO THIS, and the asymmetry is the point: `StepId` has no allocator — whether
-/// one arrives is the owner's decision — so a function that minted the intent of a step it did not
-/// open would be inventing an identity the port is meant to assign.
+/// ⛔ `grant` DOES NOT DO THIS, and the asymmetry is the point: `grant` is handed its step and has no
+/// counter of its own — the `journal` port allocates none, by the owner's choice of 2026-09-09, and
+/// step numbers come from `kernel::numbering::Progressive`, handed to whoever mints them — so a
+/// function that minted the intent of a step it did not open would be inventing an identity
+/// outside that counter. ⚠️ RECALL OF 2026-10-02 — audit of 2026-09-30, AUD-070.
 fn open_the_step(journal: &mut MemoryJournal, step: StepId) {
     let intent = Record::V1(RecordV1::intent(
         EffectClass::Idempotent,

@@ -7,8 +7,12 @@
 //!
 //! | What could have been random     | What it is instead                    | Why                                                                     |
 //! |---------------------------------|---------------------------------------|-------------------------------------------------------------------------|
-//! | identity of a run and of a step | PROGRESSIVE, assigned by the journal  | the journal already orders them; a drawn identifier is a draw to reproduce for nothing |
+//! | identity of a run and of a step | PROGRESSIVE, from the core's one counter | the journal already orders them; a drawn identifier is a draw to reproduce for nothing |
 //! | the wait between two retries    | NO jitter                             | jitter fights contention between MANY clients, and here the client is ONE |
+//!
+//! ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-062, AUD-070: the counter is
+//! `crate::numbering::Progressive`, a step's identity is minted from it by `crate::serving::Core`,
+//! and no run identity exists yet; the journal assigns none.
 //!
 //! ⛔ **Consumers in the kernel's decision logic: NONE.** Declaring the list empty is
 //! information — it says the logic is reproducible without a seed at all. A generic port

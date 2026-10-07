@@ -247,6 +247,64 @@ describe("the dock", () => {
     expect(saves(bridge)).toBe(0);
   });
 
+  it("opens the shipped view when the saved one is a layout `dockview` cannot read, at start-up and when it arrives, and saves the next move under that view's name (AUD-536, AUD-543)", async () => {
+    // ⛔ TWO WAYS `dockview-core` 8.3.1 REFUSES A LAYOUT: before touching the grid -- `{}`, no branch at the root -- and
+    // after clearing it -- a group whose id is not a string, met while the grid is rebuilt: the dock is left empty.
+    const refusals: [string, SerializedDockview][] = [
+      ["before the grid is cleared", {} as SerializedDockview],
+      ["after the grid is cleared", JSON.parse(JSON.stringify(VIEWS.work).replace('"id":"3"', '"id":3')) as SerializedDockview],
+    ];
+    const lavoro = Object.keys(VIEWS.work.panels ?? {}).sort();
+    // `dockview` says the second refusal on the console itself; the probe hears it rather than printing it.
+    const said = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    try {
+      for (const [how, unreadable] of refusals) {
+        // AT START-UP: the package is in the store before the dock is built.
+        setActivePinia(createPinia());
+        useLayout().receive(packageFromTheCore({ view: "work", layouts: { work: unreadable } }));
+        expect(showing(createDock(host())), how).toEqual(lavoro);
+        // AND WHEN IT ARRIVES with the dock up, on Home: the dock follows the store (D89).
+        setActivePinia(createPinia());
+        const bridge = createFakeBridge();
+        const layout = useLayout();
+        layout.attach(bridge);
+        const api = createDock(host());
+        api.layout(1600, 1000);
+        await flush();
+        layout.receive(packageFromTheCore({ view: "work", layouts: { work: unreadable } }));
+        await flush();
+        expect(showing(api), how).toEqual(lavoro);
+        // ⛔ SHOWING IS NOT SAVING, and the next move goes under Lavoro's name with Lavoro's tiles -- not Home's, as the
+        // dock left on the view before would have had it.
+        expect(saves(bridge), how).toBe(0);
+        api.getPanel("chat")?.api.close();
+        await flush();
+        expect(saves(bridge), how).toBe(1);
+        const last = bridge.sent.at(-1);
+        const pack = last?.kind === "SaveLayout" ? unpack({ state: "Package", bytes: last.value }) : null;
+        expect(Object.keys(pack?.layouts.work?.panels ?? {}).sort(), how).toEqual(lavoro.filter((id) => id !== "chat"));
+        expect(pack?.layouts.home, how).toBeUndefined();
+      }
+      // ⛔ NON-VACUITY: the second refusal did come after the grid was cleared -- `dockview` reverted and said so.
+      expect(said).toHaveBeenCalledWith("dockview: failed to deserialize layout. Reverting changes", expect.any(TypeError));
+    } finally {
+      said.mockRestore();
+    }
+  });
+
+  it("opens the view of always when the named view open is a layout `dockview` cannot read, and a saved view of always still wins (AUD-536)", async () => {
+    const layout = useLayout();
+    layout.attach(createFakeBridge());
+    const api = createDock(host());
+    api.layout(1600, 1000);
+    // ⛔ A NAME THE PACKAGE HOLDS WITHOUT A LAYOUT WE CAN OPEN falls back as a name it does not hold does: to the view of
+    // always -- here the owner's Home, saved, which still wins over the shipped one by name (row 6 of §2).
+    layout.receive(packageFromTheCore({ view: "home", layouts: { home: ownersHome() }, named: [{ name: "Rotta", layout: {} as SerializedDockview }], openNamed: "Rotta" }));
+    await flush();
+    expect(layout.openNamed).toBe("Rotta");
+    expect(showing(api)).toEqual(["status"]);
+  });
+
   it("saves a group maximized and a group restored, and nothing for showing a view left or opened maximized (E104)", async () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
@@ -354,6 +412,14 @@ function press(key: string): KeyboardEvent {
   return event;
 }
 
+/** A key pressed with Ctrl and Alt -- or with the modifiers given -- where it starts, the window or a field, and heard where
+ * the frame listens: the event bubbles up to the window. */
+function chord(key: string, modifiers: { ctrlKey?: boolean; altKey?: boolean } = { ctrlKey: true, altKey: true }, on: EventTarget = window): KeyboardEvent {
+  const event = new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true, ...modifiers });
+  on.dispatchEvent(event);
+  return event;
+}
+
 /** Writes in the field of a new view's name, as a keyboard does: the value, and the `input` event `v-model` listens to. */
 function write(text: string): void {
   const field = document.querySelector<HTMLInputElement>(".naming input");
@@ -412,6 +478,32 @@ describe("the frame (the (d) of the design system)", () => {
     press("F3");
     await flush();
     expect(overviewOpen()).toBe(false);
+  });
+
+  it("moves the active tile with Ctrl+Alt and an arrow, takes the chord from the browser, and leaves every other key alone (G20, move 6; AUD-720 of the audit of 2026-09-30)", async () => {
+    const bridge = createFakeBridge();
+    useLayout().attach(bridge);
+    await frame();
+    const groups = (): number => document.querySelectorAll(".dv-groupview").length;
+    const before = groups();
+    // ⛔ NON-VACUITY: Home is on screen, one group per tile.
+    expect(before).toBe(Object.keys(VIEWS.home.panels ?? {}).length);
+    // ⛔ THE SECOND DIRECTION FIRST: half the chord, another key, or the chord in a field being typed in -- the browser keeps
+    // each of them, and nothing moves.
+    const field = document.createElement("input");
+    document.body.append(field);
+    const others = [chord("ArrowRight", { ctrlKey: true }), chord("ArrowRight", { altKey: true }), chord("a"), chord("ArrowRight", undefined, field)];
+    expect(others.map((event) => event.defaultPrevented)).toEqual([false, false, false, false]);
+    await flush();
+    expect(groups()).toBe(before);
+    expect(saves(bridge)).toBe(0);
+    // Under jsdom every rectangle is zero, so every other unlocked group lies that way: the active tile -- Costi, the active
+    // group Home ships with -- goes into one of them, and its group, left empty, goes.
+    expect(chord("ArrowRight").defaultPrevented).toBe(true);
+    await flush();
+    expect(groups()).toBe(before - 1);
+    // ⛔ AND A MOVE FROM THE KEYBOARD IS A MOVE: it settles, as one with the mouse does (decision 12).
+    expect(saves(bridge)).toBe(1);
   });
 
   it("shows the view of the card chosen and closes, opens a named view by its name, and closes it with one of the three (E76, E82)", async () => {

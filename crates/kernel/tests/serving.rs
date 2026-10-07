@@ -29,9 +29,11 @@ use kernel::numbering::Progressive;
 use kernel::parameters::Parameters;
 use kernel::ports::custody::{Custody, CustodyError, CustodyKey};
 use kernel::ports::ipc::{ClientId, Ipc, IpcError};
-use kernel::ports::journal::{Journal, StepId};
+use kernel::ports::journal::{Journal, JournalError, StepId};
 use kernel::ports::reactor::Reactor;
-use kernel::record::{EffectClass, Record, RecordKind, RecordV1, RoutingDetail, Trust};
+use kernel::record::{
+    EffectClass, InvocationDetail, Record, RecordKind, RecordV1, RoutingDetail, Trust,
+};
 use kernel::serving::{serve, Core, POLICY_FUNCTION};
 use kernel::time::{Millis, Monotonic, WallTime};
 use kernel::wire::ipc::{
@@ -199,11 +201,83 @@ impl Custody for BenchCustody {
     }
 }
 
-type BenchCore<'b> = Core<FakeIpc<'b>, MemoryJournal, BenchCustody>;
+/// The journal of this bench: `MemoryJournal` underneath, plus a tap that makes ONE `replay`
+/// refuse.
+///
+/// ⛔ IT EXISTS FOR THE ROADS WHERE THE ARCHIVE CANNOT SAY, which `serving` answers with an
+/// abstention argued in its comments and which `MemoryJournal` never reaches: it is a journal
+/// that works, and its `replay` cannot fail. The refusal is `NotDurable`, the fault
+/// `FileJournal::replay` maps every one of its own onto, and the re-read it hits is chosen BY
+/// NUMBER, counted from zero across the round, so that a probe names the re-read it means. It is
+/// the shape `BenchCustody` has for `keep`, and the one the `ReplayRefusingJournal` of other
+/// benches has for a journal that refuses every time:
+/// `grep -rn 'struct ReplayRefusingJournal' crates/`.
+struct BenchJournal {
+    inner: MemoryJournal,
+    /// The `replay` this round refuses, counted from zero, if any. Set in a probe's `before`,
+    /// through the `&mut` that `Core::journal` hands out.
+    refused: Option<u64>,
+    /// How many times `replay` has been asked.
+    replays: Cell<u64>,
+}
+
+impl BenchJournal {
+    fn new() -> Self {
+        BenchJournal {
+            inner: MemoryJournal::new(),
+            refused: None,
+            replays: Cell::new(0),
+        }
+    }
+}
+
+impl Journal for BenchJournal {
+    fn intent(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.intent(step, record)
+    }
+
+    fn outcome(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.outcome(step, record)
+    }
+
+    fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError> {
+        self.inner.note(step, record)
+    }
+
+    fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError> {
+        self.inner.read_back(step)
+    }
+
+    fn replay(&self) -> Result<Vec<(StepId, Vec<u8>)>, JournalError> {
+        let this = self.replays.get();
+        self.replays.set(this + 1);
+        if self.refused == Some(this) {
+            return Err(JournalError::NotDurable);
+        }
+        self.inner.replay()
+    }
+
+    fn prune(&mut self, step: StepId) -> Result<(), JournalError> {
+        self.inner.prune(step)
+    }
+}
+
+type BenchCore<'b> = Core<FakeIpc<'b>, BenchJournal, BenchCustody>;
 
 struct Bench {
     wire: RefCell<Wire>,
     clock: RefCell<VirtualReactor>,
+}
+
+/// The second activity a round runs on the same cell, if any.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Tap {
+    /// The serving activity runs alone.
+    Nobody,
+    /// `degrade_once`.
+    Degrade,
+    /// `spoil_then_approve`.
+    SpoilThenApprove,
 }
 
 impl Bench {
@@ -220,7 +294,7 @@ impl Bench {
         before: impl FnOnce(&mut BenchCore<'b>),
         after: impl FnOnce(&mut BenchCore<'b>),
     ) {
-        self.round_with_tap(before, false, after);
+        self.round_with_tap(before, Tap::Nobody, after);
     }
 
     /// One round, optionally with a SECOND activity on the same cell.
@@ -231,13 +305,13 @@ impl Bench {
     fn round_with_tap<'b>(
         &'b self,
         before: impl FnOnce(&mut BenchCore<'b>),
-        tapped: bool,
+        tap: Tap,
         after: impl FnOnce(&mut BenchCore<'b>),
     ) {
         let parameters = Parameters::new(TURNS, TOTAL, ArbiterId::new(1), TICK);
         let mut built = Core::new(
             FakeIpc { wire: &self.wire },
-            MemoryJournal::new(),
+            BenchJournal::new(),
             BenchCustody::new(),
             Arbiter::new(parameters, VramPolicy::Remote(RemotePolicy)),
             Progressive::starting_at(1),
@@ -256,8 +330,16 @@ impl Bench {
             &sleep,
         );
         executor.spawn(serve(&core, &clock, &sleep));
-        if tapped {
-            executor.spawn(degrade_once(&core, &clock, &sleep, &tapped_once));
+        match tap {
+            Tap::Nobody => {}
+            Tap::Degrade => executor.spawn(degrade_once(&core, &clock, &sleep, &tapped_once)),
+            Tap::SpoilThenApprove => executor.spawn(spoil_then_approve(
+                &core,
+                &self.wire,
+                &clock,
+                &sleep,
+                &tapped_once,
+            )),
         }
 
         assert_eq!(
@@ -266,7 +348,7 @@ impl Bench {
             "`serve` is a loop with no exit: the run ends when the turns run out"
         );
         drop(executor);
-        if tapped {
+        if tap != Tap::Nobody {
             // ⛔ THE NON-VACUITY OF THE TAPPED ROUND. Without it, a tap that never woke up would
             // make `a_degradation_written_by_a_second_activity_reaches_the_gui` prove nothing at
             // all -- it would just be the welcome, arriving as usual.
@@ -307,6 +389,37 @@ async fn degrade_once<'b>(
         .journal()
         .intent(StepId::new(900), &record)
         .expect("the memory journal writes");
+    ran.set(true);
+}
+
+/// Bytes that are no record of any version -- what `spoil_then_approve` puts into the journal.
+const UNREADABLE: &[u8] = b"not a record of any version";
+
+/// A SECOND activity on the same cell: it sleeps past the welcome, writes into the core's journal
+/// bytes this build cannot read as a record, and only THEN lets the gui approve.
+///
+/// ⛔ THE GUI'S `Approve` IS PUT ON THE WIRE FROM HERE, AND THE ORDER IS THE REASON: a message
+/// queued with `arrives` is read on the second turn, before this activity wakes, and the step list
+/// it leads to would be read whole. ⚠️ AND IT IS THE APPROVAL ROAD ON PURPOSE: an `Approve`
+/// re-reads nothing before `run` asks for its step list, while an `Invoke` asks `is_granted`
+/// first, which refuses the same bytes and stops the invocation before it runs.
+async fn spoil_then_approve<'b>(
+    core: &RefCell<BenchCore<'b>>,
+    wire: &RefCell<Wire>,
+    clock: &SharedClock<'_>,
+    sleep: &Sleep,
+    ran: &Cell<bool>,
+) {
+    nap(sleep, clock.now().saturating_add(Millis::new(120))).await;
+    // ⚠️ ONE STATEMENT PER BORROW, SO EACH DIES WITH IT -- the rule `degrade_once` plays by.
+    core.borrow_mut()
+        .journal()
+        .intent(StepId::new(901), UNREADABLE)
+        .expect("the memory journal writes");
+    let approve = IpcMessage::Approve { triple: the_triple(), call: switch_to_local() }
+        .encode()
+        .expect("the bench frames what it sends");
+    wire.borrow_mut().up.push((GUI, approve));
     ran.set(true);
 }
 
@@ -399,9 +512,19 @@ fn a_stale_stamp_gets_the_expected_one_and_then_the_core_stops_listening() {
         // ⛔ THE SECOND MESSAGE IS THE PROBE. "The core closes" is not an operation of the port
         // (decision 22): what it does is STOP LISTENING, and only a message sent AFTER the refusal
         // tells that apart from "it answered and then had nothing more to say".
+        //
+        // ⛔ AND IT IS A `Hello` WITH THIS BUILD'S STAMP, because no other message can tell them
+        // apart: the handshake gate of `Core::answer` refuses in silence everything else a client
+        // still in `Greeting` says, so any other second message earns the same silence from a
+        // core that kept the refused client as from one that forgot it. A kept client's `Hello`
+        // "is still read on a later turn" -- the gate's own words -- and earns the whole welcome.
+        // MEASURED on 2026-10-02 with `greet` KEEPING the refused client: this probe goes red, and
+        // it is the only one of this bench that does -- it is what holds R3-12 of the sub-project
+        // 2 design, the refused client leaving the table AT ONCE. ⚠️ RECALL OF 2026-10-02 -- audit
+        // of 2026-09-30, AUD-700, AUD-701.
         &[
             IpcMessage::Hello(a_stamp_that_is_not_ours()),
-            IpcMessage::Invoke(switch_to_local()),
+            IpcMessage::Hello(build_stamp()),
         ],
     );
 
@@ -410,7 +533,7 @@ fn a_stale_stamp_gets_the_expected_one_and_then_the_core_stops_listening() {
         |core| {
             assert!(
                 core.journal().replay().expect("the memory journal replays").is_empty(),
-                "a refused gui writes nothing, and its later words are not read"
+                "a refused gui writes nothing"
             );
         },
     );
@@ -419,7 +542,8 @@ fn a_stale_stamp_gets_the_expected_one_and_then_the_core_stops_listening() {
     assert_eq!(
         heard,
         vec![IpcMessage::StaleBuild(build_stamp())],
-        "a stale gui is told the EXPECTED stamp, and then nothing at all: {heard:?}"
+        "a stale gui is told the EXPECTED stamp, and then nothing at all -- not the welcome its \
+         next `Hello` would earn at the table: {heard:?}"
     );
 }
 
@@ -479,6 +603,53 @@ fn a_client_that_has_not_shaken_hands_is_served_nothing_and_keeps_its_place() {
         "what comes back is the welcome, opening where it always opens: {heard:?}"
     );
     assert_eq!(heard.len(), 5, "the welcome, and nothing else at all: {heard:?}");
+}
+
+#[test]
+fn a_hello_the_journal_cannot_answer_gets_nothing_until_the_next_hello() {
+    // ⛔ THE ROAD OF `greet` WHERE THE DEGRADATION IS UNKNOWN, and what the core does there is
+    // what `greet`'s comment says: NOTHING of the welcome goes out -- not even `Accepted` -- and
+    // the client stays in `Greeting`. ⛔ THE SWEEP DOES NOT MAKE UP FOR IT: D23 re-reads the
+    // degradation only for a client already welcomed. What welcomes this one is its NEXT
+    // `Hello`, which the gui sends from its `retry`.
+    //
+    // ⚠️ THE JOURNAL REFUSES ONE RE-READ, THE FIRST, and answers every later one: the first
+    // `Hello` meets the refusal, and from that turn on the archive reads again.
+    //
+    // ⛔ ONE NUMBER, AND IT DECIDES THREE THINGS -- exactly one welcome:
+    // - a core that read the unknown degradation as "nothing is degraded" welcomes BOTH `Hello`s:
+    //   ten messages;
+    // - a core that dropped the client instead of keeping it never reads the second `Hello`: none;
+    // - a sweep that spoke to a client in `Greeting` once the archive reads again would do it in
+    //   the first turn, right after the refusal, and the welcome of the second `Hello` would come
+    //   after it: more than five.
+    // MEASURED on 2026-10-02, before this probe existed: with the first of the three, every probe
+    // of this bench stayed green.
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(
+        GUI,
+        &[
+            IpcMessage::Hello(build_stamp()),
+            IpcMessage::Hello(build_stamp()),
+        ],
+    );
+
+    bench.round(
+        |core| core.journal().refused = Some(0),
+        |core| {
+            assert!(
+                core.attending().contains(&GUI),
+                "the second `Hello` welcomed the client the first one could not"
+            );
+        },
+    );
+
+    let heard = bench.heard(GUI);
+    assert!(
+        matches!(heard.first(), Some(IpcMessage::Accepted(_))),
+        "what comes back is the welcome of the SECOND `Hello`: {heard:?}"
+    );
+    assert_eq!(heard.len(), 5, "one welcome, and not a word before it: {heard:?}");
 }
 
 #[test]
@@ -651,6 +822,97 @@ fn an_approve_changes_the_policy_and_the_gui_is_told() {
         matches!(heard.get(6), Some(IpcMessage::Steps(steps)) if steps.len() == 1 && steps[0].done),
         "and the step list, with the invocation closed: {heard:?}"
     );
+}
+
+#[test]
+fn the_step_list_carries_the_journals_own_step_numbers() {
+    // ⛔ §6.1.3 ON THE ONE IDENTIFIER THE `ipc` SCHEMA CARRIES: `StepSummary::step` is the number
+    // the JOURNAL wrote, read back out of `Journal::replay`, and never one the core mints.
+    // MEASURED on 2026-10-02 before this probe existed: with `step_list` numbering its own lines,
+    // every probe of this bench and of `ipc_wire.rs` stayed green.
+    //
+    // ⚠️ THE TWO NUMBERS ARE NOTHING A MINT WOULD GIVE: not from one, not consecutive, and far
+    // from what this bench's `Progressive` hands out. They are written into the journal BY HAND,
+    // the way `degrade_once` writes its routing, because a round through the dispatch numbers its
+    // steps from one -- where a counter would land too, and the probe would decide nothing.
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(GUI, &[IpcMessage::Hello(build_stamp())]);
+
+    bench.round(
+        |core| {
+            for step in [900, 907] {
+                let intent = Record::V1(RecordV1::intent(
+                    EffectClass::Idempotent,
+                    Trust::Instruction,
+                    Vec::new(),
+                    "a step the journal numbered",
+                ))
+                .encode();
+                let invocation = Record::V1(RecordV1::invocation(
+                    EffectClass::Idempotent,
+                    Trust::Instruction,
+                    Vec::new(),
+                    "the invocation on that step",
+                    InvocationDetail::new(POLICY_FUNCTION.name, 0),
+                ))
+                .encode();
+                let journal = core.journal();
+                journal
+                    .intent(StepId::new(step), &intent)
+                    .expect("the memory journal writes");
+                journal
+                    .note(StepId::new(step), &invocation)
+                    .expect("the memory journal writes");
+            }
+        },
+        |_| {},
+    );
+
+    let heard = bench.heard(GUI);
+    let numbers: Option<Vec<u64>> = heard.iter().find_map(|message| match message {
+        IpcMessage::Steps(lines) => Some(lines.iter().map(|line| line.step).collect()),
+        _ => None,
+    });
+    assert_eq!(
+        numbers,
+        Some(vec![900, 907]),
+        "the welcome's step list carries the numbers the JOURNAL wrote: {heard:?}"
+    );
+}
+
+#[test]
+fn a_welcome_whose_step_list_cannot_be_read_goes_out_without_one() {
+    // ⛔ `step_list` ANSWERS `None` WHEN THE ARCHIVE CANNOT BE READ, AND THE WELCOME THEN CARRIES
+    // NO LIST AT ALL -- never an empty one, which would SAY there are no steps: an incomplete list
+    // read as complete is the silent partial truth the doc of `step_list` refuses. ⚠️ AND THE
+    // CLIENT IS WELCOMED ALL THE SAME: the degradation, the policy and the layout were read, and a
+    // list that could not be does not cost it the table.
+    //
+    // ⚠️ THE JOURNAL REFUSES ITS SECOND RE-READ ONLY. `greet` reads it twice -- the degradation
+    // first, the step list last -- so the first answers and the second does not. A `greet` that
+    // read them the other way round would lose the degradation instead, and this probe would go
+    // red on the welcome rather than green on nothing.
+    // MEASURED on 2026-10-02, before this probe existed: with the empty list sent instead, every
+    // probe of this bench stayed green.
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(GUI, &[IpcMessage::Hello(build_stamp())]);
+
+    bench.round(
+        |core| core.journal().refused = Some(1),
+        |core| {
+            assert!(
+                core.attending().contains(&GUI),
+                "a welcome without a step list is still a welcome"
+            );
+        },
+    );
+
+    let heard = bench.heard(GUI);
+    assert!(
+        !heard.iter().any(|message| matches!(message, IpcMessage::Steps(_))),
+        "a step list that cannot be read goes out as NO list, never as an empty one: {heard:?}"
+    );
+    assert_eq!(heard.len(), 4, "and the rest of the welcome, all of it: {heard:?}");
 }
 
 #[test]
@@ -887,7 +1149,7 @@ fn a_degradation_written_by_a_second_activity_reaches_the_gui() {
     let bench = Bench::new();
     bench.wire.borrow_mut().arrives(GUI, &[IpcMessage::Hello(build_stamp())]);
 
-    bench.round_with_tap(|_| {}, true, |_| {});
+    bench.round_with_tap(|_| {}, Tap::Degrade, |_| {});
 
     let heard = bench.heard(GUI);
     // ⛔ THE SECOND DIRECTION OF D23, AND IT IS THE ONE THAT DECIDES THE RULE. The degraded routing
@@ -905,5 +1167,85 @@ fn a_degradation_written_by_a_second_activity_reaches_the_gui() {
         reports,
         vec![false, true],
         "the welcome says clean, and the sweep then says degraded: {heard:?}"
+    );
+}
+
+#[test]
+fn after_the_welcome_an_unreadable_journal_sends_no_clean_report_and_no_list() {
+    // ⛔ THE THREE ROADS WHERE THE ARCHIVE CANNOT SAY AFTER THE WELCOME, each an abstention its
+    // comment argues in `crates/kernel/src/serving.rs`:
+    // - the sweep, whose degradation is unknown, sends NOTHING -- not "nothing is degraded", which
+    //   is the silent degradation ADR-0019 forbids;
+    // - `run`, after an invocation that worked, sends the new policy and NO step list;
+    // - `step_list` answers `None` on bytes this build cannot read as a record, never a list with
+    //   that entry left out.
+    //
+    // ⚠️ THE WELCOME SAYS "DEGRADED", AND THAT IS WHAT MAKES THE FIRST ROAD DECIDE: a core that read
+    // the unknown as clean would see a CHANGE, and say so. The degraded routing is written before
+    // the round, the way `degrade_once` writes its own. ⚠️ AND THE UNREADABLE BYTES ARRIVE AFTER THE
+    // WELCOME, from `spoil_then_approve`: there before it, they would stop the welcome itself --
+    // the road of `a_hello_the_journal_cannot_answer_gets_nothing_until_the_next_hello`.
+    //
+    // MEASURED on 2026-10-02, before this probe existed: with any one of the three abstentions
+    // turned into the answer it refuses -- clean, an empty list, the list without that entry --
+    // every probe of this bench stayed green.
+    assert!(
+        Record::decode(UNREADABLE).is_err(),
+        "the bytes the second activity writes must be no record this build can read"
+    );
+    let bench = Bench::new();
+    bench.wire.borrow_mut().arrives(GUI, &[IpcMessage::Hello(build_stamp())]);
+
+    bench.round_with_tap(
+        |core| {
+            let degraded = Record::V1(RecordV1::routing(
+                EffectClass::Idempotent,
+                Trust::Instruction,
+                Vec::new(),
+                "a degraded routing, in the journal before the gui arrives",
+                RoutingDetail::new("a-model", 2, true),
+            ))
+            .encode();
+            core.journal()
+                .intent(StepId::new(800), &degraded)
+                .expect("the memory journal writes");
+        },
+        Tap::SpoilThenApprove,
+        |core| {
+            // ⛔ THE NON-VACUITY OF THE SECOND AND THIRD ROADS: `run` reaches its step list only
+            // after an invocation that WORKED, and this is that invocation's effect.
+            assert_eq!(
+                core.arbiter().policy().name(),
+                "local",
+                "the approve really ran"
+            );
+        },
+    );
+
+    let heard = bench.heard(GUI);
+    let reports: Vec<bool> = heard
+        .iter()
+        .filter_map(|message| match message {
+            IpcMessage::Degradation(report) => Some(report.routing_degraded),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(
+        reports,
+        vec![true],
+        "the welcome says degraded, and a journal that stopped reading never turns it clean: \
+         {heard:?}"
+    );
+    assert_eq!(
+        heard
+            .iter()
+            .filter(|message| matches!(message, IpcMessage::Steps(_)))
+            .count(),
+        1,
+        "the welcome's step list and no other -- not an empty one, not a short one: {heard:?}"
+    );
+    assert!(
+        matches!(heard.last(), Some(IpcMessage::Policy(report)) if report.policy == PolicyName::Local),
+        "the approve is answered with the new policy, and that is the last word: {heard:?}"
     );
 }

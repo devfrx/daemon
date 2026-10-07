@@ -3,7 +3,8 @@
 #
 # TWO THINGS, AND THE SECOND IS NOT A BONUS: the attributes are declared (below), and the
 # constrained crates HAVE NO BUILD SCRIPT (further down, with its own measurement). They live
-# in the same file because they share the same list of crates, and that list has ONE home.
+# in the same file because they share the same list of crates, and in this file that list has
+# ONE home -- not in the gate: the comment on `CONSTRAINED`, below, says where else it is written.
 #
 # THE MEASUREMENT THAT JUSTIFIES IT, and it is not a hypothesis. Without this check one can
 # remove '#![forbid(unsafe_code)]' from crates/kernel/src/lib.rs, write a REAL 'unsafe' in
@@ -31,16 +32,20 @@
 # the naive one.
 #
 # ⛔ THE CRATES ARE NAMED, NOT DISCOVERED -- exactly as gate-no-os.sh names
-# '-p kernel -p simulator'. 'platform', 'secrets' and 'daemon' are NOT checked: platform
-# uses 'std' and 'unsafe' ON PURPOSE, as counter-probes of the kernel's prohibitions. A check
-# that fired there too would be red for the wrong reason -- gotcha #24.
+# '-p kernel -p simulator' and gate-deps.sh its 'CRATES'. 'platform', 'secrets' and 'daemon'
+# are NOT checked: platform uses 'std' and 'unsafe' ON PURPOSE, as counter-probes of the
+# kernel's prohibitions. A check that fired there too would be red for the wrong reason --
+# gotcha #24.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
 failures=0
 report() { echo "  ✗ $*"; failures=$((failures + 1)); }
 
-# Single home for the constrained files: a crate is added HERE, not elsewhere.
+# Single home for the constrained files IN THIS SCRIPT. ⚠️ NOT IN THE GATE: gate-no-os.sh ('-p')
+# and gate-deps.sh ('CRATES') write the same crates by hand, and NOTHING checks that the three
+# agree -- a crate that joins the constrained set is added HERE AND in both of them.
+# RECALL OF 2026-10-06 -- audit of 2026-09-30, AUD-684.
 CONSTRAINED="crates/kernel/src/lib.rs
 crates/simulator/src/lib.rs"
 

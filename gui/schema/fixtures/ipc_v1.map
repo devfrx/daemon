@@ -33,5 +33,25 @@
     Request(GrantRequest { reserved_vram: Mib(2048), compute_class: Interactive, preemption: After(Millis(500)) })
 13 verdict 12 bytes
     Verdict(Refused { asked: Mib(4096), ceiling: Mib(1024) })
+14 policy 12 bytes
+    Policy(PolicyReport { policy: Local, allocated: Mib(14336), total: Mib(16384) })
+15 permission-required 21 bytes
+    PermissionRequired(Triple { tool: "arbiter", resource: "policy", operation: Read })
+16 token 11 bytes
+    Token { text: "ciao", provenance: Trusted }
+17 layout 6 bytes
+    Layout(Nothing)
+18 layout 6 bytes
+    Layout(Unavailable)
+19 request 11 bytes
+    Request(GrantRequest { reserved_vram: Mib(1024), compute_class: Realtime, preemption: After(Millis(250)) })
+20 request 13 bytes
+    Request(GrantRequest { reserved_vram: Mib(4096), compute_class: Batch, preemption: After(Millis(750)) })
+21 request 10 bytes
+    Request(GrantRequest { reserved_vram: Mib(512), compute_class: Interactive, preemption: Never })
+22 verdict 6 bytes
+    Verdict(Granted)
+23 verdict 6 bytes
+    Verdict(Queued)
 
-stamp 0x47b554435836e861
+stamp 0x809a77c44a5742d9

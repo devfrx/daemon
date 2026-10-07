@@ -40,8 +40,10 @@
 //! and reopening it belongs to the owner.
 //!
 //! ✅ AND THE OWNER RULED THE SAME DAY: `bincode` 2.0.1 STAYS, §6.1.1 IS NOT REOPENED -- with
-//! measure M-12 in hand rather than around it. The reasons live in ONE house, the `bincode`
-//! note in this crate's Cargo.toml; the entry is closed in docs/porta-di-qualita.md.
+//! measure M-12 in hand rather than around it. The reasons are written in the entry C-1,
+//! closed, of docs/porta-di-qualita.md, which names every other place that carries them -- the
+//! `bincode` note in this crate's Cargo.toml among them. ⚠️ RECALL OF 2026-10-07 -- audit of
+//! 2026-09-30.
 //! ⚠️ THIS FILE WAS THE HOUSE THAT RULING MISSED: the deciding commit touched five others and
 //! not this one, so the paragraph above said "the choice is not [made]" for a day after it was.
 //!
@@ -51,24 +53,27 @@
 //! STAMP of §6.1.2" above is A DEADLINE WRITTEN IN PROSE (gotcha #77), and this is the run in
 //! which it falls due. Nothing ever went red for it, and nothing could have: a sentence about
 //! a future milestone has no oracle.
-//! ⚠️ WHAT IS CORRECTED IS THE *WHEN* AND NOT THE *WHAT*. The paragraph above stays because it
-//! is the only place that says what the stamp IS; its TRIGGER, and what it costs to live
-//! without it meanwhile, live beside the schema in `crate::wire::ipc` -- ONE house, so that the
-//! two cannot drift apart.
+//! ⚠️ WHAT IS CORRECTED IS THE *WHEN* AND NOT THE *WHAT*, and the paragraph above stays for
+//! the *WHAT*.
 //! ✅ THE SCHEMA HALF DID ARRIVE, and in the format named: `crate::wire::ipc` carries
-//! `IpcMessage` over the envelope of `crate::framing`.
+//! `IpcMessage` over the envelope of `crate::framing`. ✅ AND THE STAMP ARRIVED WITH
+//! SUB-PROJECT 2, beside the schema: `crate::wire::ipc::BuildStamp` says what it IS,
+//! `crate::wire::ipc::build_stamp` computes it, and the handshake of `crate::serving` refuses a
+//! gui that carries another one with `IpcMessage::StaleBuild`. ⚠️ RECALL OF 2026-10-03 -- audit
+//! of 2026-09-30, AUD-061.
 //!
 //! ⛔ The port exchanges BYTES, like `journal` and `process`. The schema lives in
 //! `kernel` and the simulator therefore exchanges bytes too, so the DST campaign really
 //! exercises encoding and decoding instead of going around them.
 //!
-//! ⛔ DECLARED OPEN QUESTION, AND IT IS NOT RESOLVED HERE -- named at the top of the file for
-//! `network`'s reason, which is that this is where a reader sent by §6 of the compendium looks
-//! for it. `accept` HAS NO ERROR CHANNEL while `receive` has one, so a listener that has itself
-//! broken -- as opposed to a client that has -- surfaces as `None`, a wrong value rather than
-//! an error. ⚠️ The consequence that matters is the PRICE: closing it costs the SIGNATURE, not
-//! a third variant of `IpcError`. The full argument, and why the signature nevertheless stays
-//! as it is today, sits on `Ipc::accept`.
+//! ⛔ DECLARED OPEN QUESTION, AND IT IS NOT RESOLVED HERE -- named at the top of the file, as
+//! `network` names its own. `accept` HAS NO ERROR CHANNEL while `receive` has one, so a listener
+//! that has itself broken -- as opposed to a client that has -- surfaces as `None`, a wrong value
+//! rather than an error; and since the transport exists, `platform::ipc::LocalSocketIpc`, that is
+//! what every error of its listener does. ⚠️ The consequence that matters is the PRICE: closing
+//! it costs the SIGNATURE, not a third variant of `IpcError`. The full argument, and why the
+//! signature still stands today, sits on `Ipc::accept`. ⚠️ RECALL OF 2026-10-02 -- audit of
+//! 2026-09-30, AUD-078.
 //!
 //! ⚠️ AND WHAT HOLDS THESE THREE SIGNATURES IS EVERY IMPLEMENTATION FROM OUTSIDE THE CRATE, and
 //! WHICH THEY ARE IS WHAT THE COMMAND PRINTS rather than this line:
@@ -81,8 +86,10 @@
 //! schedule the same correction again" (E89 of the sub-project 2 plan).
 //! They buy that the signatures are IMPLEMENTABLE
 //! FROM OUTSIDE THE CRATE and callable; they do NOT buy that they are the right signatures, and
-//! neither is the conformance suite, which compares two implementations against ONE contract and
-//! is born with the real channel.
+//! neither does the conformance suite: `crates/kernel/tests/contract/ipc.rs`, expanded by
+//! `crates/platform/tests/ipc_contract_real.rs` against the real transport ONLY (D82), holds that
+//! transport to ONE contract and compares no fake with it. ⚠️ RECALL OF 2026-10-03 -- audit of
+//! 2026-09-30, AUD-408, AUD-081.
 //!
 //! ⛔ DATED RECALL, 2026-09-02, MILESTONE 6 TASK 9 -- THE PARAGRAPH ABOVE SAID "ONE TEST, the
 //! same one that holds `filesystem` and `network`", AND IT NAMED "the client that DIES WHEN THE
@@ -163,6 +170,9 @@ use alloc::vec::Vec;
 /// port in milestone 6 draws from THAT counter rather than starting a private one of its own" is no longer a
 /// promise about a type that does not exist: the type is one line away, and a private `u64`
 /// inside the transport is now a visible choice rather than the only road.
+/// ⚠️ RECALL OF 2026-10-02 -- audit of 2026-09-30, AUD-045, AUD-052: the transport and
+/// `crate::serving::Core` now draw from the SAME counter -- the composition root builds one and
+/// hands each a `crate::numbering::Progressive::share` of it -- and the type no longer copies.
 ///
 /// ⚠️ "ASSIGNED BY THE CORE" MEANS "NOT CHOSEN BY THE CLIENT", and the line is worth spending
 /// because the other reading contradicts the signature below it. `accept` RETURNS one, so the
@@ -183,10 +193,11 @@ use alloc::vec::Vec;
 ///   its value. The fake is what settled it: written first, it needed no getter.
 /// - `Ord`/`PartialOrd` -- the argument FOR is that gotcha #12 bans `HashMap` and pushes
 ///   toward `BTreeMap`, which demands `Ord`. It does not survive the #46 test, which is the
-///   one that matters on a port with no implementation: an outside implementation is not
-///   BLOCKED without it -- a table plus `==` works, as every other fake here does -- and
-///   unlike a missing accessor or constructor, `Ord` can be added later by anyone, in one
-///   line, breaking nothing. That is a convenience, not the entry door of whoever comes.
+///   one that matters for whoever implements this port from outside: an outside implementation
+///   is not BLOCKED without it -- a table plus `==` works, as every other fake here does and as
+///   `platform::ipc::LocalSocketIpc` does -- and unlike a missing accessor or constructor, `Ord`
+///   can be added later by anyone, in one line, breaking nothing. That is a convenience, not the
+///   entry door of whoever comes. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-550.
 /// - `Hash` -- worse than unused, and refused for the reason `Path` and `StepId` refuse it:
 ///   its consumer is `HashMap`, which `tests/compile_fail/hashmap_in_kernel.rs` forbids
 ///   outright. ⛔ A DERIVE THAT ENABLES THE FORBIDDEN THING IS WORSE THAN ONE NOBODY CALLS: it
@@ -214,10 +225,11 @@ impl ClientId {
 
 /// What can go wrong on the way to a client.
 ///
-/// ⚠️ THE "NO CALLER, NO ITEM" RULE DOES NOT REACH THESE VARIANTS, the same note that sits on
-/// `FilesystemError`, `NetworkError` and `ProcessError`: the port has no implementation, so NO
-/// variant has a producer, and applying the rule on that basis would empty the enum instead of
-/// pruning it.
+/// ⛔ BOTH VARIANTS HAVE A PRODUCER, the transport `platform::ipc::LocalSocketIpc`: `Disconnected`
+/// when a peer has gone or was never in its table, `MalformedMessage` when a declared length
+/// passes the cap it is delivered. The note on `FilesystemError`, `NetworkError` and
+/// `ProcessError` -- no implementation, so no variant has a producer -- holds for those ports and
+/// no longer for this one. ⚠️ RECALL OF 2026-10-02 -- audit of 2026-09-30, AUD-078.
 ///
 /// ⚠️ TWO VARIANTS AND THREE METHODS, so not every word is reachable on every path -- and that
 /// is deliberate rather than sloppy. `MalformedMessage` belongs to `receive`, where bytes
@@ -232,8 +244,16 @@ pub enum IpcError {
     /// identifier was never issued" are the same thing seen from the core -- THERE IS NOBODY
     /// THERE -- and neither one gives the core a different move to make.
     Disconnected,
-    /// The message did not decode, or the bytes consumed did not equal the declared
-    /// length. Same reasoning as `process` -- gotcha #34.
+    /// The peer sent a frame the transport will not take. In `platform::ipc::LocalSocketIpc`
+    /// that is a declared length past the cap it is delivered, and from then on every `receive`
+    /// from that client answers this: the state is PERMANENT.
+    ///
+    /// ⛔ IT IS NOT THE DECODING, which this port never does: it hands over whole frames. A body
+    /// that does not decode, or whose bytes consumed do not equal the declared length -- the rule
+    /// of gotcha #34, the one `ProcessError::MalformedFrame` keeps on its own port -- is a
+    /// `crate::framing::WireError`, answered by `crate::wire::ipc::IpcMessage::decode` inside the
+    /// core, and `crate::serving` absorbs it without going through this type. ⚠️ RECALL OF
+    /// 2026-10-03 -- audit of 2026-09-30, AUD-059, AUD-060.
     ///
     /// ⚠️ DISTINCT FROM `Disconnected` ON PURPOSE: a peer that talks nonsense is still there.
     /// Collapsing the two would have the core tear down a live gui over one bad frame.
@@ -259,8 +279,10 @@ pub trait Ipc {
     /// path, which is how a caller learns to ignore the error path.
     ///
     /// ⚠️ DECLARED RATHER THAN LEFT TO BE DISCOVERED: a LISTENER that has itself broken -- as
-    /// opposed to a client that has -- gets no word from this vocabulary today, and would
-    /// surface here as `None`, which is a wrong value rather than an error (gotcha #30).
+    /// opposed to a client that has -- gets no word from this vocabulary today, and surfaces here
+    /// as `None`, which is a wrong value rather than an error (gotcha #30). ⛔ AND IT IS NO LONGER
+    /// A HYPOTHESIS: the transport, `platform::ipc::LocalSocketIpc`, answers `None` for EVERY error
+    /// of its listener, and only `WouldBlock` among them means "nobody is knocking".
     ///
     /// ⛔ AND THE RESIDUE IS ALSO AN ASYMMETRY BETWEEN THESE SIGNATURES, which is worth saying
     /// straight because the cheap reading gets the PRICE OF CLOSING IT wrong. `receive` two
@@ -275,14 +297,18 @@ pub trait Ipc {
     /// ⛔ THE COST THAT FOLLOWS, and it is the part a later reader would otherwise get wrong:
     /// adding a third variant tomorrow WOULD NOT CLOSE THIS. There is nowhere to return it.
     /// Closing it means CHANGING THE SIGNATURE, not widening the enum -- and whoever reopens
-    /// this at milestone 6 should know that before deciding it is cheap.
+    /// this should know that before deciding it is cheap.
     ///
-    /// ⚠️ AND THE SIGNATURE STAYS AS IT IS TODAY, deliberately. `IpcError` currently has NO
-    /// variant `accept` could ever return, so a `Result` here would be one that can never be
-    /// `Err`: dead surface, of exactly the kind this port has just pruned three derives and a
-    /// getter for. The minimal choice is defensible; what would not be defensible is leaving
-    /// its price unstated. Same posture as `network`'s declared open question, and the same
-    /// reason: a minimal vocabulary can be widened, a rich wrong one cannot (ADR-0009).
+    /// ⚠️ AND THE SIGNATURE STILL STANDS AS IT IS, BUT THE REASON IT WAS KEPT FOR HAS AGED. It was
+    /// kept because a `Result` here would have been one that could never be `Err` -- dead surface,
+    /// of exactly the kind this port pruned three derives and a getter for -- and that held while
+    /// the port had no implementation. A real listener CAN fail, so the `Err` would now have a
+    /// producer, and only the word for it is missing. Whether to change the signature and add that
+    /// word, or keep the `Option` and declare for good that the transport swallows a broken
+    /// listener, is the owner's: registered by the audit of 2026-09-30, AUD-533. Until then the
+    /// posture is `network`'s declared open question, for the same reason: a minimal vocabulary
+    /// can be widened, a rich wrong one cannot (ADR-0009). ⚠️ RECALL OF 2026-10-02 -- same audit,
+    /// AUD-533, AUD-078, AUD-551.
     fn accept(&mut self) -> Option<ClientId>;
 
     /// Sends bytes to a client.

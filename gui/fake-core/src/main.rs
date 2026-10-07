@@ -18,7 +18,7 @@ use kernel::arbiter::{
     VramPolicy,
 };
 use kernel::executor::{Executor, Sleep, nap};
-use kernel::numbering::Progressive;
+use kernel::numbering::{self, Progressive};
 use kernel::parameters::Parameters;
 use kernel::ports::journal::{Journal, StepId};
 use kernel::ports::reactor::Reactor;
@@ -26,7 +26,7 @@ use kernel::record::{EffectClass, Record, RecordV1, RoutingDetail, Trust};
 use kernel::serving::{Core, serve};
 use kernel::time::{Millis, Monotonic, WallTime};
 use kernel::wire::ipc::{IpcMessage, Provenance, Verdict};
-use platform::ipc::LocalSocketIpc;
+use platform::ipc::{self, Account, LocalSocketIpc};
 use platform::reactor::SystemReactor;
 use platform::rng::SequentialRng;
 use simulator::custody::MemoryCustody;
@@ -36,6 +36,8 @@ use simulator::journal::MemoryJournal;
 /// other one; a binary exports nothing, so it cannot be imported (P-68). ⚠️ NOTHING COUPLES THE
 /// TWO: they are compared by a command in this task's closing criteria (D45). If they drift, the
 /// gui connects to the WRONG PROGRAMME WITHOUT AN ERROR, because the build stamp is the same.
+/// ⚠️ WHERE THE NAME LIVES IS NOT A COPY: `platform::ipc::channel_of_this_account` resolves it for
+/// both programmes, a pipe on Windows and a file in `$XDG_RUNTIME_DIR` on Linux (ADR-0041).
 const SOCKET_NAME: &str = "harness-core";
 
 /// This tool's own cap (D9). ⚠️ It need NOT equal the daemon's: the cap is local to a core, and
@@ -43,6 +45,8 @@ const SOCKET_NAME: &str = "harness-core";
 const MAX_BODY: usize = 1024 * 1024;
 
 const TOTAL_VRAM: Mib = Mib::new(16_384);
+/// ⚠️ THE DAEMON'S TWO NUMBERS, REWRITTEN (D41) -- and like the daemon's, NOT MEASURED: why, and
+/// which measurements will revise them, is written beside the daemon's pair, once.
 const AUDIO_QUOTA: Mib = Mib::new(1_024);
 const PRESENTATION_QUOTA: Mib = Mib::new(768);
 const ARBITER_ID: ArbiterId = ArbiterId::new(0);
@@ -156,6 +160,10 @@ async fn the_faucet<I, J, C, R>(
     // reached and the turn polling — the same cure D28 gave task 9.
     cadence: Millis,
     words: Receiver<String>,
+    // ⛔ A `share` OF THE CORE'S ONE COUNTER, and not a counter of the faucet's own: the steps it
+    // opens are steps of the same journal the core numbers, so they come from the same sequence
+    // (`kernel::numbering`). ⚠️ RECALL OF 2026-10-02 -- audit of 2026-09-30, AUD-045.
+    steps: Progressive,
 ) where
     I: kernel::ports::ipc::Ipc,
     J: Journal,
@@ -163,7 +171,6 @@ async fn the_faucet<I, J, C, R>(
     R: Reactor,
 {
     let mut piece = 0usize;
-    let mut step = 1_000_000u64;
     loop {
         // ⛔ `try_recv` AND NEVER A BLOCKING READ -- D42. A blocking read inside a task stops the
         // WHOLE executor, because it runs one decision at a time: `serve` would not run, and the
@@ -173,8 +180,7 @@ async fn the_faucet<I, J, C, R>(
                 let mut held = core.borrow_mut();
                 match word.trim() {
                     "degrade" => {
-                        step += 1;
-                        note_a_degraded_routing(held.journal(), StepId::new(step));
+                        note_a_degraded_routing(held.journal(), StepId::new(steps.take()));
                         // ⛔ AND NOTHING ELSE. Telling the gui is the REAL code's job: `serve`
                         // re-reads `degradation_now` and sends `Degradation` only when it changed
                         // (task 7, and its probe `an_unchanged_degradation_is_not_resent`). §7 left
@@ -286,19 +292,32 @@ fn spawn_the_console() -> Receiver<String> {
 ///
 /// ⛔ SPLIT FROM `main` FOR THE REASON THE DAEMON SPLITS ITS OWN: the gate runs `build` and `test`
 /// and never `run`, so a wiring that lived inside `main` would be covered by nothing. ⚠️ AND THE
-/// THREE ARGUMENTS ARE THE THREE THINGS A PROBE MUST CHANGE: the NAME, because a socket name is
-/// machine-wide and `cargo test` runs in parallel; the TURN LIMIT, because `serve` never ends; and
-/// the CADENCE, because the reactor here is real.
-fn run_the_graph(name: &str, turns: u64, cadence: Millis, words: Receiver<String>) {
+/// ARGUMENTS ARE THE THINGS A PROBE MUST CHANGE: the CHANNEL, because a channel is machine-wide
+/// and `cargo test` runs in parallel -- with the ACCOUNT it is bound for, which `main` asks of the
+/// system as the daemon does (ADR-0041); the TURN LIMIT, because `serve` never ends; and the
+/// CADENCE, because the reactor here is real.
+fn run_the_graph(
+    channel: &std::path::Path,
+    account: &Account,
+    turns: u64,
+    cadence: Millis,
+    words: Receiver<String>,
+) {
     let parameters = Parameters::new(turns, TOTAL_VRAM, ARBITER_ID, cadence);
-    let ipc = LocalSocketIpc::bound(name, Progressive::starting_at(0), MAX_BODY)
+    let journal = MemoryJournal::new();
+    // ⛔ THE ONE COUNTER, BUILT AS THE DAEMON BUILDS IT -- seeded from the journal, which starts
+    // empty here, and SHARED with every consumer: the transport numbers clients, the core numbers
+    // steps, the faucet numbers the steps it opens (`kernel::numbering`). ⚠️ RECALL OF 2026-10-02 --
+    // audit of 2026-09-30, AUD-045, AUD-052.
+    let numbers = numbering::seeded_from(&journal).expect("an empty in-memory journal replays");
+    let ipc = LocalSocketIpc::bound(channel, account, numbers.share(), MAX_BODY)
         .expect("bind the channel -- is a core already listening on it?");
     let core = RefCell::new(Core::new(
         ipc,
-        MemoryJournal::new(),
+        journal,
         MemoryCustody::new(),
         build_the_arbiter(parameters),
-        Progressive::starting_at(1),
+        numbers.share(),
         parameters,
     ));
     let reactor = RefCell::new(SystemReactor::new());
@@ -317,7 +336,7 @@ fn run_the_graph(name: &str, turns: u64, cadence: Millis, words: Receiver<String
         &sleep,
     );
     executor.spawn(serve(&core, &clock, &sleep));
-    executor.spawn(the_faucet(&core, &clock, &sleep, cadence, words));
+    executor.spawn(the_faucet(&core, &clock, &sleep, cadence, words, numbers));
     // ⛔ `serve` NEVER ENDS, so this only returns when the turns run out. In `main` the limit is
     // `u64::MAX`, that is never in practice: the programme is stopped with Ctrl-C, as §7 says —
     // no clean shutdown in this sub-project (ADR-0007). ⚠️ THE VALUE OF `run` IS NOT AN ORACLE, and
@@ -326,8 +345,16 @@ fn run_the_graph(name: &str, turns: u64, cadence: Millis, words: Receiver<String
 }
 
 fn main() {
-    println!("fake core listening on {SOCKET_NAME}; words: degrade, verdict");
-    run_the_graph(SOCKET_NAME, u64::MAX, GUI_TICK, spawn_the_console());
+    // ⚠️ A PANIC AND NOT A `StartupError`, as in `build_the_arbiter`: this is a TOOL, and the
+    // message names what the system refused.
+    let account = Account::of_this_process().expect("the system names the account this runs as");
+    let channel = ipc::channel_of_this_account(SOCKET_NAME)
+        .expect("the channel of this account -- on Linux, is XDG_RUNTIME_DIR set?");
+    println!(
+        "fake core listening on {}; words: degrade, verdict",
+        channel.display()
+    );
+    run_the_graph(&channel, &account, u64::MAX, GUI_TICK, spawn_the_console());
 }
 
 #[cfg(test)]
@@ -347,11 +374,28 @@ mod tests {
     // peer can be settled. See the doc on `settling`.
     use settling::{Peer, Stopped, collect_until};
 
-    // ⛔ EACH PROBE BINDS A NAME OF ITS OWN. A socket name is valid for the whole machine and
+    // ⛔ EACH PROBE BINDS A CHANNEL OF ITS OWN. A channel is valid for the whole machine and
     // `cargo test` runs in parallel by default: two probes on `SOCKET_NAME` make the second fail
     // with "already in use", which is a red in the wrong probe's box. The lesson is task 9's.
-    fn a_name_for(what: &str) -> String {
-        format!("fake-core-probe-{what}")
+    // ⛔ ON LINUX IT IS A SOCKET FILE IN A DIRECTORY OF ITS OWN, CLOSED TO EVERY OTHER ACCOUNT: the
+    // transport refuses a directory others can enter (ADR-0041, point 5), and a probe must not lean
+    // on the `$XDG_RUNTIME_DIR` of whatever machine runs it. The process id keeps two runs apart.
+    fn a_channel_for(what: &str) -> std::path::PathBuf {
+        let name = format!("fake-core-probe-{what}");
+        #[cfg(windows)]
+        {
+            std::path::PathBuf::from(format!(r"\\.\pipe\{name}"))
+        }
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let directory = std::env::temp_dir().join(format!("{name}-{}", std::process::id()));
+            let _ = std::fs::remove_dir_all(&directory);
+            std::fs::create_dir_all(&directory).expect("a fresh directory for this channel");
+            std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(0o700))
+                .expect("the directory is closed to every other account");
+            directory.join("core")
+        }
     }
 
     /// How many messages the core sends after a valid `Hello` -- the welcome of sequence 1.
@@ -445,16 +489,26 @@ mod tests {
     /// and the sentence that used to excuse it -- *«the process is ending anyway with a failed
     /// probe»* -- was FALSE: measured, after the first red the run went on to five more probes
     /// with their abandoned graphs still alive. What makes it harmless is narrower and measured:
-    /// the six probes bind six DIFFERENT socket names, so an abandoned graph steals no name.
+    /// the six probes bind six DIFFERENT channels, so an abandoned graph steals no channel.
+    ///
+    /// ⚠️ THE ACCOUNT IS ASKED ON THE GRAPH'S THREAD, as `main` asks it, for the account the probe
+    /// runs as -- the only one a probe of this tool binds for.
     // ⛔ `#[track_caller]` FOR THE SAME REASON AS `collect_until`, and it was missing here while
     // the wave that added it there wrote the argument out: this helper panics too, and a red that
     // names the helper instead of the probe is a red nobody can act on.
     #[track_caller]
-    fn run_the_graph_within(name: &str, turns: u64, cadence: Millis, words: Receiver<String>) {
-        let name = name.to_owned();
+    fn run_the_graph_within(
+        channel: &std::path::Path,
+        turns: u64,
+        cadence: Millis,
+        words: Receiver<String>,
+    ) {
+        let channel = channel.to_path_buf();
         let (ended, done) = mpsc::channel();
         std::thread::spawn(move || {
-            run_the_graph(&name, turns, cadence, words);
+            let account =
+                Account::of_this_process().expect("the system names the account this runs as");
+            run_the_graph(&channel, &account, turns, cadence, words);
             let _ = ended.send(());
         });
         // ⛔ THE TWO FAILURES ARE NOT THE SAME ONE, and the first draft of this helper told them
@@ -745,7 +799,7 @@ mod tests {
     /// that one word and lets the hand go. Before the welcome nobody is attending, and a word
     /// typed then is spent on nobody.
     fn a_peer_that_says(
-        name: String,
+        channel: std::path::PathBuf,
         said: Vec<IpcMessage>,
         until: Until,
         mut then_types: Option<(mpsc::Sender<String>, &'static str)>,
@@ -761,13 +815,15 @@ mod tests {
         as_they_come: mpsc::Sender<IpcMessage>,
     ) -> Peer {
         Peer::new(std::thread::spawn(move || {
-            use interprocess::local_socket::{GenericNamespaced, Stream, prelude::*};
+            use interprocess::local_socket::{GenericFilePath, Stream, prelude::*};
             use std::io::{Read, Write};
 
-            let ns = name.to_ns_name::<GenericNamespaced>().expect("a namespaced name");
+            // ⚠️ A PATH ON BOTH SYSTEMS -- the pipe `\\.\pipe\…`, or the socket file -- which
+            // `GenericFilePath` takes as it is, the way the transport binds it.
+            let name = channel.as_path().to_fs_name::<GenericFilePath>().expect("a channel name");
             let started = std::time::Instant::now();
             let mut stream = loop {
-                match Stream::connect(ns.clone()) {
+                match Stream::connect(name.clone()) {
                     Ok(stream) => break stream,
                     Err(error) => {
                         assert!(
@@ -817,7 +873,7 @@ mod tests {
 
     #[test]
     fn the_welcome_gives_the_sequence_one() {
-        let name = a_name_for("welcome");
+        let channel = a_channel_for("welcome");
         let (_hand, words) = a_keyboard();
         // ⛔ IT STREAMS LIKE EVERY OTHER, and here the reason is NOT obvious -- which is why the
         // first round missed it. The welcome is what the KERNEL's `greet` sends, so a valid
@@ -827,13 +883,13 @@ mod tests {
         let a_full_welcome: Until = |heard| heard.len() >= WELCOME;
         let (as_they_come, arrivals) = mpsc::channel();
         let peer = a_peer_that_says(
-            name.clone(),
+            channel.clone(),
             vec![IpcMessage::Hello(build_stamp())],
             a_full_welcome,
             None,
             as_they_come,
         );
-        run_the_graph_within(&name, WITH_A_PEER, Millis::new(0), words);
+        run_the_graph_within(&channel, WITH_A_PEER, Millis::new(0), words);
         let heard = collect_until(&arrivals, peer, a_full_welcome);
         // ⚠️ THE FIRST FIVE: one `read` may carry the welcome AND the first token, and the frames
         // are drained together.
@@ -871,11 +927,19 @@ mod tests {
 
     #[test]
     fn a_stale_stamp_is_refused_and_then_silence() {
-        let name = a_name_for("stale");
+        let channel = a_channel_for("stale");
         let (_hand, words) = a_keyboard();
         // ⛔ THE SECOND MESSAGE IS THE PROBE, as task 7 argues: "the core closes" is not an
         // operation of the port (decision 22), so only a message sent AFTER the refusal tells
         // "it stopped listening" apart from "it had nothing more to say".
+        //
+        // ⛔ AND IT IS A `Hello` WITH THIS BUILD'S STAMP, because no other message can tell them
+        // apart: the handshake gate of `kernel::serving` refuses in silence everything else a
+        // client still in `Greeting` says, so any other second message earns the same silence
+        // from a core that kept the refused client as from one that forgot it. A kept client's
+        // `Hello` is read on a later turn and earns the welcome, and the faucet's tokens after it.
+        // MEASURED on 2026-10-02 with `greet` KEEPING the refused client: red. ⚠️ RECALL OF
+        // 2026-10-02 -- audit of 2026-09-30, AUD-701, AUD-718.
         //
         // ⛔ AND THAT IS WHY THIS ONE PROBE STREAMS INSTEAD OF BEING JOINED (E110): the second
         // message never comes -- which is the point -- and nothing closes the connection, so a
@@ -883,19 +947,16 @@ mod tests {
         // does not.
         let (as_they_come, arrivals) = mpsc::channel();
         let peer = a_peer_that_says(
-            name.clone(),
+            channel.clone(),
             vec![
                 IpcMessage::Hello(a_stamp_that_is_not_ours()),
-                IpcMessage::Invoke(kernel::wire::ipc::Call {
-                    function: "set-policy".to_string(),
-                    argument: "local".to_string(),
-                }),
+                IpcMessage::Hello(build_stamp()),
             ],
             |heard| heard.len() >= 2,
             None,
             as_they_come,
         );
-        run_the_graph_within(&name, WITH_A_PEER, Millis::new(0), words);
+        run_the_graph_within(&channel, WITH_A_PEER, Millis::new(0), words);
         // ⛔ A BOUNDED COLLECT AND NOT A `join`: THE WAIT IS THE OBSERVATION, and two seconds of
         // nothing is what "and then silence" means. ⚠️ The peer thread is left dangling on
         // purpose -- it dies with the test binary -- and the cost is declared rather than hidden.
@@ -930,7 +991,7 @@ mod tests {
 
     #[test]
     fn degrade_makes_the_real_code_report_it() {
-        let name = a_name_for("degrade");
+        let channel = a_channel_for("degrade");
         let (hand, words) = a_keyboard();
         // ⛔ THE WORD IS TYPED BY THE PEER AFTER THE WELCOME (R5-4, 2026-09-15): typed before the
         // run it would be consumed on the faucet's first turn, when `attending()` is still empty,
@@ -956,13 +1017,13 @@ mod tests {
         };
         let (as_they_come, arrivals) = mpsc::channel();
         let peer = a_peer_that_says(
-            name.clone(),
+            channel.clone(),
             vec![IpcMessage::Hello(build_stamp())],
             two_degradations,
             Some((hand, "degrade")),
             as_they_come,
         );
-        run_the_graph_within(&name, WITH_A_PEER, Millis::new(0), words);
+        run_the_graph_within(&channel, WITH_A_PEER, Millis::new(0), words);
         let heard = collect_until(&arrivals, peer, two_degradations);
         let degraded: Vec<bool> = heard
             .iter()
@@ -983,7 +1044,7 @@ mod tests {
 
     #[test]
     fn verdict_reaches_the_peer() {
-        let name = a_name_for("verdict");
+        let channel = a_channel_for("verdict");
         let (hand, words) = a_keyboard();
         // ⛔ TYPED AFTER THE WELCOME, for the reason `degrade` states (R5-4): a `Verdict` sent to an
         // empty `attending()` reaches nobody, and the word is spent.
@@ -996,13 +1057,13 @@ mod tests {
             |heard| heard.iter().any(|message| matches!(message, IpcMessage::Verdict(_)));
         let (as_they_come, arrivals) = mpsc::channel();
         let peer = a_peer_that_says(
-            name.clone(),
+            channel.clone(),
             vec![IpcMessage::Hello(build_stamp())],
             a_verdict,
             Some((hand, "verdict")),
             as_they_come,
         );
-        run_the_graph_within(&name, WITH_A_PEER, Millis::new(0), words);
+        run_the_graph_within(&channel, WITH_A_PEER, Millis::new(0), words);
         let heard = collect_until(&arrivals, peer, a_verdict);
         // ⛔ THE COUNT AND THE DECIDING VALUE, NEVER `{heard:?}` -- see `degrade` for what that
         // cost. ⚠️ AND THE ASSERTION BELOW IS NOW A RESTATEMENT, NOT THE ORACLE: since
@@ -1020,7 +1081,7 @@ mod tests {
 
     #[test]
     fn the_tokens_arrive_untrusted() {
-        let name = a_name_for("tokens");
+        let channel = a_channel_for("tokens");
         let (_hand, words) = a_keyboard();
         // ⛔ ONE NUMBER, TWO USES, AND IT IS THE CURE OF `C-1`: the predicate asked for three and
         // the verdict below asked for one, so a peer that died after the first token left a short
@@ -1040,13 +1101,13 @@ mod tests {
         // seconds and was killed. It was the plainest case of all and the first round blessed it.
         let (as_they_come, arrivals) = mpsc::channel();
         let peer = a_peer_that_says(
-            name.clone(),
+            channel.clone(),
             vec![IpcMessage::Hello(build_stamp())],
             three_tokens,
             None,
             as_they_come,
         );
-        run_the_graph_within(&name, WITH_A_PEER, Millis::new(0), words);
+        run_the_graph_within(&channel, WITH_A_PEER, Millis::new(0), words);
         let heard = collect_until(&arrivals, peer, three_tokens);
         let tokens: Vec<&IpcMessage> = heard
             .iter()
@@ -1100,7 +1161,7 @@ mod tests {
         // REDUNDANCY: the evidence that the pair had the defect of E116 was written down
         // here by the very wave that cured only the other two probes. It is red now because both
         // stream (2026-09-21); the redundancy it declares is untouched.
-        let name = a_name_for("nowords");
+        let channel = a_channel_for("nowords");
         let (hand, words) = a_keyboard();
         // ⛔ IT STREAMS, for the reason `the_tokens_arrive_untrusted` states: the predicate IS the
         // faucet's output. Measured 2026-09-21 with the token send removed: joined, it ran past
@@ -1111,13 +1172,13 @@ mod tests {
             |heard| heard.iter().any(|message| matches!(message, IpcMessage::Token { .. }));
         let (as_they_come, arrivals) = mpsc::channel();
         let peer = a_peer_that_says(
-            name.clone(),
+            channel.clone(),
             vec![IpcMessage::Hello(build_stamp())],
             a_token,
             None,
             as_they_come,
         );
-        run_the_graph_within(&name, WITH_A_PEER, Millis::new(0), words);
+        run_the_graph_within(&channel, WITH_A_PEER, Millis::new(0), words);
         drop(hand);
         let heard = collect_until(&arrivals, peer, a_token);
         // ⛔ THE COUNT, NOT `{heard:?}` -- see `the_tokens_arrive_untrusted`. ⚠️ AND HERE THE

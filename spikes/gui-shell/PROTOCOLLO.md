@@ -27,6 +27,11 @@ registro il giorno dello spike, col comando di `riferimenti.md`, e vanno nell'es
 
 ⚠️ **Richiamo del 2026-09-10 — la macchina, letta durante il compito 4 (errata E9 del piano).** «La GPU è quella di ADR-0002» era una previsione: `Get-CimInstance Win32_VideoController` rende `Intel(R) UHD Graphics` e `NVIDIA GeForce RTX 4060 Laptop GPU` — la macchina delle misure è il portatile con l'`i7-14700HX`, non quella della RTX 5080 — e i due gusci ottengono WebGPU sull'**integrata** (`api=WebGPU:intel/gen-12lp`, dal titolo). Il metro non cambia: l'esito dichiara le GPU **lette** e l'adattatore di `api=`; il confronto fra i gusci regge (stessa macchina, stesso adattatore), i numeri assoluti di M3 e M5 non sono quelli della RTX 5080.
 
+⚠️ **Richiamo del 2026-10-03 — «di ADR-0002», qui sopra e nel richiamo E10 qui sotto, è un'attribuzione sbagliata.**
+ADR-0002 decide il sistema operativo e il confine, e non nomina nessuna macchina: quella di riferimento, la RTX 5080 da
+16 GB, sta nella §0.3 del [disegno del kernel](../../docs/superpowers/specs/2026-08-06-kernel-design.md). Audit del
+2026-09-30, AUD-594.
+
 **Il frontend, uno solo.** La Home finta di `app/` — Vite, Vue 3, `dockview-core` — con il nucleo bloccato
 al centro, la striscia bloccata in basso, le tessere intorno, la presa grande, e **dentro due tessere** la
 chat che rende markdown token per token e la scena `three`; la stessa build caricata dai due gusci. Il

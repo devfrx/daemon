@@ -10,11 +10,14 @@
 //
 // ⛔ A FUNCTION AND NOT A `macro_rules!`, WHICH IS THE OTHER SHAPE IN THIS VERY MILESTONE, so the
 // difference is written down rather than left to look like an inconsistency somebody should
-// tidy. `ipc_contract.rs` generates its `#[test]`s from a macro because EACH CRATE HANDS ITS OWN
-// FACTORY: its real promises need a peer writing bytes, which a fake has not got. `custody` has
-// no peer -- one factory is enough, and `kernel` builds `simulator::custody::MemoryCustody`
-// itself, because `simulator` is already one of its dev-dependencies. Shape borrowed from
-// `journal_contract.rs`, which the north star names by name.
+// tidy. The `ipc` suite, `crates/kernel/tests/contract/ipc.rs`, generates its `#[test]`s from a
+// macro over a constructor, and ONE crate expands it --
+// `crates/platform/tests/ipc_contract_real.rs`, against the real transport alone (D82) --
+// because its promises need a peer writing bytes, which a fake has not got. This suite holds TWO
+// implementations instead: `custody` has no peer, and `kernel` builds
+// `simulator::custody::MemoryCustody` itself, because `simulator` is already one of its
+// dev-dependencies. Shape borrowed from `journal_contract.rs`, which the north star names by
+// name. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-081.
 //
 // ⛔ WHAT THIS SUITE CANNOT HOLD, AND IT IS MEASURED RATHER THAN SUSPECTED: AN IMPLEMENTATION
 // THAT IGNORES THE KEY. `CustodyKey` has ONE variant, so on an archive holding one key "the

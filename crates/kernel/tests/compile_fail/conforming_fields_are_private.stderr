@@ -1,0 +1,8 @@
+error[E0451]: fields `model`, `evaluated` and `degraded` of struct `Conforming` are private
+ --> tests/compile_fail/conforming_fields_are_private.rs:4:49
+  |
+4 |     let _forged = kernel::gateway::Conforming { model: "a-model", evaluated: 1, degraded: false };
+  |                                                 ^^^^^             ^^^^^^^^^     ^^^^^^^^ private field
+  |                                                 |                 |
+  |                                                 |                 private field
+  |                                                 private field

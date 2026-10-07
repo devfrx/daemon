@@ -6,10 +6,12 @@
 //! OTLP export. With the narrower description that consumer would have been born
 //! OUTSIDE the single exit point, which is exactly what V25 forbids.
 //!
-//! ⚠️ Implementation STAGED (§0.4), and the allow-list of authorised crates is EMPTY. An
-//! empty allow-list always passes, so the check is provable in one direction only; §7.4.2
-//! declares that hole and it stays declared until the sub-project that turns the network
-//! on.
+//! ⚠️ Implementation STAGED (§0.4), and THE CHECK OF V25 · Q20 DOES NOT EXIST: no script of the
+//! gate looks at `daemon`, and no allow-list of authorised crates exists, so it has neither a
+//! probe nor a counter-probe -- it is provable in no direction. The box of §7.4.2 of the spec
+//! declares it, and so does its row in `docs/porta-di-qualita.md`; `V25` and `Q20` are ⏳ in §8,
+//! and the check is written by the sub-project that turns the network on (trigger B (3) of
+//! §8.3). ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30, AUD-552, AUD-026, AUD-321.
 //!
 //! ⛔ NO TELEMETRY LEAVES THE MACHINE BY DEFAULT (ADR-0017). The OTLP export is opt-in,
 //! with a destination chosen by the user.

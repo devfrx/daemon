@@ -1,0 +1,5 @@
+error[E0599]: no method named `is_ok` found for enum `Admission` in the current scope
+  --> tests/compile_fail/admission_has_no_is_ok.rs:15:13
+   |
+15 |     outcome.is_ok()
+   |             ^^^^^ method not found in `Admission`

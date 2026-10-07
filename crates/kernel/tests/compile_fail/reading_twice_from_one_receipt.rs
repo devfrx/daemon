@@ -1,6 +1,6 @@
 // §6.10.5 row 4: a single receipt is CONSUMED by the read. Reading twice is a use after
-// move -- `E0382` -- which is what makes "every byte that comes back is covered by a
-// receipt" a shape rather than a promise.
+// move -- `E0382` -- so the consumption is a shape; that every byte that comes back is covered
+// by a receipt is held at runtime, the receipt constructors being public (audit of 2026-09-30, AUD-405).
 //
 // ⛔ Names `kernel::` and declares no attributes of its own -- gotcha #39, WITH ONE MEASURED
 // EXCEPTION. `Process` and `Worker` are TRAITS: a fully-qualified `impl kernel::…::Worker for

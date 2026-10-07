@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { nextTick } from "vue";
 
 import { i18n } from "../i18n";
-import { FREEZE_AT, useStream } from "../stores/stream";
+import { FREEZE_AT, KEEP, useStream } from "../stores/stream";
 import { createFakeBridge } from "../transport/fakeBridge";
 
 import Chat from "./Chat.vue";
@@ -88,5 +88,56 @@ describe("the Chat", () => {
     expect(wrapper.findAll("article.block:not(.streaming)")).toHaveLength(1);
     expect(wrapper.find("article.streaming").exists()).toBe(false);
     expect(wrapper.get("[aria-live=polite] article").attributes("data-provenance")).toBe("Untrusted");
+  });
+
+  it("renders a FROZEN piece as the renderer's output, with its label in words, in both provenances (AUD-723 of the audit of 2026-09-30)", async () => {
+    // ⛔ THE OTHER v-html OF THIS FILE: every probe above reads the piece being streamed, and each piece ends frozen,
+    // through `block.html`. An HTML tag in the model's text must come out ESCAPED there too -- `block.text` in its place
+    // would put it in the page alive -- and the label must be the words, not only the attribute.
+    const stream = useStream();
+    const wrapper = mount(Chat, { global: { plugins: [i18n] } });
+    stream.receive({ kind: "Token", text: "<b>x</b> " + "a".repeat(FREEZE_AT), provenance: "Untrusted" });
+    stream.receive({ kind: "Token", text: "**fidato**", provenance: "Trusted" });
+    // A change of provenance closes the trusted piece: two frozen pieces, one per label.
+    stream.receive({ kind: "Token", text: "dopo", provenance: "Untrusted" });
+    await frame();
+    const frozen = wrapper.findAll("[aria-live=polite] article");
+    expect(frozen).toHaveLength(2);
+    const [untrusted, trusted] = frozen;
+    expect(untrusted?.get(".provenance").text()).toBe(t("chat.untrusted"));
+    const body = untrusted?.get(".body").element.innerHTML ?? "";
+    expect(body).toContain("<p>&lt;b&gt;x&lt;/b&gt; a");
+    expect(body).not.toContain("<b>x</b>");
+    expect(trusted?.get(".provenance").text()).toBe(t("chat.trusted"));
+    expect(trusted?.get(".body").element.innerHTML).toContain("<strong>fidato</strong>");
+  });
+
+  it("drops the oldest frozen piece without rewriting the others: one node goes, one comes (AUD-539 of the audit of 2026-09-30)", async () => {
+    // ⛔ THE LIVE REGION ANNOUNCES WHAT CHANGES IN IT (§6a: "with moderation"), so a freeze must change ONE piece. Once
+    // KEEP pieces are frozen every freeze drops the oldest, and a list keyed by POSITION made every article take the next
+    // one's content -- KEEP pieces re-read at each freeze. The probe above freezes one piece and never reaches the drop.
+    const stream = useStream();
+    const wrapper = mount(Chat, { global: { plugins: [i18n] } });
+    const freeze = async (n: number): Promise<void> => {
+      stream.receive({ kind: "Token", text: `${n} ` + "a".repeat(FREEZE_AT), provenance: "Untrusted" });
+      await frame();
+    };
+    const articles = (): Element[] => wrapper.findAll("[aria-live=polite] article").map((article) => article.element);
+    for (let n = 0; n < KEEP; n += 1) await freeze(n);
+    const before = articles();
+    // ⛔ NON-VACUITY: the list is full, so the next freeze drops a piece.
+    expect(before).toHaveLength(KEEP);
+    const contents = before.map((article) => article.innerHTML);
+    await freeze(KEEP);
+    const after = articles();
+    expect(after).toHaveLength(KEEP);
+    // Every piece that stays is the SAME node, holding what it held: nothing in the region was rewritten.
+    for (let index = 0; index < KEEP - 1; index += 1) {
+      expect(after[index], `piece ${index + 1}`).toBe(before[index + 1]);
+      expect(after[index]?.innerHTML, `piece ${index + 1}`).toBe(contents[index + 1]);
+    }
+    // And the one that came in is new: the dropped piece's node did not take its place.
+    expect(before).not.toContain(after[KEEP - 1]);
+    expect(after[KEEP - 1]?.textContent).toContain(`${KEEP} a`);
   });
 });

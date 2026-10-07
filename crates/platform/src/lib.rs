@@ -43,11 +43,15 @@
 //! `grep -rEn "^impl (Custody|Journal|Reactor|Rng|Filesystem|Network|Process|Ipc) for " crates/platform/src/`,
 //! WHICH IS AN ENUMERATION OF THE PORT TRAITS AND NOT A DISCOVERY.
 //!
-//! ⛔ This crate USES `std` and WILL USE `unsafe` for FFI, and that is deliberate: it is
+//! ⛔ This crate USES `std`, and `unsafe` for FFI, and that is deliberate: it is
 //! the place where I/O has to live (ADR-0031, perimeter). The functions below exist as
 //! COUNTER-PROBES — they prove that the kernel's prohibitions do not fire where they
 //! must not, which is the direction one forgets (§7.1.1 rule 3, gotcha #24). Do not
 //! delete them until real code exists that demonstrates the same two things.
+//! ⚠️ RECALL OF 2026-10-02 — audit of 2026-09-30, ADR-0041: real code now does both, on both
+//! systems — `std` everywhere, and `unsafe` in `ipc`, which asks the system for the account a
+//! channel belongs to — so the condition above is met, and whether the two counter-probes go is a
+//! choice still to take.
 
 pub mod journal;
 

@@ -18,6 +18,15 @@
 > GUI. Il registro lo costruisce ancora il primo invocatore, il click del sotto-progetto 2; la
 > knowledge base vi si registra col 6. **Nessuna riga di questo ADR è superata.**
 
+> ⚠️ **Rimando del 2026-10-03 — il registro è costruito.** Il sotto-progetto 2, chiuso il 2026-09-22, l'ha costruito:
+> `crates/kernel/src/registry.rs` col banco `crates/kernel/tests/registry.rs`, la specie `Invocation` del giornale, una
+> funzione registrata — `vram-policy` — e il primo invocatore, la GUI. Il perimetro negativo, la *Negative* *«È di
+> livello 0 finché non esiste»*, il primo *Follow-up* e il rimando del 2026-09-05 qui sopra ne parlano come di una cosa
+> da costruire. La *Negative* si legge così: il registro esiste e ha la sua sonda, ma **niente impone ancora** che una
+> funzione nuova passi da lì — `Arbiter::set_policy`, l'effetto di `vram-policy`, resta pubblico e chiamabile anche
+> fuori dal registro. Il gesto resta del 12, la voce dell'8. Audit del 2026-09-30, AUD-596. **Nessuna riga di questo ADR
+> è superata.**
+
 ## Context
 
 Le funzioni del programma — aprire un pannello, accendere la telecamera, catturare, cambiare

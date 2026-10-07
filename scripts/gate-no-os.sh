@@ -6,15 +6,24 @@
 # gate PROVES and catches a crate ALREADY ON THE LIST that reaches the OS by an unforeseen
 # route -- feature unification -- but only says "no" without saying who. The list is the
 # diagnosis, the gate is the proof.
+# ⚠️ AND IT ALSO CATCHES A CONSTRAINED CRATE THAT WRITES `extern crate std;` -- the one line
+# `#![no_std]` does not refuse: E0463 on x86_64-unknown-none, while the same file builds for the
+# host. Measured on 2026-10-06 on a scratch crate with toolchain 1.95.0, and on the kernel itself
+# by condition 2 of §7.2 of the closure design.
+# RECALL OF 2026-10-06 -- audit of 2026-09-30, AUD-587.
 #
 # TARGET: x86_64-unknown-none, and it is not a detail. It has to differ from the real
 # target along ONE SINGLE dimension, the absence of the OS. thumbv7em-none-eabihf differs
 # along four (arch, pointer, 64-bit atomics) and is a source of reds for the wrong reason
 # -- gotcha #9 applied to the target.
 #
-# ⛔ DO NOT add --workspace. The command names the TWO constrained crates, and that is not
+# ⛔ DO NOT add --workspace. The command names the constrained crates one by one, and that is not
 # a convenience: with --workspace the gate fails on `platform` with "can't find crate for
 # std", that is, right reason and wrong crate. It is probe B3, which did not exist.
+# ⚠️ AND THE SAME LIST IS WRITTEN BY HAND IN TWO MORE SCRIPTS -- `CRATES` in gate-deps.sh and
+# `CONSTRAINED` in gate-attributes.sh -- and NOTHING checks that the three agree: a crate that
+# joins the constrained set goes into all three.
+# RECALL OF 2026-10-06 -- audit of 2026-09-30, AUD-684.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 

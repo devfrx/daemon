@@ -1508,7 +1508,7 @@ come *«**Fix**: `--locked`»*, cioè una riga. Contati sul codice invece che su
 | Domanda | Comando | Esito |
 |---|---|---|
 | `--locked` esiste già da qualche parte? | `grep -rn -- "--locked\|--offline\|--frozen" scripts/ .github/` | ❌ **zero occorrenze** |
-| quanti siti `cargo` stanno nel percorso del cancello? | `grep -n "cargo" scripts/*.sh` | ⛔ **RICHIAMO DEL 2026-08-27, finding AUD-009 — questa cella era FALSA il giorno in cui fu scritta, e il comando accanto non la produce.** Diceva *«**sei** — `gate.sh` ×4, `gate-no-os.sh` ×1, `gate-deps.sh` ×3»*, e la propria scomposizione somma **otto**; il comando restituisce 35 righe, comprese quelle dentro commenti e stringhe. La misura buona è la riga qui sotto |
+| quanti siti `cargo` stanno nel percorso del cancello? | `grep -n "cargo" scripts/*.sh` | ⛔ **RICHIAMO DEL 2026-08-27** — audit del 2026-08-27, AUD-009: il comando accanto rende anche le righe dentro commenti e stringhe, quindi non conta i siti; la misura buona è la riga qui sotto. Com'era, in [archivio](archivio/riferimenti-storico.md) |
 | quanti siti `cargo` **eseguibili** ha il cancello, e li passa **tutti** con `--locked`? | `grep -hE "(^\|[^'])cargo " scripts/gate.sh scripts/gate-no-os.sh scripts/gate-deps.sh \| grep -vE "^[[:space:]]*#"` per il primo conteggio, lo stesso più `\| grep -c -- --locked` per il secondo | **11** e **11**, il 2026-08-27 — `gate.sh` cinque, `gate-no-os.sh` uno, `gate-deps.sh` cinque. ⛔ **L'oracolo è l'UGUAGLIANZA, non l'undici:** una cifra assoluta non è un oracolo su un cancello che guadagna passi (gotcha **#31**, quinta forma), una relazione fra due misure dello stesso artefatto sì. ✅ **Provata nelle due direzioni**: su una copia fuori dal repository, aggiunto un `cargo build --workspace` senza il flag, i due conteggi divergono — **12** contro **11**. ⚠️ Il filtro esclude `cargo` preceduto da apice singolo, che è la forma in cui i tre script lo **nominano** dentro un messaggio d'errore invece di eseguirlo. ⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-343, AUD-637: la misura qui sopra resta come misura di quel giorno; oggi gli script del cancello sono **quattro** e la relazione è un'altra — **ogni sito eseguibile senza `--locked` è un `cargo audit`**, perché `cargo audit` il flag non lo ha (`cargo audit --help`: solo `-f, --file`) e il lockfile lo legge soltanto. L'elenco dei siti senza il flag: `grep -hE "(^\|[^'])cargo " scripts/gate.sh scripts/gate-no-os.sh scripts/gate-deps.sh scripts/gate-gui.sh \| grep -vE "^[[:space:]]*#" \| grep -v -- --locked`, che il 2026-10-07 rende i due `cargo audit` di `gate.sh` e di `gate-gui.sh`; lo stesso seguito da `\| grep -vc 'cargo audit'` rende **0**. ✅ **Provata nelle due direzioni** il 2026-10-07, su una copia dei quattro script fuori dal repository: aggiunto `run "probe" cargo build --workspace` a `gate.sh`, rende **1**. E `sha1sum Cargo.lock gui/fake-core/Cargo.lock` è uguale prima e dopo una corsa di `cargo audit -n` su ciascuno, lo stesso giorno. È la prova a cui rimandano la cella N6 di [`porta-di-qualita.md`](porta-di-qualita.md) e la riga *«Una dipendenza si aggiunge in due passi»* di [`../CLAUDE.md`](../CLAUDE.md) |
 | `cargo tree` accetta `--locked`? | `cargo tree --locked -p kernel -e normal,no-proc-macro --prefix none` | ✅ exit 0 |
 | ADR-0031 dice qualcosa sul lockfile? | `grep -i "lock\|riproducib" docs/adr/0031-*.md` | ❌ **niente**: la ragione del lockfile versionato vive **solo** in `.gitignore` |
@@ -1624,10 +1624,9 @@ simulatore già scritto. Cade un argomento di comodità, non uno di merito.
 che citata. Lo schema del canale `ipc` nasce al **Traguardo 6**: è una finestra che **si chiude
 da sola**, come la quarta proprietà della §3 del compendio.
 
-⛔ **RICHIAMO DEL 2026-08-31 — QUI STAVA una frase che il Traguardo 6 ha reso stantia:**
-*«e si decide allora, mentre la scelta è ancora libera»*. **Il Traguardo 6 È ARRIVATO**, e il
-compito 3bis ha **rifatto** la misura da fonti primarie invece di ricordarla: rispondere a
-memoria sarebbe stato il gotcha **#48**.
+⛔ **RICHIAMO DEL 2026-08-31** — il Traguardo 6 è arrivato, e il compito 3bis ha **rifatto** la misura da fonti
+primarie invece di ricordarla: rispondere a memoria sarebbe stato il gotcha **#48**. La frase che il Traguardo 6 aveva
+reso stantia, in [archivio](archivio/riferimenti-storico.md).
 ⚖️ **Ciò che è cambiato non è l'esito, è la sua specie:** non c'è più una finestra che si chiude
 da sola, c'è una **scelta davanti al proprietario**, perché §6.1.1 è spec e riaprirla è la
 **D12**. Le domande erano **due**, ed erano diverse, e queste sono le loro risposte.
@@ -1659,7 +1658,7 @@ L'elenco che l'avviso propone è di **nomi**, non di risposte, ed è precisament
 | [`wincode` 0.6.1](https://crates.io/api/v1/crates/wincode) | ✅ **il più solido dei tre**: 0.6.1 del **2026-08-10**, `anza-xyz`, tre revisioni di sicurezza indipendenti dichiarate, derive propri, senza serde | ⛔ l'esempio del README confronta con `bincode::serialize`, che è l'**API della 1.x**, cioè **fixint**; `bincode-ts` dichiara **varint**. ⚠️ **Dedotto dal nome dell'API, non misurato** | ⛔ scartato **finché la configurazione non è misurata** — e misurarla è un banco, non una lettura |
 | [`postcard` 1.1.3](https://crates.io/api/v1/crates/postcard) | ⚠️ ultima uscita **2025-07-24** | `postcard-bindgen` 0.8.0 del **2026-07-30** è mantenuto, ma genera **JavaScript ES2021** senza dichiarazioni TypeScript, e il pacchetto si **genera in locale** invece di essere pubblicato | ⛔ scartato, e **già scartato da M-1**: richiederebbe `serde` nel grafo spedito, e ADR-0037 lo scrive alla lettera |
 | [`bitcode` 0.6.9](https://crates.io/api/v1/crates/bitcode) | ⚠️ ultima uscita **2025-12-18** | ⛔ **nessun lettore** su npm | ⛔ scartato |
-| `rkyv` + `rkyv-js` 0.3.0 — [il registro](https://registry.npmjs.org/rkyv-js) e [il monte](https://github.com/cometkim/rkyv-js) | ✅ vivo | ✅ **il solo lettore nuovo e davvero mantenuto**: 0.3.0 del **2026-08-21**, tipi TypeScript dichiarati, monte spinto il **2026-08-26**, conformità verificata contro `rkyv` 0.8.18 | ⛔ **scartato sul merito**, e la ragione è nel README del **monte**: *«No input validation: like rkyv's `access_unchecked`, decoding assumes trusted bytes. Do not decode untrusted data.»* Un decodificatore che non può **rifiutare** byte malformati non è conforme a una porta che deve rendere un errore invece di indovinare. ⚠️ E il pacchetto ha **sette mesi**: novità non è maturità. ⛔ **RICHIAMO DEL 2026-08-31, in revisione: questa riga portava UN indirizzo solo, `npmjs.com/package/rkyv-js`, e diceva *«la ragione è nel suo README»*.** ✅ **Misurato invece che dedotto:** al registro il campo `readme` è **vuoto** — la frase citata **non è a quell'indirizzo**, sta nel README del monte, dov'è verbatim. La citazione era giusta, l'**indirizzo** no. 📌 *Una fonte porta l'indirizzo che dice la cosa, non quello del pacchetto che la contiene* — e le due metà della riga hanno ora una fonte ciascuna: la **versione e la data** dal registro, la **frase** dal monte |
+| `rkyv` + `rkyv-js` 0.3.0 — [il registro](https://registry.npmjs.org/rkyv-js) e [il monte](https://github.com/cometkim/rkyv-js) | ✅ vivo | ✅ **il solo lettore nuovo e davvero mantenuto**: 0.3.0 del **2026-08-21**, tipi TypeScript dichiarati, monte spinto il **2026-08-26**, conformità verificata contro `rkyv` 0.8.18 | ⛔ **scartato sul merito**, e la ragione è nel README del **monte**: *«No input validation: like rkyv's `access_unchecked`, decoding assumes trusted bytes. Do not decode untrusted data.»* Un decodificatore che non può **rifiutare** byte malformati non è conforme a una porta che deve rendere un errore invece di indovinare. ⚠️ E il pacchetto ha **sette mesi**: novità non è maturità. ⛔ **RICHIAMO DEL 2026-08-31** — misurato: al registro il campo `readme` è **vuoto**, e la frase citata sta nel README del monte, verbatim; la **versione e la data** vengono dal registro, la **frase** dal monte. 📌 *Una fonte porta l'indirizzo che dice la cosa, non quello del pacchetto che la contiene.* Com'era, in [archivio](archivio/riferimenti-storico.md) |
 
 ⛔ **M-12 — LA COMPATIBILITÀ SUL FILO ERA UNA DICHIARAZIONE, ED È STATA MISURATA. 2026-08-31.**
 Decisione del proprietario: *misurare prima di scegliere*. La frase sotto esame è del candidato
@@ -2634,6 +2633,39 @@ ogni sezione di prima», l'indice vivo dei nomi che il codice usa; le cinque rag
 che nomina un'osservazione e non un finding. La frase viva che non dice più il vero, segnata e non risolta, sta
 nell'osservazione 13 del [rapporto](audit-2026-09-30.md).
 
+### Il lotto 4 del `lean-docs` della R5, parte 2 — 2026-10-07: le storie di `riferimenti.md` in archivio
+
+⛔ **Non doppioni ma storie**: la R5 del [terzo audit](audit-2026-09-30.md), mirata come vuole la P20, su questo file —
+la parte 2 del lotto 4 —, col ↪ AUD-639. Ciò che una riga raccontava della propria correzione — che cosa diceva, chi
+l'ha trovato, come — sta in [`archivio/riferimenti-storico.md`](archivio/riferimenti-storico.md) parola per parola, coi
+quattro tagli: i tre richiami delle sezioni «Esecuzione dell'audit» che AUD-639 nomina — la cella dei siti `cargo`, la
+frase che il Traguardo 6 aveva reso stantia, l'indirizzo della riga di `rkyv` — e il richiamo del compito 13 fra le
+versioni della parte 2 del sotto-progetto 2. L'archivio è nuovo: un file suo, scelto dal proprietario il 2026-10-07
+invece della coda di [`archivio/stato-storico.md`](archivio/stato-storico.md). Nel vivo resta la riga del richiamo. Il
+confine che AUD-639 chiedeva l'ha deciso il proprietario lo stesso giorno, col consiglio: escono le sole storie delle
+correzioni, e restano le misure coi loro comandi e le prove scartate, che sono il metodo della misura e la sua lezione.
+I tagli il proprietario li ha approvati in una domanda sola. La prova che non manca niente: lo script della skill col
+vivo e l'archivio nel `--dopo`, senza àncore perse né riferimenti rotti; quattro blocchi su quattro uguali all'originale
+a meno dei link riscritti per la cartella; il vivo uguale alla fotografia coi soli tagli e questa passata, byte per
+byte, e l'archivio CRLF integrale come il vivo; sei domande di controllo su sei — ha risposto il coordinatore, che è la
+prova più debole.
+
+📌 **Il verbale del 2026-10-07**, `cl100k_base`, limite inferiore — il tokenizzatore del comando in testa a
+[`CLAUDE.md`](../CLAUDE.md), con `tiktoken` 0.13.0, sul solo `docs/riferimenti.md`: da **121 174** a **121 059**
+token; da **372 340** a **371 974** byte in un albero CRLF, `wc -c docs/riferimenti.md`. Coi soli tagli: questa
+passata, che il file porta da sé, non è nel conto. Il conto prima e dopo è preso nella stessa sessione. ⚠️ **Poco, ed è
+il vero:** il file è il registro delle misure, e le storie delle sue correzioni erano quattro.
+
+⚠️ **Visti e non presi:** le prove scartate delle sezioni dell'audit, che AUD-639 nomina — il metodo della misura e la
+sua lezione, per la decisione qui sopra —; il titolo della sezione della decisione 5, datato 2026-08-18 e con dentro
+M-12 del 2026-08-31, perché il richiamo in testa alla sezione dice già le due date; i richiami lunghi del terzo audit —
+i comandi del Traguardo 4, i siti `cargo` eseguibili, K-1, T4-1-i —, che dicono il vero di oggi coi comandi; il
+richiamo sul «pavimento noto» dei 25,8 µs, che ripete le ragioni del Task 4 senza che un finding lo nomini; le sezioni
+d'esecuzione dei traguardi coi loro «divergenza registrata», che sono la lezione; le righe «Letta attraverso lo
+strumento che riassume … Riletta dal sorgente», che sono provenienza; le passate dello sfoltimento, verbali delle misure.
+Le due frasi vive che non dicono più il vero, segnate e non risolte, stanno nell'osservazione 14 del
+[rapporto](audit-2026-09-30.md).
+
 ## Riconoscimento gesti dalla telecamera — le fonti del disegno del 2026-09-03 (ADR-0038, ADR-0039)
 
 Consultate il **2026-09-03** scrivendo il
@@ -2831,7 +2863,7 @@ o patch nuova solo se l'appuntata non si installa):
 |---|---|---|---|
 | le appuntate di oggi | `node -e "const p=require('./gui/package.json'); console.log({...p.dependencies, ...p.devDependencies})"` | le stampa il comando: la casa è il manifesto, e qui non si ricopiano | `gui/package.json` |
 | il giorno del compito 11, il 2026-09-20 | `for p in vue vite @vitejs/plugin-vue typescript vue-tsc vitest; do npm view "$p" version dist-tags; done` | `vitest` `latest` 5.0.1 (2026-09-15): resta il tag `V4`, 4.1.11 (D4); `vue` `latest` 3.5.43: resta la 3.5.42, che si installa; `typescript` `latest` 7.0.2, la major che `vue-tsc` 3.3.11 non regge (D79): resta 5.9.3; `vite` 8.3.0, `@vitejs/plugin-vue` 6.0.9 e `vue-tsc` 3.3.11 come l'appuntato | il messaggio di `0193bbd` |
-| il giorno del compito 13, il 2026-09-21 | lo script Python sul registro npm che il compito detta — `awk '/^## Compito 13:/{s=1;next} /^## /{s=0} s&&/registry\.npmjs/{print NR}' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md` ne dà la riga (⚠️ richiamo del 2026-09-22, E234: qui stava *«lo stesso `npm view`»*; ed E236: poi un `grep -n 'registry.npmjs'` nudo, che rende anche le righe di altri compiti e dell'errata) | `dockview-core`, `dockview`, `pinia` e `reka-ui` ancora le appuntate; `vue-i18n` 11.4.12, `jsdom` 30.1.0, `@vue/test-utils` 2.5.1 e `@types/node@24` 24.13.6 più nuove delle appuntate, che si installano: restano quelle del piano | il messaggio di `8679f27` |
+| il giorno del compito 13, il 2026-09-21 | lo script Python sul registro npm che il compito detta — `awk '/^## Compito 13:/{s=1;next} /^## /{s=0} s&&/registry\.npmjs/{print NR}' docs/superpowers/plans/2026-09-11-sottoprogetto-2-parte-2-gui-minima.md` ne dà la riga (⚠️ richiamo del 2026-09-22, E234 ed E236: un `grep -n 'registry.npmjs'` nudo renderebbe anche le righe di altri compiti e dell'errata; com'era, in [archivio](archivio/riferimenti-storico.md)) | `dockview-core`, `dockview`, `pinia` e `reka-ui` ancora le appuntate; `vue-i18n` 11.4.12, `jsdom` 30.1.0, `@vue/test-utils` 2.5.1 e `@types/node@24` 24.13.6 più nuove delle appuntate, che si installano: restano quelle del piano | il messaggio di `8679f27` |
 | il giorno del compito 14, il 2026-09-22 | lo script del compito — ⚠️ **la rimisura del giorno NON è registrata** (E234): il messaggio di `c6bc9a9` porta le sole versioni installate | `markdown-it` 15.0.2 (D3) e `axe-core` 4.13.0, installate col lockfile nello stesso commit | il messaggio di `c6bc9a9` |
 | il giorno del compito 15, il 2026-09-22 | lo script Python sul registro npm, sulla catena `eslint` (E234) | `eslint` 10.10.0, `eslint-plugin-vue` 10.11.0, `@intlify/eslint-plugin-vue-i18n` 4.5.1, `@typescript-eslint/parser` 8.70.0 (D91): nessuna major nuova; i tre peer non opzionali li tira npm da sé e vivono nel lockfile — `vue-eslint-parser` 10.4.1, `jsonc-eslint-parser` 3.3.0, `yaml-eslint-parser` 2.1.0 | il messaggio di `b0ef8f7` |
 | le due crate nuove per il 2 | `grep -A1 -e '^name = "interprocess"$' -e '^name = "redb"$' Cargo.lock` | `interprocess` 2.4.4 (compito 2); `redb` 4.1.0, quella del lockfile (D6), la stessa nel lockfile del finto, seminato dalla radice (D83) | `Cargo.lock`, `gui/fake-core/Cargo.lock` |

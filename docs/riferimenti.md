@@ -2545,6 +2545,35 @@ a rifarla» e la divergenza su I1, che sono la lezione stessa; le domande barrat
 cinque frasi vive che non dicono più il vero, segnate e non risolte, stanno nell'osservazione 10 del
 [rapporto](audit-2026-09-30.md).
 
+### Il lotto 2 del `lean-docs` della R5, parte 2 — 2026-10-07: le storie della tabella dei gotcha in archivio
+
+⛔ **Non doppioni ma storie**: la R5 del [terzo audit](audit-2026-09-30.md), mirata come vuole la P20, sulla tabella
+dei gotcha di [`HANDOFF.md`](HANDOFF.md), la parte 2 del lotto. Ciò che una voce raccontava della propria correzione —
+che cosa diceva, chi l'ha trovato, come — sta in [`archivio/stato-storico.md`](archivio/stato-storico.md) parola per
+parola, nella sezione del lotto 2, parte 2, coi sei tagli; nel vivo resta la riga del richiamo, o niente dove la voce
+dice già il vero, e la riga della data in testa rimanda all'archivio. I tagli il proprietario li ha approvati in una
+domanda sola, e la §9 del [compendio](COMPENDIO.md) l'ha lasciata com'è: le cure restano nelle voci, e le tre voci
+toccate tengono la riga del richiamo con la data. La prova che non manca niente: lo script della skill coi due file nel
+`--dopo`, senza àncore perse né link rotti; sei blocchi su sei, e la riga della data, uguali all'originale a meno dei
+link riscritti per la cartella; il vivo uguale alla fotografia coi soli tagli, byte per byte, e l'archivio uguale a
+quello di prima più la sola coda; sei domande di controllo su sei — ha risposto il coordinatore, che è la prova più
+debole.
+
+📌 **Il verbale del 2026-10-07**, `cl100k_base`, limite inferiore — il tokenizzatore del comando in testa a
+[`CLAUDE.md`](../CLAUDE.md), sul solo `docs/HANDOFF.md`: da **117 420** a **117 149** token; da **364 953** a
+**364 161** byte in un albero CRLF, `wc -c docs/HANDOFF.md`. ⚠️ **Poco, ed è il vero:** la tabella è fatta di lezioni
+e di cure, e le storie delle correzioni delle voci erano sei. ⚠️ **E il conto della parte 1 diverge di una cinquantina
+di token:** lo stesso comando, con `tiktoken` 0.13.0, dà **123 445** e **117 420** su `HANDOFF.md` a `440b265` e a
+`7bb3f47`, contro i 123 499 e 117 470 del suo verbale; lo scarto è lo stesso sulle due misure, e il verbale resta com'è.
+
+⚠️ **Visti e non presi, perché sono la lezione o la sua cura:** le occorrenze e le forme nuove, compresi i richiami che
+ne aggiungono una, come nel #106 e nel #129; i verbali delle cure — «CHIUSA il …», «corretto il …», «Rimedio
+applicato»; il reperto di una lezione nella frase vecchia della voce stessa — il #63, *«più piccolo di come questo
+riquadro lo prezzava»*, e il #120, la cura che era cieca; i richiami di una riga del terzo audit, già nella forma della
+R5, anche dove la frase che correggono resta accanto — fra gli altri nel #25 e nel #64; e il #121, che AUD-545 nomina:
+non porta storie, è la regola per i sorgenti, e la applica il lotto 6. La frase viva che non dice più il vero, segnata
+e non risolta, sta nell'osservazione 11 del [rapporto](audit-2026-09-30.md).
+
 ## Riconoscimento gesti dalla telecamera — le fonti del disegno del 2026-09-03 (ADR-0038, ADR-0039)
 
 Consultate il **2026-09-03** scrivendo il

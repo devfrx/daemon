@@ -7056,3 +7056,49 @@ apertura: le voci chiuse vi tengono la storia nella cella, e che cosa si legge a
    tracciato, è dell'altra sessione del proprietario (P16).
 8. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per
    parola, la nuova al suo posto, e il commit su `main`, col push.
+
+## Da HANDOFF.md, il `lean-docs` della R5 — archiviati il 2026-10-07, lotto 2, parte 2
+
+Il lotto 2 del `lean-docs` della R5 del [terzo audit](../audit-2026-09-30.md), parte 2, mirato come vuole la P20 del proprietario: le storie che la tabella dei gotcha di [`HANDOFF.md`](../HANDOFF.md) teneva — che cosa diceva una voce, chi l'ha trovato, come —, da `HANDOFF.md` a `c2de19a`, parola per parola, coi link riscritti per questa cartella. Nel vivo resta la riga del richiamo — la data, ciò che è vero adesso, dove vive la storia —, o niente dove la voce dice già il vero. Le lezioni e le cure restano nelle voci. Ogni taglio approvato dal proprietario.
+
+### Il richiamo di AUD-064, nel gotcha #39 — una storia
+
+Riga 937 di `HANDOFF.md` a `c2de19a`. Nel vivo resta il comando che dice quali sono i casi degli attributi, col richiamo. Dopo «`#![no_std]` e `#![forbid(unsafe_code)]`, e non nominano mai `kernel::`.»:
+
+> ⛔ **RICHIAMO DEL 2026-08-28, finding AUD-064:** questa riga diceva *«I QUATTRO casi di `crates/kernel/tests/compile_fail/`»*, e a essere sbagliato era il **soggetto** e non l'argomento — le due affermazioni sono vere dei casi degli attributi e false della **cartella**, che ne portava quattro quando la riga fu scritta e **trentatré** il giorno di questo richiamo. **Il numerale è tolto e non riallineato**, e 
+
+### La cifra delle righe di `simulator`, nel gotcha #59 — una storia
+
+Riga 958 di `HANDOFF.md` a `c2de19a`. Nel vivo resta il comando che dà il conto, col richiamo. Dopo «a mano, e `madsim` non compare in `Cargo.lock`.»:
+
+>  ⚠️ **Quante righe non è scritto qui — richiamo del 2026-08-25:** questa cella diceva **512**, misurate il 2026-08-11, e il 2026-08-25 erano **519**; **tolta** da qui e dagli altri documenti **vivi** che la portavano, e **lasciata nei verbali datati** — il rimando del 2026-08-18 in ADR-0026, il finding `A-1` di `audit-2026-08-11.md` e due righe di [`riferimenti.md`](../riferimenti.md) — perché il conto lo dà `find crates/simulator/src -name '*.rs' \| xargs wc -l` e l'argomento regge identico a qualunque valore. L'argomento regge identico a qualunque valore
+
+### La provenienza dell'ultima clausola del gotcha #59 — una storia
+
+Riga 958 di `HANDOFF.md` a `c2de19a`. Nel vivo resta la clausola. Dopo «che nessuno rimisurava perché sosteneva una tesi giusta»:
+
+>  — clausola salvata dalla §9 del compendio il **2026-08-28**, prima che il duplicato fosse tolto.
+
+### La provenienza dell'ultima clausola del gotcha #61 — una storia
+
+Riga 960 di `HANDOFF.md` a `c2de19a`. Nel vivo resta la clausola. Dopo «E perché gli altri cinque controlli erano ciechi»:
+
+>  — clausola salvata dalla §9 del compendio il **2026-08-28**:
+
+### La marca «APERTA» e il titolo del richiamo del 2026-08-31, nel gotcha #64 — la metà falsa, e il suo richiamo
+
+Riga 963 di `HANDOFF.md` a `c2de19a`. Nel vivo, il richiamo col titolo che resta vero — la misura è fatta —, e la scelta del 2026-08-31, che la riga dice già. Dopo «è puntato verso entrambi i capi del filo?»:
+
+> ⛔ **APERTA** — registrata, non decisa. ⛔ **RICHIAMO DEL 2026-08-31: la MISURA è fatta, e la voce resta aperta per un'altra ragione.**
+
+### I «quattro `==`», nel gotcha #104 — una storia
+
+Riga 1003 di `HANDOFF.md` a `c2de19a`. Nel vivo resta «soli `==`», senza la cifra. Dopo «tenuti da soli `==` e da nessun `match`»:
+
+>  (⚠️ *«quattro `==`»* fino al 2026-09-01: erano tre — `E128` del piano del Traguardo 6)
+
+## La riga della data di HANDOFF.md, com'era — archiviata il 2026-10-07, al lotto 2 del `lean-docs` della R5, parte 2
+
+⚠️ **Vera il giorno in cui fu scritta.** Uscita da [`HANDOFF.md`](../HANDOFF.md) parola per parola, coi link riscritti per questa cartella.
+
+Aggiornato il **2026-10-07**, col lotto 2 del `lean-docs` della R5 del [terzo audit](../audit-2026-09-30.md), parte 1: le storie delle correzioni di questo file, fuori dalla tabella dei gotcha, sono in [`archivio/stato-storico.md`](stato-storico.md), parola per parola, e nel vivo resta la riga del richiamo. La data segue il file — finding **AUD-039**. Questa riga com'era è là.

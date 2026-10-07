@@ -2666,6 +2666,45 @@ strumento che riassume … Riletta dal sorgente», che sono provenienza; le pass
 Le due frasi vive che non dicono più il vero, segnate e non risolte, stanno nell'osservazione 14 del
 [rapporto](audit-2026-09-30.md).
 
+### Il lotto 5 del `lean-docs` della R5 — 2026-10-07: la §8 della spec, la §10 del disegno del 2 e un paragrafo di ADR-0015
+
+⛔ **Non doppioni ma storie**: la R5 del [terzo audit](audit-2026-09-30.md), mirata come vuole la P20, su tre file,
+ciascuno col sì del proprietario prima di toccarlo. **La §8 della
+[spec del sotto-progetto 1](superpowers/specs/2026-08-06-sottoprogetto-1-kernel.md)**, col ↪ AUD-651: diciannove tagli,
+le storie di diciotto celle della §8.3 e della §8.4 — coi richiami scritti prima del terzo audit escono le metà che quei
+richiami correggevano, e nella cella resta il vero di oggi con la riga del richiamo — e la riga *«Sulla E»* della §8.2.1,
+in [`archivio/sottoprogetto-1-kernel-storico.md`](archivio/sottoprogetto-1-kernel-storico.md). Stato e innesco di ogni
+riga sono quelli di prima: la stessa impronta delle colonne dell'identificativo, dello stato e dell'innesco, e lo stesso
+numero di colonne. **La §10 del [disegno del 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md)**, il
+verbale della chiusura del 2026-09-09 che AUD-660 nominava: intera, nella forma delle consegne, in
+[`archivio/consegna-disegni-sottoprogetto-2.md`](archivio/consegna-disegni-sottoprogetto-2.md); nel disegno restano il
+titolo e la riga del richiamo. **L'ultimo paragrafo del richiamo del 2026-08-27 di
+[ADR-0015](adr/0015-descrizioni-degli-strumenti-fissate-all-approvazione.md)**, la forma del difetto, con la frase che
+non era più vera — il finding basso AUD-1553 —, in [`archivio/adr-storico.md`](archivio/adr-storico.md): un'eccezione
+alla regola append-only degli ADR, che il proprietario ha deciso per quel solo paragrafo. I tre archivi sono nuovi, uno
+per file, scelti dal proprietario il 2026-10-07 invece della coda di
+[`archivio/stato-storico.md`](archivio/stato-storico.md), e CRLF integrali come i vivi. I ventuno tagli il proprietario
+li ha approvati in una domanda sola. La prova che non manca niente: lo script della skill coi tre vivi e i tre archivi
+nel `--dopo`, senza àncore perse né riferimenti rotti; ventuno blocchi su ventuno uguali all'originale a meno dei link
+riscritti per la cartella; ogni vivo uguale alla fotografia coi soli tagli, byte per byte; la verifica provata anche al
+contrario — un carattere cambiato in un archivio, in un vivo e nella consegna archiviata la fa rossa, e i file tornano
+byte-identici —; sette domande di controllo su sette — ha risposto il coordinatore, che è la prova più debole.
+
+📌 **Il verbale del 2026-10-07**, `cl100k_base`, limite inferiore — il tokenizzatore del comando in testa a
+[`CLAUDE.md`](../CLAUDE.md), con `tiktoken` 0.13.0: la spec da **120 947** a **118 763** token, il disegno del 2 da
+**40 178** a **33 761**, ADR-0015 da **1 720** a **1 703**; in byte, in un albero CRLF, `wc -c` sui tre file: da
+**367 425** a **360 672**, da **124 781** a **105 471**, da **5 515** a **5 415**. Il conto prima e dopo è preso nella
+stessa sessione. ⚠️ **Nella spec poco, ed è il vero:** le celle tenevano la storia e il vero di oggi intrecciati, e il
+vero resta.
+
+⚠️ **Visti e non presi:** la §8.5, che AUD-651 nomina — il registro delle riaperture che la §8.8 chiede, col metodo e la
+lezione di ciascuna, il confine deciso su AUD-639 —; la §8.6, misure e prove scartate; la storia del numero nella §8.8,
+reperto della lezione *«si riconta»*; gli esempi della §8.1.1 e della §8.1.3, che i richiami del 2026-10-02 datano; i
+richiami del terzo audit nelle celle e le frasi che correggono, che hanno già la forma della R5; i richiami di `Q4`,
+`Q5`, `Q9`, `Q13` e `Q14`, che dicono il vero di oggi con la data; il resto del richiamo di ADR-0015, che il proprietario
+non ha messo nel taglio. I rimandi alla §10 del 2 negli altri file vivi, che ora passano dalla riga del richiamo, stanno
+nell'osservazione 15 del [rapporto](audit-2026-09-30.md), segnati e non risolti.
+
 ## Riconoscimento gesti dalla telecamera — le fonti del disegno del 2026-09-03 (ADR-0038, ADR-0039)
 
 Consultate il **2026-09-03** scrivendo il

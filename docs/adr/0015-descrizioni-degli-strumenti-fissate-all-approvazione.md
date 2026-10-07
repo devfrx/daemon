@@ -38,10 +38,9 @@ da terzi che per funzionare deve entrare nel canale che influenza il comportamen
 > tocca ADR-0003, ADR-0009 e ADR-0014 insieme — quindi un **ADR proprio**, del proprietario.
 > **Registrata, non presa.**
 >
-> 📌 **La forma del difetto, perché non si ripeta:** i quattro ADR sono stati scritti
-> guardando ciascuno il proprio oggetto, e **nessuno dei quattro nomina l'altro su questo
-> punto**, quindi la contraddizione non si vede da nessuno dei lati. È il gotcha **#59** — un
-> ADR si legge anche contro i propri **fratelli**.
+> 📌 **La forma del difetto, perché non si ripeta:** il gotcha **#59** — un ADR si legge anche
+> contro i propri **fratelli**. Il racconto, vero al 2026-08-27, è in
+> [archivio](../archivio/adr-storico.md) dal 2026-10-07.
 
 I due attacchi rilevanti sono documentati:
 

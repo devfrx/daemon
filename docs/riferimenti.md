@@ -2606,6 +2606,34 @@ piano coi suoi tre riquadri, l'elenco «Cosa aggiornare qui» con le voci tolte 
 reperto, il confine della parte 2 del lotto 2. Le frasi vive che non dicono più il vero, segnate e non risolte, stanno
 nell'osservazione 12 del [rapporto](audit-2026-09-30.md).
 
+### Il lotto 4 del `lean-docs` della R5, parte 1 — 2026-10-07: le storie di `porta-di-qualita.md` in archivio
+
+⛔ **Non doppioni ma storie**: la R5 del [terzo audit](audit-2026-09-30.md), mirata come vuole la P20, su
+[`porta-di-qualita.md`](porta-di-qualita.md) — il lotto è grande, e il proprietario l'ha diviso in due il 2026-10-07:
+`riferimenti.md` è la parte 2. Ciò che una riga raccontava della propria correzione — che cosa diceva, chi l'ha trovato,
+come — sta in [`archivio/porta-di-qualita-storico.md`](archivio/porta-di-qualita-storico.md) parola per parola, in coda,
+coi tre tagli: due dei tre richiami di P23 che superano la riga, che la riverifica di P23 nomina — AUD-699 ed `E151` —,
+e la descrizione di prima della riga `E48` della tabella del Traguardo 6, coi suoi due richiami fatti uno. Nel vivo resta
+la riga del richiamo. I tagli il proprietario li ha approvati in una domanda sola. La prova che non manca niente: lo
+script della skill coi due file nel `--dopo`, senza àncore perse né riferimenti rotti; tre blocchi su tre uguali
+all'originale a meno dei link riscritti per la cartella; il vivo uguale alla fotografia coi soli tagli, byte per byte, e
+l'archivio uguale a quello di prima più la sola coda, CRLF integrale come prima; cinque domande di controllo su cinque —
+ha risposto il coordinatore, che è la prova più debole.
+
+📌 **Il verbale del 2026-10-07**, `cl100k_base`, limite inferiore — il tokenizzatore del comando in testa a
+[`CLAUDE.md`](../CLAUDE.md), con `tiktoken` 0.13.0, sul solo `docs/porta-di-qualita.md`: da **120 151** a **119 877**
+token; da **373 222** a **372 311** byte in un albero CRLF, `wc -c docs/porta-di-qualita.md`. Il conto prima e dopo è
+preso nella stessa sessione. ⚠️ **Poco, ed è il vero:** la compressione del 2026-09-24 aveva già portato la cronaca in
+archivio, e i richiami del terzo audit sono quasi tutti di una riga.
+
+⚠️ **Visti e non presi:** il terzo richiamo che la riverifica di P23 nomina, quello della tabella delle mutazioni `G` —
+dice il vero di oggi e dove stanno le misure del 2026-08-31, e di storia porta solo un «non più» —; il richiamo di
+AUD-040 nella sezione «K-1 e B-1», che corregge un verbale datato; il richiamo R4 in testa al file, la chiave dei
+«R4 (C-S…)»; le sezioni datate e i riquadri «✅ CHIUSA», chiusure e cure e non storie di correzioni; «Dove è finita
+ogni sezione di prima», l'indice vivo dei nomi che il codice usa; le cinque ragioni della decisione su C-1 in due case,
+che nomina un'osservazione e non un finding. La frase viva che non dice più il vero, segnata e non risolta, sta
+nell'osservazione 13 del [rapporto](audit-2026-09-30.md).
+
 ## Riconoscimento gesti dalla telecamera — le fonti del disegno del 2026-09-03 (ADR-0038, ADR-0039)
 
 Consultate il **2026-09-03** scrivendo il

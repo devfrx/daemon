@@ -1212,10 +1212,9 @@ diventano false sotto la mutazione, quelle che restano **vere** parlano di `admi
 afferma la cosa e il suo corpo asserisce **solo** su `admit`, una frase che nessun rosso difende e
 che a occhio non si trova.
 
-⚖️ **`E151` è chiusa con `E30`.** Il blocco che teneva `M9` vivo per non congelare la decisione di `E30` è riscritto dal
-2026-08-30 sul doc di `ReleaseError` — il punto ③, *«half spent»* —: decisa `E30`, le sonde che uccidono `M9` sono nate
-con la decisione, e nessun paragrafo è stato cancellato per prenderla. Voce `E151`, riga 22 della tabella del
-Traguardo 5. ⚠️ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-331, AUD-333.
+⚖️ **`E151` è chiusa con `E30`:** chi uccide oggi `M9` lo dice il riquadro *«`M9` NON LO VEDE QUESTA CAMPAGNA, E
+MUORE ALTROVE»* qui sopra, e la voce è la riga 22 della tabella del Traguardo 5.
+⚠️ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-331, AUD-333; com'era, in [archivio](archivio/porta-di-qualita-storico.md).
 
 ⚠️ **CIÒ CHE QUESTA CAMPAGNA NON COPRE, dichiarato invece che taciuto.** ① Che il rilascio renda
 **esattamente** la riserva lo tiene `releasing_gives_back_exactly_the_reservation`: qui `release` è
@@ -1829,11 +1828,9 @@ quanto il suo costruttore `pub` (via **A1/A2**), e `reason` come **enum**, che m
 ✅ **La sonda è un caso `compile_fail`, nella forma forte:** `tests/compile_fail/promote_reason_is_not_runtime_text.rs`,
 `error[E0597]`. Rimessa la firma a `&str`, il caso **compila** e `trybuild` risponde **`error`** invece di `mismatch`
 (gotcha **#42**): un caso che riporta compilando non si disarma con un `TRYBUILD=overwrite` in blocco. ⚠️ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30,
-AUD-699: il controllo della corsa del 2026-08-18 era `promote_without_journal.rs`, che allora rispondeva `mismatch`; dal
-2026-10-02 quel caso consegna passo e motivo e omette solo la porta, è nella forma forte — tolta la porta dalla firma va
-`error` — e il suo oracolo non cita più il tipo di `reason` (*«argument #1 of type `&mut _` is missing»*), quindi quel
-controllo non si rifà più così: dedotto, non misurato, perché la mutazione di P-1 non tocca più la sua uscita. Il
-verbale resta in [`riferimenti.md`](riferimenti.md).
+AUD-699: il controllo della corsa del 2026-08-18, `promote_without_journal.rs`, non si rifà più così — dedotto, non
+misurato —, e com'è oggi lo dice la sua riga in «Come scattano le due direzioni, e perché la differenza conta»;
+com'era, in [archivio](archivio/porta-di-qualita-storico.md), e il verbale in [`riferimenti.md`](riferimenti.md).
 ⚠️ **L'altra direzione non è qui, deliberatamente:** che un letterale promuova e si stampi lo tiene
 `boundary_promotion.rs`. Una copia sarebbe gotcha **#49**.
 
@@ -2502,7 +2499,7 @@ cui chiusore **non** è il proprietario le nomina il comando in fondo alla sezio
 | 14 | **E38** | il doc di `GrantRequest` è molto più denso di prosa del gemello, e il candidato a essere tolto è il blocco sui **derive** | errata | il **proprietario**: si accorcia **da sé** il giorno in cui risponde su `Eq` e `Clone` |
 | 15 | **E40** | `crates/kernel/tests/worker_wire.rs` dichiara di essere **la casa** di certe cifre, e la casa non è una | errata | il **proprietario** |
 | 16 | **E41** | ✅ **CHIUSA il 2026-09-23, `eab020d`**, approvata dal proprietario: la riga dei **fine-riga** di [`../CLAUDE.md`](../CLAUDE.md) dice *«Uno strumento che tocca file conserva i fine-riga di ciascuno»* e chiede di rimisurarli dopo, che comprende `cargo fmt`. ⚠️ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, R4 (C-S5-5) | errata | il **proprietario**: tocca il contratto d'ingresso |
-| 17 | **E48** | ✅ **CHIUSA** — ⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-314, AUD-2260: il gotcha **#83** di [`HANDOFF.md`](HANDOFF.md) dice di quale ambiente è il fatto. Era: un fatto d'**ambiente** — `core.autocrlf` — scritto senza dire **di quale** ambiente, e le macchine sono due: `git config --get core.autocrlf` risponde `true` su una e `false` sull'altra, e `git config --show-origin --get-all core.autocrlf` dice da dove viene il valore — sulla macchina dell'utente `zagor`, in `C:\EVERYTHING\DEV\MY_REPOS\daemon`, dalla configurazione di sistema di Git for Windows, `C:/Program Files/Git/etc/gitconfig` (misurato il 2026-10-06), non dal repository. La voce è la lacuna, non il valore. ⚠️ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-314: la riga dei fine-riga di [`../CLAUDE.md`](../CLAUDE.md) non nomina più `core.autocrlf`, e il fatto senza ambiente sta oggi nel gotcha **#83** di [`HANDOFF.md`](HANDOFF.md) | errata | chi corregge il gotcha **#83** di `HANDOFF.md`, un residuo di questo audit — **non** più il proprietario: il contratto d'ingresso non porta il fatto |
+| 17 | **E48** | ✅ **CHIUSA** — ⚠️ **RICHIAMI DEL 2026-10-04 E DEL 2026-10-07** — audit del 2026-09-30, AUD-314, AUD-2260: la riga dei fine-riga di [`../CLAUDE.md`](../CLAUDE.md) non nomina più `core.autocrlf`, e il gotcha **#83** di [`HANDOFF.md`](HANDOFF.md) dice di quale ambiente è il fatto; com'era, in [archivio](archivio/porta-di-qualita-storico.md) | errata | chi corregge il gotcha **#83** di `HANDOFF.md`, un residuo di questo audit — **non** più il proprietario: il contratto d'ingresso non porta il fatto |
 | 18 | **E62** | *«`dispatch` consuma il gettone, quindi una risoluzione dispaccia una volta sola»* non è tenuto da niente. ⚠️ **Il tipo la regge già** — `Conforming` non deriva `Copy` né `Clone` — a mancare è chi la dica | errata | il **proprietario**: sarebbe una riga di catalogo nuova, come il quinto caso di `Grant` |
 | 19 | **E96** | un rimando `E<n>` nel sorgente **non è un riferimento**: il numero è unico dentro **un** piano, e i piani lo riusano dall'inizio. ⚠️ A difendere il rimando è la **prosa** accanto, che nessun controllo tiene | errata | il **proprietario**: le vie sono almeno due e cambiano una **convenzione** |
 | 20 | **E108** | il doc di `Detail`: una specie **sconosciuta decodifica a `None` in silenzio**, e la coppia tenuta al livello 1 dal 2026-09-01 non chiude quella strada — lì si decodificano byte **già scritti** | errata, e il doc in `crates/kernel/src/record.rs` | il **proprietario**, e **non pinzata**: una sonda sul silenzio di oggi sarebbe un voto contro il cambiarlo (gotcha **#73**) |

@@ -5306,3 +5306,33 @@ nella cronaca sono andate in archivio con lei, e lì restano vere come verbale d
 | **C-S5-4** | riga **33**, C-1: il residuo **X-3** resta aperto e del proprietario | l'[audit del 2026-08-27](../audit-2026-08-27.md) dà **X-3 CHIUSA il 2026-09-22**, dal compito 16 del piano della parte 2 |
 | **C-S5-5** | riga **16** della tabella del Traguardo 6, `E41`: la riga dei fine-riga di `CLAUDE.md` nomina `sed -i` | dal 2026-09-23 la riga di `CLAUDE.md` dice *«uno strumento che tocca file»*: forse la voce è chiusa nei fatti. **Da verificare**, non certa |
 | **C-S5-6** | la tabella del Traguardo 6 sta *«in fondo al file»*, e il suo comando si ferma alla riga 29 perché *«questa sezione è l'ultima del file»* | dopo di lei vengono la sonda S3 (2026-09-04), il passo web (2026-09-22) e queste due sezioni; la ragione della riga 29 — un rimando, che non ha un chiusore — resta vera |
+
+## Da porta-di-qualita.md, il `lean-docs` della R5 — archiviati il 2026-10-07, lotto 4, parte 1
+
+Il lotto 4 del `lean-docs` della R5 del [terzo audit](../audit-2026-09-30.md), parte 1, mirato come vuole la P20 del proprietario: le storie che [`porta-di-qualita.md`](../porta-di-qualita.md) teneva — fra loro i richiami di P23 che superano la riga, che la riverifica di P23 nomina —, dal file a `eda14c2`, parola per parola, coi link riscritti per questa cartella. Nel vivo resta la riga del richiamo: la data, ciò che è vero adesso, dove vive la storia. Ogni taglio approvato dal proprietario. ⚠️ Sta in coda, come il registro qui sopra, e il confronto in testa a questo file la mostra.
+
+### La chiusura di `E151`, nella sezione «La campagna DST dell'arbitro — Traguardo 5, Task 12» — un richiamo che supera la riga
+
+Righe 1215–1218 di `porta-di-qualita.md` a `eda14c2`. Nel vivo la riga della chiusura, che manda al riquadro che nomina chi uccide `M9`, e il richiamo. Dopo «difende e che a occhio non si trova.»:
+
+> ⚖️ **`E151` è chiusa con `E30`.** Il blocco che teneva `M9` vivo per non congelare la decisione di `E30` è riscritto dal
+> 2026-08-30 sul doc di `ReleaseError` — il punto ③, *«half spent»* —: decisa `E30`, le sonde che uccidono `M9` sono nate
+> con la decisione, e nessun paragrafo è stato cancellato per prenderla. Voce `E151`, riga 22 della tabella del
+> Traguardo 5. ⚠️ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-331, AUD-333.
+
+### Il richiamo di AUD-699, nella sezione «P-1 — A3 era dichiarata chiusa e aveva una seconda bocca (2026-08-18)» — un richiamo che supera la riga
+
+Righe 1831–1836 di `porta-di-qualita.md` a `eda14c2`. Nel vivo la riga del richiamo, che manda alla riga del caso in «Come scattano le due direzioni, e perché la differenza conta». Dopo «non si disarma con un TRYBUILD=overwrite in blocco.»:
+
+> ⚠️ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30,
+> AUD-699: il controllo della corsa del 2026-08-18 era `promote_without_journal.rs`, che allora rispondeva `mismatch`; dal
+> 2026-10-02 quel caso consegna passo e motivo e omette solo la porta, è nella forma forte — tolta la porta dalla firma va
+> `error` — e il suo oracolo non cita più il tipo di `reason` (*«argument #1 of type `&mut _` is missing»*), quindi quel
+> controllo non si rifà più così: dedotto, non misurato, perché la mutazione di P-1 non tocca più la sua uscita. Il
+> verbale resta in [`riferimenti.md`](../riferimenti.md).
+
+### La riga 17 della tabella del Traguardo 6, `E48`: «Era:» e i due richiami — una storia, e due richiami sulla stessa riga
+
+Riga 2505 di `porta-di-qualita.md` a `eda14c2`. Nel vivo un richiamo solo, con le due date; di quale ambiente sia il fatto lo dice il gotcha #83 di `HANDOFF.md`. Dopo «il contratto d'ingresso 17 E48 ✅ CHIUSA —»:
+
+> ⚠️ **RICHIAMO DEL 2026-10-07** — audit del 2026-09-30, AUD-314, AUD-2260: il gotcha **#83** di [`HANDOFF.md`](../HANDOFF.md) dice di quale ambiente è il fatto. Era: un fatto d'**ambiente** — `core.autocrlf` — scritto senza dire **di quale** ambiente, e le macchine sono due: `git config --get core.autocrlf` risponde `true` su una e `false` sull'altra, e `git config --show-origin --get-all core.autocrlf` dice da dove viene il valore — sulla macchina dell'utente `zagor`, in `C:\EVERYTHING\DEV\MY_REPOS\daemon`, dalla configurazione di sistema di Git for Windows, `C:/Program Files/Git/etc/gitconfig` (misurato il 2026-10-06), non dal repository. La voce è la lacuna, non il valore. ⚠️ **RICHIAMO DEL 2026-10-04** — audit del 2026-09-30, AUD-314: la riga dei fine-riga di [`../CLAUDE.md`](../../CLAUDE.md) non nomina più `core.autocrlf`, e il fatto senza ambiente sta oggi nel gotcha **#83** di [`HANDOFF.md`](../HANDOFF.md)

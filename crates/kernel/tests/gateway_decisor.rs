@@ -28,11 +28,8 @@ const REMOTE_DEAR: Candidate = Candidate {
 /// "how many the SECOND pass walked". With a chain of one the two numbers are both 1 and no
 /// assertion can separate them — errata `E59`.
 ///
-/// ⚠️ RICHIAMO DEL 2026-09-01: this said "how many were WALKED", unqualified, and that is false
-/// of the FIRST pass — which exhausts the chain in the probe below, so its count is three as well.
-/// `E100` corrected exactly this claim INSIDE that probe and left this one standing, above it:
-/// the remedy closed the occurrence and not the sentence. What separates the first pass is the
-/// other probe, where it stops at index 0. Errata `E119`.
+/// ⚠️ RECALL OF 2026-09-01 -- the FIRST pass is told apart by the other probe, where it stops at
+/// index 0; the story is in `docs/archivio/sorgenti-storico.md`.
 const LOCAL_PRICEY: Candidate = Candidate {
     model: "local-medium",
     local: true,
@@ -178,12 +175,8 @@ fn the_dispatch_journals_the_RESOLVED_decision_and_not_a_reference_to_it() {
     // left the WHOLE workspace green -- measured before writing it, `42 targets, 307 passed`,
     // identical to the baseline. `reason` and `effect` were the same shape. Errata `E97`.
     //
-    // ⚠ RICHIAMO DEL 2026-09-01: this said "THE THREE FIELDS" and "`dispatch` writes six fields
-    // and only four were read back", and the arithmetic did not close with ITSELF -- six minus
-    // four is two, not three. The counts mixed units: `four` counted ASSERTIONS and `six` counted
-    // FIELDS. The field that fell outside both was `payload`, and it was still a live mutant
-    // hours later. The numerals are GONE rather than realigned; what holds is the rule below --
-    // every field this record carries is read back. Errata `E116`.
+    // ⚠ RECALL OF 2026-09-01 -- every field this record carries is read back; the story is in
+    // `docs/archivio/sorgenti-storico.md`.
     //
     // ⚠ `effect` IS PINNED THOUGH `reconcile` NEVER READS IT, and that is deliberate: the
     // doc beside the call AFFIRMS the value is true of this record, and an affirmation nobody

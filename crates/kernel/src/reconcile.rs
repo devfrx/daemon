@@ -57,45 +57,27 @@ pub struct InDoubt {
 /// `grep -rnE '\.(intent|outcome|note)\(' crates/kernel/src/ | grep -vE '^[^:]+:[0-9]+:[[:space:]]*//'` LISTS — a NUMBER
 /// written here would age at the next writer, and it had. ⚠️ THE SECOND HALF IS WHAT MAKES IT
 /// SELF-SAFE: the command does not count its own citation, because the filter drops the matched
-/// line when a comment marker opens it. ⛔ RECALL OF 2026-09-21, FINDING m-1 OF THE THIRD REVIEW
-/// OF TASK 12 OF THE PART-2 PLAN: it used to be `grep -v '///'`, and these very lines said so --
-/// *«cited on a `///` line the command does not count its own citation — written into a `//`
-/// comment it would»*. That was a DEFECT REPORT filed as a declared limit, and it sat here while
-/// the same blindness was cured elsewhere; the form now covers every comment marker. The trap
-/// `289f487` paid for is the same one, and this command was installed once WITHOUT being run:
-/// see `E58` and `E134` of the part-2 plan.
-/// ⛔ RECALL OF 2026-09-18, FROM THE REVIEW OF TASK 8 OF THE PART-2
-/// PLAN: this sentence said "AND THERE ARE TWO OF THEM", which was already false before that
-/// task — `permission::grant` has been one of them since 2026-09-01 — and the recall below names
-/// it as a third three lines under a paragraph still saying two. The numeral is REMOVED and not
-/// realigned (gotcha #31), on the precedent of `AUD-021` and `AUD-061`.
+/// line when a comment marker opens it. ⛔ RECALL OF 2026-09-21 AND OF 2026-09-18 -- the
+/// stories of this paragraph are in `docs/archivio/sorgenti-storico.md`.
 /// `Untrusted::promote` writes through `Journal::note` a record whose `kind` is
-/// `RecordKind::Note`; `Arbiter::set_policy`, since milestone 5 task 9, writes through
-/// `intent` and `outcome` records whose `kind` matches each.
-/// ⛔ RECALL OF 2026-09-18 — IT WRITES THREE NOW, NOT TWO. Between the intent and the outcome it
-/// writes, through `Journal::note`, a record whose `kind` is `RecordKind::Policy` — the species
-/// `crate::arbiter::policy_now` reads back, and the shape `permission::grant` already had, which
-/// writes through `note` a record whose `kind` is `RecordKind::Permission`. The agreement is
-/// still held by that writer's own probe, which now asserts THREE kinds in order.
-/// Each writer carries its OWN
+/// `RecordKind::Note`; `Arbiter::set_policy`, since milestone 5 task 9, writes through `intent`
+/// and `outcome` records whose `kind` matches each, and between them, through `Journal::note`, a
+/// record whose `kind` is `RecordKind::Policy` — the species `crate::arbiter::policy_now` reads
+/// back, and the shape `permission::grant` already had, which writes through `note` a record
+/// whose `kind` is `RecordKind::Permission`. Each writer carries its OWN
 /// probe that pins the agreement — `the_promotion_writes_through_note_and_the_record_says_note`
 /// in `crates/kernel/tests/boundary_promotion.rs`, and
 /// `a_policy_transition_writes_its_intent_before_its_outcome` in
-/// `crates/kernel/tests/arbiter_policy.rs`, which asserts the two `kind` IN ORDER against the
+/// `crates/kernel/tests/arbiter_policy.rs`, which asserts the three `kind` IN ORDER against the
 /// archive.
 ///
-/// ⚠️ RECALL OF 2026-08-21 — THIS PARAGRAPH SAID "TODAY THAT IS ONE FUNCTION" AND CARRIED A
-/// TRIGGER THAT HAD ALREADY FIRED: "the helper is born with the SECOND writer". That writer
-/// landed on 2026-08-20 and NOTHING WENT RED to say so — a deadline written in prose has no
-/// mechanism behind it, unlike the `dead_code` deadlines of `E10` and `E67`, which the compiler
-/// remembers. REWRITTEN and not annotated, which is finding A-2's rule.
+/// ⚠️ RECALL OF 2026-08-21 -- the trigger that stood here has fired; the story is in
+/// `docs/archivio/sorgenti-storico.md`.
 /// ⛔ WHETHER TO BUILD THE HELPER IS THE OWNER'S and it is REGISTERED, NOT TAKEN: it changes the
 /// shape of every call site the census command above lists, and each of
 /// those writers holds the agreement meanwhile with a probe of its own — the ones named above
-/// are the examples, that command is the census. ⛔ RECALL OF 2026-09-18, FROM THE REVIEW OF
-/// TASK 8 OF THE PART-2 PLAN: this sentence said "code with two call sites" and "the two
-/// probes", and both numerals are REMOVED and not realigned (gotcha #31) — the writers were
-/// already more than two when it was written.
+/// are the examples, that command is the census. ⛔ RECALL OF 2026-09-18 -- the story is in
+/// `docs/archivio/sorgenti-storico.md`.
 ///
 /// ⚠️ MEASURED, BOTH DIRECTIONS, and the two do not fail alike — kept because it is the evidence
 /// that the probe above is worth its line:
@@ -108,9 +90,8 @@ pub struct InDoubt {
 ///
 /// ⚠️ AND WHAT IS *NOT* BOUGHT IS SAID PLAINLY, because "decided" reads like "held": nothing at
 /// level 1 stops a future writer from calling `outcome()` with a record whose `kind` says
-/// `Intent`. Each probe covers its own writer. This sentence used to read "it is not
-/// a defect today, because nothing in the kernel writes a record yet"; that reason expired on
-/// 2026-08-10, and it is replaced rather than left standing.
+/// `Intent`. Each probe covers its own writer. ⚠️ RECALL OF 2026-08-10 -- the story of this
+/// sentence is in `docs/archivio/sorgenti-storico.md`.
 pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalError> {
     let entries = journal.replay()?;
 
@@ -147,12 +128,8 @@ pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalEr
                 // ADR-0007 is about an EFFECT that may or may not have reached the world; a
                 // verdict is a fact recorded ABOUT a step's artefact, and the step it names
                 // already owes its own outcome. Both other answers were tried one at a time, each
-                // reverted from a byte-exact copy. ⚠️ THE DATE CAME OUT ON 2026-09-01 AND IS NOT
-                // REALIGNED: it read "on 2026-09-01" while `git log` dates the commit that wrote
-                // this arm 2026-08-31, so it was a session's belief the commits contradict — same
-                // cure as `E66`. ⛔ THE TWO ARMS BELOW KEEP THEIR 2026-09-01, and the difference is
-                // the point: `git log` dates THEIR commits to that day, so the census had to
-                // DISCRIMINATE rather than sweep. Errata `E112`.
+                // reverted from a byte-exact copy. ⚠️ RECALL OF 2026-09-01 -- the story of
+                // this arm's date is in `docs/archivio/sorgenti-storico.md`.
                 //
                 // - `enter` makes a step that already has an intent RE-ENTER the doubt with the
                 //   verdict's own class, so a step whose outcome had already closed it comes

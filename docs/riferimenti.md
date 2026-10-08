@@ -2705,6 +2705,40 @@ richiami del terzo audit nelle celle e le frasi che correggono, che hanno già l
 non ha messo nel taglio. I rimandi alla §10 del 2 negli altri file vivi, che ora passano dalla riga del richiamo, stanno
 nell'osservazione 15 del [rapporto](audit-2026-09-30.md), segnati e non risolti.
 
+### Il lotto 6 del `lean-docs` della R5 — 2026-10-08: i commenti di tre sorgenti
+
+⛔ **Non doppioni ma storie**: la R5 del [terzo audit](audit-2026-09-30.md), mirata come vuole la P20, sui sorgenti che il
+↪ AUD-545 nomina — `crates/kernel/src/reconcile.rs`, `crates/kernel/tests/gateway_decisor.rs` e
+`crates/kernel/src/arbiter/mod.rs`; il quarto, `crates/simulator/tests/serving_campaign.rs`, portava già il puntatore di
+una riga. Ventinove tagli: le storie che i commenti tenevano delle proprie correzioni — che cosa dicevano, chi l'ha
+trovato, come —, e in due tagli la metà falsa col richiamo che la correggeva; nel sorgente resta la riga del richiamo, in
+inglese come il codice, con la data, ciò che è vero adesso e il rimando all'archivio. **L'archivio è nuovo, uno per tutti
+i sorgenti**, [`archivio/sorgenti-storico.md`](archivio/sorgenti-storico.md), scelto dal proprietario il 2026-10-08
+invece delle errate dei piani che il gotcha **#121** indicava, e la scelta vale anche per la P8: CRLF integrale come i
+vivi, coi blocchi in recinzioni `rust`, a righe intere. I ventinove tagli il proprietario li ha approvati in una domanda
+sola; nella stessa chiamata, la riga del richiamo nel gotcha #121 di [`HANDOFF.md`](HANDOFF.md). La prova che non manca
+niente: ventinove blocchi su ventinove uguali all'originale, riga per riga; ogni sorgente uguale alla fotografia coi soli
+tagli, byte per byte, coi fine-riga di prima; la verifica provata anche al contrario — un carattere cambiato
+nell'archivio e in un sorgente la fa rossa, e i file tornano byte-identici —; ogni fatto che la colla dice al presente
+riletto nel codice il 2026-10-08 — le sette famiglie della porta, `Worker::kill` che rende la concessione, nessun ciclo
+d'orchestrazione che chiami `promote`, nessun banco che rilasci una concessione in revoca, i tre `kind` in ordine nella
+sonda della policy —; il cancello verde, che sui sorgenti è la sola prova meccanica in più, perché lo script della skill
+legge solo il Markdown; sette domande di controllo su sette — ha risposto il coordinatore, che è la prova più debole.
+
+📌 **Il verbale del 2026-10-08**, `cl100k_base`, limite inferiore — il tokenizzatore del comando in testa a
+[`CLAUDE.md`](../CLAUDE.md), con `tiktoken` 0.13.0: `reconcile.rs` da **5 533** a **4 984** token, `gateway_decisor.rs`
+da **3 552** a **3 384**, `arbiter/mod.rs` da **27 893** a **25 284**; in byte, in un albero CRLF, `wc -c` sui tre
+file: da **22 934** a **20 822**, da **14 072** a **13 367**, da **109 188** a **98 978**. Il conto prima e dopo è preso
+nella stessa sessione.
+
+⚠️ **Visti e non presi:** le misure con data e cifre, che sono misure e non storie — il numero senza comando è la specie
+di AUD-1245, della P8 —; la decisione delle due verità in `reconcile.rs`, con la sua domanda; le righe che stanno già in
+una riga col rimando all'errata che tiene la storia — `E125`, `E57`, `E132` —; il richiamo del 2026-09-02 in `admit`, che
+è il vero di oggi; la regola *«THE FIGURES ARE NOT REPEATED HERE»*, per chi scrive dopo; i richiami del terzo audit, che
+hanno già la forma della R5; la storia del codice che ne spiega la forma. Gli altri sorgenti con storie della stessa
+specie sono della P8, coi bassi che li nominano. La frase viva che perde l'antecedente nel taglio T07 sta
+nell'osservazione 16 del [rapporto](audit-2026-09-30.md), segnata e non risolta.
+
 ## Riconoscimento gesti dalla telecamera — le fonti del disegno del 2026-09-03 (ADR-0038, ADR-0039)
 
 Consultate il **2026-09-03** scrivendo il

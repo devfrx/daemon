@@ -1,18 +1,12 @@
 //! The GPU arbiter (§5, ADR-0005, ADR-0006, ADR-0033).
 //!
 //! ⛔ IT IS LOGIC, NOT A PORT, and the distinction is structural rather than tidy.
-//! `crate::ports` declares SIX families and §3.1 calls that list EXHAUSTIVE; a seventh
-//! would be a decision no ADR has taken. So the arbiter has no real implementation and no
-//! fake: there is ONE, and in simulation that one runs. That is what makes the DST
-//! campaign a proof about the product instead of about its imitation (ADR-0020).
-//! ⚠️ DATED RECALL, 2026-09-17, sub-project 2 task 4: THE FAMILIES ARE SEVEN NOW, AND THE
-//! PREMISE ABOVE IS FALSE -- a seventh DID arrive, `custody`, and it was taken WITHOUT an ADR
-//! (decision 19 of the GUI north star). ⛔ THE CONCLUSION IS UNTOUCHED AND NEVER RESTED ON
-//! THAT PREMISE: what makes the arbiter logic rather than a port is the sentence right after
-//! it -- there is ONE implementation, and a port is a seam that wants two. The count is dated
-//! here rather than realigned because this paragraph ARGUES about `crate::ports` instead of
-//! counting it; the count lives there, and `grep -c '^pub mod ' crates/kernel/src/ports/mod.rs`
-//! says it.
+//! The arbiter has no real implementation and no fake: there is ONE, and in simulation that one
+//! runs -- and a port is a seam that wants two. That is what makes the DST campaign a proof about
+//! the product instead of about its imitation (ADR-0020). How many families `crate::ports`
+//! declares is what `grep -c '^pub mod ' crates/kernel/src/ports/mod.rs` says; the seventh,
+//! `custody`, was taken WITHOUT an ADR (decision 19 of the GUI north star). ⚠️ RECALL OF
+//! 2026-09-17 -- the story of this paragraph is in `docs/archivio/sorgenti-storico.md`.
 //!
 //! ⛔ AND THE SHAPE NOT TO BUILD, written because it is the natural temptation: a trait
 //! `Arbiter` with two implementations "so faults can be injected". Faults are injected
@@ -78,11 +72,8 @@ impl ArbiterId {
 ///
 /// ⛔ There is deliberately NO public constructor, and since Task 5 there IS an issuer.
 ///
-/// ⚠️ RECALL OF 2026-08-19, MILESTONE 5 TASK 6 -- "THE ONLY FUNCTION IN THIS CRATE THAT
-/// BUILDS ONE" WAS TRUE FOR ONE TASK, and it is REWRITTEN rather than qualified: an
-/// exclusivity is read as a GUARANTEE, and a stale guarantee is worse than a stale count
-/// (gotcha #31 on an adjective, the species of `E38`). It said `Arbiter::admit` was that
-/// function; task 6 gave the queue its own door and `Arbiter::promote` hands out grants too.
+/// ⚠️ RECALL OF 2026-08-19 -- `admit` and `promote` both hand out grants; the story is in
+/// `docs/archivio/sorgenti-storico.md`.
 ///
 /// ⛔ WHAT IS STILL TRUE, AND IT IS THE POINT OF §5.6: a grant is CONSTRUCTED in exactly ONE
 /// place, the private `Arbiter::issue`, and both public doors go through it. A second
@@ -97,39 +88,20 @@ impl ArbiterId {
 /// `Admission` cannot derive `Debug` or `PartialEq` either, so probes match on it with
 /// `matches!` and `let … else` instead of `assert_eq!`.
 ///
-/// ⛔ THE PARAGRAPH THAT WAS DECLARED FOR MILESTONE 6 IS NOW SPENT, AND IT CAME TRUE ON
-/// 2026-08-30. It read: "`Process::start` CONSUMES the grant, and `Arbiter::release` consumes
-/// it too. Whoever starts a worker therefore has nothing left to release. The natural way back
-/// is for `Worker::kill` to HAND THE GRANT BACK -- killing IS the release -- and it is not
-/// built now because that caller does not exist yet". ⛔ IT IS BUILT: `Worker::kill` answers a
-/// `Killed`, which carries the grant, and the deadline in prose was collected rather than left
-/// to rot (gotcha #77 avoided, this time).
+/// ⛔ `Process::start` CONSUMES the grant, and `Worker::kill` answers a `Killed`, which carries
+/// it back: killing IS the release. ⛔ RECALL OF 2026-08-30 -- the paragraph that declared it for
+/// milestone 6 is spent, and its story is in `docs/archivio/sorgenti-storico.md`.
 ///
 /// ⚠️ AND THE HALF THAT PARAGRAPH DID NOT SEE, worth writing because the design had to measure
 /// it: a start that FAILS has no worker to give the grant to. That road is `Started::Rejected`,
 /// which carries the grant home by name -- see `ports::process::Started`. Without it a failed
 /// spawn dropped a reservation nobody could rebuild, and only the sweep got it back.
 ///
-/// ⚠️ RECALL OF 2026-08-19, MILESTONE 5 TASK 4 -- WHAT THIS COMMENT SAID BEFORE THE MOVE,
-/// written out because a moved comment that keeps its old tense is the finding A-2 of this
-/// project's audit done again. It lived in `ports::process` and said "the arbiter, which
-/// arrives in milestone 5" in the FUTURE, and "today the type has no issuer": the FIRST is
-/// spent -- the arbiter module is this one. ⚠️ AND THE SECOND IS SPENT TOO SINCE TASK 5,
-/// which is why this sentence is rewritten instead of left standing: at task 4 it read
-/// "nothing constructs one yet, `admit` arrives at Task 5", and `admit` is now below it in
-/// this file. It also recorded a DIVERGENCE -- the field was a private UNIT, `Grant(())`,
-/// because the named field the plan dictated then bought nothing that the unit field did not
-/// buy for free and cost an `#[allow(dead_code)]`, which this repository treats as a
-/// prohibition switched off (gotcha #13). ⛔ THAT PARAGRAPH IS NOT COPIED, because the shape
-/// it described no longer exists: the named field is back, dictated again by the milestone 5
-/// design, and it is `id` that names the grant inside the books of the arbiter that issued it.
-///
-/// ⛔ RECALL OF 2026-08-30, MILESTONE 6 TASK 1 -- THE SENTENCE ABOVE ENDED "and it is `id`
-/// that lets `Arbiter::release` tell a grant of THIS arbiter from a grant of another one --
-/// with the limit of that written beside `ReleaseError`", AND IT IS CORRECTED RATHER THAN
-/// LEFT STANDING. It never was `id` that did that, which is exactly what the declared limit
-/// it pointed at said: `GrantId` restarts at zero in every arbiter, so `id` alone cannot tell
-/// two arbiters' grants apart. The field that does it is `issuer`, born here with `E30`.
+/// ⚠️ `id` NAMES THE GRANT INSIDE THE BOOKS OF THE ARBITER THAT ISSUED IT, and only there:
+/// `GrantId` restarts at zero in every arbiter, so `id` alone cannot tell two arbiters' grants
+/// apart. The field that does it is `issuer`. ⚠️ RECALL OF 2026-08-19 AND OF 2026-08-30 -- the
+/// story of this comment, before and after its move from `ports::process`, is in
+/// `docs/archivio/sorgenti-storico.md`.
 ///
 /// ⚠️ BOTH FIELDS ARE PRIVATE, and `issuer` for one reason more than `id`: it is the whole of
 /// the guard in `Arbiter::release`, so a caller that could write it could hand any arbiter a
@@ -176,10 +148,9 @@ impl TicketId {
 /// names what does not exist, so the day somebody adds it that case starts COMPILING and
 /// trybuild reports `error`, which no bulk regeneration disarms (gotcha #42, strong form).
 /// ✅ MEASURED, not asserted: with one shortcut added, its own case comes back `error` and
-/// EVERY OTHER CASE stays `ok`. ⚠️ RECALL OF 2026-08-28, AUD-045: this said "the other
-/// twenty-six", and the count is REMOVED, not realigned -- it was already wrong at `d662644`
-/// (28 cases, so 27), and `tests/compile_fail.rs` globs the directory, so any total here ages
-/// on its own.
+/// EVERY OTHER CASE stays `ok`. ⚠️ RECALL OF 2026-08-28, AUD-045 -- no total here:
+/// `tests/compile_fail.rs` globs the directory; the story is in
+/// `docs/archivio/sorgenti-storico.md`.
 ///
 /// ⛔ `Refused` CARRIES TWO NUMBERS AND NOT A SENTENCE. design/02 wants "why it does not fit,
 /// and the workable alternative": the alternative is built by the interface, the kernel
@@ -281,35 +252,20 @@ pub enum Released {
 /// other. Crediting it silently would corrupt the budget of an arbiter that never issued
 /// it, which is over-admission arriving by the back door.
 ///
-/// ⛔ RECALL OF 2026-08-30, MILESTONE 6 TASK 1 -- THIS BLOCK CARRIED THE WHOLE HISTORY OF
-/// `E30` AND IS REWRITTEN RATHER THAN ANNOTATED, because this commit spent every claim in it
-/// and a true sentence appended under false ones leaves them standing (finding A-2). What it
-/// argued, and what closed each piece:
-/// ① "THREE CAUSES, ONE ANSWER" -- spent. Two of the three answer `Ok` now, and the variant
-///    below states the one that is left.
-/// ② The measured pairs, which said 5_001 and the grace deadline answer `Err` -- spent:
-///    they answer `Ok` today. TWO of those inputs are now pinned by probes instead of by a
-///    paragraph, `a_grant_of_this_arbiter_released_after_its_window_is_not_an_error` at
-///    5_001 and `a_grant_released_inside_its_window_reports_what_came_back` at 4_999.
-///    ⚠️ AND WHAT NOBODY HOLDS IS NARROWER THAN THE BOUNDARY: it is `release` AT
-///    5_000. ✅ The boundary ITSELF is held -- measured 2026-08-30, `collect_expired` moved
-///    off `<=` kills `a_grant_is_collected_at_the_instant_its_window_closes` and, in
-///    `daemon`, `a_permanent_grant_survives_to_the_last_instant_of_the_axis_and_is_swept_at_it`.
-///    A release probe at 5_000 would be those two plus the 5_001 one, which is why it was
-///    refused rather than forgotten. ⚠️ The revocation grace is the real gap: no bench
-///    releases a grant under revocation at all.
-/// ③ "NO PROBE PINS THOSE THREE VALUES, WHICH IS A CHOICE RATHER THAN AN OVERSIGHT" -- half
-///    spent by ②, and it was right while it stood: a probe written then would have had to
-///    be DELETED to take the decision, which is a vote against taking it.
-/// ④ "THE DESIGN IS NOT CHANGED TO CLOSE IT, because closing it means giving an `Arbiter` an
-///    IDENTITY, and that is a decision for the owner" -- TAKEN, and the identity is
-///    `ArbiterId`. With it the declared limit that paragraph guarded is CLOSED: `GrantId`
-///    still restarts at zero in every arbiter, but `release` compares `Grant::issuer` BEFORE
-///    it reads the books, so two arbiters no longer need disjoint id spaces to be safe.
-/// ⑤ "WHAT IS DELIBERATELY NOT DECIDED: the exact type `release` answers with" -- decided,
-///    and it is `Released` above.
-/// ⛔ THE ARGUMENT IS NOT COPIED DOWN HERE, only its outcome. It lives in the milestone 6
-/// design and in the plan's `E30`; what belongs beside a type is what the type means TODAY.
+/// ⛔ RECALL OF 2026-08-30 -- the history of `E30` this block carried is in
+/// `docs/archivio/sorgenti-storico.md`; the argument lives in the milestone 6 design and in the
+/// plan's `E30`. What it left true: `release` compares `Grant::issuer` BEFORE it reads the books,
+/// so two arbiters no longer need disjoint id spaces to be safe, though `GrantId` still restarts
+/// at zero in every arbiter. TWO inputs are pinned by probes instead of by a paragraph,
+/// `a_grant_of_this_arbiter_released_after_its_window_is_not_an_error` at 5_001 and
+/// `a_grant_released_inside_its_window_reports_what_came_back` at 4_999. ⚠️ AND WHAT NOBODY HOLDS
+/// IS NARROWER THAN THE BOUNDARY: it is `release` AT 5_000. ✅ The boundary ITSELF is held --
+/// measured 2026-08-30, `collect_expired` moved off `<=` kills
+/// `a_grant_is_collected_at_the_instant_its_window_closes` and, in `daemon`,
+/// `a_permanent_grant_survives_to_the_last_instant_of_the_axis_and_is_swept_at_it`. A release
+/// probe at 5_000 would be those two plus the 5_001 one, which is why it was refused rather than
+/// forgotten. ⚠️ The revocation grace is the real gap: no bench releases a grant under
+/// revocation at all.
 ///
 /// ⚠️ A DECLARED LIMIT THAT SURVIVES. What `release` compares is
 /// EQUALITY of `ArbiterId`, and that value is DELIVERED -- §6.1.3 forbids the kernel to mint
@@ -328,17 +284,9 @@ pub enum ReleaseError {
 
 /// What the arbiter remembers about a grant it has issued.
 ///
-/// ⚠️ RECALL OF 2026-08-20, MILESTONE 5 TASK 7 -- THIS COMMENT SAID "TWO FIELDS, AND THE OTHER
-/// TWO ARRIVE WITH THEIR OWN READERS", AND IT IS REWRITTEN AND NOT ANNOTATED, because a true
-/// sentence appended under a false one leaves the false one standing, which is finding A-2 of
-/// this project's own audit done again. It carried two dated recalls of its own and both are
-/// spent: task 5 held `lane` and `activity` back because neither had a reader, so both would
-/// have compiled as `dead_code` warnings and this repository does not switch a warning off with
-/// `#[allow]` (gotcha #13); task 6 corrected the PREMISE of the `lane` one -- a WAITING request
-/// is a `Waiting`, which carries the whole `ResourceProfile` and therefore its lane, so
-/// `promote` never looks at `held` -- and named `ask_back` at task 7 as the first reader of
-/// BOTH. ⛔ TASK 7 IS THIS ONE, `ask_back` EXISTS BELOW, AND IT READS BOTH: it chooses its
-/// victim by `lane`, and by `activity` it refuses to ask back what is already on its way out.
+/// ⚠️ RECALL OF 2026-08-20 -- `ask_back` reads both `lane` and `activity`: it chooses its victim
+/// by `lane`, and by `activity` it refuses to ask back what is already on its way out. The story of
+/// this comment is in `docs/archivio/sorgenti-storico.md`.
 ///
 /// ⛔ FIVE FIELDS AND NOT FOUR, AND THE FIFTH IS THE ONE THE MILESTONE 5 DESIGN DOES NOT LIST.
 /// `grace` is here because `Preemption` lives in the PROFILE and the profile is not kept: the
@@ -352,12 +300,8 @@ pub enum ReleaseError {
 /// and not merely a number it needs -- see the THREE guards of the `askable` closure there, which
 /// are deliberately about three different questions.
 ///
-/// ⚠️ RECALL OF 2026-08-20, SECOND REVIEW OF MILESTONE 5 TASK 7 -- IT SAID "THE TWO GUARDS", AND
-/// THE NUMBER IS REWRITTEN RATHER THAN ANNOTATED. It was true until the first wave of corrections
-/// moved the guard on the LANE inside the admissibility test, which took the count from two to
-/// three; from that moment this sentence and the closure's own "THREE QUESTIONS AND NOT ONE, AND
-/// THEY STAY THREE" were two present-tense figures contradicting each other in ONE file, which is
-/// gotcha #31 and worse than a figure that is merely missing. Registered as `E78`.
+/// ⚠️ RECALL OF 2026-08-20 -- the guards are three, as the closure says; the story of the number
+/// is in `docs/archivio/sorgenti-storico.md`.
 struct Held {
     reserved: Mib,
     /// The validity window, on the MONOTONIC axis (§5.3 point 2).
@@ -402,12 +346,8 @@ struct Waiting {
 /// would be that order stated a SECOND time, which is the trap `resource.rs` refused a
 /// derived `Ord` in order to remove.
 ///
-/// ⚠️ RECALL OF 2026-08-19, OPENED AND CLOSED THE SAME DAY. At task 5 this line said
-/// "`BTreeMap` AND `Vec`" while the struct had no `Vec` -- the sentence had been copied from
-/// the milestone 5 design, which was thinking of the lane queues -- so it was cut, with a
-/// note saying the word would come back with the queues. It has: `queues` holds a
-/// `Vec<Waiting>` per lane. The note is rewritten instead of left standing as a promise
-/// already kept.
+/// ⚠️ RECALL OF 2026-08-19 -- `queues` holds a `Vec<Waiting>` per lane; the story of this line is
+/// in `docs/archivio/sorgenti-storico.md`.
 pub struct Arbiter {
     parameters: Parameters,
     /// Who this arbiter IS, lifted out of `parameters` once at construction.
@@ -464,10 +404,8 @@ impl Arbiter {
     /// `a_refused_intent_leaves_the_policy_where_it_was`, which read the name THROUGH the
     /// arbiter, FROM OUTSIDE THE CRATE.
     ///
-    /// ⚠️ RECALL OF 2026-08-20, MILESTONE 5 TASK 9: this doc ended on a PREDICTION about task 9
-    /// (gotcha #57, written at task 8 about code that did not exist), and task 9 MEASURED IT
-    /// FALSE -- `set_policy` reads `self.policy`, the FIELD. The sentence is REMOVED, not
-    /// answered beside itself (gotcha #76), on the precedent of finding `A-7`.
+    /// ⚠️ RECALL OF 2026-08-20 -- `set_policy` reads `self.policy`, the FIELD; the story of the
+    /// sentence that stood here is in `docs/archivio/sorgenti-storico.md`.
     pub const fn policy(&self) -> &VramPolicy {
         &self.policy
     }
@@ -584,13 +522,12 @@ impl Arbiter {
     /// THE ARBITER: it decides who gets served out of the queue, not who gets in front of it.
     /// ⚖️ WHOSE PROBLEM IT IS, and it is not this function's: whether an admission has to yield
     /// to a waiting ticket is an ORCHESTRATION decision -- who calls `promote`, and when.
-    /// Closing it here would mean an `admit` that can refuse room that exists. ⚠️ RECALL OF
-    /// 2026-08-21 -- THIS SAID "which is task 10's". Task 10 closed on 2026-08-21 as the
-    /// composition root: it assembles the graph and starts the executor ONCE, with no loop,
-    /// so it builds no orchestration cycle to decide this IN. The decision belongs to whoever
-    /// builds the first one -- the cycle that decides when to call `promote` relative to
-    /// `admit` -- and none exists yet in this repository. REGISTERED FOR THE OWNER in the
-    /// plan's errata, where it sits beside the permanent-quota voice it interacts with.
+    /// Closing it here would mean an `admit` that can refuse room that exists. The decision
+    /// belongs to whoever builds the first orchestration cycle -- the one that decides when to
+    /// call `promote` relative to `admit` -- and none exists yet in this repository. REGISTERED
+    /// FOR THE OWNER in the plan's errata, where it sits beside the permanent-quota voice it
+    /// interacts with. ⚠️ RECALL OF 2026-08-21 -- the story is in
+    /// `docs/archivio/sorgenti-storico.md`.
     ///
     /// ⛔ AND NOTHING IN THIS REPOSITORY HOLDS THE PARAGRAPH ABOVE -- said here rather than
     /// left to be discovered, because a claim about behaviour that no probe exercises is the
@@ -601,10 +538,9 @@ impl Arbiter {
     /// across the workspace. THE MUTANT IS ALIVE, so the day whoever builds the first
     /// orchestration cycle -- the one that decides when to call `promote` relative to `admit`
     /// -- decides the other way, this paragraph becomes FALSE IN SILENCE with nothing going
-    /// red to say so. ⚠️ RECALL OF 2026-08-21 -- THIS SAID "the day task 10 decides the other
-    /// way". Task 10 closed on 2026-08-21 as the composition root, and builds no such cycle:
-    /// it assembles the graph and starts the executor ONCE, with no loop. None exists yet in
-    /// this repository. ⚖️ AND IT IS NOT PINNED, ON PURPOSE AND ON THE MERITS: a probe
+    /// red to say so. ⚠️ RECALL OF 2026-08-21 -- the story is in
+    /// `docs/archivio/sorgenti-storico.md`.
+    /// ⚖️ AND IT IS NOT PINNED, ON PURPOSE AND ON THE MERITS: a probe
     /// asserting `Granted` for the latecomer would freeze exactly the choice the errata voice
     /// `E51` puts in front of the owner, and a probe that has to be deleted to take a decision
     /// is a vote against taking it -- the precedent is `E39`, which refused a probe for the
@@ -632,12 +568,9 @@ impl Arbiter {
     /// choice `E51` and `E53` put in front of the owner. ⚖️ THE CLOSER IS WHOEVER BUILDS THE
     /// FIRST ORCHESTRATION CYCLE -- the one that decides when to call `promote` relative to
     /// `admit` -- and it is still an ORCHESTRATION decision: what changed at task 8 is only
-    /// that the cost of leaving it open is now paid in production and not on paper. ⚠️ RECALL
-    /// OF 2026-08-21 -- THIS SAID "THE CLOSER IS STILL TASK 10". Task 10 closed on 2026-08-21
-    /// as the composition root, and builds no orchestration cycle to be that closer: it
-    /// assembles the graph and starts the executor ONCE, with no loop. None exists yet in this
-    /// repository. REWRITTEN in place and not annotated below, which is finding A-2's rule.
-    /// Registered as `E100`.
+    /// that the cost of leaving it open is now paid in production and not on paper. None exists
+    /// yet in this repository. ⚠️ RECALL OF 2026-08-21 -- the story is in
+    /// `docs/archivio/sorgenti-storico.md`. Registered as `E100`.
     ///
     /// ⛔ THE TWO GUARDS BELOW ANSWER DIFFERENTLY SINCE TASK 6, and until task 6 they did
     /// not. "Bigger than the whole machine" is `Refused` -- no release will ever make room,
@@ -752,11 +685,8 @@ impl Arbiter {
     /// 2 ignored across the workspace. THE MUTANT IS ALIVE, so the day the first orchestration
     /// cycle -- the one that decides when to call `promote` relative to `admit` -- picks a
     /// different order across lanes, this paragraph becomes FALSE IN SILENCE. ⚠️ RECALL OF
-    /// 2026-08-21 -- THIS SAID "task 7 or task 10 changes the order across lanes". Task 10 closed
-    /// on 2026-08-21 as the composition root, and builds no orchestration cycle: it assembles
-    /// the graph and starts the executor ONCE, with no loop. None exists yet in this repository.
-    /// Task 7 closed without changing the order either: `ask_back` walks the lanes from the
-    /// WORST, `lanes.iter().rev()`. ⚖️ AND A PROBE IS NOT THE REMEDY: pinning the fall-through
+    /// 2026-08-21 -- the story is in `docs/archivio/sorgenti-storico.md`. ⚖️ AND A PROBE IS NOT THE
+    /// REMEDY: pinning the fall-through
     /// would freeze the very policy the errata voice `E50` asks the owner to choose. Same
     /// reasoning as `E39`; registered as `E53`.
     ///
@@ -861,10 +791,8 @@ impl Arbiter {
     ///
     /// ⛔ IT COLLECTS THE EXPIRED FIRST, like every other operation, and the property "the
     /// arbiter collects before it decides" is why `collect_expired` is private rather than a step
-    /// somebody remembers to take. ⚠️ RECALL OF 2026-08-28, AUD-018: this said "With this one
-    /// there are FOUR" and the count is REMOVED, not realigned -- it was CORRECT here and wrong
-    /// in the third house, which is precisely the failure a figure in three places produces. The
-    /// probe's doc in `tests/arbiter_admission.rs` carries the reasoning.
+    /// somebody remembers to take. ⚠️ RECALL OF 2026-08-28, AUD-018 -- no count here; the story is
+    /// in `docs/archivio/sorgenti-storico.md`.
     ///
     /// ⚠️ `pub(crate)` BECAUSE ITS ONLY CALLER IS THE ADMISSION UNDER THE LOCAL POLICY, AND
     /// SINCE TASK 8 THAT CALLER EXISTS: it is `Arbiter::admit`, in the branch that cannot seat
@@ -873,21 +801,9 @@ impl Arbiter {
     /// `pub(crate)` keeps true -- and the probes of the `#[cfg(test)] mod tests` at the foot of
     /// this file are what the `pub(crate)` puts there instead of in `tests/`.
     ///
-    /// ⏳ RECALL OF 2026-08-20 -- A DEADLINE STOOD HERE AND TASK 8 IS WHAT MADE IT COME DUE.
-    /// `E67` and `E74` left two `dead_code` warnings standing on purpose -- "fields lane and
-    /// grace are never read" and "method ask_back is never used" -- rather than silence them
-    /// with an `#[allow]`, which this repository treats as a prohibition switched off, and the
-    /// falsifiable half was written right here in the form `E10` used at task 4: AT TASK 8 THOSE
-    /// TWO WARNINGS MUST BE GONE, and IF THEY ARE STILL THERE THIS METHOD WAS NOT NEEDED AND IT
-    /// IS REMOVED. ✅ IT CAME DUE AND IT WAS MET, measured and not deduced:
-    /// `cargo build --locked --workspace` prints ZERO warnings, against the TWO the same command
-    /// printed before the task. No `#[allow]`, no invented reader, no `pub` of convenience --
-    /// none was needed. Registered as `E91`.
-    ///
-    /// ⛔ AND THE ORDER TO REMOVE THIS METHOD IS REWRITTEN AWAY RATHER THAN LEFT BESIDE THE
-    /// FACT, because it was written in the PRESENT TENSE and this task turned it into the
-    /// opposite of true: `ask_back` is what `LocalPolicy` is made of, and whoever read the
-    /// paragraph as it stood would have been told to delete it. Registered as `E99`.
+    /// ⏳ RECALL OF 2026-08-20 -- the deadline that stood here came due at task 8 and was met, and
+    /// `ask_back` is what `LocalPolicy` is made of; the story is in
+    /// `docs/archivio/sorgenti-storico.md`.
     pub(crate) fn ask_back(&mut self, needed: Mib, below: ComputeClass, now: Monotonic) -> Mib {
         self.collect_expired(now);
 
@@ -896,15 +812,8 @@ impl Arbiter {
         // reading pass and the marking pass would answer for different sets, and the arbiter
         // would promise room it then declines to take.
         //
-        // ⚠️ A CLOSURE AND NOT A METHOD, AND THE MEASUREMENT THAT BOUGHT IT HAS EXPIRED --
-        // rewritten on 2026-08-20 rather than left standing beside the fact that killed it. The
-        // reason WAS `dead_code`: `ask_back` had no production caller, so anything it was the
-        // only caller of was dead with it, and ✅ as an associated `Held::askable_by`
-        // `cargo build --locked --workspace` printed a THIRD warning on top of the two the owner
-        // had accepted (`E67`). ⛔ TASK 8 GAVE `ask_back` A PRODUCTION CALLER AND THE PREMISE
-        // FELL WITH IT (`E91`). ✅ RE-MEASURED the same day instead of reasoned: with a private
-        // `impl Held` helper reachable ONLY from inside this closure, the build prints ZERO
-        // warnings -- `admit` reaches `ask_back`, so nothing behind it is dead any more.
+        // ⚠️ A CLOSURE AND NOT A METHOD. RECALL OF 2026-08-20 -- the measurement that bought it
+        // has expired; the story is in `docs/archivio/sorgenti-storico.md`.
         //
         // ⚠️ SO WHAT HOLDS THE CLOSURE TODAY IS NOT A MEASUREMENT AND IT IS SAID SO: it captures
         // `below`, and it keeps the admissibility test inside the body both passes read -- which
@@ -1409,24 +1318,13 @@ mod tests {
     /// grant being freed INSIDE its grace is a sweep that runs while the grace is still
     /// running, and here that sweep is `admit`'s.
     ///
-    /// ⛔ RECALL OF 2026-08-28, finding AUD-013 -- THIS PARAGRAPH SAID "neither `ask_back` nor
-    /// `revoking()` runs a sweep", and the `ask_back` half was FALSE: `self.collect_expired(now)`
-    /// is its first statement, which `ask_back_collects_the_expired_before_it_marks` below
-    /// already says about this SAME function. `ask_back` still does not stand in for `admit`
-    /// here, for a narrower reason than "it never sweeps": in THIS scenario it sweeps at the
-    /// instant the resident is admitted, before anything is marked `Revoking` -- the mark is
-    /// made by the REST of that same call, after its own leading sweep already ran, so that
-    /// sweep has nothing yet to test the grace-arm against.
-    ///
-    /// ⛔ AND TWO EXCLUSIVITY CLAIMS WERE ALSO FALSE, MEASURED and not assumed -- "would
-    /// satisfy every other probe here", and "the only way to catch it ... is `admit`".
-    /// Mutating `collect_expired`'s `Revoking` arm to sweep unconditionally fails TWO probes
-    /// under `cargo test --locked -p kernel --lib`, not one -- this one AND
-    /// `asking_back_twice_does_not_buy_the_room_twice` (11 passed, 2 failed). The second one
-    /// dies on `assert_eq!(arbiter.revoking(), 1)`, BEFORE the `admit` further down its body
-    /// ever runs, and the sweep that gets it there is the leading one of its own SECOND
-    /// `ask_back` -- at `200`, against a grace that runs to `500`. Both removed rather than
-    /// replaced: an exclusivity claim is bought by remeasuring it, and this task did not.
+    /// ⛔ `ask_back` RUNS A SWEEP TOO -- `self.collect_expired(now)` is its first statement -- and
+    /// still does not stand in for `admit` here, for a narrower reason than "it never sweeps": in
+    /// THIS scenario it sweeps at the instant the resident is admitted, before anything is marked
+    /// `Revoking` -- the mark is made by the REST of that same call, after its own leading sweep
+    /// already ran, so that sweep has nothing yet to test the grace-arm against. ⛔ RECALL OF
+    /// 2026-08-28, AUD-013 -- the story of this paragraph is in
+    /// `docs/archivio/sorgenti-storico.md`.
     #[test]
     fn a_grant_inside_its_grace_keeps_its_reservation() {
         let mut arbiter = arbiter(Mib::new(4_096));
@@ -1671,9 +1569,9 @@ mod tests {
         // `ask_back` freeing what it marks (mutation 1 -- 6/7 isolated AND 6/7 at full strength,
         // this probe among the deaths in neither, so isolating it changes nothing there).
         //
-        // ⛔ AND YET IT IS NOT THE TWO ABOVE THAT HOLD THIS PROBE, WHICH IS WHAT THE PARAGRAPH
-        // STANDING HERE UNTIL THE THIRD REVIEW CLAIMED. This probe dies under mutations 5b, 5d, 8,
-        // 11 and 12, and they do not all kill it through the same assertion. ✅ MEASURED on
+        // ⛔ AND YET IT IS NOT THE TWO ABOVE THAT HOLD THIS PROBE.
+        // This probe dies under mutations 5b, 5d, 8, 11 and 12, and they do not all kill it through
+        // the same assertion. ✅ MEASURED on
         // 2026-08-20 by reading WHICH one panics rather than that the probe went red: under 8 and
         // 12 it is the first, the ANSWER (`Mib(8192)` and `Mib(2048)` against `Mib(0)`); under 11
         // the second, the STATE (`1` against `0`); and under 5b and 5d -- the two that mutate
@@ -1681,13 +1579,10 @@ mod tests {
         // one that fires, `left: Mib(0)` and `left: Mib(6144)` against `right: Mib(8192)`. On
         // those two rows of the campaign it is this assertion that kills the probe, alone.
         //
-        // ⚠️ THE CAUSE OF THE OLD CLAIM IS WORTH MORE THAN THE CLAIM. The isolation above samples
-        // mutations of `ask_back` ONLY -- precisely the class under which this assertion cannot
-        // fail -- and never ran the two rows on which it is load-bearing. An exclusivity measured
-        // on a partial sample reads as a guarantee. ⛔ THE REMEDY WAS RIGHT AND THE REASON WRITTEN
-        // BESIDE IT WAS WRONG, and wrong by UNDERSTATEMENT: keeping the assertion needs no appeal
-        // to a day when `ask_back` might grow a road that touches the books, because the sweep it
-        // calls first already has one. Registered as `E82`; the counts as `E81` (`E79`, corrected).
+        // ⚠️ KEEPING THE ASSERTION NEEDS NO APPEAL to a day when `ask_back` might grow a road that
+        // touches the books, because the sweep it calls first already has one. RECALL OF 2026-08-20
+        // -- the story of the old claim is in `docs/archivio/sorgenti-storico.md`. Registered as
+        // `E82`; the counts as `E81` (`E79`, corrected).
         assert_eq!(arbiter.allocated(), Mib::new(8_192));
     }
 
@@ -1737,11 +1632,9 @@ mod tests {
     /// ⛔ THE MARKING PASS RUNS TO THE END OF THE LANES, and this is the direction the probe above
     /// steps over. That one asks for `1_024` against a `Batch` of `2_048`, so the WORST lane
     /// covers the need on its own and the pass never has to leave it. So "it goes on into the next
-    /// lane" was asked by NOBODY. ⚠️ RECALL OF 2026-08-28, AUD-043: a per-probe breakdown stood
-    /// here -- "seven have a single resident, two have two in the SAME lane, and one leaves
-    /// through `reclaimable < needed`" -- and it was wrong at `83c7242` too AND did not add up to
-    /// the probes it claims to partition. REMOVED, not realigned: what carries this paragraph is
-    /// the mutation below, which is a measurement over the WHOLE workspace and needs no census. ✅ MEASURED on 2026-08-20 and not deduced: with `lanes.iter().rev()`
+    /// lane" was asked by NOBODY. ⚠️ RECALL OF 2026-08-28, AUD-043 -- what carries this
+    /// paragraph is the mutation below; the story is in `docs/archivio/sorgenti-storico.md`.
+    /// ✅ MEASURED on 2026-08-20 and not deduced: with `lanes.iter().rev()`
     /// cut to `.take(1)` -- the outer loop stopped after the first lane -- the mutant survived the
     /// WHOLE WORKSPACE, 34 targets, 235 passed, 0 failed, 2 ignored. Registered as `E75`.
     ///
@@ -1840,9 +1733,8 @@ mod tests {
 
     /// ⛔ `ask_back` COLLECTS THE EXPIRED BEFORE IT MARKS, and "the arbiter collects before it
     /// decides" is a property of EVERY operation -- it is why `collect_expired` is private. This
-    /// is the only probe that exercises this one's line. ⚠️ RECALL OF 2026-08-28, AUD-018: this
-    /// said "With `ask_back` there are now FOUR of them" and the count is REMOVED, not realigned,
-    /// from all three houses that carried it.
+    /// is the only probe that exercises this one's line. ⚠️ RECALL OF 2026-08-28, AUD-018 -- no
+    /// count here; the story is in `docs/archivio/sorgenti-storico.md`.
     ///
     /// ⚠️ NOTHING IS RELEASED HERE, DELIBERATELY, exactly as in
     /// `promote_collects_the_expired_before_it_serves_the_queue`: the only thing that can empty

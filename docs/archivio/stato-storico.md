@@ -8141,3 +8141,9 @@ apertura: le voci chiuse vi tengono la storia nella cella, e che cosa si legge a
    tracciato, è dell'altra sessione del proprietario (P16).
 9. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per
    parola, la nuova al suo posto, e il commit su `main`, col push.
+
+## La riga della data di HANDOFF.md, com'era — archiviata il 2026-10-08, al lotto 6 del `lean-docs` della R5
+
+⚠️ **Vera il giorno in cui fu scritta.** Uscita da [`HANDOFF.md`](../HANDOFF.md) parola per parola, coi link riscritti per questa cartella.
+
+Aggiornato il **2026-10-07**, col lotto 2 del `lean-docs` della R5 del [terzo audit](../audit-2026-09-30.md), parte 2: le storie delle correzioni della tabella dei gotcha sono in [`archivio/stato-storico.md`](stato-storico.md), parola per parola, come quelle del resto del file dalla parte 1, e nel vivo resta la riga del richiamo. La data segue il file — finding **AUD-039**. Questa riga com'era è là.

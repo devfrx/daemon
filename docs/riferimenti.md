@@ -3569,6 +3569,33 @@ codice che le cita, qui la provenienza.
 |---|---|---|
 | `electron.d.ts` di `electron` 44.3.0, installato in `spikes/gui-shell/electron/node_modules/electron`: gli argomenti di `ipcRenderer.send` *«will be serialized with the Structured Clone Algorithm»*. Quell'algoritmo lancia `DataCloneError` su un Proxy, e la sonda di `gui/src/transport/fakeBridge.test.ts` lo misura su un `reactive` di Vue 3.5.42: `npx vitest run --project jsdom src/transport/fakeBridge.test.ts`, da `gui/` | 2026-10-02 | `Bridge.send` in `gui/src/transport/bridge.ts`: un messaggio passa per copia, quindi è un dato semplice — il ponte della §6a del [disegno del sotto-progetto 2](superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md), nel guscio di [ADR-0029](adr/0029-guscio-della-gui.md); audit del 2026-09-30, AUD-541 |
 
+## La ricerca per somiglianza della knowledge base — un candidato per il piano 2 del 6, 2026-10-08
+
+Un modello di embedding nuovo, annotato su richiesta del proprietario per la **seconda metà del sotto-progetto 6**: il
+piano 2 del [disegno della knowledge base](superpowers/specs/2026-09-04-knowledge-base-design.md), che lì *«non si
+disegna»* e che vorrà fonti primarie con la data. ⛔ **Non è una scelta:** come nel
+[fronte dei modelli decisionali](superpowers/specs/2026-09-28-modelli-decisionali-design.md), prima il posto e il
+contratto, poi il modello, tardi, misurato sulla macchina contro i rivali di quel giorno — *novità non è maturità*. La
+scelta e il suo merito li scriverà il disegno del 6; qui la provenienza, e le domande che la lettura ha fatto nascere.
+Le cifre sono lette nel testo grezzo delle schede e nell'API di Hugging Face, non attraverso lo strumento di lettura
+della sessione.
+
+| Fonte | Letta | Per |
+|---|---|---|
+| Google DeepMind, la scheda di EmbeddingGemma 2, `https://huggingface.co/google/embeddinggemma-2` — licenza Apache 2.0, senza accesso condizionato | 2026-10-08 | che cos'è: testo, codice compreso, immagini, video e audio in **un solo spazio** a 768 dimensioni, troncabile a 512, 256 e 128; 740M parametri, di cui 270M di testo — 130M di trasformatore e 140M di embedder — e i codificatori di visione (170M) e di audio (300M), caricabili a scelta; 8.192 token di contesto, condivisi fra le modalità; MTEB multilingue v2 **61,36** contro 61,15 della prima versione, MTEB codice v1 **78,68** contro 68,76; *«100+ languages»*, senza un risultato per lingua: l'italiano non è nominato; mai `float16`, che dà NaN o vettori degradati **in silenzio** — `bfloat16`, o `float32` sulla maggior parte delle CPU; i prefissi di compito sul testo |
+| Unsloth, la versione GGUF, `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | 2026-10-08 | la via `llama.cpp`, di cui GGUF è il formato: i file del modello di testo e, a parte, i file `mmproj` dei codificatori delle altre modalità — se `llama.cpp` li usi anche per gli embedding, la pagina non lo dice; le taglie le dà `curl -s 'https://huggingface.co/api/models/unsloth/embeddinggemma-2-GGUF?blobs=true'`. ⚠️ I metadati GGUF dicono un contesto di `262144`, la scheda di Google **8.192**: vale la scheda, finché una misura non dice altro |
+
+⏳ **Che cosa dovranno decidere il 6 e il 9** — dedotto, non misurato:
+
+1. **Il runtime, col 9.** La via GGUF gira su `llama.cpp`, che non è Python, e [ADR-0028](adr/0028-ecosistema-dei-worker-ml.md)
+   vuole i worker in Python; la sua riga sugli embedding è fra quelle del finding **AUD-1577** del
+   [terzo audit](audit-2026-09-30.md). La via Python c'è: `sentence-transformers` e `transformers`, nella scheda di
+   Google. Su `llama.cpp` gira anche rizzo-flow, nel fronte dei modelli decisionali.
+2. **GPU o CPU, col 6.** Il disegno della knowledge base scrive *«embedding sulla GPU via arbitro»*, ma con la policy di
+   default di [ADR-0006](adr/0006-due-policy-vram-come-oggetti-distinti.md) nessun embedding locale resta nella VRAM, e
+   un modello di testo da 270M potrebbe girare sulla CPU, dove l'arbitro non arbitra.
+3. **L'italiano.** Si misura sulle note del proprietario, non sulle classifiche.
+
 ## Cosa NON abbiamo adottato, e perché
 
 | Idea | Motivo |

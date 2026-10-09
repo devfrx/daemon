@@ -1,4 +1,5 @@
-# ⛔ UNA REGOLA SOLA, E LA RISTRETTEZZA È IL PUNTO.
+# ⛔ REGOLE STRETTE, CIASCUNA SU UNA CARTELLA SOLA: LA RISTRETTEZZA È IL PUNTO.
+# ⚠️ RICHIAMO DEL 2026-10-09 — audit del 2026-09-30, AUD-1123, AUD-1126.
 #
 # I byte congelati del record durevole (`crates/kernel/tests/frozen/*.cbor`) sono l'unico
 # artefatto del progetto che non si rigenera mai: se cambiano non è un aggiornamento, è un
@@ -27,15 +28,22 @@ crates/kernel/tests/frozen/*.cbor binary
 # `gui/schema/fixtures/` nasce col compito 3 del sotto-progetto 2. I `.json` portano il VALORE
 # ATTESO di ogni variante e `the_committed_fixtures_match_the_schema` li confronta BYTE A BYTE
 # con cio' che `variant_json` produce, che finisce sempre in un solo `\n`. Con `core.autocrlf=true`
-# -- che e' la configurazione di questa macchina -- un checkout fresco li riscriverebbe in CRLF, e
-# il controllo andrebbe rosso su TUTTI: verde dove sono stati scritti, rosso su ogni clone.
+# -- un'impostazione della MACCHINA e non del repository, e il valore di quella su cui si lavora
+# lo dice `git config --show-origin --get core.autocrlf` -- un checkout fresco li riscriverebbe in
+# CRLF, e il controllo andrebbe rosso su TUTTI: verde dove sono stati scritti, rosso su ogni clone.
+# ⚠️ RICHIAMO DEL 2026-10-09 -- audit del 2026-09-30, AUD-1125.
 # ✅ MISURATO IL 2026-09-17 e non dedotto: `git checkout-index -a --prefix=<dir>/` rende **14** CR
 # nei `.json` contro **0** nell'albero di lavoro. La mappa reggeva da se', perche' `str::lines()`
 # toglie il `\r`; i `.json` no, perche' il confronto e' sui byte.
 #
-# ⚠️ E I `.bin` SONO LA STESSA STORIA DEI `.cbor` QUI SOPRA: oggi git li riconosce binari da se'
-# perche' contengono un `00`, ma uno di essi porta gia' un `0d` -- quindi la protezione servirebbe
-# davvero se quel `00` sparisse, ed e' un accidente del contenuto come lo e' lassu'.
+# ⚠️ E I `.bin` SONO LA STESSA STORIA DEI `.cbor` QUI SOPRA: oggi git li riconosce binari da se' --
+# `i/-text` in `git ls-files --eol 'gui/schema/fixtures/*.bin'` --, e un `00` gli basta, come gli
+# basterebbe un `0d` che non precede un `0a`. Il byte che la protezione salva e' l'`0a`: una
+# lettura da testo lo riscriverebbe in `0d 0a` al checkout con `core.autocrlf=true`, e alcuni
+# `.bin` lo portano gia' -- quali, lo dice `wc -l gui/schema/fixtures/*.bin`, che conta gli `0a`.
+# La protezione servirebbe davvero il giorno che git smettesse di riconoscerli da se', ed e' un
+# accidente del contenuto come lo e' lassu'.
+# ⚠️ RICHIAMO DEL 2026-10-09 -- audit del 2026-09-30, AUD-1127.
 #
 # ⛔ E RESTA VIETATO UN `* text=auto`: queste tre righe nominano UNA cartella, che e' il punto.
 gui/schema/fixtures/*.bin  binary

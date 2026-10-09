@@ -52,8 +52,10 @@ run "allow-list on the two graphs"        bash scripts/gate-deps.sh
 # nobody was looking -- because nothing was fetching.
 #
 # ⛔ `cargo audit` IS A PREREQUISITE OF THE ENVIRONMENT, like the `x86_64-unknown-none` target of
-# constraint 4 of §11. If this line goes red with `error: no such command: audit`, the cure is:
-#     cargo install cargo-audit --locked --version 0.22.2
+# constraint 4 of §11. If this line goes red with `error: no such command: audit`, the cure is the
+# `cargo install cargo-audit` line of `.github/workflows/quality-gate.yml`, run by hand: the version
+# CI installs lives there, in ONE house, and is not copied here. RECALL OF 2026-10-09 -- audit of
+# 2026-09-30, AUD-734.
 #
 # ⛔ NO `-n` / `--no-fetch`, AND THAT IS THE POINT OF THIS COMMENT. Measured on 2026-09-15 on this
 # lockfile: `-n` gives the SAME verdict in a fraction of the time, so somebody will add it as an
@@ -89,18 +91,20 @@ run "attributes of the constrained crates" bash scripts/gate-attributes.sh
 run "gui: fake core and SPA"              bash scripts/gate-gui.sh
 run "documentation consistency"           bash scripts/check-docs.sh
 
-# ⛔ A SEVENTH STEP THAT IS NOT A SEVENTH CONTROL, and the catalogue count stays at six. The
-# assertions of every DST campaign named below already run inside `cargo test --workspace`
+# ⛔ A SEVENTH STEP THAT IS NOT A SEVENTH CONTROL: it has no row of its own in the catalogue of
+# §7.4. RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1094.
+# The assertions of every DST campaign named below already run inside `cargo test --workspace`
 # above -- that IS the cadence constraint 8 of §11 asks for, and nothing here can go red for a
 # reason that check has not already caught. This runs them a SECOND time for one reason only:
 # constraint 7 wants the WALL TIME PRINTED ON EVERY RUN -- "so that the slowdown becomes
 # visible before it becomes a temptation" -- and `cargo test` swallows the output of tests
 # that pass.
 #
-# ⚠️ 2026-09-22: "SEVENTH" is the NAME this step carries in the plan and the compendium ("il settimo
-#   passo"), and it was the seventh `run` line when written; counted today it is the NINTH, after tasks
-#   15 and 16 added one `run` each above. Kept as a name, not realigned as a count (M-1 of the review
-#   of task 16): the list of `run` lines is the only count that cannot age.
+# ⚠️ 2026-09-22: "SEVENTH" is the NAME this step carries in the plan and in docs/porta-di-qualita.md
+#   ("il settimo passo"), and it was the seventh `run` line when written; counted today it is the NINTH,
+#   after tasks 15 and 16 added one `run` each above. Kept as a name, not realigned as a count (M-1 of
+#   the review of task 16): the list of `run` lines is the only count that cannot age.
+#   RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-2086, AUD-2087.
 #
 # ⚠️ EVERY CAMPAIGN HAS TO BE ADDED HERE BY NAME, and that is the lesson rather than the
 # history: this step names its targets ONE BY ONE, so a campaign absent from the list is

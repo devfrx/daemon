@@ -113,9 +113,19 @@ echo "== every Q requirement has a verification method (V30) =="
 # two lists it believes sorted. The defect is invisible while the two sides agree -- today
 # they do, so 'comm' never meets an unpairable line and does not even print its warning --
 # and it lies EXACTLY when the check has something true to say. Measured on Q1..Q24: with
-# Q9 alone missing a method, '-uV' reported fifteen names (Q9 through Q24) instead of one.
+# Q9 alone missing a method, '-uV' reported Q9 AND every name after it, through Q24, instead of
+# Q9 alone. RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-2083. The probe, rerun that day:
+#   A=$(seq 1 24 | sed 's/^/Q/' | sort -uV); B=$(seq 1 24 | grep -v '^9$' | sed 's/^/Q/' | sort -uV)
+#   comm -23 <(echo "$A") <(echo "$B") 2>/dev/null   -> Q9 Q10 ... Q24; with 'sort -u' on both, Q9
 # A red nobody can read teaches people to ignore the audit, which is the thing the comment
 # above declares to be worse than no check at all.
+#
+# ⚠️ DECLARED LIMIT: EVERY `| Qn |` ROW OF EVERY SPEC IS TAKEN FOR A QUALITY REQUIREMENT, and paired
+# with design/08 by NAME. A row that uses the letter for something else enters the set and passes
+# by homonymy -- the qualitative rows Q1..Q4 of the shell spike, in the sub-project 2 design, pass
+# on the methods of the kernel's Q1..Q4 -- and a later spec that numbers Q rows of its own is
+# paired the same way. Which side gives way, the letter or the reading, is an open choice.
+# RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-2215.
 missing=$(comm -23 \
   <(grep -ohE '^\| Q[0-9]+ \|' docs/superpowers/specs/*.md | grep -oE 'Q[0-9]+' | sort -u) \
   <(grep -ohE '^\| Q[0-9]+ \|' docs/design/08-strategia-di-test.md | grep -oE 'Q[0-9]+' | sort -u) |
@@ -294,8 +304,15 @@ echo "== ADR counts declared in the prose =="
 # Declared limit: a number spelled out in words is invisible to this guard.
 adr_tot=$(ls docs/adr/*.md 2>/dev/null | wc -l)
 adr_acc=$(grep -l '^- \*\*Status:\*\* Accepted' docs/adr/*.md 2>/dev/null | wc -l)
+# ⛔ A DOCUMENT OF THIS LIST THAT IS MISSING IS A FAILURE, NOT A SKIP -- the guard the spec of
+# sub-project 1 and the compendium have above, gotcha #26: renamed or moved with its links updated,
+# a status document would otherwise leave this check green on nothing. RECALL OF 2026-10-09 --
+# audit of 2026-09-30, AUD-2216.
 for f in docs/HANDOFF.md docs/roadmap.md docs/README.md docs/COMPENDIO.md docs/AVVIO-CHAT.md CLAUDE.md; do
-  [ -f "$f" ] || continue
+  if [ ! -f "$f" ]; then
+    report "$f is missing: the ADR counts it declares would not be checked"
+    continue
+  fi
   # The examples live inside code spans: `2 ADR nuovi` is an example, not a
   # declaration. They are stripped before comparing, or the check accuses the
   # documentation of itself -- a success indeed.

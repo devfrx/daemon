@@ -18,8 +18,12 @@ Desktop.ini
 # ⛔ /Cargo.lock IS NOT ignored, and that is deliberate: gate-deps.sh checks the TRANSITIVE
 # dependency graph against the allow-list of ADR-0031. Without a versioned lockfile the
 # graph resolves differently on another machine or on another day, and the check would
-# measure a graph nobody has approved. The spikes below ignore their own because they are
-# throwaway probes; this is the product.
+# measure a graph nobody has approved; this is the product.
+# ⚠️ AND THE SPIKES DO NOT ALL DO THE SAME. Every spike `Cargo.lock` listed below is ignored: a
+# spike redone from a seed needs none. Committed instead: the shell spike's lockfiles, npm and
+# Cargo, whose numbers entered ADR-0029 and must be redone as they were (the coordinator's
+# decision 49 of the GUI north star), and `spikes/gesti/requirements.lock`, the environment of
+# the measures of SP-7. RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1131, AUD-735.
 
 # Build artefacts of the gui -- the lockfile is committed, the tree it installs is not
 /gui/node_modules/
@@ -44,8 +48,6 @@ Desktop.ini
 /spikes/gui-shell/tauri/node_modules/
 /spikes/gui-shell/tauri/src-tauri/target/
 /spikes/gui-shell/tauri/src-tauri/gen/
-/spikes/ts/node_modules/
-/spikes/ts/dist/
 /spikes/**/wip/
 
 # Python bytecode -- regenerated on every run, never committed

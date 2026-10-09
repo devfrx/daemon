@@ -41,8 +41,12 @@ npm run build
 # ⛔ THE KIT PAGE STAYS OUT OF THE PACKAGE (design system, section (b)): `vite build` takes the inputs it is given, and with
 # none it takes `index.html` alone. Proven on the output, not believed (trap 12 of the design); the first line is the
 # non-vacuity guard -- a build that produced nothing would pass the second.
+# ⚠️ AND THE SECOND READS THE WHOLE PACKAGE, NOT `dist/assets`: that folder is Vite's default `build.assetsDir`, which
+# nothing here pins, and a `grep` on a folder that is not there exits 2, which the `if` reads as "no match" -- assets
+# written elsewhere would carry the kit into the package with this check green. RECALL OF 2026-10-09 -- audit of
+# 2026-09-30, AUD-2218.
 test -f dist/index.html || { echo "dist/index.html is missing: the build produced nothing to check"; exit 1; }
-if [ -e dist/kit.html ] || grep -rlq 'kit-card' dist/assets; then echo "the kit page is in the package"; exit 1; fi
+if [ -e dist/kit.html ] || grep -rlq 'kit-card' dist; then echo "the kit page is in the package"; exit 1; fi
 # ⛔ THE FIRST LINE OF `src/main.ts`, PROVEN ON THE PACKAGE TOO (AUD-722 of the audit of 2026-09-30): `dockview`'s stylesheet
 # is imported FIRST, so that our tokens, after it, win where both style the dock -- and `vite build` writes the page's one
 # stylesheet in the order of the imports. So the package must OPEN with `dockview`'s first rule, whose selector is read
@@ -88,8 +92,9 @@ npm run lint
 # the root audit in `gate.sh` reds on the same crates anyway. It runs from `gui/`: the path is relative.
 # ⚠️ It fetches the advisory database a SECOND time per run (an incremental fetch, seconds): no `-n`
 # here either (D69) -- two network rounds per run are the declared price of two lockfiles.
-# ⛔ SAME PREREQUISITE AS `gate.sh`: if this goes red with `error: no such command: audit`, the cure is
-#     cargo install cargo-audit --locked --version 0.22.2
+# ⛔ SAME PREREQUISITE AS `gate.sh`, AND THE SAME CURE: if this goes red with `error: no such command: audit`,
+# run by hand the `cargo install cargo-audit` line of `.github/workflows/quality-gate.yml` -- the version
+# lives there, in ONE house, and is not copied here. RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-734.
 echo "-------- gui: fake core advisories"
 cargo audit --file fake-core/Cargo.lock
 # ⛔ THE SECOND WORLD OF X-3. `npm ci` above installs what the lockfile pins; this asks the registry

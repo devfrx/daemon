@@ -21,6 +21,10 @@ failures=0
 report() { echo "  ✗ $*"; failures=$((failures + 1)); }
 
 # --- The two lists. Single home: §7.3.1 of the spec; this file mirrors it. ---
+# ⚠️ AND NOTHING CHECKS THAT THE MIRROR AND ITS HOME AGREE: an entry is added to -- or dropped
+# from -- the table of §7.3.1 FIRST, with its justification, and then here. Changed here alone,
+# the list turns the gate green while the single home stays behind. RECALL OF 2026-10-09 --
+# audit of 2026-09-30, AUD-1092.
 SHIPPED="bincode
 kernel
 minicbor
@@ -165,21 +169,26 @@ if [ "$measured" -ne "$expected_crates" ]; then
   echo "  SKIPPED -- $measured of $expected_crates graphs measured. The union is incomplete,"
   echo "  and a phantom reported from an incomplete union would name the wrong cause."
 else
-  unione() { printf '%s\n' "$1" | grep -v '^$' | sort -u; }
+  # ⚠️ THE VERDICT AT THE END OF THIS BRANCH IS THIS SECTION'S OWN: it compares the counter with its
+  # value on the way in, so a red from the loops above -- I3 violated, a changed build graph, two
+  # graphs that COINCIDE -- does not silence it, and a red still says whether a phantom was found.
+  # RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-2118.
+  failures_before=$failures
+  union_of() { printf '%s\n' "$1" | grep -v '^$' | sort -u; }
   for pair in "SHIPPED:$shipped_union" "BUILD_ONLY:$build_union"; do
-    lista_nome=${pair%%:*}
-    unione_val=${pair#*:}
-    eval "lista_val=\$$lista_nome"
-    fantasmi=$(comm -13 <(unione "$unione_val") <(unione "$lista_val"))
-    if [ -n "$fantasmi" ]; then
-      for f in $fantasmi; do
-        report "phantom entry -- '$f' is on $lista_nome and in NO graph."
+    list_name=${pair%%:*}
+    union_value=${pair#*:}
+    eval "list_value=\$$list_name"
+    phantoms=$(comm -13 <(union_of "$union_value") <(union_of "$list_value"))
+    if [ -n "$phantoms" ]; then
+      for f in $phantoms; do
+        report "phantom entry -- '$f' is on $list_name and in NO graph."
         echo "      ⛔ REMEDY: REMOVE the line. An entry that matches nothing is a permission"
         echo "      granted in advance: the day that crate arrives, the check above stays silent."
       done
     fi
   done
-  [ "$failures" -eq 0 ] && echo "  ✓ no phantom entry: every line of both lists is reached by a graph"
+  [ "$failures" -eq "$failures_before" ] && echo "  ✓ no phantom entry: every line of both lists is reached by a graph"
 fi
 
 echo

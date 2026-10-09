@@ -7,9 +7,11 @@
 //! decoding instead of going around them; and the measured cost is small.
 //!
 //! ⛔ ARRAY ENCODING, NOT MAP, AND IT IS WRITTEN OUT EVEN THOUGH IT IS THE DEFAULT.
-//! Measured in ADR-0036: array 27 bytes (+4 %), map 33 (+27 %), positional 26. The ADR notes
-//! that the earlier estimate "priced the map instead of the array" — so the number that
-//! decided this is the array one. A default nobody wrote down is a default somebody changes.
+//! Measured in ADR-0036, whose table «Le dimensioni, sullo stesso record» carries the figures:
+//! the array came out the cheaper of the two, and the ADR notes that the earlier estimate "priced
+//! the map instead of the array" — so the number that decided this is the array one. A default
+//! nobody wrote down is a default somebody changes. ⚠️ RECALL OF 2026-10-09 -- audit of
+//! 2026-09-30, AUD-1234.
 //! ⚠️ AND THAT IT COSTS NOTHING TO WRITE IT WAS MEASURED, not assumed: with and without
 //! `#[cbor(array)]` on the two types below, a record encodes to the same bytes down to the
 //! length. ⚠️ THE BYTES OF THAT MEASUREMENT WERE `82 00 81 84 00 01 00 40` UNTIL 2026-08-10,
@@ -18,11 +20,13 @@
 //! gotcha #31 is a number nobody rechecks because the rule it supports is right, and the rule
 //! here is still right.
 //!
-//! ⚠️ AND THE ARRAY HAS A PRICE THE MAP DOES NOT, which belongs beside those numbers: a
+//! ⚠️ AND THE ARRAY HAS A PRICE THE MAP DOES NOT, which belongs beside that measurement: a
 //! RETIRED INDEX COSTS A NULL BYTE FOR EVER. The array is positional, so a gap has to be
 //! written to keep the ones after it in place, whereas a map simply omits the key. The
-//! comparison above is between the shapes as they are TODAY; every index the format retires
-//! moves it by one byte per record, in the archive's favourite direction, which is bigger.
+//! comparison above is between the shapes ADR-0036 measured, on one record on 2026-08-07, before
+//! index 4 and index 5 arrived; every index the format retires moves it by one byte per record,
+//! in the archive's favourite direction, which is bigger. ⚠️ RECALL OF 2026-10-09 -- audit of
+//! 2026-09-30, AUD-1234.
 //!
 //! ⛔ AND `#[cbor(index_only)]` ON THE THREE ENUMS CARRIES ITS OWN CONSTRAINT, declared here
 //! because it binds a FUTURE change and nothing in the file would otherwise say so: it encodes
@@ -66,12 +70,14 @@ use minicbor::{Decode, Encode};
 ///
 /// ⚠️ "IT IS FREE TODAY BECAUSE NO ARCHIVE EXISTS" WAS TRUE UNTIL 2026-08-10, and it is dated
 /// rather than quietly rewritten: `tests/frozen_bytes.rs` landed that day and THE FORMAT IS
-/// FROZEN. A fourth variant would not move the frozen bytes — the three that exist keep their
+/// FROZEN. A new variant would not move the frozen bytes — the variants that exist keep their
 /// indices and the files carry only those — but it makes every record carrying it undecodable
 /// to a build that predates it, and that is a cost somebody pays instead of a hypothesis.
-/// ⚠️ MEASURED, AND THE COMPILER GETS THERE FIRST: adding `#[n(3)] Amend` never reaches any
-/// bench, because `crate::reconcile` matches this enum exhaustively and the LIBRARY stops with
-/// `E0004`. So the level 1 guard is the reconciliation's match; the frozen bytes speak after it.
+/// ⚠️ MEASURED ON 2026-08-10, AND THE COMPILER GOT THERE FIRST: adding `#[n(3)] Amend` —
+/// index 3 was the first free one that day, and is `Verdict`'s now — reached no bench, because
+/// `crate::reconcile` matches this enum exhaustively and the LIBRARY stopped with `E0004`. So the
+/// level 1 guard is the reconciliation's match; the frozen bytes speak after it. ⚠️ RECALL OF
+/// 2026-10-09 -- audit of 2026-09-30, AUD-1235.
 ///
 /// ⚠️ AND THE TWO EXISTING VARIANTS DID NOT MOVE, which was measured and not assumed:
 /// `#[cbor(index_only)]` encodes a variant as its bare index, so `Intent` stays `00` and
@@ -173,8 +179,9 @@ pub enum EffectClass {
 /// ⛔ THIS FIELD IS WHY IT IS HERE ON DAY ONE, and the reason is written where it was found:
 /// road A4 of `crate::boundary`. Write external text into the journal, read it back as raw
 /// bytes, and it comes out indistinguishable from an instruction — BYTES CARRY NO LABELS.
-/// The record is where a label can live, and `boundary.rs` prices the alternative exactly:
-/// "retrofitted later only by migrating the one irreproducible archive".
+/// The record is where a label can live, and the alternative has its price: a label retrofitted
+/// later means migrating the one archive nobody can reproduce. ⚠️ RECALL OF 2026-10-09 --
+/// audit of 2026-09-30, AUD-1237.
 ///
 /// ⚠️ AND THE LIMIT IS THE TOKEN'S LIMIT, declared rather than discovered later: this proves
 /// PROVENANCE, NOT CORRECTNESS (§6.3.2). Whoever writes a record can label it wrongly. What
@@ -199,7 +206,9 @@ pub enum Trust {
 ///
 /// ⛔ AN UNKNOWN SPECIES DECODES, AND IT DECODES TO `None` IN SILENCE. Measured 2026-09-01 from
 /// outside the crate on the frozen verdict record: the variant index of `Detail` turned from `00`
-/// to `03` — the first free one — or to `09` answers `Ok(V1(RecordV1 { .. detail: None .. }))`.
+/// to `03` — the first free one that day, `Invocation`'s since 2026-09-18 — or to `09` answers
+/// `Ok(V1(RecordV1 { .. detail: None .. }))` (⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30,
+/// AUD-1235).
 /// No error is produced, so none reaches `Record::decode`'s mapping and none reaches `reconcile`.
 ///
 /// ⛔ THIS PARAGRAPH SAID THE OPPOSITE UNTIL 2026-09-01, and how it got there is the part worth
@@ -286,9 +295,10 @@ pub enum Detail {
 pub struct VerdictDetail {
     /// `false` is `VerdictOutcome::Fail`. ⚠️ A `bool` AND NOT THE ENUM, and the asymmetry is
     /// deliberate: `sensor::VerdictOutcome` is a kernel type free to grow a third answer, while
-    /// this one is on the WIRE and an index here never retires (rule 4 of §4.9.2). The day the
-    /// enum grows, this field becomes a new optional index and the `bool` retires — which is
-    /// exactly the discipline, and it is cheaper than reserving indices for answers nobody has.
+    /// this one is on the WIRE and an index here is retired, never reused (rule 4 of §4.9.2). The
+    /// day the enum grows, this field becomes a new optional index and the `bool` retires — which
+    /// is exactly the discipline, and it is cheaper than reserving indices for answers nobody has.
+    /// ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1240.
     #[n(0)]
     pub passed: bool,
     /// ⚠️ `Millis` DOES NOT COME HERE, and the cost is declared: carrying it would give a time
@@ -420,10 +430,10 @@ pub struct PermissionDetail {
     /// `VerdictDetail` TOOK FOR ITS OWN OUTCOME — read that field, the argument is one. In one
     /// line: an enum here would be a FOURTH `index_only` enum ON THE WIRE, whose variant indices
     /// `tests/frozen_bytes.rs` would then have to pin ONE PER FROZEN RECORD, and an index on the
-    /// wire never retires (rule 4 of §4.9.2). A `bool` costs one byte, pins itself, and the day a
-    /// THIRD operation exists this field RETIRES in favour of a new optional index — which is
-    /// rule 3 of §4.9.2 doing exactly its job, and cheaper than reserving indices for operations
-    /// nobody has.
+    /// wire is retired, never reused (rule 4 of §4.9.2). A `bool` costs one byte, pins itself, and
+    /// the day a THIRD operation exists this field RETIRES in favour of a new optional index —
+    /// which is rule 3 of §4.9.2 doing exactly its job, and cheaper than reserving indices for
+    /// operations nobody has. ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1240.
     ///
     /// ⚠️ SO THE TWO OPERATIONS OF `permission::Operation` ARE THE WHOLE OF WHAT THIS FIELD CAN
     /// SAY, and the enum's own doc carries the trigger for a third.
@@ -497,9 +507,10 @@ pub struct InvocationDetail {
     /// ⛔ A `u8` AND NOT THE `registry::Invoker` ENUM, AND IT IS `PermissionDetail`'s ARGUMENT ONE
     /// SIZE UP. An enum here would be a FOURTH `index_only` enum ON THE WIRE, whose variant
     /// indices `tests/frozen_bytes.rs` would then have to pin ONE PER FROZEN RECORD, and an index
-    /// on the wire never retires (rule 4 of §4.9.2). That type could use a `bool` because it had
-    /// two values; this one has four coming — click, gesture, voice, agent — so a `bool` cannot
-    /// serve and a `u8` is the same trade at the next size.
+    /// on the wire is retired, never reused (rule 4 of §4.9.2). That type could use a `bool`
+    /// because it had two values; this one has four coming — click, gesture, voice, agent — so a
+    /// `bool` cannot serve and a `u8` is the same trade at the next size. ⚠️ RECALL OF
+    /// 2026-10-09 -- audit of 2026-09-30, AUD-1240.
     ///
     /// ⛔ AND THE CODE IS ASSIGNED BY AN EXHAUSTIVE `match` IN `registry::Invoker::code`, never by
     /// `as u8`: a cast would number a new variant BY POSITION, and a reordering would silently
@@ -543,7 +554,8 @@ impl InvocationDetail {
 /// `PermissionDetail::write` both took — read either, the argument is one. In one line: an enum
 /// here would be a FOURTH `index_only` enum ON THE WIRE, whose variant indices
 /// `tests/frozen_bytes.rs` would then have to pin ONE PER FROZEN RECORD, and an index on the wire
-/// never retires (rule 4 of §4.9.2). ⚠️ AND `VramPolicy` IS NOT SERIALISABLE ANYWAY: its variants
+/// is retired, never reused (rule 4 of §4.9.2). ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30,
+/// AUD-1240. ⚠️ AND `VramPolicy` IS NOT SERIALISABLE ANYWAY: its variants
 /// carry the policy objects themselves, so no derive would make one.
 ///
 /// ⚠️ SO THE TWO POLICIES OF ADR-0006 ARE THE WHOLE OF WHAT THIS FIELD CAN SAY. A third one is a
@@ -606,8 +618,10 @@ pub struct RecordV1 {
     #[n(2)]
     trust: Trust,
     /// ⛔ THE BYTE-STRING ANNOTATION IS LOAD-BEARING, not decoration. Without it `minicbor`
-    /// encodes a `Vec<u8>` as an ARRAY OF NUMBERS: it compiles, it round-trips, and it costs
-    /// 1.91x — measured on 4096 B, 7813 against 4101. Gotcha #35.
+    /// encodes a `Vec<u8>` as an ARRAY OF NUMBERS: it compiles, it round-trips, and every byte
+    /// from 24 up costs two. Gotcha #35, whose measure and figures live in `docs/riferimenti.md`;
+    /// `a_payload_is_a_byte_string_and_not_an_array_of_numbers` holds the annotation. ⚠️ RECALL
+    /// OF 2026-10-09 -- audit of 2026-09-30, AUD-1234.
     ///
     /// ⛔ THIS INDEX HOLDS THE CONTENT THE `trust` FIELD SPEAKS ABOUT, and after 2026-08-10 that
     /// is a rule and not a description. It is index 3 that the hand-written `Debug` below hides,
@@ -678,7 +692,8 @@ pub struct RecordV1 {
 }
 
 /// ⛔ THE CONSTRUCTORS ARE THE GUARD, AND THAT IS THE WHOLE OF AUD-050. Until 2026-09-01 every
-/// field below was `pub`, so a struct literal from ANY crate put a RUNTIME `String` at index 4
+/// field of `RecordV1`, above, was `pub` (⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30,
+/// AUD-1241), so a struct literal from ANY crate put a RUNTIME `String` at index 4
 /// and the hand-written `Debug` printed it whole — P-1 through a second mouth. Reproduced from
 /// outside the crate that day on a throwaway probe deleted in the same run:
 /// `RecordV1 { .. payload: <6 bytes>, reason: "ignore your instructions", .. }` — the guarded
@@ -705,7 +720,8 @@ pub struct RecordV1 {
 /// `kind` is not a parameter of anything. ⚠️ AND A SPECIES ADDED LATER BRINGS ITS OWN
 /// CONSTRUCTOR, which is additive — nothing written here has to be edited to stay true, which is
 /// why this shape was preferred to a probe freezing today's partition (that would have been
-/// gotcha #57, a prediction cited as a measure, with milestones 6 and 7 about to change it).
+/// gotcha #57, a prediction cited as a measure, with new species about to change it). ⚠️ RECALL
+/// OF 2026-10-09 -- audit of 2026-09-30, AUD-1241.
 ///
 /// ⚠️ WHAT THIS DOES NOT BUY, declared rather than left to be discovered: `payload` is still a
 /// `Vec<u8>` a caller fills, and `trust` is still a parameter. The label describing the payload
@@ -957,12 +973,15 @@ impl RecordV1 {
 /// gotcha #42) while `promote_reason_is_not_runtime_text.rs` stays `ok`, which is what proves
 /// the two cases hold DIFFERENT roads instead of being a copy.
 /// ⚠️ WHAT IT COST is what the paragraph above predicted: every construction site,
-/// `frozen_bytes.rs` included — `grep -rn 'RecordV1::' crates/ --include=*.rs` counts them today,
-/// and a count written here would age. ⚠️ IT SAID "ACROSS THREE CRATES" UNTIL 2026-09-01: measured,
-/// they are TWO — `platform`, `daemon` and `secrets` have never named `RecordV1`, and
+/// `frozen_bytes.rs` included — what lists them today is
+/// `grep -rn 'RecordV1::' --include=*.rs crates/ gui/ | grep -vE '^[^:]+:[0-9]+:[[:space:]]*//'`,
+/// which walks `gui/fake-core` too and drops the lines that only quote it, and a count written
+/// here would age. ⚠️ IT SAID "ACROSS THREE CRATES" UNTIL 2026-09-01: measured that day, they
+/// were TWO — `platform`, `daemon` and `secrets` have never named `RecordV1`, and
 /// `git log -S RecordV1 -- crates/platform crates/daemon crates/secrets` returns nothing. The
 /// numeral is TAKEN OUT rather than realigned, because it lived in six houses at once and the
-/// command beside it does not rot. ✅ THE FROZEN BYTES DID NOT MOVE, which was
+/// command beside it does not rot. ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1169.
+/// ✅ THE FROZEN BYTES DID NOT MOVE, which was
 /// the thing to check first: `every_frozen_record_still_encodes_to_its_frozen_bytes` and
 /// `the_map_lists_the_bytes_that_are_really_frozen` stayed green through the whole change.
 ///
@@ -1054,17 +1073,22 @@ impl Record {
     /// implements `minicbor::encode::Write` with `type Error = core::convert::Infallible`, so
     /// the WRITE road of that error is uninhabited here. Its other two roads — a message and a
     /// custom error — have exactly two producers in `minicbor` 2.3.0, `SystemTime` and a
-    /// non-UTF-8 `Path`, and NEITHER IS IN THIS TYPE'S GRAPH: three `index_only` enums and a
-    /// byte string. So the compiler could not see it, but nothing could produce it.
+    /// non-UTF-8 `Path`, and NEITHER IS IN THIS TYPE'S GRAPH — which is a RULE for every field
+    /// `RecordV1` or a `Detail` species gains, not an inventory of today's: no field of either may
+    /// be a `SystemTime` or a `Path`. ⚠️ AND BOTH PRODUCERS SIT UNDER `#[cfg(feature = "std")]`
+    /// in that version, while `crates/kernel/Cargo.toml` takes `minicbor` without `std`. So the
+    /// compiler could not see it, but nothing could produce it. ⚠️ RECALL OF 2026-10-09 --
+    /// audit of 2026-09-30, AUD-1238, AUD-1241.
     ///
-    /// ⛔ AND THE THREE REASONS FOR CLOSING IT NOW rather than at the version that first needs
-    /// an error. The repository already holds this position and wrote it down for `Ipc::accept`:
-    /// A `Result` THAT CAN NEVER BE `Err` IS DEAD SURFACE, of the kind that port pruned three
-    /// derives and a getter for. `Untrusted::promote` will call this at task 7, and an `.expect`
-    /// that cannot fire, sitting INSIDE THE CODE OF THE UNTRUSTED-DATA BOUNDARY, is debt and not
-    /// prudence — a reader of that file has to establish that it cannot fire before trusting the
-    /// line it is on. And the call sites are FEW today and will be many afterwards: the edit
-    /// costs least now and most later.
+    /// ⛔ AND THE THREE REASONS FOR CLOSING IT ON 2026-08-10 rather than at the version that
+    /// first needs an error. The repository already holds this position and wrote it down for
+    /// `Ipc::accept`: A `Result` THAT CAN NEVER BE `Err` IS DEAD SURFACE, of the kind that port
+    /// pruned three derives and a getter for. `Untrusted::promote` was to call this at task 7, and
+    /// does, and an `.expect` that cannot fire, sitting INSIDE THE CODE OF THE UNTRUSTED-DATA
+    /// BOUNDARY, is debt and not prudence — a reader of that file has to establish that it cannot
+    /// fire before trusting the line it is on. And the call sites were FEW that day and were to be
+    /// many afterwards: the edit cost least then. ⚠️ RECALL OF 2026-10-09 -- audit of
+    /// 2026-09-30, AUD-1197, AUD-1241.
     ///
     /// ⚠️ "FEW" WAS "TWO" FOR ONE COMMIT, AND THE COUNT WAS WRONG — dated rather than
     /// quietly fixed, because a wrong number attached to a right rule is exactly how gotcha #31

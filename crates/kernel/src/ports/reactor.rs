@@ -16,18 +16,23 @@
 //! 2026-09-30, AUD-402. Everything the campaign exercises on this side of the boundary is
 //! therefore the production code, not a rehearsal of it.
 //!
-//! ⚠️ THE TWO CLOCKS LIVE ON THIS PORT, AND THAT DOES NOT CREATE A SEVENTH FAMILY (decision
+//! ⚠️ THE TWO CLOCKS LIVE ON THIS PORT, AND THAT DOES NOT CREATE A FAMILY OF ITS OWN (decision
 //! D2 of the milestone 2 plan). Reading a clock IS I/O, and `reactor` is the port of time
 //! and readiness — §3.1 already assigns it "moves the virtual clock forward". A separate
 //! `clock` family would split one source of virtual time across two ports the simulator
 //! would then have to keep in step, which is more machinery for less determinism.
+//! ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1224, AUD-1229.
 //!
 //! ⛔ Which of the two a caller may read is NOT this port's rule to make, and this comment
-//! does not restate it as though it were. §2.1 — "no kernel decision depends on wall time" —
-//! is held at level 1 by the type separation in `crate::time`, and by the four cases in
-//! `tests/compile_fail/` that guard it in both directions. Those bite at EVERY site where a
-//! `Monotonic` is expected, `wait_until`'s deadline included: handing out both clocks from
-//! one trait adds a call site to a mechanism that is already general, not a hole in it.
+//! does not restate it as though it were. What `crate::time` holds at level 1, with the four
+//! cases in `tests/compile_fail/` that guard it in both directions, is that the two times CANNOT
+//! BE SWAPPED and that no `From`/`Into` road joins them — the two rows `V29 · §2.1` of §7.4.1.
+//! Those bite at EVERY site where a `Monotonic` is expected, `wait_until`'s deadline included:
+//! handing out both clocks from one trait adds a call site to a mechanism that is already
+//! general, not a hole in it. ⚠️ AND THAT IS NARROWER THAN §2.1's "no kernel decision
+//! depends on wall time": a site that holds a `Reactor` can read `wall_time()` and branch on it
+//! — `WallTime` derives `Ord` and `as_millis_since_epoch` is `pub` — and no check looks for it.
+//! ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-759.
 
 use crate::time::{Monotonic, WallTime};
 
@@ -45,9 +50,11 @@ pub trait Reactor {
     ///
     /// ⚠️ THE READER §2.1 NAMES IS THE RECORD — Q14, journal stamps — AND TODAY IT DOES NOT READ
     /// IT. This line said "ONLY the record reads it" in the PRESENT tense until 2026-08-27,
-    /// finding AUD-052: `RecordV1` carries five fields and none of them is a stamp, `WallTime`
-    /// does not appear in `record.rs` at all, and under `crates/*/src/` nothing calls
-    /// `wall_time()`. The sentence described §2.1's DESIGN and read as a guarantee about this
+    /// finding AUD-052: none of `RecordV1`'s fields is a stamp, `WallTime` does not appear in
+    /// `record.rs` at all, and under `crates/*/src/` nothing reads the wall time — the call to
+    /// `wall_time()` there is `SharedClock`, in `crates/daemon/src/main.rs`, forwarding it to the
+    /// `SystemReactor` it wraps (⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1226,
+    /// AUD-1227, AUD-1230). The sentence described §2.1's DESIGN and read as a guarantee about this
     /// file — the same distinction `StepId` and `CheckpointId` already carry, below the very
     /// paragraph of this module that promises not to restate a rule as though it were ours.
     ///
@@ -93,8 +100,8 @@ pub trait Reactor {
     ///   so no implementation could return it, and its only consumer would have been the
     ///   getter's own match arm — an item that exists to support itself. It is the rule that
     ///   already removed `Millis::ZERO`, `Monotonic::as_millis` and a `?Sized` bound here.
-    /// - THE ARGUMENT FOR DECLARING IT EARLY DOES NOT REACH IT. §0.4.3 states what its
-    ///   regola B buys, in its own words: "here one declares WHERE a source enters, not HOW
+    /// - THE ARGUMENT FOR DECLARING IT EARLY DOES NOT REACH IT. §0.4.3 states what its staging
+    ///   rule B (§0.3) buys, in its own words: "here one declares WHERE a source enters, not HOW
     ///   it works … what this section buys is that the day it is built, no new port is born".
     ///   The port had to exist now, and it does. The shape of what the wait returns is the
     ///   "how", which that section excludes outright — adding that the conformance suite
@@ -119,8 +126,9 @@ pub trait Reactor {
     ///
     /// ⚠️ And widening later is cheap BY THE PROJECT'S OWN CRITERION, not by hope: §7.4.5
     /// stages a piece by asking "is it retrofittable?", answering for the confinement token
-    /// that "adding an argument to a signature with zero callers is mechanical — regola B
-    /// does not apply, so C does". This is that case, and what makes it so is a RELATION rather
+    /// that "adding an argument to a signature with zero callers is mechanical — rule B
+    /// does not apply, so C does", the staging rules of §0.3 (⚠️ RECALL OF 2026-10-09 --
+    /// audit of 2026-09-30, AUD-758). This is that case, and what makes it so is a RELATION rather
     /// than a count: EVERY call site and EVERY implementation of `wait_until` lives inside this
     /// REPOSITORY -- in the five members of the root `Cargo.toml`, and in `gui/fake-core`, which
     /// that manifest excludes and `scripts/gate-gui.sh` builds and tests on a lockfile of its own
@@ -138,7 +146,9 @@ pub trait Reactor {
     /// it is the relation that holds however many arrive -- the cure gotcha #68 asks for, and
     /// the one AUD-009 applied to the gate's `cargo` sites. On 2026-08-28, over `crates/` alone,
     /// `grep -rn '\.wait_until(' --include=*.rs crates/ | wc -l` and the same for
-    /// `'impl Reactor for'` answered 12 and 11. The census that sees EVERY site walks `gui/` too,
+    /// `'impl Reactor for'` answered 12 and 11 — BEFORE this paragraph quoted them: rerun, each
+    /// also counts the lines here that quote it (⚠️ RECALL OF 2026-10-09 -- audit of
+    /// 2026-09-30, AUD-1223). The census that sees EVERY site walks `gui/` too,
     /// drops the lines that only quote it, and anchors the impl, generic and path-qualified ones
     /// included:
     /// `grep -rn '\.wait_until(' --include=*.rs crates/ gui/ | grep -vE '^[^:]+:[0-9]+:[[:space:]]*//'`

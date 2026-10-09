@@ -54,12 +54,14 @@
 //! D6, and it is paid knowingly.
 //!
 //! ⚠️ THE TENSE IS PAST AND THE NUMBER IS A MEASUREMENT OF THAT MOMENT, not a description of
-//! today: the operation brought a liar of its own and this file had ELEVEN implementations,
+//! today: the operation brought a liar of its own and this port had ELEVEN implementations,
 //! twelve once `redb` landed at task 8. A cost figure written in the present tense is a figure
 //! that goes quietly wrong the first time the set grows — gotcha #31.
 //!
-//! ✅ TASK 8 LANDED ON 2026-08-10 AND THE TWELFTH IS `platform::journal::FileJournal`, counted
-//! with `grep -rn "impl Journal for"` rather than by adding one to the sentence above. It is the
+//! ✅ TASK 8 LANDED ON 2026-08-10 AND THE TWELFTH IS `platform::journal::FileJournal`. What
+//! counts them is `grep -rnE "^ *impl Journal for" crates/` rather than adding one to the sentence
+//! above -- ANCHORED, because the bare pattern also matches this line, which quotes it
+//! (⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1204). It is the
 //! FIRST implementation outside a test that is not the in-memory double, and what it cost the
 //! port is one item: `StepId::get`, without which no implementation outside `kernel` can write a
 //! step's identity down.
@@ -132,9 +134,18 @@ impl StepId {
 /// implements the port.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum JournalError {
-    /// The write did not reach durable storage.
+    /// The durable store did not answer: a write that did not reach durable storage, or a read
+    /// or a prune it could not serve.
+    ///
+    /// ⛔ A FAILED READ IS THIS AND NOT `Missing`: `Missing` asserts that the step IS NOT THERE,
+    /// which a read that failed cannot know, and reconciliation would take that for an answer and
+    /// let a step in doubt out of the doubt. `platform::journal::FileJournal` answers so from every
+    /// call it makes into its engine, and carries the argument beside them. ⚠️ RECALL OF
+    /// 2026-10-09 -- audit of 2026-09-30, AUD-1198.
     NotDurable,
-    /// The read found nothing under that identity.
+    /// Nothing is recorded under that identity: `read_back` of a step with no record, and `prune`
+    /// of a step nobody wrote or one already pruned -- see `prune`. ⚠️ RECALL OF 2026-10-09 --
+    /// audit of 2026-09-30, AUD-1198.
     Missing,
     /// ⛔ An operation arrived OUT OF ORDER for this step, and there are THREE ways to do that.
     ///
@@ -203,10 +214,13 @@ pub trait Journal {
     /// Appends a NOTE upon a step that is already open. ⛔ IT IS NEITHER OF THE OTHER TWO, and
     /// that is the whole reason it exists rather than being folded into one of them.
     ///
-    /// ⛔ WHY IT ARRIVED ON 2026-08-10, and it is a MEASUREMENT and not a preference. A note has
-    /// one caller — `Untrusted::promote`, which records a crossing of the untrusted boundary
-    /// onto THE CALLER'S STEP, because a promotion touches nothing outside and by ADR-0007 is
-    /// therefore not a step of its own. Both existing operations were tried and both fail:
+    /// ⛔ WHY IT ARRIVED ON 2026-08-10, and it is a MEASUREMENT and not a preference. That day a
+    /// note had one caller — `Untrusted::promote`, which records a crossing of the untrusted
+    /// boundary onto THE CALLER'S STEP, because a promotion touches nothing outside and by
+    /// ADR-0007 is therefore not a step of its own. ⚠️ IT HAS MORE SINCE, and which they are is
+    /// what `grep -rn '\.note(' --include=*.rs crates/kernel/src | grep -vE '^[^:]+:[0-9]+:[[:space:]]*//'`
+    /// prints (⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1197, AUD-1201). Both
+    /// existing operations were tried and both fail:
     ///
     /// - `intent` is REFUSED, because the caller's step already carries one — and even with
     ///   that guard removed, reconciliation reads a second `Intent` record for the step and
@@ -231,13 +245,22 @@ pub trait Journal {
     /// nothing here observable through the port distinguishes an implementation that stores a
     /// note in its own right from one that files it wherever it files outcomes. The port cannot
     /// see an implementation's bookkeeping. What the separate operation buys is that a CALLER
-    /// cannot write a note through `intent` and trip its guard, and that the port's vocabulary
-    /// matches the record's `RecordKind`. The semantics live in the record — see
-    /// `crate::reconcile`, which neither opens nor closes a doubt on a `Note`.
+    /// cannot write a note through `intent` and trip its guard, and that the port's words say what
+    /// a write does to the DOUBT: `intent` opens one, `outcome` closes it, `note` does neither.
+    /// ⛔ THEY ARE NOT THE RECORD'S `RecordKind`: a species that neither opens a doubt nor closes
+    /// one is written through `note` and carries its own `kind`, and the writer keeps the two in
+    /// step (`docs/design/10-modello-dei-dati-durevoli.md`, «Due verità sullo stesso record»).
+    /// ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1200. The semantics live in the
+    /// record — see `crate::reconcile`, which neither opens nor closes a doubt on a `Note`.
     fn note(&mut self, step: StepId, record: &[u8]) -> Result<(), JournalError>;
 
     /// Re-reads on resume. Returns the bytes as they were written: decoding is the
     /// kernel's job, which is what keeps the durable form its property.
+    ///
+    /// ⛔ THE BYTES OF THE STEP'S FIRST RECORD, WHICH IS ITS INTENT -- still the intent once the
+    /// outcome has arrived. Promise 2 of `crates/kernel/tests/journal_contract.rs` holds it on both
+    /// implementations, and says why that record and not the last. ⚠️ RECALL OF 2026-10-09 --
+    /// audit of 2026-09-30, AUD-1198.
     fn read_back(&self, step: StepId) -> Result<Vec<u8>, JournalError>;
 
     /// Re-reads EVERYTHING, in write order, for reconciliation.
@@ -270,6 +293,12 @@ pub trait Journal {
     /// Neither is fully held today, and both are written HERE rather than only beside the two
     /// implementations: this is the one document an implementation is obliged to read, and a
     /// rule stated as an obligation that nothing keeps reads as a promise.
+    ///
+    /// ⚠️ ITS ANSWERS, written here for the same reason: `Missing` for a step with no record --
+    /// one nobody wrote, or one already pruned --, `StepInDoubt` for one still open, `Ok` for one
+    /// reconciled. Both implementations give all of them; the first is held for the in-memory
+    /// double alone, open entry 2 in `docs/porta-di-qualita.md`. ⚠️ RECALL OF 2026-10-09 --
+    /// audit of 2026-09-30, AUD-1198.
     ///
     /// ⛔ RULE ONE — "an absent payload and one that was never recorded must not be
     /// indistinguishable" — IS VIOLATED BY BOTH IMPLEMENTATIONS. Neither replaces anything:

@@ -58,9 +58,11 @@ impl Endpoint {
     }
 }
 
-/// ⚠️ Three variants and no implementation to produce any of them: the "no caller, no item"
-/// rule does not reach an error vocabulary while the port itself is staged. The argument is
-/// written out once, on `FilesystemError`.
+/// ⚠️ Three variants and no implementation outside the benches to produce any of them -- the
+/// bench's fake produces some, which proves the words constructible and not that a real network
+/// produces them: the "no caller, no item" rule does not reach an error vocabulary while the port
+/// itself is staged. The argument is written out once, on `FilesystemError`. ⚠️ RECALL OF
+/// 2026-10-09 -- audit of 2026-09-30, AUD-1218.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NetworkError {
     /// No route, no connection, no answer.
@@ -75,8 +77,10 @@ pub enum NetworkError {
 pub trait Network {
     /// Sends a request and waits for the whole answer.
     ///
-    /// ⚠️ Readiness comes from the `reactor`, as for every other port: nothing waits
-    /// inside `network`. §2.4 stays intact -- no thread in the decision path.
+    /// ⚠️ §2.4's rule is that readiness comes from the `reactor` and nothing waits
+    /// inside `network` -- no thread in the decision path. `ipc` does not follow it today, the
+    /// core polls that port: see `Ipc::accept`. ⚠️ RECALL OF 2026-10-09 -- audit of
+    /// 2026-09-30, AUD-753.
     ///
     /// ⛔ THAT RULE IS TRUE AND THIS SIGNATURE IS BLOCKING, and the two are reconciled by
     /// NOBODY YET: see the declared open question at the top of this module. It is not a

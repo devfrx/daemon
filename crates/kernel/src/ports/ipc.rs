@@ -10,8 +10,10 @@
 //! ⛔ It is already so BY CONSTRUCTION, and §6.1.4 asks in those words for it to be WRITTEN
 //! ANYWAY, SO THAT IT DOES NOT GET ERODED. The shape of the trait is the argument: `send` is
 //! called BY THE CORE, when the core decides; `receive` hands over what the client has already
-//! SAID, which is a request arriving and not a read the client performed; and THERE IS NO
-//! THIRD OPERATION. Nothing here lets a client name a piece of state and ask for its current
+//! SAID, which is a request arriving and not a read the client performed; and the third method,
+//! `accept`, admits a client and carries no message either way, so NO OPERATION READS STATE
+//! (⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1194). Nothing here lets a client
+//! name a piece of state and ask for its current
 //! value, so "the gui refreshes itself" is not expressible -- a gui that wants something asks,
 //! and then waits to be told.
 //!
@@ -106,8 +108,9 @@
 //! that is loudly missing (gotcha #31).
 //!
 //! ⚠️ DATED RECALL, 2026-08-28 -- FINDING AUD-054. That list read "`filesystem`, `network` and
-//! `process`", and `process` is OUT: from `5fceee1` (2026-08-21) its signatures are held by two
-//! benches plus four `compile_fail` cases, so naming it here understated it. ⛔ What is removed
+//! `process`", and `process` is OUT: from `5fceee1` (2026-08-21) its signatures are held by more
+//! benches than this one and by `compile_fail` cases, so naming it here understated it
+//! (⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1195). ⛔ What is removed
 //! is ONE WORD, not the sentence. ⛔ DATED RECALL, 2026-09-02: this went on to say "measured,
 //! `Ipc` has exactly one implementation from outside the crate, and so do `filesystem` and
 //! `network`", and the `ipc` half of that measurement EXPIRED with milestone 6 task 9 -- there
@@ -203,17 +206,25 @@ use alloc::vec::Vec;
 ///   outright. ⛔ A DERIVE THAT ENABLES THE FORBIDDEN THING IS WORSE THAN ONE NOBODY CALLS: it
 ///   makes the violation one keystroke cheaper in `platform`, where `std` is reachable.
 ///
-/// ⛔ AND EVERY DERIVE THAT REMAINS IS ACCOUNTED FOR, three by a red and one by the compiler --
-/// the list is closed on purpose, so that nobody arriving with task 11's pruning lesson finds
-/// one without a reason beside it. `PartialEq`/`Eq` is the mechanism that REPLACES the getter
-/// above, so that argument would have rested on nothing had it not been checked: removed,
-/// `E0369`, `==` cannot be applied. `Copy` -- `E0382`, twenty-three of them over EIGHT
-/// declaration sites. `Debug` -- `E0277`, demanded by the `assert_eq!`s, which is why it stays
-/// here where `Grant` lost it. ⚠️ `Clone` IS NOT A CHOICE AND NEVER WAS: `Copy` requires it
-/// (`trait Copy: Clone`), so it cannot be weighed on its own. Measured rather than asserted --
-/// dropped while `Copy` stays, `kernel` itself fails to build with
-/// `E0277: the trait bound ClientId: Clone is not satisfied`, which is a stronger refusal than
-/// any of the three above: not a test going red, the crate not compiling.
+/// ⛔ AND EVERY DERIVE THAT REMAINS IS ACCOUNTED FOR, three by a red and one by the compiler on
+/// the day they were weighed, 2026-08-10 -- the list is closed on purpose, so that nobody arriving
+/// with task 11's pruning lesson finds one without a reason beside it. `PartialEq`/`Eq` is the
+/// mechanism that REPLACES the getter above, so that argument would have rested on nothing had it
+/// not been checked: removed, `E0369`, `==` cannot be applied. `Copy` -- `E0382`, at the sites
+/// that use a `ClientId` after handing it over. `Debug` -- `E0277`, demanded by the
+/// `assert_eq!`s, which is why it stays here where `Grant` lost it. ⚠️ `Clone` IS NOT A CHOICE
+/// AND NEVER WAS: `Copy` requires it (`trait Copy: Clone`), so it cannot be weighed on its own.
+/// Measured rather than asserted -- dropped while `Copy` stays, `kernel` itself fails to build
+/// with `E0277: the trait bound ClientId: Clone is not satisfied`, which is a stronger refusal
+/// than any of the three above: not a test going red, the crate not compiling.
+/// ⚠️ AND SINCE 2026-09-18 EVERY ONE OF THEM IS THAT STRONGER REFUSAL: `crate::registry::Invoker`
+/// derives the same five over its `Gui(ClientId)`, so dropping any of them stops `kernel`
+/// building -- `Debug` and `Eq` at that derive (`E0277`), `Clone` there too once `Copy` goes with
+/// it (`E0277`), `Copy` there (`E0204`) and in `crate::serving` (`E0507`, `E0382`), `PartialEq`
+/// there and in `crate::client` (`E0369`). Measured on 2026-10-09 with
+/// `cargo check --locked -p kernel`, one derive at a time and `PartialEq` and `Clone` each with
+/// the derive that requires it. `Eq` had no reason of its own beside it until then, and `Invoker`
+/// is it. ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1191.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ClientId(u64);
 
@@ -228,8 +239,9 @@ impl ClientId {
 /// ⛔ BOTH VARIANTS HAVE A PRODUCER, the transport `platform::ipc::LocalSocketIpc`: `Disconnected`
 /// when a peer has gone or was never in its table, `MalformedMessage` when a declared length
 /// passes the cap it is delivered. The note on `FilesystemError`, `NetworkError` and
-/// `ProcessError` -- no implementation, so no variant has a producer -- holds for those ports and
-/// no longer for this one. ⚠️ RECALL OF 2026-10-02 -- audit of 2026-09-30, AUD-078.
+/// `ProcessError` -- no implementation outside the benches, so no variant has a real producer --
+/// holds for those ports and no longer for this one. ⚠️ RECALL OF 2026-10-02 -- audit of
+/// 2026-09-30, AUD-078. ⚠️ RECALL OF 2026-10-09 -- same audit, AUD-1218.
 ///
 /// ⚠️ TWO VARIANTS AND THREE METHODS, so not every word is reachable on every path -- and that
 /// is deliberate rather than sloppy. `MalformedMessage` belongs to `receive`, where bytes
@@ -261,8 +273,14 @@ pub enum IpcError {
 }
 
 pub trait Ipc {
-    /// Accepts a client that is waiting, if there is one. Never blocks: readiness comes
-    /// from the `reactor`, as for every other port.
+    /// Accepts a client that is waiting, if there is one. Never blocks.
+    ///
+    /// ⚠️ §2.4 WANTS READINESS FROM THE `reactor`, AND FOR THIS PORT IT DOES NOT COME FROM THERE
+    /// TODAY: the reactor's readiness has no producer (`Reactor::wait_until` says so), so the core
+    /// POLLS this port on every turn and sleeps a tick in between -- entry 5 of §9 of the
+    /// sub-project 2 design, confirmed as is by the owner on 2026-09-09, with the tick and its
+    /// reason in `crates/daemon/src/main.rs`. ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30,
+    /// AUD-753.
     ///
     /// ⛔ IT RETURNS AN `Option` WHERE THE OTHER TWO RETURN A `Result`, and that asymmetry is
     /// intended. `IpcError::Disconnected` is a statement ABOUT A `ClientId` -- "the one you

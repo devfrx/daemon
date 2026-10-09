@@ -1,9 +1,10 @@
 //! The SEVENTH family of ports: keeping bytes the kernel never opens.
 //!
 //! ⛔ WHY A PORT AND NOT THE JOURNAL, IN ONE PARAGRAPH, because whoever reads this file is
-//! exactly who would ask. The journal keeps "the small part" for ever (ADR-0018): permissions,
-//! policy, approved guides -- SMALL DECISIONS. A panel layout is written dozens of times a day
-//! and would sit there for ever, encrypted and in the backup, and sub-project 15's retention would
+//! exactly who would ask. The journal keeps "the small part" for a LONG, CONFIGURABLE time
+//! (ADR-0018): permissions, policy, approved guides -- SMALL DECISIONS. A panel layout is written
+//! dozens of times a day and would sit there as long as they do, encrypted and in the backup
+//! (⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-751), and sub-project 15's retention would
 //! owe it an exception written just for it (⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30,
 //! AUD-563). ADR-0022 had already decided that "configuration"
 //! is an archive of its own; THIS PORT IS THAT ARCHIVE, in its smallest form. The full argument
@@ -31,14 +32,17 @@ use alloc::vec::Vec;
 /// namespace is the configuration system this port is deliberately not. A second thing to keep
 /// is a VARIANT, added deliberately, which is the same shape ADR-0031 asks of a dependency.
 ///
-/// ⚠️ THREE OF THESE FIVE DERIVES ARE NOT HELD BY THE BENCH, AND IT IS DECLARED HERE RATHER
-/// THAN LEFT IMPLICIT. Measured on 2026-09-17 by removing ONE derive at a time and rerunning
-/// `cargo test --locked -p kernel --test ports_are_implementable`: only `Copy` fails from the
-/// bench (`E0382` -- the key is held in a variable and passed BY VALUE to both operations).
-/// `Clone` and `PartialEq` fail from THIS FILE, because they are what `Copy` and `Eq` require,
-/// and `Debug` and `Eq` leave the bench GREEN. ⛔ THE ONE-AT-A-TIME SWEEP CANNOT TELL "the bench
-/// needs it" FROM "another derive needs it": WHERE the error lands is the answer, and a line
-/// number in this file means the latter. ⛔ THEY ALL STAY BECAUSE THEY ARE A CONTRACT, promised
+/// ⚠️ TWO OF THESE FIVE DERIVES ARE NOT HELD BY THE BENCH -- `Debug` and `Eq` --, AND IT IS
+/// DECLARED HERE RATHER THAN LEFT IMPLICIT. Measured on 2026-09-17 by removing ONE derive at a
+/// time and rerunning `cargo test --locked -p kernel --test ports_are_implementable`: only `Copy`
+/// fails from the bench (`E0382` -- the key is held in a variable and passed BY VALUE to both
+/// operations). `Clone` and `PartialEq` fail from THIS FILE, because they are what `Copy` and `Eq`
+/// require, and `Debug` and `Eq` leave the bench GREEN. ⛔ THE ONE-AT-A-TIME SWEEP CANNOT TELL
+/// "the bench needs it" FROM "another derive needs it": WHERE the error lands is the answer, and
+/// a line number in this file means the latter. So the two it could not settle are settled by
+/// READING the bench: `Clone` is held through `Copy`, which the bench exercises, and `PartialEq`
+/// directly -- its fake compares keys with `==` and `!=`. ⚠️ RECALL OF 2026-10-09 -- audit of
+/// 2026-09-30, AUD-1189. ⛔ THEY ALL STAY BECAUSE THEY ARE A CONTRACT, promised
 /// by name to tasks 5, 7, 9, 10 and 12, and that is the difference from `ipc`, where three
 /// derives came OFF on the evidence that nobody had promised them. ⚠️ NO TRIGGER IS NAMED, and
 /// that too is deliberate: task 5's conformance suite compares with `assert_eq!`, which is
@@ -57,11 +61,14 @@ pub enum CustodyKey {
 /// back the old package. Both fail: the archive is unavailable, and the activity says so
 /// (decision 35 of the sub-project 2 design). Written here so the consumer does not rediscover it.
 ///
-/// ⚠️ THE SAME THREE-OF-FIVE HOLDS HERE, WITH A DIFFERENT THREE, and it is spelled out rather
-/// than referred because a reader who lands on this enum alone would otherwise carry over the
-/// neighbour's list, which is NOT the same list. Measured the same way on the same day: `Debug`
-/// fails from the bench, because `assert_eq!` formats this type when it reports; `Clone` and
-/// `PartialEq` fail from THIS FILE; and `Copy` and `Eq` leave the bench GREEN.
+/// ⚠️ HERE THREE OF THE FIVE ARE NOT HELD BY THE BENCH -- `Copy`, `Clone` and `Eq` --, NOT THE
+/// NEIGHBOUR'S TWO, and it is spelled out rather than referred because a reader who lands on this
+/// enum alone would otherwise carry over the neighbour's list, which is NOT the same list.
+/// Measured the same way on the same day: `Debug` fails from the bench, because `assert_eq!`
+/// formats this type when it reports; `Clone` and `PartialEq` fail from THIS FILE; and `Copy`
+/// and `Eq` leave the bench GREEN. Read the same way: `PartialEq` is held by the same
+/// `assert_eq!`s, and `Clone`, in this bench, by nothing but `Copy`. ⚠️ RECALL OF 2026-10-09 --
+/// audit of 2026-09-30, AUD-1189.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CustodyError {
     /// The archive could not be reached -- it would not open, or the write did not land.

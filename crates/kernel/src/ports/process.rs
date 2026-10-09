@@ -28,18 +28,21 @@
 //!
 //! # What milestone 2 builds, and what it does not
 //!
-//! The trait and its types. NOT the implementation (milestone 6), NOT the wire format
-//! (§6.10.3: `minicbor`, the port exchanges BYTES, every frame declares its own length
-//! and decoding checks the bytes consumed), and NOT the negative tests of §6.10.5 rows
-//! 1-4: a row proved in one direction only is not admissible (§7.1.1 rule 3).
+//! The trait and its types. NOT the implementation (staged: the first real worker process,
+//! §0.2), NOT the wire format (§6.10.3: `minicbor`, the port exchanges BYTES, every frame
+//! declares its own length and decoding checks the bytes consumed), and NOT the negative tests
+//! of §6.10.5 rows 1-4: a row proved in one direction only is not admissible (§7.1.1 rule 3).
+//! ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1209, AUD-1222.
 //!
 //! ⛔ RECALL OF 2026-08-21, AUDIT FINDING P-2. The reason this paragraph gave for staging
 //! them -- "all four need to OBTAIN a `Worker`, a `Worker` comes only from
 //! `start(grant,..)`, and no arbiter issues grants until milestone 5" -- was FALSE, and it
-//! is TAKEN OUT rather than reworded. A `Worker` comes from IMPLEMENTING THIS TRAIT, with
-//! no grant anywhere: measured from outside the crate, and `tests/ports_are_implementable.rs`
-//! has done it since milestone 2. The verbal and both measurements live in
-//! `docs/porta-di-qualita.md`.
+//! is TAKEN OUT rather than reworded. A `Worker` comes from IMPLEMENTING THIS TRAIT, not only
+//! from `start`: measured from outside the crate, and `tests/ports_are_implementable.rs` has done
+//! it since milestone 2. The verbal and both measurements live in `docs/porta-di-qualita.md`.
+//! ⚠️ AND SINCE 2026-08-30 AN IMPLEMENTATION THAT HONOURS `kill` HOLDS A GRANT: `Killed` hands
+//! one back and `Grant` has no public constructor, so writing one costs a real admission -- the
+//! benches say so beside their fakes. ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1219.
 //!
 //! ⛔ AND A SECOND RECALL, 2026-08-21, MILESTONE 5 TASK 11: the STATE that sentence still
 //! carried -- "so they are registered as not-yet-covered" -- IS TAKEN OUT TOO, and not
@@ -56,7 +59,8 @@
 //! PATH the other bench never touches. And the `tests/compile_fail/` cases hold the TOKEN
 //! SHAPES at level 1, where no test can reach. ⛔ None of the three buys that these are the
 //! RIGHT signatures, and none is the conformance suite, which needs two implementations to
-//! compare and is born with the real worker channel in milestone 6.
+//! compare and is born with the real worker channel: its trigger is the `process` row of §8.2.2
+//! of the spec. ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-757, AUD-1209, AUD-1222.
 //!
 //! ⛔ DATED RECALL, 2026-08-28 -- FINDING AUD-054. The paragraph above read "IS ONE TEST, the
 //! same one that holds `filesystem` and `network`". True when written, false from `5fceee1`
@@ -67,7 +71,10 @@
 //! and `ports/mod.rs` -- and `CLAUDE.md` says a figure kept in more than one house is REMOVED,
 //! not re-corrected. `grep -rn 'impl Worker for' crates/` names the benches, and a count
 //! written here would age again. ⚠️ For `filesystem` and `network` the old sentence is still
-//! TRUE, measured: each has exactly ONE implementation from outside the crate.
+//! TRUE: what implements them is what
+//! `grep -rnE '^ *impl(<[^>]*>)? *([A-Za-z_]+::)*(Filesystem|Network) for' --include=*.rs crates/ gui/`
+//! prints, and on 2026-10-09 that is the one fake of each in `tests/ports_are_implementable.rs`.
+//! ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1221.
 //!
 //! ⛔ DATED RECALL, 2026-08-31 -- MILESTONE 6 TASK 3. "NOT the wire format" was TWO claims
 //! inside one clause: a statement about MILESTONE 2, still true, and a description of
@@ -121,8 +128,10 @@ impl WorkerDescriptor {
 ///
 /// ⚠️ NO `Clone`, same argument as `WorkerDescriptor` and written once there. Every frame
 /// crosses the port BY VALUE. ⛔ The tempting objection is I5 -- retries live in the core,
-/// and a retry would resend a frame -- and it does not hold: that caller arrives in
-/// milestone 6, and until then the derive would be kept alive by an intention. The fake in
+/// and a retry would resend a frame -- and it does not hold: that caller does not exist, and
+/// none can before the first real worker process (§0.2) gives a frame somewhere to go, so until
+/// then the derive would be kept alive by an intention (⚠️ RECALL OF 2026-10-09 -- audit of
+/// 2026-09-30, AUD-1217). The fake in
 /// `tests/ports_are_implementable.rs` is the instrument this repository gave itself for
 /// exactly that question, and it never clones one.
 #[derive(Debug, PartialEq, Eq)]
@@ -150,8 +159,9 @@ impl SingleReceipt {
     /// ⛔ WITHOUT THIS THE PORT IS NOT IMPLEMENTABLE, and the plan did not have it. It is
     /// gotcha #46 in its worse form: not "I cannot read a field" but "I CANNOT PRODUCE THE
     /// RETURN VALUE". `instruct_one` must HAND BACK a `SingleReceipt`, whoever implements
-    /// `Worker` is `platform` (milestone 6), and the privacy of a struct field is
-    /// MODULE-scoped -- so from outside `kernel` the value could not be built at all.
+    /// `Worker` is `platform`, with the first real worker process (§0.2), and the privacy of a
+    /// struct field is MODULE-scoped -- so from outside `kernel` the value could not be built at
+    /// all. ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1209, AUD-1222.
     /// Measured, not deduced: `SingleReceipt::new` absent, the fake in
     /// `tests/ports_are_implementable.rs` failed with `E0599`.
     ///
@@ -162,8 +172,9 @@ impl SingleReceipt {
     ///
     /// ⛔ THE DECLARED LIMIT THIS COSTS, and it is the most important one in the file
     /// because it is the one a reader would otherwise assume he had been given. `new` is
-    /// `pub` because `Worker` is implemented OUTSIDE this crate -- `platform`, milestone 6
-    /// -- and Rust has no visibility narrower than `pub` that still reaches another crate.
+    /// `pub` because `Worker` is implemented OUTSIDE this crate -- `platform`, with the first
+    /// real worker process -- and Rust has no visibility narrower than `pub` that still reaches
+    /// another crate (⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1209, AUD-1222).
     /// So "a receipt implies an instruction", the sentence §6.10.1 rests the whole port on,
     /// IS NOT A GUARANTEE OF THE COMPILER: anyone can mint `SingleReceipt::new(7)` and hand
     /// it to a reader. ⛔ WHAT ENFORCES IT IS THE IMPLEMENTATION, AT RUNTIME, by answering
@@ -234,9 +245,11 @@ impl StreamReceipt {
 ///
 /// ⚠️ THE "NO CALLER, NO ITEM" RULE DOES NOT REACH THESE VARIANTS, the same note that sits
 /// on `FilesystemError` and `NetworkError` and for the same reason: the port has no
-/// implementation at all, so NO variant has a producer, and applying the rule on that
-/// basis would empty the enum instead of pruning it. Each of the four is a failure a real
-/// worker channel really has.
+/// implementation outside the benches, so NO variant has a REAL producer -- the doubles produce
+/// them, which proves the words constructible and not that a real worker channel produces them,
+/// as the recall below says of `StartFailed` -- and applying the rule on that basis would empty
+/// the enum instead of pruning it. Each of the four is a failure a real worker channel really
+/// has. ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1218.
 ///
 /// ⛔ RECALL OF 2026-08-27, finding AUD-051 — THIS SAID `StartFailed` "is the one with neither
 /// producer NOR test" and that it "becomes reachable the day `start` becomes callable --
@@ -308,7 +321,11 @@ pub struct Killed {
     pub outcome: Result<(), ProcessError>,
 }
 
-/// The handle of a live worker. Obtained ONLY from `Process::start`.
+/// The handle of a live worker, which is what `Process::start` returns. ⚠️ HOLDING ONE DOES
+/// NOT PROVE THAT A `start` HAPPENED: this trait is implementable from outside the crate, and the
+/// benches build one with no `start` at all (the P-2 recall at the head of this module). What the
+/// compiler guarantees is `start`'s: it takes a `Grant`. ⚠️ RECALL OF 2026-10-09 -- audit of
+/// 2026-09-30, AUD-1220.
 pub trait Worker {
     /// An instruction expecting one answer.
     fn instruct_one(&mut self, frame: Frame) -> Result<SingleReceipt, ProcessError>;

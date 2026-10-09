@@ -24,7 +24,7 @@
 //! |--------------|-------------|------------------------------------------|
 //! | `reactor`    | §2.4        | milestone 2 — the executor needs it now  |
 //! | `journal`    | §4          | milestone 3                              |
-//! | `filesystem` | §4          | staged (§0.4)                            |
+//! | `filesystem` | ADR-0024    | staged (§0.4)                            |
 //! | `process`    | §5.6, §6.10 | milestone 6 (the port) · staged: the first real worker process (§0.2) |
 //! | `ipc`        | §6.1        | milestone 6 (the port) · sub-project 2, task 2 (`platform::ipc::LocalSocketIpc`, the real transport) |
 //! | `network`    | §2.3.1      | staged — the single exit point           |
@@ -32,16 +32,23 @@
 //!
 //! ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-549: the `process` row says that
 //! milestone 6 brought the port and not its real implementation, which `platform` does not have.
+//! ⚠️ RECALL OF 2026-10-09 -- same audit, AUD-1206: §4 of the spec is the journal and does not
+//! describe the `filesystem` port; ADR-0024 carries its decision.
 //!
 //! ⛔ THE TABLE IS THE DESIGN, NOT AN INVENTORY OF FILES — and with task 12 the two finally
-//! COINCIDE: this module declares SEVEN submodules, one per row. Two of them have a caller —
-//! `reactor`, which the executor needs, and `journal`, which the promotion of
-//! `crate::boundary` demands as an argument. The other FIVE — `filesystem`, `network`,
-//! `process`, `ipc` and `custody` — have NO CALLER AT ALL and are here for the reason above.
+//! COINCIDE: this module declares SEVEN submodules, one per row. On 2026-09-17 two of them had a
+//! caller — `reactor`, which the executor needs, and `journal`, which the promotion of
+//! `crate::boundary` demands as an argument — and the other FIVE — `filesystem`, `network`,
+//! `process`, `ipc` and `custody` — had NO CALLER AT ALL and were here for the reason above.
+//! WHICH HAVE ONE TODAY IS SAID AT THE END OF THIS PARAGRAPH, BY THE RECALL OF 2026-10-03
+//! (AUD-549), and not by this sentence: the partition moves with every sub-project that brings a
+//! caller. ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1210, AUD-1212, AUD-1214.
 //! ⚠️ DATED RECALL, 2026-09-17, sub-project 2 task 2: `ipc` HAS ITS REAL IMPLEMENTATION NOW --
 //! `platform::ipc::LocalSocketIpc` -- and its first caller arrives with task 7 (`kernel::serving`),
 //! so the FOUR above are THREE from there on. The figure in the sentence is dated here and NOT
-//! realigned (gotcha #31): the command that counts is `grep -rnE "^ *impl Ipc for" crates/`.
+//! realigned (gotcha #31). `grep -rnE "^ *impl Ipc for" crates/` lists who IMPLEMENTS `ipc`
+//! and does not count it: having a caller is not something a plain `grep` sees. ⚠️ RECALL OF
+//! 2026-10-09 -- audit of 2026-09-30, AUD-1213.
 //! ⚠️ DATED RECALL, 2026-09-17, sub-project 2 task 4: THE BASE WENT FROM FOUR TO FIVE, and the
 //! subtraction above is UNTOUCHED because it is still right. `custody` joined the submodules with
 //! no caller, so the partition here reads TWO PLUS FIVE and the list had to NAME it: the command
@@ -63,10 +70,11 @@
 //! added later stops being a discrepancy anyone can see, which is gotcha #17 arriving by the
 //! back door.
 //!
-//! ⚠️ A TRAIT NOBODY IMPLEMENTS IS NOT A TRAIT PROVED IMPLEMENTABLE. The five declared
-//! without a caller are held by `tests/ports_are_implementable.rs` — SIX fakes, because
+//! ⚠️ A TRAIT NOBODY IMPLEMENTS IS NOT A TRAIT PROVED IMPLEMENTABLE. The five that had no caller
+//! when they were declared are held by `tests/ports_are_implementable.rs` — SIX fakes, because
 //! `process` needs two of them (`Worker` and `Process`), and calls that exercise each in both
-//! directions. It buys that the signatures compile FROM OUTSIDE THE CRATE and can be called;
+//! directions (⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1214). It buys that the
+//! signatures compile FROM OUTSIDE THE CRATE and can be called;
 //! it does not buy that they are the right signatures, and it is not a conformance suite, which
 //! holds an implementation to the contract's promises -- the real one and the double where both
 //! exist, the real transport ONLY for `ipc` (D82, `crates/kernel/tests/contract/ipc.rs`).
@@ -76,7 +84,8 @@
 //! kept for it; what was false is reading the sentence as the whole account for `process`,
 //! which since `5fceee1` (2026-08-21) is ALSO held by `tests/worker_tokens.rs` — where `start`
 //! is driven with a `Grant` the arbiter really issued, a path this bench never walks — and by
-//! four `tests/compile_fail/` cases at level 1. ⛔ THE COUNT IS NOT EXTENDED HERE, and that is
+//! `tests/compile_fail/` cases at level 1 (⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30,
+//! AUD-1195). ⛔ THE COUNT IS NOT EXTENDED HERE, and that is
 //! the point: extending it would give the figure a second house and it would rot in the one
 //! nobody moves. `ports/process.rs` carries the reckoning for that family; this paragraph
 //! keeps only what it measured, which is this one file.

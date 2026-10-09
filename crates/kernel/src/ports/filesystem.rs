@@ -1,4 +1,7 @@
-//! The `filesystem` port: checkpoint scopes and artefacts (§4, ADR-0024).
+//! The `filesystem` port: checkpoint scopes and artefacts (ADR-0024).
+//!
+//! ⚠️ §4 OF THE SPEC IS THE JOURNAL AND DOES NOT DESCRIBE THIS PORT: the decision it carries
+//! is ADR-0024's. ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1206.
 //!
 //! A WORKING SCOPE is an explicitly declared set of paths; the checkpoint covers those
 //! and nothing else. Before an effect touches a file inside a scope, the previous
@@ -99,9 +102,12 @@ impl CheckpointId {
 /// ⚠️ THE "NO CALLER, NO ITEM" RULE DOES NOT REACH THESE VARIANTS, and saying so is cheaper
 /// than someone re-deriving it, because it looks like the rule that removed the `Wakeup` enum
 /// from `reactor`. There the variant `EventReady` had NO POSSIBLE PRODUCER -- nothing in this
-/// milestone generates external events. Here NO variant has a producer, for the plain reason
-/// that the port has no implementation at all: applying the rule on that basis would empty the
-/// enum instead of pruning it. Each of the three is a failure a real store really has.
+/// milestone generates external events. Here NO variant has a REAL producer, for the plain
+/// reason that the port has no implementation outside the benches -- the bench's fake produces
+/// some of them, which proves the words constructible and not that a real store produces them:
+/// applying the rule on that basis would empty the enum instead of pruning it. Each of the three
+/// is a failure a real store really has. ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30,
+/// AUD-1218.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FilesystemError {
     /// The path is outside every declared working scope. Fail-closed: a checkpoint that
@@ -119,6 +125,13 @@ pub trait Filesystem {
 
     /// Preserves the current version of `path` before an effect touches it, and ties it
     /// to the journal step that is about to act.
+    ///
+    /// ⛔ A PATH INSIDE A SCOPE WITH NO FILE UNDER IT IS PRESERVED TOO, AS AN ABSENCE, and it is
+    /// not `Missing`. That is ADR-0024's decision 2 read against this port: restoring brings the
+    /// scope back to the state before the step, so a file the step CREATED has to be gone
+    /// afterwards -- and with no delete among these operations, only the handle `preserve` hands
+    /// out can carry "there was no file here before" to `restore`, which `CheckpointId` already
+    /// allows for. ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1190.
     fn preserve(&mut self, step: StepId, path: &Path) -> Result<CheckpointId, FilesystemError>;
 
     /// Puts a preserved version back.

@@ -30,9 +30,11 @@
 //! ⛔ And it is the second and not the first, which was MEASURED: with that impl present the
 //! rule A case stays `ok` — its output still matches its oracle exactly — so on I6 the direct
 //! case is what stands between a conversion and a green gate. Measured a second time from the
-//! other end: with that impl present AND the direct case removed, ALL SIX checks of the gate
-//! come out green. The measurement, and why this pair behaves differently from the two times
-//! of §2.1, is written in the two cases.
+//! other end, on 2026-08-09: with that impl present AND the direct case removed,
+//! `bash scripts/gate.sh` came out green, every check it ran that day. The measurement and its
+//! command live in `docs/riferimenti.md`, and why this pair behaves differently from the two
+//! times of §2.1 is written in the two cases. ⚠️ RECALL OF 2026-10-09 -- audit of
+//! 2026-09-30, AUD-1169.
 //!
 //! ⛔ AND EACH RULE HAS ONE CASE HERE, WHERE THE TWO TIMES OF §2.1 HAVE TWO. It is an
 //! asymmetry, not an omission, and the reason is written in the case itself: only one of the
@@ -57,15 +59,16 @@
 //!
 //! ⚠️ RECALL OF 2026-08-21 — THE COUNTS ARE GONE FROM THIS FILE AND NOT REALIGNED. This
 //! paragraph said "eight promises and eight liars", and road A6 below said "the same eight
-//! promises": they are NINE and TWELVE, and have been since 2026-08-17. A figure that lives
-//! in more than one file goes stale in the copy nobody moves, so it is REMOVED here and left
-//! where it is recounted — `tests/journal_contract.rs`, which counts its own tests with a
-//! `grep` instead of bumping a number. `CLAUDE.md`'s rule, and gotcha #68.
+//! promises": both counts had already moved by 2026-08-17. A figure that lives in more than
+//! one file goes stale in the copy nobody moves, so it is REMOVED here and left where it is
+//! recounted — `tests/journal_contract.rs`, which counts its own tests with a `grep` instead of
+//! bumping a number. `CLAUDE.md`'s rule, and gotcha #68.
 //! ⛔ AND THIS RECALL WAS ITSELF FALSE UNTIL 2026-08-28, finding AUD-049: a THIRD count sat
-//! nine lines above it — "two deliberate liars" of `tests/reactor_contract.rs`, which has had
-//! SEVEN of them since 2026-08-18 — so "the counts are gone from this file" was written with
+//! nine lines above it — "two deliberate liars" of `tests/reactor_contract.rs`, which had
+//! already had more since 2026-08-18 — so "the counts are gone from this file" was written with
 //! one still standing, on the very line the same pass was editing. Removed too, and left
-//! where that suite recounts its own liars.
+//! where that suite recounts its own liars. ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30,
+//! AUD-1167, AUD-1169: the counts of both suites live in the suites alone.
 
 use core::fmt;
 
@@ -126,12 +129,14 @@ impl Untrusted {
         Untrusted(raw)
     }
 
-    /// ⚠️ NO PRODUCTION CALLER TODAY — only assertions use it, and that is recorded so a YAGNI
-    /// pass does not remove it without knowing what it is doing. It stays because reading
-    /// external content is what the system is FOR: the day a capability puts a fetched page
-    /// into a prompt AS DATA, it reads it through here. ⛔ And removing it would close road
-    /// A1/A2 of the residual below by accident rather than by decision — a road that shuts
-    /// itself when an unrelated cleanup runs is not a closed road, it is a coincidence.
+    /// ⚠️ ITS CALLER IN SOURCE IS `crate::sensor::run_the_ring`, which copies a verdict's
+    /// untrusted detail into the `payload` of the records it writes, under `Trust::Untrusted` —
+    /// external content read AS DATA, which is what the system is FOR and what this method exists
+    /// for: the day a capability puts a fetched page into a prompt as data, it reads it through
+    /// here too. Written down so a YAGNI pass knows what it would be removing. ⛔ And removing
+    /// it would close road A1/A2 of the residual below by accident rather than by decision — a
+    /// road that shuts itself when an unrelated cleanup runs is not a closed road, it is a
+    /// coincidence. ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1168, AUD-1170.
     pub fn as_str(&self) -> &str {
         &self.0
     }
@@ -196,15 +201,26 @@ impl Untrusted {
     ///
     /// ⛔ The roads that COMPILE, with the price of closing each, which is the part worth
     /// knowing. ⚠️ The heading used to read "what is NOT covered", and it stopped being the
-    /// truth as soon as entries started closing: **three of the seven are closed** — A3 at level
-    /// 1, A4 and A6 at level 2 — and a heading that called them uncovered would mislead in the
-    /// one direction nobody checks. Each entry says its own state.
+    /// truth as soon as entries started closing: **three of the seven are closed** — A4 and A6
+    /// at level 2, and A3 at both: its first mouth, `{:?}`, by the hand-written `Debug` that
+    /// `the_debug_of_untrusted_does_not_print_the_content` holds, which is level 2 because a
+    /// derive put back still compiles, and its second and third, the `reason` of `promote` and of
+    /// `RecordV1`, by `&'static str` at level 1 — and a heading that called them uncovered would
+    /// mislead in the one direction nobody checks. Each entry says its own state. ⚠️ RECALL OF
+    /// 2026-10-09 -- audit of 2026-09-30, AUD-742.
     ///
     /// ⚠️ COUNTED ON THE ENTRIES BELOW AND NOT DEDUCED, because this line has already been wrong
     /// once: there are SIX entries and SEVEN roads, since A1/A2 is two. Closed: A3, A4, A6.
     /// Open: A1, A2, A5, A7 — FOUR, and every one of them is an entry that declares itself NOT
     /// CLOSABLE. That last sentence is new on 2026-08-10 and is the real change: what remains is
     /// no longer a backlog, it is the declared floor.
+    /// ⛔ AND A CLOSED ENTRY IS NOT A ROAD WITH NOTHING LEFT ON IT: A3 and A4 each name, inside
+    /// their own entry, what stays open beside the road they shut — on A3 `String::leak`, the lying
+    /// literal, and `Record::decode`, which reaches index 4 and every text field of every
+    /// `Detail`; on A4 whatever is handed to the port as raw bytes rather than as a `Record` — and
+    /// each of those is declared rather than closed, held by review as A5 and A7 are. So the floor
+    /// is the four open entries AND those residues, and a reader who counts the four alone reads it
+    /// lower than it is. ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1173.
     ///
     /// - **A1/A2 — `Instruction::new(untrusted.as_str().into())`.** Reaches the instruction
     ///   channel with the journal never hearing of it. NOT closable here: making
@@ -267,9 +283,10 @@ impl Untrusted {
     ///   while the old stays `ok`, which is what proves the two hold different roads.
     ///   ⚠️ **What it cost is what the recall predicted:** every construction site,
     ///   `frozen_bytes.rs` included — and the frozen bytes did NOT move, checked first.
-    ///   ⚠️ **It said "across three crates" until 2026-09-01, and they are TWO** — the numeral is
-    ///   taken out and not realigned, on the precedent of AUD-018 and AUD-060: it lived in six
-    ///   houses, and the measure with its command lives in `porta-di-qualita.md`, in one.
+    ///   ⚠️ **It said "across three crates" until 2026-09-01, and that day they were TWO** — the
+    ///   numeral is taken out and not realigned, on the precedent of AUD-018 and AUD-060: it lived
+    ///   in six houses, and the measure with its command lives in `porta-di-qualita.md`, in one.
+    ///   ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1169.
     ///   ⛔ **And what stays open on A3 is written, so the floor is not read as flat:**
     ///   `String::leak` and the lying literal, above. Those are deliberate acts; this one was not.
     ///   ⛔ **And a THIRD, which takes no deliberate act at all — added 2026-09-01, measured:**
@@ -345,9 +362,11 @@ impl Untrusted {
     /// ⚠️ A4 and A6 are the counter-examples that prove the shape of the answer rather than
     /// breaking it: both were closed at **level 2**, by things that run rather than by the
     /// compiler — a whole conformance suite for one, a field in the durable format for the
-    /// other. ⛔ THE REMAINING FOUR — A1, A2, A5, A7 — ARE NOT A BACKLOG: each of their entries
-    /// declares itself not closable, so what is left is the floor and not the unfinished part.
+    /// other. ⛔ THE REMAINING FOUR — A1, A2, A5, A7 — AND WHAT A3 AND A4 DECLARE OPEN BESIDE
+    /// THEIR CLOSURE ARE NOT A BACKLOG: the four declare themselves not closable and the residues
+    /// are declared rather than closed, so what is left is the floor and not the unfinished part.
     /// What holds them is review. The guard covers the roads that exist; it is not total.
+    /// ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1173.
     pub fn promote<J: Journal>(
         self,
         journal: &mut J,

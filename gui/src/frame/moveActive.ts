@@ -6,7 +6,9 @@ export type Moved = "moved" | "split" | "none";
 
 /**
  * Move 6 of SP-8: the active tile goes into the nearest group in that direction; with no
- * neighbour there, it splits its own group on that side.
+ * neighbour there, it splits its own group on that side if the group holds another tile, and a
+ * tile alone in its group -- as every group of the views that ship -- stays where it is (AUD-721
+ * and AUD-2232 of the audit of 2026-09-30).
  *
  * ⛔ GEOMETRY, NOT `dockview`'S NAVIGATION API: it is what a keyboard user SEES, and the library's
  * spatial navigation is a paid feature (§4 of the north star). Locked groups -- the nucleus, the

@@ -7,7 +7,8 @@ import home from "./home.json";
 import work from "./work.json";
 
 /**
- * The three views that ship with the app (decision 11 of the north star): they stay in `gui/`
+ * The three views that ship with the app (the coordinator's decision 11 of the north star, in its table «Decisioni prese
+ * dal coordinatore»; the owner's table numbers a decision 11 of its own, AUD-2070 of the audit of 2026-09-30): they stay in `gui/`
  * and are NOT copied into the archive at first run -- copied, an update that improves a view
  * would never reach anyone who had not touched it.
  *
@@ -17,7 +18,8 @@ import work from "./work.json";
  * `TS2322`. What the assertion catches is a GROSS mismatch (`TS2352` when a field changes type or
  * goes missing), not a field-by-field comparison: `panels` removed outright, or an unknown key,
  * passes. The check that the committed files are views the frame can build is the first probe of
- * `frame.test.ts` -- every `component` known to the registry, and no view without panels.
+ * `frame.test.ts` -- every `component` known to the registry, and no view without panels -- and that
+ * they are what their writer would write, the registry's `params` included, `generate-views.test.ts`.
  */
 export const VIEWS: Readonly<Record<ViewName, SerializedDockview>> = {
   home: home as SerializedDockview,

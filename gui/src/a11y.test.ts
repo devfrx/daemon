@@ -21,22 +21,41 @@ import { useConnection } from "./stores/connection";
 import { useCore } from "./stores/core";
 import { useDrawer } from "./stores/drawer";
 import { useInvoke } from "./stores/invoke";
+import { useLayout } from "./stores/layout";
 import { useStream } from "./stores/stream";
 import { violations } from "./testing/axe";
-import { createFakeBridge } from "./transport/fakeBridge";
+import { createFakeBridge, type FakeBridge } from "./transport/fakeBridge";
 
-/** Fills the stores the way a welcome does, so every component has something to draw. */
-function welcome(): void {
+/**
+ * The welcome as the core sends it -- `greet` in `crates/kernel/src/serving.rs`, in the order sequence 1 of the north star
+ * fixes -- handed to the five stores as `main.ts` hands every message.
+ *
+ * ⛔ A WELCOME AND NOT THE CANONICAL SET (AUD-2188 of the audit of 2026-09-30): `deliverAll` hands over every fixture, the two
+ * branches of sequence 1 among them -- `StaleBuild` after `Accepted` -- and left the bar's chip `stale`, which no welcome
+ * gives, and a permission waiting on no call of ours. What follows a welcome in a session is each probe's own, below.
+ */
+function welcome(): FakeBridge {
   const bridge = createFakeBridge();
   const connection = useConnection();
   const core = useCore();
+  const layout = useLayout();
+  const invoke = useInvoke();
   const stream = useStream();
   bridge.listen((message) => {
     connection.receive(message);
     core.receive(message);
+    layout.receive(message);
+    invoke.receive(message);
     stream.receive(message);
   });
-  bridge.deliverAll();
+  for (const kind of ["Accepted", "Degradation", "Policy", "Layout", "Steps"] as const) bridge.deliver(kind);
+  return bridge;
+}
+
+/** A call of ours, and the core's question about it: what opens the confirmation window, and what Permessi shows waiting. */
+function asked(bridge: FakeBridge): void {
+  useInvoke().send({ function: VRAM_POLICY.name, argument: VRAM_POLICY.argument.local });
+  bridge.deliver("PermissionRequired");
 }
 
 async function mounted(component: Component, props: Record<string, unknown> = {}): Promise<{ element: Element; unmount: () => void }> {
@@ -68,24 +87,35 @@ describe("the probe itself", () => {
 describe("the SPA, with the welcome delivered", () => {
   // The bar holds the overview's trigger, which saves the layout on screen: a snapshot of Home stands for the dock.
   const bar = { snapshot: () => VIEWS.home, overview: false };
-  const modules: [string, Component, Record<string, unknown>?][] = [
-    ["Stato", Status],
-    ["Permessi", Permissions],
-    ["Passi", Steps],
-    ["Impostazioni", Settings],
-    ["Chat", Chat],
-    ["la striscia", Strip],
-    ["la barra", ViewBar, bar],
+  /** Each module after the welcome, with what follows it in a session where the module draws that: a verdict for Stato, a
+   * question about a call of ours for Permessi, a piece of the stream for the Chat. */
+  const modules: { name: string; component: Component; props?: Record<string, unknown>; then?: (bridge: FakeBridge) => void }[] = [
+    { name: "Stato", component: Status, then: (bridge) => bridge.deliver("Verdict") },
+    { name: "Permessi", component: Permissions, then: asked },
+    { name: "Passi", component: Steps },
+    { name: "Impostazioni", component: Settings },
+    { name: "Chat", component: Chat, then: (bridge) => bridge.deliver("Token") },
+    { name: "la striscia", component: Strip },
+    { name: "la barra", component: ViewBar, props: bar },
   ];
 
-  for (const [name, component, props] of modules) {
+  for (const { name, component, props, then } of modules) {
     it(`${name} has no violation`, async () => {
-      welcome();
+      then?.(welcome());
       const { element, unmount } = await mounted(component, props);
       expect(await violations(element)).toEqual([]);
       unmount();
     });
   }
+
+  it("leaves the core connected and nothing waiting: the state a user meets (AUD-2188 of the audit of 2026-09-30)", () => {
+    // ⛔ NON-VACUITY OF THE PROBES ABOVE: they judge the SPA a welcome leaves, the bar's chip `connected` among it.
+    welcome();
+    expect(useConnection().phase).toBe("connected");
+    expect(useCore().pending).toBeNull();
+    expect(useCore().degradation).not.toBeNull();
+    expect(useCore().steps.length).toBeGreaterThan(0);
+  });
 
   it("the overview, open, has no violation", async () => {
     welcome();
@@ -120,12 +150,7 @@ describe("the SPA, with the welcome delivered", () => {
   });
 
   it("the confirmation window, open, has no violation", async () => {
-    welcome();
-    const core = useCore();
-    const invoke = useInvoke();
-    core.settled();
-    invoke.send({ function: VRAM_POLICY.name, argument: VRAM_POLICY.argument.local });
-    core.receive({ kind: "PermissionRequired", value: { tool: "registry", resource: "arbiter", operation: "Write" } });
+    asked(welcome());
     const { unmount } = await mounted(Confirm);
     const dialog = document.querySelector('[role="dialog"]');
     expect(dialog).not.toBeNull();

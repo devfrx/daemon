@@ -9,9 +9,10 @@ import type { IpcMessage } from "../schema/messages";
  * this file goes red. A filter of literals matches one member fewer and says nothing, which
  * is what a second hand-written list would do, because that is what this is.
  *
- * ⚠️ WHERE IT DOES GO RED is wherever a caller CONSTRUCTS one of these -- and one such caller
- * already exists in this task: `fakeBridge.test.ts` sends `Hello`, so renaming `Hello` is red
- * TODAY. `Invoke`, `Approve` and `SaveLayout` get their first caller at tasks 13 and 14.
+ * ⚠️ WHERE IT DOES GO RED is wherever a caller CONSTRUCTS one of these: the stores that send them
+ * -- `connection.ts` sends `Hello`, `invoke.ts` sends `Invoke` and `Approve`, `layout.ts` sends
+ * `SaveLayout` -- and the probes that build them, `fakeBridge.test.ts` among them. A variant renamed
+ * in `IpcMessage` goes red there, not here (AUD-2077 and AUD-2078 of the audit of 2026-09-30).
  *
  * ⛔ WHAT `Extract` BUYS, and only this: the message types are not RETYPED here. They are the
  * ones `IpcMessage` declares, so this file cannot become a second definition of them.

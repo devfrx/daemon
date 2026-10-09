@@ -15,7 +15,7 @@ export type ViewName = "home" | "work" | "compact";
  * under the Lavoro tab and lost Home at the next settle -- and it compiled and passed every probe.
  *
  * `layouts` IS PARTIAL ON PURPOSE: a view the owner never touched has NO entry and falls back to
- * the shipped one, which is what keeps decision 11 true -- the shipped views stay in `gui/`, and
+ * the shipped one, which is what keeps the coordinator's decision 11 of the north star true -- the shipped views stay in `gui/`, and
  * an update that improves one still reaches whoever has not touched it.
  */
 export interface LayoutPack {
@@ -161,7 +161,7 @@ export const useLayout = defineStore("layout", () => {
     keep({ ...pack, named: (pack.named ?? []).map((entry) => (entry.name === open ? { name: open, layout } : entry)) });
   }
 
-  /** One of the three views on screen, which closes the named one. ⛔ SHOWING IS NOT SAVING (decision 11): the choice
+  /** One of the three views on screen, which closes the named one. ⛔ SHOWING IS NOT SAVING (the coordinator's decision 11): the choice
    * reaches the package at the next settle. */
   function showView(next: ViewName): void {
     openNamed.value = null;
@@ -231,7 +231,7 @@ export function unpack(state: LayoutState): LayoutPack | null {
     if (typeof candidate.layouts !== "object" || candidate.layouts === null) return null;
     const held = candidate.layouts as Record<string, unknown>;
     const layouts: LayoutPack["layouts"] = {};
-    // ⛔ ONLY THE THREE VIEWS THIS BUILD KNOWS ARE READ (decision 11): an entry under another
+    // ⛔ ONLY THE THREE VIEWS THIS BUILD KNOWS ARE READ (the coordinator's decision 11): an entry under another
     // name is another build's, and is neither shown nor kept -- row 8 of §2, for views. ⚠️ The
     // layout under a known name is any object, kept unread: `dockview` judges it, in `apply`.
     for (const name of VIEWS) {

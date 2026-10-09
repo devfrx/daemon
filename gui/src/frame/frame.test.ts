@@ -19,11 +19,26 @@ import { shownTheme } from "../tokens/theme";
 import { createFakeBridge, type FakeBridge } from "../transport/fakeBridge";
 
 import Frame from "./Frame.vue";
-import { createDock, harnessTheme } from "./dock";
+import { createDock, harnessTheme, type Dock } from "./dock";
 
 beforeEach(() => {
   setActivePinia(createPinia());
 });
+
+/** The docks the probes built, each disposed after its probe: a dock left alive listens on `window`, and the next probe's
+ * `beforeunload` would reach it too (AUD-2116 of the audit of 2026-09-30). */
+const docks: Dock[] = [];
+
+afterEach(() => {
+  for (const dock of docks.splice(0)) dock.dispose();
+});
+
+/** A dock on `where`, disposed after the probe: its grid, for the probe to drive. */
+function dockOn(where: HTMLElement): DockviewApi {
+  const dock = createDock(where);
+  docks.push(dock);
+  return dock.api;
+}
 
 /** Every `component` a committed view names must be something the registry can build. ⛔ NO DOM
  * NEEDED, and that is deliberate: this is the property that actually protects the frame, and it
@@ -56,6 +71,10 @@ describe("the registry", () => {
       props: { params: placeholderParams(type!.name) },
     });
     expect(wrapper.text()).toContain(String(type!.who));
+    // ⛔ AND NOT THE NUCLEUS'S PHRASE (AUD-2193 of the audit of 2026-09-30): «niente ancora» is the centre of Home's alone, and
+    // a placeholder that said it on every tile passed the probe of the nucleus below.
+    expect(type!.name).not.toBe("knowledge");
+    expect(wrapper.text()).not.toContain(i18n.global.t("placeholder.nucleus"));
   });
 
   it("says «niente ancora» on the nucleus, and still who fills it (R6-14)", () => {
@@ -86,10 +105,24 @@ describe("the registry", () => {
     expect(closed).toBe(true);
   });
 
-  it("builds something for every module type, and for the strip", () => {
-    for (const type of [...PANEL_TYPES.map((t) => t.name), "strip"]) {
-      expect(typeof componentFor(type), type).toBe("function");
+  it("builds, for every module type and for the strip, a renderer that draws what that name is (AUD-2194 of the audit of 2026-09-30)", () => {
+    // ⛔ THE RENDERER IS MADE AND MOUNTED, AND WHAT IT DRAWS IS READ: `componentFor` answers a function for any name at all, so
+    // a probe of its type held of nothing. No module is registered in this file: every type draws the placeholder that says
+    // who fills it, and the strip draws itself.
+    const drawn = (name: string): { classes: string[]; text: string } => {
+      const renderer = componentFor(name)();
+      renderer.init({ api: { id: name }, containerApi: {}, params: name === "strip" ? {} : placeholderParams(name), title: name } as never);
+      const root = renderer.element.firstElementChild;
+      const seen = { classes: [...(root?.classList ?? [])], text: root?.textContent ?? "" };
+      renderer.dispose?.();
+      return seen;
+    };
+    for (const type of PANEL_TYPES) {
+      const seen = drawn(type.name);
+      expect(seen.classes, type.name).toContain("placeholder");
+      expect(seen.text, type.name).toContain(i18n.global.t("placeholder.who", { number: type.who }));
     }
+    expect(drawn("strip").classes).toContain("strip");
   });
 });
 
@@ -132,16 +165,15 @@ async function flush(): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, 0));
 }
 
-/** ⛔ THESE MOUNT A GRID, and say so: if Passo 3 measured that `dockview` does not run under
- * jsdom, this `describe` is what moves to the reviewer in the browser (the table of Passo 3), and
- * the rest of the file stays. */
+/** ⛔ THESE MOUNT A GRID, UNDER jsdom: `dockview` runs there with the `ResizeObserver` fake of `src/jsdom-setup.ts`
+ * (R6-8), and every rectangle is zero -- what only a layout engine can judge is `dock.browser.test.ts`'s. */
 describe("the dock", () => {
   it("shows a saved view under its own name, the shipped one under another, and saves neither (D80, D89)", async () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
     layout.attach(bridge);
     const home = ownersHome();
-    const api = createDock(host());
+    const api = dockOn(host());
     api.layout(1600, 1000);
     // ⛔ THE PACKAGE ARRIVES AFTER THE DOCK IS UP, as the welcome does in `main.ts` (D89): before,
     // it updated the store and nothing showed it.
@@ -157,7 +189,7 @@ describe("the dock", () => {
     await flush();
     expect(showing(api)).toEqual(["status"]);
     // ⛔ AND NOTHING WAS SAVED: showing a view is not changing it, and the shipped Lavoro must not
-    // reach the archive for having been looked at (decision 11).
+    // reach the archive for having been looked at (the coordinator's decision 11 of the north star).
     expect(saves(bridge)).toBe(0);
   });
 
@@ -165,11 +197,11 @@ describe("the dock", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
     layout.attach(bridge);
-    const api = createDock(host());
+    const api = dockOn(host());
     await flush();
     window.dispatchEvent(new Event("beforeunload"));
     // ⛔ THE FIRST DIRECTION: an untouched gui closing must not copy the shipped Home into the
-    // archive (decision 11) -- before D81 it did, at every first close.
+    // archive (the coordinator's decision 11 of the north star) -- before D81 it did, at every first close.
     expect(saves(bridge)).toBe(0);
     api.getPanel("costs")?.api.close();
     window.dispatchEvent(new Event("beforeunload"));
@@ -180,10 +212,27 @@ describe("the dock", () => {
     expect(saves(bridge)).toBe(1);
   });
 
+  it("saves when a click changes the active panel, and not when it leaves the active one where it is (D81; AUD-2062 of the audit of 2026-09-30)", async () => {
+    // ⛔ WHAT `dock.ts` TAKES FROM `dockview-core`, HELD ON THE VERSION INSTALLED: a change of the active panel fires
+    // `onDidLayoutChange`, and `activeGroup` is in `toJSON()` -- so the click settles.
+    const bridge = createFakeBridge();
+    useLayout().attach(bridge);
+    const api = dockOn(host());
+    api.layout(1600, 1000);
+    await flush();
+    // ⛔ THE SECOND DIRECTION FIRST: Costi's group is the one Home ships active, and making it active again moves nothing.
+    api.getPanel("costs")?.group.api.setActive();
+    await flush();
+    expect(saves(bridge)).toBe(0);
+    api.getPanel("status")?.group.api.setActive();
+    await flush();
+    expect(saves(bridge)).toBe(1);
+  });
+
   it("leaves the strip's params alone: only what nobody built gets them from the registry (R6-17)", async () => {
     const bridge = createFakeBridge();
     useLayout().attach(bridge);
-    const api = createDock(host());
+    const api = dockOn(host());
     await flush();
     // ⛔ THE STRIP CARRIES NO PARAMS AND MUST NOT GET `{ missing: true }`: before R6-17 it did, at
     // every `apply`, and the value entered the package at the first settle -- unseen, because
@@ -193,10 +242,62 @@ describe("the dock", () => {
     expect(api.getPanel("knowledge")?.params).toEqual(placeholderParams("knowledge"));
   });
 
+  it("takes its watchers and its two listeners on the window away with it, and answers nothing once disposed (AUD-2116 of the audit of 2026-09-30)", async () => {
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge);
+    const dock = createDock(host());
+    const api = dock.api;
+    await flush();
+    let opened = 0;
+    let laid = 0;
+    const open = api.fromJSON.bind(api);
+    const lay = api.layout.bind(api);
+    api.fromJSON = (data) => {
+      opened += 1;
+      open(data);
+    };
+    api.layout = (width, height, force) => {
+      laid += 1;
+      lay(width, height, force);
+    };
+    // A move the dock has not settled yet: a close, whose buffered `onDidLayoutChange` is still on its way.
+    api.getPanel("costs")?.api.close();
+    dock.dispose();
+    window.dispatchEvent(new Event("beforeunload"));
+    window.dispatchEvent(new Event("resize"));
+    layout.view = "work";
+    await flush();
+    // ⛔ NOTHING OF A DOCK THAT IS GONE ANSWERS: not the window closing or resizing, not the change it left buffered, not the
+    // store it watched -- each held a dock that is no more, and the first would save its last state.
+    expect(saves(bridge)).toBe(0);
+    expect([opened, laid]).toEqual([0, 0]);
+  });
+
+  it("hands the params `apply` puts back to the panel itself, not only to dockview (AUD-1115 of the audit of 2026-09-30)", async () => {
+    // ⛔ A PACKAGE WRITTEN WITHOUT THE PARAMS OF AN UNBUILT TILE -- by hand, or by another build -- gets them back from `apply`
+    // AFTER the panels are made (R6-17), through `updateParameters`: the component sees them only if the bridge passes
+    // dockview's update on. Without it the nucleus said nothing, and a type that is gone neither said so nor offered to
+    // close -- row 8 of §2 of the north star.
+    const gone = "a-type-that-never-existed";
+    const bare = JSON.parse(JSON.stringify(VIEWS.home).replaceAll('"costs"', `"${gone}"`)) as SerializedDockview;
+    delete bare.panels.knowledge?.params;
+    delete bare.panels[gone]?.params;
+    useLayout().receive(packageFromTheCore({ view: "home", layouts: { home: bare } }));
+    const where = host();
+    const api = dockOn(where);
+    await flush();
+    // ⛔ NON-VACUITY: dockview holds the params `apply` put back -- the half the probe above watches.
+    expect(api.getPanel("knowledge")?.params).toEqual(placeholderParams("knowledge"));
+    expect(api.getPanel(gone)?.params).toEqual({ missing: true });
+    expect(where.querySelector(".placeholder.nucleus")?.textContent).toContain(i18n.global.t("placeholder.nucleus"));
+    expect(where.textContent).toContain(i18n.global.t("placeholder.missing"));
+  });
+
   it("wears our theme, and hands it to dockview again when the theme on screen changes (design system, section (c))", async () => {
     useLayout().attach(createFakeBridge());
     const where = host();
-    const api = createDock(where);
+    const api = dockOn(where);
     // ⛔ THE SHELL WEARS OUR CLASS, the one `tokens/dock.css` dresses -- and the abyss theme's is gone (control 15).
     expect(where.querySelector(".dv-shell")?.classList.contains("dockview-theme-harness")).toBe(true);
     expect(where.querySelector(".dockview-theme-abyss")).toBeNull();
@@ -231,7 +332,7 @@ describe("the dock", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
     layout.attach(bridge);
-    const api = createDock(host());
+    const api = dockOn(host());
     api.layout(1600, 1000);
     // ⛔ TWO NAMED VIEWS, THE OPEN ONE SECOND (E82 of the plan): with one alone, "the one open" reads the same as
     // "the first".
@@ -262,13 +363,13 @@ describe("the dock", () => {
         // AT START-UP: the package is in the store before the dock is built.
         setActivePinia(createPinia());
         useLayout().receive(packageFromTheCore({ view: "work", layouts: { work: unreadable } }));
-        expect(showing(createDock(host())), how).toEqual(lavoro);
+        expect(showing(dockOn(host())), how).toEqual(lavoro);
         // AND WHEN IT ARRIVES with the dock up, on Home: the dock follows the store (D89).
         setActivePinia(createPinia());
         const bridge = createFakeBridge();
         const layout = useLayout();
         layout.attach(bridge);
-        const api = createDock(host());
+        const api = dockOn(host());
         api.layout(1600, 1000);
         await flush();
         layout.receive(packageFromTheCore({ view: "work", layouts: { work: unreadable } }));
@@ -295,7 +396,7 @@ describe("the dock", () => {
   it("opens the view of always when the named view open is a layout `dockview` cannot read, and a saved view of always still wins (AUD-536)", async () => {
     const layout = useLayout();
     layout.attach(createFakeBridge());
-    const api = createDock(host());
+    const api = dockOn(host());
     api.layout(1600, 1000);
     // ⛔ A NAME THE PACKAGE HOLDS WITHOUT A LAYOUT WE CAN OPEN falls back as a name it does not hold does: to the view of
     // always -- here the owner's Home, saved, which still wins over the shipped one by name (row 6 of §2).
@@ -309,7 +410,7 @@ describe("the dock", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
     layout.attach(bridge);
-    const api = createDock(host());
+    const api = dockOn(host());
     api.layout(1600, 1000);
     await flush();
     /** Whether the last package sent opens Home with a group maximized: `dockview-core` 8.3.1 writes `grid.maximizedNode`,
@@ -328,7 +429,7 @@ describe("the dock", () => {
     await flush();
     expect(saves(bridge)).toBe(before + 1);
     expect(homeMaximized()).toBe(true);
-    // ⛔ SHOWING STAYS NOT SAVING (decision 11): leaving a view with a group maximized, and coming back to it, fire the
+    // ⛔ SHOWING STAYS NOT SAVING (the coordinator's decision 11): leaving a view with a group maximized, and coming back to it, fire the
     // same event inside `fromJSON` -- and Home opens as it was left.
     layout.showView("work");
     await flush();
@@ -653,5 +754,29 @@ describe("the frame (the (d) of the design system)", () => {
     await flush();
     expect(useDrawer().open).toBe(false);
     expect(document.querySelector('.base-dialog[data-variant="sheet"]')).toBeNull();
+  });
+
+  it("lists in the drawer every module type, in the registry's order, each with who fills it (decision 16 of the north star; AUD-2191 of the audit of 2026-09-30)", async () => {
+    // ⛔ THE ONE THING THE DRAWER DOES, READ ROW BY ROW: the probes above open it, close it and judge it with axe, and a
+    // drawer short of a type, or with the numbers in the wrong place, passed them all.
+    await frame();
+    useDrawer().open = true;
+    await flush();
+    const rows = [...document.querySelectorAll('.base-dialog[data-variant="sheet"] .base-list-row')].map((row) =>
+      [...row.querySelectorAll("span")].map((span) => span.textContent?.trim()),
+    );
+    expect(rows).toEqual(
+      PANEL_TYPES.map((type) => [i18n.global.t(`modules.${type.module}`), i18n.global.t("drawer.who", { number: type.who })]),
+    );
+  });
+
+  it("keeps the bar's search off, saying who fills it, rather than absent (decision 16 of the north star; AUD-2190 of the audit of 2026-09-30)", async () => {
+    // ⛔ THE DIRECTION IN WHICH THE FIELD IS OFF: without it, a search that took text and did nothing passed every probe.
+    await frame();
+    const input = document.querySelector<HTMLInputElement>(".search input");
+    expect(input).not.toBeNull();
+    expect(input?.disabled).toBe(true);
+    expect(input?.closest(".frame")?.hasAttribute("data-disabled")).toBe(true);
+    expect(input?.placeholder).toBe(i18n.global.t("bar.searchHint"));
   });
 });

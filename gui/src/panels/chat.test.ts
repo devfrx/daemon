@@ -110,6 +110,31 @@ describe("the Chat", () => {
     expect(body).not.toContain("<b>x</b>");
     expect(trusted?.get(".provenance").text()).toBe(t("chat.trusted"));
     expect(trusted?.get(".body").element.innerHTML).toContain("<strong>fidato</strong>");
+    // ⛔ AND THE MARK THE STYLESHEET DRAWS ITS BORDER ON, IN BOTH DIRECTIONS (AUD-2201 of the audit of 2026-09-30): the bar
+    // beside a piece is `[data-provenance="Untrusted"]`'s, so a trusted piece must not carry that value. jsdom applies no
+    // stylesheet: the attribute is what is judged here.
+    expect(untrusted?.attributes("data-provenance")).toBe("Untrusted");
+    expect(trusted?.attributes("data-provenance")).toBe("Trusted");
+  });
+
+  it("renders a frozen piece once, when it freezes, as SP-8's tile did and as M4 was measured (AUD-2121 and AUD-2122 of the audit of 2026-09-30)", async () => {
+    // ⛔ THE STORE NEVER TOUCHES A FROZEN PIECE AGAIN, so a change made here to the first one's text can reach the page only if
+    // the Chat renders that piece a second time -- which a `computed` over the whole list did at every freeze, up to KEEP
+    // renders at each one, on a scheme M4 never measured: the tile kept each piece's HTML from the moment it froze.
+    const stream = useStream();
+    const wrapper = mount(Chat, { global: { plugins: [i18n] } });
+    stream.receive({ kind: "Token", text: "primo " + "a".repeat(FREEZE_AT), provenance: "Untrusted" });
+    await frame();
+    const first = (): string => wrapper.findAll("[aria-live=polite] article .body")[0]?.element.innerHTML ?? "";
+    expect(first()).toContain("primo");
+    const frozen = stream.blocks[0];
+    if (frozen !== undefined) frozen.text = "cambiato";
+    stream.receive({ kind: "Token", text: "secondo " + "a".repeat(FREEZE_AT), provenance: "Untrusted" });
+    await frame();
+    // ⛔ NON-VACUITY: the second piece froze, so the list did change under the Chat.
+    expect(wrapper.findAll("[aria-live=polite] article")).toHaveLength(2);
+    expect(first()).toContain("primo");
+    expect(first()).not.toContain("cambiato");
   });
 
   it("drops the oldest frozen piece without rewriting the others: one node goes, one comes (AUD-539 of the audit of 2026-09-30)", async () => {

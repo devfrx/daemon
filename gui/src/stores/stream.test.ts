@@ -1,9 +1,20 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it } from "vitest";
 
+import { loadFixtures } from "../schema/fixtures";
 import { createFakeBridge } from "../transport/fakeBridge";
 
 import { FREEZE_AT, KEEP, useStream } from "./stream";
+
+/** SP-8's chat tile, the one M4 was measured on: read, not retyped. */
+const TILE = readFileSync(
+  join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "spikes", "gui-shell", "app", "src", "tiles", "Chat.vue"),
+  "utf8",
+);
 
 beforeEach(() => {
   setActivePinia(createPinia());
@@ -20,12 +31,19 @@ describe("the stream", () => {
     expect(stream.blocks).toHaveLength(0);
   });
 
-  it("concatenates verbatim and freezes at the threshold M4 was measured with", () => {
+  it("keeps the threshold and the window M4 was measured with: SP-8's tile's own numbers (D61; AUD-2210 of the audit of 2026-09-30)", () => {
+    // ⛔ THE NUMBERS A MEASURE SITS BEHIND, HELD TO THE TILE IT WAS TAKEN ON: every other probe reads FREEZE_AT and KEEP by
+    // name, and a changed constant left them all green -- while D61 says that whoever changes one leaves the measure.
+    const constant = (name: string): number => Number(new RegExp(`const ${name} = (\\d+);`).exec(TILE)?.[1]);
+    expect([FREEZE_AT, KEEP]).toEqual([constant("FREEZE_AT"), constant("KEEP")]);
+  });
+
+  it("concatenates verbatim and freezes at the threshold", () => {
     const stream = useStream();
     const piece = "x".repeat(FREEZE_AT / 4);
     for (let n = 0; n < 4; n += 1) stream.receive({ kind: "Token", text: piece, provenance: "Untrusted" });
     // ⛔ THE SECOND DIRECTION IS IN THE COUNTS: one frozen block of exactly FREEZE_AT, and nothing
-    // open -- a store that never froze would have a current of 4 * FREEZE_AT and no blocks.
+    // open -- a store that never froze would have a current of FREEZE_AT characters, the four pieces, and no blocks.
     expect(stream.blocks).toHaveLength(1);
     expect(stream.blocks[0]?.text).toHaveLength(FREEZE_AT);
     expect(stream.current).toBeNull();
@@ -51,9 +69,12 @@ describe("the stream", () => {
     expect(stream.blocks.map((block) => block.id)).toEqual(Array.from({ length: KEEP }, (_, index) => index + 3));
   });
 
-  it("ignores every other kind", () => {
+  it("ignores every other kind: each one the kernel's canonical set carries (AUD-2210 of the audit of 2026-09-30)", () => {
     const stream = useStream();
-    stream.receive({ kind: "Accepted", value: "AsSystemAccount" });
+    const others = loadFixtures().filter(({ message }) => message.kind !== "Token");
+    // ⛔ NON-VACUITY: every kind but the Token is here, not one of them.
+    expect(new Set(others.map(({ message }) => message.kind)).size).toBeGreaterThan(1);
+    for (const { message } of others) stream.receive(message);
     expect(stream.current).toBeNull();
     expect(stream.blocks).toHaveLength(0);
   });

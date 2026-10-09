@@ -72,12 +72,13 @@ export default defineConfig({
         extends: true,
         test: {
           name: "jsdom",
-          // ⛔ `jsdom` since task 11 of part 2: the frame mounts components, so it needs a DOM.
+          // ⛔ `jsdom`: the frame mounts components, so the probes need a DOM (AUD-2079 of the audit of 2026-09-30).
           environment: "jsdom",
           include: ["src/**/*.test.ts"],
           exclude: [...configDefaults.exclude, "src/**/*.browser.test.ts"],
           // ⛔ `jsdom` 30.0.1 has no `ResizeObserver`, and `dockview-core` wants one the moment a grid is
-          // created: the fake in this file is what lets a probe mount a grid at all (R6-8).
+          // created: the fake in `src/jsdom-setup.ts`, the file below, is what lets a probe mount a grid at
+          // all (R6-8; AUD-2080 of the audit of 2026-09-30).
           setupFiles: ["src/jsdom-setup.ts"],
         },
       },

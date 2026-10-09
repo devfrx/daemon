@@ -10,7 +10,9 @@ import BaseDialog from "./BaseDialog.vue";
 const core = useCore();
 const invoke = useInvoke();
 
-// Escape and the veil are the "no" (ADR-0016: nothing is granted by silence).
+// ⛔ ESCAPE AND THE VEIL ARE THE "NO" (E41 of the design-system plan): a permission is granted by the yes alone, never by
+// closing the window. ⚠️ ADR-0016 does not write this rule -- it was read from its prudent default -- and no living
+// document writes it yet: where it is written is the owner's to choose (AUD-2068 of the audit of 2026-09-30).
 function onOpenChange(value: boolean | undefined): void {
   if (value !== true) invoke.refuse();
 }

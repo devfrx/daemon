@@ -11,7 +11,7 @@ import { VIEWS } from "../panels/views";
 import { computed, concentricRadii } from "../testing/probes";
 import { readToken } from "../tokens/readToken";
 
-import { canonical, createDock } from "./dock";
+import { canonical, createDock, type Dock } from "./dock";
 import { moveActive } from "./moveActive";
 import type { Direction } from "./nearest";
 
@@ -19,7 +19,7 @@ import type { Direction } from "./nearest";
 // space between the cards, their radius and surface, the grab's height, the level and the surface of a floating group.
 // The stylesheets are the SPA's own, in the order `main.ts` loads them: `dockview.css` first, our tokens after it.
 
-const docks: DockviewApi[] = [];
+const docks: Dock[] = [];
 
 beforeEach(() => {
   setActivePinia(createPinia());
@@ -28,8 +28,9 @@ beforeEach(() => {
 
 afterEach(() => {
   // ⛔ DISPOSED, NOT ONLY DETACHED: `dockview-core` 8.3.1 stacks the floating groups of the whole PAGE in one module-level
-  // list, `+ 2` per group, and a group left there lifts the next test's to 52 (measured on 2026-09-23).
-  for (const api of docks.splice(0)) api.dispose();
+  // list, `+ 2` per group, and a group left there lifts the next test's to 52 (measured on 2026-09-23). And `dispose` of
+  // the dock takes its listeners off `window` too (AUD-2116 of the audit of 2026-09-30).
+  for (const dock of docks.splice(0)) dock.dispose();
   document.body.replaceChildren();
   delete document.documentElement.dataset.theme;
 });
@@ -40,10 +41,10 @@ async function dock(theme: "light" | "dark") {
   const host = document.createElement("div");
   host.style.cssText = "width:1400px;height:800px";
   document.body.append(host);
-  const api = createDock(host);
-  docks.push(api);
+  const dock = createDock(host);
+  docks.push(dock);
   await new Promise((resolve) => setTimeout(resolve, 50));
-  return { host, api };
+  return { host, api: dock.api };
 }
 
 /** The Status panel floated where the grab's first command puts it, and its container once laid out. */

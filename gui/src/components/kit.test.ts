@@ -197,6 +197,14 @@ describe("BaseTextField", () => {
     const describedBy = wrapper.get("input").attributes("aria-describedby");
     expect(wrapper.get(`[id="${describedBy}"]`).text()).toBe("esiste già");
   });
+
+  it("is off when disabled: the input takes no text, and the frame carries the mark its look is drawn on (AUD-2190 of the audit of 2026-09-30)", () => {
+    // ⛔ THE DIRECTION THE PROBE ABOVE DOES NOT TAKE: there, with no `disabled`, the frame carries no mark. The bar's search
+    // is this field off, waiting for sub-project 6, and nothing else held that it is off.
+    const wrapper = mount(BaseTextField, { props: { label: "Cerca", icon: "search", type: "search", disabled: true } });
+    expect((wrapper.get("input").element as HTMLInputElement).disabled).toBe(true);
+    expect(wrapper.get(".frame").attributes("data-disabled")).toBeDefined();
+  });
 });
 
 describe("BaseRadioGroup -- controlled (P-8 of the plan)", () => {

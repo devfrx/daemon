@@ -12,12 +12,18 @@ import type {
 
 /**
  * What the core has told us about itself. ⛔ PRESENTATION ONLY (I1): nothing here is authoritative
- * and nothing here is persisted -- every field is the last thing the core said, and after a
- * restart the core says it again at the welcome (sequence 1).
+ * and nothing here is persisted. After a restart the core says three of the fields again at the
+ * welcome -- the degradation, the policy, the steps (`greet` in `crates/kernel/src/serving.rs`,
+ * sequence 1) --; `pending` and `lastVerdict` it says once, when they happen. And `pending` is the
+ * one field the gui clears itself: `settled`, once the confirmation window has answered (AUD-1089
+ * of the audit of 2026-09-30).
  *
  * ⚠️ THE FIELDS START AT `null` AND NOT AT A MADE-UP DEFAULT: "we have not been told" and "the
  * core says no degradation" are different, and a component that cannot tell them apart shows a
- * green light to a user who is not connected.
+ * green light to a user who is not connected. ⛔ BUT `steps`, WHICH STARTS EMPTY (AUD-2071 of the
+ * audit of 2026-09-30): an empty list is the empty state of a module with no data, the C13-2 recall
+ * of §6a of the sub-project 2 design -- so Passi says it has no step before the welcome as it does
+ * when the core sends none, and no light it shows depends on telling the two apart.
  */
 export const useCore = defineStore("core", () => {
   const degradation = ref<DegradationReport | null>(null);
@@ -51,7 +57,7 @@ export const useCore = defineStore("core", () => {
     }
   }
 
-  /** Task 14's confirmation window clears it after `Approve`; the frame only counts it. */
+  /** The confirmation window's answer clears it, a yes or a no (`approve` and `refuse` in `invoke.ts`); the frame only counts it. */
   function settled(): void {
     pending.value = null;
   }

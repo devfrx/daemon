@@ -9,7 +9,7 @@ import { useInvoke } from "../stores/invoke";
 import Band from "./Band.vue";
 import Drawer from "./Drawer.vue";
 import ViewBar from "./ViewBar.vue";
-import { createDock } from "./dock";
+import { createDock, type Dock } from "./dock";
 import { directionOf, moveActive } from "./moveActive";
 
 const host = ref<HTMLElement | null>(null);
@@ -17,7 +17,7 @@ const drawer = useDrawer();
 const invoke = useInvoke();
 /** The overview of the views: opened from the view's name in the bar, or with F3 here. */
 const overview = ref(false);
-let api: ReturnType<typeof createDock> | null = null;
+let dock: Dock | null = null;
 
 function onKey(event: KeyboardEvent): void {
   // ⛔ F3 OPENS AND CLOSES THE OVERVIEW (the (d) of the design system), AND IS QUIET WHILE ANOTHER WINDOW IS OPEN -- the
@@ -31,24 +31,28 @@ function onKey(event: KeyboardEvent): void {
   // G20, move 6 of SP-8: the active tile moves in the four directions from the keyboard. The
   // mapping lives in `moveActive.ts` and the geometry in `nearest.ts`; this is only the wire.
   const direction = directionOf(event);
-  if (direction === null || api === null) return;
+  if (direction === null || dock === null) return;
   event.preventDefault();
-  moveActive(api, direction);
+  moveActive(dock.api, direction);
 }
 
 onMounted(() => {
-  if (host.value !== null) api = createDock(host.value);
+  if (host.value !== null) dock = createDock(host.value);
   window.addEventListener("keydown", onKey);
 });
 
+// ⛔ THE DOCK GOES WITH THE FRAME (AUD-2116 of the audit of 2026-09-30): its listeners on `window` and its panels' Vue apps
+// are its own, and `dispose` takes them away.
 onUnmounted(() => {
   window.removeEventListener("keydown", onKey);
+  dock?.dispose();
+  dock = null;
 });
 
 /** The layout on screen, for «Salva questa vista»: the dock's own serialisation -- what `settle` saves. */
 function snapshot(): SerializedDockview {
-  if (api === null) throw new Error("the dock is not mounted");
-  return api.toJSON();
+  if (dock === null) throw new Error("the dock is not mounted");
+  return dock.api.toJSON();
 }
 </script>
 

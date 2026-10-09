@@ -36,11 +36,25 @@ describe("the token discipline", () => {
     expect(all.filter((file) => !file.startsWith("tokens/") && read(file).includes("var(--ref-"))).toEqual([]);
   });
 
+  /**
+   * A colour by hand. Control 5 of the design, widened to the colour functions of CSS Color 4 (E6 of the design-system plan,
+   * the owner's choice A, 2026-09-24): `rgb()`, `hsl()`, `hwb()`, `lab()`, `lch()`, their `ok` forms and `color()`, with
+   * `color-mix()` of Color 5 -- in any case, as CSS reads a function's name (AUD-2214 of the audit of 2026-09-30).
+   * ⚠️ A colour BY NAME -- `white`, `red` -- is NOT seen: catching it would take a list or a guess, with false positives.
+   */
+  const HAND = /#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(|\bhwb\(|\b(?:ok)?lab\(|\b(?:ok)?lch\(|\bcolor\(|\bcolor-mix\(/i;
+
+  it("sees a colour by hand in every form it names, and not a role or a word of code", () => {
+    // ⛔ THE CONTROL PROVED IN BOTH DIRECTIONS: the probe below is green on today's files, which says nothing of what it sees.
+    const hand = ["#fff", "#1F9CF0", "rgb(0 0 0)", "RGBA(0, 0, 0, 0.5)", "hsl(0 0% 0%)", "hwb(0 0% 0%)", "lab(50% 0 0)", "OKLCH(0.5 0.1 20)", "color(display-p3 1 0 0)", "color-mix(in srgb, red, blue)"];
+    const not = ["var(--color-text)", "currentColor", "background-color: var(--color-bg)", "label(block)", "colourOf(token)"];
+    expect(hand.filter((text) => !HAND.test(text))).toEqual([]);
+    expect(not.filter((text) => HAND.test(text))).toEqual([]);
+  });
+
   it("writes no colour by hand outside the token files", () => {
-    // Control 5 of the design, widened to the colour functions of CSS Color 4 (E6 of the design-system plan, the
-    // owner's choice A, 2026-09-24). ⚠️ A colour BY NAME -- `white`, `red` -- is NOT seen: catching it would take
-    // a list or a guess, with false positives.
-    const HAND = /#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(|\bhwb\(|\b(?:ok)?lab\(|\b(?:ok)?lch\(|\bcolor-mix\(/;
+    // ⚠️ THE `.ts` FILES ARE NOT JUDGED: control 5 names the `.vue` and `tokens/dock.css`, and a colour written in
+    // TypeScript -- a canvas, tomorrow -- passes it.
     const judged = all.filter((file) => file.endsWith(".vue") || file === "tokens/dock.css");
     const offenders = judged.flatMap((file) =>
       read(file)

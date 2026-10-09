@@ -45,7 +45,14 @@ beforeEach(() => {
 });
 
 describe("the registry, with the modules plugged in", () => {
-  it("builds the five real modules and leaves the other types to the placeholder", () => {
+  it("builds the modules sub-project 2 builds and leaves the other types to the placeholder", () => {
+    // ⛔ THE BUILT SET IS THE DECISION'S, NOT `MODULES`'S OWN (AUD-2202 of the audit of 2026-09-30): Stato, Permessi,
+    // Impostazioni, the Chat and Passi -- row 7 of §3 of the north star --, each by a name the registry knows. Derived from
+    // `MODULES` alone, a key with a slip of the pen drew its module under a name no view asks for, and the type it meant
+    // went to the placeholder below -- green on both loops, and `Record<string, …>` lets the compiler see nothing.
+    expect(Object.keys(MODULES).sort()).toEqual(["chat", "permissions", "settings", "status", "steps"]);
+    const names = PANEL_TYPES.map((type) => type.name);
+    expect(Object.keys(MODULES).filter((name) => !names.includes(name))).toEqual([]);
     registerModules();
     // ⛔ WHAT TELLS A BUILT MODULE FROM A PLACEHOLDER IS WHAT IT DRAWS (R7-10): `componentFor`
     // answers a function in both cases, so the renderer is mounted and read. A placeholder says
@@ -64,6 +71,32 @@ describe("the registry, with the modules plugged in", () => {
     const unbuilt = PANEL_TYPES.filter((type) => !(type.name in MODULES));
     expect(unbuilt.length).toBeGreaterThan(0);
     for (const type of unbuilt) expect(drawn(type.name), type.name).toMatch(/\bclass="placeholder\b/);
+  });
+
+  it("hands a panel only the props it declares: nothing falls through to its root as an attribute (AUD-1114 of the audit of 2026-09-30)", () => {
+    registerModules();
+    // ⛔ THE BRIDGE HAS FOUR PROPS TO GIVE AND A PANEL DECLARES WHAT IT READS: an undeclared one fell through to the panel's
+    // root -- `title` with the panel's id, a tooltip of code over the tile and a region named by it, and the objects as
+    // "[object Object]".
+    const given = ["title", "api", "containerapi", "params"];
+    for (const name of [...PANEL_TYPES.map((type) => type.name), "strip"]) {
+      const renderer = componentFor(name)();
+      renderer.init({ api: { id: name }, containerApi: {}, params: placeholderParams(name), title: name } as never);
+      const root = renderer.element.firstElementChild;
+      expect(root, name).not.toBeNull();
+      expect(root?.getAttributeNames().filter((attribute) => given.includes(attribute)), name).toEqual([]);
+      renderer.dispose?.();
+    }
+    // ⛔ THE SECOND DIRECTION: what a panel declares still arrives -- the placeholder's `params` say the type is gone, and its
+    // `api` closes the panel.
+    let closed = false;
+    const gone = componentFor("a-type-that-never-existed")();
+    const api = { id: "a-type-that-never-existed", close: () => (closed = true) };
+    gone.init({ api, containerApi: {}, params: placeholderParams("a-type-that-never-existed"), title: "gone" } as never);
+    expect(gone.element.textContent).toContain(t("placeholder.missing"));
+    gone.element.querySelector("button")?.click();
+    expect(closed).toBe(true);
+    gone.dispose?.();
   });
 });
 
@@ -390,7 +423,7 @@ describe("the confirmation window", () => {
     wrapper.unmount();
   });
 
-  it("takes Escape for a no: sends nothing, and closes (ADR-0016, E41)", async () => {
+  it("takes Escape for a no: sends nothing, and closes (E41 of the design-system plan)", async () => {
     const { bridge, core, invoke } = wire();
     const wrapper = mount(Confirm, { global: { plugins: [i18n] }, attachTo: document.body });
     invoke.send({ function: VRAM_POLICY.name, argument: VRAM_POLICY.argument.local });

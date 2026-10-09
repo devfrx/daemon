@@ -71,20 +71,34 @@ describe("moveActive", () => {
   });
 });
 
+/** The chord pressed on `target`, as a keyboard sends it: the event is dispatched there, so `event.target` is that element. */
+function pressed(target: Element, key: string): KeyboardEvent {
+  const event = new KeyboardEvent("keydown", { key, ctrlKey: true, altKey: true, bubbles: true });
+  target.dispatchEvent(event);
+  return event;
+}
+
 describe("directionOf", () => {
-  it("maps Ctrl+Alt+Arrow, and nothing else", () => {
-    expect(directionOf(new KeyboardEvent("keydown", { key: "ArrowLeft", ctrlKey: true, altKey: true }))).toBe("left");
-    expect(directionOf(new KeyboardEvent("keydown", { key: "ArrowDown", ctrlKey: true, altKey: true }))).toBe("down");
+  it("maps Ctrl+Alt+Arrow, each arrow to its own direction, and nothing else", () => {
+    // ⛔ ALL FOUR, AND PRESSED ON AN ELEMENT THAT IS NOT A FIELD -- the case of every real key, which reaches `Frame.vue`'s
+    // listener with an element for target (AUD-2195 of the audit of 2026-09-30): two arrows of four, on events never
+    // dispatched, left a swap of the other two and a guard that refused every target to pass.
+    const button = document.createElement("button");
+    document.body.append(button);
+    const arrows = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"];
+    expect(arrows.map((key) => directionOf(pressed(button, key)))).toEqual(["left", "right", "up", "down"]);
+    expect(arrows.map((key) => directionOf(pressed(document.body, key)))).toEqual(["left", "right", "up", "down"]);
+    button.remove();
     expect(directionOf(new KeyboardEvent("keydown", { key: "ArrowLeft", ctrlKey: true }))).toBeNull();
     expect(directionOf(new KeyboardEvent("keydown", { key: "a", ctrlKey: true, altKey: true }))).toBeNull();
   });
 
-  it("stays out of a field being typed in", () => {
-    const input = document.createElement("input");
-    document.body.append(input);
-    const event = new KeyboardEvent("keydown", { key: "ArrowUp", ctrlKey: true, altKey: true, bubbles: true });
-    input.dispatchEvent(event);
-    expect(directionOf(event)).toBeNull();
-    input.remove();
+  it("stays out of every field being typed in: an input, a select, a text area", () => {
+    for (const tag of ["input", "select", "textarea"]) {
+      const field = document.createElement(tag);
+      document.body.append(field);
+      expect(directionOf(pressed(field, "ArrowUp")), tag).toBeNull();
+      field.remove();
+    }
   });
 });

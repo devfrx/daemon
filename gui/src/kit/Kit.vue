@@ -19,6 +19,11 @@ import { isThemeChoice, watchTheme, type ThemeChoice } from "../tokens/theme";
  * the theme chosen at the top -- ONE THEME AT A TIME (D7 of the plan), because a dialog goes to a portal on `body` and
  * would take the root's theme, not a column's. ⛔ The words and the values are SPECIMENS (D8).
  *
+ * ⛔ AND IN EACH OF ITS FORMS (AUD-1085 of the audit of 2026-09-30), as the buttons show their variants and sizes: the
+ * window in its three shapes -- the question in the centre, the drawer's sheet, the overview's whole page --, the list
+ * ordered too, the field as the bar's search. A form the page does not show is looked at nowhere, and judged by none of
+ * the probes of `kit.browser.test.ts`.
+ *
  * ⛔ THE RADIUS RULE SHAPES THIS PAGE TOO: the card buttons sit in a frame of `--radius-frame`, the pill button in a
  * pill, and no card ends with a small round control in its corner. The grid does NOT stretch the cards, so what closes
  * one -- a note, or the list's last row -- sits in its corner, where the radius probe judges it (R3-1 of the review).
@@ -49,6 +54,10 @@ const rows = [
   { what: "policy · VRAM · cambia", when: "14:02" },
   { what: "file · ~/note · leggi", when: "13:58" },
   { what: "rete · openrouter · usa", when: "13:41" },
+];
+const steps = [
+  { step: "42", what: "arbiter.set_policy · chiuso" },
+  { step: "43", what: "vram-policy · in dubbio" },
 ];
 /**
  * ⛔ THE ONE WORD OF THIS PAGE THAT IS NOT A SPECIMEN (D8): the scope of a grant is a FACT of the system -- who builds the
@@ -91,9 +100,9 @@ const scope = it.confirm.scope;
       <section class="kit-card">
         <BaseLabel icon="search" as="h2">Campo</BaseLabel>
         <BaseTextField v-model="text" label="Cerca negli artefatti" icon="search" placeholder="Cerca negli artefatti" />
-        <BaseTextField model-value="" label="Cerca" icon="search" placeholder="la ricerca arriva col sotto-progetto 6" disabled />
+        <BaseTextField model-value="" type="search" label="Cerca" icon="search" placeholder="la ricerca arriva col sotto-progetto 6" disabled />
         <BaseTextField model-value="Home" label="Nome della vista" error="Esiste già una vista con questo nome." />
-        <p class="kit-note">Normale, spento, con un errore sotto.</p>
+        <p class="kit-note">Normale; spento, nella forma della ricerca, com'è nella barra; con un errore sotto.</p>
       </section>
 
       <section class="kit-card">
@@ -109,6 +118,13 @@ const scope = it.confirm.scope;
           <template #item="{ item }">
             <span>{{ item.what }}</span>
             <em>{{ item.when }}</em>
+          </template>
+        </BaseList>
+        <!-- The ordered form, as Passi has it: the same rows, in an `ol`. Last in the card, its last row closes it (E29). -->
+        <BaseList :items="steps" :key-of="(step) => step.step" ordered>
+          <template #item="{ item }">
+            <span>{{ item.what }}</span>
+            <em>{{ item.step }}</em>
           </template>
         </BaseList>
       </section>
@@ -130,16 +146,41 @@ const scope = it.confirm.scope;
 
       <section class="kit-card">
         <BaseLabel icon="float" as="h2">Finestra</BaseLabel>
-        <BaseDialog title="Serve un permesso" :description="scope">
-          <template #trigger>
-            <BaseButton data-kit="open-dialog">Apri la finestra</BaseButton>
-          </template>
-          <template #actions>
-            <BaseButton variant="quiet">Rifiuta</BaseButton>
-            <BaseButton variant="primary">Consenti</BaseButton>
-          </template>
-        </BaseDialog>
-        <p class="kit-note">Esc chiude, il fuoco resta dentro e torna al pulsante.</p>
+        <div class="kit-row">
+          <BaseDialog title="Serve un permesso" :description="scope">
+            <template #trigger>
+              <BaseButton data-kit="open-dialog">Apri la finestra</BaseButton>
+            </template>
+            <template #actions>
+              <BaseButton variant="quiet">Rifiuta</BaseButton>
+              <BaseButton variant="primary">Consenti</BaseButton>
+            </template>
+          </BaseDialog>
+          <BaseDialog title="I moduli" variant="sheet">
+            <template #trigger>
+              <BaseButton data-kit="open-sheet">Apri il cassetto</BaseButton>
+            </template>
+            <BaseList :items="rows" :key-of="(row) => row.when">
+              <template #item="{ item }">
+                <span>{{ item.what }}</span>
+                <em>{{ item.when }}</em>
+              </template>
+            </BaseList>
+            <template #actions>
+              <BaseButton variant="quiet">Chiudi</BaseButton>
+            </template>
+          </BaseDialog>
+          <BaseDialog title="Le viste" description="F3 apre e chiude, Esc chiude." variant="full">
+            <template #trigger>
+              <BaseButton data-kit="open-full">Apri la pagina intera</BaseButton>
+            </template>
+            <p class="kit-page-text">La pagina intera: i suoi angoli sono quelli della finestra.</p>
+            <template #actions>
+              <BaseButton variant="quiet">Chiudi</BaseButton>
+            </template>
+          </BaseDialog>
+        </div>
+        <p class="kit-note">Tre forme: la domanda al centro, il cassetto dal basso, la pagina intera. Esc chiude, il fuoco resta dentro e torna al pulsante.</p>
       </section>
 
       <section class="kit-section kit-wide">
@@ -280,6 +321,9 @@ h1 {
   margin: 0;
   font: var(--font-caption);
   color: var(--color-text-muted);
+}
+.kit-page-text {
+  margin: 0;
 }
 code {
   font: var(--font-mono);

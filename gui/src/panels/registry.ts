@@ -16,21 +16,21 @@ export interface PanelType {
 }
 
 /**
- * The eighteen module types of §1 of the north star: five with a full table, thirteen with a
- * short one. ⛔ THE LIST IS THE CATALOGUE'S, NOT THIS FILE'S: a module type is added when §1
- * gains a row.
+ * The module types of §1 of the north star, those of its full tables and those of its short one.
+ * ⛔ THE LIST IS THE CATALOGUE'S, NOT THIS FILE'S: a module type is added when §1 gains a row --
+ * how many there are is §1's to say, and this file counts nothing (AUD-2069 of the audit of
+ * 2026-09-30).
  *
  * ⛔ `who` IS THE NUMBER THE PLACEHOLDER AND THE DRAWER SHOW: the sub-project that FILLS
  * the module. It is NOT mechanically derivable from §1, and this doc does not pretend it is --
- * a row there may name several sub-projects, and SIX of the eighteen do: "Chat" (2 and 3),
- * "Permessi" (2, then 3 and 4), "Passi" (2 and 3), "Attività" (3, 4 and 13), "Voce e gesti"
- * (8, 12) and "Impostazioni" (2, then 3 and 10). Nor is it always the FIRST: Chat's row opens
- * with the 2 and `who` is 3, because the 2 builds the frame around a fake core and the 3 brings
- * the real chat.
+ * a row there may name several sub-projects, as Chat's names the 2 and the 3. Nor is it always
+ * the FIRST: Chat's row opens with the 2 and `who` is 3, because the 2 builds the frame around a
+ * fake core and the 3 brings the real chat.
  *
  * ⛔ THE ANCHOR IS §1's "Attività" ROW, WHICH SAYS IT OUTRIGHT: "nel 2 la tessera dice a
  * parole << arriva col 3 >>" -- so the field is what the tile SAYS, and each value is a reading
- * of its row rather than the output of a rule. Measured row by row on 2026-09-21 (E164).
+ * of its row rather than the output of a rule. Read row by row on 2026-09-21 (E164): a reading of
+ * prose, which no command repeats.
  * ⚠️ E163 claimed "the first sub-project" and "two rows", and both were wrong: its census
  * had read the SHORT table's "Chi" column and not the prose of the five full ones.
  *
@@ -67,8 +67,13 @@ export function register(name: string, component: Component): void {
   BUILT.set(name, component);
 }
 
+/** The module type a panel of `name` is, or `undefined` for a name that is not one -- the strip, a type gone. */
+export function panelType(name: string): PanelType | undefined {
+  return PANEL_TYPES.find((type) => type.name === name);
+}
+
 export function isModule(name: string): boolean {
-  return PANEL_TYPES.some((type) => type.name === name);
+  return panelType(name) !== undefined;
 }
 
 /** ⛔ WHAT THE REGISTRY CAN BUILD -- the strip, and the modules task 14 plugs in. `apply` in
@@ -96,6 +101,6 @@ export function componentFor(name: string): () => IContentRenderer {
 
 /** The params a panel of `name` carries when nobody built it -- read by `Placeholder`. */
 export function placeholderParams(name: string): Record<string, unknown> {
-  const type = PANEL_TYPES.find((candidate) => candidate.name === name);
+  const type = panelType(name);
   return type === undefined ? { missing: true } : { module: type.module, who: type.who };
 }

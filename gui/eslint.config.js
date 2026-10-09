@@ -2,10 +2,19 @@ import i18n from "@intlify/eslint-plugin-vue-i18n";
 import tsParser from "@typescript-eslint/parser";
 import vue from "eslint-plugin-vue";
 
-/** The one door of the icons (answer 11 of the design system). */
+/**
+ * The one door of the icons (answer 11 of the design system). ⛔ A PATTERN AND NOT A PATH, so that the whole package is
+ * closed: `paths` matches the bare name alone, and `lucide` 1.47.0 has no `exports` map -- a deep import such as
+ * `lucide/dist/esm/icons/search.mjs` resolves, and only a pattern sees it (AUD-2189 of the audit of 2026-09-30).
+ */
 const LUCIDE = {
-  name: "lucide",
+  regex: "^lucide(/|$)",
   message: "icons pass through BaseIcon and the one map, src/components/icons.ts (answer 11 of the design system)",
+};
+/** `reka-ui` behind the base pieces, the same way: its `exports` map opens paths under the name (`reka-ui/namespaced`). */
+const REKA = {
+  regex: "^reka-ui(/|$)",
+  message: "panels and frame use the base pieces, which sit on reka-ui (design system, section (b))",
 };
 /** What a base piece may not reach: the global state, and every layer above the kit (section (b); P-3 of its plan). */
 const UPWARD = {
@@ -21,12 +30,13 @@ const ABOVE = {
 /**
  * ⛔ `flat/essential` AND NOT `flat/recommended`, AND `--max-warnings 0` IS NOT USED.
  *
- * `flat/recommended` carries 33 warn-level rules that are almost all FORMATTING -- `html-indent`,
- * `html-quotes`, `max-attributes-per-line` -- and line 8 of `scripts/gate.sh` forbids, at the top of
- * the gate, a red that means "questionable style" (§7.4.3 of the compendium). `--max-warnings 0`
- * looks like the cure and is the opposite: it would promote exactly those to blocking.
- * `flat/essential` carries 85 rules and ZERO warnings, so every line this step prints is an `error`
- * and every `error` stops the gate. The command that re-measures both numbers lives in P-100.
+ * `flat/recommended` adds warn-level rules that are almost all FORMATTING -- `html-indent`,
+ * `html-quotes`, `max-attributes-per-line` -- and the head of `scripts/gate.sh` forbids a red that
+ * means "questionable style" (§7.4.3 of the sub-project 1 spec). `--max-warnings 0` looks like the
+ * cure and is the opposite: it would promote exactly those to blocking. `flat/essential` carries NO
+ * warn-level rule, so every line this step prints is an `error` and every `error` stops the gate --
+ * measured on 2026-10-09 on `eslint-plugin-vue` 10.11.0, from `gui/`, with:
+ *   node -e "const v=require('eslint-plugin-vue'); for (const n of ['flat/essential','flat/recommended']) { const r={}; for (const b of v.configs[n]) Object.assign(r,b.rules||{}); const c={error:0,warn:0}; for (const l of Object.values(r)) c[Array.isArray(l)?l[0]:l]++; console.log(n,c); }"
  */
 export default [
   ...vue.configs["flat/essential"],
@@ -73,15 +83,17 @@ export default [
        */
       "vue/multi-word-component-names": "off",
       /**
-       * ⛔ NOT IN `essential`, SO IT IS TURNED ON BY HAND. ADR-0016 cares about what the GUI is
-       * made to render; the one legitimate `v-html` is Chat's, and it has its own block below.
+       * ⛔ NOT IN `essential`, SO IT IS TURNED ON BY HAND. A model's text is untrusted (ADR-0014), and
+       * the gui renders it as text and code, never as HTML (`components/markdown.ts`); the one
+       * legitimate `v-html` is Chat's, and it has its own block below.
        */
       "vue/no-v-html": "error",
       /**
        * ⛔ `error` AND NOT THE PRESET'S `warn`, OR THIS CONTROL CANNOT GO RED. Measured: with the
        * preset's level, `eslint` exits 0 on a template full of raw text (P-98). This rule is what
-       * replaces the FIRST probe of `src/locales/copy.test.ts`; the second one survives, because it
-       * watches keys the SPA BUILDS and no lint can see those (P-105).
+       * replaced the probe of bare words `src/locales/copy.test.ts` carried first; the probes of the
+       * keys the SPA BUILDS stay there, because no lint can see those (P-105). ⚠️ The level and the
+       * `ignoreText` below are held by that file too: it reads this line verbatim.
        *
        * ⛔ `ignoreText` IS PUNCTUATION AND NOT AN ESCAPE HATCH (D91). Measured on 2026-09-16 on the
        * thirteen `.vue` of this plan: seven errors on bare `:` and `—` between two mustaches, in
@@ -126,7 +138,7 @@ export default [
   {
     name: "harness/imports",
     files: ["**/*.vue", "**/*.ts"],
-    rules: { "no-restricted-imports": ["error", { paths: [LUCIDE] }] },
+    rules: { "no-restricted-imports": ["error", { patterns: [LUCIDE] }] },
   },
   {
     // ⛔ THE WHOLE KIT KNOWS NO LAYER ABOVE IT (section (b); R2-11 of the design-system review, the owner's choice A). A
@@ -136,12 +148,12 @@ export default [
     name: "harness/imports/components",
     files: ["src/components/**/*.{vue,ts}"],
     ignores: ["src/components/**/*.test.ts"],
-    rules: { "no-restricted-imports": ["error", { paths: [LUCIDE], patterns: [ABOVE] }] },
+    rules: { "no-restricted-imports": ["error", { patterns: [LUCIDE, ABOVE] }] },
   },
   {
     name: "harness/imports/base-pieces",
     files: ["src/components/Base*.vue"],
-    rules: { "no-restricted-imports": ["error", { paths: [LUCIDE], patterns: [UPWARD] }] },
+    rules: { "no-restricted-imports": ["error", { patterns: [LUCIDE, UPWARD] }] },
   },
   {
     // The one file that may import `lucide`, and the only rule it keeps is the base pieces' one.
@@ -159,10 +171,7 @@ export default [
     name: "harness/panels-and-frame",
     files: ["src/panels/**/*.{vue,ts}", "src/frame/**/*.{vue,ts}"],
     rules: {
-      "no-restricted-imports": [
-        "error",
-        { paths: [LUCIDE, { name: "reka-ui", message: "panels and frame use the base pieces, which sit on reka-ui (design system, section (b))" }] },
-      ],
+      "no-restricted-imports": ["error", { patterns: [LUCIDE, REKA] }],
       "vue/no-restricted-html-elements": [
         "error",
         { element: ["button"], message: "a button is BaseButton (design system, section (b))" },

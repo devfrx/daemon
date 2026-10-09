@@ -103,7 +103,7 @@ for (const theme of ["light", "dark"] as const) {
       expect(judged.incomplete).toBe(0);
     });
 
-    it("opens its window with the radii concentric, and no axe violation", async () => {
+    it("opens its window with the radii concentric, nothing cut or sticking out, and no axe violation", async () => {
       await kit(theme);
       document.querySelector<HTMLButtonElement>('[data-kit="open-dialog"]')?.click();
       await nextTick();
@@ -113,11 +113,41 @@ for (const theme of ["light", "dark"] as const) {
       const report = concentricRadii(dialog);
       expect(report.near).toBeGreaterThan(0);
       expect(report.bad).toEqual([]);
+      // ⛔ THE OPEN WINDOW IS JUDGED FOR CUT TEXT TOO (AUD-2198 of the audit of 2026-09-30): it lives in a portal on `body`,
+      // out of the roots the probe of the page reads, so its `.base-dialog` among the boxes met nothing there.
+      const fit = fits(dialog, BOXES);
+      expect(fit.seen).toBeGreaterThan(0);
+      expect(fit.boxed).toBeGreaterThan(0);
+      expect(fit.problems).toEqual([]);
       expect(await violations(dialog[0] as Element, { contrast: true })).toEqual([]);
       const judged = await contrastJudged(dialog[0] as Element);
       expect(judged.passes).toBeGreaterThan(0);
       expect(judged.incomplete).toBe(0);
     });
+
+    for (const [variant, trigger] of [
+      ["sheet", "open-sheet"],
+      ["full", "open-full"],
+    ] as const) {
+      it(`opens its window as the ${variant}, nothing cut or sticking out, and no axe violation (AUD-1085 of the audit of 2026-09-30)`, async () => {
+        await kit(theme);
+        document.querySelector<HTMLButtonElement>(`[data-kit="${trigger}"]`)?.click();
+        await nextTick();
+        await nextTick();
+        const dialog = roots(`.base-dialog[data-variant="${variant}"]`);
+        expect(dialog).toHaveLength(1);
+        const fit = fits(dialog, BOXES);
+        expect(fit.seen).toBeGreaterThan(0);
+        expect(fit.boxed).toBeGreaterThan(0);
+        expect(fit.problems).toEqual([]);
+        // ⛔ NO RADIUS JUDGED HERE, AND IT IS NOT AN OVERSIGHT: the rule judges a rounded piece in a rounded box, and the
+        // sheet's two rounded corners hold nothing, while the whole page's corners are square -- Windows' (the (d)).
+        expect(await violations(dialog[0] as Element, { contrast: true })).toEqual([]);
+        const judged = await contrastJudged(dialog[0] as Element);
+        expect(judged.passes).toBeGreaterThan(0);
+        expect(judged.incomplete).toBe(0);
+      });
+    }
 
     it("draws every button that is off in the disabled colour, whatever its variant (E19)", async () => {
       await kit(theme);

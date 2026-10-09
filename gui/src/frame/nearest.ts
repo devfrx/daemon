@@ -14,8 +14,16 @@ export type Direction = "left" | "right" | "up" | "down";
  * lives here once.
  * Only what lies BEYOND `from` in that direction counts, and the nearest is the smallest gap on that axis.
  *
+ * ⛔ ONE PIXEL OF SLACK (AUD-2197 of the audit of 2026-09-30): a candidate whose edge touches `from`'s, or crosses it by
+ * less than a pixel, still lies beyond; one that crosses it by more does not. The number came bare from SP-8's `home.ts`,
+ * with no measure behind it -- what holds it is `nearest.test.ts`, on both sides of it.
+ *
  * ⛔ A TIE IS BROKEN ON THE OTHER AXIS, by the centre nearest to `from`'s (R3-18 of the design-system review): in a grid
  * every card of the row below is equally far, and the gap alone sent "down" to the first column from any column.
+ *
+ * ⛔ THE CALLER LEAVES `from` OUT OF THE CANDIDATES (AUD-2117 of the audit of 2026-09-30) -- `moveActive` by its group, the
+ * overview by its card. A rectangle is not beyond itself only because it is wider and taller than the slack: one of a pixel
+ * or less lies beyond itself in all four directions, and under jsdom every rectangle is zero.
  *
  * ⚠️ UNDER jsdom EVERY RECT IS ZERO: the probes hand rectangles of their own (`nearest.test.ts`, `keys.test.ts`), and the
  * browser is where the real ones are seen.

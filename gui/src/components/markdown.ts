@@ -14,7 +14,10 @@ import MarkdownIt from "markdown-it";
  *   no `href`: nothing to follow, and the address is visible instead of hidden behind the text;
  * - an image becomes text -- the alt and the address -- and NEVER `<img>`: an `<img src>` is
  *   fetched by the browser with nobody clicking, which would let an untrusted text make the gui
- *   reach a URL of its choosing (P-87). ADR-0016's exfiltration canary exists for that channel.
+ *   reach a URL of its choosing (P-87). ⚠️ THIS RULE IS THE ONLY DEFENCE OF THAT CHANNEL TODAY:
+ *   the exfiltration canary of ADR-0016 is staggered, not built (row Q17 of §8 of the sub-project 1
+ *   spec, ⏳), and as that ADR decides it -- a sensor's verdict on content going out of the kernel's
+ *   loop -- it would not see a request the browser makes by itself (deduced, not measured).
  */
 const md = new MarkdownIt("default", { html: false, linkify: false });
 

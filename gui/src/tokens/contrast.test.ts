@@ -4,7 +4,9 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-const css = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "themes.css"), "utf8");
+const HERE = dirname(fileURLToPath(import.meta.url));
+const css = readFileSync(join(HERE, "themes.css"), "utf8");
+const base = readFileSync(join(HERE, "base.css"), "utf8");
 
 /** Every `--name: value;` of the block that opens with `selector {`. ⛔ READ FROM THE FILE AND NOT RETYPED:
  * a probe that carried its own copy of the palette would go on passing after someone edits the real one. */
@@ -46,6 +48,37 @@ export function contrast(foreground: string, background: string): number {
   return (high + 0.05) / (low + 0.05);
 }
 
+/** The pairs under their threshold, each in words: what the probe of every pair wants empty. */
+function failing(roles: Record<string, string>, pairs: readonly [string, string, number][]): string[] {
+  const failed: string[] = [];
+  for (const [foreground, background, need] of pairs) {
+    const a = colour(roles, roles[foreground] ?? "");
+    const b = colour(roles, roles[background] ?? "");
+    if (a === null || b === null) {
+      failed.push(`${foreground} on ${background}: not a plain colour`);
+      continue;
+    }
+    const ratio = contrast(a, b);
+    if (ratio < need) failed.push(`${foreground} on ${background}: ${ratio.toFixed(2)} < ${need}`);
+  }
+  return failed;
+}
+
+/**
+ * The pair `::selection` draws in `base.css`, its text on its ground, by role. ⛔ READ FROM THE RULE AND NOT RETYPED
+ * (AUD-2211 of the audit of 2026-09-30): a pair written here would go on being judged after the rule drew another one.
+ */
+function selection(): [string, string] {
+  const body = /::selection \{([^}]*)\}/.exec(base)?.[1] ?? "";
+  const role = (property: string): string | undefined => new RegExp(`(?:^|[;\\s])${property}:\\s*var\\(--([a-z0-9-]+)\\)`).exec(body)?.[1];
+  const text = role("color");
+  const ground = role("background");
+  if (text === undefined || ground === undefined) throw new Error("base.css has no `::selection` drawn with two roles");
+  return [text, ground];
+}
+
+const SELECTION = selection();
+
 /**
  * ⛔ THE FAMILIES OF THE 176 PAIRS APPROVED WITH THE BOARD (P-1 of the design-system plan), as rules on NAMES
  * and not as a list of pairs. `pairs()` of the board's generator, `palette.py`, was:
@@ -54,8 +87,8 @@ export function contrast(foreground: string, background: string): number {
  *   on 4.5:1       `text-on-X` on `bg-X` and on its hover and active states
  *   non-text 3:1   border-strong, focus, mark, border-accent -- on bg, bg-surface, bg-raised, bg-fill
  * "Every text on every background" -- the words of decision 14 of the design -- fails by construction: in
- * the dark theme `--color-text-on-ok` IS `--color-bg`. One pair is added here, and it passes: `--color-text`
- * on `--color-bg-selection`, the pair `::selection` draws in `base.css`.
+ * the dark theme `--color-text-on-ok` IS `--color-bg`. One pair is added here, read from `base.css`: the text
+ * and the ground `::selection` draws.
  */
 function families(names: string[]) {
   const texts = names.filter((n) => n.startsWith("color-text") && n !== "color-text-disabled" && !n.startsWith("color-text-on-"));
@@ -88,6 +121,26 @@ const EXEMPT: Record<string, string> = {
   "shadow-overlay": "a shadow, not a colour",
 };
 
+describe("the judge itself (AUD-2212 of the audit of 2026-09-30)", () => {
+  it("gives WCAG's ratios at its two ends, and the same either way round", () => {
+    // 21:1 and 1:1 are the formula's own bounds -- black on white, and a colour on itself.
+    expect(contrast("#000000", "#ffffff")).toBeCloseTo(21, 10);
+    expect(contrast("#ffffff", "#000000")).toBeCloseTo(21, 10);
+    expect(contrast("#767676", "#767676")).toBe(1);
+  });
+
+  it("puts a pair under its threshold among the failures, and leaves the pair over it out", () => {
+    // ⛔ THE PROBE OF EVERY PAIR GOES RED, AND NOT ONLY GREEN: two greys on white either side of 4.5:1 -- the darkest grey that
+    // passes and the lightest that does not, by the formula of WCAG 2.2 -- and only the second is a failure.
+    const roles = { "color-text": "#777777", "color-mark": "#767676", "color-bg": "#ffffff" };
+    const pairs: [string, string, number][] = [
+      ["color-text", "color-bg", 4.5],
+      ["color-mark", "color-bg", 4.5],
+    ];
+    expect(failing(roles, pairs)).toEqual([expect.stringMatching(/^color-text on color-bg: 4\.\d\d < 4\.5$/)]);
+  });
+});
+
 describe("the two themes", () => {
   it("carry the same roles, by name", () => {
     expect(Object.keys(THEMES.dark ?? {}).sort()).toEqual(Object.keys(THEMES.light ?? {}).sort());
@@ -99,7 +152,7 @@ describe("the two themes", () => {
     const pairs: [string, string, number][] = [
       ...f.texts.flatMap((text) => f.grounds.map((ground): [string, string, number] => [text, ground, 4.5])),
       ...f.onPairs.map(([text, ground]): [string, string, number] => [text, ground, 4.5]),
-      ["color-text", "color-bg-selection", 4.5],
+      [...SELECTION, 4.5],
       ...f.marks.flatMap((mark) => f.surfaces.map((surface): [string, string, number] => [mark, surface, 3])),
     ];
 
@@ -112,23 +165,12 @@ describe("the two themes", () => {
     });
 
     it(`${theme}: every pair reads at its threshold (WCAG 2.2, 1.4.3 and 1.4.11)`, () => {
-      const failing: string[] = [];
-      for (const [foreground, background, need] of pairs) {
-        const a = colour(roles, roles[foreground] ?? "");
-        const b = colour(roles, roles[background] ?? "");
-        if (a === null || b === null) {
-          failing.push(`${foreground} on ${background}: not a plain colour`);
-          continue;
-        }
-        const ratio = contrast(a, b);
-        if (ratio < need) failing.push(`${foreground} on ${background}: ${ratio.toFixed(2)} < ${need}`);
-      }
-      expect(failing).toEqual([]);
+      expect(failing(roles, pairs)).toEqual([]);
     });
 
     it(`${theme}: every role is judged by a family, or exempt with its reason`, () => {
       // ⛔ THE GUARD AGAINST A SILENT ESCAPE: a role added tomorrow in no family would never be judged.
-      const judged = new Set([...f.texts, ...f.grounds, ...f.onPairs.flat(), ...f.marks, ...f.surfaces, "color-bg-selection"]);
+      const judged = new Set([...f.texts, ...f.grounds, ...f.onPairs.flat(), ...f.marks, ...f.surfaces, ...SELECTION]);
       expect(names.filter((name) => !judged.has(name) && !(name in EXEMPT))).toEqual([]);
     });
   }

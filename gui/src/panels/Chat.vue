@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onUnmounted, ref, watch } from "vue";
+import { computed, onUnmounted, ref, shallowRef, watch } from "vue";
 
 import { renderMarkdown } from "../components/markdown";
 import { useStream, type Block } from "../stores/stream";
@@ -10,8 +10,18 @@ import { useStream, type Block } from "../stores/stream";
 const stream = useStream();
 const empty = computed(() => stream.blocks.length === 0 && stream.current === null);
 
-// Frozen blocks are rendered once, when the list changes (a freeze every FREEZE_AT characters).
-const frozen = computed(() => stream.blocks.map((block) => ({ ...block, html: renderMarkdown(block.text) })));
+// ⛔ A FROZEN BLOCK IS RENDERED ONCE, WHEN IT FREEZES, as SP-8's tile did and as M4 was measured (AUD-2121 and AUD-2122 of
+// the audit of 2026-09-30): its HTML is kept by its `id`, which no other block ever takes, and a freeze renders the one
+// block that closed. A `computed` over the whole list rendered every block it kept again at each freeze, up to KEEP.
+const frozen = shallowRef<(Block & { html: string })[]>([]);
+watch(
+  () => [...stream.blocks],
+  (blocks) => {
+    const rendered = new Map(frozen.value.map((block) => [block.id, block.html]));
+    frozen.value = blocks.map((block) => ({ ...block, html: rendered.get(block.id) ?? renderMarkdown(block.text) }));
+  },
+  { immediate: true },
+);
 
 // ⛔ ONE RENDER PER ANIMATION FRAME AT MOST for the block being streamed, as SP-8's tile did and as
 // M4 was measured: rendering markdown on every token pays the parser per token. Where there is no
@@ -64,9 +74,11 @@ function label(block: Block): string {
       <article v-for="block in frozen" :key="block.id" class="block" :data-provenance="block.provenance">
         <p class="provenance">{{ $t(label(block)) }}</p>
         <!-- v-html OF OUR OWN OUTPUT: `renderMarkdown` escapes the model's text (html: false), so
-             what lands here is HTML the renderer wrote, never HTML the model wrote. Task 15's lint
-             (`vue/no-v-html`, a warning in the recommended set) gets these two lines as its
-             declared exception, with this reason. -->
+             what lands here is HTML the renderer wrote, never HTML the model wrote. ⚠️ THE LINT DOES
+             NOT WATCH THIS FILE: `vue/no-v-html`, at `error` everywhere else, is off for the whole of
+             `Chat.vue` (the block `harness/chat-renders-our-own-html` of `eslint.config.js`), so a
+             third `v-html` here would pass it -- what holds the reason is `markdown.test.ts`, on the
+             renderer, and `chat.test.ts`, which reads both `v-html` of this file. -->
         <div class="body" v-html="block.html"></div>
       </article>
     </div>

@@ -1,5 +1,5 @@
 import type { TabPartInitParameters } from "dockview-core";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { i18n } from "../i18n";
 
@@ -7,11 +7,23 @@ import { BigTab } from "./BigTab";
 
 const t = i18n.global.t;
 
-function parameters(id: string, title?: string) {
+/** A module type whose `name` is not its `module`: the registry hands it out for this name, here only. Hoisted, as the
+ * mock below is. */
+const RENAMED = vi.hoisted(() => ({ name: "status-renamed", module: "status", who: 2 }));
+
+// ⛔ EVERY ROW OF `PANEL_TYPES` HAS ITS NAME EQUAL TO ITS MODULE TODAY, so the one case that tells which of the two the tab
+// reads needs a row the registry does not have: it is handed one more, and nothing else changes (AUD-2115 of the audit of
+// 2026-09-30).
+vi.mock("../panels/registry", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../panels/registry")>();
+  return { ...actual, panelType: (name: string) => (name === RENAMED.name ? RENAMED : actual.panelType(name)) };
+});
+
+function parameters(id: string, title?: string, maximized = false) {
   const calls: string[] = [];
   const api = {
     id,
-    isMaximized: () => false,
+    isMaximized: () => maximized,
     maximize: () => calls.push("maximize"),
     exitMaximized: () => calls.push("exit"),
   };
@@ -34,6 +46,15 @@ describe("the big tab", () => {
     expect(other.element.querySelector(".base-label svg")).toBeNull();
   });
 
+  it("names a module and draws its icon from its `module`, as the drawer does, and not from the panel's id (AUD-2115 of the audit of 2026-09-30)", () => {
+    // `module` is the key of `modules.*` in the locale and the icon's name (`PanelType` in `registry.ts`); the probes of the
+    // words and of the icons walk it, so the tab is covered only if it reads the same field.
+    const tab = new BigTab();
+    tab.init(parameters(RENAMED.name, "Titolo dato").init);
+    expect(tab.element.querySelector(".base-label")?.textContent?.trim()).toBe(t("modules.status"));
+    expect(tab.element.querySelector('.base-label svg[data-icon="status"]')).not.toBeNull();
+  });
+
   it("carries two named commands of the kit, that run and do not start a drag", () => {
     const { calls, init } = parameters("status");
     const tab = new BigTab();
@@ -54,6 +75,16 @@ describe("the big tab", () => {
     buttons[0]?.click();
     buttons[1]?.click();
     expect(calls).toEqual(["float", "maximize"]);
+  });
+
+  it("brings a tile at full page back with its second command, and does not maximize it again (AUD-2192 of the audit of 2026-09-30)", () => {
+    // ⛔ THE OTHER HALF OF «A PAGINA INTERA, O RITORNO»: the probe above meets a tile that is not maximized, and the return
+    // went unexercised -- a command that always maximized passed it.
+    const { calls, init } = parameters("status", undefined, true);
+    const tab = new BigTab();
+    tab.init(init);
+    tab.element.querySelectorAll("button")[1]?.click();
+    expect(calls).toEqual(["exit"]);
   });
 
   it("takes its face away when dockview disposes of the tab", () => {

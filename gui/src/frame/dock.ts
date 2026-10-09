@@ -1,5 +1,5 @@
 import { createDockview, type DockviewApi, type DockviewTheme, type SerializedDockview } from "dockview-core";
-import { watch } from "vue";
+import { effectScope, watch } from "vue";
 
 import { componentFor, isBuilt, placeholderParams } from "../panels/registry";
 import { useLayout, type LayoutPack, type ViewName } from "../stores/layout";
@@ -68,14 +68,27 @@ function same(a: SerializedDockview, b: SerializedDockview): boolean {
  *
  * ⛔ SHOWING RESETS THE BASELINE: the buffered `onDidLayoutChange` that follows a `fromJSON`, and
  * a maximize deferred like it (E104), compare equal and do not settle, so LOOKING at a view is not
- * SAVING it -- decision 11, the shipped views stay in `gui/` until the owner changes one.
+ * SAVING it -- the coordinator's decision 11 of the north star, the shipped views stay in `gui/`
+ * until the owner changes one.
  *
  * ⚠️ THE ACTIVE PANEL IS LAYOUT (D81): `activeGroup` is in `toJSON()`, and `dockview` fires
- * `onDidLayoutChange` on `onDidActiveChange` too (measured on the 8.2.0 in SP-8's `node_modules`,
- * R9b-12; if 8.3.1 differs, this line is an errata). So a click that changes the active panel
- * settles, and that is accepted: which panel is active is part of where things are.
+ * `onDidLayoutChange` on a change of the active panel too -- read in `dockview-core` 8.3.1, where
+ * `BaseGrid` and `DockviewComponent` hand `onDidActiveChange` and `onDidActivePanelChange` to the
+ * buffer behind it, and held by «saves when a click changes the active panel» in `frame.test.ts`
+ * (AUD-2062 of the audit of 2026-09-30). So a click that changes the active panel settles, and that
+ * is accepted: which panel is active is part of where things are.
+ *
+ * ⛔ WHAT IT REGISTERS OUTSIDE THE GRID GOES WITH IT (AUD-2116 of the audit of 2026-09-30): its
+ * watchers and its two listeners on `window` hold the dock, and `dispose` takes them away before
+ * the grid -- as `watchTheme` hands back its stop, and `Frame.vue` takes its own `keydown` off.
  */
-export function createDock(host: HTMLElement): DockviewApi {
+export interface Dock {
+  readonly api: DockviewApi;
+  /** Stops the watchers, takes the listeners off `window`, and disposes of the grid: nothing of it answers after. */
+  dispose(): void;
+}
+
+export function createDock(host: HTMLElement): Dock {
   const layout = useLayout();
   const api = createDockview(host, {
     // ⛔ OUR THEME AND NOT `dockview`'s abyss theme, on which the eight moves were judged: that one
@@ -100,44 +113,64 @@ export function createDock(host: HTMLElement): DockviewApi {
   // outside the box, so the grid gets exactly the room it has (P-7 of the design-system plan).
   api.layout(host.clientWidth, host.clientHeight);
 
-  // The theme follows the one on screen (the (c)): `updateOptions` hands it to `updateTheme` again.
-  watch(shownTheme, () => api.updateOptions({ theme: harnessTheme() }));
-
   function show(): SerializedDockview {
     apply(api, layout.view, layout.saved, layout.openNamed);
     return api.toJSON();
   }
 
-  // ⛔ AND THE NAMED VIEW THAT IS OPEN (the (d)): opening one, or closing it for one of the three, shows it here too.
   let last = show();
-  watch([() => layout.view, () => layout.openNamed, () => layout.arrivals], () => {
-    last = show();
+  // ⛔ THE WATCHERS IN A SCOPE OF THEIR OWN, STOPPED BY `dispose`: inside a component's hook -- `Frame.vue`'s `onMounted` --
+  // it is a child of the component's and stops with it too; anywhere else only `dispose` stops it.
+  const scope = effectScope();
+  scope.run(() => {
+    // The theme follows the one on screen (the (c)): `updateOptions` hands it to `updateTheme` again.
+    watch(shownTheme, () => api.updateOptions({ theme: harnessTheme() }));
+    // ⛔ AND THE NAMED VIEW THAT IS OPEN (the (d)): opening one, or closing it for one of the three, shows it here too.
+    watch([() => layout.view, () => layout.openNamed, () => layout.arrivals], () => {
+      last = show();
+    });
   });
+
+  /** Whether `dispose` has run: a change `dockview` buffered, or a maximize deferred, may still land after it. */
+  let gone = false;
 
   /** What is on screen, saved only if it moved since the last save or the last showing. */
   function settleIfMoved(): void {
+    if (gone) return;
     const now = api.toJSON();
     if (same(last, now)) return;
     last = now;
     layout.settle(now);
   }
 
-  api.onDidLayoutChange(settleIfMoved);
+  const heard = [
+    api.onDidLayoutChange(settleIfMoved),
+    // ⛔ A MAXIMIZE IS A MOVE, AND NOT AN `onDidLayoutChange` (E104 of the design-system plan): in `dockview-core` 8.3.1
+    // `maximizeGroup` saved only through the change of the active group it makes, when it makes one, and
+    // `exitMaximizedGroup` never -- a group restored stayed maximized in the package. ⛔ DEFERRED TO A MICROTASK, AS
+    // `dockview` DEFERS `onDidLayoutChange`, SO THAT SHOWING STAYS NOT SAVING: `fromJSON` fires this event inside `apply`
+    // -- restoring the group of the view it leaves, maximizing the one of the view it opens -- before `show` resets the
+    // baseline; heard at once, it saved the view left under the name of the view opened (measured on 2026-09-27).
+    api.onDidMaximizedGroupChange(() => queueMicrotask(settleIfMoved)),
+  ];
 
-  // ⛔ A MAXIMIZE IS A MOVE, AND NOT AN `onDidLayoutChange` (E104 of the design-system plan): in `dockview-core` 8.3.1
-  // `maximizeGroup` saved only through the change of the active group it makes, when it makes one, and
-  // `exitMaximizedGroup` never -- a group restored stayed maximized in the package. ⛔ DEFERRED TO A MICROTASK, AS
-  // `dockview` DEFERS `onDidLayoutChange`, SO THAT SHOWING STAYS NOT SAVING: `fromJSON` fires this event inside `apply` --
-  // restoring the group of the view it leaves, maximizing the one of the view it opens -- before `show` resets the
-  // baseline; heard at once, it saved the view left under the name of the view opened (measured on 2026-09-27).
-  api.onDidMaximizedGroupChange(() => queueMicrotask(settleIfMoved));
-
+  const resize = (): void => api.layout(host.clientWidth, host.clientHeight);
   // Decision 12: and when the window closes. ⛔ ONLY IF SOMETHING CHANGED SINCE THE LAST SETTLE
   // (D81): before, an untouched gui copied the shipped Home into the archive at its first close.
   window.addEventListener("beforeunload", settleIfMoved);
+  window.addEventListener("resize", resize);
 
-  window.addEventListener("resize", () => api.layout(host.clientWidth, host.clientHeight));
-  return api;
+  return {
+    api,
+    dispose(): void {
+      gone = true;
+      scope.stop();
+      window.removeEventListener("beforeunload", settleIfMoved);
+      window.removeEventListener("resize", resize);
+      for (const listener of heard) listener.dispose();
+      api.dispose();
+    },
+  };
 }
 
 /**

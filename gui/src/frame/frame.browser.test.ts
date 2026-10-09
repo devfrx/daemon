@@ -147,9 +147,9 @@ for (const theme of ["light", "dark"] as const) {
       expect(radii.bad).toEqual([]);
       // ⛔ THE BAND THAT STOPS THE WINDOW IS ON THE PAGE TOO (E70), AND THE PAGE NEVER SPILLS WHILE IT COMES IN (E43): the
       // core welcomed, the band leaves; another stamp brings it back. `dockview` resizes one frame late, and for that
-      // frame the grid spilled out of the dock and the page showed its scrollbars -- read on `scrollHeight`, which the
-      // hidden scrollbars do not hide: 50 px on the first frame without the dock's `overflow: clip`, measured on
-      // 2026-09-27.
+      // frame the grid spilled out of the dock and the page showed its scrollbars -- read on `scrollHeight`, which sees a
+      // spill whether the bars are drawn or not (this project draws them, control 22 in `vite.config.ts`; AUD-2063 of
+      // the audit of 2026-09-30): 50 px on the first frame without the dock's `overflow: clip`, measured on 2026-09-27.
       const connection = useConnection();
       connection.receive({ kind: "Accepted", value: "AsSystemAccount" });
       await expect.poll(() => document.querySelector(".band")).toBeNull();

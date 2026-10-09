@@ -1,7 +1,7 @@
 /* OUR `dockview` THEME, `dockview-theme-harness` (design system, section (c); task 6 of its plan): `frame/dock.ts` puts the
    class on the dock's shell, and this sheet dresses it with our roles and tokens only -- no colour by hand (control 5,
-   `usage.test.ts`). It sets every variable `dockview`'s abyss theme set, but the tab groups' and the palette's
-   (`dock.test.ts`).
+   `usage.test.ts`). It sets every variable `dockview`'s abyss theme set, but the tab groups' and the palette's, and every
+   one `dockview.css` reads with a colour of its own, but those of the modules the SPA does not turn on (`dock.test.ts`).
 
    ⛔ `frame/VueContent.ts` and `frame/BigTab.ts` hand `dockview` plain elements, because it asks for RENDERERS and not
    components: the classes they name -- `panel`, `bigtab` -- live here and not in a scoped <style> (E165, E166 of the
@@ -17,6 +17,10 @@
   --dv-tab-border-radius: 0;
   --dv-tab-close-icon-size: var(--size-icon-sm);
   --dv-tabs-container-scrollbar-color: var(--color-border-strong);
+  /* ⛔ AND THE THUMB `dockview` DRAWS ITSELF over a tab strip that scrolls, under the pointer: `createDock` leaves its
+     `scrollbars` option as it is, so every strip gets `dockview`'s own bar, whose colour no theme of ours set -- it fell back
+     to a white by hand from `dockview.css` (AUD-2213 of the audit of 2026-09-30). The role every thumb takes on hover (E59). */
+  --dv-scrollbar-background-color: var(--color-border-strong);
   --dv-icon-hover-background-color: var(--color-bg-fill-hover);
   --dv-dropdown-border-radius: var(--radius-control);
 

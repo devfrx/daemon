@@ -1,7 +1,9 @@
 // THE CONFORMANCE SUITE OF THE `ipc` PORT (§3 of the sub-project 2 design). ⛔ IT IS EXPANDED AGAINST
 // THE REAL TRANSPORT ONLY (D82): every promise worth holding here needs a peer that writes bytes,
-// and the two fakes of this port pass bytes verbatim and frame nothing -- expanded on them the
-// suite would be comparing itself. No liar either: one expansion has nothing to disagree with.
+// and no fake of this port frames anything -- each hands whole messages over, or drops them --
+// so expanded on one the suite would be comparing itself. Which fakes there are is what
+// `grep -rnE "^ *impl Ipc for" crates/` prints, not this line. No liar either: one expansion has
+// nothing to disagree with. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1301.
 //
 // ⛔ REGULAR COMMENTS AND NOT `//!`, BECAUSE THIS FILE IS `include!`d.
 // `crates/platform/tests/ipc_contract_real.rs` expands it IN ITEM POSITION, and an inner

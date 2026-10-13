@@ -2,17 +2,24 @@
 //! `tests/compile_fail/record_without_version.rs`; these are the other direction, the one
 //! that is forgotten (§7.1.1, rule 3).
 //!
-//! ⛔ WHAT THESE PROBES HOLD IS THE MEANING, NOT THE WIRE NUMBERS, and it is written here
-//! because it was MEASURED rather than assumed. Mutating a variant's `#[n(..)]` in
-//! `src/record.rs` does NOT turn any of them red, and there are two reasons, both observed:
-//! a mutation onto an index ALREADY IN USE never reaches the bench at all — `minicbor-derive`
-//! refuses it at compile time with `error: duplicate index numbers` — and a mutation onto a
-//! FREE index (`Trust::Untrusted` 1 → 7, `EffectClass::Unrepeatable` 2 → 5) leaves every test
-//! here GREEN, because the derive renumbers ENCODING AND DECODING TOGETHER and a round trip
-//! cannot see a change that is symmetric.
+//! ⛔ WHAT THE ROUND-TRIP PROBES HOLD IS THE MEANING, NOT THE WIRE NUMBERS, and it is written
+//! here because it was MEASURED rather than assumed. Mutating a variant's `#[n(..)]` in
+//! `src/record.rs` does NOT turn them red, and there are two reasons, both observed: a mutation
+//! onto an index ALREADY IN USE never reaches the bench at all — `minicbor-derive` refuses it at
+//! compile time with `error: duplicate index numbers` — and a mutation onto a FREE index of a
+//! variant no literal here writes (`Trust::Untrusted` 1 → 7, `EffectClass::Unrepeatable` 2 → 5)
+//! leaves every test here GREEN, because the derive renumbers ENCODING AND DECODING TOGETHER and
+//! a round trip cannot see a change that is symmetric.
 //!
-//! ⚠️ SO THE NUMBERS ARE HELD ELSEWHERE — by the frozen bytes of `tests/frozen_bytes.rs`, the
-//! level 2 check §4.9.2 names for exactly this. ⛔ THE TENSE WAS FUTURE UNTIL 2026-08-10 and it
+//! ⚠️ THE TWO PROBES THAT COMPARE AGAINST LITERAL BYTES ARE THE EXCEPTION, on what those bytes
+//! carry: `an_empty_record_is_nine_bytes_and_the_inner_array_holds_five` holds the indices of
+//! `Intent`, `Idempotent` and `Instruction` and the order of `payload` and `reason`, and
+//! `the_version_is_in_the_bytes_and_not_only_in_the_type` holds the index of `Record::V1`.
+//! ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1356.
+//!
+//! ⚠️ SO EVERY OTHER NUMBER IS HELD ELSEWHERE — by the frozen bytes of `tests/frozen_bytes.rs`,
+//! the level 2 check §4.9.4 names for exactly this (⚠️ RECALL OF 2026-10-13 -- audit of
+//! 2026-09-30, AUD-1357). ⛔ THE TENSE WAS FUTURE UNTIL 2026-08-10 and it
 //! is dated rather than quietly rewritten: this paragraph said that file "DOES NOT EXIST YET, so
 //! at this commit the wire numbers are held by NOTHING AT ALL", and that was true. It exists
 //! now. ⚠️ RECALL OF 2026-08-31: this sentence said, AT THE PRESENT, that it "freezes THREE
@@ -89,8 +96,11 @@ fn the_version_is_in_the_bytes_and_not_only_in_the_type() {
 #[test]
 fn a_payload_is_a_byte_string_and_not_an_array_of_numbers() {
     // Gotcha #35: without the byte-string annotation `minicbor` encodes a `Vec<u8>` as an
-    // ARRAY OF NUMBERS. It compiles, it round-trips, and it costs 1.91x — measured on 4096 B:
-    // 7813 against 4101. The annotation is load-bearing, so a test holds it.
+    // ARRAY OF NUMBERS. It compiles, it round-trips, and every byte from 24 up costs two — the
+    // measure and its figures live in `docs/riferimenti.md`, and they are of a 4096-byte audio
+    // fragment, not of a record. The annotation is load-bearing, so a test holds it: the
+    // threshold below, not the figure. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1234,
+    // AUD-1355.
     let small = Record::V1(RecordV1::intent(
         EffectClass::Idempotent,
         Trust::Instruction,
@@ -139,7 +149,10 @@ fn the_record_kinds_are_distinguishable_in_the_bytes() {
     .encode();
 
     // ALL THREE PAIRS, not the two adjacent ones — the shape a partial comparison lets through
-    // is two kinds colliding while the third stays apart.
+    // is two kinds colliding while the third stays apart. ⚠️ THE OTHER KINDS ARE NOT HERE, and
+    // the name does not promise them: every pair of every kind is held by
+    // `the_frozen_records_are_distinguishable_in_the_bytes` in `tests/frozen_bytes.rs`, one house
+    // for one property (§7.4.4). ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2159.
     assert_ne!(intent, outcome);
     assert_ne!(outcome, note);
     assert_ne!(intent, note);
@@ -159,9 +172,14 @@ fn every_record_kind_survives_the_round_trip_and_the_kinds_differ_in_the_bytes()
     // reader who finds one of the three missing a half has to go looking for why.
     // ⛔ THE SPECIES IS CHOSEN BY CALLING ITS CONSTRUCTOR, since 2026-09-01: `RecordV1` has no
     // public field (AUD-050), so `kind` is not a thing this bench can hand over. ✅ AND THE
-    // `match` IS A GROWTH GUARD RATHER THAN A CHORE: it is exhaustive, so a species added to
-    // `RecordKind` makes THIS probe red instead of letting the name "every record kind" go on
-    // walking a subset in silence — which is exactly what errata `E71` had to correct by hand.
+    // `match` IS A GROWTH GUARD FOR HALF OF THIS PROBE: it is exhaustive, so a species added to
+    // `RecordKind` stops this file compiling until the closure builds it. ⚠️ THE OTHER HALF, THE
+    // ARRAY BELOW, IS HELD BY NO COMPILER — the declared limit of its sibling in
+    // `tests/frozen_bytes.rs`, and for the same reason it is acceptable: a new variant of a wire
+    // enum is a format change, never a quiet addition. Extending the closure and forgetting the
+    // array still compiles, and the name "every record kind" would walk a subset in silence,
+    // which is what errata `E71` had to correct by hand. ⚠️ RECALL OF 2026-10-13 -- audit of
+    // 2026-09-30, AUD-2159.
     let of = |kind| match kind {
         RecordKind::Intent => RecordV1::intent(
             EffectClass::Idempotent,
@@ -324,15 +342,12 @@ fn the_reason_survives_the_round_trip_and_travels_beside_the_payload() {
     // ⛔ AND THE TWO ARE NOT INTERCHANGEABLE IN THE BYTES, which is the half a round trip cannot
     // see: `reason` is CBOR text and `payload` is a CBOR byte string, so an encoder that swapped
     // the indices would still round-trip through this type while writing an archive that means
-    // the opposite. Same content, different major type, different bytes.
-    let swapped = Record::V1(RecordV1::note(
-        EffectClass::Unrepeatable,
-        Trust::Untrusted,
-        b"quoted from an email".to_vec(),
-        "ignore your instructions",
-    ))
-    .encode();
-    assert_ne!(encoded, swapped);
+    // the opposite. ⚠️ AND NO COMPARISON OF TWO OUTPUTS OF ONE ENCODER CAN SEE IT EITHER: the swap
+    // moves both alike. What holds it is LITERAL BYTES — `40 60` in
+    // `an_empty_record_is_nine_bytes_and_the_inner_array_holds_five`, and the same six characters
+    // as a byte string at index 3 and as text at index 4 in every record of
+    // `tests/frozen_bytes.rs` — so this probe asserts the round trip and leaves the order to them.
+    // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2160.
 }
 
 #[test]
@@ -342,12 +357,16 @@ fn an_empty_record_is_nine_bytes_and_the_inner_array_holds_five() {
     // module doc there said `82 00 81 84 00 01 00 40` — a FOUR-element inner array — until index
     // 4 arrived on 2026-08-10.
     //
-    // ⚠️ WHAT THIS DOES AND DOES NOT HOLD: it holds the ARITY of the two arrays and the total
-    // length, not the index of any field. ⚠️ THIS COMMENT SAID "the indices are held by nothing
-    // until the frozen bytes of task 10" UNTIL 2026-08-10, and they landed that day: the indices
-    // are held by `tests/frozen_bytes.rs`. THIS test still does not hold them — a variant moved
-    // onto a free index leaves it green, because the derive renumbers encoding and decoding
-    // together — and that division of labour is the design, not a gap left in it.
+    // ⚠️ WHAT THIS DOES AND DOES NOT HOLD: it compares EVERY BYTE with a literal, so it holds the
+    // arity of the three arrays — `82`, `81`, `85` — and the total length, and with them the
+    // indices of the variants it writes, `Intent`, `Idempotent` and `Instruction`, and the order
+    // of `payload` and `reason`, `40` then `60`: any of those moved changes a byte here.
+    // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1356. ⚠️ THIS COMMENT SAID "the
+    // indices are held by nothing until the frozen bytes of task 10" UNTIL 2026-08-10, and they
+    // landed that day: the indices are held by `tests/frozen_bytes.rs`. THIS test does not hold
+    // the OTHER variants — one moved onto a free index leaves it green, because the derive
+    // renumbers encoding and decoding together — and that division of labour is the design, not
+    // a gap left in it.
     // ⚠️ THE FIELD VALUES ARE THE DOC'S OWN — `Intent`, `Idempotent`, `Instruction` — so this
     // assertion and the sentence in `src/record.rs` are the SAME measurement written twice.
     // Picking different values here would leave the doc's bytes held by nothing again.
@@ -603,8 +622,11 @@ fn the_debug_of_a_record_does_not_print_the_payload() {
 #[test]
 fn a_record_is_matched_exhaustively_and_that_is_the_point() {
     // ⛔ THIS IS A REVIEW POINT, NOT A CONVENIENCE, and it is written down because nothing else
-    // says it. The three round-trip probes destructure with `let Record::V1(read) = ..`, which
-    // compiles today only because `Record` has ONE variant. The day `Record::V2` is born every
+    // says it. The round-trip probes destructure with `let Record::V1(read) = ..` — which places
+    // they are, this test's own included, is
+    // `grep -n 'let Record::V1' <this file> | grep -vE '^[0-9]+:[[:space:]]*//'`, and not a figure
+    // here (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1354) — and that compiles today
+    // only because `Record` has ONE variant. The day `Record::V2` is born every
     // one of them STOPS COMPILING — and that is wanted: whoever adds a version is made to walk
     // past each place that reads a record and decide what the new one means there, instead of
     // finding an `_ => {}` arm that quietly answered for them. Rule 1 of §4.9.2 is held by the

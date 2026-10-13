@@ -9,9 +9,10 @@
 //!    `#[cbor(default)]` by convention. `reason` came in at index 4 as a mandatory field
 //!    precisely because no archive existed yet; that exemption is spent.
 //!    ⚠️ WHICH HALF CARRIES IT WAS MEASURED ON 2026-08-31, AND IT IS THE `Option`: with the
-//!    annotation removed from `detail` the whole workspace stays green — 41 targets, 298
-//!    passed — INCLUDING the backward direction, because the 21-byte files still decode to
-//!    `detail: None`. `minicbor` already treats a missing `Option` field as `None`, so on an
+//!    annotation removed from `detail`, `cargo test --locked --workspace` stays green —
+//!    INCLUDING the backward direction, because the files that carry no `detail` still decode
+//!    to `detail: None` (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1310).
+//!    `minicbor` already treats a missing `Option` field as `None`, so on an
 //!    `Option` the annotation is belt AND braces rather than the belt. ⛔ SAID OUT LOUD BECAUSE
 //!    THIS LINE CLAIMED IT WAS LOAD-BEARING AND NOTHING HELD IT: a field arriving without it
 //!    would turn nothing red, so a reader must not mistake the convention for the defence.
@@ -38,18 +39,22 @@
 //! ⚠️ WHAT THIS CATCHES THAT THE COMPILER CANNOT: an index REUSED or RENUMBERED. The compiler
 //! sees types, not the numbers written inside an annotation — rule 4 of §4.9.2 is a
 //! DISCIPLINE, and this file is what holds it. `tests/record_shape.rs` says the same thing
-//! from the other side and MEASURED it: a variant moved onto a free index leaves every probe
-//! there green, because the derive renumbers encoding and decoding together and no round trip
-//! can see a symmetric change.
+//! from the other side and MEASURED it: a variant moved onto a free index leaves its ROUND-TRIP
+//! probes green, because the derive renumbers encoding and decoding together and no round trip
+//! can see a symmetric change — and only its two probes against literal bytes see the variants
+//! those bytes carry. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1356.
 //!
 //! ⛔ MORE THAN ONE RECORD, AND HOW MANY IS FORCED BY WHAT THERE IS TO PIN — NOT CHOSEN. A
 //! record carries exactly ONE variant of each `index_only` enum, so a single frozen record
 //! pins one index per enum and leaves every other variant held by nothing at all, which is the
 //! state `record_shape.rs` describes and which this file exists to end. Two rules follow, and
 //! both are rules rather than counts: the set must cover EVERY variant of every one of those
-//! enums, and it therefore cannot be smaller than the WIDEST of them. The effects and the
-//! kinds are laid out as a Latin square, so no pair of fields can be swapped without moving at
-//! least one file.
+//! enums, and it therefore cannot be smaller than the WIDEST of them. ⛔ AND NO TWO OF THE THREE
+//! ENUM FIELDS CAN BE SWAPPED WITHOUT A RED: `every_field_sits_at_the_offset_the_map_gives_it`
+//! moves each one alone and holds it at its own offset, and the frozen files see a swap as well,
+//! because for every pair of them some record carries two different bytes at their two offsets
+//! — a property of the values in the table below, not of any layout the table follows.
+//! ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1313.
 //!
 //! ⛔ RECALL OF 2026-08-31 — THIS PARAGRAPH CARRIED THREE NUMERALS AND ALL THREE HAD GONE
 //! FALSE: "THREE RECORDS", "EIGHT variants — `RecordKind` three", and "Three records are the
@@ -79,12 +84,14 @@
 //! four bytes from the other side, in `82 00 81 85 00 01 00 40 60`.
 //!
 //! ⚠️ RECALL OF 2026-09-01: this said "before `85`, the five fields" and "a record is 21 bytes and
-//! not 20". BOTH TAKEN OUT and neither realigned, because both grow with the format — the frozen
-//! records span 21 to 40 bytes today, and the count is `the_frozen_records()` below, not a line of
-//! prose. ⚖️ Priced honestly: the paragraph one row up already says a record carrying a `detail`
-//! "IS LONGER AND ALSO MOVES BYTE 3", so a careful reader was not misled. What earns the cut is
-//! WHERE it sat — that neighbouring paragraph was corrected on 2026-08-31 for exactly this reason
-//! and this one was left standing beside it, which is the shape of AUD-049. Errata `E113`.
+//! not 20". BOTH TAKEN OUT and neither realigned, because both grow with the format — how long
+//! the frozen records are is `wc -c crates/kernel/tests/frozen/*.cbor`, and how many there are is
+//! `the_frozen_records()` below, not a line of prose (⚠️ RECALL OF 2026-10-13 -- audit of
+//! 2026-09-30, AUD-1310). ⚖️ Priced honestly: the paragraph one row up already says a record
+//! carrying a `detail` "IS LONGER AND ALSO MOVES BYTE 3", so a careful reader was not misled. What
+//! earns the cut is WHERE it sat — that neighbouring paragraph was corrected on 2026-08-31 for
+//! exactly this reason and this one was left standing beside it, which is the shape of AUD-049.
+//! Errata `E113`.
 
 use kernel::record::{
     Detail, EffectClass, InvocationDetail, PermissionDetail, PolicyDetail, Record, RecordKind,
@@ -93,7 +100,8 @@ use kernel::record::{
 
 /// The bytes on disk. ⛔ `include_bytes!` AND NOT A READ AT RUN TIME: the artefact enters the
 /// test binary, so a `.cbor` deleted or renamed is a COMPILE error and not a check that
-/// quietly stops checking — gotcha #26, which this repository has already met three times.
+/// quietly stops checking — gotcha #26, whose row in `docs/HANDOFF.md` lists where this
+/// repository has met it (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1310).
 const INTENT_BYTES: &[u8] = include_bytes!("frozen/record_v1_intent.cbor");
 const OUTCOME_BYTES: &[u8] = include_bytes!("frozen/record_v1_outcome.cbor");
 const NOTE_BYTES: &[u8] = include_bytes!("frozen/record_v1_note.cbor");
@@ -104,7 +112,8 @@ const INVOCATION_BYTES: &[u8] = include_bytes!("frozen/record_v1_invocation.cbor
 const POLICY_BYTES: &[u8] = include_bytes!("frozen/record_v1_policy.cbor");
 
 /// The map, included for the same reason and READ BACK by
-/// `the_map_lists_the_bytes_that_are_really_frozen` instead of being believed.
+/// `the_map_lists_the_bytes_that_are_really_frozen` and by
+/// `every_field_sits_at_the_offset_the_map_gives_it` instead of being believed.
 const MAP: &str = include_str!("frozen/record_v1.map");
 
 /// ⛔ THE SAME SIX CHARACTERS IN BOTH, AND IT IS THE POINT RATHER THAN LAZINESS. `payload` is
@@ -117,8 +126,11 @@ const MAP: &str = include_str!("frozen/record_v1.map");
 const FROZEN_PAYLOAD: &[u8] = b"frozen";
 const FROZEN_REASON: &str = "frozen";
 
-/// What the oracle says when it fires. ⛔ A CONSTANT because three assertions carry it, and a
-/// message written three times is a message that ages twice — gotcha #31.
+/// What the oracle says when it fires. ⛔ A CONSTANT because more than one assertion carries it,
+/// and a message written once per assertion ages in every copy but the one somebody edits:
+/// gotcha #31. Which assertions they are is
+/// `grep -n '{FORMAT_CHANGED}' <this file> | grep -vE '^[0-9]+:[[:space:]]*//'` — the filter keeps
+/// this line out of its own count. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1312.
 const FORMAT_CHANGED: &str = "\n⛔ THE DURABLE FORMAT CHANGED.\n\
      This is not a test to update: it is the oracle of §4.9.4. If a field was added it must \
      be OPTIONAL AND AT A NEW INDEX, and these bytes must be UNCHANGED. \
@@ -192,9 +204,9 @@ fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 8] {
             }),
         ),
         // ⛔ THE FIFTH IS THE SECOND SPECIES THAT CARRIES A `detail`, AND THAT IS WHAT IT PINS
-        // THAT THE FOURTH CANNOT: index 1 of `Detail`. A wire index never retires (rule 4 of
-        // §4.9.2), and until this file a variant of that enum other than `Verdict` was held by
-        // nothing at all.
+        // THAT THE FOURTH CANNOT: index 1 of `Detail`. A wire index is retired, never reused (rule
+        // 4 of §4.9.2, ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1240), and until this
+        // file a variant of that enum other than `Verdict` was held by nothing at all.
         //
         // ⚠️ `model: "frozen"` AND NOT A REAL NAME, for the reason `FROZEN_PAYLOAD` and
         // `FROZEN_REASON` exist: a value that is recognisable at a glance in the map and that
@@ -216,8 +228,8 @@ fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 8] {
         ),
         // ⛔ THE SIXTH IS THE THIRD SPECIES THAT CARRIES A `detail`, AND WHAT IT PINS THAT THE
         // OTHER TWO CANNOT IS INDEX 2 OF `Detail` — and, with it, index 5 of `RecordKind`. A wire
-        // index never retires (rule 4 of §4.9.2), so until this file both were held by nothing at
-        // all.
+        // index is retired, never reused (rule 4 of §4.9.2), so until this file both were held by
+        // nothing at all.
         //
         // ⚠️ `EffectClass::Unrepeatable` AND `Trust::Instruction` ARE WHAT `permission::grant`
         // REALLY WRITES, which is true here and is NOT what makes the choice right: this table is
@@ -230,10 +242,10 @@ fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 8] {
         //
         // ⛔ RECALL OF 2026-09-01 — THE TWO BEING EQUAL *IS* A HOLE, AND THIS COMMENT SAID IT WAS
         // NOT. It read "two equal strings at two offsets pin two offsets", and that is false:
-        // they pin ONE offset and its mirror image. Measured — exchanging the `#[n(0)]` of `tool`
-        // and the `#[n(1)]` of `resource` in `src/record.rs` moves no byte of this record, and
-        // the whole workspace stayed at `43 targets, 321 passed, 0 failed, 2 ignored`, identical
-        // to the baseline.
+        // they pin ONE offset and its mirror image. Measured — the mutation and what it left
+        // green are written once, on
+        // `the_two_names_of_a_permission_do_not_share_one_offset_and_its_mirror` below.
+        // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1310.
         //
         // ⛔ AND THE RESCUE IT NAMED DOES NOT CARRY THE LOAD: `tests/permission_triple.rs`
         // encodes and decodes through the SAME derive, which renumbers both directions together,
@@ -266,14 +278,15 @@ fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 8] {
         ),
         // ⛔ THE SEVENTH IS THE FOURTH SPECIES THAT CARRIES A `detail`, AND WHAT IT PINS THAT THE
         // OTHER THREE CANNOT IS INDEX 3 OF `Detail` — and, with it, index 6 of `RecordKind`. A
-        // wire index never retires (rule 4 of §4.9.2), so until this file both were held by
-        // nothing at all.
+        // wire index is retired, never reused (rule 4 of §4.9.2), so until this file both were
+        // held by nothing at all.
         //
-        // ⛔ AND IT IS THE FIRST FROZEN DETAIL WHOSE TWO FIELDS HAVE DIFFERENT TYPES, which is
-        // what saves it from the hole the recall of 2026-09-01 measured on the `Permission`
-        // record: two EQUAL STRINGS at two offsets pin one offset and its mirror, and exchanging
-        // their `#[n(..)]` moved no byte. A text and a `u8` cannot mirror each other, so this
-        // record really does pin both indices — measured by exchanging them, not assumed.
+        // ⛔ AND ITS TWO FIELDS HAVE DIFFERENT TYPES — as the verdict's do, a `bool` and a `u64` —
+        // which is what saves it from the hole the recall of 2026-09-01 measured on the
+        // `Permission` record: two EQUAL STRINGS at two offsets pin one offset and its mirror, and
+        // exchanging their `#[n(..)]` moved no byte. A text and a `u8` cannot mirror each other,
+        // so this record really does pin both indices — measured by exchanging them, not assumed.
+        // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1314.
         //
         // ⚠️ `invoker: 3` IS NOT A CODE ANY `Invoker` HAS, and that is deliberate rather than a
         // slip: what this record freezes is the FIELD'S FORMAT, and the field is a `u8` precisely
@@ -296,7 +309,8 @@ fn the_frozen_records() -> [(&'static str, &'static [u8], Record); 8] {
         ),
         // ⛔ THE EIGHTH IS THE FIFTH SPECIES THAT CARRIES A `detail`, AND WHAT IT PINS THAT THE
         // OTHER FOUR CANNOT IS INDEX 4 OF `Detail` — and, with it, index 7 of `RecordKind`. A wire
-        // index never retires (rule 4 of §4.9.2), so until this file both were held by nothing.
+        // index is retired, never reused (rule 4 of §4.9.2), so until this file both were held by
+        // nothing.
         //
         // ⛔ ITS DETAIL HAS ONE FIELD, so it cannot pin a PAIR of offsets the way the seventh does
         // — and it does not need to: one field has no sibling to mirror, which is the hole the
@@ -363,39 +377,57 @@ fn the_frozen_records_are_distinguishable_in_the_bytes() {
     // RATHER THAN LEFT: a name that counts its own subjects is a count like any other. The
     // pairwise comparison itself never mentioned three.
     let frozen = the_frozen_records();
-    for (i, (left_name, left, _)) in frozen.iter().enumerate() {
-        for (right_name, right, _) in frozen.iter().skip(i + 1) {
+    let mut wheres_compared = 0;
+    for (i, (left_name, left, Record::V1(left_record))) in frozen.iter().enumerate() {
+        for (right_name, right, Record::V1(right_record)) in frozen.iter().skip(i + 1) {
             assert_ne!(
                 left, right,
                 "`{left_name}` and `{right_name}` encode alike: between them they pin one \
                  variant and not two"
             );
 
-            // ⚠️ AND THE DIFFERENCE IS WHERE THE MAP SAYS IT IS — FOR THE PAIRS THAT CARRY THE
-            // SAME FIELDS. The records of one arity were chosen to differ in the three enum
-            // fields and in NOTHING else, so a byte moving outside 4..7 means either the
-            // constructors above drifted apart or the framing changed.
+            // ⚠️ AND THE DIFFERENCE IS WHERE THE MAP SAYS IT IS — FOR THE PAIRS THAT CARRY NO
+            // `detail`. Those records were chosen to differ in the three enum fields and in
+            // NOTHING else, so a byte moving outside 4..7 means either the constructors above
+            // drifted apart or the framing changed.
             //
-            // ⛔ A PAIR OF DIFFERENT ARITY IS SKIPPED HERE, AND IT IS NOT A HOLE — it is the
-            // D21 showing through: the fourth record exists precisely BECAUSE it carries a
-            // field the other three do not, so it differs at the array header
-            // and in the whole tail, by construction. Asserting equal length across arities
-            // would assert that the D21 did not happen. ⚠️ WHAT WOULD BE A HOLE is dropping
-            // the pair entirely: the `assert_ne!` above runs on EVERY pair, arity included, so
-            // "two frozen records that encode alike" is still caught between any two of them.
-            // What is skipped is only the WHERE of the difference, which has no meaning across
-            // two different shapes.
-            if left.len() != right.len() {
+            // ⛔ A PAIR WHERE EITHER RECORD CARRIES A `detail` IS SKIPPED HERE, AND IT IS NOT A
+            // HOLE — it is the D21 showing through: such a record exists precisely BECAUSE it
+            // carries a field the others do not, so it differs at the array header and in a tail
+            // of its own, by construction, from a record without one and from another with one
+            // alike. ⚠️ WHAT WOULD BE A HOLE is dropping the pair entirely: the `assert_ne!` above
+            // runs on EVERY pair, so "two frozen records that encode alike" is still caught
+            // between any two of them. What is skipped is only the WHERE of the difference.
+            // ⛔ AND THE SKIP ASKS WHAT THE RECORDS CARRY, NOT HOW LONG THEY ARE: two records
+            // with a `detail` that happened to share a length would otherwise be held to "only
+            // 4, 5 and 6", and go red naming a format change where none happened.
+            // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1309, AUD-2148.
+            if left_record.detail().is_some() || right_record.detail().is_some() {
                 continue;
             }
+            wheres_compared += 1;
+            assert_eq!(
+                left.len(),
+                right.len(),
+                "`{left_name}` and `{right_name}` carry no `detail` and differ in length: the \
+                 constructors above drifted apart, or the framing changed"
+            );
             let moved: Vec<usize> = (0..left.len()).filter(|&i| left[i] != right[i]).collect();
             assert!(
                 moved.iter().all(|&i| (4..7).contains(&i)),
                 "`{left_name}` and `{right_name}` differ at bytes {moved:?}, and frozen records \
-                 of the same arity are meant to differ only at 4, 5 and 6"
+                 that carry no `detail` are meant to differ only at 4, 5 and 6"
             );
         }
     }
+
+    // ⛔ THE NON-VACUITY OF THE WHERE, gotcha #26: a set in which every record carried a `detail`
+    // would skip every pair above, and the WHERE would be compared between none of them.
+    assert!(
+        wheres_compared > 0,
+        "no two frozen records are without a `detail`: the WHERE of their difference was \
+         compared between none of them"
+    );
 }
 
 #[test]
@@ -484,12 +516,13 @@ fn every_variant_of_the_wire_enums_is_pinned_by_a_frozen_record() {
     }
 
     // ⛔ AND `Detail` IS THE FOURTH WIRE ENUM, WHICH THIS TEST DID NOT HOLD UNTIL 2026-08-31.
-    // Its indices never retire either (rule 4 of §4.9.2), so the guarantee written above was
-    // true of three enums while the head of this file claims it for the format. ⚠️ MEASURED IN
-    // BOTH DIRECTIONS on 2026-08-31, reviewing the task that added the species: a second variant
-    // on `Detail` left the WHOLE WORKSPACE green — 41 targets, 297 passed, 0 failed, 2 ignored,
-    // identical to the baseline figure for figure — while the same addition to `RecordKind` is
-    // `error[E0004]: non-exhaustive patterns`.
+    // Its indices too are retired, never reused (rule 4 of §4.9.2), so the guarantee written
+    // above was true of three enums while the head of this file claims it for the format.
+    // ⚠️ MEASURED IN BOTH DIRECTIONS on 2026-08-31, reviewing the task that added the species: a
+    // second variant on `Detail` left `cargo test --locked --workspace` green, the same tests
+    // passing as on the baseline, while the same addition to `RecordKind` is
+    // `error[E0004]: non-exhaustive patterns`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+    // AUD-1240, AUD-1310.
     //
     // ⚠️ THE SHAPE DIFFERS FROM THE THREE ABOVE BECAUSE THE ENUM CARRIES DATA: a variant cannot
     // go in an array literal without inventing a value, and comparing values would assert the
@@ -553,20 +586,37 @@ fn every_field_sits_at_the_offset_the_map_gives_it() {
     // ⚠️ THE MUTANTS KEEP THE LENGTH, deliberately: an upper-case payload of the same six
     // bytes and a reason of the same six characters. A shorter value would move every byte
     // after it and the assertion would degrade into "something changed".
+    //
+    // ⛔ AND THE OFFSETS ARE THE MAP'S, READ BACK FROM IT AND NOT WRITTEN HERE A SECOND TIME
+    // (§7.4.4): a probe holding offsets of its own would hold the bytes and leave the map's
+    // `index N · field` labels to nobody, so a row naming the wrong field — or two rows with
+    // their labels exchanged — would stay green. ⚠️ RECALL OF 2026-10-13 -- audit of
+    // 2026-09-30, AUD-2147.
+    let sections = the_map_read_back();
+
+    let intent = the_section_of(&sections, "record_v1_intent.cbor");
     let base =
         record(|p, r| RecordV1::intent(EffectClass::Idempotent, Trust::Untrusted, p, r)).encode();
+    assert_eq!(
+        base, intent.bytes,
+        "the mutants below are changed from the intent record, so its section is the one that \
+         gives their offsets"
+    );
 
     let moved_kind =
         record(|p, r| RecordV1::outcome(EffectClass::Idempotent, Trust::Untrusted, p, r)).encode();
-    only_inside("kind", &base, &moved_kind, 4, 5);
+    let (from, to) = the_offsets_of(intent, "kind");
+    only_inside("kind", &base, &moved_kind, from, to);
 
     let moved_effect =
         record(|p, r| RecordV1::intent(EffectClass::Unrepeatable, Trust::Untrusted, p, r)).encode();
-    only_inside("effect", &base, &moved_effect, 5, 6);
+    let (from, to) = the_offsets_of(intent, "effect");
+    only_inside("effect", &base, &moved_effect, from, to);
 
     let moved_trust =
         record(|p, r| RecordV1::intent(EffectClass::Idempotent, Trust::Instruction, p, r)).encode();
-    only_inside("trust", &base, &moved_trust, 6, 7);
+    let (from, to) = the_offsets_of(intent, "trust");
+    only_inside("trust", &base, &moved_trust, from, to);
 
     let moved_payload = Record::V1(RecordV1::intent(
         EffectClass::Idempotent,
@@ -575,7 +625,8 @@ fn every_field_sits_at_the_offset_the_map_gives_it() {
         FROZEN_REASON,
     ))
     .encode();
-    only_inside("payload", &base, &moved_payload, 7, 14);
+    let (from, to) = the_offsets_of(intent, "payload");
+    only_inside("payload", &base, &moved_payload, from, to);
 
     let moved_reason = Record::V1(RecordV1::intent(
         EffectClass::Idempotent,
@@ -584,7 +635,70 @@ fn every_field_sits_at_the_offset_the_map_gives_it() {
         "FROZEN",
     ))
     .encode();
-    only_inside("reason", &base, &moved_reason, 14, 21);
+    let (from, to) = the_offsets_of(intent, "reason");
+    only_inside("reason", &base, &moved_reason, from, to);
+
+    // ⛔ AND `detail`, INDEX 5, ON THE VERDICT, which the intent cannot give: a trailing `None`
+    // is not written. `passed` turned from `false` to `true` is one byte, `f4` to `f5`, and the
+    // length does not move.
+    let verdict = the_section_of(&sections, "record_v1_verdict.cbor");
+    let judged = |passed| {
+        record(|p, r| {
+            RecordV1::verdict(
+                EffectClass::Verifiable,
+                Trust::Untrusted,
+                p,
+                r,
+                VerdictDetail {
+                    passed,
+                    spent_millis: 7,
+                },
+            )
+        })
+        .encode()
+    };
+    let verdict_base = judged(false);
+    assert_eq!(
+        verdict_base, verdict.bytes,
+        "the `detail` mutant below is changed from the verdict record, so its section is the one \
+         that gives its offsets"
+    );
+    let (from, to) = the_offsets_of(verdict, "detail");
+    only_inside("detail", &verdict_base, &judged(true), from, to);
+
+    // ⛔ AND EVERY OTHER SECTION NAMES EACH FIELD WHERE THOSE TWO PUT IT, so the label of a row is
+    // held in every section and not only in the two the mutants are built from.
+    for section in &sections {
+        for (field, from, _) in &section.fields {
+            let held = if field == "detail" { verdict } else { intent };
+            let (expected, _) = the_offsets_of(held, field);
+            assert_eq!(
+                *from, expected,
+                "the map's section for `{}` puts `{field}` at {from}, and `{}`, whose bytes the \
+                 mutants move, puts it at {expected}",
+                section.file, held.file
+            );
+        }
+    }
+}
+
+/// The section of the map that describes `file`.
+fn the_section_of<'a>(sections: &'a [Section], file: &str) -> &'a Section {
+    sections
+        .iter()
+        .find(|section| section.file == file)
+        .unwrap_or_else(|| panic!("the map has no section for `{file}`"))
+}
+
+/// The offsets the map gives `field` in one section: from the first byte of its row to the first
+/// byte after it.
+fn the_offsets_of(section: &Section, field: &str) -> (usize, usize) {
+    section
+        .fields
+        .iter()
+        .find(|(name, _, _)| name == field)
+        .map(|(_, from, to)| (*from, *to))
+        .unwrap_or_else(|| panic!("the map names no `{field}` in `{}`", section.file))
 }
 
 /// What a `PermissionDetail` whose two names are DIFFERENT must encode to: `82 02` is the
@@ -609,9 +723,9 @@ fn the_two_names_of_a_permission_do_not_share_one_offset_and_its_mirror() {
     // ⛔ THIS IS WHAT THE FROZEN PERMISSION RECORD CANNOT SEE, and it was measured rather than
     // feared. `record_v1_permission.cbor` carries `"frozen"` as BOTH the tool and the resource,
     // so exchanging the `#[n(0)]` of `tool` and the `#[n(1)]` of `resource` in `src/record.rs`
-    // moves no byte of it at all — measured on 2026-09-01, the whole workspace stayed at
-    // `43 targets, 321 passed, 0 failed, 2 ignored`, identical to the baseline. Two EQUAL strings
-    // at two offsets pin ONE offset and its mirror image.
+    // moves no byte of it at all — measured on 2026-09-01: `cargo test --locked --workspace`
+    // stayed green under that exchange (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+    // AUD-1310). Two EQUAL strings at two offsets pin ONE offset and its mirror image.
     //
     // ⛔ AND THE FIX IS NOT A SEVENTH FROZEN RECORD, NOR AN EDIT TO THE SIXTH. These bytes are
     // never regenerated: if they move it is a change of FORMAT and not an updated test, which is
@@ -663,8 +777,16 @@ fn the_two_names_of_a_permission_do_not_share_one_offset_and_its_mirror() {
         &encoded[at..],
         TWO_DIFFERENT_NAMES,
         "{FORMAT_CHANGED}The two names of a `PermissionDetail` no longer encode where they did. \
-         `tool` is index 0 and `resource` is index 1, and an index never retires.\n"
+         `tool` is index 0 and `resource` is index 1, and an index is retired, never reused.\n"
     );
+}
+
+/// One section of the map: the file it describes, the bytes its rows rebuild, and the field each
+/// `index N · field` row names, with the offsets that row spans.
+struct Section {
+    file: String,
+    bytes: Vec<u8>,
+    fields: Vec<(String, usize, usize)>,
 }
 
 /// Reads the map back — `offset | hex bytes | prose`, one section per `.cbor` file, a section
@@ -674,8 +796,8 @@ fn the_two_names_of_a_permission_do_not_share_one_offset_and_its_mirror() {
 /// that nothing reads, which is the second place to keep aligned that §7.4.4 refuses. It is
 /// deliberately UNFORGIVING — a row it cannot read is a panic and not a row skipped, because a
 /// parser that skips is a check that empties itself in silence (gotcha #26).
-fn the_map_read_back() -> Vec<(String, Vec<u8>)> {
-    let mut sections: Vec<(String, Vec<u8>)> = Vec::new();
+fn the_map_read_back() -> Vec<Section> {
+    let mut sections: Vec<Section> = Vec::new();
 
     for (n, raw) in MAP.lines().enumerate() {
         let line = raw.trim();
@@ -690,11 +812,15 @@ fn the_map_read_back() -> Vec<(String, Vec<u8>)> {
                 "map line {at}: a line without columns opens a section and must be a file \
                  name, and this one is `{line}`"
             );
-            sections.push((String::from(line), Vec::new()));
+            sections.push(Section {
+                file: String::from(line),
+                bytes: Vec::new(),
+                fields: Vec::new(),
+            });
             continue;
         };
 
-        let (hex, _prose) = rest.split_once('|').unwrap_or_else(|| {
+        let (hex, prose) = rest.split_once('|').unwrap_or_else(|| {
             panic!("map line {at}: a row has three columns — `offset | hex | prose` — not two")
         });
         let section = sections
@@ -706,10 +832,10 @@ fn the_map_read_back() -> Vec<(String, Vec<u8>)> {
         });
         assert_eq!(
             declared,
-            section.1.len(),
+            section.bytes.len(),
             "map line {at}: the row declares offset {declared}, and the rows before it end at \
              {}",
-            section.1.len()
+            section.bytes.len()
         );
 
         for token in hex.split_whitespace() {
@@ -723,7 +849,41 @@ fn the_map_read_back() -> Vec<(String, Vec<u8>)> {
             let byte = u8::from_str_radix(token, 16).unwrap_or_else(|e| {
                 panic!("map line {at}: `{token}` is not a hexadecimal byte ({e})")
             });
-            section.1.push(byte);
+            section.bytes.push(byte);
+        }
+
+        // ⛔ THE FIELD A ROW NAMES IS READ TOO: a row whose prose opens with `index N · field`
+        // names the field that sits at its offsets, and
+        // `every_field_sits_at_the_offset_the_map_gives_it` holds it there. The index has to be
+        // the row's place among the fields of its section, because a CBOR array puts index N at
+        // place N. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2147.
+        if let Some(label) = prose.trim().strip_prefix("index ") {
+            let mut parts = label.split('·');
+            let index: usize = parts
+                .next()
+                .unwrap_or_default()
+                .trim()
+                .parse()
+                .unwrap_or_else(|e| {
+                    panic!("map line {at}: `index` is not followed by a number ({e}): `{line}`")
+                });
+            let field = parts
+                .next()
+                .map(str::trim)
+                .filter(|field| !field.is_empty())
+                .unwrap_or_else(|| {
+                    panic!("map line {at}: a row that names an index names no field: `{line}`")
+                });
+            assert_eq!(
+                index,
+                section.fields.len(),
+                "map line {at}: the row names index {index}, and it is field number {} of its \
+                 section -- an index is its field's place in the array",
+                section.fields.len()
+            );
+            section
+                .fields
+                .push((String::from(field), declared, section.bytes.len()));
         }
     }
 
@@ -741,9 +901,11 @@ fn the_map_lists_the_bytes_that_are_really_frozen() {
     // for once. A `<fill in>` left in the hex column does not parse, and a byte typed wrong
     // does not match: a map that lies cannot be committed green.
     //
-    // ⚠️ THE PROSE COLUMN IS NOT CHECKED, and the map says so in its own header. Declaring it
-    // is what keeps the file from being read as verified throughout — the middle ground the
-    // check was written to leave.
+    // ⚠️ THE PROSE COLUMN IS NOT CHECKED HERE, and the map says so in its own header — save the
+    // field each row names, which `every_field_sits_at_the_offset_the_map_gives_it` holds.
+    // Declaring it is what keeps the file from being read as verified throughout — the middle
+    // ground the check was written to leave. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+    // AUD-2147.
     let sections = the_map_read_back();
 
     // Non-vacuity guard, gotcha #26: a map emptied of its rows would rebuild nothing and every
@@ -756,18 +918,18 @@ fn the_map_lists_the_bytes_that_are_really_frozen() {
         the_frozen_records().len()
     );
 
-    for ((name, bytes), (file, frozen, _)) in sections.iter().zip(the_frozen_records()) {
+    for (section, (file, frozen, _)) in sections.iter().zip(the_frozen_records()) {
         assert_eq!(
-            name.as_str(),
+            section.file.as_str(),
             file,
             "the map's sections are in a different order from the frozen records"
         );
         assert!(
-            !bytes.is_empty(),
+            !section.bytes.is_empty(),
             "the map's section for `{file}` has no rows at all"
         );
         assert_eq!(
-            bytes.as_slice(),
+            section.bytes.as_slice(),
             frozen,
             "{FORMAT_CHANGED}The map of `{file}` and its bytes disagree.\n"
         );

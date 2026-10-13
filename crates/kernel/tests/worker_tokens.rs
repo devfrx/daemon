@@ -1,4 +1,9 @@
-//! The counter-probes of the four rows of §6.10.5 -- the "must stay green" half.
+//! The counter-probes of the four rows of §6.10.5 -- the "must stay green" half -- and, since
+//! milestone 6 task 1, the probes that the grant comes home: after a kill,
+//! `a_worker_that_is_killed_gives_the_grant_back`, and after a start that fails,
+//! `a_start_that_fails_gives_the_grant_back_by_name`, with the one producer of
+//! `ProcessError::StartFailed`, `a_spawn_that_does_not_happen_is_start_failed` (finding AUD-051).
+//! ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1366.
 //!
 //! ⛔ RECALL OF 2026-08-21, AUDIT FINDING P-2. The paragraph that used to open this file said
 //! "until milestone 5 they could not be written at all: all four need to OBTAIN a `Worker`, a
@@ -11,9 +16,10 @@
 //! direction. The verbal record is in `docs/porta-di-qualita.md`, section "P-2".
 //!
 //! ⛔ AND THE GRANT HERE IS A REAL ONE, from a real admission. A test-only constructor was
-//! weighed and refused in `docs/porta-di-qualita.md`: it would create the SECOND way of
-//! obtaining a grant that §5.6 exists to take away from the compiler. The bench goes through
-//! the admission like everybody else.
+//! weighed and refused in `docs/porta-di-qualita.md`: it would create a way of obtaining a grant
+//! that does not go through the arbiter, which §5.6 exists to take away from the compiler. The
+//! bench goes through the admission like everybody else. ⚠️ RECALL OF 2026-10-13 -- audit of
+//! 2026-09-30, AUD-2268.
 
 use kernel::arbiter::{
     Admission, Arbiter, ArbiterId, ComputeClass, Grant, Mib, Preemption, Released, RemotePolicy,
@@ -36,7 +42,8 @@ use kernel::time::{Millis, Monotonic};
 /// `crates/kernel/tests/serving.rs` does.
 const GUI_TICK: Millis = Millis::new(0);
 
-/// A grant obtained the only way there is.
+/// A grant obtained from a real admission -- one of the two doors the doc of `Grant` names, the
+/// other being `Arbiter::promote`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2268.
 ///
 /// ⛔ ITS ARBITER IS `ArbiterId::new(2)`, AND THE DIFFERENCE FROM `an_arbiter_and_a_real_grant`
 /// BELOW -- which uses `new(1)` -- IS LOAD-BEARING. This helper throws its arbiter away, and
@@ -168,18 +175,23 @@ fn reading_once_with_the_receipt_compiles() {
 /// ⚠️ RECALL OF 2026-08-21, TASK 11 BRIEF PART A4. The comment that used to close this
 /// function claimed this property was held by a `compile_fail` case -- "a second `start`
 /// would need a second grant... held by `compile_fail/`, not here". FALSE, measured against
-/// the 29 cases that existed before this task: none names a `Grant` moved by `start`, and the
+/// the cases of `tests/compile_fail/` as they stood on 2026-08-21, before this task
+/// (`ls crates/kernel/tests/compile_fail/*.rs`): none names a `Grant` moved by `start`, and the
 /// two that name `Grant` at all hold different rules (no public constructor; matched only
-/// inside `Admission`). ⛔ WHAT HOLDS "one grant starts one worker" IS THE COMPILER, not a case
-/// in this repository: `Process::start` takes `grant: Grant` BY VALUE and `Grant` is not
-/// `Copy` -- and cannot become it, because it derives no `Clone` either
+/// inside `Admission`). ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1360.
+/// ⛔ WHAT HOLDS "one grant starts one worker" IS THE COMPILER, not a case in this repository:
+/// `Process::start` takes `grant: Grant` BY VALUE and `Grant` is not `Copy` -- and could not be
+/// made so alone, since `Copy` needs `Clone` and `Grant` has neither
 /// (`crates/kernel/src/arbiter/mod.rs`, no `#[derive]` above `pub struct Grant`), so a
 /// second `.start(grant, ..)` below would not compile -- `grant` was moved into the call that
-/// is already there. ⚠️ `Copy` IS THE HINGE AND `Clone` IS NOT, which is what the oracles say
-/// too (`reading_twice_from_one_receipt.stderr`: "does not implement the `Copy` trait"):
-/// adding `Clone` here would not disarm anything, adding `Copy` would. That is why this
-/// function calls `start` exactly once: a second call is not refused at runtime, it does not
-/// exist to be written.
+/// is already there. ⚠️ FOR THAT SECOND CALL `Copy` IS THE HINGE AND `Clone` IS NOT, which is
+/// what the oracles say too (`reading_twice_from_one_receipt.stderr`: "does not implement the
+/// `Copy` trait"): adding `Clone` alone would leave it a use after move, adding `Copy` would
+/// compile it. ⛔ BUT `Clone` WOULD DISARM THE PROPERTY ALL THE SAME, by another road:
+/// `start(grant.clone(), ..)` twice is one grant starting two workers, which is why the doc of
+/// `Grant` calls each absence load-bearing, `Clone` included. ⚠️ RECALL OF 2026-10-13 -- audit
+/// of 2026-09-30, AUD-783. That is why this function calls `start` exactly once: a second call
+/// on the same grant is not refused at runtime, it does not exist to be written.
 #[test]
 fn one_grant_starts_one_worker() {
     let grant = a_real_grant();
@@ -187,7 +199,9 @@ fn one_grant_starts_one_worker() {
     // `Running`, so that assertion could never fail and would prove nothing -- a vacuous
     // probe. And this function holds no shape that `a_started_worker` above does not already
     // compile: it is a declared place to hang the reasoning, not a probe. The `else` arm below
-    // is for the panic message, not for coverage.
+    // is for the panic message, not for coverage. ⚠️ Whether it stays a `#[test]` at all, or
+    // its reasoning moves to a doc, is an open choice (⚠️ RECALL OF 2026-10-13 -- audit of
+    // 2026-09-30, AUD-2162).
     let Started::Running(_worker) =
         FakeProcess.start(grant, WorkerDescriptor::new(b"asr.exe".to_vec()))
     else {
@@ -276,9 +290,11 @@ fn an_arbiter_and_a_real_grant() -> (Arbiter, Grant) {
 ///
 /// ⚠️ WHAT IS STILL OPEN, and it is narrower: a substitute issued by the SAME arbiter.
 /// ✅ Measured the same day -- a second `Arbiter` built with `ArbiterId::new(1)`, handing its
-/// own grant back in place of the one it was given: 7 passed. `release` compares the ISSUER,
-/// and by that measure the two arbiters ARE one. Closing it needs the conformance suite of
-/// §6.10, which compares two implementations and is born with the real worker channel.
+/// own grant back in place of the one it was given:
+/// `cargo test --locked -p kernel --test worker_tokens` stayed green (⚠️ RECALL OF 2026-10-13 --
+/// audit of 2026-09-30, AUD-1360). `release` compares the ISSUER, and by that measure the two
+/// arbiters ARE one. Closing it needs the conformance suite of §6.10, which compares two
+/// implementations and is born with the real worker channel.
 #[test]
 fn a_worker_that_is_killed_gives_the_grant_back() {
     let (mut arbiter, grant) = an_arbiter_and_a_real_grant();
@@ -303,10 +319,12 @@ fn a_worker_that_is_killed_gives_the_grant_back() {
 /// ⚠️ IT CARRIES THE DECLARED LIMIT OF THE PROBE ABOVE, written once there.
 #[test]
 fn a_start_that_fails_gives_the_grant_back_by_name() {
-    // ⛔ THIS VIA WAS NOT DISCUSSED ANYWHERE before the milestone 6 design measured it: today
-    // `start` takes the grant BY VALUE and drops it on `Err`, and nothing can rebuild it --
-    // `GrantId` is private and `grant_has_no_constructor.rs` pins that. The reservation then
-    // sat in the books for the whole declared window, and only the sweep got it back.
+    // ⛔ THIS VIA WAS NOT DISCUSSED ANYWHERE before the milestone 6 design measured it: until
+    // milestone 6 task 1, `start` took the grant BY VALUE and dropped it on `Err`, and nothing
+    // could rebuild it -- `GrantId` is private and `grant_has_no_constructor.rs` pins that -- so
+    // the reservation sat in the books for the whole declared window, and only the sweep got it
+    // back. Today `Started::Rejected` hands it back by name, which is what this probe holds.
+    // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1365.
     let (mut arbiter, grant) = an_arbiter_and_a_real_grant();
 
     let Started::Rejected { grant, error } =

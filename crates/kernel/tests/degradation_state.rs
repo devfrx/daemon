@@ -46,7 +46,8 @@ const GUI_TICK: Millis = Millis::new(0);
 /// A machine with room to spare, for every probe whose subject is the ROUTING half.
 const ROOMY: Mib = Mib::new(16_384);
 
-/// The window every probe here uses: none of them is about expiry.
+/// The window of the one admission in this file, `a_full_arbiter_declares_its_vram_exhausted`'s:
+/// no probe here is about expiry. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1305.
 const LONG: Millis = Millis::new(1_000_000);
 
 /// ⛔ THE ONE CANDIDATE EVERY ROUTING PROBE RESOLVES, and it is dear on purpose: the price is
@@ -211,7 +212,10 @@ fn the_LAST_routing_wins_and_not_any_routing() {
     // with one routing per journal, "the last one" and "any one" give the same answer, and a loop
     // that stopped at the FIRST record — or one that accumulated with `|=` — passed every other
     // probe in this file. A degradation that happened and was then RESOLVED is a fact about
-    // history, not about what the user can do now (§7.5).
+    // history, not about what the user can do now — the criterion of §7.5 of the KERNEL spec,
+    // `docs/superpowers/specs/2026-08-06-kernel-design.md`, which §6.7 of the sub-project 1 spec
+    // points to; the other § of this file are the sub-project 1 spec's. ⚠️ RECALL OF 2026-10-13
+    // -- audit of 2026-09-30, AUD-1306.
     //
     // ⚠️ BOTH DIRECTIONS ARE IN ONE PROBE, and that is what keeps either half from being vacuous:
     // "always false" fails the first assertion, "always true" and "the first one wins" fail the

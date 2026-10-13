@@ -179,8 +179,11 @@ fn the_in_memory_custody_honours_the_contract() {
 }
 
 // ⛔ THE DIRECTION ONE FORGETS (§7.1.1 rule 3): a suite never seen to fail is not a suite. The
-// five below break the port's promises ONE EACH, and demand that the suite notices each -- and
-// notices it ON THE RIGHT PROMISE, which is what reading the payload buys over `is_err()`.
+// liars below break the port's promises ONE EACH, and demand that the suite notices each -- and
+// notices it ON THE RIGHT PROMISE, which is what reading the payload buys over `is_err()`. How
+// many they are is `grep -c '^fn a_custody_that.*is_caught' <this file>` — anchored, so that this
+// line is not counted — one per promise, and not a figure here. ⚠️ RECALL OF 2026-10-13 -- audit
+// of 2026-09-30, AUD-1302.
 //
 // ⚠️ AND EACH IS BROKEN IN A DIFFERENT WAY (gotcha #45): the write dropped, the bytes
 // canonicalised, an absence reported as a failure, a replacement turned into an append, and an
@@ -224,6 +227,55 @@ fn a_custody_that_files_an_empty_package_as_no_package_is_caught() {
     );
 }
 
+// ⛔ THE QUIET HOOK, PROVED IN BOTH DIRECTIONS — the same two probes as `journal_contract.rs`'s,
+// on this file's copy of the hook. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2165.
+
+#[test]
+fn the_quiet_hook_keeps_quiet_about_the_panic_its_thread_expects() {
+    let before = PANICS_HANDED_ON_HERE.with(std::cell::Cell::get);
+    let outcome = expecting_a_panic(|| panic!("the panic this probe expects"));
+    assert!(
+        outcome.is_err(),
+        "the body panicked, and `expecting_a_panic` caught it"
+    );
+    assert_eq!(
+        PANICS_HANDED_ON_HERE.with(std::cell::Cell::get),
+        before,
+        "the quiet hook printed a panic its own thread was expecting"
+    );
+}
+
+#[test]
+fn the_quiet_hook_keeps_quiet_about_nothing_else() {
+    // A red of another thread, raised while this one expects a panic.
+    let handed_on = expecting_a_panic(|| {
+        std::thread::spawn(|| {
+            let _ = std::panic::catch_unwind(|| {
+                panic!("a red of another thread, raised on purpose by this probe")
+            });
+            PANICS_HANDED_ON_HERE.with(std::cell::Cell::get)
+        })
+        .join()
+        .expect("the other thread caught its own panic")
+    })
+    .expect("nothing panicked on this thread");
+    assert_eq!(
+        handed_on, 1,
+        "a red of another thread did not reach the hook that prints"
+    );
+
+    // And a later red of this same thread, once its expected panic is over.
+    let before = PANICS_HANDED_ON_HERE.with(std::cell::Cell::get);
+    let _ = std::panic::catch_unwind(|| {
+        panic!("a later red of this thread, raised on purpose by this probe")
+    });
+    assert_eq!(
+        PANICS_HANDED_ON_HERE.with(std::cell::Cell::get),
+        before + 1,
+        "a later red of this thread did not reach the hook that prints"
+    );
+}
+
 #[test]
 fn no_promise_message_is_a_substring_of_another() {
     // ⛔ THE CONSTRAINT THAT MAKES `contains` SAFE. If one message were a substring of another, a
@@ -231,6 +283,10 @@ fn no_promise_message_is_a_substring_of_another() {
     // the suite would keep printing `ok` while pointing at the wrong place. It is a property of
     // the SET, so every message added has to be checked against ALL the others, which is exactly
     // the check nobody repeats by eye.
+    //
+    // ⚠️ THE SET IS WRITTEN BY HAND, with the declared limit `journal_contract.rs` writes beside
+    // its own: nothing ties it to the `pub const …_MESSAGE` of this file (⚠️ RECALL OF 2026-10-13
+    // -- audit of 2026-09-30, AUD-2152).
     let messages = [
         ("KEPT_COMES_BACK", KEPT_COMES_BACK_MESSAGE),
         ("OPAQUE", OPAQUE_MESSAGE),
@@ -239,6 +295,10 @@ fn no_promise_message_is_a_substring_of_another() {
         ("EMPTY_IS_NOT_ABSENT", EMPTY_IS_NOT_ABSENT_MESSAGE),
     ];
 
+    // ⚠️ AND THE SAME LOOP REFUSES AN EMPTY MESSAGE, on its own: `str::contains("")` is true of
+    // every string, so an empty message is a substring of every other one and the loop names it —
+    // which is why no second loop asks for it.
+    // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2144.
     for (name, message) in messages {
         for (other_name, other) in messages {
             if name == other_name {
@@ -250,12 +310,6 @@ fn no_promise_message_is_a_substring_of_another() {
                  satisfy the test that names {name}"
             );
         }
-    }
-
-    // The other direction, the one that gets forgotten (§7.1.1 rule 3): a bench where every
-    // message were distinct BY BEING EMPTY would pass the loop above without saying anything.
-    for (name, message) in messages {
-        assert!(!message.is_empty(), "{name} is empty");
     }
 }
 
@@ -277,26 +331,66 @@ where
 
 /// Runs the suite and returns the message it failed with, or `None` if it passed.
 ///
-/// ⚠️ The panic hook is silenced for the duration of the call: the panic is EXPECTED, and its
-/// backtrace in the test output would train the reader to ignore backtraces. Restored
-/// immediately. ⛔ DECLARED LIMIT, the same one `journal_contract.rs` declares: the hook is
-/// PROCESS-WIDE and libtest runs tests on parallel threads, so a panic raised in another test
-/// landing inside this window is reported with no stdout section. The failure is never hidden,
-/// only its message, and the window is microseconds wide.
+/// ⚠️ The panic is EXPECTED, and its backtrace in the test output would train the reader to
+/// ignore backtraces: so the suite runs under `expecting_a_panic`, and the quiet hook keeps THIS
+/// thread's panic out of the output — and no other.
 fn message_the_suite_fails_with<C, F>(build: F) -> Option<String>
 where
     C: Custody,
     F: Fn() -> C + std::panic::RefUnwindSafe,
 {
-    let previous = std::panic::take_hook();
-    std::panic::set_hook(Box::new(|_| {}));
-    let outcome = std::panic::catch_unwind(|| assert_custody_contract(&build));
-    std::panic::set_hook(previous);
-
-    match outcome {
+    match expecting_a_panic(|| assert_custody_contract(&build)) {
         Ok(()) => None,
         Err(payload) => Some(panic_message(payload.as_ref())),
     }
+}
+
+std::thread_local! {
+    /// Raised by `expecting_a_panic` on the thread that runs a body it expects to panic, and only
+    /// while that body runs.
+    static A_PANIC_IS_EXPECTED_HERE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+
+    /// How many panics of THIS thread the quiet hook handed on to the hook that prints: what the
+    /// two probes of the quiet hook read, and nothing else does.
+    static PANICS_HANDED_ON_HERE: std::cell::Cell<u32> = const { std::cell::Cell::new(0) };
+}
+
+/// Runs `body` under `catch_unwind` with THIS thread marked as expecting a panic, so the quiet
+/// hook keeps that panic out of the output; every other thread's panic, and every later one of
+/// this thread, reaches the hook that prints.
+///
+/// ⛔ THE QUIET HOOK OF `journal_contract.rs`, and its reason is written there once: one hook for
+/// the whole process, installed once and never put back, and a flag per thread. Test code does not
+/// cross a crate boundary, so this suite carries its own copy — a change to one of the three is a
+/// change to the three. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2143, AUD-2165.
+fn expecting_a_panic<T>(
+    body: impl FnOnce() -> T + std::panic::UnwindSafe,
+) -> std::thread::Result<T> {
+    install_the_quiet_hook();
+    A_PANIC_IS_EXPECTED_HERE.with(|expected| expected.set(true));
+    let outcome = std::panic::catch_unwind(body);
+    A_PANIC_IS_EXPECTED_HERE.with(|expected| expected.set(false));
+    outcome
+}
+
+/// Installs, once per process, the hook that keeps quiet about the panic `expecting_a_panic` is
+/// waiting for and hands every other one on to the hook it found. ⚠️ `try_with` inside the hook,
+/// for the reason `journal_contract.rs` gives.
+fn install_the_quiet_hook() {
+    static INSTALLED: std::sync::Once = std::sync::Once::new();
+    INSTALLED.call_once(|| {
+        let found = std::panic::take_hook();
+        std::panic::set_hook(Box::new(move |info| {
+            let expected = A_PANIC_IS_EXPECTED_HERE
+                .try_with(std::cell::Cell::get)
+                .unwrap_or(false);
+            if expected {
+                return;
+            }
+            let _ = PANICS_HANDED_ON_HERE.try_with(|handed_on| handed_on.set(handed_on.get() + 1));
+            found(info);
+        }));
+    });
 }
 
 /// The text of a panic, dug out of the payload. `assert!`/`assert_eq!` with a format argument
@@ -330,9 +424,11 @@ impl Custody for SilentCustody {
     }
 }
 
-/// Keeps only what is valid text and drops the rest. ⛔ THIS IS THE SHAPE AN IMPLEMENTATION
-/// TAKES THE DAY SOMEBODY DECIDES THE PACKAGE "IS JSON ANYWAY": it survives promise 1, whose
-/// payload is valid UTF-8, and dies on promise 2. Caught by promise 2.
+/// Keeps the package AS TEXT: every sequence that is not valid UTF-8 becomes U+FFFD, the
+/// replacement character, so what comes back is CANONICALISED -- longer, and not a subset of what
+/// was kept. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1303. ⛔ THIS IS THE SHAPE AN
+/// IMPLEMENTATION TAKES THE DAY SOMEBODY DECIDES THE PACKAGE "IS JSON ANYWAY": it survives
+/// promise 1, whose payload is valid UTF-8, and dies on promise 2. Caught by promise 2.
 struct TextCustody {
     kept: Option<Vec<u8>>,
 }

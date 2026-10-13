@@ -139,9 +139,13 @@ fn a_granted_triple_reaches_the_effect_and_the_step_closes() {
 #[test]
 fn the_note_carries_the_registered_name_the_invoker_and_the_argument() {
     // §5: "una sonda legge il dettaglio dopo `replay`". ⛔ AND IT READS ALL THREE, because each
-    // is a different road: the name proves the REGISTERED one reached the record and not the
-    // arriving text, the code proves `Invoker::code` was consulted, and the payload proves the
-    // argument did NOT end up in the structured half.
+    // is a different road: the name proves the detail names the function that was invoked, the
+    // code proves `Invoker::code` was consulted, and the payload proves the argument did NOT end
+    // up in the structured half. ⚠️ THAT THE NAME IS THE REGISTERED ONE AND NOT THE ARRIVING TEXT
+    // IS HELD BY THE TYPE, NOT HERE: here the two are one string, because `Registry::held` matches
+    // a name by equality, while `InvocationDetail::new` takes a `&'static str` —
+    // `tests/compile_fail/invocation_detail_function_is_not_runtime_text.rs`. ⚠️ RECALL OF
+    // 2026-10-13 -- audit of 2026-09-30, AUD-2161.
     //
     // ⛔ AND THE ARGUMENT'S LABEL WITH IT, because the label is what says, once the bytes are
     // re-read from the archive, that the peer's argument is not an instruction (I6, ADR-0014).
@@ -198,6 +202,82 @@ fn the_note_carries_the_registered_name_the_invoker_and_the_argument() {
         trust,
         kernel::record::Trust::Untrusted,
         "the payload is the argument the peer chose, so it travels under the label that says so"
+    );
+}
+
+/// The label `Registry::invoke` gave the record of species `kind` it wrote on step A, read back
+/// out of the archive.
+///
+/// ⛔ ONE PROBE PER PRODUCER, as the doc of `impl RecordV1` asks: `invoke` writes three records on
+/// step A — the intent (`opened`), the invocation note (`noted`, whose label
+/// `the_note_carries_the_registered_name_the_invoker_and_the_argument` reads) and the outcome
+/// (`closed`) — and a producer whose bench never calls `trust()` writes a label nobody watches.
+/// ⚠️ THE STEP IS ASKED FOR BY NUMBER: the granting step before it carries an intent and an
+/// outcome of this bench's own, with the same label, and a probe that read those would be green
+/// over a producer it never saw. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2234.
+fn the_label_invoke_wrote_on_step_a(kind: RecordKind) -> kernel::record::Trust {
+    let mut journal = MemoryJournal::new();
+    let registry = a_registry();
+    let step_a = StepId::new(2);
+
+    journal
+        .intent(StepId::new(1), &a_bare_intent())
+        .expect("the granting step");
+    permission::grant(&mut journal, StepId::new(1), &GUARDED).expect("grant");
+    journal
+        .outcome(StepId::new(1), &a_bare_outcome())
+        .expect("the granting step closes");
+
+    registry
+        .invoke(
+            &mut journal,
+            step_a,
+            "set-policy",
+            Invoker::Gui(ClientId::new(7)),
+            b"local",
+            Approval::Checked,
+            |_| -> Result<(), JournalError> { Ok(()) },
+        )
+        .expect("a granted invocation must run");
+
+    let labels: Vec<kernel::record::Trust> = journal
+        .replay()
+        .expect("replay")
+        .into_iter()
+        .filter(|(step, _)| *step == step_a)
+        .filter_map(|(_, bytes)| {
+            let Record::V1(body) = Record::decode(&bytes).expect("every record must decode");
+            (body.kind() == kind).then(|| body.trust())
+        })
+        .collect();
+    assert_eq!(
+        labels.len(),
+        1,
+        "step A must carry exactly one record of species {kind:?}, and carries {}",
+        labels.len()
+    );
+    labels[0]
+}
+
+#[test]
+fn the_intent_of_step_a_carries_the_instruction_label() {
+    // ⛔ `opened` writes no byte the peer chose — its payload is empty and the argument travels in
+    // the note — so `Trust::Instruction` is true of it, and an `Untrusted` there would say a step
+    // of ours came from outside.
+    assert_eq!(
+        the_label_invoke_wrote_on_step_a(RecordKind::Intent),
+        kernel::record::Trust::Instruction,
+        "the intent of step A is ours, and must say so"
+    );
+}
+
+#[test]
+fn the_outcome_of_step_a_carries_the_instruction_label() {
+    // ⛔ `closed` likewise: an empty payload, and nothing in it the peer chose.
+    assert_eq!(
+        the_label_invoke_wrote_on_step_a(RecordKind::Outcome),
+        kernel::record::Trust::Instruction,
+        "the outcome of step A is ours, and must say so"
     );
 }
 

@@ -27,16 +27,18 @@
 //
 // ⚠️ DECLARED COST, AND IT HAS BEEN PAID SINCE 2026-08-10 — this sentence read "AND IT IS NOT
 // YET BEING PAID" until task 9. `include!` carries the `#[test]` functions of this file along
-// with it, so the FOURTEEN tests below RUN A SECOND TIME inside `platform`'s binary: that binary
-// reports FIFTEEN tests, these fourteen plus the one that builds the real journal. It buys the
-// single copy of the assertions and costs a few milliseconds — nothing here touches the disk or
-// sleeps, and that stayed true when the real journal started pruning: `prune` runs against the
-// in-memory double here and against the file only in `platform`'s own copy.
+// with it, so EVERY test below RUNS A SECOND TIME inside `platform`'s binary, beside the one that
+// builds the real journal. It buys the single copy of the assertions and costs a few milliseconds
+// — nothing here touches the disk or sleeps, and that stayed true when the real journal started
+// pruning: `prune` runs against the in-memory double here and against the file only in
+// `platform`'s own copy.
 // ⚠️ The figure said "eight", then "ten", then "eleven" during 2026-08-10, as promise 8 brought a
 // liar, the substring constraint became a test of its own, and promise 7b brought the ninth liar;
-// and "fourteen" on 2026-08-17, when the audit's three blind journals arrived. COUNTED WITH
-// `grep -c '^#\[test\]'` RATHER THAN BUMPED BY THREE — gotcha #31 is a number inside a sentence
-// that stays true, and the sentence around this one has stayed true four times running.
+// and "fourteen" on 2026-08-17, when the audit's three blind journals arrived. ⛔ HOW MANY THE
+// TESTS ARE IS NOT WRITTEN AS A FIGURE: the count is
+// `grep -c '^#\[test\]' crates/kernel/tests/journal_contract.rs`, and this is its one house —
+// `journal_contract_real.rs` sends its reader here (gotcha #31, gotcha #68).
+// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-779, AUD-1322, AUD-1323, AUD-1391.
 
 use kernel::ports::journal::{Journal, JournalError, StepId};
 
@@ -275,9 +277,17 @@ pub fn assert_journal_contract<J: Journal, F: Fn() -> J>(build: F) {
     // asked for the refusal on an EMPTY ARCHIVE and nowhere else, so a guard that asked «is the
     // archive empty?» instead of «does THIS STEP carry an intent?» satisfied it. That is not a
     // hypothetical: with `FileJournal`'s guards replaced by `find_first(|_, _, _| Some(()))
-    // .is_none()`, `cargo test --workspace --no-fail-fast` answered 32 targets, 171 passed, ZERO
-    // failed — and the mutation IS observable (gotcha #54, proved in two directions): on a
-    // non-empty archive it accepts an outcome for a step NOBODY EVER OPENED.
+    // .is_none()`, `cargo test --workspace --no-fail-fast` came back green — the run and its
+    // figures are in `docs/audit-2026-08-11.md`, the one house of that measurement, and this is
+    // the one place in this file that names it — and the mutation IS observable (gotcha #54,
+    // proved in two directions): on a non-empty archive it accepts an outcome for a step NOBODY
+    // EVER OPENED. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1325.
+    //
+    // ⚠️ ONE MESSAGE COSTS THE NAME OF THE DIRECTION, and the cost is held rather than left: a
+    // liar's test reads the promise's message, which (a) and (b) share, so WHERE each liar of this
+    // promise dies — `PermissiveJournal` on (a), `BlindGuardJournal::on_outcome` on (b) — is held
+    // by `the_liars_of_promises_5_and_8_reach_the_direction_their_docs_name`, and not by their own
+    // tests. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2150.
     //
     // ⛔ WHAT THAT COSTS DOWNSTREAM, which is why this is V6 and not tidiness: reconciliation
     // reads an `Outcome` for a step that never ran and lifts it OUT OF A DOUBT THAT NEVER EXISTED.
@@ -513,7 +523,10 @@ pub fn assert_journal_contract<J: Journal, F: Fn() -> J>(build: F) {
     // suite stops at the FIRST promise a journal breaks, so a liar blind on both dies on promise 5
     // and this block would go on being unproven while a test claimed otherwise. That is why
     // `BlindGuardJournal` blinds ONE guard per instance: `on_note` walks past promise 5 on its
-    // merits and dies here.
+    // merits and dies here, on (a-bis) — and since (a) and (a-bis) share this promise's message,
+    // that it is (a-bis) is held by
+    // `the_liars_of_promises_5_and_8_reach_the_direction_their_docs_name`.
+    // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2150.
     //
     // ⚠️ AND THIS IS NOT SYMMETRY-FILLING, WHICH IS A REASON THIS REPOSITORY REJECTS: it was
     // MEASURED. `on_note` against the suite as it stood reported «THE SUITE IS VACUOUS ON promise
@@ -594,6 +607,13 @@ fn no_promise_message_is_a_substring_of_another() {
     // messages are 72 ordered pairs, and re-reading nine strings by eye is exactly the check
     // nobody repeats. ⚠️ The two prune messages are the closest pair the set has ever held, both
     // opening "a step ", which is why the count is written down instead of the reassurance.
+    //
+    // ⛔ DECLARED LIMIT: THE SET BELOW IS WRITTEN BY HAND, and nothing ties it to the
+    // `pub const …_MESSAGE` of this file. A message added to the suite and forgotten here is
+    // checked against nobody, so the diligence this test took off the messages is still asked of
+    // this array: `grep -c 'pub const [A-Z_]*_MESSAGE' <this file>` against its length is the
+    // check, by hand. What would hold it is a mechanism this file does not have, and choosing one
+    // is the owner's: an open choice (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2152).
     let messages = [
         ("READ_BACK", READ_BACK_MESSAGE),
         ("READ_BACK_IS_THE_INTENT", READ_BACK_IS_THE_INTENT_MESSAGE),
@@ -606,6 +626,10 @@ fn no_promise_message_is_a_substring_of_another() {
         ("NOTE", NOTE_MESSAGE),
     ];
 
+    // ⚠️ AND THE SAME LOOP REFUSES AN EMPTY MESSAGE, on its own: `str::contains("")` is true of
+    // every string, so an empty message is a substring of every other one and the loop names it —
+    // which is why no second loop asks for it.
+    // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2151.
     for (name, message) in messages {
         for (other_name, other) in messages {
             if name == other_name {
@@ -617,12 +641,6 @@ fn no_promise_message_is_a_substring_of_another() {
                  satisfy the test that names {name}"
             );
         }
-    }
-
-    // The other direction, the one that gets forgotten (§7.1.1 rule 3): a bench where every
-    // message were distinct BY BEING EMPTY would pass the loop above without saying anything.
-    for (name, message) in messages {
-        assert!(!message.is_empty(), "{name} is empty");
     }
 }
 
@@ -652,12 +670,14 @@ fn no_promise_message_is_a_substring_of_another() {
 // returned, absence reported as emptiness, order reversed, the write-ahead guard removed on
 // `outcome`, the guard removed on `intent`, retention granted, a write VALIDATED AND THEN
 // DISCARDED, retention REFUSED to everything in the right words, the STEP NOT CONSULTED on the
-// way back out, and — the eleventh way, worn by two instances — the write-ahead guard asking
-// ABOUT THE ARCHIVE instead of about the step. Two liars broken the same way prove one thing
-// twice and leave the other promise unguarded.
+// way back out, the write-ahead guard asking ABOUT THE ARCHIVE instead of about the step — the
+// way worn by two instances —, and `Missing` read from the EMPTINESS OF THE ARCHIVE instead of
+// from the absence of the step, on the way back out through `read_back`. Two liars broken the
+// same way prove one thing twice and leave the other promise unguarded. ⚠️ RECALL OF 2026-10-13
+// -- audit of 2026-09-30, AUD-1167, AUD-1321.
 //
-// ⛔ THE ELEVENTH WAY WEARS TWO INSTANCES AND NOT TWO TYPES, and the difference is worth the
-// line: it is ONE defect on TWO operations, so two types would be one defect written twice. Two
+// ⛔ THE ARCHIVE-ASKING GUARD WEARS TWO INSTANCES AND NOT TWO TYPES, and the difference is worth
+// the line: it is ONE defect on TWO operations, so two types would be one defect written twice. Two
 // INSTANCES are needed because the suite stops at the first promise broken — see
 // `BlindGuardJournal`.
 
@@ -747,6 +767,88 @@ fn a_journal_whose_note_guard_asks_whether_the_archive_is_empty_is_caught() {
     assert_caught_on(BlindGuardJournal::on_note, NOTE_MESSAGE, "promise 8");
 }
 
+#[test]
+fn the_liars_of_promises_5_and_8_reach_the_direction_their_docs_name() {
+    // ⛔ WHERE A LIAR DIES, HELD AND NOT ONLY WRITTEN — "a declared reason that no test holds is
+    // a comment". Promises 5 and 8 ask their question twice under ONE message: (a) on an EMPTY
+    // archive, then again on a non-empty one. The liars' tests read the message, so a liar that
+    // died on the wrong one of the two would still be green, and the other direction would be left
+    // with no liar at all — the shape gotcha #45 exists to prevent. What decides where each one
+    // dies is its answer to (a), and that is what is asked here, of each, on an empty archive.
+    assert_eq!(
+        PermissiveJournal::new().outcome(StepId::new(3), b"too early"),
+        Ok(()),
+        "`PermissiveJournal` refuses an outcome on an empty archive: it would die on (b) of \
+         promise 5, and (a) would be held by no liar"
+    );
+    assert_eq!(
+        BlindGuardJournal::on_outcome().outcome(StepId::new(3), b"too early"),
+        Err(JournalError::OutOfOrder),
+        "`BlindGuardJournal::on_outcome` accepts an outcome on an empty archive: it dies on (a) of \
+         promise 5 as `PermissiveJournal` does, and (b) is held by no liar"
+    );
+    assert_eq!(
+        BlindGuardJournal::on_note().note(StepId::new(8), b"a note about nothing"),
+        Err(JournalError::OutOfOrder),
+        "`BlindGuardJournal::on_note` accepts a note on an empty archive: it dies on (a) of \
+         promise 8, and (a-bis) is held by no liar"
+    );
+}
+
+// ⛔ THE QUIET HOOK, PROVED IN BOTH DIRECTIONS. It is a check on what prints, and it can be wrong
+// two ways: printing the panic its thread expects, which trains the reader to skip backtraces, or
+// keeping quiet about one nobody expected, which hides a red's message. `PANICS_HANDED_ON_HERE` is
+// how the two probes see what the hook did. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+// AUD-2165.
+
+#[test]
+fn the_quiet_hook_keeps_quiet_about_the_panic_its_thread_expects() {
+    let before = PANICS_HANDED_ON_HERE.with(std::cell::Cell::get);
+    let outcome = expecting_a_panic(|| panic!("the panic this probe expects"));
+    assert!(
+        outcome.is_err(),
+        "the body panicked, and `expecting_a_panic` caught it"
+    );
+    assert_eq!(
+        PANICS_HANDED_ON_HERE.with(std::cell::Cell::get),
+        before,
+        "the quiet hook printed a panic its own thread was expecting"
+    );
+}
+
+#[test]
+fn the_quiet_hook_keeps_quiet_about_nothing_else() {
+    // ⛔ A RED OF ANOTHER THREAD, RAISED WHILE THIS ONE EXPECTS A PANIC: the overlap that could
+    // leave a silent hook installed for good. It has to reach the hook that prints.
+    let handed_on = expecting_a_panic(|| {
+        std::thread::spawn(|| {
+            let _ = std::panic::catch_unwind(|| {
+                panic!("a red of another thread, raised on purpose by this probe")
+            });
+            PANICS_HANDED_ON_HERE.with(std::cell::Cell::get)
+        })
+        .join()
+        .expect("the other thread caught its own panic")
+    })
+    .expect("nothing panicked on this thread");
+    assert_eq!(
+        handed_on, 1,
+        "a red of another thread did not reach the hook that prints"
+    );
+
+    // ⛔ AND A LATER RED OF THIS SAME THREAD, once its expected panic is over: the flag has to
+    // come down with the window.
+    let before = PANICS_HANDED_ON_HERE.with(std::cell::Cell::get);
+    let _ = std::panic::catch_unwind(|| {
+        panic!("a later red of this thread, raised on purpose by this probe")
+    });
+    assert_eq!(
+        PANICS_HANDED_ON_HERE.with(std::cell::Cell::get),
+        before + 1,
+        "a later red of this thread did not reach the hook that prints"
+    );
+}
+
 /// Runs the suite against a deliberately broken journal and demands that it be caught, and
 /// caught ON THE NAMED PROMISE.
 ///
@@ -770,8 +872,10 @@ fn a_journal_whose_note_guard_asks_whether_the_archive_is_empty_is_caught() {
 /// count to what it is today and dates each step. ⚠️ AND THE AUDIT'S OWN REMEDY MOVED IT LAST,
 /// which is the part worth knowing: this finding measured the callers, and `79aba9e` added one
 /// more the same day. The relation left above cannot age that way; the count, when somebody
-/// wants it, is `grep -c 'assert_caught_on(' <this file>`. ⚠️ The other half was RE-MEASURED and
-/// holds: the suite contains exactly one bare `assert!`.
+/// wants it, is `grep -c '^ *assert_caught_on(' <this file>` — anchored to the start of the line,
+/// so that the doc writing it, this one, is not counted among the callers. ⚠️ RECALL OF
+/// 2026-10-13 -- audit of 2026-09-30, AUD-1324. ⚠️ The other half was RE-MEASURED and holds: the
+/// suite contains exactly one bare `assert!`.
 fn assert_caught_on<J, F>(build: F, expected: &str, promise: &str)
 where
     J: Journal,
@@ -790,29 +894,79 @@ where
 
 /// Runs the suite and returns the message it failed with, or `None` if it passed.
 ///
-/// ⚠️ The panic hook is silenced for the duration of the call: the panic is EXPECTED, and its
-/// backtrace in the test output would train the reader to ignore backtraces. It is restored
-/// immediately, so any LATER panic prints normally.
-///
-/// ⛔ DECLARED LIMIT, because the hook is PROCESS-WIDE and libtest runs tests on parallel
-/// threads: a panic raised in ANOTHER test that happens to land inside this window is reported
-/// as `FAILED` with no stdout section — the failure is never hidden, only its message. The
-/// window is microseconds wide and the risk is negligible, which is why it is declared rather
-/// than engineered away.
+/// ⚠️ The panic is EXPECTED, and its backtrace in the test output would train the reader to
+/// ignore backtraces: so the suite runs under `expecting_a_panic`, and the quiet hook keeps THIS
+/// thread's panic out of the output — and no other.
 fn message_the_suite_fails_with<J, F>(build: F) -> Option<String>
 where
     J: Journal,
     F: Fn() -> J + std::panic::RefUnwindSafe,
 {
-    let previous = std::panic::take_hook();
-    std::panic::set_hook(Box::new(|_| {}));
-    let outcome = std::panic::catch_unwind(|| assert_journal_contract(&build));
-    std::panic::set_hook(previous);
-
-    match outcome {
+    match expecting_a_panic(|| assert_journal_contract(&build)) {
         Ok(()) => None,
         Err(payload) => Some(panic_message(payload.as_ref())),
     }
+}
+
+std::thread_local! {
+    /// Raised by `expecting_a_panic` on the thread that runs a body it expects to panic, and only
+    /// while that body runs.
+    static A_PANIC_IS_EXPECTED_HERE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+
+    /// How many panics of THIS thread the quiet hook handed on to the hook it found, the one that
+    /// prints. Nothing reads it but the two probes of the quiet hook, and they need it: what a
+    /// hook prints cannot be read back from inside a test, and this can.
+    static PANICS_HANDED_ON_HERE: std::cell::Cell<u32> = const { std::cell::Cell::new(0) };
+}
+
+/// Runs `body` under `catch_unwind` with THIS thread marked as expecting a panic, so the quiet
+/// hook keeps that panic out of the output; every other thread's panic, and every later one of
+/// this thread, reaches the hook that prints.
+///
+/// ⛔ ONE HOOK FOR THE WHOLE PROCESS, INSTALLED ONCE AND NEVER PUT BACK, AND A FLAG PER THREAD —
+/// the owner's decision of 2026-10-13. The hook is a PROCESS-WIDE resource and libtest runs tests
+/// on parallel threads, so silencing it around one call and putting the old one back is not safe
+/// between them: two overlapping calls can put back each other's SILENT hook, which then stays
+/// for the rest of the process, and every later red of the binary — `platform`'s real journal
+/// included — prints with no message. Here nothing is ever put back, so nothing can be put back
+/// wrong, and the flag is read on the thread that panics: a red of another test prints whatever
+/// this one is doing. ⚠️ `catch_unwind` IS INSIDE, so no panic leaves the window with the flag
+/// still raised.
+///
+/// ⚠️ THE SAME HOOK, AND THE SAME TWO PROBES, LIVE IN `custody_contract.rs` AND
+/// `reactor_contract.rs`: three suites that `platform` includes one per binary, and test code does
+/// not cross a crate boundary. A change to one is a change to the three.
+/// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2153, AUD-2165.
+fn expecting_a_panic<T>(
+    body: impl FnOnce() -> T + std::panic::UnwindSafe,
+) -> std::thread::Result<T> {
+    install_the_quiet_hook();
+    A_PANIC_IS_EXPECTED_HERE.with(|expected| expected.set(true));
+    let outcome = std::panic::catch_unwind(body);
+    A_PANIC_IS_EXPECTED_HERE.with(|expected| expected.set(false));
+    outcome
+}
+
+/// Installs, once per process, the hook that keeps quiet about the panic `expecting_a_panic` is
+/// waiting for and hands every other one on to the hook it found.
+///
+/// ⚠️ `try_with` AND NOT `with` INSIDE THE HOOK: a hook that panicked would abort the process,
+/// and a thread whose flag cannot be read is not one that expects a panic — so it prints.
+fn install_the_quiet_hook() {
+    static INSTALLED: std::sync::Once = std::sync::Once::new();
+    INSTALLED.call_once(|| {
+        let found = std::panic::take_hook();
+        std::panic::set_hook(Box::new(move |info| {
+            let expected = A_PANIC_IS_EXPECTED_HERE
+                .try_with(std::cell::Cell::get)
+                .unwrap_or(false);
+            if expected {
+                return;
+            }
+            let _ = PANICS_HANDED_ON_HERE.try_with(|handed_on| handed_on.set(handed_on.get() + 1));
+            found(info);
+        }));
+    });
 }
 
 /// The text of a panic, dug out of the payload. `assert!`/`assert_eq!` with a format argument
@@ -966,9 +1120,11 @@ impl Journal for EmptyInsteadOfMissingJournal {
 /// it launders an absent step into a successful read of nothing.
 ///
 /// ⛔ IT IS NOT `EmptyInsteadOfMissingJournal` WITH EXTRA STEPS, and the difference is the whole
-/// point: that one breaks `Missing` EVERYWHERE and dies on promise 3 as the block stands. This
-/// one breaks it ONLY where promise 3 never looked. Two liars broken the same way prove one
-/// thing twice (gotcha #45); these two are broken at the same place for OPPOSITE reasons.
+/// point: that one breaks `Missing` EVERYWHERE, an empty archive included, so promise 3 catches
+/// it whatever the archive holds; this one breaks it ONLY on an archive that holds something,
+/// which is why promise 3 asks its question with a bystander in place. Two liars broken the same
+/// way prove one thing twice (gotcha #45); these two are broken at the same place for OPPOSITE
+/// reasons. Caught by promise 3. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1320.
 struct EmptinessIsMissingJournal {
     inner: simulator::journal::MemoryJournal,
 }
@@ -1058,8 +1214,11 @@ impl Journal for ShuffledJournal {
 /// `BlindGuardJournal::on_outcome` is caught there too, and the two defects are not the same.
 /// This one REMOVES the guard, laundering its inner `Err(OutOfOrder)` into `Ok(())`, so it dies
 /// on sub-assertion (a) at the first opportunity; that one asks the WRONG QUESTION and dies on
-/// (b). ⛔ The mechanism is written once, in the comment beside (b) in the suite — named here
-/// rather than copied, because a second house rots in the one nobody moves.
+/// (b) — which of the two each dies on is held by
+/// `the_liars_of_promises_5_and_8_reach_the_direction_their_docs_name` (⚠️ RECALL OF 2026-10-13
+/// -- audit of 2026-09-30, AUD-2150). ⛔ The mechanism is written once, in the comment beside (b)
+/// in the suite — named here rather than copied, because a second house rots in the one nobody
+/// moves.
 ///
 /// ⛔ DATED RECALL, 2026-08-28 — FINDING AUD-055. This doc read "It is the only journal here
 /// that reaches promise 5: every other liar either dies earlier or refuses correctly". The
@@ -1238,12 +1397,12 @@ impl Journal for EagerPruner {
 /// been reconciled exactly as for one that has not.
 ///
 /// ⛔ BROKEN IN A NINTH WAY, and gotcha #45 is why the shape was chosen rather than reached for.
-/// The eight above drop every write, hand back the wrong record, report absence as emptiness,
-/// reverse the order, remove the guard on `outcome`, remove the guard on `intent`, grant
-/// retention, and validate a write then discard it. This one REFUSES SOMETHING LEGITIMATE — the
-/// only liar here whose defect is saying NO — and it says it with an answer that is CORRECT on
-/// the case promise 7 tests. `EagerPruner` is its opposite and not its twin: that one destroys
-/// evidence, this one never destroys anything and never asks the question.
+/// How the others are broken is listed once, at the head of the negative tests, and "ninth" is
+/// this way's place in that list — not this type's place in the file. This one REFUSES SOMETHING
+/// LEGITIMATE — the only liar here whose defect is saying NO — and it says it with an answer that
+/// is CORRECT on the case promise 7 tests. `EagerPruner` is its opposite and not its twin: that
+/// one destroys evidence, this one never destroys anything and never asks the question.
+/// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1326.
 ///
 /// ⛔ IT ANSWERS `StepInDoubt` AND NOT `Missing`, WHICH IS THE WHOLE POINT AND NOT A DETAIL. With
 /// `Missing` it would die on promise 7, which runs first, and promise 7b would go on being
@@ -1291,11 +1450,11 @@ impl Journal for AlwaysInDoubtJournal {
 /// Checks that a note has a step to attach to, answers `Ok(())`, and KEEPS NOTHING.
 ///
 /// ⛔ BROKEN IN AN EIGHTH WAY, and gotcha #45 is why the shape was chosen rather than reached
-/// for. The seven above drop every write, return the wrong record, report absence as emptiness,
-/// reverse the order, remove the guard on `outcome`, remove the guard on `intent`, and grant
-/// retention. This one VALIDATES AND THEN DISCARDS — it does the check, says yes, and stores
-/// nothing. `SilentJournal` is the nearest neighbour and is not the same: it never checks
-/// anything and dies on promise 1, six promises earlier.
+/// for. How the others are broken is listed once, at the head of the negative tests, and "eighth"
+/// is this way's place in that list — not this type's place in the file. This one VALIDATES AND
+/// THEN DISCARDS — it does the check, says yes, and stores nothing. `SilentJournal`
+/// is the nearest neighbour and is not the same: it never checks anything and dies on promise 1,
+/// the first the suite asks. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1326, AUD-1327.
 ///
 /// ⚠️ AND IT IS THE SHAPE A REAL IMPLEMENTATION REALLY TAKES: `note` is the newest operation on
 /// the port, so it is the one most likely to be stubbed `Ok(())` while the rest is written
@@ -1407,11 +1566,11 @@ impl Journal for StepBlindJournal {
 /// non-empty one it says yes to everything.
 ///
 /// ⛔ BROKEN IN AN ELEVENTH WAY, and it is the shape the 2026-08-11 audit REPRODUCED on the real
-/// implementation: `FileJournal`'s guards replaced with `find_first(|_, _, _| Some(())).is_none()`
-/// left `cargo test --workspace` at 32 targets, 171 passed, ZERO failed. `PermissiveJournal` is
-/// the nearest neighbour and is NOT the same defect: that one has NO guard and launders every
-/// refusal, this one has the WRONG guard and launders only where the two disagree. The difference
-/// is exactly what the two directions of promise 5 measure.
+/// implementation — the mutation, and what it left green, are written once, beside (b) of
+/// promise 5, and not copied here. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1325.
+/// `PermissiveJournal` is the nearest neighbour and is NOT the same defect: that one has NO guard
+/// and launders every refusal, this one has the WRONG guard and launders only where the two
+/// disagree. The difference is exactly what the two directions of promise 5 measure.
 ///
 /// ⛔ WHAT IT COSTS IF IT SHIPS: an `outcome` accepted for a step nobody ever opened, so
 /// reconciliation reads an `Outcome` for a step that never ran and takes it OUT OF A DOUBT THAT

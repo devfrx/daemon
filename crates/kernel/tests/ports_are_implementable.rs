@@ -40,9 +40,14 @@
 //! (gotcha #46).
 //!
 //! ⛔ WHAT IT DOES NOT BUY: that these are the RIGHT signatures. That is the spec's decision,
-//! not this file's. And it is NOT a conformance suite — the one `tests/reactor_contract.rs` is
-//! for `reactor` — which needs TWO implementations to compare and is born the day these ports
-//! get a real one. The fakes below do nothing useful ON PURPOSE: they have to compile and run.
+//! not this file's. And it is NOT a conformance suite: a port's suite is a file of its own, born
+//! with the port's real implementation, that holds the port's promises against the
+//! implementations it has — and the ports here that have a real one have their suite already:
+//! `ipc` against the real transport alone (D82), `custody` against both of its implementations.
+//! Which suites exist is
+//! `ls crates/kernel/tests/*_contract.rs crates/kernel/tests/contract/`, not a list here. The
+//! fakes below do nothing useful ON PURPOSE: they have to compile and run. ⚠️ RECALL OF
+//! 2026-10-13 -- audit of 2026-09-30, AUD-1344.
 //!
 //! ⚠️ AND THE FAKE DECIDES SOMETHING THE KERNEL CANNOT, which is the whole point of `Path`'s
 //! comment: `InMemoryFilesystem` calls a path "inside a scope" when its bytes START WITH the
@@ -83,7 +88,10 @@ const GUI_TICK: Millis = Millis::new(0);
 struct InMemoryFilesystem {
     scopes: Vec<Path>,
     files: Vec<(Path, Vec<u8>)>,
-    preserved: Vec<(CheckpointId, Path, Vec<u8>)>,
+    /// ⛔ `None` IS A PRESERVED ABSENCE: the contract written on `Filesystem::preserve` (ADR-0024,
+    /// decision 2) preserves a path with no file under it too, and restoring it takes away the
+    /// file the step created. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1190.
+    preserved: Vec<(CheckpointId, Path, Option<Vec<u8>>)>,
 }
 
 impl InMemoryFilesystem {
@@ -110,10 +118,7 @@ impl Filesystem for InMemoryFilesystem {
         if !self.in_scope(path) {
             return Err(FilesystemError::OutsideScope);
         }
-        let content = match self.position(path) {
-            Some(i) => self.files[i].1.clone(),
-            None => return Err(FilesystemError::Missing),
-        };
+        let content = self.position(path).map(|i| self.files[i].1.clone());
         // ⚠️ And this is why `CheckpointId` keeps `Copy`: the handle goes into the store AND
         // comes back out of the call.
         let checkpoint = CheckpointId::new(self.preserved.len() as u64);
@@ -130,9 +135,14 @@ impl Filesystem for InMemoryFilesystem {
         let Some((_, path, content)) = found else {
             return Err(FilesystemError::Missing);
         };
-        match self.position(&path) {
-            Some(i) => self.files[i].1 = content,
-            None => self.files.push((path, content)),
+        match (self.position(&path), content) {
+            (Some(i), Some(content)) => self.files[i].1 = content,
+            (None, Some(content)) => self.files.push((path, content)),
+            // ⛔ THE ABSENCE COMES BACK: the file the step created is taken away, and that one only.
+            (Some(i), None) => {
+                self.files.remove(i);
+            }
+            (None, None) => {}
         }
         Ok(())
     }
@@ -163,9 +173,9 @@ impl Filesystem for InMemoryFilesystem {
 // THE `network` FAKE
 // ============================================================================================
 
-/// A recorder, modelled on `RecordingJournal` in `boundary_promotion.rs`. What this port is
-/// FOR is that everything leaving the machine goes through one place, so the fake worth having
-/// is the one that writes down what left.
+/// A recorder. What this port is FOR is that everything leaving the machine goes through one
+/// place, so the fake worth having is the one that writes down what left. ⚠️ RECALL OF
+/// 2026-10-13 -- audit of 2026-09-30, AUD-1335.
 #[derive(Default)]
 struct RecordingNetwork {
     sent: Vec<(Endpoint, Vec<u8>)>,
@@ -187,18 +197,21 @@ impl Network for RecordingNetwork {
 // THE `process` FAKES -- `Worker` and `Process`
 // ============================================================================================
 
-/// A grant obtained the only way there is.
+/// A grant obtained from a real admission.
 ///
 /// ⛔ IT ARRIVED AT MILESTONE 6 TASK 1, AND IT IS A COST AND NOT A CONVENIENCE. `Worker::kill`
 /// now answers a `Killed`, which CARRIES a `Grant`; `Grant` has no public constructor (§5.6,
-/// `tests/compile_fail/grant_has_no_constructor.rs`), so from outside the crate the only way to
-/// build one is a real admission. Every fake in this file that implements `Worker` therefore
-/// needs an arbiter, where before it needed nothing.
+/// `tests/compile_fail/grant_has_no_constructor.rs`), so from outside the crate one comes only
+/// from the arbiter — `admit`, or `promote` handing out a request it had queued, the two doors
+/// the doc of `Grant` names — and an admission is the one this needs. Every fake in this file
+/// that implements `Worker` therefore needs an arbiter, where before it needed nothing.
+/// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2268.
 ///
-/// ⚠️ IT IS DUPLICATED FROM `tests/worker_tokens.rs` ON PURPOSE, and the reason is the one
-/// already written for `Yield`: test code does not cross a crate boundary, and these two benches
-/// buy DIFFERENT things -- that one drives the ADMISSION PATH, this one only needs a token to
-/// hand back. Sharing it would tie the two together for no gain.
+/// ⚠️ IT IS DUPLICATED FROM `tests/worker_tokens.rs` ON PURPOSE: test code does not cross a crate
+/// boundary — each file under `tests/` is a crate of its own, and none can name an item of
+/// another — and these two benches buy DIFFERENT things -- that one drives the ADMISSION PATH,
+/// this one only needs a token to hand back. Sharing it would tie the two together for no gain.
+/// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-794.
 fn a_real_grant() -> Grant {
     let mut arbiter = Arbiter::new(
         Parameters::new(10_000, Mib::new(16_384), ArbiterId::new(1), GUI_TICK),
@@ -235,7 +248,8 @@ struct ScriptedWorker {
     /// that did not keep the one it was started with could not honour the signature at all.
     /// ⚠️ IT IS THE FIRST TIME THIS FAKE NEEDS A REAL ADMISSION. Finding P-2's sentence still
     /// holds -- a `Worker` is obtained by IMPLEMENTING the trait, not by holding a grant --
-    /// but building one now costs an arbiter, which is why `a_real_grant` sits below.
+    /// but building one now costs an arbiter, which is why `a_real_grant` exists. ⚠️ RECALL OF
+    /// 2026-10-13 -- audit of 2026-09-30, AUD-1336.
     grant: Grant,
 }
 
@@ -574,6 +588,46 @@ fn the_filesystem_port_can_be_implemented_and_called() {
     assert_eq!(filesystem.read(&inside), Ok(b"second".to_vec()));
     assert_eq!(filesystem.restore(checkpoint), Ok(()));
     assert_eq!(filesystem.read(&inside), Ok(b"first".to_vec()));
+}
+
+#[test]
+fn a_path_preserved_while_absent_is_restored_to_absent() {
+    // ⛔ THE CONTRACT WRITTEN ON `Filesystem::preserve` (ADR-0024, decision 2): a path inside a
+    // scope with no file under it is preserved AS AN ABSENCE, not refused with `Missing` —
+    // restoring brings the scope back to the state before the step, so a file the step CREATED
+    // is gone afterwards. ⚠️ THE OTHER DIRECTION, a file that existed coming back with the bytes
+    // it had, is `the_filesystem_port_can_be_implemented_and_called`; and the BYSTANDER below is
+    // what tells "restore the absence" from "remove whatever is there". ⚠️ RECALL OF 2026-10-13
+    // -- audit of 2026-09-30, AUD-1190.
+    let mut filesystem = InMemoryFilesystem::default();
+    let created = Path::new(b"scope/new.txt".to_vec());
+    let bystander = Path::new(b"scope/a.txt".to_vec());
+    filesystem
+        .declare_scope(&[Path::new(b"scope/".to_vec())])
+        .expect("the scope was accepted");
+    filesystem
+        .write(&bystander, b"there before the step")
+        .expect("write");
+
+    let checkpoint = filesystem
+        .preserve(StepId::new(1), &created)
+        .expect("a path with no file under it is preserved too, as an absence");
+    filesystem
+        .write(&created, b"made by the step")
+        .expect("write");
+    assert_eq!(filesystem.read(&created), Ok(b"made by the step".to_vec()));
+
+    assert_eq!(filesystem.restore(checkpoint), Ok(()));
+    assert_eq!(
+        filesystem.read(&created),
+        Err(FilesystemError::Missing),
+        "the file the step created survived the restore"
+    );
+    assert_eq!(
+        filesystem.read(&bystander),
+        Ok(b"there before the step".to_vec()),
+        "restoring an absence took a file the checkpoint never covered"
+    );
 }
 
 #[test]
@@ -1054,8 +1108,12 @@ fn the_ipc_fake_refuses_where_it_must() {
 fn messages_are_delivered_to_the_client_they_name() {
     // ⛔ THE LESSON OF `answers_are_correlated_to_the_receipt_that_asked`, applied here BEFORE
     // it had to be learned a second time. With one client connected, "deliver to the right
-    // one" and "deliver to the only one" are the same sentence, and a fake that ignored the
-    // identifier entirely would satisfy every other test in this file.
+    // one" and "deliver to the only one" are the same sentence, and a fake whose `send` wrote
+    // every message to the first client of its table would satisfy every other test in this file
+    // — M6 of the mutation pass, which dies here alone. ⚠️ A fake that stopped comparing
+    // identities altogether is NOT that fake: `the_ipc_fake_refuses_where_it_must`, with its
+    // genuine client and its forged identifier, catches it too (M3). ⚠️ RECALL OF 2026-10-13 --
+    // audit of 2026-09-30, AUD-1337.
     let mut gui = FakeGui::new();
     gui.knock();
     gui.knock();

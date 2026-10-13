@@ -14,12 +14,14 @@
 // items, so textual inclusion is the mechanism, not a shortcut.
 //
 // ⚠️ DECLARED COST: `include!` carries the `#[test]` functions of this file along with it, so
-// the EIGHT tests below RUN A SECOND TIME inside `platform`'s binary. It buys the single copy of
-// the assertions and costs a few milliseconds. ⚠️ THIS LINE SAID "THREE" UNTIL 2026-08-18, when
-// finding B-2 brought five liars more — and the clause that followed it, "the fake and the two
-// liars sleep for nothing", was wrong in BOTH halves even then: the SEVEN liars never sleep at
-// all, because a liar is a fake clock and only the real implementation waits. Recounted on the
-// source rather than remembered — gotcha #31.
+// EVERY test below RUNS A SECOND TIME inside `platform`'s binary — how many is
+// `grep -c '^#\[test\]' crates/kernel/tests/reactor_contract.rs`, and not a figure here. It buys
+// the single copy of the assertions and costs a few milliseconds. ⚠️ THIS LINE SAID "THREE" UNTIL
+// 2026-08-18, when finding B-2 brought five liars more — and the clause that followed it, "the
+// fake and the two liars sleep for nothing", was wrong in BOTH halves even then: the liars never
+// sleep at all, because a liar is a fake clock and only the real implementation waits. Recounted
+// on the source rather than remembered — gotcha #31. ⚠️ RECALL OF 2026-10-13 -- audit of
+// 2026-09-30, AUD-2156.
 
 use kernel::ports::reactor::Reactor;
 use kernel::time::{Millis, Monotonic, WallTime};
@@ -78,6 +80,14 @@ pub const SECOND_WAIT_SHORT_MESSAGE: &str =
 /// panics with.
 pub const WALL_TIME_UNREACHED_MESSAGE: &str =
     "reactor contract violated: wall_time() was never called, so group 5 is dead code";
+
+/// The setup of case 2b — a wait that came back and a clock that did not move.
+///
+/// ⛔ A CONSTANT FOR THE REASON THE OTHERS ARE: a negative test has to say which assertion fired,
+/// and `StandingClockLiar` is the one that fires this. ⚠️ RECALL OF 2026-10-13 -- audit of
+/// 2026-09-30, AUD-2156.
+pub const SETUP_DID_NOT_MOVE_MESSAGE: &str =
+    "the setup of case 2b did not move the clock, so the case would be vacuous";
 
 /// What every wait on a future deadline fails with, AND IT NAMES THE SECOND CAUSE ON PURPOSE.
 ///
@@ -142,10 +152,7 @@ pub fn assert_reactor_contract<R: Reactor, F: Fn() -> R>(build: F) {
         let start = reactor.now();
         let ahead = start.saturating_add(Millis::new(CONTRACT_MARGIN_MS));
         reactor.wait_until(ahead).expect(FUTURE_DEADLINE_MESSAGE);
-        assert!(
-            start < reactor.now(),
-            "the setup of case 2b did not move the clock, so the case would be vacuous"
-        );
+        assert!(start < reactor.now(), "{}", SETUP_DID_NOT_MOVE_MESSAGE);
         assert_eq!(
             reactor.wait_until(start),
             None,
@@ -158,8 +165,9 @@ pub fn assert_reactor_contract<R: Reactor, F: Fn() -> R>(build: F) {
     // ── 4. Two consecutive waits COMPOSE ────────────────────────────────────────────────
     // The two share one reactor, and deliberately: assertion 4 is about what a SECOND wait
     // does to a clock the first one has already moved, so building a fresh reactor for it
-    // would throw away the very state it is asking about. It also halves what the real
-    // implementation spends sleeping.
+    // would throw away the very state it is asking about. It also spares the real
+    // implementation a wait: on a fresh reactor, group 4 would first have to move the clock.
+    // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1346.
     {
         let mut reactor = build();
 
@@ -365,31 +373,178 @@ fn the_suite_really_reaches_the_wall_time_block() {
     );
 }
 
+// ⛔ AND THE ORACLES BETWEEN THE ASSERTIONS ARE ASSERTIONS TOO, so the rule above reaches them:
+// the guard that 2b's setup moved the clock, and the `expect(FUTURE_DEADLINE_MESSAGE)` of every
+// wait on a future deadline. The tests below hold them, one liar each. ⚠️ RECALL OF 2026-10-13 --
+// audit of 2026-09-30, AUD-2156.
+//
+// ⚠️ AND ONE OF THEM IS HELD BY NO LIAR, declared rather than left to be found: the `expect` of
+// group 3. It asks a fresh reactor exactly what 2b's setup asked another fresh one first — read
+// the clock, wait `CONTRACT_MARGIN_MS` past it — so a liar whose instances are alike answers the
+// two the same way and dies on 2b's. Like group 4's second assertion it is dead weight against a
+// liar — measured on 2026-10-13: with that `expect` turned into `unwrap_or`, every test of this
+// file stays green — and it is not vacuous against the real reactor: a preemption that lands on
+// that wait alone stops the real one there, which is what the message's second cause is for.
+//
+// ⚠️ AND THE WAITS SHARE ONE MESSAGE, which is what `FUTURE_DEADLINE_MESSAGE` costs: the payload
+// cannot say WHICH wait refused. What keeps `SecondWaitRefusedLiar` on group 4's wait and not on
+// 2b's is its count, written on it.
+
+#[test]
+fn a_reactor_that_refuses_a_future_deadline_is_caught() {
+    let message = message_the_suite_fails_with(RefusingLiar::new).expect(
+        "THE SUITE IS VACUOUS ON THE WAIT OF 2b's SETUP: a reactor that refuses a future deadline \
+         passed it",
+    );
+    assert!(
+        message.contains(FUTURE_DEADLINE_MESSAGE),
+        "the suite did fire, but NOT on the wait of 2b's setup.\n\
+         expected to contain: {FUTURE_DEADLINE_MESSAGE}\n\
+         actual payload: {message}"
+    );
+}
+
+#[test]
+fn a_reactor_whose_wait_does_not_move_its_clock_is_caught() {
+    let message = message_the_suite_fails_with(StandingClockLiar::new).expect(
+        "THE SUITE IS VACUOUS ON THE GUARD OF 2b's SETUP: a wait that left the clock where it was \
+         passed it",
+    );
+    assert!(
+        message.contains(SETUP_DID_NOT_MOVE_MESSAGE),
+        "the suite did fire, but NOT on the guard of 2b's setup.\n\
+         expected to contain: {SETUP_DID_NOT_MOVE_MESSAGE}\n\
+         actual payload: {message}"
+    );
+}
+
+#[test]
+fn a_reactor_that_refuses_its_second_wait_is_caught() {
+    let message = message_the_suite_fails_with(SecondWaitRefusedLiar::new).expect(
+        "THE SUITE IS VACUOUS ON THE WAIT OF GROUP 4: a reactor that refuses its second wait \
+         passed it",
+    );
+    assert!(
+        message.contains(FUTURE_DEADLINE_MESSAGE),
+        "the suite did fire, but NOT on a wait.\n\
+         expected to contain: {FUTURE_DEADLINE_MESSAGE}\n\
+         actual payload: {message}"
+    );
+}
+
+// ⛔ THE QUIET HOOK, PROVED IN BOTH DIRECTIONS — the same two probes as `journal_contract.rs`'s,
+// on this file's copy of the hook. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2165.
+
+#[test]
+fn the_quiet_hook_keeps_quiet_about_the_panic_its_thread_expects() {
+    let before = PANICS_HANDED_ON_HERE.with(std::cell::Cell::get);
+    let outcome = expecting_a_panic(|| panic!("the panic this probe expects"));
+    assert!(
+        outcome.is_err(),
+        "the body panicked, and `expecting_a_panic` caught it"
+    );
+    assert_eq!(
+        PANICS_HANDED_ON_HERE.with(std::cell::Cell::get),
+        before,
+        "the quiet hook printed a panic its own thread was expecting"
+    );
+}
+
+#[test]
+fn the_quiet_hook_keeps_quiet_about_nothing_else() {
+    // A red of another thread, raised while this one expects a panic.
+    let handed_on = expecting_a_panic(|| {
+        std::thread::spawn(|| {
+            let _ = std::panic::catch_unwind(|| {
+                panic!("a red of another thread, raised on purpose by this probe")
+            });
+            PANICS_HANDED_ON_HERE.with(std::cell::Cell::get)
+        })
+        .join()
+        .expect("the other thread caught its own panic")
+    })
+    .expect("nothing panicked on this thread");
+    assert_eq!(
+        handed_on, 1,
+        "a red of another thread did not reach the hook that prints"
+    );
+
+    // And a later red of this same thread, once its expected panic is over.
+    let before = PANICS_HANDED_ON_HERE.with(std::cell::Cell::get);
+    let _ = std::panic::catch_unwind(|| {
+        panic!("a later red of this thread, raised on purpose by this probe")
+    });
+    assert_eq!(
+        PANICS_HANDED_ON_HERE.with(std::cell::Cell::get),
+        before + 1,
+        "a later red of this thread did not reach the hook that prints"
+    );
+}
+
 /// Runs the suite against a deliberately broken reactor and gives back THE MESSAGE IT FAILED
 /// WITH, or `None` if the suite let the reactor through — the vacuous case, which each caller
 /// reports in its own words because the two mean different things.
 ///
-/// ⚠️ The panic hook is silenced for the duration of the call: the panic is EXPECTED, and its
-/// backtrace in the test output would train the reader to ignore backtraces. It is restored
-/// immediately, so any LATER panic prints normally.
-///
-/// ⛔ DECLARED LIMIT, because the hook is PROCESS-WIDE and libtest runs tests on parallel
-/// threads: a panic raised in ANOTHER test that happens to land inside this window is reported
-/// as `FAILED` with no stdout section — the failure is never hidden, only its message. In
-/// `platform`'s binary a test that sleeps 150 ms really does run alongside this one. The window
-/// is microseconds wide and the risk is negligible, which is why it is declared rather than
-/// engineered away; saying "a later unexpected panic still prints" would have been a shade
-/// wider than the truth.
+/// ⚠️ The panic is EXPECTED, and its backtrace in the test output would train the reader to
+/// ignore backtraces: so the suite runs under `expecting_a_panic`, and the quiet hook keeps THIS
+/// thread's panic out of the output — and no other. A red of the real reactor, which
+/// `platform`'s binary runs alongside these, prints with its message whatever they are doing.
 fn message_the_suite_fails_with<R, F>(build: F) -> Option<String>
 where
     R: Reactor,
     F: Fn() -> R + std::panic::UnwindSafe,
 {
-    let previous_hook = std::panic::take_hook();
-    std::panic::set_hook(Box::new(|_| {}));
-    let outcome = std::panic::catch_unwind(|| assert_reactor_contract(build));
-    std::panic::set_hook(previous_hook);
-    outcome.err().map(|payload| panic_message(&*payload))
+    expecting_a_panic(|| assert_reactor_contract(build))
+        .err()
+        .map(|payload| panic_message(&*payload))
+}
+
+std::thread_local! {
+    /// Raised by `expecting_a_panic` on the thread that runs a body it expects to panic, and only
+    /// while that body runs.
+    static A_PANIC_IS_EXPECTED_HERE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+
+    /// How many panics of THIS thread the quiet hook handed on to the hook that prints: what the
+    /// two probes of the quiet hook read, and nothing else does.
+    static PANICS_HANDED_ON_HERE: std::cell::Cell<u32> = const { std::cell::Cell::new(0) };
+}
+
+/// Runs `body` under `catch_unwind` with THIS thread marked as expecting a panic, so the quiet
+/// hook keeps that panic out of the output; every other thread's panic, and every later one of
+/// this thread, reaches the hook that prints.
+///
+/// ⛔ THE QUIET HOOK OF `journal_contract.rs`, and its reason is written there once: one hook for
+/// the whole process, installed once and never put back, and a flag per thread. Test code does not
+/// cross a crate boundary, so this suite carries its own copy — a change to one of the three is a
+/// change to the three. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2157, AUD-2165.
+fn expecting_a_panic<T>(
+    body: impl FnOnce() -> T + std::panic::UnwindSafe,
+) -> std::thread::Result<T> {
+    install_the_quiet_hook();
+    A_PANIC_IS_EXPECTED_HERE.with(|expected| expected.set(true));
+    let outcome = std::panic::catch_unwind(body);
+    A_PANIC_IS_EXPECTED_HERE.with(|expected| expected.set(false));
+    outcome
+}
+
+/// Installs, once per process, the hook that keeps quiet about the panic `expecting_a_panic` is
+/// waiting for and hands every other one on to the hook it found. ⚠️ `try_with` inside the hook,
+/// for the reason `journal_contract.rs` gives.
+fn install_the_quiet_hook() {
+    static INSTALLED: std::sync::Once = std::sync::Once::new();
+    INSTALLED.call_once(|| {
+        let found = std::panic::take_hook();
+        std::panic::set_hook(Box::new(move |info| {
+            let expected = A_PANIC_IS_EXPECTED_HERE
+                .try_with(std::cell::Cell::get)
+                .unwrap_or(false);
+            if expected {
+                return;
+            }
+            let _ = PANICS_HANDED_ON_HERE.try_with(|handed_on| handed_on.set(handed_on.get() + 1));
+            found(info);
+        }));
+    });
 }
 
 /// A `Reactor` broken ON PURPOSE: `wait_until` moves the clock to the deadline and answers
@@ -430,7 +585,9 @@ impl Reactor for NullAdvanceLiar {
 ///
 /// It walks further into the suite than `NullAdvanceLiar` does, and that is its purpose: it
 /// passes assertion 1, passes case 2a, performs 2b's setup wait correctly — the clock really
-/// moves — and dies on 2b's own assertion. It is the only reactor here that reaches that line.
+/// moves — and dies on 2b's own assertion. It is the only liar here that DIES on that line: the
+/// ones built for 2b's setup die before it, and the ones built for groups 3 and 4 pass it
+/// honestly. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1347.
 struct PastDeadlineLiar {
     now: Monotonic,
 }
@@ -649,6 +806,115 @@ impl Reactor for PanickingWallClockLiar {
         if deadline <= self.now {
             return None;
         }
+        self.now = deadline;
+        Some(deadline)
+    }
+}
+
+/// A `Reactor` broken ON PURPOSE IN THE WAIT OF 2b's SETUP: it refuses EVERY wait, a deadline in
+/// the future included, and its clock never moves. A still clock passes group 1 and `None` is the
+/// right answer to case 2a, so the first wait it has to honour is 2b's setup, and that `expect` is
+/// the one that fires.
+struct RefusingLiar {
+    now: Monotonic,
+}
+
+impl RefusingLiar {
+    fn new() -> Self {
+        RefusingLiar {
+            now: Monotonic::ORIGIN,
+        }
+    }
+}
+
+impl Reactor for RefusingLiar {
+    fn now(&self) -> Monotonic {
+        self.now
+    }
+
+    fn wall_time(&self) -> WallTime {
+        WallTime::from_millis_since_epoch(0)
+    }
+
+    fn wait_until(&mut self, _deadline: Monotonic) -> Option<Monotonic> {
+        // ⛔ THE DEFECT: a deadline in the future is refused as if it had already passed.
+        None
+    }
+}
+
+/// A `Reactor` broken ON PURPOSE IN THE GUARD OF 2b's SETUP: it refuses what is not ahead, as the
+/// contract asks, and answers `Some(deadline)` for what is — WITHOUT MOVING ITS CLOCK. It is the
+/// port `LaggingClockLiar` must not be, and the guard it dies on is what keeps case 2b from
+/// asking its question of a clock that never left the origin.
+struct StandingClockLiar {
+    now: Monotonic,
+}
+
+impl StandingClockLiar {
+    fn new() -> Self {
+        StandingClockLiar {
+            now: Monotonic::ORIGIN,
+        }
+    }
+}
+
+impl Reactor for StandingClockLiar {
+    fn now(&self) -> Monotonic {
+        self.now
+    }
+
+    fn wall_time(&self) -> WallTime {
+        WallTime::from_millis_since_epoch(0)
+    }
+
+    fn wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic> {
+        if deadline <= self.now {
+            return None;
+        }
+        // ⛔ THE DEFECT: the answer says the deadline was reached, and the clock stays put.
+        Some(deadline)
+    }
+}
+
+/// A `Reactor` broken ON PURPOSE IN THE WAIT OF GROUP 4: correct on the FIRST successful wait of
+/// its life, and REFUSING the second.
+///
+/// ⚠️ The count is per INSTANCE, as `SecondWaitShortLiar`'s is: 2b's setup is the only wait of its
+/// own instance, so this liar honours it, and on the instance groups 3 and 4 share it honours
+/// group 3's wait and refuses group 4's. `FUTURE_DEADLINE_MESSAGE` cannot tell group 4's wait from
+/// 2b's, so this count is what keeps the liar on the one it is named for.
+struct SecondWaitRefusedLiar {
+    now: Monotonic,
+    successful_waits: u32,
+}
+
+impl SecondWaitRefusedLiar {
+    fn new() -> Self {
+        SecondWaitRefusedLiar {
+            now: Monotonic::ORIGIN,
+            successful_waits: 0,
+        }
+    }
+}
+
+impl Reactor for SecondWaitRefusedLiar {
+    fn now(&self) -> Monotonic {
+        self.now
+    }
+
+    fn wall_time(&self) -> WallTime {
+        WallTime::from_millis_since_epoch(0)
+    }
+
+    fn wait_until(&mut self, deadline: Monotonic) -> Option<Monotonic> {
+        if deadline <= self.now {
+            return None;
+        }
+        if self.successful_waits >= 1 {
+            // ⛔ THE DEFECT, and only from the second wait on.
+            return None;
+        }
+        self.successful_waits += 1;
         self.now = deadline;
         Some(deadline)
     }

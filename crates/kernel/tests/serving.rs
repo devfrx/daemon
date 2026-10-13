@@ -1,9 +1,9 @@
 //! The activity that serves the gui, driven FROM OUTSIDE THE CRATE against an in-memory wire.
 //!
 //! ⛔ WHAT THIS BENCH IS FOR, AND IT IS NOT ONLY THE DISPATCH: it is the first caller to build
-//! `serving::serve` from outside, which is what `gui/fake-core` must do at task 12 (§7 of the
-//! sub-project 2 design). A signature that could only be assembled inside `kernel` would not be
-//! found out any other way.
+//! `serving::serve` from outside, which is what `gui/fake-core` does too (§7 of the sub-project 2
+//! design). A signature that could only be assembled inside `kernel` would not be found out any
+//! other way. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1364.
 //!
 //! ⛔ `Err(RunError::TurnLimitReached)` IS THE EXPECTED ANSWER OF EVERY ROUND. `serve` is a loop
 //! with no exit -- a core that stopped serving would be the defect -- so the run ends when the
@@ -12,11 +12,13 @@
 //! ⚠️ AND THE CLOCK IS SHARED THROUGH `SharedClock` rather than handed out twice, which is the
 //! shape `crates/simulator/tests/arbiter_campaign.rs` already uses: `VirtualReactor` HOLDS the
 //! instant, so two of them would drift and the activity would read an origin the executor had
-//! long left. ⛔ THIS IS THE SECOND COPY OF THAT WRAPPER IN THE REPOSITORY -- declared rather than
-//! discovered (gotcha #49): the third and fourth arrive with tasks 9 and 10 (D29, D34), the fifth
-//! with task 12 (P-74). Where it should live is DECIDED, by D34: it stays local, because the
-//! daemon refuses to depend on `simulator` and a common home would serve three callers out of
-//! four (P-59).
+//! long left. ⛔ IT IS ONE COPY OF THAT WRAPPER AMONG SEVERAL, declared rather than discovered
+//! (gotcha #49), and WHERE THE COPIES ARE IS WHAT THE COMMAND SAYS AND NOT THIS LINE:
+//! `grep -rn 'struct SharedClock' crates/ gui/ --include='*.rs' | grep -vE '^[^:]+:[0-9]+:[[:space:]]*//'`.
+//! Where it should live is DECIDED, by D34: it stays local, because the daemon refuses to depend
+//! on `simulator`, and a common home would have to be generic over the reactor -- some copies
+//! wrap `VirtualReactor`, the daemon's and `gui/fake-core`'s wrap `SystemReactor` (P-74).
+//! ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1361, AUD-1364.
 
 use core::cell::{Cell, RefCell};
 
@@ -56,7 +58,10 @@ const TOTAL: Mib = Mib::new(8_192);
 const TICK: Millis = Millis::new(50);
 
 /// Enough turns for the longest round here, with room to spare. ⛔ FIXED AND VERSIONED WITH THIS
-/// FILE (constraint 7 of §11), never drawn from the clock or from the environment.
+/// FILE, never drawn from the clock or from the environment -- the rule constraint 7 of §11 sets
+/// for the seed count of a campaign, held here for the turns: this bench sweeps no seeds, it runs
+/// on `SeededRng::new(1)`, and what a round produces depends on how many turns it gets.
+/// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1431.
 const TURNS: u64 = 64;
 
 const GUI: ClientId = ClientId::new(1);
@@ -362,8 +367,18 @@ impl Bench {
     }
 }
 
-/// A SECOND activity on the same cell: it sleeps one tick, then writes a degraded routing into the
-/// core's journal.
+/// How long a second activity sleeps before it acts, on the virtual clock.
+///
+/// ⚠️ A LITERAL OF THIS BENCH, and it is not one `TICK`: it is more than two of them. What it has
+/// to be is PAST THE WELCOME and INSIDE THE ROUND, and only the second end is held by a probe —
+/// woken after the last turn, the round's `tapped_once` goes red. ⚠️ MEASURED ON 2026-10-13: at
+/// zero, and at one `TICK`, every probe of this bench stays green, because the welcome is already
+/// out when the second activity first runs — so the margin is this bench's choice, not something
+/// `serve` asks for. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1363.
+const PAST_THE_WELCOME: Millis = Millis::new(120);
+
+/// A SECOND activity on the same cell: it sleeps `PAST_THE_WELCOME`, then writes a degraded
+/// routing into the core's journal.
 ///
 /// ⛔ IT IS THE TAP OF `gui/fake-core` IN MINIATURE (§7 of the sub-project 2 design, the `degrade`
 /// word): the write reaches the journal WITHOUT passing through the dispatch, which is the whole
@@ -374,7 +389,7 @@ async fn degrade_once<'b>(
     sleep: &Sleep,
     ran: &Cell<bool>,
 ) {
-    nap(sleep, clock.now().saturating_add(Millis::new(120))).await;
+    nap(sleep, clock.now().saturating_add(PAST_THE_WELCOME)).await;
     let record = Record::V1(RecordV1::routing(
         EffectClass::Idempotent,
         Trust::Instruction,
@@ -395,8 +410,8 @@ async fn degrade_once<'b>(
 /// Bytes that are no record of any version -- what `spoil_then_approve` puts into the journal.
 const UNREADABLE: &[u8] = b"not a record of any version";
 
-/// A SECOND activity on the same cell: it sleeps past the welcome, writes into the core's journal
-/// bytes this build cannot read as a record, and only THEN lets the gui approve.
+/// A SECOND activity on the same cell: it sleeps `PAST_THE_WELCOME`, writes into the core's
+/// journal bytes this build cannot read as a record, and only THEN lets the gui approve.
 ///
 /// ⛔ THE GUI'S `Approve` IS PUT ON THE WIRE FROM HERE, AND THE ORDER IS THE REASON: a message
 /// queued with `arrives` is read on the second turn, before this activity wakes, and the step list
@@ -410,7 +425,7 @@ async fn spoil_then_approve<'b>(
     sleep: &Sleep,
     ran: &Cell<bool>,
 ) {
-    nap(sleep, clock.now().saturating_add(Millis::new(120))).await;
+    nap(sleep, clock.now().saturating_add(PAST_THE_WELCOME)).await;
     // ⚠️ ONE STATEMENT PER BORROW, SO EACH DIES WITH IT -- the rule `degrade_once` plays by.
     core.borrow_mut()
         .journal()
@@ -936,7 +951,7 @@ fn a_client_that_dies_gives_its_grant_back() {
             // ⛔ AND THERE ARE TWO OF THEM, OF DIFFERENT SIZES, WHICH IS WHAT MAKES THE `after`
             // BLOCK DECIDE. With one grant "gave back only the dead client's" and "gave back
             // everything it holds" leave the SAME number in the books, so a sweeping
-            // reconciliation would pass -- measured, and it is rilievo I-1. With 1024 held by the
+            // reconciliation would pass -- measured, and it is finding I-1. With 1024 held by the
             // client that dies and 512 by the one that lives, the books answer three different
             // numbers: 512 when the right pair goes, 1024 when the wrong one does, 0 when both do.
             let grant_of = |core: &mut BenchCore<'_>, name, vram| {
@@ -981,8 +996,9 @@ fn a_client_that_dies_gives_its_grant_back() {
             // first -- so `!contains(&OTHER)` would be green even if `forget` never ran at all.
             // What holds the table is the line above: a grant returns to the books ONLY by way of
             // `forget`, which is the same line that takes the client off the table. A better
-            // assertion would want `clients` exposed, and "an API item with no caller in this
-            // repository is deleted" (`crates/kernel/src/boundary.rs`).
+            // assertion would want `clients` exposed, and "an API item with no caller is deleted
+            // in this repository" (`crates/kernel/src/boundary.rs`). ⚠️ RECALL OF 2026-10-13 --
+            // audit of 2026-09-30, AUD-1362.
         },
     );
 
@@ -992,7 +1008,8 @@ fn a_client_that_dies_gives_its_grant_back() {
     // keep. This line was claimed to be that witness and was not: with one grant registered a
     // sweep left the same number behind, every probe of this file stayed green, and the red came
     // out in `crates/kernel/tests/client_grants.rs` and `crates/simulator/tests/gui_death_campaign.rs`
-    // instead (rilievo I-1, measured 2026-09-18).
+    // instead (finding I-1, measured 2026-09-18). ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+    // AUD-782.
     let heard = bench.heard(GUI);
     assert_eq!(heard.len(), 5, "the living gui got its whole welcome: {heard:?}");
 }

@@ -46,7 +46,9 @@ fn a_queued_verdict_survives_the_round_trip() {
     // have been read by no assertion in the workspace. Mutation G5 measures the gap it closes.
     //
     // ⚠️ ITS OWN `#[test]` AND NOT A SECOND ASSERTION IN `a_verdict_survives_the_round_trip`,
-    // for the reason written on the pair at the bottom of this file -- gotcha #14. That probe
+    // for the reason written on the pair `an_empty_body_in_an_honest_envelope_does_not_decode` and
+    // `a_truncated_body_in_an_honest_envelope_does_not_decode` -- gotcha #14 (⚠️ RECALL OF
+    // 2026-10-13 -- audit of 2026-09-30, AUD-1318). That probe
     // asserts on `Refused` FIRST, so a red there would stop it before this input ran, and the
     // one variant with no other exercise anywhere is exactly the one that must not depend on
     // another assertion passing.
@@ -780,7 +782,10 @@ fn every_u64_reaches_the_json_as_a_decimal_string() {
     // ⛔ AND IT IS EVERY FIXTURE THAT CARRIES A `u64`, NOT A SAMPLE. One left out is one the
     // reading side rounds: `Number.MAX_SAFE_INTEGER` is 2^53-1 and `02-stale-build` alone
     // carries 18364758544493064720, so a bare number there would reach the gui ALREADY WRONG
-    // and compare equal to itself (gotcha #51, which the step-6 prose cites of itself).
+    // and compare equal to itself: an oracle that starts from a value the subject never
+    // produced, the general form gotcha #107 gives to #51 and #66 — the step-6 prose cites #51
+    // alone, whose row is about the death of the process. ⚠️ RECALL OF 2026-10-13 -- audit of
+    // 2026-09-30, AUD-1319.
     //
     // ⚠️ AND THE LIMIT, DECLARED RATHER THAN HIDDEN: this list is kept BY HAND. It covers every
     // message of the set that renders a `u64` today, and nothing makes it grow on its own -- a

@@ -23,13 +23,18 @@
 #      frozen` in ../frozen_bytes.rs: every row is read back, the offsets must be contiguous,
 #      and the bytes must rebuild the `.cbor` file exactly. A placeholder left in the hex column
 #      does not parse, and a byte typed wrong does not match.
-#   ✅ The claim that byte 4 is `kind`, byte 5 `effect`, byte 6 `trust`, 7..14 the payload and
-#      14..21 the reason is CHECKED too, by `every_field_sits_at_the_offset_the_map_gives_it`,
-#      which changes one field at a time and demands that the encoding move there and nowhere
-#      else.
+#   ✅ The FIELD a row names — `index N · field`, the start of its prose — is CHECKED too. The
+#      index has to be the row's place among its section's fields, which is what a CBOR array
+#      makes it; and `every_field_sits_at_the_offset_the_map_gives_it` READS THE OFFSETS FROM
+#      HERE, changes one field at a time and demands that the encoding move there and nowhere
+#      else — `kind` to `reason` on `record_v1_intent.cbor`, `detail` on
+#      `record_v1_verdict.cbor` — and that every other section put each field it names at the
+#      offset those two give it. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2147.
 #   ⚠️ The rest of the PROSE column is PROSE — unverified. Nothing reads the words `array(2)`
 #      or `EffectClass::Idempotent`. It is said out loud because a document half checked and
-#      not saying which half is worse than one nobody checks at all.
+#      not saying which half is worse than one nobody checks at all. What the prose names, it
+#      names with the source's own words: a field is called what `src/record.rs` calls it.
+#      ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-775, AUD-776, AUD-777.
 #
 # ⚠️ THE FRAMING IS FOUR BYTES, NOT THREE, and it is the thing the obvious reading gets wrong:
 # `82 00` is the version enum and its variant index, then `81` — the ONE-ELEMENT ARRAY of the
@@ -41,13 +46,14 @@
 # because a fix that lands in one house of a claim and not the other is how the two drift apart
 # (errata `E113`).
 #
-# ⛔ RECORDS OF THE SAME ARITY DIFFER ONLY AT BYTES 4, 5 AND 6, on purpose: a record pins ONE
-# variant of each `index_only` enum, so a single record would leave every other variant of them
-# held by nothing, and the set has to cover them all. Everything else about those records is
-# identical, so the difference between two files of one arity is exactly the enum bytes.
-# ⛔ A RECORD CARRYING A `detail` IS LONGER AND ALSO MOVES BYTE 3, the field-array header —
-# so it differs from the others outside 4..7 by construction, and the bench
-# compares the WHERE only within one arity.
+# ⛔ THE RECORDS WITHOUT A `detail` DIFFER ONLY AT BYTES 4, 5 AND 6, on purpose: a record pins
+# ONE variant of each `index_only` enum, so a single record would leave every other variant of
+# them held by nothing, and the set has to cover them all. Everything else about those records
+# is identical, so the difference between two of them is exactly the enum bytes.
+# ⛔ A RECORD CARRYING A `detail` IS LONGER, ALSO MOVES BYTE 3, the field-array header, and
+# carries a tail of its own — so it differs from the others outside 4..7 by construction, and
+# the bench compares the WHERE only between records that carry NO `detail`. ⚠️ RECALL OF
+# 2026-10-13 -- audit of 2026-09-30, AUD-1309, AUD-2148.
 # ⚠️ RECALL OF 2026-08-31: this paragraph said "THE THREE RECORDS", "EIGHT variants —
 # RecordKind 3", "Three is the fewest" and "the difference between any two files"; all four
 # went false when `Verdict` and index 5 arrived. Taken out and not realigned to four and nine,
@@ -61,7 +67,7 @@ record_v1_intent.cbor
   0 | 82                   | array(2) — the version enum
   1 | 00                   | variant index 0 = Record::V1
   2 | 81                   | array(1) — the body of the variant
-  3 | 85                   | array(5) — the five fields of RecordV1
+  3 | 85                   | array(5) — the fields `kind` to `reason`: a `None` detail is not written
   4 | 00                   | index 0 · kind    · RecordKind::Intent
   5 | 01                   | index 1 · effect  · EffectClass::Idempotent
   6 | 01                   | index 2 · trust   · Trust::Untrusted
@@ -72,7 +78,7 @@ record_v1_outcome.cbor
   0 | 82                   | array(2) — the version enum
   1 | 00                   | variant index 0 = Record::V1
   2 | 81                   | array(1) — the body of the variant
-  3 | 85                   | array(5) — the five fields of RecordV1
+  3 | 85                   | array(5) — the fields `kind` to `reason`: a `None` detail is not written
   4 | 01                   | index 0 · kind    · RecordKind::Outcome
   5 | 02                   | index 1 · effect  · EffectClass::Unrepeatable
   6 | 00                   | index 2 · trust   · Trust::Instruction
@@ -83,7 +89,7 @@ record_v1_note.cbor
   0 | 82                   | array(2) — the version enum
   1 | 00                   | variant index 0 = Record::V1
   2 | 81                   | array(1) — the body of the variant
-  3 | 85                   | array(5) — the five fields of RecordV1
+  3 | 85                   | array(5) — the fields `kind` to `reason`: a `None` detail is not written
   4 | 02                   | index 0 · kind    · RecordKind::Note
   5 | 00                   | index 1 · effect  · EffectClass::Verifiable
   6 | 01                   | index 2 · trust   · Trust::Untrusted
@@ -94,19 +100,19 @@ record_v1_verdict.cbor
   0 | 82                   | array(2) — the version enum
   1 | 00                   | variant index 0 = Record::V1
   2 | 81                   | array(1) — the body of the variant
-  3 | 86                   | array(6) — the SIX fields of RecordV1
+  3 | 86                   | array(6) — the fields `kind` to `detail`
   4 | 03                   | index 0 · kind    · RecordKind::Verdict
   5 | 00                   | index 1 · effect  · EffectClass::Verifiable
   6 | 01                   | index 2 · trust   · Trust::Untrusted
   7 | 46 66 72 6f 7a 65 6e | index 3 · payload · byte string(6) b"frozen"
  14 | 66 66 72 6f 7a 65 6e | index 4 · reason  · text(6) "frozen"
- 21 | 82 00 81 82 f4 07    | index 5 · detail  · Some(Detail::Verdict { passed: false, spent: 7 })
+ 21 | 82 00 81 82 f4 07    | index 5 · detail  · Some(Detail::Verdict { passed: false, spent_millis: 7 })
 
 record_v1_routing.cbor
   0 | 82                   | array(2) — the version enum
   1 | 00                   | variant index 0 = Record::V1
   2 | 81                   | array(1) — the body of the variant
-  3 | 86                   | array(6) — the SIX fields of RecordV1
+  3 | 86                   | array(6) — the fields `kind` to `detail`
   4 | 04                   | index 0 · kind    · RecordKind::Routing
   5 | 01                   | index 1 · effect  · EffectClass::Idempotent
   6 | 00                   | index 2 · trust   · Trust::Instruction
@@ -118,7 +124,7 @@ record_v1_permission.cbor
   0 | 82                   | array(2) — the version enum
   1 | 00                   | variant index 0 = Record::V1
   2 | 81                   | array(1) — the body of the variant
-  3 | 86                   | array(6) — the SIX fields of RecordV1
+  3 | 86                   | array(6) — the fields `kind` to `detail`
   4 | 05                   | index 0 · kind    · RecordKind::Permission
   5 | 02                   | index 1 · effect  · EffectClass::Unrepeatable
   6 | 00                   | index 2 · trust   · Trust::Instruction
@@ -130,7 +136,7 @@ record_v1_invocation.cbor
   0 | 82                   | array(2) — the version enum
   1 | 00                   | variant index 0 = Record::V1
   2 | 81                   | array(1) — the body of the variant
-  3 | 86                   | array(6) — the SIX fields of RecordV1
+  3 | 86                   | array(6) — the fields `kind` to `detail`
   4 | 06                   | index 0 · kind    · RecordKind::Invocation
   5 | 00                   | index 1 · effect  · EffectClass::Verifiable
   6 | 01                   | index 2 · trust   · Trust::Untrusted
@@ -142,7 +148,7 @@ record_v1_policy.cbor
   0 | 82                   | array(2) — the version enum
   1 | 00                   | variant index 0 = Record::V1
   2 | 81                   | array(1) — the body of the variant
-  3 | 86                   | array(6) — the SIX fields of RecordV1
+  3 | 86                   | array(6) — the fields `kind` to `detail`
   4 | 07                   | index 0 · kind    · RecordKind::Policy
   5 | 01                   | index 1 · effect  · EffectClass::Idempotent
   6 | 00                   | index 2 · trust   · Trust::Instruction

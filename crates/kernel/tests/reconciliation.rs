@@ -511,9 +511,13 @@ fn an_empty_journal_leaves_nothing_in_doubt() {
     // real resume meets before any other. An implementation that answered `Missing` on an empty
     // journal — a plausible reading of `replay` — would make the FIRST BOOT an error.
     //
-    // ✅ AND IT IS THE ONLY TEST HERE THAT SEES THAT, measured rather than assumed: making
-    // `MemoryJournal::replay` refuse an empty journal turns THIS ONE RED AND NOTHING ELSE. Every
-    // other test writes something first, so none of them ever meets the empty case.
+    // ✅ AND IN THIS FILE IT IS THE ONLY TEST THAT SEES THAT, measured rather than assumed when it
+    // was written: making `MemoryJournal::replay` refuse an empty journal turned THIS ONE RED among
+    // the tests of this file. Every other test here writes something first, so none of them ever
+    // meets the empty case. ⚠️ NOT THE ONLY ONE IN THE WORKSPACE: `permission_triple.rs` and
+    // `degradation_state.rs` ask an empty `MemoryJournal` too, through `is_granted` and
+    // `degradation_now`, which replay before anything else. ⚠️ RECALL OF 2026-10-13 -- audit of
+    // 2026-09-30, AUD-1350.
     let journal = MemoryJournal::new();
 
     assert!(steps_in_doubt(&journal).expect("reconcile").is_empty());
@@ -666,6 +670,14 @@ fn an_unreadable_record_after_a_readable_outcome_puts_the_step_back_in_doubt() {
 
     let in_doubt = steps_in_doubt(&journal).expect("reconcile");
 
+    // ⛔ THE DEFECT THIS PROBE HUNTS IS AN ABSENCE, and its message says so first: an `Err` arm
+    // that ignores leaves the step closed by its readable outcome, and the doubt is lost in
+    // silence — the failure ADR-0007 exists to prevent. The duplicate is the other test's.
+    // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2158.
+    assert!(
+        !in_doubt.is_empty(),
+        "the unreadable record after a readable outcome did not put the step back in doubt"
+    );
     assert_eq!(in_doubt.len(), 1, "the same step came back more than once");
     assert_eq!(in_doubt[0].step, StepId::new(5));
     assert_eq!(in_doubt[0].resolution, Resolution::SuspendAndAsk);
@@ -704,8 +716,8 @@ impl Journal for ReplayRefusingJournal {
 fn an_archive_that_will_not_replay_is_not_an_answer_of_no_doubt() {
     // ⛔ THE ERROR ROAD OF THE RESUME SCAN, REACHED BY NOTHING UNTIL THIS PROBE. Measured on
     // 2026-09-01 before writing it: with `journal.replay()?` turned into
-    // `journal.replay().unwrap_or_default()`, the whole workspace stayed green -- `43 targets,
-    // 324 passed, 0 failed, 2 ignored`, identical to the baseline. Errata `E118`.
+    // `journal.replay().unwrap_or_default()`, `cargo test --locked --workspace` stayed green.
+    // Errata `E118`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1349.
     //
     // ⛔ AND THE CONSEQUENCE IS THE WORST ONE ADR-0007 NAMES. Swallowed, the scan answers
     // `Ok(vec![])` -- "no step is in doubt" -- about an archive it could not read, on the one

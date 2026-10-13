@@ -6,10 +6,11 @@
 //! backup; this is the "configuration" archive -- NOT encrypted, in the backup, permanent. Two
 //! natures in one file would be one policy for both, and sub-project 15, which brings encryption
 //! at rest and retention, would owe this package an exception written just for it. That is
-//! decision 15 of the north star in full. ⚠️ THOSE ARE THE POLICIES, NOT TODAY: neither the
-//! journal nor this archive is encrypted or pruned until sub-project 15, nor backed up until
-//! sub-project 11 -- both are plain `redb` files meanwhile. ⚠️ RECALL OF 2026-10-03 -- audit of
-//! 2026-09-30, AUD-020.
+//! decision 15 of the north star in full. ⚠️ THOSE ARE THE POLICIES, NOT TODAY: encryption at
+//! rest and retention are sub-project 15's and the backup sub-project 11's, so both files are
+//! plain `redb` files for now -- and of the three, the backup is the only one this archive's
+//! policy asks for: it stays in clear and permanent. ⚠️ RECALL OF 2026-10-03 -- audit of
+//! 2026-09-30, AUD-020. ⚠️ RECALL OF 2026-10-13 -- same audit, AUD-2244.
 //!
 //! ⚠️ AND IT IS THE SAME `FileBackend`, WHICH IS NOT A CONTRADICTION: the backend is the boundary
 //! at which level-2 faults are injected (ADR-0032 requirement 4), and sharing the TYPE is what
@@ -29,8 +30,9 @@ use std::path::Path;
 
 use kernel::ports::custody::{Custody, CustodyError, CustodyKey};
 // `ReadableTable` is NOT imported: in redb 4.1.0 `ReadOnlyTable::get` is inherent, so the import
-// would be an unused-import warning at every build. The mutation of step 7 imports it where it
-// needs `iter`, which IS the trait's (measured at the plan review, 2026-09-15).
+// would be an unused-import warning at every build. What IS the trait's is `iter`, and nothing in
+// this file iterates (measured at the plan review, 2026-09-15). ⚠️ RECALL OF 2026-10-13 -- audit
+// of 2026-09-30, AUD-1369.
 use redb::{Database, ReadableDatabase, TableDefinition};
 
 use crate::journal::{FileBackend, OpenError, engine};

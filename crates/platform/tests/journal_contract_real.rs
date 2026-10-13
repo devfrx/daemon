@@ -18,12 +18,14 @@
 // one.
 //
 // ⚠️ DECLARED COST, accepted rather than unnoticed: `include!` brings the included file's
-// `#[test]` functions with it, so THE FIFTEEN TESTS OF THE SUITE — the double, the substring
-// constraint and the thirteen liars — RUN A SECOND TIME inside this binary. None of them touches
-// the disk or sleeps, so it costs a few milliseconds, and it buys the single copy of the
-// assertions. ⚠️ Only `the_real_journal_honours_the_contract` below reaches a file at all, which
-// is what makes a red in this binary readable: a broken `FileJournal` turns THAT test red and
-// leaves the other fifteen green, because they never meet it.
+// `#[test]` functions with it, so EVERY TEST OF THE SUITE — the double, the substring constraint
+// and the liars — RUNS A SECOND TIME inside this binary. None of them touches the disk or sleeps,
+// so it costs a few milliseconds, and it buys the single copy of the assertions. ⛔ HOW MANY THEY
+// ARE IS NOT WRITTEN HERE: the included file owns that figure, and
+// `grep -c '^#\[test\]' crates/kernel/tests/journal_contract.rs` answers it. ⚠️ Only
+// `the_real_journal_honours_the_contract` below reaches a file at all, which is what makes a red
+// in this binary readable: a broken `FileJournal` turns THAT test red and leaves the others green,
+// because they never meet it. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1391.
 // ⚠️ THE TWO FIGURES SAID "TEN" AND "EIGHT" UNTIL 2026-08-17, and were already stale before the
 // three blind journals of that day arrived: promise 7b's liar had made them eleven and nine.
 // They said "FOURTEEN" AND "TWELVE" until 2026-08-27, when the bystander of promise 3 brought a
@@ -75,19 +77,22 @@ fn the_real_journal_honours_the_contract() {
 /// A directory of this test's own, emptied on entry — the same mechanism
 /// `crates/platform/tests/file_journal.rs` uses, and for the same reason.
 ///
-/// ⛔ ONE DIRECTORY PER CALL SITE, AND THE LINE NUMBER IS WHAT MAKES IT ONE. `cargo test` runs
-/// the test BINARIES in parallel and libtest runs the tests inside one binary on parallel
-/// threads, so a directory emptied on entry is only safe if nothing else can be inside it: a
-/// shared directory with a different file name per test still loses, because the entering test
-/// deletes the running one's file too. Two call sites cannot share a line number, so the
-/// directories are distinct BY CONSTRUCTION and not by anybody remembering.
+/// ⛔ ONE DIRECTORY PER CALL SITE, AND THE LINE NUMBER IS WHAT MAKES IT ONE. libtest runs the
+/// tests inside one binary on parallel threads, so a directory emptied on entry is only safe if
+/// nothing else can be inside it: a shared directory with a different file name per test still
+/// loses, because the entering test deletes the running one's file too. Two call sites cannot
+/// share a line number, so the directories are distinct BY CONSTRUCTION and not by anybody
+/// remembering.
 ///
 /// ⛔ AND THE PREFIX IS NOT THE ONE `file_journal.rs` USES, which is the half a line number alone
 /// does not cover: line 49 of that file and line 49 of this one would name the SAME directory,
-/// and those two binaries run at the same time.
+/// and two processes running the two files at once would meet in it. What the prefix keeps
+/// apart, and what it does not, is written once, at the head of `file_journal.rs`. ⚠️ RECALL OF
+/// 2026-10-13 -- audit of 2026-09-30, AUD-1383, AUD-1388, AUD-1390.
 ///
-/// ⚠️ Deliberately not a crate: `tempfile` would be a new entry in the dependency list for six
-/// lines, and `platform` already names `std`.
+/// ⚠️ Deliberately not a crate: `tempfile` would be a new entry in the dependency list for a
+/// helper of a few lines, and `platform` already names `std`. ⚠️ RECALL OF 2026-10-13 -- audit of
+/// 2026-09-30, AUD-1391.
 fn private_dir_for_line(line: u32) -> std::path::PathBuf {
     let dir = std::env::temp_dir().join(format!("daemon-journal-contract-{line}"));
     let _ = std::fs::remove_dir_all(&dir);

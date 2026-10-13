@@ -25,7 +25,8 @@ use kernel::ports::ipc::{ClientId, Ipc, IpcError};
 use platform::ipc::{Account, LocalSocketIpc};
 
 /// The cap every test in this file hands over. Big enough for any body written here, small
-/// enough that `a_body_over_the_cap_is_malformed` can exceed it without allocating.
+/// enough that `a_body_over_the_cap_is_malformed_and_the_client_stays` can exceed it without
+/// allocating. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1389.
 const CAP: usize = 4_096;
 
 /// How long any wait of this file lasts before it gives a verdict. Generous against a loaded

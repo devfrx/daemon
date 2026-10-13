@@ -67,19 +67,24 @@ use platform::rng::SequentialRng;
 /// `SystemReactor`, the reactor THIS FILE wires, is a real `std::thread::sleep`. So the wall
 /// time of a turn is whatever that turn waits for, and no number chosen here bounds it.
 ///
-/// Measured on this graph, which is what settles it:
+/// Measured on this graph before it carried the serving activity, which is what settled it:
 ///
 /// | Case                                          | Cost                   |
 /// |-----------------------------------------------|------------------------|
 /// | the whole ceiling spent polling, no waits     | 100 000 turns ≈ 15 ms  |
 /// | ONE run whose turns contain a 2000 ms wait    | 2.0004 s               |
 ///
-/// # What the value therefore buys, stated exactly
+/// # What a FINITE value buys, stated exactly -- and this one is not finite
+///
+/// ⚠️ THE THREE POINTS BELOW ARE WHAT THE FINITE LIMIT BOUGHT -- the hundred thousand turns this
+/// constant held until 2026-09-19 -- and a bench that delivers a finite limit of its own still
+/// buys the last two. This constant is `u64::MAX` and buys none of them in production, for the
+/// reason the recall further down gives. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1146.
 ///
 /// - ABOVE anything legitimate. The reference scenario — three activities of four steps
-///   each — takes NINE turns, so the limit clears it by FOUR orders of magnitude.
+///   each — takes NINE turns, so a hundred thousand clears it by FOUR orders of magnitude.
 /// - It catches a block that DOES NOT WAIT in far less than a second: the top row is the
-///   whole ceiling in about fifteen milliseconds. Those are the two SPINNING failures
+///   whole of such a ceiling in about fifteen milliseconds. Those are the two SPINNING failures
 ///   `RunError::TurnLimitReached` documents — an activity that yields for ever, and one that
 ///   re-registers an elapsed deadline. Both spin, so both land there. ⚠️ RECALL OF 2026-10-03 --
 ///   audit of 2026-09-30, AUD-058.
@@ -168,9 +173,13 @@ const ARBITER_ID: ArbiterId = ArbiterId::new(0);
 /// ⛔ A LITERAL, ON THE SAME BOUNDARY AS `TOTAL_VRAM` and for the same reason: the value has
 /// to be chosen somewhere until the parameter store arrives, and a literal in `daemon` is
 /// visible and can be varied. ⚠️ AND IT IS RELATIVE TO THE WORKING DIRECTORY, which is
-/// declared rather than defended: where a per-user data directory should be is a decision no
-/// ADR has taken, and inventing one here would be that decision taken by whoever typed the
-/// path. Every test passes its OWN path, so nothing in the gate depends on this constant.
+/// declared rather than defended: where the program's data lives is DECIDED AND NOT BUILT --
+/// ADR-0040, decision 1, puts it in the system's per-user data directory, and nothing in the
+/// code makes that directory yet. The first sub-project that uses it builds it, and rewrites
+/// this path: the 6, if nobody does it before (section 4.2 of
+/// `docs/superpowers/specs/2026-09-28-knowledge-base-revisione-design.md`). ⚠️ RECALL OF
+/// 2026-10-13 -- audit of 2026-09-30, AUD-1138. Every test passes its OWN path, so nothing in
+/// the gate depends on this constant.
 const JOURNAL_PATH: &str = "journal.redb";
 
 /// Where the LAYOUT ARCHIVE lives, in production — the seventh port's store.
@@ -184,9 +193,9 @@ const JOURNAL_PATH: &str = "journal.redb";
 /// AUD-020. It is also what lets the layout archive fail to open WITHOUT stopping the start-up
 /// (decision 35), which sharing a file with the journal would make impossible.
 ///
-/// ⚠️ RELATIVE TO THE WORKING DIRECTORY, exactly as `JOURNAL_PATH` is and declared for the same
-/// reason: where a per-user data directory belongs is a decision no ADR has taken, and inventing one
-/// here would be that decision taken by whoever typed the path. Every probe passes its OWN path.
+/// ⚠️ RELATIVE TO THE WORKING DIRECTORY, exactly as `JOURNAL_PATH` is and for the same reason,
+/// which is written there once: the per-user data directory is decided and not built. ⚠️ RECALL
+/// OF 2026-10-13 -- audit of 2026-09-30, AUD-1138. Every probe passes its OWN path.
 const LAYOUT_PATH: &str = "layout.redb";
 
 /// The name the GUI knocks on.
@@ -384,7 +393,8 @@ impl Reactor for SharedClock<'_> {
 /// ⚠️ DECLARED RESIDUAL — WHY THE ARCHIVE WOULD NOT OPEN DOES NOT REACH THE OPERATOR. `OpenError`
 /// is dropped here rather than carried, because a field only `Debug` reads is flagged dead (the
 /// paragraph beside `main` measured exactly that), and printing from `run_the_graph` would take on
-/// the job that same function's doc gives to `main` alone. ⛔ ITS TRIGGER IS THE FIRST DIAGNOSTIC
+/// the job the doc of `run_the_production_graph` gives to `main` alone (⚠️ RECALL OF 2026-10-13 --
+/// audit of 2026-09-30, AUD-1136). ⛔ ITS TRIGGER IS THE FIRST DIAGNOSTIC
 /// CHANNEL the daemon grows — sub-project 10, with the clean shutdown — and until then the operator
 /// sees the effect, "layout unavailable", and not the cause.
 enum MaybeCustody {
@@ -422,7 +432,8 @@ impl Custody for MaybeCustody {
 
 /// Why the start-up did not complete.
 ///
-/// ⛔ THREE VARIANTS, AND THE THIRD IS THE ONE THAT CLOSES `E41`. An impossible VRAM
+/// ⛔ `ReservedQuota` IS THE VARIANT THAT CLOSES `E41` (⚠️ RECALL OF 2026-10-13 -- audit of
+/// 2026-09-30, AUD-1136, AUD-1142, AUD-1146). An impossible VRAM
 /// configuration stopped announcing itself the day the arbiter grew queues: the second
 /// permanent quota comes back `Queued` instead of `Refused`, and nobody will ever serve it,
 /// because releasing a permanent grant is exactly what nobody does. The arbiter cannot repair
@@ -435,9 +446,9 @@ impl Custody for MaybeCustody {
 /// so an `assert_eq!` on this type does not compile and the probes match instead. `Debug` is
 /// what the probes and `main` both need, and it is the only thing `OpenError` gives.
 ///
-/// ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — THE VARIANTS ARE NOW SIX, AND THE PARAGRAPH
-/// ABOVE IS ABOUT THE THIRD, WHICH IS UNCHANGED. The wiring grew three failures it can name and
-/// did not have: the journal will not replay at all, so the step number to carry on from cannot
+/// ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — THE VARIANTS GREW, AND THE PARAGRAPH ABOVE
+/// IS ABOUT `ReservedQuota`, WHICH IS UNCHANGED. The wiring grew failures it can name and did
+/// not have: the journal will not replay at all, so the step number to carry on from cannot
 /// be found (`numbering::seeded_from`); it replays, and a record in it is not one this build can
 /// read, so the policy in force cannot be answered (ADR-0006, `policy_now`); and the channel will
 /// not open, whose causes the variant's own doc names.
@@ -473,8 +484,14 @@ enum StartupError {
     Numbering(JournalError),
     /// The channel would not open, and the error says why (ADR-0041). ⛔ ON BOTH SYSTEMS THE
     /// ORDINARY CAUSE IS A SECOND CORE, and refusing is the point: `daemon` is the single instance
-    /// of ADR-0004, and two cores on one journal is the one thing the exclusive lock cannot catch,
-    /// because the second one never gets that far. On Windows that is the pipe's first instance
+    /// of ADR-0004. ⚠️ A SECOND CORE ON THE SAME JOURNAL NEVER GETS THIS FAR: `run_the_graph`
+    /// opens the journal first, and its exclusive lock stops that core as
+    /// `Journal(OpenError::AlreadyOpen)` -- with `JOURNAL_PATH` relative, that is a second core
+    /// started from the same working directory, and
+    /// `a_second_core_on_the_same_journal_stops_at_the_journal_and_not_at_the_bind` holds it. What
+    /// reaches this variant is a core on ANOTHER journal -- started from another directory -- or a
+    /// listener that is not a core at all (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+    /// AUD-1140). On Windows that is the pipe's first instance
     /// refused -- which is also what a name another account took first looks like, a cost ADR-0041
     /// accepts; on Linux it is a live core answering on the socket. ⚠️ ON LINUX TWO MORE CAUSES ARE
     /// ADR-0041's own: no `$XDG_RUNTIME_DIR`, and a runtime directory that is not the account's or
@@ -485,11 +502,13 @@ enum StartupError {
 
 /// Builds the production graph and runs the executor, handing back what the start-up said.
 ///
-/// ⚠️ IT IS A FUNCTION RATHER THAN THE BODY OF `main` SO THAT A TEST CAN CALL IT. The
-/// quality gate runs `cargo build` and `cargo test`, never `cargo run`, so a wiring that
-/// only `main` touches would be the one part of this milestone that no check exercises —
-/// and a principle nobody can check is an intention. `main` keeps the process-level job,
-/// what to print and what to exit with, and nothing else.
+/// ⚠️ IT IS A FUNCTION RATHER THAN THE BODY OF `main`, AND IT WAS SPLIT SO THAT A TEST COULD
+/// CALL IT: the quality gate runs `cargo build` and `cargo test`, never `cargo run`, so a wiring
+/// that only `main` touched would be one no check exercises — and a principle nobody can check is
+/// an intention. No test calls it now, for the reason the recall below gives: what the probes
+/// walk is `run_the_graph`, and what this function adds is walked by nothing. `main` keeps the
+/// process-level job, what to print and what to exit with, and nothing else. ⚠️ RECALL OF
+/// 2026-10-13 -- audit of 2026-09-30, AUD-1146.
 ///
 /// ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — NO TEST CALLS IT ANY MORE, AND THE PARAGRAPH
 /// ABOVE IS DATED. It hands `u64::MAX`, so a probe calling it would HANG rather than fail (D28);
@@ -530,7 +549,9 @@ fn run_the_production_graph(journal_path: &Path, layout_path: &Path) -> Result<(
 /// a fixed socket NAME is worse, because it is shared across the whole machine rather than a
 /// directory: two probes binding `SOCKET_NAME` at once make the second fail with "already in use",
 /// and `cargo test` runs them at once BY DEFAULT. Every probe hands its own name, built from
-/// `line!()` and the process id, exactly as `private_dir_for_line` does (P-55).
+/// `line!()` as `private_dir_for_line` builds its directory, and from the process id besides,
+/// which the directory does not carry (P-55; ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+/// AUD-2127).
 /// ⚠️ RECALL OF 2026-10-02 — audit of 2026-09-30, ADR-0041: what is handed is now a CHANNEL and
 /// the ACCOUNT it is for -- a pipe on Windows, a socket file in a private directory on Linux -- and
 /// every probe builds its own with `channel_for_line`.
@@ -709,20 +730,21 @@ fn reserve(arbiter: &mut Arbiter, profile: &ResourceProfile) -> Result<Grant, St
 /// beats one that is contorted. The trade stops being fair the day these branches grow a
 /// decision of their own.
 ///
-/// ⛔ THE THREE FAILURES ARE SPELT OUT ONE BY ONE AND NOT FOLDED INTO ONE `{error:?}`, and it
+/// ⛔ THE FAILURES ARE SPELT OUT ONE BY ONE AND NOT FOLDED INTO ONE `{error:?}`, and it
 /// is FORCED rather than a preference: `#[derive(Debug)]` does not count as a read for the
 /// dead-code analysis, so a single arm left `Journal`'s and `Run`'s payloads flagged as
 /// "field `0` is never read" — MEASURED, two warnings on `cargo test -p daemon`. Silencing
 /// that with an `#[allow]` is a prohibition switched off (gotcha #13), and emptying the two
 /// payloads would throw away the only thing that says WHICH file and WHICH failure. Reading
-/// them is what the fix had to be, and the operator gets three different sentences out of it.
+/// them is what the fix had to be, and the operator gets a sentence of its own for each.
+/// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1142, AUD-1146.
 ///
-/// ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — THEY ARE SIX. The reason is unchanged and is
-/// the reason the three new ones are also spelt out: a single arm would leave every payload
-/// flagged "never read". ⚠️ AND THE RESIDUAL ABOVE GREW WITH THEM: none of the six error branches
-/// is walked by a check, and three of them now name values — the socket, the policy, the counter
-/// — that only `main` knows how to print. ⚠️ AND THE `Ok` ARM IS WORSE OFF THAN THEY ARE: it has
-/// no possible producer at all since this task, which is said at the arm itself rather than
+/// ⛔ RECALL OF 2026-09-19, SUB-PROJECT 2, TASK 9 — THE FAILURES GREW WITH THE ENUM. The reason
+/// is unchanged and is the reason the new ones are also spelt out: a single arm would leave every
+/// payload flagged "never read". ⚠️ AND THE RESIDUAL ABOVE GREW WITH THEM: none of the error
+/// branches is walked by a check, and the new ones name values — the socket, the policy, the
+/// counter — that only `main` knows how to print. ⚠️ AND THE `Ok` ARM IS WORSE OFF THAN THEY ARE:
+/// it has no possible producer at all since this task, which is said at the arm itself rather than
 /// counted a second time here.
 fn main() {
     match run_the_production_graph(Path::new(JOURNAL_PATH), Path::new(LAYOUT_PATH)) {
@@ -805,8 +827,14 @@ mod tests {
     //! would delete them.
     //!
     //! ⚠️ HOW MANY SUCH MODULES THERE ARE, AND WHERE, COMES FROM THE COMMAND AND NOT FROM THIS
-    //! LINE — `grep -rn --include='*.rs' 'mod tests {' crates/*/src/`. What differs between them
-    //! is the REASON, and each states its own: here it is forced, elsewhere it IS a choice.
+    //! LINE — `grep -rnE --include='*.rs' '^\s*mod tests \{' crates/*/src/ gui/fake-core/src/`.
+    //! ⛔ THE ANCHOR KEEPS IT BLIND TO EVERY LINE THAT CITES IT -- this one, and its twin in
+    //! `crates/platform/src/rng.rs` --: a citation sits in a comment, and `^\s*` wants the motif
+    //! at the head of the line. And it walks `gui/fake-core` too, because "this repository" is
+    //! more than the workspace.
+    //! What differs between them is the REASON, and each states its own: here it is forced,
+    //! elsewhere it can be a choice. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1137,
+    //! AUD-1380, AUD-1381.
     //!
     //! ⛔ RECALL OF 2026-08-28, FINDING AUD-060 — THIS SAID "one of THREE" AND NAMED THE OTHER
     //! TWO. The figure was RIGHT and is removed anyway: the same count sat in
@@ -839,8 +867,9 @@ mod tests {
     // binary itself never calls it -- it hands the journal over to `Core` and `Core` writes.
     use kernel::ports::journal::{Journal, StepId};
     // ⚠️ AND A COUNTER OF ITS OWN IS BENCH-ONLY TOO: the binary builds the one counter with
-    // `numbering::seeded_from` and shares it, while the first core of
-    // `a_second_core_on_the_same_channel_stops_the_start_up` is a bare listener and needs one.
+    // `numbering::seeded_from` and shares it, while the first core of the probes of a second
+    // core -- `a_second_core_on_the_same_channel_stops_the_start_up` and its twin on the journal --
+    // holds a bare listener and needs one.
     use kernel::numbering::Progressive;
 
     /// ⛔ A DIRECTORY OF ITS OWN PER CALL SITE, from `line!()`, and it is not caution: a
@@ -848,8 +877,15 @@ mod tests {
     /// refuses to delete a file that is open, so the removal FAILS SILENTLY there and the
     /// red comes out on Linux -- the project's second system.
     ///
-    /// ⚠️ AND THE PREFIX IS DIFFERENT from the two benches of `platform`, because a line
-    /// number is unique inside ONE file only and the binaries run together.
+    /// ⚠️ AND THE PREFIX IS THIS FILE'S OWN, as every bench of `platform` that makes its directories
+    /// this way has its own, because a line number is unique inside ONE file only. What the prefix
+    /// keeps apart, and what it does not, is written once, at the head of
+    /// `crates/platform/tests/file_journal.rs`. ⚠️ AND NOTHING HERE CARRIES THE PROCESS ID that
+    /// `channel_for_line` carries, below, for two `cargo test` invocations that overlap: the
+    /// directory is under `temp_dir()`, shared by every process of the account, so two overlapping
+    /// runs of these probes share every directory. Whether it should carry it is the owner's: audit
+    /// of 2026-09-30, AUD-2127. ⚠️ RECALL OF 2026-10-13 -- same audit, AUD-1139, AUD-1141,
+    /// AUD-1388.
     fn private_dir_for_line(line: u32) -> std::path::PathBuf {
         let dir = std::env::temp_dir().join(format!("daemon-production-graph-{line}"));
         let _ = std::fs::remove_dir_all(&dir);
@@ -1084,8 +1120,13 @@ mod tests {
     ///
     /// ⚠️ THE FAILURE IS PROVOKED BY A DIRECTORY THAT IS NOT THERE, which is the one way to
     /// make `open` fail that needs no privileges and behaves the same on both of the project's
-    /// systems -- a locked file would need a second process on Linux, and a read-only path
-    /// would need a mode change Windows spells differently.
+    /// systems -- a read-only path would need a mode change Windows spells differently.
+    ///
+    /// ⛔ AND THE VARIANT IS NAMED, `OpenError::File`, because the start-up stopping is half of
+    /// what a human reads: the other half is WHY, and `StartupError::Journal` carries the very
+    /// distinction `OpenError` exists for. Read with `Journal(_)`, a journal that answered
+    /// `AlreadyOpen` or `Engine` for a missing directory would pass. ⚠️ RECALL OF 2026-10-13 --
+    /// audit of 2026-09-30, AUD-2163.
     #[test]
     fn a_journal_that_cannot_be_opened_stops_the_start_up() {
         let dir = private_dir_for_line(line!());
@@ -1099,8 +1140,41 @@ mod tests {
         );
 
         match outcome {
-            Err(StartupError::Journal(_)) => {}
+            Err(StartupError::Journal(OpenError::File(_))) => {}
             other => panic!("a journal that will not open must stop the start-up: {other:?}"),
+        }
+    }
+
+    /// ⛔ A SECOND CORE ON THE SAME JOURNAL STOPS AT THE JOURNAL, AND NEVER REACHES THE CHANNEL:
+    /// what the doc of `StartupError::Ipc` leans on. The first core here holds BOTH -- its
+    /// journal open and a listener bound -- so the variant says which guard stopped the second:
+    /// `Journal(OpenError::AlreadyOpen)` while the journal is opened before the bind, `Ipc` the
+    /// day the bind came first. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1140.
+    ///
+    /// ⚠️ NO SECOND PROCESS, the shape of `a_second_core_on_the_same_channel_stops_the_start_up`:
+    /// the lock refuses a second handle in the same process too, which
+    /// `crates/platform/tests/file_journal.rs` holds on both systems.
+    #[test]
+    fn a_second_core_on_the_same_journal_stops_at_the_journal_and_not_at_the_bind() {
+        let dir = private_dir_for_line(line!());
+        let journal = dir.join("journal.redb");
+        let channel = channel_for_line(line!());
+        let _first_journal = FileJournal::open(&journal).expect("the first core holds the journal");
+        let _first_listener =
+            LocalSocketIpc::bound(&channel, &this_account(), Progressive::starting_at(0), MAX_BODY)
+                .expect("the first core holds the channel");
+
+        let outcome = run_the_graph(
+            Parameters::new(8, TOTAL_VRAM, ARBITER_ID, Millis::new(0)),
+            &journal,
+            &dir.join("layout.redb"),
+            &channel,
+            &this_account(),
+        );
+
+        match outcome {
+            Err(StartupError::Journal(OpenError::AlreadyOpen)) => {}
+            other => panic!("a second core on the same journal must stop at the journal: {other:?}"),
         }
     }
 

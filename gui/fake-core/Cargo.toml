@@ -6,7 +6,9 @@ publish = false
 
 # ⛔ A TOOL, NOT A SPIKE, and that is why the lockfile is committed: `scripts/gate-gui.sh` runs
 # `cargo test --locked --manifest-path gui/fake-core/Cargo.toml`, and `--locked` needs a lockfile
-# somebody approved. A spike's lockfile is ignored because a spike is redone from a seed.
+# somebody approved. A spike redone from a seed ignores its lockfile; a spike whose numbers must be
+# redone as they were commits it -- `.gitignore` says which. ⚠️ RECALL OF 2026-10-13 -- audit of
+# 2026-09-30, AUD-735, AUD-2048.
 # ⚠️ PRESENT TENSE SINCE TASK 15 WROTE THAT SCRIPT (E237) -- future until then (E120): a comment
 # that justifies an item by naming a consumer writes it in the future until the consumer is
 # there, which is E34 in its general form. `grep -n 'manifest-path' scripts/gate-gui.sh` finds it.

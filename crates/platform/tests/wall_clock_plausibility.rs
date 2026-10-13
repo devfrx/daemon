@@ -9,8 +9,10 @@
 //! pinned in the same spirit, and just as separately, in `crates/simulator/tests/virtual_clock.rs`.
 //!
 //! ⚠️ AND WHY IT IS AN INTEGRATION TEST rather than a `#[cfg(test)] mod tests` in `src/`: it
-//! needs nothing private. The repository puts its tests in `tests/`, and the single unit-test
-//! module in this crate — in `src/rng.rs` — is there only because it reaches a private field.
+//! needs nothing private. The repository puts its tests in `tests/`, and a unit-test module in
+//! `src/` is an exception that states its own reason; which ones there are comes from the command
+//! `src/rng.rs` gives, not from this line. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+//! AUD-1393, AUD-1394.
 
 use kernel::ports::reactor::Reactor;
 use platform::reactor::SystemReactor;

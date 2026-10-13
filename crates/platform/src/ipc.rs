@@ -78,6 +78,16 @@
 //! queue of the paragraph above. What is not acceptable is leaving the cost unnamed, and until
 //! this paragraph it was: found by the review of 2026-09-17 (I-2).
 //!
+//! ⚠️ AND THE GROWTH IS NOT THE POISONED CLIENT'S ALONE: the cap bounds ONE FRAME, not the bytes
+//! in flight. The reader thread reads with no backpressure, `receive` drains the whole channel
+//! into `pending` and hands back at most one frame a call, and `kernel::serving` reads one message
+//! per client per turn -- so a peer that writes whole frames, each under the cap, faster than the
+//! core takes them grows the channel and `pending` without bound and never meets the cap. A stream
+//! the core read by itself would push back on the peer through the pipe once its buffer filled;
+//! the reader thread (D78) takes that away from EVERY client. The question above -- backpressure
+//! for the reader thread, a measurement for sub-project 3 -- is therefore the same question for
+//! them all. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2120.
+//!
 //! ⚠️ AND IT IS NOT ONLY A BROKEN OR HOSTILE PEER THAT REACHES THAT BRANCH. ADR-0041 narrows who
 //! can send a body to the processes of the core's own account and does not remove a bad one, which
 //! a faulty gui can send too; and a SOUND gui reaches it with a layout package over the cap the
@@ -645,10 +655,12 @@ mod tests {
         }
     }
 
-    /// ⚠️ ITS OWN PREFIX, NOT THE ONE `tests/ipc_contract_real.rs` USES, and that is not caution:
-    /// a channel is global to the machine -- a pipe name, or a directory in the shared temporary
-    /// one -- a line number is unique inside ONE file only, and the two binaries can run at the
-    /// same time. The pid separates two runs, the line two probes.
+    /// ⚠️ ITS OWN PREFIX, NOT THE ONE `tests/ipc_contract_real.rs` USES: a channel is global to the
+    /// machine -- a pipe name, or a directory in the shared temporary one -- and a line number is
+    /// unique inside ONE file only. The pid separates two processes -- the two binaries, or two
+    /// runs that overlap -- and the line two probes of one binary; `cargo test` does not run the two
+    /// binaries at the same time in any case ("run serially", `man cargo-test`). ⚠️ RECALL OF
+    /// 2026-10-13 -- audit of 2026-09-30, AUD-1388.
     ///
     /// ⛔ ON LINUX THE CHANNEL GETS A DIRECTORY OF ITS OWN, CLOSED TO EVERY OTHER ACCOUNT, because
     /// a directory any other account can enter is one `bound` refuses (ADR-0041, point 5) -- and

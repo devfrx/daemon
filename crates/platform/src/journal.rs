@@ -5,8 +5,8 @@
 //! decides anything — which is why the same conformance suite runs against the in-memory double.
 //!
 //! ⛔ THE BACKEND IS NOT A DETAIL OF `open`, and it is the reason this file is longer than a
-//! wrapper would be. `FileBackend` is a TYPE, with `read`, `write`, `set_len` and `sync_data` on
-//! it, because it is the boundary at which milestone 4 injects level-2 faults (§4.6, ADR-0032
+//! wrapper would be. `FileBackend` is a TYPE, with the methods of `redb::StorageBackend` on it,
+//! because it is the boundary at which milestone 4 injects level-2 faults (§4.6, ADR-0032
 //! requirement 4) — and a boundary that does not exist as a type cannot be substituted. That it
 //! really can is not asserted here but PROVEN FROM OUTSIDE, by
 //! `crates/platform/tests/file_journal.rs`, which writes a second implementation of its own and
@@ -14,9 +14,11 @@
 //! (gotcha #46), and the only thing that answers the doubt is a caller written from outside.
 //!
 //! ⚠️ THE TRAIT IS `redb`'s AND WE DO NOT MIRROR IT. A parallel trait of our own, with an
-//! adapter onto this one, would buy nothing today: `redb::StorageBackend` already names exactly
-//! the four operations §4.6 wants injectable, and the cost of the indirection would be paid on
-//! every read. If a second engine ever arrives, the trait arrives with it.
+//! adapter onto this one, would buy nothing today: `redb::StorageBackend` already names every
+//! operation the engine performs on the file -- the write and the `sync_data` at which §4.6 makes
+//! a fault fall among them -- and the cost of the indirection would be paid on every read. If a
+//! second engine ever arrives, the trait arrives with it. ⚠️ RECALL OF 2026-10-13 -- audit of
+//! 2026-09-30, AUD-788.
 //!
 //! ⛔ WHAT BOTH IMPLEMENTATIONS PROMISE IS NOT WRITTEN HERE: it is in
 //! `crates/kernel/tests/journal_contract.rs`, and its promises RUN AGAINST THIS TYPE ON EVERY
@@ -24,9 +26,10 @@
 //! them by `include!`. This line said "at task 9" until that file existed. What only THIS one
 //! promises — that a write survives the process — is in `crates/platform/tests/file_journal.rs`.
 //!
-//! ⚠️ RECALL OF 2026-08-21 — THIS SAID "EIGHT PROMISES", AND THEY ARE NINE SINCE 2026-08-10.
-//! The figure is REMOVED and not realigned: it lived in three files at once and went stale in
-//! the two that never recount it. It stays where it is counted — `journal_contract.rs`.
+//! ⚠️ RECALL OF 2026-08-21 — THIS SAID "EIGHT PROMISES", AND THE COUNT HAD ALREADY MOVED ON
+//! 2026-08-10. The figure is REMOVED and not realigned: it lived in three files at once and went
+//! stale in the two that never recount it. It stays where it is counted — `journal_contract.rs`.
+//! ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-787.
 
 use std::fs::{File, TryLockError};
 use std::io;
@@ -87,11 +90,12 @@ const KIND_NOTE: u8 = 2;
 /// What can go wrong OPENING the journal.
 ///
 /// ⛔ IT IS DELIBERATELY NOT A `JournalError`, and the decision is worth its lines because the
-/// plan asked for the opposite. `JournalError` has three variants — `NotDurable`, `Missing`,
-/// `OutOfOrder` — and NONE of them means "the file would not open": `NotDurable` says a write
-/// did not land when nothing has been written yet, and `Missing` asserts an ABSENCE that a
-/// failure to open cannot know about. Either mapping would put a false sentence in the one
-/// place whose job is to be true.
+/// plan asked for the opposite. NONE of the variants of `JournalError` means "the file would not
+/// open": `NotDurable` says a write did not land when nothing has been written yet, `Missing`
+/// asserts an ABSENCE that a failure to open cannot know about, and the others speak of the
+/// records of a step, which an open has not touched. Any mapping would put a false sentence in the
+/// one place whose job is to be true. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1370,
+/// AUD-1371, AUD-1374.
 ///
 /// ⛔ AND `open` IS NOT AN OPERATION OF THE PORT, which is what makes an error of its own
 /// legitimate rather than an enrichment by stealth. `JournalError` is poor ON PURPOSE — "a rich
@@ -126,8 +130,9 @@ pub enum OpenError {
     File(io::Error),
     /// Another journal already holds this file. ⛔ The refusal is deliberate and it is NOT how
     /// `redb`'s own backend behaves on a platform without locks, where it warns and carries on:
-    /// two writers on one write-ahead journal is the corruption ADR-0007 exists to prevent, so
-    /// this one stops instead of guessing.
+    /// two writers on one journal would be two cores on one authoritative state, and ADR-0004 runs
+    /// the core as a single instance -- so this one stops instead of guessing. ⚠️ RECALL OF
+    /// 2026-10-13 -- audit of 2026-09-30, AUD-786.
     AlreadyOpen,
     /// The file opened and the engine refused it: not a journal, a version this build cannot
     /// read, or an I/O failure on the way to the tree.
@@ -152,8 +157,9 @@ pub(crate) fn engine(error: impl Into<redb::Error>) -> OpenError {
 }
 
 /// The journal's file, and THE BOUNDARY AT WHICH MILESTONE 4 INJECTS FAILURES (§4.6,
-/// ADR-0032 requirement 4). Every byte the engine reads or writes passes through the five
-/// methods below; there is no other route to the disk.
+/// ADR-0032 requirement 4). Every byte the engine reads or writes passes through the methods of
+/// the `impl StorageBackend` below; there is no other route to the disk. ⚠️ RECALL OF 2026-10-13
+/// -- audit of 2026-09-30, AUD-788.
 ///
 /// ⚠️ `Mutex<File>` AND NOT POSITIONAL I/O, and the trade is declared rather than defended.
 /// `StorageBackend` hands out `&self`, while `Seek`/`Read`/`Write` want `&mut File`, so
@@ -439,13 +445,15 @@ impl FileJournal {
     ///
     /// ⛔ IT IS A SCAN, AND THE COST IS DECLARED RATHER THAN HIDDEN. Every guard below asks a
     /// question about a step, and a step's records are spread through a table keyed on the
-    /// PROGRESSIVE — so answering costs a walk from the beginning. ⚠️ MEASURED, so that the cost
-    /// is a number and not a worry: **56 ns per record** in a release build, linear, against a
-    /// floor of **1.45 ms** for the `fsync` a write pays anyway — the scan only overtakes it past
-    /// some 26 000 records. It is NOT optimised, because no measurement asks for it, and the
-    /// remedy the day one does is the same CHECKPOINT that `Journal::replay` already declares it
-    /// needs: two mechanisms for one measurement, when the measurement exists. The figures are in
-    /// `docs/riferimenti.md`, section "Esecuzione del Traguardo 3 — il Task 8".
+    /// PROGRESSIVE — so answering costs a walk from the beginning. ⚠️ MEASURED on 2026-08-10, so
+    /// that the cost is a number and not a worry: the scan is linear, and it overtakes the `fsync`
+    /// a write pays anyway only on an archive larger than any the probe measured. The figures, the
+    /// sizes they were taken at, the probe and the size at which the scan would overtake are in
+    /// `docs/riferimenti.md`, section "Esecuzione del Traguardo 3 — il Task 8", and live there
+    /// alone. It is NOT optimised, because no measurement asks for it, and the remedy the day one
+    /// does is the same CHECKPOINT that `Journal::replay` already declares it needs: two
+    /// mechanisms for one measurement, when the measurement exists. ⚠️ RECALL OF 2026-10-13 --
+    /// audit of 2026-09-30, AUD-1373.
     fn find_first<T>(
         &self,
         mut visit: impl FnMut(u64, u8, &[u8]) -> Option<T>,

@@ -34,13 +34,16 @@
 // ⚖️ REGISTERED AND NOT TAKEN: the twin pair carries the same shape -- `journal_contract_real.rs`
 // states the suite's size that `journal_contract.rs` also owns, and has been RECOUNTED three
 // times instead of unlinked. It is CORRECT today, so it is not touched here; whether the twin
-// should lose its copy too is one edit on a file this finding does not name.
+// should lose its copy too is one edit on a file this finding does not name. ⚠️ RECALL OF
+// 2026-10-13 -- audit of 2026-09-30, AUD-1391: it has lost it.
 
 include!("../../kernel/tests/reactor_contract.rs");
 
 #[test]
 fn the_real_reactor_honours_the_contract() {
-    // ⚠️ THIS ONE REALLY SLEEPS — three waits of `CONTRACT_MARGIN_MS` each, so about 150 ms.
-    // That is the price of measuring the actual port instead of a description of it.
+    // ⚠️ THIS ONE REALLY SLEEPS — every wait `assert_reactor_contract` asks of it,
+    // `CONTRACT_MARGIN_MS` each: how many, and so how long, is the included file's to say. That
+    // is the price of measuring the actual port instead of a description of it. ⚠️ RECALL OF
+    // 2026-10-13 -- audit of 2026-09-30, AUD-1392.
     assert_reactor_contract(platform::reactor::SystemReactor::new);
 }

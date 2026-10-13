@@ -653,10 +653,11 @@ fn a_crashed_archive_reopens_in_a_coherent_state() {
     // set on the fast profile is a ceiling nobody pays and nobody checks.
     //
     // ⛔ THE RULE, THEREFORE: the whole `engine_crash_consistency` binary stays under ONE SECOND of
-    // wall time in `debug` — all five ordinary tests together, of which this sweep is by far the
-    // dearest. Measured the same day, running the binary itself rather than `cargo`: **0.14 s**,
-    // seven times inside the ceiling. ⚠️ THE CEILING IS ON THE BINARY AND NOT ON THIS SWEEP, which is what
-    // stops the budget being spent twice — a sixth probe costs against the same second.
+    // wall time in `debug` — every test of the file that is not `#[ignore]`d, together, of which
+    // this sweep is by far the dearest. Measured the same day, running the binary itself rather
+    // than `cargo`: **0.14 s**, seven times inside the ceiling. ⚠️ THE CEILING IS ON THE BINARY AND
+    // NOT ON THIS SWEEP, which is what stops the budget being spent twice — a probe added to the
+    // file costs against the same second. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1384.
     // ⚠️ THE `DST` PREFIX MATCHES LEVEL 1's, and it is not decoration: `scripts/gate.sh` runs
     // both binaries with `--nocapture` so that constraint 7 of §11 has its wall time, and the two
     // lines exist to be READ AS A PAIR. Two prefixes would make whoever scans that output know

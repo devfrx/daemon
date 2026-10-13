@@ -54,16 +54,17 @@ fn the_real_custody_honours_the_contract() {
 /// A directory of this test's own, emptied on entry -- the same mechanism
 /// `crates/platform/tests/file_journal.rs` uses, and for the same reason.
 ///
-/// ⛔ ONE DIRECTORY PER CALL SITE, AND THE LINE NUMBER IS WHAT MAKES IT ONE. `cargo test` runs the
-/// test BINARIES in parallel and libtest runs the tests inside one binary on parallel threads, so
-/// a directory emptied on entry is only safe if nothing else can be inside it. Two call sites
-/// cannot share a line number, so the directories are distinct BY CONSTRUCTION.
+/// ⛔ ONE DIRECTORY PER CALL SITE, AND THE LINE NUMBER IS WHAT MAKES IT ONE. libtest runs the
+/// tests inside one binary on parallel threads, so a directory emptied on entry is only safe if
+/// nothing else can be inside it. Two call sites cannot share a line number, so the directories
+/// are distinct BY CONSTRUCTION.
 ///
 /// ⛔ AND THE PREFIX IS UNIQUE TO THIS FILE, which is the half a line number alone does not cover:
-/// line 40 of this file and line 40 of `file_journal.rs`, `journal_contract_real.rs` or
-/// `file_custody.rs` would name the SAME directory, and those binaries run at the same time. No
-/// other bench may share this prefix; `grep -rhoE 'daemon-[a-z-]+' crates/ | sort -u` lists the
-/// ones in use.
+/// line 40 of this file and line 40 of another bench that makes its directories this way would
+/// name the SAME directory, and two processes running the two files at once would meet in it. No
+/// other bench may share this prefix. What the prefix keeps apart, and what it does not, is
+/// written once, at the head of `file_journal.rs`, with the command that lists the prefixes in
+/// use. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1383, AUD-1388, AUD-1390.
 fn private_dir_for_line(line: u32) -> std::path::PathBuf {
     let dir = std::env::temp_dir().join(format!("daemon-custody-contract-{line}"));
     let _ = std::fs::remove_dir_all(&dir);

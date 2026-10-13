@@ -4,10 +4,19 @@
 //! line said "at task 9" until that file existed. Asserting the promises below inside that suite
 //! would turn the in-memory double red, and the double is CORRECT not to make them: gotcha #44.
 //!
-//! ⚠️ AND THE TWO FILES DO NOT SHARE A TEMPORARY DIRECTORY, which the `line!()` scheme below
-//! does not cover on its own: a line number is unique within ONE file, and these two binaries
-//! run at the same time. The prefixes differ — `daemon-file-journal-` here,
-//! `daemon-journal-contract-` there.
+//! ⚠️ AND NO TWO FILES SHARE A TEMPORARY DIRECTORY, which the `line!()` scheme below does not
+//! cover on its own: a line number is unique within ONE file, and `temp_dir()` is one for every
+//! process of the account. So every bench that makes its directories this way has a prefix of its
+//! own -- `daemon-file-journal-` here, `daemon-journal-contract-` in `journal_contract_real.rs` -- and
+//! `grep -rhoE 'daemon-[a-z-]+' crates/ | sort -u` lists the ones in use. ⛔ WHAT THE PREFIX KEEPS
+//! APART IS TWO PROCESSES AT ONCE, NOT THE BINARIES OF ONE `cargo test`: that command runs its
+//! test binaries one after the other -- "run serially", `man cargo-test` of the toolchain this
+//! repository pins -- so inside one invocation two files never meet. Two processes do: two
+//! `cargo test` invocations that overlap on one machine, or a runner that starts the binaries
+//! together. ⚠️ AND IT DOES NOT KEEP APART TWO RUNS OF THE SAME FILE: no directory name carries the
+//! process id, so two overlapping runs of one bench share every directory -- whether they should
+//! carry it is the owner's, audit of 2026-09-30, AUD-2127. ⚠️ RECALL OF 2026-10-13 -- same audit,
+//! AUD-1383, AUD-1388, AUD-1390.
 
 use std::io;
 use std::sync::Arc;
@@ -29,8 +38,8 @@ use redb::StorageBackend;
 /// property and a discipline: two call sites cannot share a line number, so the directories
 /// are distinct BY CONSTRUCTION and nobody has to remember to keep the names apart.
 ///
-/// ⚠️ Deliberately not a crate: `tempfile` would be a new entry for eight lines, and
-/// `platform` already names `std`.
+/// ⚠️ Deliberately not a crate: `tempfile` would be a new entry for a helper of a few lines, and
+/// `platform` already names `std`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1391.
 ///
 /// ⚠️ AND IT IS DEFINED UP HERE, NOT NEXT TO THE OTHER HELPERS AT THE BOTTOM: a `macro_rules!`
 /// is visible only AFTER its definition in the file, so a macro written below its callers does
@@ -267,8 +276,9 @@ fn the_storage_backend_is_substitutable_from_outside() {
 fn a_second_journal_on_the_same_file_is_refused_while_the_first_is_open() {
     // ⛔ THE GUARANTEE OUR BACKEND WOULD OTHERWISE HAVE LOST. `redb`'s own file backend takes
     // an exclusive lock, and replacing it with one that does not would drop that protection in
-    // silence — two writers on one write-ahead journal is the corruption ADR-0007 exists to
-    // make impossible.
+    // silence — two writers on one journal would be two cores on one authoritative state, which
+    // ADR-0004's single instance of the core rules out. ⚠️ RECALL OF 2026-10-13 -- audit of
+    // 2026-09-30, AUD-786.
     //
     // ⚠️ THE OTHER DIRECTION IS HELD BY `what_was_written_survives_reopening_the_file`
     // (§7.1.1 rule 3): once the first journal is dropped the lock goes with it, and reopening
@@ -288,6 +298,44 @@ fn a_second_journal_on_the_same_file_is_refused_while_the_first_is_open() {
         Ok(_) => panic!("a second journal on an already open file was accepted"),
     }
     drop(first);
+}
+
+#[test]
+fn a_journal_under_a_directory_that_is_not_there_is_refused_as_a_file_error() {
+    // ⛔ THE OTHER HALF OF WHY `OpenError` EXISTS: "a wrong path and a locked file are exactly
+    // the two things a human has to be able to tell apart", and the locked file is the probe
+    // above. A change that folded the variants, or sent the failure of the open down another arm,
+    // would leave that probe green and turn this one red.
+    //
+    // ⚠️ A DIRECTORY THAT IS NOT THERE, because it fails the same way on both of the project's
+    // systems and needs no privileges -- the road `crates/daemon/src/main.rs` takes to stop its
+    // start-up on a journal that will not open.
+    let dir = private_dir!();
+
+    match FileJournal::open(&dir.join("no-such-directory").join("journal.redb")) {
+        Err(OpenError::File(_)) => {}
+        Err(other) => panic!("refused, but not as a file that would not open: {other:?}"),
+        Ok(_) => panic!("a journal under a directory that is not there was opened"),
+    }
+}
+
+#[test]
+fn a_file_that_is_not_a_journal_is_refused_by_the_engine() {
+    // ⛔ THE THIRD VARIANT, AND THE ONE NO PROBE PROVOKED: the file opens and its lock is taken,
+    // and what refuses is `redb`, on reading what the file holds. Folded into `File`, a human
+    // would hunt a path that is right; folded into `AlreadyOpen`, a second core that is not there.
+    //
+    // ⚠️ THE BYTES ARE NONE OF `redb`'s, and there are enough of them: an EMPTY file is not this
+    // case at all -- the engine takes it for a new archive and writes one into it.
+    let dir = private_dir!();
+    let path = dir.join("journal.redb");
+    std::fs::write(&path, [0xA5_u8; 4_096]).expect("a file that holds no archive");
+
+    match FileJournal::open(&path) {
+        Err(OpenError::Engine(_)) => {}
+        Err(other) => panic!("refused, but not by the engine: {other:?}"),
+        Ok(_) => panic!("a file that is not a journal was opened as one"),
+    }
 }
 
 /// A `redb::StorageBackend` WRITTEN FROM OUTSIDE `platform`, wrapped around the real one and

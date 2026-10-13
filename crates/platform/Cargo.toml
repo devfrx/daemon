@@ -61,9 +61,11 @@ widestring = "1.2.1"
 libc = "0.2.189"
 
 [dev-dependencies]
-# ⚠️ Needed by the CONFORMANCE SUITE, not by this crate: tests/reactor_contract_real.rs
-# `include!`s crates/kernel/tests/reactor_contract.rs, and that file builds a `VirtualReactor`
-# for the two tests it carries with it. A dev-dependency, so it does not enter the shipped
-# graph — and `platform` is outside the ADR-0031 allow-list anyway, which measures `kernel`
-# and `simulator`.
+# ⚠️ Needed by the CONFORMANCE SUITES, not by this crate: the files `tests/*_contract_real.rs`
+# `include!` from crates/kernel/tests/ hold the doubles of `simulator` to the same contract as
+# the real ports, inside this crate's test binaries -- not every one of them, and which is read in
+# the included files: no list and no count is kept here, because they grow. A dev-dependency, so
+# it does not enter the shipped graph — and `platform` is outside the ADR-0031 allow-list anyway,
+# which measures `kernel` and `simulator`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+# AUD-1367, AUD-1368.
 simulator = { path = "../simulator" }

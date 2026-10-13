@@ -53,7 +53,10 @@ impl Rng for SequentialRng {
 
 // ⚠️ A UNIT TEST MODULE IN `src/`, WHERE THIS REPOSITORY OTHERWISE PUTS TESTS IN `tests/`, and
 // the deviation is declared rather than left to be noticed. HOW MANY THERE ARE, AND WHERE, COMES
-// FROM THE COMMAND AND NOT FROM THIS LINE — `grep -rn --include='*.rs' 'mod tests {' crates/*/src/`.
+// FROM THE COMMAND AND NOT FROM THIS LINE —
+// `grep -rnE --include='*.rs' '^\s*mod tests \{' crates/*/src/ gui/fake-core/src/` -- and the
+// anchor is what keeps it blind to the lines that cite it, this one included: a citation sits in
+// a comment. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1137, AUD-1380, AUD-1381.
 // What is worth reading is the REASON, which differs from one to the next and which each of them
 // states for itself. Here it IS a choice, and the reason is
 // `the_counter_wraps_instead_of_overflowing`: it builds `SequentialRng(u64::MAX)` directly, and

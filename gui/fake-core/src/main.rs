@@ -294,8 +294,10 @@ fn spawn_the_console() -> Receiver<String> {
 /// and never `run`, so a wiring that lived inside `main` would be covered by nothing. ⚠️ AND THE
 /// ARGUMENTS ARE THE THINGS A PROBE MUST CHANGE: the CHANNEL, because a channel is machine-wide
 /// and `cargo test` runs in parallel -- with the ACCOUNT it is bound for, which `main` asks of the
-/// system as the daemon does (ADR-0041); the TURN LIMIT, because `serve` never ends; and the
-/// CADENCE, because the reactor here is real.
+/// system as the daemon does (ADR-0041); the TURN LIMIT, because `serve` never ends; the CADENCE,
+/// because the reactor here is real; and the WORDS, because `main` hands the console and a probe
+/// its own keyboard (`a_keyboard`), and without them `degrade` and `verdict` could not be typed
+/// at all. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2053, AUD-2056.
 fn run_the_graph(
     channel: &std::path::Path,
     account: &Account,
@@ -338,9 +340,11 @@ fn run_the_graph(
     executor.spawn(serve(&core, &clock, &sleep));
     executor.spawn(the_faucet(&core, &clock, &sleep, cadence, words, numbers));
     // ⛔ `serve` NEVER ENDS, so this only returns when the turns run out. In `main` the limit is
-    // `u64::MAX`, that is never in practice: the programme is stopped with Ctrl-C, as §7 says —
-    // no clean shutdown in this sub-project (ADR-0007). ⚠️ THE VALUE OF `run` IS NOT AN ORACLE, and
-    // no probe reads it: what a probe reads is the PEER.
+    // `u64::MAX`, that is never in practice: the programme ends when its process is killed -- Ctrl-C
+    // at its console -- because the sub-project 2 design gives this sub-project no clean shutdown:
+    // §5, "si uccide il processo" (ADR-0007), and §9, entry 8, which hands it to sub-project 10.
+    // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2049, AUD-2052. ⚠️ THE VALUE OF `run`
+    // IS NOT AN ORACLE, and no probe reads it: what a probe reads is the PEER.
     let _ = executor.run();
 }
 
@@ -357,6 +361,11 @@ fn main() {
     run_the_graph(&channel, &account, u64::MAX, GUI_TICK, spawn_the_console());
 }
 
+// ⚠️ A UNIT TEST MODULE IN `src/`, AND IT IS FORCED, as the daemon's is: the probes call private
+// functions of a `bin` target -- `run_the_graph` first -- and a file under `tests/` is a crate of
+// its own that can link only a LIBRARY. Which such modules the repository has comes from the
+// command at the daemon's own `mod tests`, which walks this tree too. ⚠️ RECALL OF 2026-10-13 --
+// audit of 2026-09-30, AUD-1381.
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -365,13 +374,23 @@ mod tests {
     // where `cargo build` would report it unused -- `cargo test` compiles the test target alone
     // and would never show the warning.
     use kernel::wire::ipc::build_stamp;
+    // ⚠️ AND ONLY A PROBE APPROVES AN INVOCATION, for the same reason: the programme never speaks
+    // for the gui, so the pieces of an `Approve` reach this file through
+    // `the_client_the_faucet_and_the_invocation_draw_from_one_counter` alone. `MakeRoom` is the
+    // trait `VramPolicy::name` lives on.
+    use kernel::arbiter::{LocalPolicy, MakeRoom};
+    use kernel::serving::POLICY_FUNCTION;
+    use kernel::wire::ipc::{Access, Call, Triple};
 
-    // ⛔ WHAT THE SEALED MODULE LETS OUT, AND IT IS THREE AND NOT TWO -- this comment said two and
-    // "there is no third", and `settling::Peer::new(...)` compiles, measured. The third is
-    // `Peer::new`, and it MUST be reachable because `a_peer_that_says` lives out here and has to
-    // wrap its own thread. What the seal buys is narrower and true: `Peer` carries no way to
-    // REACH the thread inside it (`peer.0` is `E0616`), so `collect_until` is the only place a
-    // peer can be settled. See the doc on `settling`.
+    // ⛔ WHAT THE SEALED MODULE LETS OUT IS EVERY `pub(super)` ITEM IN IT, and which they are is
+    // what `grep -n 'pub(super)' gui/fake-core/src/main.rs | grep -vE '^[0-9]+:[[:space:]]*//'`
+    // answers, not a count here -- the filter keeps comment lines like this one out. This comment
+    // said two and "there is no third", and `settling::Peer::new(...)` compiles, measured:
+    // `Peer::new` MUST be reachable, because `a_peer_that_says` lives out here and has to wrap its
+    // own thread. What the seal buys is narrower and true: `Peer` carries no way to REACH the
+    // thread inside it (`peer.0` is `E0616`), so `collect_until` is the only place a peer can be
+    // settled. See the doc on `settling`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+    // AUD-2055.
     use settling::{Peer, Stopped, collect_until};
 
     // ⛔ EACH PROBE BINDS A CHANNEL OF ITS OWN. A channel is valid for the whole machine and
@@ -471,10 +490,14 @@ mod tests {
     /// first round DELETED it instead of reading it as the defect report it was (gotcha 129).
     ///
     /// ⚠️ IT IS LONGER THAN `A_CEILING` ON PURPOSE: the graph is the thing under test and runs
-    /// `WITH_A_PEER` turns, which costs well under a second per probe (the whole suite is ~2,3 s),
-    /// so ten seconds is a margin of an order of magnitude and still bounds a pathological suite
-    /// to a minute. ⛔ AND IT IS A PROBE'S CEILING, NOT THE PROGRAMME'S: `main` runs the same
-    /// graph with `u64::MAX` turns and must NOT have one -- there the run ends with Ctrl-C (§7).
+    /// `WITH_A_PEER` turns, which costs well under a second per probe -- the wall time of the
+    /// whole suite is measured, dated and commanded beside the fake core's step in
+    /// `scripts/gate-gui.sh`, and lives there -- so ten seconds is a margin of an order of
+    /// magnitude and still bounds a pathological suite to ten seconds a probe. ⛔ AND IT IS A
+    /// PROBE'S CEILING, NOT THE PROGRAMME'S: `main` runs the same graph with `u64::MAX` turns and
+    /// must NOT have one -- there the run ends when the process is killed (§5 of the sub-project 2
+    /// design). ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2049, AUD-2052, AUD-2057,
+    /// AUD-2058.
     const A_GRAPH_CEILING: std::time::Duration = std::time::Duration::from_secs(10);
 
     /// Run the graph to its last turn, or give a verdict saying it did not get there.
@@ -489,7 +512,8 @@ mod tests {
     /// and the sentence that used to excuse it -- *«the process is ending anyway with a failed
     /// probe»* -- was FALSE: measured, after the first red the run went on to five more probes
     /// with their abandoned graphs still alive. What makes it harmless is narrower and measured:
-    /// the six probes bind six DIFFERENT channels, so an abandoned graph steals no channel.
+    /// every probe binds a channel of its own (`a_channel_for`), so an abandoned graph steals no
+    /// channel. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2057.
     ///
     /// ⚠️ THE ACCOUNT IS ASKED ON THE GRAPH'S THREAD, as `main` asks it, for the account the probe
     /// runs as -- the only one a probe of this tool binds for.
@@ -617,16 +641,26 @@ mod tests {
         /// its own peer COMPILED, measured 2026-09-21 (`I-1` of the third review). A rule that
         /// every caller must remember is what failed twice here; the cure is that the compiler
         /// refuses, not that the doc asks.
-        pub(super) struct Peer(std::thread::JoinHandle<Vec<IpcMessage>>);
+        ///
+        /// ⛔ AND IT CARRIES THE PREDICATE THE PEER STOPS ON, for the same reason: `collect_until`
+        /// waits on THAT one and is handed no other, so the two halves of the wait cannot differ.
+        /// Handed separately, they could: a peer told to stop on more than the collector waits for
+        /// is joined while it still reads, and the `join` never returns -- MEASURED on 2026-10-13
+        /// with a probe that handed the two different predicates, killed after sixty seconds; the
+        /// same probe is now `E0061`. ⚠️ THAT IS WHAT IS ENFORCED, AND NOT MORE: `Peer::new` is
+        /// reachable, so a peer built by hand could still carry a predicate its thread does not
+        /// stop on; `a_peer_that_says` hands it the one it stops on. ⚠️ RECALL OF 2026-10-13 --
+        /// audit of 2026-09-30, AUD-2186.
+        pub(super) struct Peer(std::thread::JoinHandle<Vec<IpcMessage>>, Until);
 
         impl Peer {
-            pub(super) fn new(thread: std::thread::JoinHandle<Vec<IpcMessage>>) -> Self {
-                Self(thread)
+            pub(super) fn new(thread: std::thread::JoinHandle<Vec<IpcMessage>>, until: Until) -> Self {
+                Self(thread, until)
             }
         }
 
-        /// Collect what the peer streams until `enough` is satisfied, or the ceiling passes -- and
-        /// then settle with the peer.
+        /// Collect what the peer streams until the predicate it carries is satisfied, or the
+        /// ceiling passes -- and then settle with the peer.
         ///
         /// ⛔ THE HALF OF E110'S CURE THAT WAS MISSED (E116): `a_peer_that_says` says why nothing
         /// closes the connection, so a probe whose predicate can become unsatisfiable must NOT `join`
@@ -641,8 +675,9 @@ mod tests {
         /// expressible: whoever collects hands the peer over, and the settling happens in one place.
         ///
         /// ⛔ THE SETTLING IS CONDITIONAL, AND THE CONDITION IS FREE. If `enough` holds, the peer has
-        /// already left its own loop -- it streams a message BEFORE testing its predicate, so it exits
-        /// at the next test -- and `join` returns AT ONCE, propagating a panic if there was one. Only
+        /// already left its own loop -- `enough` IS its predicate, read off the `Peer`, and it
+        /// streams a message BEFORE testing it, so it exits at the next test -- and `join` returns
+        /// AT ONCE, propagating a panic if there was one. Only
         /// when the ceiling expired is the peer still running, and only then is it dropped. ✅ PROVED
         /// IN BOTH DIRECTIONS, 2026-09-21: as the code stands, six of six; with the peer mutated to
         /// die as soon as its predicate holds, the probes that used to pass IN SILENCE go red.
@@ -671,11 +706,8 @@ mod tests {
         // is given here for every caller, and a red that points at the helper is a red nobody can
         // act on.
         #[track_caller]
-        pub(super) fn collect_until(
-            arrivals: &Receiver<IpcMessage>,
-            peer: Peer,
-            enough: Until,
-        ) -> Vec<IpcMessage> {
+        pub(super) fn collect_until(arrivals: &Receiver<IpcMessage>, peer: Peer) -> Vec<IpcMessage> {
+            let enough = peer.1;
             let mut heard = Vec::new();
             // ⛔ A PREDICATE THAT ALREADY HOLDS ON NOTHING IS NOT AN ORACLE, and since the wait
             // below only tests it after something has arrived, this is the one assumption the
@@ -868,7 +900,7 @@ mod tests {
                 }
             }
             heard
-        }))
+        }), until)
     }
 
     #[test]
@@ -890,12 +922,13 @@ mod tests {
             as_they_come,
         );
         run_the_graph_within(&channel, WITH_A_PEER, Millis::new(0), words);
-        let heard = collect_until(&arrivals, peer, a_full_welcome);
-        // ⚠️ THE FIRST FIVE: one `read` may carry the welcome AND the first token, and the frames
-        // are drained together.
+        let heard = collect_until(&arrivals, peer);
+        // ⚠️ THE WHOLE VECTOR, AND IT IS THE WELCOME: `collect_until` stops at the first message
+        // that satisfies `a_full_welcome`, so what comes back is exactly the five -- a token one
+        // `read` carried along with them stays in the channel. ⚠️ RECALL OF 2026-10-13 -- audit of
+        // 2026-09-30, AUD-2054.
         let kinds: Vec<&str> = heard
             .iter()
-            .take(WELCOME)
             .map(|message| match message {
                 IpcMessage::Accepted(_) => "Accepted",
                 IpcMessage::Degradation(_) => "Degradation",
@@ -1006,8 +1039,10 @@ mod tests {
         // there waits FOR EVER. Measured 2026-09-20: `timeout 90 cargo test degrade_makes` came
         // back `143` after "has been running for over 60 seconds".
         //
-        // ⚠️ ONE PREDICATE HANDED TO BOTH, not two copies: the peer stops on it and the collector
-        // waits for it, and two spellings of the same rule are two things nobody compares.
+        // ⚠️ ONE PREDICATE, HANDED ONCE: the peer stops on it and carries it, and `collect_until`
+        // waits for the one the peer carries. Two spellings of the same rule are two things nobody
+        // compares, and two arguments were two things a caller could make differ. ⚠️ RECALL OF
+        // 2026-10-13 -- audit of 2026-09-30, AUD-2186.
         let two_degradations: Until = |heard| {
             heard
                 .iter()
@@ -1024,7 +1059,7 @@ mod tests {
             as_they_come,
         );
         run_the_graph_within(&channel, WITH_A_PEER, Millis::new(0), words);
-        let heard = collect_until(&arrivals, peer, two_degradations);
+        let heard = collect_until(&arrivals, peer);
         let degraded: Vec<bool> = heard
             .iter()
             .filter_map(|message| match message {
@@ -1033,7 +1068,9 @@ mod tests {
             })
             .collect();
         // ⛔ THE DIAGNOSTIC IS THE COUNT AND THE DECIDING VALUES, NEVER `{heard:?}`: five seconds
-        // of tokens printed whole made a 7,5 MB red, which is unreadable and therefore useless.
+        // of tokens printed whole make a red nobody can read, and therefore a useless one. The
+        // size that red was measured at, on 2026-09-20, lives in `E116` of the sub-project 2
+        // plan, part 2, in one house. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2059.
         assert_eq!(
             degraded,
             [false, true],
@@ -1064,17 +1101,22 @@ mod tests {
             as_they_come,
         );
         run_the_graph_within(&channel, WITH_A_PEER, Millis::new(0), words);
-        let heard = collect_until(&arrivals, peer, a_verdict);
+        let heard = collect_until(&arrivals, peer);
         // ⛔ THE COUNT AND THE DECIDING VALUE, NEVER `{heard:?}` -- see `degrade` for what that
         // cost. ⚠️ AND THE ASSERTION BELOW IS NOW A RESTATEMENT, NOT THE ORACLE: since
         // `collect_until` gives the verdict itself when the predicate does not hold, reaching
         // this line already means a `Verdict` arrived. It is kept because it names, in the probe,
         // what the probe is about -- but what fails a broken run is the predicate, upstream.
+        //
+        // ⚠️ AND WHICH VERDICT IS NOT READ: the predicate asks for A `Verdict`, which is what §7
+        // of the sub-project 2 design asks of this word, so a faucet that sent a fixed `Granted`
+        // without asking the arbiter would pass. The message says only what the probe holds.
+        // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2187.
         let verdicts =
             heard.iter().filter(|message| matches!(message, IpcMessage::Verdict(_))).count();
         assert!(
             verdicts >= 1,
-            "the word `verdict` asks the REAL arbiter and the answer reaches the gui (heard {} messages, {verdicts} of them verdicts)",
+            "the word `verdict` brings a `Verdict` to the gui (heard {} messages, {verdicts} of them verdicts)",
             heard.len()
         );
     }
@@ -1108,7 +1150,7 @@ mod tests {
             as_they_come,
         );
         run_the_graph_within(&channel, WITH_A_PEER, Millis::new(0), words);
-        let heard = collect_until(&arrivals, peer, three_tokens);
+        let heard = collect_until(&arrivals, peer);
         let tokens: Vec<&IpcMessage> = heard
             .iter()
             .filter(|message| matches!(message, IpcMessage::Token { .. }))
@@ -1180,7 +1222,7 @@ mod tests {
         );
         run_the_graph_within(&channel, WITH_A_PEER, Millis::new(0), words);
         drop(hand);
-        let heard = collect_until(&arrivals, peer, a_token);
+        let heard = collect_until(&arrivals, peer);
         // ⛔ THE COUNT, NOT `{heard:?}` -- see `the_tokens_arrive_untrusted`. ⚠️ AND HERE THE
         // ASSERTION IS THE PREDICATE WORD FOR WORD, so it cannot fail on its own: what fails a
         // broken run is `collect_until`, which gives the verdict when the predicate does not hold
@@ -1189,6 +1231,73 @@ mod tests {
         assert!(
             heard.iter().any(|message| matches!(message, IpcMessage::Token { .. })),
             "with nothing typed the faucet still streams (heard {} messages in all)",
+            heard.len()
+        );
+    }
+
+    /// ⛔ THE ONE COUNTER, ON THE GRAPH THIS TOOL RUNS: the transport numbers the client, the
+    /// faucet the step it opens on `degrade`, and the core the steps of an invocation, and the
+    /// three draw from ONE sequence (`kernel::numbering`, §3 of the sub-project 2 design).
+    /// `run_the_graph` copies the daemon's wiring BY HAND (P-68), so the daemon's
+    /// `the_client_and_the_steps_draw_from_one_counter` cannot see this copy: this is its twin,
+    /// with the faucet added.
+    ///
+    /// ⛔ WHAT IT READS IS THE STEP THE INVOCATION OPENS. `degrade` is typed BEFORE the run, so the
+    /// faucet spends it on its first turn -- it opens a step whether or not anybody is attending --
+    /// while the core reads the `Approve` a turn after the `Hello` at the earliest; and the client
+    /// takes its number at `accept`. On one counter, then, the invocation opens step TWO. A counter
+    /// of the transport's own, or of the faucet's, leaves it ONE; one of the core's own puts the
+    /// invocation's steps on numbers the faucet or the client already took, and the invocation is
+    /// refused with no list at all. ✅ MEASURED on 2026-10-13: each of the three mutations red.
+    /// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2236.
+    #[test]
+    fn the_client_the_faucet_and_the_invocation_draw_from_one_counter() {
+        let channel = a_channel_for("counter");
+        let (hand, words) = a_keyboard();
+        hand.send(String::from("degrade")).expect("the word is typed before the run");
+        let triple = Triple {
+            tool: String::from(POLICY_FUNCTION.permission.tool),
+            resource: String::from(POLICY_FUNCTION.permission.resource),
+            operation: Access::Write,
+        };
+        let call = Call {
+            function: String::from(POLICY_FUNCTION.name),
+            argument: String::from(VramPolicy::Local(LocalPolicy).name()),
+        };
+        // ⚠️ IT STREAMS, for the reason every probe here does: the second list is what the
+        // invocation brings -- the welcome carries the first -- and an invocation that is refused
+        // brings none.
+        let a_second_list: Until = |heard| {
+            heard
+                .iter()
+                .filter(|message| matches!(message, IpcMessage::Steps(_)))
+                .count()
+                >= 2
+        };
+        let (as_they_come, arrivals) = mpsc::channel();
+        let peer = a_peer_that_says(
+            channel.clone(),
+            vec![IpcMessage::Hello(build_stamp()), IpcMessage::Approve { triple, call }],
+            a_second_list,
+            None,
+            as_they_come,
+        );
+        run_the_graph_within(&channel, WITH_A_PEER, Millis::new(0), words);
+        let heard = collect_until(&arrivals, peer);
+        let opened: Vec<u64> = heard
+            .iter()
+            .skip(WELCOME)
+            .filter_map(|message| match message {
+                IpcMessage::Steps(list) => Some(list.iter().map(|line| line.step)),
+                _ => None,
+            })
+            .flatten()
+            .collect();
+        assert_eq!(
+            opened,
+            [2],
+            "the client and the faucet took 0 and 1, so the invocation opens 2 -- ONE counter for \
+             the three (heard {} messages in all)",
             heard.len()
         );
     }

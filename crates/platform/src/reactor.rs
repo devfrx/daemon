@@ -70,8 +70,10 @@ impl Reactor for SystemReactor {
         //
         // ⚠️ AND THIS CLOCK CAN GO BACKWARDS — NTP, daylight saving, the user setting it — so
         // two readings taken in order can compare in the opposite order. That is EXACTLY why
-        // §2.1 lets no kernel decision read it: what it feeds is the record (journal stamps,
-        // Q14), never a deadline, a grant window or a timeout. Those read `now()`, above.
+        // §2.1 lets no kernel decision read it: the reader §2.1 names is the record (journal
+        // stamps, Q14), never a deadline, a grant window or a timeout, which read `now()`, above.
+        // ⚠️ AND TODAY THE RECORD DOES NOT READ IT EITHER: it carries no stamp yet, as the doc of
+        // `Reactor::wall_time` says. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1379.
         //
         // ⚠️ AND `as u64` IS THE SAME `u128` TRUNCATION `now()` declares above — said here too
         // rather than left to the reader to notice the symmetry. It is just as unreachable:

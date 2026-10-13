@@ -1,11 +1,9 @@
-//! The real implementations of the ports the kernel declares. Today they are `Journal`
-//! (`journal::FileJournal`), `Reactor` (`reactor::SystemReactor`) and `Rng`
-//! (`rng::SequentialRng`) -- the list is not written here as a fixed set, because milestone 6
-//! adds to it; it comes from
-//! `grep -rEn "^impl (Journal|Reactor|Rng|Filesystem|Network|Process|Ipc) for " crates/platform/src/`,
-//! which answered those three on 2026-08-28. `Rng` is a port of its own and NOT one of the six
-//! families (§2.2): the kernel declares it in `kernel::rng`, outside `kernel::ports`. In
-//! production its randomness is FAKE, deliberately: see `rng::SequentialRng`.
+//! The real implementations of the ports the kernel declares. WHICH they are is not written here
+//! as a list: it comes from the command at the foot of this doc, an enumeration of the port
+//! traits that whoever adds a port extends. `Rng` is a port of its own and NOT one of the families
+//! of `kernel::ports` (§2.2): the kernel declares it in `kernel::rng`, outside `kernel::ports`. In
+//! production its randomness is FAKE, deliberately: see `rng::SequentialRng`. ⚠️ RECALL OF
+//! 2026-10-13 -- audit of 2026-09-30, AUD-1376, AUD-1378, AUD-789, AUD-790.
 //!
 //! ⛔ RECALL OF 2026-08-28, FINDING AUD-022 -- THIS SAID "filesystem, clock, network, processes,
 //! confinement", AND EVERY ONE OF THE FIVE WAS WRONG IN ONE OF TWO WAYS. `clock` and
@@ -17,18 +15,18 @@
 //! `kernel::ports::reactor`, "a separate `clock` family would split one source of virtual time
 //! across two ports" -- so naming it here contradicts a decision instead of merely being stale.
 //! The sentence was a literal translation of the spec's §1.2 cell, written when the crate layout
-//! was decided; the six families were fixed AFTERWARDS in §2.3, and the line was never reread
-//! against them. `kernel::ports` declares six modules: filesystem, ipc, journal, network,
-//! process, reactor.
+//! was decided; the families were fixed AFTERWARDS in §2.3, and the line was never reread
+//! against them -- that day `kernel::ports` declared filesystem, ipc, journal, network, process
+//! and reactor.
 //!
-//! ⚠️ DATED RECALL, 2026-09-17 -- THE OPENING SENTENCE, the one that lists `Journal`, `Reactor` and `Rng`, IS
-//! FALSE FROM THIS TASK: `ipc::LocalSocketIpc` is the fourth. The `grep` above DOES find it -- `Ipc` is one of the names it
-//! enumerates -- so the two halves of that sentence now contradict each other, which is why the prose is
-//! dated here rather than left to be believed. The count is deliberately NOT rewritten into the sentence:
+//! ⚠️ DATED RECALL, 2026-09-17 -- THE OPENING SENTENCE, which then listed `Journal`, `Reactor` and `Rng`, WAS
+//! FALSE FROM THAT TASK: `ipc::LocalSocketIpc` was the fourth. The `grep` it handed over DID find it -- `Ipc` was one of the names it
+//! enumerated -- so the two halves of that sentence contradicted each other, which is why the prose was
+//! dated here rather than left to be believed. The count was deliberately NOT rewritten into the sentence:
 //! the command answers it, and a figure inside prose is gotcha #31.
 //!
-//! ⛔ DATED RECALL, 2026-09-18 -- THE SENTENCE ABOVE CALLED ITSELF "not written here as a fixed set" AND IT WAS
-//! ONE. The `grep` it hands over ENUMERATES SEVEN TRAIT NAMES, so it can never answer with a
+//! ⛔ DATED RECALL, 2026-09-18 -- THE OPENING SENTENCE CALLED ITSELF "not written here as a fixed set" AND IT WAS
+//! ONE. The `grep` it handed over ENUMERATED SEVEN TRAIT NAMES, so it could never answer with a
 //! family added later: `Custody` -- the seventh port, §2 of the GUI north star -- was invisible
 //! to it the moment `custody::FileCustody` existed. Measured, not reasoned. ⛔ AND THE CURE IS
 //! NOT AN OPEN REGEX, which was measured too: `^impl [A-Za-z_]+ for ` catches `StorageBackend for

@@ -9310,3 +9310,219 @@ dell'integrazione: un correttore non si riprende da un'altra sessione; si misura
 e i rami `repo-audit-pacchetti/20260930-1510/P32`, `P37` e `P38`, si salvano gli esiti che ci sono (C20), e si chiede
 al proprietario se rilanciare. `daemon_kit/` è nascosto in `.git/info/exclude` (P16), con la sua riga da togliere alla
 chiusura.
+
+## La consegna del terzo audit, com'era — archiviata il 2026-10-13, alla chiusura della sessione della ripresa
+
+Da [`audit-2026-09-30.md`](../audit-2026-09-30.md), sezione *«Come si riprende — scritto alla chiusura della sessione del 2026-10-09: l'ondata 13, la prima dei bassi»*, parola per parola
+
+1. `git fetch --all --prune`, poi `git status -sb`. Si lavora su `main` (P17). Il ramo `repo-audit/20260930-1510` resta
+   su `origin`, coi suoi commit tutti nella storia di `main`: toglierlo è una scelta del proprietario, e nessuno l'ha
+   chiesta.
+2. Lo stato del run è in `.repo-audit/20260930-1510/`, **solo sulla macchina del run**, `jays` — lo dice
+   `hostname` —, e serve alla P8: il `ledger.json` porta i bassi della P8 e gli esiti che le tabelle nominano; `fase6_tabelle.py` rigenera *«I pacchetti»*
+   e *«I finding»* in `fase6-tabelle.md` e controlla che ogni numero citato abbia la sua riga, e `fase6_omonimi.py` è
+   l'osservazione 8; `pacchetti-bassi.json` porta la composizione dei bassi, C46.
+3. **Fatto fra il 2026-10-08 e il 2026-10-09: il lancio della P8 e l'ondata 13, la prima dei bassi** — la consegna
+   della composizione, col punto fermo della mattina, è in [`archivio/stato-storico.md`](stato-storico.md),
+   parola per parola. La preparazione in `7b48b89`: `bassi_triage.py --scrivi` e `consolida_p8.py --scrivi` — 133
+   bassi `rinviato`, AUD-2258 `decisione` —, le due tabelle con `bassi_tabella.py` (C47), `valida_ondate.py`, il ramo
+   portato a `main`. Poi `prepara --ondata 13` sulla base `7b48b89`; i tre correttori su `opus`, P37, P32 e P38,
+   fermati dalla sospensione della macchina e ripresi la mattina dopo con `SendMessage` (C24), con le copie di P32 e
+   P38 ricreate negli stessi percorsi; `integra.py` — i tre integrati, ciascuno col cancello intero verde, in 15
+   minuti —; `messaggi_ondata_13.py` (C17) — `4d443c8` per P37, `b3bc3e2` per P32, `6f2c3d5` per P38 —; il push, e
+   la CI verde sulla punta, la corsa 832; le tre riverifiche su `sonnet`; `consolida_p8.py`, che ora ammette i finding
+   nuovi delle riverifiche dei bassi (C48): **112** bassi da `aperto` a `corretto` — 54 di P37, 41 di P32, 17 di P38
+   —, gli `aperto` da 1071 a 959, e **otto finding nuovi**, tutti bassi, da AUD-2270 ad AUD-2277, `da_verificare`;
+   di nuovo `bassi_tabella.py`. Il costo, ~5,2M, in *«Il costo»*. Correttore e riverifica non coincidono su tre —
+   AUD-1240 di P32, AUD-735 e AUD-1094 di P38, che la riverifica dà risolti e il messaggio del commit no —: vale il
+   ledger, e il messaggio non si riscrive (la regola dell'ondata 4).
+4. **Come si chiude un ↪**, deciso alla prima chiusura: nel `ledger.json` il finding resta `rinviato` e prende il campo
+   `lean_docs` col lotto, `"lotto 2"`; `fase6_tabelle.py` lo rende `✅ lean-docs, lotto 2`, e la sua riga si
+   sostituisce nel rapporto dopo aver visto che la tabella rigenerata differisce da quella del rapporto solo lì; la
+   legenda in testa a *«I finding»* lo dice. Il `ledger.json` è JSON con `indent=1`, `ensure_ascii=False`, CRLF e senza
+   a-capo finale: si riscrive solo dopo aver asserito che rileggerlo e riscriverlo dà gli stessi byte. Nessun ↪ resta oggi:
+   AUD-545, l'ultimo, l'ha chiuso il lotto 6, e i 133 bassi della R5 lo diventano quando `bassi_triage.py --scrivi`
+   scrive la loro decisione `rinviare`. ⛔ **E il campo `lean_docs` lo cancella `ledger.py consolida` da solo**,
+   che ricalcola il ledger dagli esiti: misurato il 2026-10-08 su una copia del run, otto finding. Si consolida con
+   `consolida_p8.py`, che lo salva prima e lo rimette dopo (C44).
+5. ✅ **Il `lean-docs` della R5 è chiuso**, coi suoi sei lotti — li elenca la sua consegna, in archivio —, e il
+   prossimo passo è il punto 6. Il
+   metodo resta qui per chi lo riprende — i 133 bassi della R5 che la P8 ha confermato, dopo l'ondata 20 (punto 6) —: non è un pacchetto di
+   correzione, e il commit di un sorgente parte sul verde di `bash scripts/gate.sh`, da solo. Il metodo è quello della R5
+   e delle passate del 2026-09-23 e 24, nel loro [verbale](../superpowers/specs/2026-09-23-ridimensionamento-lettura-design.md):
+   niente si cancella; la storia — che cosa diceva, chi l'ha trovato, come — va in archivio parola per parola, coi link
+   riscritti per la cartella; nel documento vivo resta la riga del richiamo: la data, ciò che è vero adesso, dove vive la
+   storia. Comprimere non è correggere: una contraddizione in un'unità viva si segna e si elenca, e non si risolve — la
+   decisione 11 di quel verbale.
+
+Ogni lotto: la fotografia dei file in `.lean-docs/prima/`, che `.git/info/exclude` già nasconde, copiati dall'albero
+di lavoro pulito — `git show HEAD:` li darebbe LF, e gli strumenti asseriscono i fine-riga di ciascun file —; la lettura per intero, e l'inventario delle storie; la destinazione in archivio — dove il file ne ha già una,
+quella: [`archivio/stato-storico.md`](stato-storico.md) per il compendio e per `HANDOFF.md`,
+[`archivio/porta-di-qualita-storico.md`](porta-di-qualita-storico.md) per la porta,
+[`archivio/riferimenti-storico.md`](riferimenti-storico.md) per `riferimenti.md`,
+[`archivio/sottoprogetto-1-kernel-storico.md`](sottoprogetto-1-kernel-storico.md) per la spec del
+sotto-progetto 1, [`archivio/adr-storico.md`](adr-storico.md) per gli ADR,
+[`archivio/sorgenti-storico.md`](sorgenti-storico.md) per i sorgenti; dove non l'ha, la si chiede
+al proprietario prima di creare un file —; lo spostamento in Python, con `newline=""` e `os.replace` (gotcha #82), e i
+fine-riga rimisurati; la verifica: `misura.py` della skill col file vivo **e** l'archivio nel `--dopo`, ogni blocco
+archiviato confrontato con l'originale, il vivo con la fotografia coi soli tagli, le domande di controllo — risponde il coordinatore, che è la prova più debole, e
+lo si dichiara —, e `bash scripts/check-docs.sh`; il commit e il push. ⚠️ Un ↪ che il lotto chiude si aggiorna
+come dice il punto 4.
+
+📌 **Ciò che i lotti 1–6 hanno insegnato, per chi riprende il metodo.** I tagli si provano prima a secco: uno script che trova ogni
+testo vecchio una volta sola e dice i byte che libera; poi si scrivono. Il confronto dei blocchi archiviati si fa con
+la fotografia, a meno dei link riscritti per la cartella — anche quelli verso `archivio/`, che perdono il prefisso. L'archivio
+[`archivio/stato-storico.md`](stato-storico.md) è CRLF in testa e LF in coda: si accoda in LF, e il conto dei
+CR resta quello di prima. La riga della data in testa al compendio si aggiorna, e quella di prima va in archivio. E la
+domanda al proprietario può essere una sola, con la lista dei tagli e la B «uno per volta»: il 2026-10-07 ha scelto
+così, anche per le due righe della sua tabella. Dal lotto 2: le specie di taglio sono tre — la **storia** di una riga,
+che esce senza lasciare altro; la **metà falsa** che un richiamo corregge, che esce col suo richiamo e lascia nel vivo il
+vero, col richiamo e «com'era, in archivio», ma solo nelle sezioni che dicono lo stato di oggi, perché in una sezione
+chiusa il testo vecchio è un verbale datato e resta; la **cronaca** o la **copia** di un'altra casa, solo dove un finding
+la nomina. La lista dei tagli va in un file di `.lean-docs/`, che il proprietario apre dall'app. Dalla parte 2: in una
+tabella di lezioni le storie sono poche, e il confine è uno — esce la storia di una correzione del testo della voce
+stessa, *«questa riga diceva»*, *«clausola salvata dalla §9»*, la marca di uno stato che non è più vero; restano le
+occorrenze, le cure, e la frase vecchia quando è il reperto della lezione che la voce ne trae. Un lotto che tocca la
+riga di un altro file vivo — lì la §9 del compendio — porta due domande in una chiamata sola, i tagli e la riga: il
+2026-10-07 il proprietario ha scelto il consiglio in tutte e due. Il conto dei token si prende prima e dopo nella
+stessa sessione, col comando di `CLAUDE.md`: quello del verbale della parte 1 diverge di una cinquantina di token.
+Dal lotto 3: tre file in un lotto solo vogliono uno script coi tagli per file, e la verifica rifà ogni file vivo e
+l'archivio; le righe di un messaggio fra recinzioni si archiviano fra recinzioni, come stavano — il precedente
+dell'ondata 10 —, e `misura.py` segnala allora come àncora persa l'intero blocco recintato, che il lotto accorcia
+dentro: lo giustifica la verifica dei blocchi. In un file che dice il perché delle sue righe, come `AVVIO-CHAT.md`, il
+confine della parte 2 regge: esce la storia di un numero o di uno stato del testo stesso, la specie del #31 e del #68;
+resta la storia che è il reperto della lezione della sua sezione. Più richiami sulla stessa riga diventano una riga
+sola, con tutte le date. Un taglio che rende falsa la regola di un altro file — lì una riga di `CLAUDE.md` — porta la
+seconda domanda nella stessa chiamata, come la §9 nella parte 2: il proprietario l'ha voluta segnata e lasciata. Gli
+strumenti sono nella cartella del run: `lotto3_tagli.py`, coi tagli per file e un modo per ciascuno — testo, citazione
+o recinzione —; `lotto3_verifica.py`; `lotto3_ledger.py`, che chiude i ↪ nel ledger dopo aver asserito che rileggerlo
+e riscriverlo dà gli stessi byte, e con `--rapporto` sostituisce le sole righe che la tabella rigenerata cambia; e
+`lotto3_note.py`, la passata e l'osservazione. Per un lotto nuovo si rifanno cambiando i file, i tagli — inizio, fine,
+colla, modo —, i titoli e lo SHA; rilanciati come sono si fermano da sé, o non cambiano niente.
+Dalla parte 1 del lotto 4: un file già compresso tiene poche storie, e si trovano elencando i richiami col testo che li
+segue, e leggendo la riverifica del pacchetto che li ha scritti, che dice quali superano la riga. Un richiamo lungo che
+porta la storia esce; uno che porta solo il vero di oggi e dove sta la storia resta, anche lungo — lì la tabella `G`.
+L'archivio della porta tiene già il file com'era il 2026-09-24, quindi le storie di prima sono già lì, ed escono quelle
+scritte dopo; ed è CRLF integrale, e la coda si accoda in CRLF. `misura.py` prende anche dei file: nel `--prima` vanno i
+soli due del taglio, perché la fotografia porta anche `riferimenti.md` e il rapporto. Gli strumenti sono
+`lotto4a_tagli.py`, `lotto4a_verifica.py` e `lotto4a_note.py`, rifatti per la parte 2.
+Dalla parte 2 del lotto 4: un registro di misure tiene poche storie — quattro su 3488 righe —, perché le sue
+«divergenze registrate» e le sue prove scartate sono la lezione e non la storia di una correzione: il confine l'ha deciso
+il proprietario su AUD-639, e vale per i file della stessa specie. Un archivio nuovo lo crea lo script dei tagli, con la
+sua testa e nei fine-riga del vivo, e si ferma se esiste già; la verifica confronta la testa dopo la riscrittura dei
+link. Quando la passata va nello stesso file dei tagli, prima i tagli e poi la passata, e la verifica ricostruisce il
+vivo dalla fotografia coi tagli **e** con la passata; il conto dei token si prende coi soli tagli, e la passata lo
+dichiara. La riga del richiamo può pesare più della storia che sostituisce — il taglio T4, quattordici byte in più —: la
+R5 dice dove vive la storia, non quanti byte si risparmiano. Gli strumenti sono i `lotto4b_*.py` — `_tagli`,
+`_verifica`, `_note`, `_ledger`, `_consegna` —, rifatti per il lotto 5.
+Dal lotto 5: in una tabella di stato la storia e il vero di oggi stanno nella stessa cella, intrecciati. Il taglio prende
+il richiamo scritto prima del terzo audit **e** la metà che correggeva, e la colla rimette il vero di oggi con le parole
+della cella; un fatto che la colla tiene al presente si rilancia prima di scriverlo — il 2026-10-07 le chiamate a
+`journal.replay()` di `V24` erano cresciute, e nel vivo è restata la sola conclusione, ancora vera. I richiami del terzo
+audit restano: hanno già la forma della R5. In una tabella letta per posizione, la prova che stato e innesco non
+cambiano è l'impronta delle colonne dell'identificativo, dello stato e dell'innesco, col numero delle colonne, prima e
+dopo; e nessuna colla porta un tubo. Tre file in tre cartelle vogliono i link riscritti risolvendoli dalla cartella di
+ciascuno, non da `docs/`. Una sezione intera, come la §10 del 2, si archivia nella forma delle consegne — la testa, la
+recinzione, il testo com'era —, e il suo titolo resta nel vivo con la riga del richiamo: così i rimandi «la §10» degli
+altri file passano da lì. Un ADR si taglia solo col sì del proprietario, paragrafo per paragrafo, e l'archivio degli ADR
+è uno per tutti. La verifica si prova anche al contrario: un carattere cambiato in un archivio, in un vivo e nella
+consegna archiviata la fa rossa, e i file tornano byte-identici. Gli strumenti sono i `lotto5_*.py` — `_tagli`,
+`_verifica`, `_note`, `_ledger`, `_consegna` —, rifatti per il lotto 6.
+Dal lotto 6: nei sorgenti il taglio va a righe intere — l'inizio e la fine sono frammenti unici, che lo script allarga
+alla loro riga —, e la colla porta il rientro e il segno di commento della prima riga del taglio, che lo script
+asserisce: dentro un `impl` i commenti hanno quattro spazi, e la prima bozza li aveva persi. Il testo vivo che la colla
+rimette si controlla con le parole nuove che lo script stampa per ogni taglio: devono essere quelle del richiamo e poco
+altro. Nell'archivio i blocchi stanno in recinzioni `rust`, e la verifica li confronta riga per riga; `misura.py` non
+legge il codice, e lo si dichiara: sui sorgenti la prova meccanica in più è il cancello. `trybuild` non scrive nei
+`.stderr` i numeri di riga dei sorgenti della crate, quindi tagliare un sorgente non li tocca; i file di
+`tests/compile_fail/` sì, e il lotto non li ha toccati. Ogni numero citato vuole la sua riga in *«I finding»*: il lotto
+5 citava AUD-1553 senza, e `lotto6_ledger.py --rapporto` l'ha aggiunta nel posto della tabella rigenerata. Gli
+strumenti sono i `lotto6_*.py` — `_tagli`, `_verifica`, `_ledger`, `_note`, `_consegna`.
+
+⛔ **Registrati, non presi (P20): gli altri documenti vivi.** Quali tengano storie lo dice per approssimazione questo
+comando, che conta le righe con le parole dei richiami e non le storie:
+
+```
+for f in $(find docs -name '*.md' -not -path 'docs/archivio/*' -not -path 'docs/superpowers/plans/*'); do printf '%s %s\n' "$(grep -c -i 'richiamo del\|diceva\|questa riga\|questa cella' "$f")" "$f"; done | sort -rn | head -25
+```
+
+Fra loro la tabella delle voci X del [rapporto del 2026-08-27](../audit-2026-08-27.md), che `CLAUDE.md` fa leggere a ogni
+apertura: le voci chiuse vi tengono la storia nella cella, e che cosa si legge all'apertura lo decide il proprietario.
+
+6. **Il prossimo passo**, dopo il `lean-docs`, nell'ordine della P19, ciascuno nelle sue sessioni:
+   1. **la P8, il passaggio fra la 13 e la 14, e l'ondata 14** — P35, P34 e P36, tre di codice —, poi le altre, una o
+      più per sessione, finché il contesto regge:
+      - **il passaggio**, sulle note lette intere — i tre esiti e le tre riverifiche dell'ondata 13, in
+        `esiti/correzione/` e in `esiti/riverifica/` —: **37 residui**, 8 di P37, 20 di P32 e 9 di P38, ciascuno al
+        pacchetto di un'ondata dopo che ha il suo file. La mappa la dà `bassi_case_residui.py 13`: 34 hanno una casa —
+        una sola all'ondata 14, AUD-735 in P36, che la riverifica dà già risolto —, e 3 no: `gui/src/tokens/base.css`,
+        `gui/src/frame/Overview.vue` e `gui/src/stores/stores.test.ts`, case di P37, già integrato; `base.css` va
+        corretto insieme a `token.html`, in P47, o `board.test.ts` va rosso. ⛔ **Il meccanismo è da scrivere**: dopo
+        `bassi_triage.py --scrivi`, `componi_pacchetti.py --scrivi` non si rilancia, quindi la tabella dei residui dei
+        bassi vive in uno script nuovo, che porta il testo nella nota della casa e il file fra i suoi `file`, prima di
+        `valida_ondate.py`; si prova nelle due direzioni prima di `prepara --ondata 14`;
+      - **le scelte aperte dell'ondata 13**, in `triage.json` come `decisione` e nella tabella di *«Le scelte
+        aperte»* (C32): di P37 AUD-2125, AUD-2061, AUD-2068 e AUD-2076; di P38 AUD-731 con AUD-732, AUD-1128,
+        AUD-2124, AUD-733 e AUD-2215, più AUD-1092, che la riverifica dà come scelta e il correttore come residuo;
+        poi al proprietario, una alla volta, ciascuna con la sua A/B dall'esito;
+      - **gli otto bassi nuovi**, da AUD-2270 ad AUD-2277: un lotto loro con `lotto_verifica.py` (C41) e un
+        verificatore su `sonnet`, col costo detto prima, perché un basso non entra in un pacchetto senza (P6);
+      - **le osservazioni fuori dai finding**, nelle note intere dei sei agenti, ciascuna a una `NOTE`, o scritta
+        perché no — fra loro: «ONLY the record reads it» in `crates/kernel/src/time.rs`, «four of them have no caller
+        yet» in `crates/kernel/src/ports/mod.rs`, il `grep` non ancorato in `process.rs`, la riga di P-100 in
+        `riferimenti.md`, «nel repository tutto è LF» in `audit-2026-08-27.md`, e tre commenti che rimandano a una
+        scelta aperta col solo numero — `BigTab.ts`, `Confirm.vue`, `tokens/index.ts`;
+      - **il costo dell'ondata 14, prima del lancio** (P6): ~4,7M dalla retta, banda ~3,8–5,6M, e circa due ore e
+        mezza; l'ondata 13 l'ha confermata, ~4,0M senza la ripresa contro ~4,4M stimati;
+      - **il ciclo di un'ondata**, com'è andato nella 13: la riga di `daemon_kit/` in `.git/info/exclude` (P16),
+        perché `prepara` vuole l'albero pulito; la sveglia di C35 con `[uint32]2147483649`, il ritorno letto prima di
+        lanciare, e al proprietario il coperchio aperto; `prepara --ondata K`; i correttori su `opus` col prompt di
+        `prompt_ventaglio.mjs ventaglio-audit.js correzione …`; finiti, le copie tolte e i rami `worktree-agent-*`
+        senza commit propri cancellati (C16, C20); `integra.py --ondata K`; `messaggi_ondata_K.py`, rifatto da
+        `messaggi_ondata_13.py` coi titoli scritti letti gli esiti; il push del ramo, `main` portato avanti con
+        `git push . repo-audit/20260930-1510:main` e spinto; le riverifiche su `sonnet` col prompt della
+        `riverifica`; `consolida_p8.py` a secco e `--scrivi`; `bassi_tabella.py --scrivi`;
+      - **dopo l'ondata 20, i lotti del `lean-docs` per i 133 bassi della R5**, col metodo del punto 5 e una domanda
+        al proprietario per lotto; per i sorgenti la destinazione è
+        [`archivio/sorgenti-storico.md`](sorgenti-storico.md).
+      Da sapere: il residuo di AUD-1304 sta nella nota di P46; AUD-1762 è in P52, AUD-2268 in P33 e AUD-2269 in P31;
+      AUD-2258 è in *«Le scelte aperte»*.
+   2. **il piano dei documenti della revisione della knowledge base**, coi pre-controlli riletti sul testo corretto,
+      come dice la §6 del compendio.
+
+   Fra un passo e l'altro, *«Le scelte aperte»* al proprietario, una alla volta, ciascuna con la sua A/B. Quando la §6
+   del compendio smetterà di nominare questo rapporto, la §12 ne prende la riga, come per quello del 2026-08-27, col
+   margine del tetto misurato prima; il README la porta dal 2026-10-07.
+7. Gli script si lanciano con `PYTHONUTF8=1`. ⛔ Non rilanciare `ledger.py da-verificare`: cancellerebbe i lotti senza
+   esito; né `ledger.py evidenze`: riscriverebbe `evidenze.json` sui testi già corretti (C41); né
+   `ledger.py consolida` da solo: cancellerebbe il campo `lean_docs` di otto finding, e si consolida con
+   `consolida_p8.py` (C44). ⛔
+   `componi_pacchetti.py --scrivi` e `valida_ondate.py` riscrivono tutte le specifiche: si lanciano solo prima di un
+   pacchetto nuovo; ⛔ e dopo `bassi_triage.py --scrivi`, `componi_pacchetti.py --scrivi` non si rilancia
+   più: riscriverebbe pacchetti, ondate e `dopo` con la sola Fase 4, e i P31-P52 sparirebbero.
+   ⛔ `messaggi_ondata_2.py` … `messaggi_ondata_12.py` non si rilanciano: `origin` porta ora i commit
+   che riscrivevano, e ciascuno si ferma da sé. `archivia_p25.py`, `archivia_p27.py`, `archivia_p30.py`,
+   `passaggio_10_11.py`, `passaggio_11_12.py`, `verificati_12.py`, `residui_p30.py` e `nota_riverifica_12.py` si
+   fermano da sé se rilanciati. `prova_valida_ondate.py`, `prova_fatto.py` e `lotto_verifica.py` senza `--scrivi` si
+   rilanciano quando si vuole: lavorano su copie del run, o in memoria; e `decisioni_ondata_5.py` …
+   `decisioni_ondata_11.py` senza danno: ciò che è già fatto si salta. I `fase5_*.py` e i `fase6_*.py` non toccano il
+   repository, e si rilanciano quando si vuole. `lotto2_tagli.py`, `lotto2_verifica.py`, i `lotto2b_*.py`, i
+   `lotto3_*.py`, i `lotto4a_*.py`, i `lotto4b_*.py`, i `lotto5_*.py` e i `lotto6_*.py` si lanciano dalla radice del
+   repository, e rilanciati si fermano da sé — `lotto3_ledger.py`, `lotto4b_ledger.py`, `lotto5_ledger.py` e
+   `lotto6_ledger.py` senza `--rapporto` riscrivono lo stesso ledger, e le `_verifica.py`
+   vogliono la fotografia in `.lean-docs/`, che a lotto chiuso non c'è più —; i `_tagli.py` senza `--scrivi` scrivono
+   solo in `.lean-docs/`. `lotti_bassi.py` e `consolida_p8.py` senza `--scrivi` si rilanciano quando si vuole: il primo
+   stampa — su file: in `| head` Windows lo ferma con `OSError` —, il secondo lavora su una copia del run.
+   `controlla_risolti_p8.py` si rilancia quando si vuole, e scrive solo il suo resoconto; `p8_tabella.py` senza
+   `--scrivi` rigenera `fase6-tabelle.md` e non tocca il rapporto, e con `--scrivi`, a lavoro fatto, non cambia
+   niente. `p8cal_consegna.py`, `p8m1_consegna.py`, `p8m2_consegna.py` e `p8comp_consegna.py` si fermano da sé.
+   `bassi_componi.py` senza `--scrivi` si rilancia quando si vuole, e con `--scrivi` si ferma se
+   `pacchetti-bassi.json` esiste; `bassi_triage.py --prova` lavora su una copia, e `--scrivi` si ferma se
+   `triage.json` porta già P31. `bassi_tabella.py` senza `--scrivi` si rilancia quando si vuole, e con `--scrivi`, a
+   lavoro fatto, non cambia niente; `bassi_case_residui.py` non scrive; `messaggi_ondata_13.py` si ferma da sé,
+   perché `origin` porta già i commit che riscriveva; `ondata13_consegna.py` si ferma da sé.
+8. Il controllo di non intrusione: `git status --porcelain` non mostra niente dell'audit. `daemon_kit/`, non
+   tracciato, è dell'altra sessione del proprietario (P16): la riga che lo nasconde durante un'ondata si toglie
+   alla chiusura, e il 2026-10-09 è tolta.
+9. Alla chiusura della prossima sessione: questa sezione in [`archivio/`](stato-storico.md), parola per
+   parola, la nuova al suo posto, e il commit su `main`, col push.

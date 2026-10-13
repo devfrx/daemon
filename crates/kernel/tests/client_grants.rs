@@ -1,11 +1,17 @@
 //! ADR-0033: "if the GUI dies holding an ordinary grant, the core notices from the IPC
 //! DISCONNECTION and reconciles". This is that reconciliation, seen from outside the crate.
 //!
-//! ⛔ THE BASELINE IS NEVER ZERO IN THIS FILE, and it is the assertion and not the setup. "The
-//! sum comes back to baseline" is green for a reconciliation that releases EVERYTHING when the
-//! baseline is zero, so every probe here builds a grant SOMEBODY ELSE holds first — the core's
-//! own presentation quota of ADR-0033 is the model — and asserts the books still carry it
-//! afterwards.
+//! ⛔ THE BASELINE IS NEVER ZERO IN THIS FILE, and it is the assertion and not the setup: every
+//! probe here builds a grant SOMEBODY ELSE holds first — the core's own presentation quota of
+//! ADR-0033 is the model — and asserts the books still carry it afterwards. ⚠️ WHAT IT WATCHES
+//! IS THE ARBITER'S BOOKS, NOT THE RECONCILIATION'S CHOICE: the core's grant is never registered
+//! in `ClientGrants`, and `Grant` is neither `Clone` nor `Copy` while `Arbiter::release` takes it
+//! by value, so no `on_disconnect` can reach it — one that released EVERY pair it holds leaves
+//! the baseline standing. What the baseline sees is the books losing a reservation nobody
+//! handed back: a release or a sweep that takes more than the grant it was given. The witness
+//! against "released everything" is the SURVIVOR of the second probe, a client registered in the
+//! same `ClientGrants` — the two witnesses `crates/simulator/tests/gui_death_campaign.rs` keeps
+//! apart. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2138.
 //!
 //! ⚠️ WHAT THIS FILE DOES NOT HOLD, said rather than assumed: it never touches the `ipc` port.
 //! `ClientGrants` answers a disconnection; SEEING one is the business of whoever polls `send`
@@ -176,12 +182,13 @@ fn a_disconnect_gives_back_only_that_client_s_grants() {
     );
 
     // ⛔ AND IT IS STILL REGISTERED, which the sum alone does not say -- MEASURED on 2026-09-02
-    // rather than argued. The shape this file's own doc warns against, `drain(..)` with the
-    // non-matching pairs never put back, releases exactly the right grants and leaves the books
-    // exactly right: it passes every assertion above and dies HERE, because the survivor's pair
-    // was thrown away with the dead client's and its reservation can never come home. It is
-    // therefore a different axis from "released everything", which dies on the first assertion
-    // of this probe (gotcha #55).
+    // rather than argued. The shape this assertion kills, `drain(..)` with the non-matching pairs
+    // never put back, releases exactly the right grants and leaves the books exactly right: it
+    // passes every assertion above and dies HERE, because the survivor's pair was thrown away
+    // with the dead client's and its reservation can never come home. It is therefore a
+    // different axis from "released everything", which dies on the first assertion of this
+    // probe (gotcha #55). No doc of this file or of `ClientGrants` names that shape: this
+    // comment is where it is written. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1284.
     assert_eq!(
         clients.on_disconnect(survivor, &mut arbiter, Monotonic::ORIGIN),
         Ok(vec![Released::Now(GUI_QUOTA)])

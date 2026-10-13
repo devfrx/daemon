@@ -9,8 +9,8 @@
 // the guarded field hidden, the unguarded one wide open.
 //
 // ⛔ THIS CASE REPORTS BY COMPILING, which is the strong shape (gotcha #42): put the signature
-// back to `&str` and this file COMPILES, and trybuild reports "expected compilation to fail"
-// outright instead of through its oracle. A bulk `TRYBUILD=overwrite` cannot disarm it.
+// back to `&str` and this file COMPILES, and trybuild reports `error` — "Expected test case to
+// fail to compile, but it succeeded." — outright. A bulk `TRYBUILD=overwrite` cannot disarm it.
 //
 // ⚠️ THE OTHER DIRECTION IS NOT HERE, and that is deliberate rather than missing: that a
 // literal still promotes and still prints is held by `tests/boundary_promotion.rs`, which runs
@@ -57,3 +57,7 @@ fn main() {
         .promote(&mut journal, step, smuggled.as_str())
         .expect("promote");
 }
+
+// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1293: the quotation at the top is
+// trybuild's own message (`message.rs`, trybuild 1.0.120). The note sits down here because the
+// oracle next door quotes the lines of `main`.

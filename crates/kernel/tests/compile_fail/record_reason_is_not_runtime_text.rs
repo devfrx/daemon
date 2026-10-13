@@ -29,8 +29,10 @@ fn main() {
 // ⛔ THIS CASE REPORTS BY COMPILING, which is the strong shape (gotcha #42): widen EVERY
 // `reason: &'static str` in `crates/kernel/src/record.rs` — every species constructor AND the
 // private `of` they all go through — back to `&str`, and this file COMPILES, with trybuild
-// reporting "expected compilation to fail" outright instead of through its oracle. A bulk
-// `TRYBUILD=overwrite` cannot disarm it.
+// reporting `error` — "Expected test case to fail to compile, but it succeeded." — outright
+// instead of through its oracle. A bulk `TRYBUILD=overwrite` cannot disarm it. ⚠️ RECALL OF
+// 2026-10-13 -- audit of 2026-09-30, AUD-1293: the quotation is trybuild's own (`message.rs`,
+// trybuild 1.0.120).
 // ⛔ THE NUMERAL IS GONE AND NOT REALIGNED. This line said "ALL FIVE — the four species" on
 // 2026-09-01, and the NEXT commit of that same day added the fifth species: the sites became six
 // while the recipe still said five, so taking it at its word produces the very `E0521` it exists

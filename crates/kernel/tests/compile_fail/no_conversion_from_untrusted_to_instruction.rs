@@ -41,5 +41,10 @@ fn main() {
 // pair — `untrusted_as_instruction.rs`, at the foot of the file. Both oracles moved for the one
 // reason, and a residual kept in two places is a residual that goes stale in one.
 //
-// ⛔ THE NOTE IS DOWN HERE ON PURPOSE: the oracle above quotes LINE 37 of this file, so a
-// paragraph added at the top would move the code and break it. Whoever writes here appends.
+// ⛔ THE NOTE IS DOWN HERE ON PURPOSE: the oracle above quotes the line of the conversion, so a
+// paragraph added at the top would move the code and break it. Whoever writes here appends. The
+// number lives in the `.stderr` alone (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1288).
+//
+// ⚠️ THE OTHER DIRECTION IS NOT HERE: that the one road which IS allowed, `Untrusted::promote`,
+// compiles and leaves its record is held by `tests/boundary_promotion.rs`, which names this case
+// back. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1279, AUD-1283.

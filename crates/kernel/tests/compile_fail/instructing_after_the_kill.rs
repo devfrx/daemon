@@ -10,16 +10,16 @@
 // case ever reached the one it exists to prove. `as _` brings in the methods and not the
 // names, so the fully-qualified `impl` headers below stay exactly as written elsewhere.
 //
-// ⚠️ AND THE REST OF THE PREAMBLE BELOW IS REPEATED VERBATIM from
-// `crates/kernel/tests/worker_tokens.rs`, with `kernel::` in place of its `use` statements:
-// `trybuild` compiles every case in this directory as its own crate, and test code does not
-// cross a crate boundary -- the same reason `Yield` is duplicated word for word between
-// `executor_determinism.rs` and `dst_campaign.rs`.
+// ⚠️ AND THE REST OF THE PREAMBLE BELOW IS REPEATED VERBATIM from `worker_tokens.rs` in
+// `crates/kernel/tests/`, with `kernel::` in place of its `use` statements and its `GUI_TICK`
+// written out as the `kernel::time::Millis::new(0)` it stands for: `trybuild` compiles every case
+// here as its own crate, and test code does not cross a crate boundary -- the reason `Yield` is
+// duplicated word for word between `executor_determinism.rs` and `dst_campaign.rs`.
 use kernel::ports::process::{Process as _, Worker as _};
 
 fn a_real_grant() -> kernel::arbiter::Grant {
     let mut arbiter = kernel::arbiter::Arbiter::new(
-        kernel::parameters::Parameters::new(10_000, kernel::arbiter::Mib::new(16_384), kernel::arbiter::ArbiterId::new(1), kernel::time::Millis::new(0)),
+        kernel::parameters::Parameters::new(10_000, kernel::arbiter::Mib::new(16_384), kernel::arbiter::ArbiterId::new(2), kernel::time::Millis::new(0)),
         kernel::arbiter::VramPolicy::Remote(kernel::arbiter::RemotePolicy),
     );
     let kernel::arbiter::Admission::Granted(grant) = arbiter.admit(
@@ -119,3 +119,7 @@ fn main() {
     let _killed = worker.kill();
     let _ = worker.instruct_one(kernel::ports::process::Frame::new(b"too late".to_vec()));
 }
+
+// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1291: the arbiter of `a_real_grant` is
+// `ArbiterId::new(2)`, as in the bench the preamble is copied from. The note sits down here
+// because the oracle next door quotes the lines of `main`.

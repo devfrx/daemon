@@ -88,9 +88,11 @@ fn the_remote_policy_does_not_make_room_it_queues() {
     // declares is the intent the probe's name carries: the books did not move. As `E93`.
     //
     // ⛔ AND THE ONE `allocated()` ASSERTION OF THIS FILE THAT IS *NOT* DOMINATED IS THE ONE THAT
-    // IS NOT FINAL: the PRECONDITION of the partly-full probe at the foot of this file, which
-    // under the sweep mutation is the assertion that fires -- the only one on `allocated()` in
-    // this bench that ever decides an outcome. Registered as `E108`.
+    // IS NOT FINAL: the PRECONDITION of
+    // `a_partly_full_machine_asks_back_the_need_and_not_the_whole_request`, which under the sweep
+    // mutation is the assertion that fires -- the only one on `allocated()` in this bench that
+    // ever decides an outcome. Registered as `E108`. ⚠️ RECALL OF 2026-10-13 -- audit of
+    // 2026-09-30, AUD-1277.
     assert_eq!(arbiter.allocated(), Mib::new(4_096));
 }
 
@@ -218,12 +220,13 @@ fn each_policy_names_itself() {
 /// is held by nothing.
 ///
 /// ✅ MEASURED AND NOT ARGUED, on 2026-08-20: with `ask_back(asked, ...)` in place of
-/// `ask_back(needed, ...)` the WHOLE WORKSPACE stayed green -- 241 passed, 0 failed -- and that
-/// mutant is not cosmetic. `ask_back` uses its first argument as the THRESHOLD
-/// (`if reclaimable < needed { return Mib::ZERO }`), so asking for the whole request instead of
-/// the shortfall makes `LocalPolicy` mark NOBODY, and degrade to `RemotePolicy` in silence,
-/// every time the machine is only PARTLY full. Here the four sizes are `4_096`, `3_072`,
-/// `2_048` and `1_024`: all different. Registered as `E97`.
+/// `ask_back(needed, ...)` the WHOLE WORKSPACE stayed green under
+/// `cargo test --locked --workspace` -- and that mutant is not cosmetic. `ask_back` uses its
+/// first argument as the THRESHOLD (`if reclaimable < needed { return Mib::ZERO }`), so asking
+/// for the whole request instead of the shortfall makes `LocalPolicy` mark NOBODY, and degrade
+/// to `RemotePolicy` in silence, every time the machine is only PARTLY full. Here the four sizes
+/// are `4_096`, `3_072`, `2_048` and `1_024`: all different. Registered as `E97`. ⚠️ RECALL OF
+/// 2026-10-13 -- audit of 2026-09-30, AUD-1360.
 #[test]
 fn a_partly_full_machine_asks_back_the_need_and_not_the_whole_request() {
     let mut arbiter = arbiter(4_096, VramPolicy::Local(LocalPolicy));
@@ -282,8 +285,9 @@ fn a_partly_full_machine_asks_back_the_need_and_not_the_whole_request() {
 /// ⚠️ AND THAT PROBE DOES NOT SEE IT, WHICH IS WHY THIS ONE IS HERE: it calls `ask_back`
 /// DIRECTLY with explicit lanes, so it holds the boundary inside the mechanism and says nothing
 /// about the WIRING outside it. ✅ MEASURED on 2026-08-20 with
-/// `ask_back(needed, ComputeClass::Realtime, now)` in `admit`: the whole workspace stayed green,
-/// 241 passed, 0 failed. Registered as `E97`.
+/// `ask_back(needed, ComputeClass::Realtime, now)` in `admit`: the whole workspace stayed green
+/// under `cargo test --locked --workspace`. Registered as `E97`. ⚠️ RECALL OF 2026-10-13 -- audit
+/// of 2026-09-30, AUD-1360.
 ///
 /// ⛔ IT IS THE "DOES NOT FIRE WHERE IT MUST NOT" DIRECTION of the probe above, and the pair is
 /// deliberate: no single scenario can hold both arguments, and the reason is measured rather
@@ -381,7 +385,8 @@ fn a_policy_transition_writes_its_intent_before_its_outcome() {
     // ⛔ THE LABEL AND THE PAYLOAD ARE CONTRACT, NOT DECORATION: the doc of `set_policy` says no
     // external byte reaches this record, so the payload is EMPTY and the label is
     // `Trust::Instruction`. ✅ MEASURED: mutating either field is caught HERE AND NOWHERE ELSE
-    // -- rows 8 and 9 of the campaign, 247 passed / 1 failed each, this probe alone.
+    // -- rows 8 and 9 of the campaign of 2026-08-20, each red in this probe alone under
+    // `cargo test --locked --workspace`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1360.
     assert!(records.iter().all(|r| r.trust() == Trust::Instruction));
     assert!(records.iter().all(|r| r.payload().is_empty()));
 }
@@ -446,26 +451,44 @@ fn a_refused_intent_leaves_the_policy_where_it_was() {
 }
 
 /// ⛔ AND A TRANSITION CUT IN HALF LEAVES A RECONCILABLE STEP -- which is DST property 4,
-/// asserted here on ONE constructed state so that the campaign of task 12 has a shape to
-/// look for rather than a hope.
+/// asserted here on constructed states, one per cut, where
+/// `property_4_a_severed_transition_leaves_a_reconcilable_step` in
+/// `crates/simulator/tests/arbiter_campaign.rs` draws the cut from a seed.
+///
+/// ⚠️ "BETWEEN THE INTENT AND THE OUTCOME" IS TWO CUTS, because the transition writes three
+/// records -- the intent, the `Policy` note, the outcome: writes 0, 1 and 2. Falling at write 1
+/// refuses the note, and the archive keeps the intent alone; falling at write 2 refuses the
+/// outcome, and the note is durable without it. Both are built here, and the record count says
+/// which one each is. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2135.
 #[test]
 fn a_transition_cut_between_intent_and_outcome_leaves_the_step_in_doubt() {
-    let mut journal = CrashingJournal::falling_at(1);
-    let mut arbiter = arbiter(4_096, VramPolicy::Remote(RemotePolicy));
+    for cut in [1, 2] {
+        let mut journal = CrashingJournal::falling_at(cut);
+        let mut arbiter = arbiter(4_096, VramPolicy::Remote(RemotePolicy));
 
-    let outcome = arbiter.set_policy(VramPolicy::Local(LocalPolicy), StepId::new(7), &mut journal);
-    assert!(outcome.is_err(), "the outcome never reached the archive");
+        let outcome =
+            arbiter.set_policy(VramPolicy::Local(LocalPolicy), StepId::new(7), &mut journal);
+        assert!(
+            outcome.is_err(),
+            "cut at write {cut}: the outcome never reached the archive"
+        );
 
-    let survivor = journal.into_survivor();
-    let doubts = steps_in_doubt(&survivor).expect("the archive reads back");
+        let survivor = journal.into_survivor();
+        assert_eq!(
+            survivor.replay().expect("the archive reads back").len(),
+            cut as usize,
+            "cut at write {cut}: the archive keeps every write before the cut, and none after"
+        );
+        let doubts = steps_in_doubt(&survivor).expect("the archive reads back");
 
-    assert_eq!(doubts.len(), 1);
-    assert_eq!(doubts[0].step, StepId::new(7));
-    assert_eq!(
-        doubts[0].resolution,
-        Resolution::RunAgain,
-        "a policy transition is idempotent: re-running converges"
-    );
+        assert_eq!(doubts.len(), 1, "cut at write {cut}");
+        assert_eq!(doubts[0].step, StepId::new(7));
+        assert_eq!(
+            doubts[0].resolution,
+            Resolution::RunAgain,
+            "a policy transition is idempotent: re-running converges"
+        );
+    }
 }
 
 /// The counter-probe of the one above, and it is the direction that is skipped: WITHOUT a
@@ -473,9 +496,10 @@ fn a_transition_cut_between_intent_and_outcome_leaves_the_step_in_doubt() {
 /// that never writes an outcome at all.
 ///
 /// ⚠️ DOMINATED IN EVERY ROW OF THE CAMPAIGN, and kept: the species of `E93`. It goes red only
-/// in rows 1 and 5, where `a_policy_transition_writes_its_intent_before_its_outcome` is red too
-/// (244 passed / 4 failed, both). It decides no row on its own; what it holds is the
-/// direction.
+/// in rows 1 and 5 of the campaign of 2026-08-20, where
+/// `a_policy_transition_writes_its_intent_before_its_outcome` is red too. It decides no row on
+/// its own; what it holds is the direction. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+/// AUD-1360.
 #[test]
 fn without_a_crash_a_transition_leaves_no_step_in_doubt() {
     let mut journal = MemoryJournal::new();

@@ -2,10 +2,10 @@
 //!
 //! ⛔ WHY IT IS A CASE OF ITS OWN AND NOT A SECOND LINE IN ITS SIBLING. `PermissionDetail::new`
 //! takes TWO `&'static str`, so there are two roads a runtime `String` could take into a `Detail`.
-//! A single case naming both parameters stays `error` when EITHER one is widened, which is the
-//! weak shape: it would go on passing while half the guard it claims to hold had been removed.
-//! Measured on 2026-09-01 — widening `resource` alone leaves
-//! `permission_detail_tool_is_not_runtime_text.rs` compiling `error` and nothing goes red there.
+//! A single case naming both parameters could never COMPILE while either one still refuses
+//! runtime text, so widening one would leave it failing — `ok`, or at best `mismatch` — with half
+//! the guard it claims to hold removed: the weak shape. Measured on 2026-09-01 — widening
+//! `resource` alone leaves `permission_detail_tool_is_not_runtime_text.rs` `ok`, nothing red.
 //!
 //! ⛔ AND THE RESOURCE IS THE HALF THAT MATTERS MOST, which is worth one line: the tool names our
 //! own code, while the resource names a PATH — the one component of the triple most likely to be
@@ -20,8 +20,10 @@ fn main() {
 
 // ⛔ THIS CASE REPORTS BY COMPILING, which is the strong shape (gotcha #42): widen the `resource`
 // parameter of `PermissionDetail::new` back to `&str` and this file COMPILES, with trybuild
-// reporting "expected compilation to fail" outright instead of through its oracle. A bulk
-// `TRYBUILD=overwrite` cannot disarm it.
+// reporting `error` — "Expected test case to fail to compile, but it succeeded." — outright
+// instead of through its oracle. A bulk `TRYBUILD=overwrite` cannot disarm it. ⚠️ RECALL OF
+// 2026-10-13 -- audit of 2026-09-30, AUD-1293: in this directory `error` is trybuild's word for
+// a case that COMPILED, and the quotation is its own (`message.rs`, trybuild 1.0.120).
 //
 // ⛔ Names `kernel::` and declares no attributes of its own — gotcha #39.
 //

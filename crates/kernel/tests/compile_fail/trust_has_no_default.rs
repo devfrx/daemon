@@ -1,16 +1,18 @@
 //! Catalogue §7.4.1 block C, row `Q9 · I6 · V20 · §4.9`, SECOND HALF — the trust label has no
-//! default. `record_without_trust_label.rs` holds "the field exists"; this one holds "and
+//! default. `record_without_trust_label.rs` holds "the label is asked for"; this one holds "and
 //! nothing defaults it", which is the half that decides what a SHORT ARCHIVE decodes to.
 
 fn main() {
     let _label = <kernel::record::Trust as Default>::default();
 }
 
-// ⛔ THIS IS THE SECOND CASE OF ONE CATALOGUE ROW, NOT A ROW OF ITS OWN, and it is the remedy
-// gotcha #42 prescribes: a rule watched by a single case is watched in a single shape. The
-// local precedent is next door — `monotonic_as_wall.rs` and `wall_as_monotonic.rs` are two
-// cases under one row, and so are the two `no_conversion_*` pairs. The block C counts do not
-// move because of this file.
+// ⛔ THIS IS THE SECOND CASE OF ONE CATALOGUE ROW, NOT A ROW OF ITS OWN, and the reason is the
+// row's: it has TWO halves — the label is asked for, and nothing defaults it — and each case is
+// blind to what the other catches, as the paragraph on the two cases below says. Gotcha #42 asks
+// nothing here: the first case already fires by compiling. ⚠️ RECALL OF 2026-10-13 -- audit of
+// 2026-09-30, AUD-1296. The local precedent is next door — `monotonic_as_wall.rs` and
+// `wall_as_monotonic.rs` are two cases under one row, and so are the two `no_conversion_*`
+// pairs. The block C counts do not move because of this file.
 //
 // ⛔ MEASURED IN BOTH DIRECTIONS, AND THE WORD IS `error`. Baseline: the case fails to compile
 // with the oracle next to it, so trybuild prints `ok`. With `impl Default for Trust` added to
@@ -36,9 +38,13 @@ fn main() {
 // road must pass through, this case stands in it, and the two-line mutation trips it too
 // (measured: with impl plus attribute, this case is `error`).
 //
-// ⚠️ THE TWO CASES ARE COMPLEMENTARY AND NEITHER IS REDUNDANT, measured rather than argued: with
-// `impl Default for Trust` present, `record_without_trust_label.rs` stays `ok` and only this one
-// goes red; with the FIELD REMOVED, the reverse. Each is blind to what the other catches.
+// ⚠️ THE TWO CASES ARE COMPLEMENTARY AND NEITHER IS REDUNDANT: with `impl Default for Trust`
+// present, `record_without_trust_label.rs` stays `ok` and only this one goes red — measured on
+// 2026-08-10 and again on 2026-10-13, against that case's present shape. The reverse is a
+// constructor that stops asking for the label, which only that case sees: it holds the SIGNATURE
+// of `RecordV1::intent` since its recall of 2026-09-01, where deleting the FIELD stops the whole
+// crate compiling and is no mutation either case sees. Each is blind to what the other catches.
+// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-774.
 //
 // ⚠️ WHAT NEITHER CASE COVERS, declared here rather than discovered later: a default written BY
 // HAND inside a bespoke `Decode` impl needs no `Default` at all, and no compile-fail case can
@@ -47,5 +53,6 @@ fn main() {
 //
 // ⛔ Names `kernel::` and declares no attributes of its own — gotcha #39.
 //
-// ⛔ THE NOTE IS DOWN HERE ON PURPOSE: the oracle quotes LINE 6 of this file, so a paragraph
-// added at the top would move the code and break it. Whoever writes here appends.
+// ⛔ THE NOTE IS DOWN HERE ON PURPOSE: the oracle quotes the line of the call, so a paragraph
+// added at the top would move the code and break it. Whoever writes here appends. The number
+// lives in the `.stderr` alone (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1288).

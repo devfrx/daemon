@@ -1,7 +1,7 @@
 //! The resolved parameters are DELIVERED (§2.8, ADR-0034).
 //!
 //! The probe that must fire is in `tests/compile_fail/executor_without_parameters.rs`,
-//! written in Task 5 when there is an executor to build. This file is the other
+//! which builds an `Executor` without its parameters. This file is the other
 //! direction: the value exists, carries what it says it carries, and nothing in the
 //! kernel can name a file, a key or a default in order to obtain it.
 //!
@@ -9,7 +9,10 @@
 //! `tests/compile_fail/parameters_have_no_default.rs` — because a `Default` impl is not
 //! the only way a default gets in, and the two ways need two different guards. The
 //! cheaper way in is a fallback written inside the constructor, and the compiler cannot
-//! forbid it (§2.8.4, the declared limit). That one is pinned here, by the last test.
+//! forbid it (§2.8.4, the declared limit). That one is pinned here, by ONE PROBE PER
+//! DELIVERED VALUE: each `the_constructor_substitutes_nothing_for_*`, and for the identity
+//! `the_arbiter_identity_is_delivered_and_not_invented`. ⚠️ RECALL OF 2026-10-13 -- audit of
+//! 2026-09-30, AUD-1328, AUD-1329.
 
 use kernel::arbiter::{ArbiterId, Mib};
 use kernel::parameters::Parameters;

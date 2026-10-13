@@ -60,9 +60,35 @@ fn open_the_step(journal: &mut MemoryJournal, step: StepId) {
 fn a_conforming_candidate_is_chosen_and_nothing_is_degraded() {
     // ⛔ THE COUNTER-PROBE OF CATALOGUE ROW `Q13` — "filtered -> it compiles". It lives here and
     // not beside `dispatching_an_unfiltered_candidate.rs`: gotcha #49.
+    //
+    // ⛔ AND IT HANDS THE TOKEN TO `dispatch`, which is what the row is about -- EXECUTING a
+    // request -- and the very call that case makes with an unfiltered candidate: the legal half
+    // is `resolve` and `dispatch` compiling together, the way
+    // `releasing_gives_back_exactly_the_reservation` consumes the `Grant` it obtains. The record
+    // `dispatch` writes is also the only place that says WHICH candidate was chosen, so the name
+    // is asserted there. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2149.
+    let mut journal = MemoryJournal::new();
+    let step = StepId::new(1);
+    open_the_step(&mut journal, step);
+
     let chain = [LOCAL_CHEAP, REMOTE_DEAR];
     let resolved = resolve(&chain, &[Constraint::LocalOnly]).expect("resolve");
     assert!(!resolved.was_degraded());
+
+    dispatch(resolved, step, &mut journal).expect("dispatch");
+
+    let entries = journal.replay().expect("replay");
+    let (_, bytes) = entries.last().expect("the routing was written");
+    let Record::V1(body) = Record::decode(bytes).expect("decode");
+    let Some(Detail::Routing(routing)) = body.detail() else {
+        panic!("the routing record carries no structured detail");
+    };
+    assert_eq!(
+        routing.model(),
+        "local-small",
+        "the candidate the data constraint discards was the one chosen"
+    );
+    assert!(!routing.degraded());
 }
 
 #[test]
@@ -172,8 +198,9 @@ fn the_dispatch_journals_the_RESOLVED_decision_and_not_a_reference_to_it() {
     assert_eq!(body.kind(), RecordKind::Routing);
     // ⛔ THE FIELDS NOTHING HELD, AND `trust` IS THE ONE THAT MATTERS: it is the `I6`
     // label of ADR-0014 on a DURABLE record. Until this line a `dispatch` writing `Untrusted`
-    // left the WHOLE workspace green -- measured before writing it, `42 targets, 307 passed`,
-    // identical to the baseline. `reason` and `effect` were the same shape. Errata `E97`.
+    // left the WHOLE workspace green -- measured before writing it, on 2026-09-01, with
+    // `cargo test --locked --workspace`. `reason` and `effect` were the same shape. Errata `E97`.
+    // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1316.
     //
     // ⚠ RECALL OF 2026-09-01 -- every field this record carries is read back; the story is in
     // `docs/archivio/sorgenti-storico.md`.
@@ -191,9 +218,9 @@ fn the_dispatch_journals_the_RESOLVED_decision_and_not_a_reference_to_it() {
     // ⛔ AND THE `payload`, WHICH IS THE PREMISE OF THE `trust` LINE ABOVE RATHER THAN ONE MORE
     // FIELD. `Trust::Instruction` is true of this record ONLY BECAUSE no external byte is in it,
     // so an unread payload leaves the `I6` label resting on nothing. Measured on 2026-09-01:
-    // three bytes put into the payload left the whole workspace green, `43 targets, 324 passed`,
-    // identical to the baseline. The wording is the sister bench's, `permission_triple.rs`, where
-    // the same class was closed first. Errata `E116`.
+    // three bytes put into the payload left `cargo test --locked --workspace` green. The wording
+    // is the sister bench's, `permission_triple.rs`, where the same class was closed first.
+    // Errata `E116`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1316.
     assert!(
         body.payload().is_empty(),
         "the payload carries {} bytes, and `dispatch` affirms that no external byte enters this record",
@@ -211,10 +238,10 @@ fn the_dispatch_journals_the_RESOLVED_decision_and_not_a_reference_to_it() {
 fn dispatch_does_not_swallow_the_journal_saying_no() {
     // ⛔ THE ERROR ROAD, REACHABLE BY NOTHING UNTIL THIS PROBE. `dispatch` returns
     // `Result<(), JournalError>` and no probe ever looked at the `Err`. Measured before writing
-    // it: turning the last line into `let _ = journal.note(..); Ok(())` left the whole workspace
-    // green -- `42 targets, 307 passed`, identical to the baseline. A `dispatch` that reports
-    // success while the routing record never reached the journal is the silent loss ADR-0007
-    // exists to forbid. Errata `E98`.
+    // it, on 2026-09-01: turning the last line into `let _ = journal.note(..); Ok(())` left
+    // `cargo test --locked --workspace` green. A `dispatch` that reports success while the
+    // routing record never reached the journal is the silent loss ADR-0007 exists to forbid.
+    // Errata `E98`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1316.
     //
     // ⚠ THE STEP IS NOT OPENED ON PURPOSE, which is the one thing `open_the_step` exists to
     // avoid everywhere else in this bench: `Journal::note` refuses a note upon a step with no

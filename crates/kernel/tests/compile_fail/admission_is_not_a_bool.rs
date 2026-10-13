@@ -17,15 +17,20 @@ fn main() {
     let _ = shortcut;
 }
 
-// ⛔ IT REPORTS BY COMPILING, which is the strong shape (gotcha #42), and a bulk
-// `TRYBUILD=overwrite` cannot disarm it. Measured on 2026-10-02 in both directions: with
-// `impl From<Admission> for bool` this case is `error`, with a hand-written
+// ⛔ ON THE TWO ROADS BY VALUE IT REPORTS BY COMPILING, which is the strong shape (gotcha #42),
+// and a bulk `TRYBUILD=overwrite` cannot disarm it. Measured on 2026-10-02 in both directions:
+// with `impl From<Admission> for bool` this case is `error`, with a hand-written
 // `impl Into<bool> for Admission` it is `error` too, and every other case stays `ok` under both;
 // without either, `ok`.
 //
 // ⚠️ WHAT IT DOES NOT SEE, declared rather than left to be discovered: a FALLIBLE conversion,
 // `impl TryFrom<Admission> for bool`, goes through another trait, and with it this case stays
 // `ok` — measured the same day. That road is closed by the review, not by the compiler.
+// ⚠️ AND A CONVERSION BY REFERENCE, `impl From<&Admission> for bool`, is seen only through the
+// ORACLE: the call takes `outcome` by value, so rustc answers that `Admission: Into<_>` is not
+// satisfied and appends `help: consider borrowing here`, and the case goes `mismatch` — the shape
+// a bulk regeneration blesses in silence. Measured on 2026-10-13. ⚠️ RECALL OF 2026-10-13 --
+// audit of 2026-09-30, AUD-2235.
 //
 // ⛔ Names `kernel::` and declares no attributes of its own — gotcha #39.
 //

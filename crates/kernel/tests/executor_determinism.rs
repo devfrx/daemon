@@ -131,9 +131,19 @@ fn c2_a_different_seed_gives_a_different_trace() {
 
 #[test]
 fn c3_virtual_time_does_not_wait() {
-    // 3 activities x 4 waits of 5000 ms. If they were sequential the clock would reach
-    // 60 000; concurrent, it reaches 20 000. The figure is the COUNTER-PROOF THAT THE
-    // CONCURRENCY IS REAL, not just that the run is deterministic — finding 2 of §3.6.1.
+    // 3 activities x 4 waits, on the SAME four absolute deadlines: 5 000, 10 000, 15 000 and
+    // 20 000. The run ends with the clock at 20 000 virtual milliseconds and not one real
+    // millisecond waited, which is what the name says; an executor that ignored `Sleep` would
+    // leave the clock at the origin, which is the direction this probe holds for the K-1 pair
+    // further down.
+    //
+    // ⚠️ IT IS NOT THE COUNTER-PROOF THAT THE CONCURRENCY IS REAL. A deadline already reached
+    // wakes WITHOUT touching the clock (`Sleep::until`), so the same three activities run one
+    // after the other end at 20 000 too -- ✅ MEASURED on 2026-10-13 with a throwaway probe that
+    // spawned and ran them one at a time on one executor. The 60 000 of finding 2 of §3.6.1 is
+    // M-2's, whose waits were RELATIVE, and a future cannot write a relative wait: it cannot read
+    // the clock. The interleaving is held by `non_vacuity_the_interleaving_is_real`. ⚠️ RECALL OF
+    // 2026-10-13 -- audit of 2026-09-30, AUD-2145, AUD-2146.
     let sleep = Sleep::new();
     let mut executor = Executor::new(
         SeededRng::new(20_260_806),
@@ -205,9 +215,10 @@ fn a_block_becomes_an_error_and_not_an_infinite_wait() {
 fn the_delivered_turn_limit_is_honoured_by_its_value() {
     // ⛔ FINDING B-1 OF THE 2026-08-11 AUDIT. The test above proves the guard FIRES; it does
     // not prove the executor used the number it was HANDED. Measured on 2026-08-18:
-    // replacing the field with `turn_limit: { let _ = parameters; 10_000 }` left the whole
-    // workspace at 32 targets and 177 passing — a parameter that is delivered and not read
-    // is a constant just the same, which is gotcha #28 from the other side.
+    // replacing the field with `turn_limit: { let _ = parameters; 10_000 }` left
+    // `cargo test --locked --workspace` green — a parameter that is delivered and not read
+    // is a constant just the same, which is gotcha #28 from the other side. ⚠️ RECALL OF
+    // 2026-10-13 -- audit of 2026-09-30, AUD-1360.
     //
     // ⚠️ TWO VALUES AND NOT ONE, because a single one is satisfied by any implementation
     // whose constant happens to equal it — gotcha #48, "for every mutation on a value prove
@@ -326,11 +337,10 @@ fn a_suspension_request_is_not_inherited_by_the_next_activity() {
     // leak needs the DECLARING activity to be polled FIRST, which is `below(2) == 1` on the
     // turn's only draw — so the seeds split in two and neither half is negligible.
     //
-    // 📌 MEASURED HERE, on this executor, by putting the defect back and reading the clock:
-    // seeds 2, 3, 5 and 6 leak (clock 9999), seeds 1 and 4 do not (clock 0). That is FOUR
-    // out of six, and errata E10 records three — {1, 3, 5} — from an earlier measurement.
-    // The divergence is registered rather than smoothed over (gotcha #15); what both agree
-    // on, and what this loop rests on, is that one seed is not enough.
+    // 📌 MEASURED HERE, on this executor, by putting the defect back and reading the clock, on
+    // 2026-08-09: seeds 2, 3, 5 and 6 leak (clock 9999), seeds 1 and 4 do not (clock 0). What
+    // this loop rests on is that one seed is not enough. ⚠️ RECALL OF 2026-10-13 -- audit of
+    // 2026-09-30, AUD-1308.
     for seed in 1..=6u64 {
         let sleep = Sleep::new();
         let mut executor = Executor::new(

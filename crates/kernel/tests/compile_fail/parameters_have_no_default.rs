@@ -18,7 +18,7 @@
 // inside `Parameters::new` is a default too, and §2.8.4 says the compiler cannot forbid it.
 // That half is held at level 2, by `tests/parameters_delivered.rs`.
 //
-// ⚠️ AND THE ORACLE NEXT DOOR WILL GO `mismatch` THE DAY A SECOND PARAMETER IS ADDED —
+// ⚠️ AND THE ORACLE NEXT DOOR GOES `mismatch` EVERY TIME `Parameters::new` GAINS OR LOSES ONE —
 // measured, not feared: rustc closes this error with a note quoting the signature of
 // `Parameters::new` verbatim, so §2.8.5's promised friction reaches the `.stderr` too. That
 // regeneration is LEGITIMATE and it disarms nothing, because the rule trips as `error` and
@@ -33,3 +33,8 @@ use kernel::parameters::Parameters;
 fn main() {
     let _parameters = Parameters::default();
 }
+
+// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1292: "ONE" above is a parameter, and the
+// oracle next door has been regenerated with each parameter added so far —
+// `git log -- crates/kernel/tests/compile_fail/parameters_have_no_default.stderr`. The note sits
+// down here because that oracle quotes the line of the call.

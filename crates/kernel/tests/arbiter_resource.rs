@@ -124,9 +124,9 @@ fn cold_start_is_readable_outside_the_decision_path() {
 /// the admission.
 ///
 /// ⛔ THIS PROBE IS NOT THAT PLACE, and this comment claimed it was until 2026-08-27 --
-/// finding AUD-020. Both strings are LITERALS of this bench, written eight lines apart, so the
-/// `assert_eq!` compares two copies of one constant and NOTHING in `crates/kernel/src/` can
-/// turn it red. ⚠️ ITS REAL STRENGTH IS LEVEL 1, at the compiler: that the two shapes exist,
+/// finding AUD-020. Both strings are LITERALS of this bench, so the `assert_eq!` compares two
+/// copies of one constant and NOTHING in `crates/kernel/src/` can turn it red. ⚠️ ITS REAL
+/// STRENGTH IS LEVEL 1, at the compiler: that the two shapes exist,
 /// carry those field names and those field types, and are constructible from OUTSIDE the crate
 /// -- the only place a missing `pub` shows up, gotcha #46.
 ///
@@ -137,10 +137,12 @@ fn cold_start_is_readable_outside_the_decision_path() {
 /// evidence (gotcha #32).
 ///
 /// ⚠️ NOTHING HOLDS THE ALIGNMENT TODAY, and that is a declared limit, not a residue: the
-/// product never builds a `WorkDescriptor` at all. Measured 2026-08-27 --
-/// `grep -rn 'WorkDescriptor {' crates/ --include=*.rs` names `resource.rs`, where the type is
-/// defined, and this file twice. The cost §5.2.1 accepted falls due at the first descriptor the
-/// product builds, and whoever writes it inherits this paragraph.
+/// product never builds a `WorkDescriptor` at all. Measured 2026-08-27, and again 2026-10-13 --
+/// `grep -rn 'WorkDescriptor {' crates/ --include=*.rs | grep -v '//'` names the definition in
+/// `resource.rs` and the constructions of this bench, and nothing else; the second `grep` keeps
+/// out the comments, this one among them, which the first would count. The cost §5.2.1 accepted
+/// falls due at the first descriptor the product builds, and whoever writes it inherits this
+/// paragraph. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1278.
 #[test]
 fn a_descriptor_names_the_profile_it_describes() {
     let profile = ResourceProfile {

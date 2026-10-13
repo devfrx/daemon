@@ -32,7 +32,7 @@
 // `crates/kernel/tests/arbiter_policy.rs`, which builds an arbiter with each of the two from
 // outside the crate. §7.1.1 rule 3 wants both directions and that is where the other lives. The
 // second half of the row's counter-probe -- "and the transition stays a journalled step (§5.4)"
-// -- is task 9's.
+// -- lives there too, from `a_policy_transition_writes_its_intent_before_its_outcome` on.
 //
 // ⛔ Names `kernel::` and declares no attributes of its own -- gotcha #39.
 fn main() {
@@ -47,3 +47,6 @@ fn main() {
 // BOTTOM FOR THE SAME REASON: anything inserted above it shifts the asserted error below
 // and rewrites this case's `.stderr` line numbers for nothing. `cargo fmt` does not reach
 // this directory, so nothing else objects to the width.
+//
+// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1297: the second half of the
+// counter-probe named above is written, in `arbiter_policy.rs`.

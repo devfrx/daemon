@@ -23,10 +23,13 @@ fn main() {
 // function". Both are `mismatch`, the shape a bulk regeneration blesses in silence (gotcha #42).
 // Unlike `Grant`, whose `id` is a `GrantId` no other crate can name, these fields are a
 // `&'static str`, a `u32` and a `bool`: opened, they forge the token for real. A `pub` FREE
-// function of the module that returns one is not seen at all: the case stays `ok`. And nothing here stops a `pub(crate)` constructor —
-// that would be a new catalogue row, and the catalogue is spec. Read every regeneration of the
-// oracle next door by hand, never with `TRYBUILD=overwrite` (gotcha #25). Audit of 2026-09-30,
-// AUD-696.
+// function of the module that returns one is not seen at all: the case stays `ok`. A
+// `pub(crate)` constructor is seen like a `pub` one, through the oracle alone: with
+// `pub(crate) fn new() -> Self` in `impl Conforming` rustc appends the same help and the case goes
+// `mismatch`, measured on 2026-10-13 (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2235);
+// nothing outside the crate sees it more strongly, and stopping it for good would be a new
+// catalogue row, and the catalogue is spec. Read every regeneration of the oracle next door by
+// hand, never with `TRYBUILD=overwrite` (gotcha #25). Audit of 2026-09-30, AUD-696.
 //
 // ⛔ THE NOTE IS DOWN HERE ON PURPOSE: the oracle quotes the line of the literal, so a paragraph
 // added at the top would move the code and break it. Whoever writes here appends.

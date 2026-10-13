@@ -6,7 +6,9 @@
 //! step nobody opened is not something", and `MemoryJournal` enforces it. A verdict is an
 //! annotation upon the artefact of a step that EXISTS, and the one who opened that step is the
 //! caller — never the ring. ⚠️ The dictated probes started from an empty journal and could not
-//! pass: measured, `Err(OutOfOrder)`. Errata `E45`.
+//! pass: measured, `Err(OutOfOrder)`. Errata `E45`. ⚠️ ONE PROBE DOES NOT, BECAUSE THE REFUSAL IS
+//! ITS SUBJECT: `a_step_nobody_opened_is_refused_and_nothing_is_written` starts from an empty
+//! journal to hold that road. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1359.
 
 use core::cell::Cell;
 
@@ -22,11 +24,12 @@ use simulator::journal::MemoryJournal;
 /// ⛔ `spent` IS CHOSEN BY THE TEST AND NOT FIXED, AND IT HAD TO BECOME SO. It was the literal
 /// `Millis::new(7)` until 2026-08-31, which made `7` the ONLY cost that ever crossed the
 /// conversion in the whole workspace — so `spent_millis: 7` written as a CONSTANT in
-/// `run_the_ring` survived every test there is, 41 targets and 298 passed, identical to the
-/// baseline. ⚠️ THE PROBES DELIBERATELY USE DIFFERENT VALUES (gotcha #48): a ring that ignored
-/// the sensor and wrote either constant fails on the other, which is what a single value can
-/// never ask. It is the shape of `E65` on a field `E65` did not reach, and of the two-value
-/// probe this same file already uses for the corrective step's class. Errata `E67`.
+/// `run_the_ring` survived every test there was, `cargo test --locked --workspace` green
+/// (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1360). ⚠️ THE PROBES DELIBERATELY USE
+/// DIFFERENT VALUES (gotcha #48): a ring that ignored the sensor and wrote either constant fails
+/// on the other, which is what a single value can never ask. It is the shape of `E65` on a field
+/// `E65` did not reach, and of the two-value probe this same file already uses for the
+/// corrective step's class. Errata `E67`.
 struct ScriptedSensor {
     cost: CostClass,
     outcome: VerdictOutcome,
@@ -114,10 +117,10 @@ fn a_passing_sensor_writes_a_verdict_and_opens_nothing() {
     // ⛔ AND `passed` IS TRUE HERE, WHICH IS THE ONLY `true` IN THE WORKSPACE. Every other site
     // of that field carries `false` — the frozen record, `reconciliation.rs`, `record_shape.rs`
     // and the failing probe below — so until this line a ring that wrote the CONSTANT `false`
-    // was indistinguishable from one that computed the outcome. Measured: `passed: false` in
-    // `run_the_ring` survived the whole workspace, 41 targets and 298 passed, identical to the
-    // baseline. It is the second direction of a two-valued field, and the second direction is
-    // the one that gets forgotten. Errata `E65`.
+    // was indistinguishable from one that computed the outcome. Measured on 2026-08-31:
+    // `passed: false` in `run_the_ring` left `cargo test --locked --workspace` green. It is the
+    // second direction of a two-valued field, and the second direction is the one that gets
+    // forgotten. Errata `E65`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1360.
     let Some(Detail::Verdict(detail)) = &body.detail() else {
         panic!("the verdict of a passing sensor carries no structured detail");
     };
@@ -147,12 +150,15 @@ fn a_passing_sensor_writes_a_verdict_and_opens_nothing() {
     // said "a ring that wrote its verdict against the NEXT step would satisfy every line above
     // except this one", and the measurement says otherwise — such a ring reaches NO line above,
     // because `note` on a step nobody opened is `Err(OutOfOrder)` and the probe dies on the
-    // `.expect` at the call. Measured: `note(next, ..)` gives 41 targets, 294 passed, 4 FAILED,
-    // panicking with `the ring: OutOfOrder`.
+    // `.expect` at the call. Measured on 2026-08-31 with
+    // `cargo test --locked --workspace --no-fail-fast`: under `note(next, ..)` four probes go red,
+    // each panicking with `the ring: OutOfOrder`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+    // AUD-1360.
     //
     // ⚠️ SO THIS ASSERTION IS DOMINATED, AND IT STAYS ANYWAY — declared rather than deleted.
-    // Entry 0 is the intent this test wrote itself and entry 1 is already pinned three lines
-    // up, so nothing a single mutation of `run_the_ring` can do makes it the FIRST to fail. It
+    // Entry 0 is the intent this test wrote itself and entry 1 is already pinned by the
+    // `assert_eq!(*step, judged)` above it, so nothing a single mutation of `run_the_ring` can do
+    // makes it the FIRST to fail. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1358. It
     // costs one line and states the property in the form a reader looks for; what it must not
     // do is claim a discriminating power it does not have. Errata `E68`.
     assert!(
@@ -223,17 +229,18 @@ fn a_failing_verdict_opens_a_new_step_and_carries_the_detail() {
     // that I6 exists to keep shut, and would carry it into the DURABLE format.
     //
     // ⚠️ IT WAS HELD BY NOTHING UNTIL 2026-08-31, and the shape of the gap is worth more than
-    // the fix: the line thirteen rows above asserts exactly this field on the VERDICT record, so
-    // the bench held one of the two records the ring writes and not the other. Turned to
-    // `Trust::Instruction` here, the whole workspace stayed green — 41 targets, 298 passed,
-    // identical to the baseline. Errata `E65`.
+    // the fix: `assert_eq!(verdict.trust(), Trust::Untrusted)` above asserts exactly this field on
+    // the VERDICT record, so the bench held one of the two records the ring writes and not the
+    // other. Turned to `Trust::Instruction` here, `cargo test --locked --workspace` stayed green.
+    // Errata `E65`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1358, AUD-1360.
     assert_eq!(intent.trust(), Trust::Untrusted);
     // ⚠️ AND `detail` IS `None` ON PURPOSE: the structured half belongs to the VERDICT
     // species, and an `Intent` carrying a `Detail::Verdict` would enter the durable format
     // with a pair `RecordKind` and `Detail` that nothing at level 1 forbids. What holds the
     // pair is that ONE function per species builds the record, and this line is what holds
-    // THIS function to it. Turned to `Some(..)`, the whole workspace stayed green — 41
-    // targets, 298 passed, identical to the baseline. Errata `E73`.
+    // THIS function to it. Turned to `Some(..)`, `cargo test --locked --workspace` stayed green
+    // -- the measurement of errata `E73`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+    // AUD-1360.
     assert_eq!(intent.detail(), None);
     assert_eq!(
         intent.reason(),
@@ -286,10 +293,10 @@ fn an_inferential_sensor_is_refused_by_the_tight_ring() {
 #[test]
 fn the_class_of_the_corrective_step_is_the_one_the_caller_delivered() {
     // ⛔ THE RING DOES NOT KNOW WHAT THE CORRECTION WILL DO, SO IT DOES NOT NAME ITS CLASS. Until
-    // 2026-08-31 it wrote a literal `Idempotent` and NOTHING held it: turned to `Unrepeatable`
-    // the whole workspace stayed green — 41 targets, 297 passed, identical to the baseline. It
-    // was not among this task's five dictated mutations, which is why it was never run. Errata
-    // `E55`.
+    // 2026-08-31 it wrote a literal `Idempotent` and NOTHING held it: turned to `Unrepeatable`,
+    // `cargo test --locked --workspace` stayed green. It was not among this task's five dictated
+    // mutations, which is why it was never run. Errata `E55`. ⚠️ RECALL OF 2026-10-13 -- audit
+    // of 2026-09-30, AUD-1360.
     //
     // ⚠️ TWO VALUES AND NOT ONE (gotcha #48), AND NEITHER IS THE OLD LITERAL: a ring that
     // ignored the argument and kept writing `Idempotent` fails on BOTH, so the probe cannot pass
@@ -356,11 +363,15 @@ impl Sensor for WatchfulSensor {
 
 #[test]
 fn an_inferential_sensor_is_never_run_at_all() {
-    // ⛔ THIS IS THE SECOND HALF OF V11, AND IT WAS ADDED BECAUSE A MUTATION SURVIVED. The doc of
-    // `run_the_ring` says the declared cost is read BEFORE `observe` and that "that ordering IS
-    // V11". Measured by moving the cost check AFTER `observe`: the whole workspace
-    // stayed GREEN — `an_inferential_sensor_is_refused_by_the_tight_ring` only ever looked at
-    // what was WRITTEN, and a sensor that runs and is then discarded writes nothing either.
+    // ⛔ THIS IS THE "READ BEFORE RUNNING" OF V11'S FIRST HALF, AND IT WAS ADDED BECAUSE A
+    // MUTATION SURVIVED. The SECOND half of V11 has no subject yet (§8.3, trigger C4), as
+    // `an_inferential_sensor_is_refused_by_the_tight_ring` says, and this probe does not give it
+    // one: the row stays `parziale`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-780,
+    // AUD-781. The doc of `run_the_ring` says the declared cost is read BEFORE `observe` and that
+    // "that ordering IS V11". Measured by moving the cost check AFTER `observe`: the whole
+    // workspace stayed GREEN — `an_inferential_sensor_is_refused_by_the_tight_ring` only ever
+    // looked at what was WRITTEN, and a sensor that runs and is then discarded writes nothing
+    // either.
     //
     // ⛔ AND THE DIFFERENCE IS NOT COSMETIC: §6.4.1 refuses an inferential sensor from the tight
     // ring because running it "turns every step into two inferences". A ring that runs it and
@@ -461,8 +472,8 @@ fn the_second_write_of_the_ring_is_not_swallowed_either() {
     // ⛔ `run_the_ring` WRITES TWICE AND ONLY THE FIRST HAD A READER. The probe above holds the
     // `note`; the `intent` that OPENS the corrective step had nothing at all. Measured on
     // 2026-09-01 before writing this: with `journal.intent(next, ..)?` turned into
-    // `let _ = journal.intent(next, ..);`, the whole workspace stayed green -- `43 targets, 324
-    // passed, 0 failed, 2 ignored`, identical to the baseline. Errata `E117`.
+    // `let _ = journal.intent(next, ..);`, `cargo test --locked --workspace` stayed green.
+    // Errata `E117`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1360.
     //
     // ⛔ AND WHAT IS LOST IS NOT A RETURN VALUE. Swallowing that refusal makes the ring answer
     // `Ok(Some(next))` -- "the corrective step is open" -- while no intent ever reached the

@@ -4,16 +4,16 @@
 //
 // ⛔ IT IS THE SAME MECHANISM AS `executor_without_parameters.rs`, deliberately: no
 // `Default` for `ResourceProfile`, no builder, no optional argument, no second `admit` with
-// fewer arguments. Nothing else in the gate would see such a route appear —
-// `gate-attributes.sh` reads attributes, `gate-deps.sh` reads the dependency graph,
-// `gate-no-os.sh` builds for a target without an OS, `check-docs.sh` does not read code at
-// all — and `cargo build` compiles a two-argument admission happily, because it is valid
-// Rust.
+// fewer arguments. Of those roads THIS CASE SEES ONE, the arity of `admit` -- the foot of the
+// file says what it does not see -- and nothing else in the gate sees any: `gate-attributes.sh`
+// reads attributes, `gate-deps.sh` the dependency graph, `gate-no-os.sh` builds for a target
+// without an OS, `check-docs.sh` does not read code at all — and `cargo build` compiles a
+// two-argument admission happily, because it is valid Rust.
 //
-// ⛔ And it trips as an `error`, not as a `mismatch`: the day somebody adds an overload-like
-// route this case starts COMPILING, and trybuild says so outright instead of noticing
-// through its oracle. A bulk regeneration of the `.stderr` files therefore cannot disarm it.
-// Gotcha #42.
+// ⛔ And on that road it trips as an `error`, not as a `mismatch`: the day the profile leaves the
+// signature of `admit`, the rest kept, this case starts COMPILING, and trybuild says so outright
+// instead of noticing through its oracle. A bulk regeneration of the `.stderr` files therefore
+// cannot disarm it. Gotcha #42.
 //
 // ⚠️ THE LIMIT, declared before anyone discovers it: this proves that the admission RECEIVES
 // a profile, not that the profile it receives is the RIGHT one, and not that the numbers in
@@ -48,3 +48,12 @@ fn main() {
 // BOTTOM FOR THE SAME REASON: anything inserted above it shifts the asserted error below
 // and rewrites this case's `.stderr` line numbers for nothing. `cargo fmt` does not reach
 // this directory, so nothing else objects to the width.
+//
+// ⚠️ WHAT IT DOES NOT SEE, declared rather than left to be discovered — the species of limit
+// `two_policies_at_once.rs` measured for `Arbiter::new`, and the one
+// `executor_without_parameters.rs` declares for its own constructor. A `Default` or a builder for
+// `ResourceProfile`, or a second admission under another name, is not called here and leaves
+// this case `ok`; an optional profile, `Option<&ResourceProfile>`, keeps the arity, so the case
+// goes on failing with another note — `mismatch`, measured on 2026-10-13, the shape a bulk
+// regeneration blesses. The review closes those roads, not the compiler. ⚠️ RECALL OF 2026-10-13
+// -- audit of 2026-09-30, AUD-2140.

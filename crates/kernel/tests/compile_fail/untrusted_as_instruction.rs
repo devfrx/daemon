@@ -34,13 +34,20 @@ fn main() {
 // `no_conversion_from_untrusted_to_instruction.rs` points at it. `kernel::record::Trust`
 // arrived at milestone 3 with variants named `Instruction` and `Untrusted`, so those two names
 // are no longer unique inside the crate, and rustc STOPS ABBREVIATING a name it cannot trim
-// unambiguously: every diagnostic that mentions either type now prints `kernel::boundary::..`.
-// Measured, not deduced — commenting out `pub mod record;` in `src/lib.rs` puts the short form
-// back and turns both cases green again.
+// unambiguously where it spells a type out in full: the `note` lines of the oracle above print
+// `kernel::boundary::..`, while the label under the span keeps the short form, `&Instruction`
+// and `&Untrusted` — so ONE oracle carries both. Measured, not deduced — commenting out
+// `pub mod record;` in `src/lib.rs` puts the short form back and turns both cases green again.
 //
 // ⚠️ AND IT IS A STANDING COST, not a one-off repair: any future oracle in this crate that
-// names either type carries the long form, and a reader who "tidies" one back to `Instruction`
-// gets a `mismatch` with no explanation in front of them.
+// names either type may carry the long form, line by line as rustc chooses, and a reader who
+// "tidies" one back to `Instruction` gets a `mismatch` with no explanation in front of them.
+// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1299.
 //
-// ⛔ THE NOTE IS DOWN HERE ON PURPOSE: the oracle above quotes LINE 29 of this file, so a
-// paragraph added at the top would move the code and break it. Whoever writes here appends.
+// ⛔ THE NOTE IS DOWN HERE ON PURPOSE: the oracle above quotes the line of the call, so a
+// paragraph added at the top would move the code and break it. Whoever writes here appends. The
+// number lives in the `.stderr` alone (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1288).
+//
+// ⚠️ THE OTHER DIRECTION IS NOT HERE: that an `Instruction` IS taken where an instruction is
+// expected is held by `tests/boundary_promotion.rs`, which names this case back. ⚠️ RECALL OF
+// 2026-10-13 -- audit of 2026-09-30, AUD-1279, AUD-1283.

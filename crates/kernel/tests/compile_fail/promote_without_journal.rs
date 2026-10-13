@@ -34,3 +34,7 @@ fn main() {
 // That regeneration is LEGITIMATE and disarms nothing; regenerate by the documented route —
 // delete the stale `.stderr`, re-run, `diff -u` the old against the `wip/` one, move by hand —
 // and NEVER with `TRYBUILD=overwrite`. Gotcha #25.
+//
+// ⚠️ THE OTHER DIRECTION IS NOT HERE: that the promotion WITH the port compiles and leaves its
+// record in the journal is held by `tests/boundary_promotion.rs`, which names this case back.
+// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1279, AUD-1283.

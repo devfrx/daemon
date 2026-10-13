@@ -38,6 +38,7 @@ fn main() {
 //
 // ⛔ Names `kernel::` and declares no attributes of its own — gotcha #39.
 //
-// ⛔ THE NOTE IS DOWN HERE ON PURPOSE: the oracle quotes LINE 8 of this file, so a paragraph
+// ⛔ THE NOTE IS DOWN HERE ON PURPOSE: the oracle quotes the line of the call, so a paragraph
 // added at the top would move the code and turn the case into a `mismatch`. Whoever writes here
-// appends.
+// appends. The number lives in the `.stderr` alone, the one house that cannot fall out of step
+// (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1288).

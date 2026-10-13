@@ -1,19 +1,29 @@
 //! The permission is a TRIPLE, and "which permissions are active now" is a PROJECTION of the
 //! journal (§6.6, ADR-0016, `V21`).
 //!
-//! ⛔ EVERY PROBE HERE OPENS THE GRANTED STEP FIRST, AND THAT IS NOT SETUP NOISE — it is the
-//! write-ahead discipline of ADR-0007 showing through. `Journal::note` says of itself that "a note
-//! for a step with NO INTENT is `OutOfOrder`. A note is an annotation UPON something, and a step
-//! nobody opened is not something", and `MemoryJournal` enforces it. `permission::grant` writes a
-//! note, so the step it annotates has to exist, and the one who opened it is the CALLER — never
-//! `grant`. It is the same asymmetry `tests/sensor_ring.rs` declares for the step the ring judges,
-//! and it is written here because the dictated probes started from an empty journal and could not
-//! pass: measured, `Err(OutOfOrder)` on all five.
+//! ⛔ EVERY PROBE HERE THAT EXPECTS A GRANT TO LAND OPENS THE GRANTED STEP FIRST, AND THAT IS NOT
+//! SETUP NOISE — it is the write-ahead discipline of ADR-0007 showing through. `Journal::note`
+//! says of itself that "a note for a step with NO INTENT is `OutOfOrder`. A note is an annotation
+//! UPON something, and a step nobody opened is not something", and `MemoryJournal` enforces it.
+//! `permission::grant` writes a note, so the step it annotates has to exist, and the one who
+//! opened it is the CALLER — never `grant`. It is the same asymmetry `tests/sensor_ring.rs`
+//! declares for the step the ring judges, and it is written here because the dictated probes
+//! started from an empty journal and could not pass: measured, `Err(OutOfOrder)` on every one of
+//! them that calls `grant`. Where a probe grants upon a step nobody opened —
+//! `grant_does_not_open_the_step_it_is_handed`, and the first half of
+//! `a_journal_that_refuses_the_note_makes_the_grant_fail` — it does so to hold that refusal.
+//! ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1332, AUD-2154, AUD-2155.
 //!
 //! ⛔ AND THE THREE COMPONENTS OF THE TRIPLE GET THREE SEPARATE PROBES, one changing ONE component
 //! each. A single probe changing two at once cannot say which conjunct of `is_granted` did the
 //! work — drop the `tool` comparison and a probe that also moved the resource stays green, which is
 //! the shape that lets a widened permission through in silence.
+//!
+//! ⚠️ THE ERROR ROADS ①–④ NAMED BELOW are the four the pre-check of milestone 6 task 7 found,
+//! registered in `docs/porta-di-qualita.md` with that task: ① the journal refuses — the note
+//! `grant` writes, or the replay `is_granted` reads —, ② a record that will not decode, ③ a record
+//! of another species, ④ a permission record without its detail. ⚠️ RECALL OF 2026-10-13 -- audit
+//! of 2026-09-30, AUD-1333.
 
 use kernel::permission::{Operation, Permission, PermissionError, grant, is_granted};
 use kernel::ports::journal::{Journal, JournalError, StepId};
@@ -36,7 +46,9 @@ const READ_A: Permission = Permission {
 /// counter of its own — the `journal` port allocates none, by the owner's choice of 2026-09-09, and
 /// step numbers come from `kernel::numbering::Progressive`, handed to whoever mints them — so a
 /// function that minted the intent of a step it did not open would be inventing an identity
-/// outside that counter. ⚠️ RECALL OF 2026-10-02 — audit of 2026-09-30, AUD-070.
+/// outside that counter. ⚠️ RECALL OF 2026-10-02 — audit of 2026-09-30, AUD-070. It is held by
+/// `grant_does_not_open_the_step_it_is_handed` (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+/// AUD-2154).
 fn open_the_step(journal: &mut MemoryJournal, step: StepId) {
     let intent = Record::V1(RecordV1::intent(
         EffectClass::Idempotent,
@@ -48,17 +60,23 @@ fn open_the_step(journal: &mut MemoryJournal, step: StepId) {
     journal.intent(step, &intent).expect("intent");
 }
 
-/// A journal open enough to receive an intent and REFUSING the note.
+/// A journal open enough to receive an intent and REFUSING the note — once the step is open.
 ///
-/// ⛔ IT IS NOT THE ALL-REFUSING FAKE OF `tests/boundary_promotion.rs`, and the narrowing is what
-/// makes the probe say something. A journal that refused the intent too would leave the step
-/// unopened, and `grant`'s failure could then be `OutOfOrder` from the missing intent rather than
-/// the refusal being tested — the probe would be green for the wrong reason. Here the step IS
-/// open, so the only thing that can fail is the write `grant` performs.
+/// ⛔ THE NARROWING IS WHAT MAKES THE PROBE SAY SOMETHING, AND THE FIXTURE ENFORCES IT. A journal
+/// that refused the intent too would leave the step unopened, and `grant`'s failure could then be
+/// `OutOfOrder` from the missing intent rather than the refusal being tested. So `note` answers
+/// as `MemoryJournal` does upon a step nobody opened, `OutOfOrder`, and `NotDurable` only once an
+/// intent has arrived: the `NotDurable` the probe asserts says both that the step was open and
+/// that `grant` passed on the refusal of its own write, and the probe also checks the other side,
+/// `OutOfOrder` before the intent. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2155.
 ///
 /// ⚠️ `NotDurable` IS A STATE A REAL JOURNAL REACHES when the disk is full, which is what keeps
-/// this a fixture rather than a liar; and it would not pass the conformance suite, for the reason
-/// `RefusingJournal` states there.
+/// this a fixture rather than a liar by the rule at the head of `tests/boundary_promotion.rs`:
+/// the refusal is the subject of the one probe that uses it. And it would not pass the
+/// conformance suite, for a reason of its own: it accepts an intent and keeps nothing, so
+/// `read_back` answers `Missing` after an intent it accepted — promise 1 of
+/// `tests/journal_contract.rs` broken, the shape of `SilentJournal` there. ⚠️ RECALL OF
+/// 2026-10-13 -- audit of 2026-09-30, AUD-1334.
 struct NoteRefusingJournal {
     opened: bool,
 }
@@ -72,6 +90,9 @@ impl Journal for NoteRefusingJournal {
         Err(JournalError::NotDurable)
     }
     fn note(&mut self, _s: StepId, _r: &[u8]) -> Result<(), JournalError> {
+        if !self.opened {
+            return Err(JournalError::OutOfOrder);
+        }
         Err(JournalError::NotDurable)
     }
     fn read_back(&self, _s: StepId) -> Result<Vec<u8>, JournalError> {
@@ -87,7 +108,10 @@ impl Journal for NoteRefusingJournal {
     }
 }
 
-/// A journal whose `replay` refuses outright, for the OTHER road into `PermissionError::Journal`.
+/// A journal whose `replay` refuses outright: the road into `PermissionError::Journal`, and the
+/// only one — `is_granted` replays and `grant` does not, so the refused note of the fixture above
+/// comes back from `grant` as a bare `JournalError`. ⚠️ RECALL OF 2026-10-13 -- audit of
+/// 2026-09-30, AUD-1331.
 struct ReplayRefusingJournal;
 
 impl Journal for ReplayRefusingJournal {
@@ -132,8 +156,8 @@ fn grant_writes_every_field_it_says_it_writes() {
     // mutation at a time with the whole workspace run after each: `trust`
     // `Instruction → Untrusted`, `effect` `Unrepeatable → Idempotent`, `reason` → `""`, an
     // `alloc::vec![0xAA]` in place of the empty `payload`, and the `write` flag flattened to
-    // `false` — five mutants, five times `43 targets, 321 passed, 0 failed, 2 ignored`, identical
-    // to the baseline figure for figure.
+    // `false` — five mutants, and `cargo test --locked --workspace` green under every one of them.
+    // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1360.
     //
     // ⛔ IT IS ERRATA `E97` ON THE SISTER FUNCTION, not a species of its own: the commit before
     // this one closed exactly this on `gateway::dispatch`, and the shape is reused from
@@ -147,9 +171,13 @@ fn grant_writes_every_field_it_says_it_writes() {
     // another file and that nothing tied back to `grant`.
     //
     // ⚠️ THE TRIPLE GRANTED HERE IS A `Write`, AND THAT IS THE ONE THING THAT CANNOT BE BORROWED
-    // FROM `READ_A`: every other call to `grant` in the workspace passes a `Read`, so the road
-    // `Operation::Write → write: true` was walked by nothing at all and flattening the flag to
-    // `false` cost nothing. ⛔ THE OTHER DIRECTION IS HELD BY
+    // FROM `READ_A`: on 2026-09-01 every other call to `grant` in the workspace passed a `Read`, so
+    // the road `Operation::Write → write: true` was walked by nothing at all and flattening the
+    // flag to `false` cost nothing. ⚠️ IT IS NOT THE ONLY `Write` NOW: since 2026-09-18
+    // `tests/registry.rs` grants one, `GUARDED`, and asks for it through `Registry::invoke` --
+    // measured on 2026-10-13, the flattened flag turns probes of that bench red too, besides this
+    // one, under `cargo test --locked -p kernel --test registry --test permission_triple`.
+    // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1330. ⛔ THE OTHER DIRECTION IS HELD BY
     // `a_different_OPERATION_is_not_covered` — measured, flattening the same flag to `true` turns
     // it red — so between the two probes one line is held both ways (§7.1.1, rule 3).
     let mut journal = MemoryJournal::new();
@@ -268,14 +296,23 @@ fn nothing_is_granted_on_an_empty_journal() {
 
 #[test]
 fn a_journal_that_refuses_the_note_makes_the_grant_fail() {
-    // ⛔ §4 WAY ①: the error road of `grant`. Without this probe a `grant` that SWALLOWED the
+    // ⛔ ERROR ROAD ①: the error road of `grant`. Without this probe a `grant` that SWALLOWED the
     // refusal — `let _ = journal.note(..); Ok(())` — stays green on every probe above, because
     // they all use a journal that accepts. The recording is not a courtesy: if it fails, the grant
     // fails, or the whole mechanism rests on the diligence of whoever calls.
+    //
+    // ⚠️ THE OPEN STEP IS SEEN BY THE FIXTURE, NOT BY AN ASSERTION ON ITS FLAG: before the intent
+    // it answers `OutOfOrder`, after it `NotDurable`, so the two answers below tell the refusal of
+    // the write from the missing intent. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2155.
     let mut journal = NoteRefusingJournal { opened: false };
     let step = StepId::new(1);
+    assert_eq!(
+        grant(&mut journal, step, &READ_A),
+        Err(JournalError::OutOfOrder),
+        "before the intent the refusal must be the missing intent's"
+    );
+
     journal.intent(step, b"the step").expect("intent");
-    assert!(journal.opened, "the fixture did not open the step");
 
     assert_eq!(
         grant(&mut journal, step, &READ_A),
@@ -284,8 +321,33 @@ fn a_journal_that_refuses_the_note_makes_the_grant_fail() {
 }
 
 #[test]
+fn grant_does_not_open_the_step_it_is_handed() {
+    // ⛔ THE ASYMMETRY `open_the_step` DECLARES, HELD AND NOT ONLY WRITTEN: `grant` notes upon a
+    // step and never opens one. Upon a step nobody opened it is refused, `OutOfOrder`, and the
+    // archive stays EMPTY — a `grant` that wrote the intent itself before its note would coin an
+    // identity outside the counter that hands steps out, and no probe that opens its step first
+    // can see it: a second intent upon an open step is refused, and the refusal ignored.
+    // ✅ MEASURED on 2026-10-13 with `let _ = journal.intent(step, &record);` ahead of the note in
+    // `permission::grant`: this probe goes red, and with it the `OutOfOrder` half of the probe
+    // above, the only other one in this file that grants upon a step not yet open. The sister
+    // functions carry the same probe — `dispatch_does_not_swallow_the_journal_saying_no` in
+    // `tests/gateway_decisor.rs`, `a_step_nobody_opened_is_refused_and_nothing_is_written` in
+    // `tests/sensor_ring.rs`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2154.
+    let mut journal = MemoryJournal::new();
+
+    assert_eq!(
+        grant(&mut journal, StepId::new(1), &READ_A),
+        Err(JournalError::OutOfOrder)
+    );
+    assert!(
+        journal.replay().expect("replay").is_empty(),
+        "`grant` wrote upon a step nobody had opened"
+    );
+}
+
+#[test]
 fn a_journal_that_will_not_replay_is_not_an_answer_of_false() {
-    // ⛔ §4 WAY ① FROM THE OTHER SIDE, and it is `is_granted`'s half rather than `grant`'s. A
+    // ⛔ ERROR ROAD ① FROM THE OTHER SIDE, and it is `is_granted`'s half rather than `grant`'s. A
     // projection that answered `Ok(false)` when it could not read the archive would report "not
     // granted" for "I do not know" — the silent degradation ADR-0019 forbids — and every probe
     // above would stay green, because they all replay successfully.
@@ -299,10 +361,11 @@ fn a_journal_that_will_not_replay_is_not_an_answer_of_false() {
 
 #[test]
 fn a_record_that_will_not_decode_is_not_an_answer_of_false() {
-    // ⛔ §4 WAY ②, AND IT IS THE ONE THE DOC DECLARES LOAD-BEARING (P-15 · D20). `PermissionError`
-    // says in so many words that folding an unreadable record into `false` is the silent partial
-    // truth D20 exists to prevent — and until this probe NOTHING held that sentence. A `continue`
-    // in place of the `?` on `Record::decode` passes every other probe in this file.
+    // ⛔ ERROR ROAD ②, AND IT IS THE ONE THE DOC DECLARES LOAD-BEARING (P-15 · D20).
+    // `PermissionError` says in so many words that folding an unreadable record into `false` is
+    // the silent partial truth D20 exists to prevent — and until this probe NOTHING held that
+    // sentence. A `continue` in place of the `?` on `Record::decode` passes every other probe in
+    // this file.
     //
     // ⚠️ THE BYTES ARE WRITTEN THROUGH THE PORT, which takes `&[u8]` and validates nothing — road
     // A4 of `kernel::boundary`, which already declares that nothing requires every write to the
@@ -322,7 +385,7 @@ fn a_record_that_will_not_decode_is_not_an_answer_of_false() {
 
 #[test]
 fn a_record_of_another_species_is_stepped_over_and_not_read_as_a_permission() {
-    // ⛔ §4 WAY ③: a MIXED journal, which is the only journal this function ever really sees — a
+    // ⛔ ERROR ROAD ③: a MIXED journal, which is the only journal this function ever really sees — a
     // journal holding a permission holds at least the intent of the step it was noted upon. The
     // other species here is a ROUTING record, chosen because it CARRIES A `detail` of its own: a
     // projection that looked at the detail without checking the `kind` would have to step over it
@@ -365,7 +428,7 @@ fn a_record_of_another_species_is_stepped_over_and_not_read_as_a_permission() {
 
 #[test]
 fn a_permission_record_without_its_detail_is_not_an_answer_of_false() {
-    // ⛔ §4 WAY ④, AND IT IS REACHABLE — measured on 2026-09-01 rather than declared impossible.
+    // ⛔ ERROR ROAD ④, AND IT IS REACHABLE — measured on 2026-09-01 rather than declared impossible.
     // In SOURCE it is unpronounceable: `RecordV1::permission` takes its `PermissionDetail` by
     // value, so the `kind`/`detail` pair cannot be split. From BYTES it is one byte's work, which
     // is road A4 of `kernel::boundary` again — `Record::decode` is `pub` and privacy does not

@@ -19,19 +19,23 @@ fn main() {
 
 // ⛔ THIS CASE REPORTS BY COMPILING, which is the strong shape (gotcha #42): widen the `tool`
 // parameter of `PermissionDetail::new` back to `&str` and this file COMPILES, with trybuild
-// reporting "expected compilation to fail" outright instead of through its oracle. A bulk
-// `TRYBUILD=overwrite` cannot disarm it.
+// reporting `error` — "Expected test case to fail to compile, but it succeeded." — outright
+// instead of through its oracle. A bulk `TRYBUILD=overwrite` cannot disarm it.
 //
 // ⛔ AND IT HAS A SIBLING, `permission_detail_resource_is_not_runtime_text.rs`, BECAUSE THE ROADS
-// ARE TWO. This type has two text parameters, and one case naming both would stay `error` when
-// EITHER was widened — the weak shape, and it would hold neither road on its own. Measured on
-// 2026-09-01 in both directions: widening `tool` alone leaves the sibling `ok`, and widening
-// `resource` alone leaves this one `ok`. It is the "le metà sono due e i casi sono due" this
-// repository already applies to `Grant` and to `Conforming`.
+// ARE TWO. This type has two text parameters, and one case naming both could never compile
+// while EITHER still refused runtime text — widening one would leave it failing, `ok` or at best
+// `mismatch`: the weak shape, and it would hold neither road on its own. Measured on 2026-09-01
+// in both directions: widening `tool` alone leaves the sibling `ok`, and widening `resource`
+// alone leaves this one `ok`. It is the "le metà sono due e i casi sono due" this repository
+// already applies to `Grant` and to `Conforming`.
 //
 // ⚠️ IT IS NOT A COPY OF `routing_detail_model_is_not_runtime_text.rs`: that one holds index 0 of
 // `Detail::Routing`, this one index 0 of `Detail::Permission`. Widening one leaves the other
-// `error`, which is what proves they hold DIFFERENT roads instead of the same one twice.
+// `ok`, which is what proves they hold DIFFERENT roads instead of the same one twice.
+// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1293: in this directory `error` is
+// trybuild's word for a case that COMPILED, and the quotation is its own (`message.rs`, trybuild
+// 1.0.120).
 //
 // ⛔ AND WHAT THIS DOES NOT BUY, declared rather than left to be discovered: `write` is a `bool`,
 // so it was never a mouth; and the type derives `Decode`, so BYTES still build one without passing

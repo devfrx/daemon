@@ -24,8 +24,10 @@ fn main() {
 
 // ⛔ THIS CASE REPORTS BY COMPILING, which is the strong shape (gotcha #42): widen the `model`
 // parameter of `RoutingDetail::new` back to `&str` and this file COMPILES, with trybuild
-// reporting "expected compilation to fail" outright instead of through its oracle. A bulk
-// `TRYBUILD=overwrite` cannot disarm it.
+// reporting `error` — "Expected test case to fail to compile, but it succeeded." — outright
+// instead of through its oracle. A bulk `TRYBUILD=overwrite` cannot disarm it. ⚠️ RECALL OF
+// 2026-10-13 -- audit of 2026-09-30, AUD-1293: the quotation is trybuild's own (`message.rs`,
+// trybuild 1.0.120).
 //
 // ⚠️ IT IS NOT A COPY OF `record_reason_is_not_runtime_text.rs`, and the difference is the point:
 // that one holds index 4 of the RECORD, this one holds index 0 of a `Detail`. Widening one leaves

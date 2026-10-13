@@ -7,7 +7,7 @@
 // (`a_real_grant`, `FakeWorker`, `FakeProcess`, `a_started_worker`): this `main` needs neither
 // a `Grant` nor a `Worker`, only `WorkerDescriptor` and `Frame`. Pulling the rest in would
 // leave four items DEAD -- `dead_code` warnings inside a case whose oracle is a text file, and
-// this workspace has no `#[allow]` to silence them with.
+// no `#[allow(dead_code)]` in this workspace to silence them with.
 //
 // ⛔ THE IMPORT BELOW IS DELIBERATE THOUGH NOTHING IN THIS `main` RESOLVES THROUGH IT, and it
 // is what keeps the red non-rewritable -- 2026-08-24. Without it, the regression this case
@@ -25,3 +25,7 @@ fn main() {
     let descriptor = kernel::ports::process::WorkerDescriptor::new(b"asr.exe".to_vec());
     let _ = descriptor.instruct_one(kernel::ports::process::Frame::new(b"hello".to_vec()));
 }
+
+// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-773: the `#[allow]` the paragraph at the top
+// speaks of is one for `dead_code`, and the workspace has none. The note sits down here because
+// the oracle next door quotes the line of the call.

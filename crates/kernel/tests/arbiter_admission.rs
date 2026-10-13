@@ -7,15 +7,17 @@
 //! ⛔ AND THE QUEUES FROM TASK 6, which is a SUBJECT and not one more assertion about the
 //! previous one: that a request which fits the machine but not the moment is QUEUED instead of
 //! refused, that `promote` serves the queue BY LANE and, inside one lane, in arrival order,
-//! that it serves EVERY request that fits and skips ahead to none, that it collects the expired
-//! before it serves, and that what comes out of the queue is a grant like any other.
+//! that it serves EVERY request that fits and, INSIDE A LANE, skips ahead to none -- across lanes
+//! it does, and the doc of `promote` says so -- that it collects the expired before it serves,
+//! and that what comes out of the queue is a grant like any other. ⚠️ RECALL OF 2026-10-13 --
+//! audit of 2026-09-30, AUD-1271.
 //!
 //! ⛔ AND THE REVOCATION FROM TASK 7, WHICH IS A THIRD SUBJECT AND WHOSE PROBES ARE ALMOST ALL
 //! SOMEWHERE ELSE -- said here because a reader who counted the revocation probes in this file
 //! would find ONE and conclude the subject is barely held. `Arbiter::ask_back` is `pub(crate)`,
 //! and a `pub(crate)` is unreachable from an integration test, which is a crate of its own
-//! (`error[E0624]`, measured). So the THIRTEEN probes that CALL it live in the `#[cfg(test)] mod
-//! tests` of `crates/kernel/src/arbiter/mod.rs`, with the deviation declared beside them: that
+//! (`error[E0624]`, measured). So the probes that CALL it live in the `#[cfg(test)] mod tests`
+//! of `crates/kernel/src/arbiter/mod.rs`, with the deviation declared beside them: that
 //! asking back MARKS and does not free, that the grace is collected when it runs out and not
 //! before, the instant it runs out, that a non-preemptible grant and a lane that is not below
 //! the asking one are never touched, that a PEER in the very lane that is asking is not touched
@@ -25,18 +27,19 @@
 //! the need, that asking twice does not buy the room twice, and that it collects the expired
 //! before it marks.
 //!
-//! ⚠️ THIS COUNT IS REWRITTEN AND NEVER ANNOTATED, AND IT HAS BEEN REWRITTEN TWICE: "TEN" until
-//! 2026-08-20, "TWELVE" for the first wave of corrections of that day, THIRTEEN since the second.
-//! A count that is quietly wrong is worse than one that is loudly missing (gotcha #31). The two
-//! of the first wave were the LANE BOUNDARY, which no probe stood on, and the CAPACITY of what can
+//! ⚠️ HOW MANY THEY ARE IS NOT WRITTEN IN THIS FILE: every probe of that module calls `ask_back`,
+//! so `grep -c '#\[test\]' crates/kernel/src/arbiter/mod.rs` counts them. ⚠️ RECALL OF 2026-10-13
+//! -- audit of 2026-09-30, AUD-1274. A count that is quietly wrong is worse than one that is
+//! loudly missing (gotcha #31), and this one was rewritten twice on 2026-08-20: "TEN" until then,
+//! "TWELVE" for the first wave of corrections of that day, "THIRTEEN" for the second. The two of
+//! the first wave were the LANE BOUNDARY, which no probe stood on, and the CAPACITY of what can
 //! actually be reclaimed; the one of the second is the marking pass CROSSING out of the worst lane
 //! when that lane does not cover the need alone.
 //!
-//! ⛔ AND THIS IS THE ONLY PLACE IN THIS FILE WHERE THAT NUMBER IS WRITTEN, since 2026-08-20 and
-//! deliberately. There was a second copy in the doc of the probe below; it said "ten" while this
-//! line said "twelve", which is gotcha #31 in one file and gotcha #68 on top -- the second copy
-//! sat right under a claim that the number had just been rewritten. A figure that lives in two
-//! places gets taken out of one, not realigned in both (`E77`).
+//! ⛔ AND A FIGURE THAT LIVES IN TWO PLACES GETS TAKEN OUT OF ONE, NOT REALIGNED IN BOTH (`E77`).
+//! There was a second copy in the doc of the probe below; it said "ten" while this comment said
+//! "twelve", which is gotcha #31 in one file and gotcha #68 on top -- the second copy sat right
+//! under a claim that the number had just been rewritten.
 //!
 //! ⛔ WHAT STAYS HERE IS THE ONE PROBE THAT NEEDS NOTHING PRIVATE, and only privacy moved the
 //! others: `a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep` is about the
@@ -51,10 +54,12 @@
 //! queues and the sweep would silently be about the revocation instead. ⚠️ THE OTHER HALF OF
 //! THAT, MEASURED AND NOT ASSUMED: nothing here holds the new branch. With the policy question
 //! deleted from `admit` in EITHER direction -- nobody asks back, or everybody does -- this file
-//! stays at 20 passed, 0 failed and the `#[cfg(test)] mod tests` of the lib at 13, 0. The branch
-//! is held by `tests/arbiter_policy.rs` and by nothing else, and the extraction of `enqueue`
-//! that came with it IS held here: filing every request in the `Batch` lane, or freezing the
-//! ticket counter, each turns probes of this file red. Registered as `E96`.
+//! and the `#[cfg(test)] mod tests` of the lib both stay green while `tests/arbiter_policy.rs`
+//! goes red: `cargo test --locked -p kernel --test arbiter_admission --test arbiter_policy --lib`,
+//! measured on 2026-08-20 and again on 2026-10-13. ⚠️ RECALL OF 2026-10-13 -- audit of
+//! 2026-09-30, AUD-1269, AUD-1273. The extraction of `enqueue` that came with it IS held here:
+//! filing every request in the `Batch` lane, or freezing the ticket counter, each turns probes of
+//! this file red. Registered as `E96`.
 //!
 //! ⚠️ THE PROBES LIVE HERE AND NOT IN `arbiter_resource.rs`, and the split is by subject
 //! rather than by convenience: that file holds the vocabulary of the RESOURCE -- `Mib`, the
@@ -87,10 +92,10 @@
 //! ⛔ AND THE ZERO RESERVATION FROM THE GESTURE DESIGN OF 2026-09-03, WHICH IS A FOURTH SUBJECT:
 //! that a request of `Mib::ZERO` is `Granted` even on a machine that is exactly full, and -- the
 //! other direction, on the SAME full machine -- that a reservation of one MiB waits. It is the
-//! sonda S3 of that design (§4.2): the camera worker of ADR-0039 tracks on the CPU and asks for
+//! probe S3 of that design (§4.2): the camera worker of ADR-0039 tracks on the CPU and asks for
 //! zero, and `Process::start` still wants a grant. ⚠️ NO CATALOGUE ROW holds these two probes --
 //! §7.4 is spec -- and the register `docs/porta-di-qualita.md` says so in its own words, where
-//! its index command looks.
+//! its index command looks. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-770, AUD-1270.
 
 use kernel::arbiter::{
     Activity, Admission, Arbiter, ArbiterId, ComputeClass, Mib, PreemptibleState, Preemption,
@@ -196,18 +201,20 @@ fn a_revocation_is_constructible_on_the_preemptible_side() {
 ///
 /// ⚠️ ONLY `Refused` IS CONSTRUCTIBLE FROM OUT HERE. `Granted` carries a `Grant`, which has
 /// no public constructor (`grant_has_no_constructor.rs`); `Queued` carries a `TicketId`,
-/// whose only field is private too. The other two arms therefore bind and discard -- their
+/// whose only field is private too. The three arms therefore bind and discard -- their
 /// weight is that the match TYPE-CHECKS against all three shapes. R2-compliant: this
 /// matches `Admission` instead of comparing it, exactly as the module comment requires.
 ///
 /// 📌 THIS PROBE'S FORCE IS AT COMPILE TIME ONLY, and it is worth saying plainly instead of
-/// implying otherwise. Nothing here computes anything -- it constructs the answer itself --
-/// so the `Mib` values only ever echo what this test passed in. Removing or renaming a
-/// variant of `Admission` makes this REFUSE TO COMPILE; no mutation of the production code
-/// can turn the `assert_eq!` calls below false while the type still has three variants named
-/// the way this file names them. ⚠️ THAT IS UNCHANGED BY TASK 5: `admit` computes now, but
-/// it computes for the probes BELOW -- this one still builds its own `Refused`, because it
-/// is the only variant a bench can construct.
+/// implying otherwise. Nothing here computes anything -- it constructs the answer itself -- so
+/// it asserts no value: the two `Mib` it could read back are the ones it has just written, and
+/// no mutation of the production code could turn such an assertion false. Removing or renaming
+/// a variant of `Admission` makes this REFUSE TO COMPILE, which is the whole of what it holds;
+/// the two numbers of a `Refused` are pinned where `admit` computes them, by
+/// `a_request_larger_than_the_total_is_refused_and_not_queued`. ⚠️ THAT IS UNCHANGED BY TASK 5:
+/// `admit` computes now, but it computes for the probes BELOW -- this one still builds its own
+/// `Refused`, because it is the only variant a bench can construct. ⚠️ RECALL OF 2026-10-13 --
+/// audit of 2026-09-30, AUD-2133.
 #[test]
 fn an_admission_is_distinguishable_three_ways() {
     let outcome = Admission::Refused {
@@ -218,10 +225,7 @@ fn an_admission_is_distinguishable_three_ways() {
     match outcome {
         Admission::Granted(_) => panic!("this probe never constructs a Granted admission"),
         Admission::Queued(_) => panic!("this probe never constructs a Queued admission"),
-        Admission::Refused { asked, ceiling } => {
-            assert_eq!(asked, Mib::new(512));
-            assert_eq!(ceiling, Mib::new(256));
-        }
+        Admission::Refused { .. } => {}
     }
 }
 
@@ -284,14 +288,16 @@ fn releasing_gives_back_exactly_the_reservation() {
 /// identity is DELIVERED (§6.1.3), so "these are two arbiters" is the composition root's
 /// statement and not a fact the kernel could check.
 ///
-/// ⛔ AND THE SECOND ASSERTION CANNOT FAIL, WRITTEN DOWN INSTEAD OF QUIETLY KEPT -- the
-/// species this milestone has already paid for as `E17`. `release` can only REMOVE from the
-/// map, never insert, so `allocated()` on an arbiter that was born empty is `Mib::ZERO`
-/// whatever the production code does: no mutation of `release` turns that line red. IT IS
-/// THE LINE ABOVE, `is_err()`, THAT HOLDS THE PROBE. The assertion stays because it states
-/// the intent the name carries -- "and not a silent credit" -- and because the day `release`
-/// grows a path that can INSERT, it stops being free and starts being the guard it reads
-/// like.
+/// ⛔ AND THE SECOND ARBITER HOLDS A GRANT OF ITS OWN, which is what lets the second assertion
+/// fail: on an EMPTY arbiter `allocated()` reads `Mib::ZERO` whatever `release` does --
+/// `release` can only REMOVE from the map -- and an assertion no mutation can turn red is the
+/// species this milestone paid for as `E17`. Its reservation sits under the SAME `GrantId` as the
+/// foreign grant -- every arbiter numbers its grants from zero -- so a `release` that touched the
+/// books before it asked who issued the grant would take that reservation out while still
+/// answering `Err`: `is_err()` stays green and the books do not.
+/// ✅ MEASURED on 2026-10-13 with `self.held.remove(&grant.id)` ahead of the `Err` of `release`:
+/// this probe goes red on the second assertion. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+/// AUD-2133.
 #[test]
 fn a_grant_released_on_the_wrong_arbiter_is_an_error_and_not_a_silent_credit() {
     let mut first = arbiter(ArbiterId::new(1), TOTAL);
@@ -304,9 +310,20 @@ fn a_grant_released_on_the_wrong_arbiter_is_an_error_and_not_a_silent_credit() {
     ) else {
         panic!("1024 of 16384 fits");
     };
+    let Admission::Granted(_own) = second.admit(
+        &profile("tts-realtime", 2_048, ComputeClass::Realtime),
+        LONG,
+        Monotonic::ORIGIN,
+    ) else {
+        panic!("2048 of 16384 fits");
+    };
 
     assert!(second.release(grant, Monotonic::ORIGIN).is_err());
-    assert_eq!(second.allocated(), Mib::ZERO, "no silent credit");
+    assert_eq!(
+        second.allocated(),
+        Mib::new(2_048),
+        "no silent credit: a grant this arbiter never issued moved its books"
+    );
 }
 
 /// ⛔ THE INVARIANT, ASSERTED ON THE NUMBER: the sum of ALL grants never exceeds the total.
@@ -420,15 +437,18 @@ fn an_expired_grant_does_not_stay_allocated() {
         Millis::new(5_000),
         Monotonic::from_millis(5_001),
     );
+    // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2134: `4_096` fits the machine, so
+    // without the collection the answer is `Queued`, the same answer the probe below gets.
     assert!(
         matches!(after, Admission::Granted(_)),
-        "without the collection this is Refused"
+        "without the collection this is Queued"
     );
     assert_eq!(arbiter.allocated(), Mib::new(4_096), "one grant, not two");
 }
 
 /// The counter-probe of the one above, and it is the direction that is skipped: a grant
-/// that has NOT expired is not collected. Without this, "collect everything always" passes.
+/// that has NOT expired is not collected. Without this, "collect everything always" passes the
+/// probe above. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1272.
 ///
 /// ⚠️ RECALL OF 2026-08-19, MILESTONE 5 TASK 6 -- WHAT THIS PROBE MATCHED BEFORE THE QUEUES.
 /// The second request used to come back `Refused` and the assertion read
@@ -563,7 +583,8 @@ fn a_request_that_fits_the_machine_but_not_the_moment_is_queued() {
 /// the same thing, said completely. The rewrite is a MEASUREMENT and not a tidy-up: with
 /// `Interactive` against `Batch` only, NOTHING IN THE WORKSPACE EVER PROMOTED A WAITER IN THE
 /// `Realtime` LANE -- ✅ measured, `if *lane_key == ComputeClass::Realtime { continue; }`
-/// inside the lane loop of `promote` left ALL 34 TARGETS GREEN. "Best lane first" was
+/// inside the lane loop of `promote` left `cargo test --locked --workspace` entirely green
+/// (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1269). "Best lane first" was
 /// therefore proved on the SECOND-best lane, and `Realtime` is the very lane §5.3.1, M-7 and
 /// ADR-0033's permanent quotas are about.
 ///
@@ -745,8 +766,10 @@ fn a_promoted_grant_is_a_grant_like_any_other() {
 /// production code. The campaign substituted the mutation that DELETES the fit check, which
 /// kills four probes and therefore isolates nothing. ✅ NOW MEASURED, with the skip-ahead
 /// mutation itself -- the `break` on the first non-fitting waiter replaced by a scan for the
-/// first entry that fits: this probe goes red and it is SOLE, 18 passed 1 failed. The
-/// sentence is kept because it turned out to be true, not because it was written down.
+/// first entry that fits: this probe goes red and it is SOLE in this file, under
+/// `cargo test --locked -p kernel --test arbiter_admission` (⚠️ RECALL OF 2026-10-13 -- audit of
+/// 2026-09-30, AUD-1269). The sentence is kept because it turned out to be true, not because it
+/// was written down.
 ///
 /// ⚠️ THE ROOM FREED IS EXACTLY THE SMALL ONE'S, and that is the whole construction: `1_024`
 /// comes back, the head of the lane asks `4_096` and does not fit, the tail asks `1_024` and
@@ -813,10 +836,15 @@ fn promote_does_not_skip_ahead_to_a_smaller_request_behind_a_bigger_one() {
     );
 }
 
-/// ⛔ `promote` COLLECTS THE EXPIRED BEFORE IT DECIDES, and this is the only probe that
-/// exercises that line. "The arbiter collects before it decides" is a property of EVERY
-/// operation -- it is why `collect_expired` is private. Deleting `self.collect_expired(now)`
-/// from this one has to make something red, and before this probe nothing went red.
+/// ⛔ `promote` COLLECTS THE EXPIRED BEFORE IT DECIDES, and this probe holds that line here.
+/// "The arbiter collects before it decides" is a property of EVERY operation -- it is why
+/// `collect_expired` is private. Deleting `self.collect_expired(now)` from this one has to make
+/// something red, and before this probe nothing went red. ⚠️ IT IS NOT THE ONLY ONE that leans
+/// on that line today: with it deleted, `cargo test --locked -p kernel -p daemon --no-fail-fast`
+/// also turns red `under_the_local_policy_the_queued_request_is_served_past_the_grace` in
+/// `tests/arbiter_policy.rs` and the daemon's
+/// `a_permanent_grant_survives_to_the_last_instant_of_the_axis_and_is_swept_at_it` -- measured on
+/// 2026-10-13. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1271.
 ///
 /// ⛔ RECALL OF 2026-08-28, FINDING AUD-018 -- THIS SAID "and with `promote` there are now THREE
 /// of them", AND THE COUNT IS REMOVED FROM ALL THREE OF ITS HOUSES RATHER THAN REALIGNED TO FOUR.
@@ -873,7 +901,8 @@ fn promote_collects_the_expired_before_it_serves_the_queue() {
 /// `promote`'s doc says it "serves the queue with whatever room there is now", the plural was
 /// stated in a comment and held by NOTHING, and a rule held by nothing is an intention
 /// (gotcha #42). ✅ Measured, not deduced: with a `break` after the first promotion of a lane,
-/// all eighteen other probes stayed green.
+/// every other probe of `cargo test --locked -p kernel --test arbiter_admission` stayed green
+/// that day. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1269.
 ///
 /// ⚠️ THE TWO WAITERS ARE IN THE SAME LANE, and that is what makes the probe about "how many"
 /// rather than about "which lane": one per LANE would still pass if they were split.
@@ -921,9 +950,13 @@ fn promote_serves_every_request_that_fits_and_not_just_the_first() {
 
 /// ⛔ THE PROBE THAT PROTECTS THE ONES FROM TASK 5 FROM BECOMING VACUOUS (gotcha #66): with
 /// forced reclamation now living inside the same sweep, a grant that is neither expired nor
-/// revoking must still survive it. Without it, a `collect_expired` whose SECOND arm answered
-/// "collect" would empty the books of everything that was never asked back, and the whole of
-/// the validity window above would still be green.
+/// revoking must still survive it. ⚠️ WHAT IT ADDS IS THE STATE: its resident is PREEMPTIBLE and
+/// RUNNING, and every other grant in this file is non-preemptible. ✅ MEASURED
+/// on 2026-10-13 with `cargo test --locked -p kernel --test arbiter_admission`: a SECOND arm of
+/// `collect_expired` answering "collect" for both its states turns most of this file red, the
+/// validity window above included -- `a_grant_still_inside_its_window_is_not_collected` is one
+/// of them; answering "collect" for `Preemptible(Running)` alone, it is this probe that goes red,
+/// and only this one here. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1272.
 ///
 /// ⚠️ THE ANSWER IS `Queued` AND NOT `Refused`, AND THE PLAN'S STEP SAID `Refused`. That was
 /// written before task 6 gave `admit` its queueing branch: `4_096` is not bigger than the whole
@@ -940,9 +973,10 @@ fn promote_serves_every_request_that_fits_and_not_just_the_first() {
 /// right after, to have just rewritten that very number. ⛔ TWO PRESENT-TENSE COUNTS
 /// CONTRADICTING EACH OTHER IN ONE FILE IS GOTCHA #31, AND A CLAIM OF COMPLETENESS THE SAME FILE
 /// FALSIFIES IS GOTCHA #68 -- the rule that fails to bind the document hosting it, which weighs
-/// more than the figure. ⛔ SO THE COUNT NOW LIVES IN EXACTLY ONE PLACE, the module comment, and
-/// this sentence points at it instead of restating it: the second copy is what let the first one
-/// rot unseen. Registered as `E77`.
+/// more than the figure. ⛔ SO THE COUNT LIVES IN NO SENTENCE OF THIS FILE: the module comment
+/// gives the command that counts the probes, and this sentence points at it instead of
+/// restating it -- the second copy is what let the first one rot unseen. Registered as `E77`.
+/// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1274.
 #[test]
 fn a_grant_that_is_neither_expired_nor_revoking_survives_the_sweep() {
     let mut arbiter = arbiter(ArbiterId::new(1), Mib::new(4_096));
@@ -984,7 +1018,12 @@ fn a_grant_of_this_arbiter_released_after_its_window_is_not_an_error() {
 }
 
 /// The counter-probe, and it is the direction that is skipped: inside the window the release
-/// says WHAT CAME BACK. Without it, "always answer AlreadyCollected" stays green.
+/// says WHAT CAME BACK. What it adds is the SIDE OF THE WINDOW: it releases at `4_999`, the
+/// probe above at `5_001`, and the window closes at `5_000`. ⚠️ IT IS NOT ALONE against a
+/// `release` that always answers `AlreadyCollected`: the probes of this file that release at
+/// `ORIGIN` -- `releasing_gives_back_exactly_the_reservation` among them -- go red with it,
+/// measured on 2026-10-13 with `cargo test --locked -p kernel --test arbiter_admission`.
+/// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1272.
 #[test]
 fn a_grant_released_inside_its_window_reports_what_came_back() {
     let mut arbiter = arbiter(ArbiterId::new(1), TOTAL);
@@ -1001,7 +1040,7 @@ fn a_grant_released_inside_its_window_reports_what_came_back() {
     assert_eq!(released, Ok(Released::Now(Mib::new(4_096))));
 }
 
-/// ⛔ A RESERVATION OF ZERO IS GRANTED EVEN WHEN THE MACHINE IS FULL, and that is the sonda S3
+/// ⛔ A RESERVATION OF ZERO IS GRANTED EVEN WHEN THE MACHINE IS FULL, and that is the probe S3
 /// of the gesture design (2026-09-03, §4.2): the camera worker of ADR-0039 tracks on the CPU and
 /// asks for `Mib::ZERO`, and the port `process` still wants a grant to start it (§5.6). `admit`
 /// asks two questions -- "bigger than the whole machine?" and "does it fit NOW?" -- and zero

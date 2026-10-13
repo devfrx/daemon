@@ -45,11 +45,18 @@ pub enum VerdictOutcome {
 /// HEREDITARY — "extracting, summarising, translating or concatenating still produces untrusted
 /// content" — and a detail is computed FROM the artefact. For an inferential sensor it is model
 /// output outright. So it travels in the record's `payload`, which is the box whose doc says it
-/// holds "somebody else's" bytes, and never in `reason`.
+/// holds "somebody else's" bytes, and never in `reason` -- ⚠️ NOR in the record's `Detail`, which
+/// shares the word and nothing else: that is the STRUCTURED half of the record, and the verdict's,
+/// `VerdictDetail`, carries `passed` and `spent_millis` and no text. ⚠️ RECALL OF 2026-10-13 --
+/// audit of 2026-09-30, AUD-766.
 ///
 /// ⚠️ WHAT THE SPENT COST IS AND IS NOT: it is what the SENSOR reports, not what the ring
 /// measured. A sensor that lies about it is not caught here — sensors are kernel-side code and
 /// the content comes from capacities (ADR-0009). The limit is declared rather than defended.
+///
+/// ⚠️ NOT TO BE CONFUSED WITH `crate::wire::ipc::Verdict`, which has the same name and is a
+/// different thing: the three-way outcome of a GPU admission, on the `ipc` wire. No file imports
+/// both. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-765.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Verdict {
     pub outcome: VerdictOutcome,
@@ -72,7 +79,8 @@ pub trait Sensor {
 ///
 /// ⛔ A FREE FUNCTION THAT TAKES THE PORT, like `reconcile::steps_in_doubt` — the project already
 /// has this shape for "read the journal and derive", and this one writes as well. A struct
-/// holding the journal would give the ring state, and I5 keeps state in one place.
+/// holding the journal would give the ring state of its own, and the ring needs none: what it
+/// knows is in the archive. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1188.
 ///
 /// ⛔ `next` IS DELIVERED AND NOT ALLOCATED, and that is not laziness: the `journal` port has NO
 /// ALLOCATOR for a `StepId` and stays without one until a second consumer asks — open item 6 of
@@ -93,12 +101,25 @@ pub trait Sensor {
 /// ⛔ AND `correction_effect` IS DELIVERED FOR THE SAME REASON `next` IS. The ring opens a step
 /// it will not execute, and the class of an effect says how a DOUBT about it is reconciled
 /// (ADR-0007) — so naming it here would classify an effect nobody has written yet. ⚠️ IT USED TO
-/// BE A LITERAL `Idempotent` UNTIL 2026-08-31, held by nothing: turned to `Unrepeatable` the whole
-/// workspace stayed green, 41 targets and 297 passed, identical to the baseline. ⛔ AND THE
+/// BE A LITERAL `Idempotent` UNTIL 2026-08-31, held by nothing: turned to `Unrepeatable`, it left
+/// `cargo test --locked --workspace` exactly as green as the baseline (⚠️ RECALL OF 2026-10-13
+/// -- audit of 2026-09-30, AUD-1245). ⛔ AND THE
 /// DEFAULT ADR-0007 GIVES AN UNCLASSIFIED EFFECT IS THE OPPOSITE ONE — "an effect with no declared
 /// class is treated as UNREPEATABLE: facing a doubt it cannot resolve the system STOPS, it does
 /// not guess" — so the literal was not merely unheld, it guessed in the permissive direction.
 /// Errata `E55`, decided by the owner on 2026-08-31.
+///
+/// ⚠️ A NEGATIVE VERDICT IS TWO WRITES AND NOT ONE, AND A CRASH BETWEEN THEM LOSES THE FEEDBACK.
+/// The verdict is noted upon `step`, THEN the corrective step is opened upon `next`, and the port
+/// has no write that does both. A fall after the first leaves a durable negative verdict and no
+/// corrective step, and resume does not see it: a `Verdict` record opens no doubt
+/// (`crate::reconcile`), `step` owes only its own outcome, and nothing in the archive ties `next`
+/// to the verdict. `the_second_write_of_the_ring_is_not_swallowed_either`, in
+/// `tests/sensor_ring.rs`, holds the second write's REFUSAL, not the fall, and no DST campaign
+/// calls this function. Declared rather than closed: nothing outside the benches calls it and no
+/// inferential sensor exists, and which road closes the window -- the corrective intent written
+/// first, a resume that looks for a negative verdict with nothing after it, or the window kept as
+/// it is -- is the owner's choice. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1112.
 ///
 /// Returns the id of the step it opened, or `None` when nothing was opened — either the verdict
 /// passed, or the sensor was refused by the tight ring.

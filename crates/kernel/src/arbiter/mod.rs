@@ -40,8 +40,11 @@ pub use resource::{ComputeClass, Mib, Preemption, ResourceProfile, WorkDescripto
 /// already swept" from "a grant of ANOTHER arbiter". Without it `held.remove` answers `None`
 /// to both, and the two need opposite answers -- see `Released` and `ReleaseError`.
 ///
-/// ⛔ DELIVERED, per ADR-0034: it travels in `Parameters`, and §6.1.3 forbids the kernel to
-/// mint an identifier. Nothing here generates one.
+/// ⛔ DELIVERED, per ADR-0034: it travels in `Parameters`, because a decision of the kernel reads
+/// only what it is handed, and an identity that tells two arbiters apart, minted in here, would
+/// need state every arbiter shares -- the hidden kind no decision is handed. Nothing here
+/// generates one. §6.1.3 rules something narrower: the identifiers the kernel does produce are
+/// progressives, never random. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1160.
 ///
 /// ⚠️ THE FIELD IS PRIVATE AND THE CONSTRUCTOR IS NOT, and the asymmetry is the whole of it:
 /// `daemon` has to build one, so a tuple literal from any crate would give the same forgery
@@ -82,8 +85,16 @@ impl ArbiterId {
 /// and whoever writes "start the worker" without passing an admission does not compile.
 ///
 /// ⚠️ NO `Debug`, NO `Clone`, NO `Copy`, and each absence is load-bearing rather than
-/// minimal. `Clone` would let one grant start two workers. `Debug` -- nothing formats a
-/// grant, and the receipts of `ports::process` keep theirs only because `unwrap_err`
+/// minimal. `Clone` would let one grant start two workers -- `start(grant.clone(), ..)` -- and
+/// `Copy` would let a second `start(grant, ..)` compile: the `E0382` that refuses it today hinges
+/// on `Copy` alone, which is why the two roads are named apart. ⚠️ AND NOTHING THAT CAN GO RED
+/// HOLDS EITHER ABSENCE: measured on 2026-10-13, with `#[derive(Clone)]` and then
+/// `#[derive(Clone, Copy)]` on this type, `cargo test --locked -p kernel --lib --test compile_fail
+/// --test worker_tokens --test arbiter_admission --test client_grants` stayed green, because no
+/// case writes a second `start` or a `.clone()` on a `Grant`. The case that would is the open
+/// item of milestone 5 on the fifth `compile_fail` case, in docs/porta-di-qualita.md, and it is
+/// the owner's. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-740. `Debug` -- nothing
+/// formats a grant, and the receipts of `ports::process` keep theirs only because `unwrap_err`
 /// requires it. The consequence is on the BENCH and is written down so nobody discovers it:
 /// `Admission` cannot derive `Debug` or `PartialEq` either, so probes match on it with
 /// `matches!` and `let … else` instead of `assert_eq!`.
@@ -268,8 +279,9 @@ pub enum Released {
 /// revocation at all.
 ///
 /// ⚠️ A DECLARED LIMIT THAT SURVIVES. What `release` compares is
-/// EQUALITY of `ArbiterId`, and that value is DELIVERED -- §6.1.3 forbids the kernel to mint
-/// one. Two arbiters handed the SAME id ARE the same arbiter as far as this guard can tell,
+/// EQUALITY of `ArbiterId`, and that value is DELIVERED -- ADR-0034, as the doc of `ArbiterId`
+/// says (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1160). Two arbiters handed the SAME
+/// id ARE the same arbiter as far as this guard can tell,
 /// and nothing here can see otherwise: making them differ is the composition root's statement
 /// to make, and `Parameters::arbiter_id` is where it is made.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -397,12 +409,12 @@ impl Arbiter {
 
     /// The policy this arbiter is running.
     ///
-    /// ⚠️ ITS CONSUMERS ARE BENCHES, AND THAT IS SAID RATHER THAN LEFT TO BE NOTICED: it is
-    /// `pub`, so `dead_code` would not have mentioned it either way. What buys it, in
-    /// `tests/arbiter_policy.rs`, is `each_policy_names_itself` and -- since task 9 --
-    /// `a_policy_transition_writes_its_intent_before_its_outcome` and
-    /// `a_refused_intent_leaves_the_policy_where_it_was`, which read the name THROUGH the
-    /// arbiter, FROM OUTSIDE THE CRATE.
+    /// ⚠️ ITS PRODUCTION CONSUMER IS `crate::serving`, AND THE BENCHES READ IT TOO: it is `pub`,
+    /// so `dead_code` would not have mentioned it either way. `Core::policy_report` matches on it
+    /// to build the `Policy` message the core sends the gui, and `tests/arbiter_policy.rs` and
+    /// `tests/serving.rs` read the name THROUGH the arbiter, FROM OUTSIDE THE CRATE --
+    /// `grep -rn '\.policy()' crates/kernel` lists them all. ⚠️ RECALL OF 2026-10-13 -- audit of
+    /// 2026-09-30, AUD-1155.
     ///
     /// ⚠️ RECALL OF 2026-08-20 -- `set_policy` reads `self.policy`, the FIELD; the story of the
     /// sentence that stood here is in `docs/archivio/sorgenti-storico.md`.
@@ -533,12 +545,12 @@ impl Arbiter {
     /// left to be discovered, because a claim about behaviour that no probe exercises is the
     /// species this task has already paid for once. ✅ MEASURED on 2026-08-19, not deduced:
     /// with `!self.queues.is_empty() ||` added to the second guard below -- so a latecomer
-    /// QUEUES BEHIND the waiters instead of jumping them -- NOTHING goes red: 19 passed, 0
-    /// failed in `tests/arbiter_admission.rs`, and 34 targets, 222 passed, 0 failed, 2 ignored
-    /// across the workspace. THE MUTANT IS ALIVE, so the day whoever builds the first
-    /// orchestration cycle -- the one that decides when to call `promote` relative to `admit`
-    /// -- decides the other way, this paragraph becomes FALSE IN SILENCE with nothing going
-    /// red to say so. ⚠️ RECALL OF 2026-08-21 -- the story is in
+    /// QUEUES BEHIND the waiters instead of jumping them -- NOTHING goes red under
+    /// `cargo test --locked --workspace`, `tests/arbiter_admission.rs` included. ⚠️ RECALL OF
+    /// 2026-10-13 -- audit of 2026-09-30, AUD-1154, AUD-1245. THE MUTANT IS ALIVE, so the day
+    /// whoever builds the first orchestration cycle -- the one that decides when to call
+    /// `promote` relative to `admit` -- decides the other way, this paragraph becomes FALSE IN
+    /// SILENCE with nothing going red to say so. ⚠️ RECALL OF 2026-08-21 -- the story is in
     /// `docs/archivio/sorgenti-storico.md`.
     /// ⚖️ AND IT IS NOT PINNED, ON PURPOSE AND ON THE MERITS: a probe
     /// asserting `Granted` for the latecomer would freeze exactly the choice the errata voice
@@ -680,15 +692,14 @@ impl Arbiter {
     /// ⛔ AND NOTHING HOLDS THE PARAGRAPH ABOVE EITHER, which is declared here for the same
     /// reason as beside `admit`. ✅ MEASURED on 2026-08-19, not deduced: with the WHOLE PASS
     /// made to stop at the first lane whose head does not fit -- a flag on the inner `break`,
-    /// then `break` on the outer loop, so no lane ever falls through -- NOTHING goes red: 19
-    /// passed, 0 failed in `tests/arbiter_admission.rs`, and 34 targets, 222 passed, 0 failed,
-    /// 2 ignored across the workspace. THE MUTANT IS ALIVE, so the day the first orchestration
-    /// cycle -- the one that decides when to call `promote` relative to `admit` -- picks a
-    /// different order across lanes, this paragraph becomes FALSE IN SILENCE. ⚠️ RECALL OF
-    /// 2026-08-21 -- the story is in `docs/archivio/sorgenti-storico.md`. ⚖️ AND A PROBE IS NOT THE
-    /// REMEDY: pinning the fall-through
-    /// would freeze the very policy the errata voice `E50` asks the owner to choose. Same
-    /// reasoning as `E39`; registered as `E53`.
+    /// then `break` on the outer loop, so no lane ever falls through -- NOTHING goes red under
+    /// `cargo test --locked --workspace`, `tests/arbiter_admission.rs` included. ⚠️ RECALL OF
+    /// 2026-10-13 -- audit of 2026-09-30, AUD-1150, AUD-1245. THE MUTANT IS ALIVE, so the day the
+    /// first orchestration cycle -- the one that decides when to call `promote` relative to
+    /// `admit` -- picks a different order across lanes, this paragraph becomes FALSE IN SILENCE.
+    /// ⚠️ RECALL OF 2026-08-21 -- the story is in `docs/archivio/sorgenti-storico.md`. ⚖️ AND A
+    /// PROBE IS NOT THE REMEDY: pinning the fall-through would freeze the very policy the errata
+    /// voice `E50` asks the owner to choose. Same reasoning as `E39`; registered as `E53`.
     ///
     /// ⚠️ `BTreeMap` ITERATES IN KEY ORDER, and `ComputeClass` orders by its explicit
     /// priority key -- so "best lane first" costs nothing here. TWO probes hold that coupling
@@ -710,9 +721,11 @@ impl Arbiter {
         // writing the three lanes out here would have restated a second time.
         //
         // ⛔ THE HAZARD, WRITTEN DOWN INSTEAD OF LEFT TO BE DISCOVERED: while this loop runs,
-        // `self.queues` is EMPTY. It is sound only because the two things called inside --
-        // `allocated` and `issue` -- read and write `held` and `next_grant` and nothing else.
-        // Anything added to either that touches `queues` would see an empty map.
+        // `self.queues` is EMPTY. It is sound only because neither of the two things called
+        // inside touches `queues`: `allocated` reads `held`, and `issue` writes `held` and
+        // `next_grant` and reads `id`, which nothing writes after `new`. Anything added to either
+        // that touches `queues` would see an empty map. ⚠️ RECALL OF 2026-10-13 -- audit of
+        // 2026-09-30, AUD-1157.
         let mut queues = core::mem::take(&mut self.queues);
         for queue in queues.values_mut() {
             while let Some(waiting) = queue.first() {
@@ -784,10 +797,11 @@ impl Arbiter {
     /// deleted to take a decision is a vote against taking it. ✅ RE-MEASURED on 2026-08-20
     /// against the code of the second wave rather than carried over -- a figure quoted instead of
     /// redone is gotcha #31, and this suite grew by a probe in between: with the marking pass
-    /// walking `self.held.values_mut().rev()` -- NEWEST first -- NOTHING goes red, 13 passed here
-    /// and 20 in `tests/arbiter_admission.rs` (row 13 of the campaign). THE MUTANT IS STILL ALIVE,
-    /// so the day somebody changes it this paragraph becomes false in silence with nothing to say
-    /// so. Registered as `E70`, re-measured under `E80`.
+    /// walking `self.held.values_mut().rev()` -- NEWEST first -- NOTHING goes red under
+    /// `cargo test --locked -p kernel --lib --test arbiter_admission` (row 13 of the campaign).
+    /// THE MUTANT IS STILL ALIVE, so the day somebody changes it this paragraph becomes false in
+    /// silence with nothing to say so. Registered as `E70`, re-measured under `E80`. ⚠️ RECALL OF
+    /// 2026-10-13 -- audit of 2026-09-30, AUD-1150, AUD-1245.
     ///
     /// ⛔ IT COLLECTS THE EXPIRED FIRST, like every other operation, and the property "the
     /// arbiter collects before it decides" is why `collect_expired` is private rather than a step
@@ -892,9 +906,10 @@ impl Arbiter {
         // uses for the order within a lane. A suite can only see BEHAVIOUR, and this filter has
         // none: the lanes it removes hold nothing the inner loop would have marked, because that
         // loop asks `askable` again itself. ✅ MEASURED the same day: with this one line deleted
-        // the WHOLE WORKSPACE stays green -- 34 targets, 236 passed, 0 failed, 2 ignored, the
-        // baseline exactly. ⚠️ SO THE SENTENCE ABOVE IS HELD BY NOTHING THAT CAN GO RED, and the
-        // day somebody deletes the line for being dead weight it becomes false in silence. That is
+        // the WHOLE WORKSPACE stays green under `cargo test --locked --workspace` (⚠️ RECALL OF
+        // 2026-10-13 -- audit of 2026-09-30, AUD-1150, AUD-1245). ⚠️ SO THE SENTENCE ABOVE IS
+        // HELD BY NOTHING THAT CAN GO RED, and the day somebody deletes the line for being dead
+        // weight it becomes false in silence. That is
         // the price of buying the property by CONSTRUCTION rather than by a probe, and it is
         // written down rather than discovered. Row 15 of the campaign, registered as `E83`.
         let lanes: BTreeSet<ComputeClass> = self
@@ -913,10 +928,10 @@ impl Arbiter {
         // so a pass that stopped after the first lane would answer LESS than it had just promised,
         // with that lane's victims already marked: one evicted and nobody seated, which is the
         // damage `E69` exists to remove arriving by a third road. ⚠️ AND NOTHING HELD IT UNTIL
-        // 2026-08-20, which is stated because it was measured and not deduced: `lanes.iter().rev()`
-        // cut to `.take(1)` survived the WHOLE WORKSPACE -- 34 targets, 235 passed, 0 failed, 2
-        // ignored. What holds it now is
+        // 2026-08-20 -- measured and not deduced, and the measure is written once, on the probe
+        // that holds it now:
         // `asking_back_crosses_into_the_next_lane_when_the_worst_one_is_not_enough` (`E75`).
+        // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1151.
         let mut covered = Mib::ZERO;
         for lane in lanes.iter().rev() {
             for held in self.held.values_mut() {
@@ -1023,13 +1038,18 @@ impl Arbiter {
     /// are on the MONOTONIC axis, never wall time (§5.3 point 2).
     ///
     /// ⛔ AND BOTH WINDOWS ARE HALF-OPEN, WHICH IS ONE RULE AND NOT TWO. At `now == expires_at`
-    /// the grant is already collected, and at `now == deadline` the grace is already over: both
-    /// comparisons are `>`, and both boundaries have a probe standing exactly on them --
+    /// the grant is already collected, and at `now == deadline` the grace is already over. The
+    /// rule is SPELLED TWO WAYS below, and the recipe of a mutation follows the spelling: the
+    /// window is written as its collection, `held.expires_at <= now`, and the grace as its
+    /// retention, `deadline > now`. Both boundaries have a probe standing exactly on them --
     /// `a_grant_is_collected_at_the_instant_its_window_closes` for the first,
-    /// `the_grace_runs_out_at_the_instant_of_its_deadline` for the second. The second exists
-    /// because the first had to be added at task 5 for the same reason: the two probes either
-    /// side of a boundary step OVER it, and `>` mutated to `>=` then survives the whole suite
-    /// (`E29`).
+    /// `the_grace_runs_out_at_the_instant_of_its_deadline` for the second -- and each goes red
+    /// when its comparison is moved off the boundary, `<=` to `<` and `>` to `>=`: measured on
+    /// 2026-10-13 with `cargo test --locked -p kernel --lib --test arbiter_admission`. The second
+    /// exists because the first had to be added at task 5 for the same reason: the two probes
+    /// either side of a boundary step OVER it, and the window, then written as the retention
+    /// `expires_at > now`, survived the whole suite with `>` mutated to `>=` (`E29`). ⚠️ RECALL OF
+    /// 2026-10-13 -- audit of 2026-09-30, AUD-1156.
     fn collect_expired(&mut self, now: Monotonic) {
         self.held.retain(|_, held| {
             if held.expires_at <= now {
@@ -1447,9 +1467,9 @@ mod tests {
 
     /// ⛔ BELOW MEANS STRICTLY BELOW, AND THIS PROBE STANDS ON THE BOUNDARY ITSELF. Every other
     /// probe here puts its resident STRICTLY above or STRICTLY below the asking lane, so the
-    /// boundary was asked by nobody and `lane <= below` mutated to `lane < below` survived the
-    /// WHOLE WORKSPACE -- measured on 2026-08-20 against the suite AS IT WAS BEFORE this probe,
-    /// ten here and twenty in `tests/arbiter_admission.rs`, with every other target green too.
+    /// boundary was asked by nobody and `lane <= below` mutated to `lane < below` survived
+    /// `cargo test --locked --workspace` -- measured on 2026-08-20 against the suite AS IT WAS
+    /// BEFORE this probe (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1151).
     /// It is the species of `E29` on a third guard: the two probes either side of a boundary
     /// step OVER it.
     ///
@@ -1561,13 +1581,15 @@ mod tests {
         // function never takes anything off the books itself: only `collect_expired` does, and at
         // `ORIGIN` with `LONG` windows there is nothing to collect, so `allocated()` is `8_192`
         // for any implementation of the thing under test. ✅ MEASURED on 2026-08-20 in the THIRD
-        // review, against the suite OF THAT MOMENT -- thirteen probes here, twenty in
-        // `tests/arbiter_admission.rs` -- with the two assertions above removed and this one left
-        // standing alone: it survives the reading pass being deleted (mutation 12, this probe's
-        // own sole killer -- 13 passed, 0 failed, where at full strength it is 12/1), the grace
-        // guard being dropped (mutation 8 -- 12/1, and the one that dies is somebody else), and
-        // `ask_back` freeing what it marks (mutation 1 -- 6/7 isolated AND 6/7 at full strength,
-        // this probe among the deaths in neither, so isolating it changes nothing there).
+        // review, against the suite OF THAT MOMENT and with
+        // `cargo test --locked -p kernel --lib --test arbiter_admission`, with the two assertions
+        // above removed and this one left standing alone: it survives the reading pass being
+        // deleted (mutation 12, this probe's own sole killer -- isolated, every probe here stays
+        // green, while at full strength this one alone goes red), the grace guard being dropped
+        // (mutation 8 -- another probe goes red, not this one), and `ask_back` freeing what it
+        // marks (mutation 1 -- the same probes go red isolated and at full strength, this one among
+        // them in neither, so isolating it changes nothing there). ⚠️ RECALL OF 2026-10-13 --
+        // audit of 2026-09-30, AUD-1151.
         //
         // ⛔ AND YET IT IS NOT THE TWO ABOVE THAT HOLD THIS PROBE.
         // This probe dies under mutations 5b, 5d, 8, 11 and 12, and they do not all kill it through
@@ -1635,8 +1657,9 @@ mod tests {
     /// lane" was asked by NOBODY. ⚠️ RECALL OF 2026-08-28, AUD-043 -- what carries this
     /// paragraph is the mutation below; the story is in `docs/archivio/sorgenti-storico.md`.
     /// ✅ MEASURED on 2026-08-20 and not deduced: with `lanes.iter().rev()`
-    /// cut to `.take(1)` -- the outer loop stopped after the first lane -- the mutant survived the
-    /// WHOLE WORKSPACE, 34 targets, 235 passed, 0 failed, 2 ignored. Registered as `E75`.
+    /// cut to `.take(1)` -- the outer loop stopped after the first lane -- the mutant survived
+    /// `cargo test --locked --workspace`. Registered as `E75`. ⚠️ RECALL OF 2026-10-13 -- audit of
+    /// 2026-09-30, AUD-1151.
     ///
     /// ⛔ AND IT IS NOT A CURIOSITY, IT IS `E69` BY A THIRD ROAD. The reading pass adds up ALL the
     /// lanes, so it can promise `6_144` and let the marking pass hand back `2_048` with the `Batch`

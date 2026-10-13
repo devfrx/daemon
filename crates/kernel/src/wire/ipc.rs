@@ -1,9 +1,12 @@
 //! The schema of the `ipc` channel: the envelope of `crate::framing` carrying ONE enum.
 //!
-//! ⛔ ONE ENUM FOR BOTH DIRECTIONS, AND THE DIRECTION IS DOCUMENTED RATHER THAN TYPED. Two
-//! enums of one variant each would leave BOTH discriminants unexercised, which is the very
-//! thing §6.7 asks two messages for. And typing the direction would buy nothing at the port:
-//! `send` takes `&[u8]` and `receive` returns `Vec<u8>`, so the boundary sees no type at all.
+//! ⛔ ONE ENUM FOR BOTH DIRECTIONS, AND THE DIRECTION IS DOCUMENTED RATHER THAN TYPED. When the
+//! channel carried one message each way, two enums of one variant each would have left BOTH
+//! discriminants unexercised, which is the very thing §6.7 of the milestone 6 design asks two
+//! messages for; sub-project 2 gave each direction several, so that reason no longer bites, and
+//! the one that holds is the next. Typing the direction would buy nothing at the port: `send`
+//! takes `&[u8]` and `receive` returns `Vec<u8>`, so the boundary sees no type at all.
+//! ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-769.
 //! ⚠️ THE COST, stated: nothing stops a caller from encoding a `Verdict` and sending it UP.
 //! The transport exists -- `platform::ipc::LocalSocketIpc` -- and the guard that pays for itself
 //! is on the receiving side, not here: `crate::serving` reads a core -> gui variant that arrives
@@ -18,10 +21,12 @@
 //! audit of 2026-09-30, AUD-693.
 //!
 //! ⛔ NO VERSION ENUM, NO RETIRED-INDEX REGISTER, NO FROZEN BYTES -- I4 renounces versioning
-//! (§6.4). What stands in its place is the BUILD STAMP of §6.1.2, WHICH THIS MILESTONE DOES
-//! NOT BUILD (§3.4). Until it exists, NOTHING REFUSES A STALE GUI, and today that costs
-//! nothing because there is no gui to refuse -- `grep -rnE "^ *impl Ipc for" crates/` returns
-//! a bench fake. The trigger is milestone 2 of the subproject, the one that brings the shell.
+//! (§6.4 of the milestone 6 design). What stands in its place is the BUILD STAMP of §6.1.2,
+//! WHICH THIS MILESTONE DOES NOT BUILD (§3.4 of the same design). Until it exists, NOTHING
+//! REFUSES A STALE GUI, and today that costs nothing because there is no gui to refuse --
+//! `grep -rnE "^ *impl Ipc for" crates/` returns a bench fake. The trigger is milestone 2 of the
+//! subproject, the one that brings the shell. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+//! AUD-1268.
 //!
 //! ⛔ AND THE REVOCATION core -> gui IS A DECLARED NON-CONSTRUCTION. ADR-0033 names it -- "the
 //! gui stops rendering the 3D and says so" -- and it is the first message this vocabulary will
@@ -32,7 +37,8 @@
 //! above, because the two non-constructions could have had different ones: a revocation needs
 //! an ADDRESSEE, and until milestone 2 of the subproject there is nobody to tell. Inventing
 //! the message before there is one would freeze a vocabulary against an imaginary consumer --
-//! gotcha #46 from the wrong side, which is the same reason §3.4 gives for the stamp.
+//! gotcha #46 from the wrong side, which is the same reason §3.4 of the milestone 6 design gives
+//! for the stamp. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1268.
 //!
 //! ✅ DATED RECALL, 2026-09-17 -- THE TRIGGER WRITTEN ABOVE FELL DUE TODAY AND IS NOT HONOURED,
 //! WHICH IS THE OPPOSITE OF WHAT "the same shell" READS LIKE. The shell arrived (ADR-0029,
@@ -122,11 +128,14 @@ use crate::time::Millis;
 /// on its own: `Debug` -- `E0277`, `IpcMessage` doesn't implement `Debug`, demanded by the
 /// `assert_eq!`s of `crates/kernel/tests/ipc_wire.rs`. `PartialEq` -- `E0369`, `==` cannot be
 /// applied. `Encode`/`Decode` are the schema itself.
-/// ⛔ `Eq` AND `Clone` HAVE ONE CONSUMER, THE DERIVE OF `IpcMessage` THAT CARRIES THIS TYPE:
+/// ⛔ `Eq` AND `Clone` ARE CONSUMED BY THE DERIVE OF `IpcMessage` THAT CARRIES THIS TYPE:
 /// dropped from this type alone, one at a time, each stops `kernel` compiling with `E0277` on the
 /// `Request` variant -- measured on 2026-10-06 (`cargo build --locked -p kernel`), so the question
 /// below is the family's, `IpcMessage` with its payloads, and not this type's alone. ⚠️ RECALL OF
-/// 2026-10-07 -- audit of 2026-09-30. They are here because they are the shape of
+/// 2026-10-07 -- audit of 2026-09-30. ⚠️ AND `Clone` HAS A DIRECT CONSUMER BESIDES, which a build
+/// of `kernel` alone does not reach: `DyingGui::receive`, in `crates/simulator/src/ipc.rs`, clones
+/// the request it holds -- `grep -rn 'request.clone()' crates/simulator/src`. ⚠️ RECALL OF
+/// 2026-10-13 -- audit of 2026-09-30, AUD-1260. They are here because they are the shape of
 /// `crate::wire::worker::FromWorker`,
 /// which E33 of this task's errata pointed at, and pruning them is REGISTERED AND NOT TAKEN --
 /// the precedent that argues for pruning lives on `crate::ports::ipc::ClientId`, which refused
@@ -167,6 +176,10 @@ pub struct GrantRequest {
 /// load-bearing only for a caller with TWO requests outstanding, and the gui has one.
 ///
 /// ⚠️ Same derive accounting as `GrantRequest`, one house above.
+///
+/// ⚠️ NOT TO BE CONFUSED WITH `crate::sensor::Verdict`, which has the same name and is a different
+/// thing: what a sensor answers about an artefact. No file imports both. ⚠️ RECALL OF
+/// 2026-10-13 -- audit of 2026-09-30, AUD-765.
 #[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
 pub enum Verdict {
     Granted,
@@ -182,8 +195,14 @@ pub struct BuildStamp(u64);
 
 impl BuildStamp {
     /// ⛔ THE CONSTRUCTOR IS `crate::wire::ipc::build_stamp` AND NOT A `new` HERE, and that is
-    /// the point: a stamp anyone can mint from any number is a stamp that proves nothing. The
-    /// only value that exists is the one the canonical set produces.
+    /// the point: a stamp anyone can mint from any number is a stamp that proves nothing.
+    /// ⚠️ WHAT THAT BUYS IS NARROWER THAN ONE VALUE: outside this module no code BUILDS a stamp
+    /// but through `build_stamp`, while a stamp DECODED from arriving bytes carries whatever `u64`
+    /// the peer sent -- `Decode` is derived, which is how a stale gui's `Hello` reaches the core at
+    /// all, to be answered `StaleBuild` -- and `stamp_set` builds two more for the canonical set.
+    /// So a received stamp is content: the
+    /// core compares it for equality with `build_stamp()` (`crate::serving`) and believes it for
+    /// nothing else. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1257.
     pub const fn get(&self) -> u64 {
         self.0
     }
@@ -259,7 +278,9 @@ pub struct PolicyReport {
 /// ⚠️ AND THE DIRECTION MATTERS: the core sends this DOWN (`PermissionRequired`) and receives
 /// it back UP (`Approve`). The returning one is untrusted, so whoever consumes it matches it
 /// against the triple IT asked for rather than trusting the strings -- written here so the
-/// consumer does not rediscover it. The probe is born with that consumer, task 7.
+/// consumer does not rediscover it. That consumer is the approval road of `crate::serving`, and
+/// its probe is `an_approve_whose_triple_does_not_match_the_registry_is_refused`, in
+/// `crates/kernel/tests/serving.rs`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1242.
 #[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
 pub struct Triple {
     pub tool: String,
@@ -281,9 +302,11 @@ pub enum Access {
 
 /// Which registry function, and with what argument. ADR-0038.
 ///
-/// ⛔ NAMED `Call` AND NOT `Invocation`, and that is deliberate: task 6 brings
-/// `crate::record::Invocation`, the DURABLE detail, and two types one letter apart in the two
-/// worlds this plan keeps separate is the ambiguity D8 refused for `counter`.
+/// ⛔ NAMED `Call` AND NOT `Invocation`, and that is deliberate: the DURABLE side already speaks
+/// that word -- the species `crate::record::RecordKind::Invocation`, the variant
+/// `crate::record::Detail::Invocation` and its `crate::record::InvocationDetail` -- and one word
+/// for two types in the two worlds this plan keeps separate is the ambiguity D8 refused for
+/// `counter`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1258, AUD-1259.
 ///
 /// ⚠️ THE ARGUMENT IS A `String` AND IT IS UNTRUSTED. Nothing here validates that `function`
 /// names a registered function: the registry does, by REFUSING (task 6). A schema that could
@@ -588,8 +611,12 @@ pub fn stamp_set() -> Vec<IpcMessage> {
 /// for pruned payloads, whose function sub-project 13 chooses (`crate::ports::journal`, the doc
 /// of `prune`). ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30, AUD-563.
 ///
-/// ⚠️ THE LENGTH GOES IN TOO, not just the bytes: without it two adjacent messages could be
-/// re-split differently and hash the same.
+/// ⚠️ THE LENGTH GOES IN TOO, AND FOR THESE BYTES IT IS REDUNDANT: each `bytes` is already an
+/// envelope -- `IpcMessage::encode` frames it with `crate::framing` -- and an envelope carries its
+/// own length, so the set cannot be re-split into other messages that hash the same. The eight
+/// bytes change the hash only where `encode` failed and `unwrap_or_default` hands back an empty
+/// `Vec` -- a body over four gibibytes, which no message of the set has. ⚠️ RECALL OF 2026-10-13
+/// -- audit of 2026-09-30, AUD-1265.
 pub fn build_stamp() -> BuildStamp {
     let mut hash: u64 = 0xCBF2_9CE4_8422_2325;
     for message in stamp_set() {

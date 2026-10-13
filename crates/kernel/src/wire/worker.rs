@@ -3,11 +3,12 @@
 //! ⛔ THIS TAKES THE MECHANICS OF `record.rs` AND NOT ITS DISCIPLINE, and §6.10.3 says it in
 //! as many words: no version enum, no register of retired indices, NO FROZEN BYTES. I4 gives
 //! up versioning, and what stands in its place is the build stamp of §6.1.2 -- which this
-//! milestone deliberately did NOT build (§3.4), and which sub-project 2 built for the `ipc`
-//! channel alone: `crate::wire::ipc::build_stamp` is computed over THAT channel's canonical set
-//! and checked at its handshake. THIS channel has neither a stamp nor a handshake, so here
-//! NOTHING REFUSES A STALE PEER, and the trigger is the first real worker process (§0.2).
-//! ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-061.
+//! milestone deliberately did NOT build (§3.4 of the milestone 6 design), and which sub-project 2
+//! built for the `ipc` channel alone: `crate::wire::ipc::build_stamp` is computed over THAT
+//! channel's canonical set and checked at its handshake. THIS channel has neither a stamp nor a
+//! handshake, so here NOTHING REFUSES A STALE PEER, and the trigger is the first real worker
+//! process (§0.2). ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-061. ⚠️ RECALL OF
+//! 2026-10-13 -- audit of 2026-09-30, AUD-1268.
 //!
 //! ⛔ ONE DIRECTION ONLY, worker -> core, AND THE OTHER IS A DECLARED NON-CONSTRUCTION.
 //! Nothing written imposes a core -> worker message today: `instruct_one` and
@@ -15,8 +16,8 @@
 //! exactly these two -- it measures the annotation ON AN AUDIO FRAGMENT and names the VRAM
 //! peak as the field this channel puts into the journal. Inventing a downward vocabulary now
 //! would freeze it against an imaginary consumer -- gotcha #46 from the wrong side, the same
-//! reason §3.4 gives for the stamp. The trigger is the same one: the first real worker
-//! process (§0.2), which is what gives a downward message its first caller.
+//! reason §3.4 of the milestone 6 design gives for the stamp. The trigger is the same one: the
+//! first real worker process (§0.2), which is what gives a downward message its first caller.
 
 use alloc::vec::Vec;
 use minicbor::{Decode, Encode};

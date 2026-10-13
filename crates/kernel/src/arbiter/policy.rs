@@ -12,7 +12,9 @@
 //! ⛔ AND AT MILESTONE 5 THEY ARE NOT EMPTY SHELLS, which was the open question. The
 //! difference is ONE DECISION inside the admission path -- "a request does not fit. Can room
 //! be made?" -- and no model is needed to answer it: evicting a resident IS revoking a
-//! preemptible grant, a mechanism §6 built anyway.
+//! preemptible grant, a mechanism the grant cycle of §5.3 built anyway -- the words of §7.1 of
+//! the milestone 5 design, where that cycle is §6. ⚠️ RECALL OF 2026-10-13 -- audit of
+//! 2026-09-30, AUD-1164.
 //!
 //! ⚠️ AND A TRAIT HERE IS NOT THE SHAPE THE MODULE COMMENT OF `mod.rs` REFUSES. That one
 //! refuses a trait `Arbiter` with two implementations, "an abstraction with no second
@@ -62,7 +64,8 @@ impl MakeRoom for LocalPolicy {
 
 /// The policy the arbiter was BUILT WITH. ⛔ ONE, AND THE TYPE SAYS SO: "two active
 /// policies" is NOT EXPRESSIBLE, which is `V3` at level 1 rather than a test at level 2
-/// (§7.4.1 C, and §5.4 said this rule would rise to the compiler).
+/// (§7.4.1 C; §2.8.2 is where the uniqueness §5.4 checked with an example-based test rises to
+/// the compiler). ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1164.
 pub enum VramPolicy {
     Remote(RemotePolicy),
     Local(LocalPolicy),

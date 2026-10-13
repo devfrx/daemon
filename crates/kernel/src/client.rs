@@ -29,13 +29,16 @@ use crate::time::Monotonic;
 /// The pairs: who holds what.
 ///
 /// ⛔ A `Vec` OF PAIRS AND NOT A MAP, and it is a consequence of two decisions taken elsewhere
-/// rather than a preference. `HashMap` is forbidden outright — gotcha #12, and
-/// `tests/compile_fail/hashmap_in_kernel.rs` is what makes it unspeakable — and `BTreeMap` wants
-/// `Ord`, which `ClientId` deliberately does not derive: `ports::ipc` pruned `PartialOrd`, `Ord`
-/// and `Hash` one at a time, and the argument it pruned them with is that "a table plus `==`
-/// works, as every other fake here does". This is that table. ⛔ ADDING THE DERIVE TO GET A
-/// `BTreeMap` WOULD REOPEN THAT DECISION for the convenience of this file, which is the trade
-/// `ports::process` refused when `Grant` was asked for a `Debug`.
+/// rather than a preference. `HashMap` is out of reach — gotcha #12 — because it lives in `std`
+/// and this crate is `#![no_std]`, which `lib.rs` declares and `scripts/gate-attributes.sh`
+/// watches: `tests/compile_fail/hashmap_in_kernel.rs` demonstrates that mechanism on a crate of
+/// its own and holds nothing here (gotcha #39). And `BTreeMap` wants `Ord`, which `ClientId`
+/// deliberately does not derive: `ports::ipc` pruned `PartialOrd`, `Ord` and `Hash` one at a
+/// time, and the argument it pruned them with is that "a table plus `==` works, as every other
+/// fake here does". This is that table. ⛔ ADDING THE DERIVE TO GET A `BTreeMap` WOULD REOPEN
+/// THAT DECISION for the convenience of this file, which is the trade `ports::process` refused
+/// when `Grant` was asked for a `Debug`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+/// AUD-1174.
 ///
 /// ⛔ ONE CLIENT MAY HOLD SEVERAL, which is why the pairs are not a client-keyed anything: a gui
 /// that asked twice and was granted twice holds two, and `on_disconnect` owes both back.

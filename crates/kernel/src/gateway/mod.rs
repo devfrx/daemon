@@ -50,9 +50,13 @@ pub enum ConstraintClass {
 
 /// What a request demands of a candidate.
 ///
-/// ⛔ A CANDIDATE THAT VIOLATES A CONSTRAINT IS NOT A FALLBACK: IT IS A DIFFERENT REQUEST
-/// (ADR-0012), discarded before evaluation. That is why the filter runs first and the choice
-/// second, rather than scoring everything and picking a winner.
+/// ⛔ A CANDIDATE THAT VIOLATES A DATA CONSTRAINT IS NOT A FALLBACK: IT IS A DIFFERENT REQUEST
+/// (point 1 of ADR-0012), discarded before evaluation. A QUALITY constraint -- `PriceCeiling` --
+/// is not a filter but a PREFERENCE among the candidates the data constraints leave (point 2):
+/// the one that exceeds it stays in the running as the second choice, and `resolve` declares it
+/// `degraded`. That is the reading the recall of 2026-10-06 at the head of ADR-0012 writes down,
+/// and it is why the filter runs first and the choice second, rather than scoring everything
+/// and picking a winner. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1183.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Constraint {
     /// The request may not leave this machine.

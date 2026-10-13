@@ -14,16 +14,18 @@
 //! construction, it does not build one. What ADR-0034 rules out is a decision reading a value
 //! nobody handed it; a counter handed over at construction is the shape `Parameters` already has.
 //!
-//! ⛔ WHY THE SEEDING LIVES HERE AND NOT IN `daemon`. §7 of the milestone-2 design builds the
+//! ⛔ WHY THE SEEDING LIVES HERE AND NOT IN `daemon`. §7 of the sub-project 2 design builds the
 //! core's listening activity FROM OUTSIDE, in `gui/fake-core`, which cannot import a binary --
-//! the same thing that section's own dedotto says about `build_the_arbiter`. A seeding written
-//! inside `daemon/src/main.rs` would be COPIED by the fake core, and a copy of the wiring is
-//! green on the day the two drift.
+//! the same thing the deduction of that section, the paragraph it labels "Dedotto", says about
+//! `build_the_arbiter`. A seeding written inside `daemon/src/main.rs` would be COPIED by the fake
+//! core, and a copy of the wiring is green on the day the two drift. ⚠️ RECALL OF 2026-10-13 --
+//! audit of 2026-09-30, AUD-1184, AUD-749.
 //!
 //! ⛔ IT ADDS NO OPERATION TO THE `journal` PORT. Whether the allocator belongs inside that port
-//! is open item 6 of §9 of the milestone-2 design, confirmed A by the owner on 2026-09-09
+//! is open item 6 of §9 of the sub-project 2 design, confirmed A by the owner on 2026-09-09
 //! (decision 42 of the north star): it stays OUT until a second consumer asks for it. `replay`
-//! is an operation the port already has.
+//! is an operation the port already has. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+//! AUD-1184.
 
 use alloc::rc::Rc;
 use core::cell::Cell;
@@ -50,8 +52,17 @@ use crate::ports::journal::{Journal, JournalError};
 /// not `Send`, so a `Progressive` cannot be carried to a second thread, where a `Cell` would be
 /// the wrong tool.
 ///
-/// ⚠️ The overflow reckoning is the arbiter's: a `u64` that counts clients and steps does not
-/// reach its end, and a guard here would be a branch no caller can exercise.
+/// ⚠️ THE END OF THE AXIS IS REACHABLE, AND NOTHING HERE GUARDS IT. The arbiter's reckoning --
+/// a `u64` that counts from zero does not reach its end -- holds for a counter this core seeds
+/// and advances itself, and not for the two doors that take an arbitrary `u64`: `starting_at`,
+/// and `seeded_from`, which adds one to the highest step a journal hands back. A journal holding
+/// `StepId(u64::MAX)` -- corrupt, or written by somebody else -- reaches the end, and so does a
+/// counter started at `u64::MAX` on its first `take`: the `+ 1` panics where overflow checks are
+/// on, as in the `dev` and `test` profiles, and wraps to zero where they are off, as in the
+/// `release` profile this workspace leaves at its default -- a counter reseeded beneath every
+/// step already written, the defect this module exists to prevent. Whether these doors refuse
+/// instead, and with what error, is the owner's choice. ⚠️ RECALL OF 2026-10-13 -- audit of
+/// 2026-09-30, AUD-1111.
 pub struct Progressive {
     next: Rc<Cell<u64>>,
 }

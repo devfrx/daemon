@@ -14,8 +14,13 @@
 //!   THE FIRST REVOCATION, which will be a species of its own and one more arm in the loop below.
 //! - NOTHING HERE IS SCOPED TO A SESSION. `V21` reads "a permission holds for the granted triple
 //!   AND for the current session", and this module answers the first half only: there is no
-//!   session in the kernel, no interface, no mediator and no approval cycle. The row stays
-//!   `⚠️ parziale` deliberately.
+//!   session in the kernel, and no mediator: the full one, its presets and the approval cycle of
+//!   MCP are staged by rule C. The row stays `⚠️ parziale` deliberately. ⚠️ WHAT THE KERNEL
+//!   DOES HAVE, since sub-project 2, is the approval road of the program's functions:
+//!   `crate::registry` answers `InvokeError::PermissionRequired`, the gui asks the user, and
+//!   `crate::serving`'s `Core::approve` compares the triple that comes back and invokes again
+//!   with `Approval::JustGiven`, which writes the grant through `grant` below. ⚠️ RECALL OF
+//!   2026-10-13 -- audit of 2026-09-30, AUD-1185, AUD-1187.
 //! - `grant` DOES NOT ASK ANYBODY. It records a decision somebody else took — the kernel provides
 //!   the mechanism and implements no user-facing behaviour.
 
@@ -36,9 +41,10 @@ use alloc::vec::Vec;
 /// ⚠️ IT IS A KERNEL TYPE AND NOT A WIRE TYPE, which is what leaves it free to grow: on the wire
 /// the operation travels as the `bool` of `record::PermissionDetail`, whose doc carries the whole
 /// argument. An enum here costs ONE `error[E0004]`, at `is_write`, the day it grows a third
-/// variant, where an enum THERE would cost an index that never retires.
+/// variant, where an enum THERE would cost an index the wire can never reuse (rule 4 of §4.9.2).
+/// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1240.
 ///
-/// ⚠️ RICHIAMO DEL 2026-09-01: this said "costs NOTHING the day it grows a third variant", and
+/// ⚠️ RECALL OF 2026-09-01: this said "costs NOTHING the day it grows a third variant", and
 /// the measure said otherwise — the third variant reached the durable record as a READ and widened
 /// a permission, with the workspace green digit for digit. It costs nothing only BECAUSE
 /// `is_write` now makes the day a compile error; the sentence was true of the wish and false of
@@ -58,10 +64,11 @@ impl Operation {
     /// EXISTS. `matches!(op, Operation::Write)` folds EVERY other variant into `false`, so a third
     /// operation would reach the DURABLE record as a read. Measured on 2026-09-01, with `Execute`
     /// added to the enum: `cargo check --locked --workspace --all-targets` stayed at ZERO errors
-    /// and the whole suite stayed green digit for digit (43 targets, 324 passed), while a
-    /// throwaway probe written from OUTSIDE the crate showed `grant` writing `write: false` for an
-    /// `Execute` and `is_granted` then answering `true` for a read nobody ever granted. The
-    /// aliasing runs both ways. A `match` makes that day `error[E0004]` instead.
+    /// and `cargo test --locked --workspace` exactly as green as before, while a throwaway probe
+    /// written from OUTSIDE the crate showed `grant` writing `write: false` for an `Execute` and
+    /// `is_granted` then answering `true` for a read nobody ever granted. The aliasing runs both
+    /// ways. A `match` makes that day `error[E0004]` instead. ⚠️ RECALL OF 2026-10-13 -- audit of
+    /// 2026-09-30, AUD-1245.
     ///
     /// ⚠️ AND IT IS ONE FUNCTION RATHER THAN TWO `match`es, because the two call sites read two
     /// DIFFERENT values and could drift apart, while one exhaustive `match` is already enough to
@@ -102,7 +109,7 @@ impl Operation {
 /// `'static` names would be ceremony that shuts nothing — it is aimed at exactly the road the
 /// leak already goes around.
 ///
-/// ⚠️ RICHIAMO DEL 2026-09-01: this said "cannot be handed runtime text AT ALL", and that is
+/// ⚠️ RECALL OF 2026-09-01: this said "cannot be handed runtime text AT ALL", and that is
 /// false to the measure — `String::leak` yields a `&'static str` from arriving bytes, and
 /// `boundary.rs` declares that road OPEN rather than papering over it. The qualified form is the
 /// one this repository already owns, three times over in `record.rs`: "not producible from
@@ -204,10 +211,12 @@ pub fn grant<J: Journal>(
 /// the decoded values never leave this function: they are compared against `&'static str` the
 /// caller already held, and dropped.
 ///
-/// ⛔ A FREE FUNCTION TAKING THE PORT, exactly like `reconcile::steps_in_doubt`. A struct holding
-/// the journal would give the projection STATE (`I1`, `I5`), and state is the one thing a
-/// projection must not have: the answer would then depend on when the struct was built rather than
-/// on what the archive says now.
+/// ⛔ A FREE FUNCTION TAKING THE PORT, exactly like `reconcile::steps_in_doubt` -- the shape §5.2
+/// of the milestone 6 design gives the projection of the permissions. A struct holding the journal
+/// would give the projection STATE, and state is the one thing a projection must not have: the
+/// answer would then depend on when the struct was built rather than on what the archive says
+/// now -- the journal is the source and what is derived from it is a projection (ADR-0017).
+/// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1188.
 ///
 /// ⚠️ THE COST OF ANSWERING BY RE-READING IS THE COST `Journal::replay` DECLARES: the whole journal
 /// is loaded to answer one question, and on a production archive that does not hold. The remedy is

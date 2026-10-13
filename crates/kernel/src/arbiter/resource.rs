@@ -113,8 +113,9 @@ impl Mib {
 /// `the_committed_fixtures_match_the_schema`, in `crates/kernel/tests/ipc_wire.rs`: red on every
 /// fixture that carries a moved variant and on the stamp of the map -- measured on 2026-10-06
 /// with `Realtime` and `Interactive` swapped. ⚠️ BUT ITS RED ASKS FOR A REGENERATION, WHICH
-/// BLESSES THE REORDER: §6.4 forbids this channel the frozen bytes that would refuse it, as the
-/// journal's do. ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30. What the hand-written `Ord`
+/// BLESSES THE REORDER: §6.4 of the milestone 6 design forbids this channel the frozen bytes that
+/// would refuse it, as the journal's do. ⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30.
+/// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1164. What the hand-written `Ord`
 /// above buys is the other half, and it still buys
 /// it: the arbiter's priorities come from `priority()`, so they do not follow the wire. ⛔ The
 /// peer that would notice lives OUTSIDE this workspace, which is the same asymmetry
@@ -177,7 +178,8 @@ impl Ord for ComputeClass {
 /// with no message naming it directly.
 ///
 /// ⚠️ SAME COST AS `ComputeClass`: the tag is the declaration index, a reorder is seen by the
-/// regenerable fixtures only, and §6.4 gives this channel no frozen bytes to refuse it.
+/// regenerable fixtures only, and §6.4 of the milestone 6 design gives this channel no frozen
+/// bytes to refuse it. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1164.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, bincode::Encode, bincode::Decode)]
 pub enum Preemption {
     /// The arbiter never takes it back. ⚠️ NOT "permanent": a job that cannot be
@@ -206,8 +208,11 @@ impl Preemption {
 ///
 /// ⛔ `name` IS `&'static str` AND NOT `String`, and the reason is finding P-1, closed on
 /// 2026-08-18: a profile name is chosen when the code is written, so it is a literal in the
-/// binary, and runtime text -- which is where untrusted content lives -- cannot get here at
-/// all. A `String` would buy nothing and reopen a road that was measured shut.
+/// binary, and runtime text -- which is where untrusted content lives -- cannot get here
+/// WITHOUT LEAKING: `String::leak` yields a `&'static str` from arriving bytes, a road
+/// `crate::boundary` declares open, deliberate and visible. A `String` would buy nothing and
+/// would reopen the road somebody takes without noticing. ⚠️ RECALL OF 2026-10-13 -- audit of
+/// 2026-09-30, AUD-1166.
 ///
 /// ⛔ AND `cold_start` IS NOT HERE. §5.2.1: design/02 says it is "used to warn the user, not
 /// to decide", which was a written rule and therefore a recommendation. It lives in

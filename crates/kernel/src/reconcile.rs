@@ -148,12 +148,15 @@ pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalEr
                 // in BOTH directions (§7.1.1 rule 3) exactly as `Note`'s pair is.
                 RecordKind::Verdict => {}
                 // ⛔ A ROUTING RECORD NEITHER OPENS A DOUBT NOR CLOSES ONE, and it was measured
-                // for THIS variant rather than inherited: `enter` would leave every routed step
-                // in doubt for ever, and `leave` would close a doubt that no outcome resolved —
-                // which is the silent loss of a real doubt, the one failure ADR-0007 exists to
-                // prevent. Both were tried on 2026-09-01, one at a time, each reverted from a
-                // byte-exact copy: `leave` killed the second of the pair below alone, and
-                // `enter` killed both.
+                // for THIS variant rather than inherited: `enter` would re-enter the routed step
+                // with the routing record's own class while its doubt is open -- `enter` on an
+                // open step replaces its resolution, it adds no second entry -- and would put a
+                // finished step back in doubt if a routing record ever followed its outcome; and
+                // `leave` would close a doubt that no outcome resolved — which is the silent loss
+                // of a real doubt, the one failure ADR-0007 exists to prevent. Both were tried on
+                // 2026-09-01, one at a time, each reverted from a byte-exact copy: `leave` killed
+                // the second of the pair below alone, and `enter` killed both. ⚠️ RECALL OF
+                // 2026-10-13 -- audit of 2026-09-30, AUD-1232.
                 //
                 // ⚠️ AND THE DIFFERENCE FROM `Verdict` IS WORTH ONE LINE, because it is what
                 // makes `leave` the sharper of the two defects here: a verdict is written ABOUT
@@ -209,15 +212,19 @@ pub fn steps_in_doubt<J: Journal>(journal: &J) -> Result<Vec<InDoubt>, JournalEr
                 // The step it names owes its own outcome, and writes one.
                 //
                 // ⛔ BOTH OTHER ANSWERS WERE PUT IN THIS ARM AND RUN:
-                // `enter` would leave EVERY invoked step in doubt for ever, because the note
-                // arrives after the step's own `intent` and a second `enter` on an open step is
-                // not what `leave` undoes; and `leave` would CLOSE the doubt the invocation's own
-                // `intent` opened, so a crash between the note and the effect would reconcile as
-                // "finished" — the silent loss of a real doubt, the one failure ADR-0007 exists
-                // to prevent. ⚠️ AND THAT SECOND ONE IS WORSE HERE THAN IT WAS FOR `Routing`: the
-                // note sits between the intent and the effect BY DESIGN (§5 of the sub-project 2
-                // design), so the window it would swallow is not hypothetical — it is the
-                // ordinary shape of every invocation.
+                // `enter` would replace the resolution of the invoked step with the NOTE's class
+                // while its doubt is open -- a second `enter` on an open step replaces, it does
+                // not pile up, and the outcome's `leave` closes the step whatever the note did --
+                // and would put a finished step back in doubt if a note ever followed the
+                // outcome; in the registry the note carries the function's own class, the
+                // intent's, so the first half shows only where a note carries another. And
+                // `leave` would CLOSE the doubt the invocation's own `intent` opened, so a crash
+                // between the note and the effect would reconcile as "finished" — the silent loss
+                // of a real doubt, the one failure ADR-0007 exists to prevent. ⚠️ AND THAT SECOND
+                // ONE IS WORSE HERE THAN IT WAS FOR `Routing`: the note sits between the intent
+                // and the effect BY DESIGN (§5 of the sub-project 2 design), so the window it
+                // would swallow is not hypothetical — it is the ordinary shape of every
+                // invocation. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1232.
                 //
                 // Held in BOTH directions (§7.1.1 rule 3) by
                 // `an_invocation_note_does_not_put_a_step_in_doubt` and

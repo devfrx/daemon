@@ -17,15 +17,19 @@ publish.workspace = true
 # Without this pin, the next update "fixes" the constraint and breaks the build.
 # Gotcha #22, constraint 3 of §11.
 #
-# ✅ DECIDED 2026-08-31 -- `bincode` STAYS. The reasons are in the dated recall at the bottom of
-# this note; what follows first is the 2026-08-18 record, kept verbatim because it is a minute.
+# ✅ DECIDED 2026-08-31 -- `bincode` STAYS. The reasons are in the entry C-1 of
+# docs/porta-di-qualita.md, which the decision at the bottom of this note points at; what follows
+# first is the 2026-08-18 record, kept verbatim because it is a minute.
 # ⚠️ THE MARKER USED TO READ "REGISTERED 2026-08-18, NOT DECIDED" and it was corrected on
 # 2026-08-31, not deleted: the recall was already at the bottom, but the HEADING is the frame
 # nobody re-reads, and it said the opposite of the truth. Gotcha #31, in its declared form.
 #
 # ⚠️ REGISTERED 2026-08-18 — finding C-1 of the audit. `bincode` 2.0.1 is covered by
 # RUSTSEC-2025-0141, "Bincode is unmaintained", issued 2026-01-07. It is category INFO: NOT a
-# vulnerability, and the other seven dependencies are clean (checked on OSV.dev).
+# vulnerability, and the seven other crates the OSV.dev consultation of 2026-08-11 queried are
+# clean -- that day's list, which is not this crate's graph: the list and its command are in
+# docs/riferimenti.md, and what reads every crate of the lockfile today is `cargo audit`, in the
+# gate. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1149.
 #
 # ⛔ IT IS THE HOLE BETWEEN TWO CRITERIA, and that is the part worth remembering. ADR-0037 asks
 # "does the PEER have a conformant and MAINTAINED reader?" — pointed at the far end of the wire,
@@ -49,35 +53,14 @@ publish.workspace = true
 # exactly where M-11 left it. So there is no longer a window closing by itself -- there is a
 # CHOICE, and it is not the agent's: §6.1.1 is spec, and reopening it belongs to the owner.
 #
-# ✅ DECIDED 2026-08-31 BY THE OWNER: `bincode` 2.0.1 STAYS, AND §6.1.1 IS NOT REOPENED.
-# The wire compatibility of the fork was measured first and it HOLDS -- measure M-12, five
-# cases byte-for-byte identical, the peer reading them with the right values -- so this is a
-# choice made against evidence, not around it. Five reasons, and the last one is the one that
-# decides:
-#   1. The advisory says UNMAINTAINED, not BROKEN. No fixed version exists because there is
-#      nothing to fix: the upstream team calls 2.x complete.
-#   2. I4 renounces versioning and this channel is private, so the format is frozen BY DESIGN.
-#      A finished library is what such a channel wants. And ADR-0031 exists to keep the graph
-#      inside I3 SMALL: adopting the fork grows the shipped graph by one net node.
-#      ⚠️ "THE FORMAT" READS AS bincode 2's ENCODING RULES, which a finished library does not
-#      change -- NOT AS the schema of the channel, which I4 leaves free to change: its fixtures are
-#      REGENERATED, never frozen (`gui/schema/fixtures/ipc_v1.map`), and the build stamp refuses
-#      a stale peer. Frozen bytes are the journal's discipline (ADR-0036), the opposite artefact.
-#      ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-053.
-#   3. Staying leaves DECLARED debt -- this note, gotcha #64, the register entry. Adopting
-#      would create a NEW and SILENT one: compatibility measured TODAY over five cases, a
-#      single maintainer, and no check anywhere that would tell us if a later release broke
-#      it. Silent debt is the worse kind.
-#   4. Novelty is not maturity: the fork is eight months old with one maintainer, and RustSec
-#      does NOT recommend it -- the alternatives the advisory names are wincode, postcard,
-#      bitcode and rkyv, and all four fell, each with its own measurement.
-#   5. THE ROOT OF C-1 IS NOT THIS CRATE. What C-1 named is the HOLE BETWEEN TWO CRITERIA:
-#      nobody asks how the library at OUR end is doing. Swapping this one library cures ONE
-#      crate and leaves the hole open for the other seven. The cure at the root is entry X-3
-#      of the 2026-08-27 audit -- no advisory scanning at all -- whose state lives in that
-#      audit's table of open entries, not here.
-# ⚠️ SO THE RESIDUE IS NAMED, and naming it is part of this decision, never a substitute for
-# it. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-054, AUD-055.
+# ✅ DECIDED 2026-08-31 BY THE OWNER: `bincode` 2.0.1 STAYS, AND §6.1.1 IS NOT REOPENED -- with
+# measure M-12 in hand rather than around it. ⛔ THE REASONS ARE WRITTEN ONCE, in the entry C-1,
+# closed, of docs/porta-di-qualita.md, which names every other place that carries them; this note
+# points at them, as the doc of `src/ports/ipc.rs` does, and keeps what whoever touches this line
+# must not miss: `cargo audit`, in the gate, prints the advisory above as a WARNING on every run
+# and lets the gate pass, which is the decision holding and not an oversight to clear; replacing
+# this crate reopens §6.1.1, which is spec and the owner's; and the pin to "2" at the top of this
+# note is not a constraint to "update". ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1196.
 # The sources, each with its consultation date and what it says, live in ONE house --
 # docs/riferimenti.md, section on decision 5 (C-1) -- and M-12 is there too.
 bincode = { version = "2", default-features = false, features = ["alloc", "derive"] }
@@ -102,6 +85,11 @@ trybuild = "1"
 #
 # ⚠️ AND IT CLOSES A CYCLE, `kernel -> (dev) -> simulator -> kernel`. Cargo accepts it
 # because a dev-dependency does not take part in building the library; it was still run
-# once rather than assumed. The test lives here and not in `simulator/tests/` because what
-# it proves is THE KERNEL'S EXECUTOR under a fake reactor.
+# once rather than assumed. ⛔ WHAT IT IS FOR: the benches of `tests/` prove THE KERNEL'S code
+# -- the executor, the arbiter and the serving activity among it -- over the simulator's
+# doubles of the ports, and the conformance suites of the ports hold those doubles to the
+# kernel's contracts. Which benches, and which doubles, is what
+# `grep -n 'simulator::' crates/kernel/tests/*.rs` lists, not a sentence here; a bench whose
+# subject is the SIMULATOR itself lives in `simulator/tests/`. ⚠️ RECALL OF 2026-10-13 -- audit
+# of 2026-09-30, AUD-1147.
 simulator = { path = "../simulator" }

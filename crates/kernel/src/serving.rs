@@ -268,7 +268,13 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
                 Ok(Some(bytes)) => self.answer(index, &bytes),
                 // ⛔ THE ONE SIGNAL THERE IS. `Ipc` has no disconnection event, so an `Err` on
                 // `send` or `receive` is what ADR-0033 calls "the core notices from the ipc
-                // disconnection" -- `gui_death_campaign.rs` reads it in exactly this place.
+                // disconnection". THIS arm is held by `a_client_that_dies_gives_its_grant_back`, in
+                // `crates/kernel/tests/serving.rs`, and by
+                // `a_gui_that_dies_under_the_activity_gives_its_grant_back`, in
+                // `crates/simulator/tests/serving_campaign.rs`, which run `serve`;
+                // `gui_death_campaign.rs` reads the same signal in a loop of its own and holds
+                // `ClientGrants`, not this arm. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+                // AUD-1247, AUD-1249.
                 Err(IpcError::Disconnected) => Outcome::Forget,
                 // ⚠️ A PEER THAT TALKS NONSENSE IS STILL THERE, which is `IpcError`'s own words:
                 // folding this into `Disconnected` would tear down a live gui over one bad frame.
@@ -328,12 +334,13 @@ impl<I: Ipc, J: Journal, C: Custody> Core<I, J, C> {
             // `ResourceProfile` at all. ⚠️ Entry 27 of milestone 6's open items keeps its trigger
             // intact, and its closer is still the 3D pillar.
             IpcMessage::Request(_) => Outcome::Keep,
-            // ⚠️ CORE -> GUI VARIANTS ARRIVING UPWARD. The schema is ONE enum for both directions
-            // (I4 renounces versioning, so there is no per-direction type), which makes these
-            // expressible and perfectly decodable -- so they are not `MalformedMessage`, and they
-            // are IGNORED rather than answered. Tearing the client down for one is the move
-            // `IpcError`'s own doc argues against: the gui is sacrificial, and a live one must not
-            // be lost over a stray frame.
+            // ⚠️ CORE -> GUI VARIANTS ARRIVING UPWARD. The schema is ONE enum for both directions,
+            // for the reason the head of `crate::wire::ipc` gives and at the cost it declares,
+            // which makes these expressible and perfectly decodable -- so they are not
+            // `MalformedMessage`, and they are IGNORED rather than answered. Tearing the client
+            // down for one is the move `IpcError`'s own doc argues against: the gui is
+            // sacrificial, and a live one must not be lost over a stray frame. ⚠️ RECALL OF
+            // 2026-10-13 -- audit of 2026-09-30, AUD-769.
             IpcMessage::Accepted(_)
             | IpcMessage::StaleBuild(_)
             | IpcMessage::Degradation(_)

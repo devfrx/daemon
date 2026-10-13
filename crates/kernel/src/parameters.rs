@@ -74,9 +74,12 @@ impl Parameters {
 
     /// Which arbiter these parameters belong to.
     ///
-    /// ⛔ DELIVERED, never invented: the kernel has no way to produce one, and §6.1.3 says
-    /// it must not. Two arbiters built from the same value ARE the same arbiter as far as
-    /// `release` is concerned, and that is the caller's statement to make, not ours.
+    /// ⛔ DELIVERED, never invented: a decision reads only what it is handed (ADR-0034), and an
+    /// identity that tells two arbiters apart, minted in the kernel, would need state every
+    /// arbiter shares. §6.1.3 rules only that the identifiers the kernel does produce are
+    /// progressives, never random. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1160.
+    /// Two arbiters built from the same value ARE the same arbiter as far as `release` is
+    /// concerned, and that is the caller's statement to make, not ours.
     pub const fn arbiter_id(self) -> ArbiterId {
         self.arbiter_id
     }
@@ -107,13 +110,14 @@ impl Parameters {
     /// `crate::wire::worker::FromWorker::VramPeak`, that nothing sends, so the mitigation arrives
     /// with the first worker on the GPU. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-198.
     ///
-    /// ⛔ IT IS THE ONLY ONE OF THE THREE ADDENDS THAT IS DELIVERED, and that is a declared
-    /// divergence from the letter of §5.1 rather than an omission. The audio quota and the
-    /// presentation quota are NOT subtracted here: they are the reservations of two
-    /// PERMANENT GRANTS asked for by the composition root. A subtraction without a holder
-    /// leaves I2 false for those two consumers -- "the subtraction is not an exemption",
-    /// ADR-0005 and gotcha #4 -- and two fields no kernel decision reads would be dead
-    /// surface inside the kernel.
+    /// ⛔ IT IS THE ONLY ONE OF THE THREE ADDENDS THAT IS DELIVERED, and since 2026-08-27 §5.1
+    /// says the same: one of the three is a delivered parameter, the total, and the recall under
+    /// its formula says the two quotas are never subtracted. ⚠️ RECALL OF 2026-10-13 -- audit of
+    /// 2026-09-30, AUD-2269. The audio quota and the presentation quota are NOT subtracted here:
+    /// they are the reservations of two PERMANENT GRANTS asked for by the composition root. A
+    /// subtraction without a holder leaves I2 false for those two consumers -- "the subtraction
+    /// is not an exemption", ADR-0005 and gotcha #4 -- and two fields no kernel decision reads
+    /// would be dead surface inside the kernel.
     pub const fn total_vram(self) -> Mib {
         self.total_vram
     }

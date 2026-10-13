@@ -16,10 +16,16 @@ use alloc::vec::Vec;
 /// ⚠️ PUBLIC SINCE 2026-08-31, AND IT IS A DEDUPLICATION AND AN API WIDENING BOTH:
 /// `crates/kernel/tests/worker_wire.rs` cuts a body off a framed message and spelled the `4`
 /// itself, so the width the module doc claims is "decided here and nowhere else" had a second
-/// site. ⚠️ THE WIDENING IS REAL: outside this file the only caller is that bench.
-/// ⛔ READING THIS CONSTANT PROVES NOTHING, and no probe may use it as an oracle: the
-/// oracle is `the_declared_length_is_four_bytes_big_endian`, which asserts the prefix as a
-/// LITERAL. A probe that compared against this constant would assert the code against itself.
+/// site. ⚠️ THE WIDENING IS REAL, and who reads the constant outside this file is what
+/// `grep -rn LENGTH_WIDTH crates gui/fake-core --include=*.rs` lists, not a sentence here.
+/// ⛔ READING THIS CONSTANT PROVES NOTHING ABOUT THE WIDTH, and no probe may use it as the
+/// oracle of the WIDTH: that oracle is `the_declared_length_is_four_bytes_big_endian`, which
+/// asserts the prefix as a LITERAL, and a probe that checked the width against this constant
+/// would assert the code against itself. A probe whose subject is something else -- the shape
+/// prefix-then-body that `an_empty_body_is_a_whole_frame_and_not_an_absence` holds for
+/// `take_frame` -- may count the prefix with it, because the width it adds up is held by that
+/// literal. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1180, AUD-746, AUD-747,
+/// AUD-2129.
 pub const LENGTH_WIDTH: usize = 4;
 
 /// The longest body this envelope can declare.
@@ -88,10 +94,11 @@ pub fn frame(body: &[u8]) -> Result<Vec<u8>, WireError> {
 /// carries several frames back to back, and it cannot be asked where the next one begins. The
 /// catalogue line `Q4 · I5 · §6.10` is what imposes it -- the bytes consumed must equal the
 /// declared length, and a reader that handed back the rest would be free to consume fewer.
-/// ⚠️ A REAL TRANSPORT WILL WANT A SECOND ENTRY POINT, one that answers "this frame, and where
-/// the next starts", and it is a NEW function beside this one rather than a loosening of this
-/// one -- `TrailingBytes` is the whole of what `a_frame_with_a_tail_is_refused` holds. Written
-/// here so the transport does not rediscover it, the way `MAX_BODY_LEN` declares its own limit.
+/// ⚠️ THE SECOND ENTRY POINT A REAL TRANSPORT WANTS -- "this frame, and where the next starts"
+/// -- IS `take_frame`, below: a NEW function beside this one rather than a loosening of this
+/// one, because `TrailingBytes` is the whole of what `a_frame_with_a_tail_is_refused` holds. The
+/// transport of the `ipc` channel, `platform::ipc`, reads its stream with it. ⚠️ RECALL OF
+/// 2026-10-13 -- audit of 2026-09-30, AUD-1181, AUD-746.
 pub fn unframe(bytes: &[u8]) -> Result<&[u8], WireError> {
     if bytes.len() < LENGTH_WIDTH {
         return Err(WireError::Incomplete);

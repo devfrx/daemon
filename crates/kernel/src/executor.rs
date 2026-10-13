@@ -80,8 +80,9 @@ pub enum RunError {
     ///
     /// ⛔ IT IS NOT A DEADLOCK, and an earlier draft called it `Stalled` and meant exactly
     /// that. The rename came with the fix: an activity whose deadline has already passed is
-    /// READY, not blocked, so it is promoted and polled. What is left here is only the port
-    /// misbehaving.
+    /// READY, not blocked, so it is promoted and polled -- once no other activity is `Runnable`,
+    /// as `nap` says. What is left here is only the port misbehaving. ⚠️ RECALL OF 2026-10-13 --
+    /// audit of 2026-09-30, AUD-1179.
     ReactorWillNotAdvance,
 }
 
@@ -117,11 +118,11 @@ impl TaskState {
     ///
     /// ⚠️ THE `Runnable` ARM IS HELD BY NOTHING, AND IT IS SAID RATHER THAN LEFT TO BE FOUND: both
     /// callers run only after `poll_one_turn()` returned `false`, that is when no task is
-    /// `Runnable`, so the arm is never taken. Measured on 2026-09-01, tenth review round — turned
-    /// into `Some(..)` of the origin, the whole workspace stayed green, `43 · 326 · 0 · 2`. It is
-    /// an equivalent mutant of the shape of `E70`, not a gap: what this predicate buys is the
-    /// `E0004` on growth, and the `Sleeping` arm is held by the run loop's own probes
-    /// (errata `E135`).
+    /// `Runnable`, so the arm is never taken. Measured on 2026-09-01, tenth review round, with that
+    /// arm turned into `Some(..)` of the origin: `cargo test --locked --workspace` stayed green
+    /// (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1178). It is an equivalent mutant of
+    /// the shape of `E70`, not a gap: what this predicate buys is the `E0004` on growth, and the
+    /// `Sleeping` arm is held by the run loop's own probes (errata `E135`).
     fn sleeping_until(self) -> Option<Monotonic> {
         match self {
             TaskState::Runnable => None,
@@ -161,19 +162,20 @@ pub struct Sleep {
 }
 
 // ⛔ NO `impl Default`, AND ITS ABSENCE IS THE DECISION — the same one, for the same reason, as
-// `SystemReactor`, `VirtualReactor` and `MemoryJournal`: nothing calls it, and this repository
-// removes such items rather than keeping them for symmetry. `cargo clippy` asks for one
-// (`new_without_default`); the warning is ACCEPTED and NOT silenced, because §7.4.3 gives clippy
-// no voice in the gate and an `#[allow]` would hide the next occurrence too. The argument is
-// written out once, in `crates/platform/src/reactor.rs`, and this comment points at it rather
-// than restating it.
+// every other `new` of this workspace that `cargo clippy` names under `new_without_default`
+// (`SystemReactor`, `VirtualReactor` and `MemoryJournal` among them): nothing calls it, and this
+// repository removes such items rather than keeping them for symmetry. The warning is ACCEPTED
+// and NOT silenced, because §7.4.3 gives clippy no voice in the gate and an `#[allow]` would hide
+// the next occurrence too: which sites it names is what `cargo clippy --locked --workspace
+// --all-targets`, run by hand, prints. The argument is written out once, in
+// `crates/platform/src/reactor.rs`, and this comment points at it rather than restating it.
 //
 // ⚠️ REMOVED 2026-08-27, finding AUD-048: the impl was here, `Sleep::default()` had no caller
-// anywhere in the workspace, and it was the ONE site of the four where clippy had been obeyed —
-// against the rule `crates/kernel/src/boundary.rs` states for this crate, "an API item with no
-// caller is deleted in this repository". Four hand-written exceptions elsewhere say why THEY
-// stay; this one had no reason, and an undeclared survivor is what makes the other four
-// unreadable.
+// anywhere in the workspace, and it was the one site where clippy had been obeyed — against the
+// rule `crates/kernel/src/boundary.rs` states for this crate, "an API item with no caller is
+// deleted in this repository". The hand-written exceptions elsewhere say why THEY stay; this one
+// had no reason, and an undeclared survivor is what makes the others unreadable. ⚠️ RECALL OF
+// 2026-10-13 -- audit of 2026-09-30, AUD-1176.
 impl Sleep {
     pub const fn new() -> Self {
         Sleep {
@@ -185,7 +187,13 @@ impl Sleep {
     ///
     /// ⛔ A DEADLINE ALREADY REACHED IS NOT AN ERROR — the wait is simply over. The executor
     /// promotes the activity and polls it again WITHOUT touching the clock, so a zero-length
-    /// sleep behaves as a yield rather than stopping the run.
+    /// sleep does not stop the run, and the clock stands still as it does for a yield.
+    /// ⚠️ IT IS A YIELD FOR THE CLOCK AND NOT FOR THE ORDER: until the promotion the activity is
+    /// `Sleeping`, and `run` promotes only when `poll_one_turn` found nobody `Runnable`, while an
+    /// activity that yields stays `Runnable` and is polled on the very next turn. So a sleeper
+    /// whose wait is over is polled again only once nobody is `Runnable`, and an activity that
+    /// only yields, in a loop, keeps it from being polled for as long as it loops. ⚠️ RECALL OF
+    /// 2026-10-13 -- audit of 2026-09-30, AUD-1179.
     ///
     /// ⚠️ WHY IT HAS TO WORK THIS WAY, and the reason is structural rather than a kindness:
     /// A FUTURE CANNOT READ THE CLOCK — it holds no reactor — so an activity computing an
@@ -254,10 +262,14 @@ impl<'a, R: Rng, C: Reactor> Executor<'a, R, C> {
 
     /// Run until every activity has finished.
     ///
-    /// One TURN is: poll every `Runnable` activity exactly once, in an order chosen by the
-    /// seed (decision D4). Only when NO activity is `Runnable` does the reactor get to move
-    /// the clock — which is §3.2's rule verbatim: "while a ready activity exists, time
-    /// stands still".
+    /// One TURN is one iteration of the loop below, and it is what the delivered turn limit
+    /// counts: it polls every `Runnable` activity exactly once, in an order chosen by the seed
+    /// (decision D4) -- or, when none is `Runnable`, it promotes the sleepers whose wait is over,
+    /// or waits on the reactor for the earliest one. So a run of one activity that only yields
+    /// takes one turn per poll, and one that naps takes two per wake: the turn that polls it and
+    /// the turn that wakes it. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1177. Only
+    /// when NO activity is `Runnable` does the reactor get to move the clock — which is §3.2's
+    /// rule verbatim: "while a ready activity exists, time stands still".
     pub fn run(&mut self) -> Result<(), RunError> {
         let mut turns: u64 = 0;
 
@@ -308,9 +320,12 @@ impl<'a, R: Rng, C: Reactor> Executor<'a, R, C> {
             // ⚠️ `earliest` is always `Some` here: the loop guard says the vector is not
             // empty, `poll_one_turn` returned false so nothing is `Runnable`, and the
             // promotion above returned false so every sleeper is strictly ahead. Were that
-            // ever to stop holding, the turn limit ends the run with an error instead of
-            // hanging it — which is why this is an `if let` and not a second error variant
-            // that no reachable state produces.
+            // ever to stop holding, the loop would go round empty: under a finite turn limit --
+            // the benches', the campaigns' -- it ends as `RunError::TurnLimitReached` instead of
+            // hanging, and in the shipped binary, which delivers `u64::MAX`, it would spin; what
+            // guards production instead is written on that variant. That is why this is an
+            // `if let` and not a second error variant that no reachable state produces.
+            // ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2243.
             if let Some(deadline) = earliest {
                 let Some(reached) = self.reactor.wait_until(deadline) else {
                     return Err(RunError::ReactorWillNotAdvance);
@@ -430,25 +445,33 @@ impl<'a, R: Rng, C: Reactor> Executor<'a, R, C> {
 
 /// Suspends the calling activity until `deadline`, and hands control back to the executor.
 ///
-/// ⛔ IT IS THE ONLY WAY AN ACTIVITY OF THE KERNEL MAY SUSPEND (§2.4.1): the request is written
+/// ⛔ IT IS THE ONE PRIMITIVE OF THIS EXECUTOR, TODAY. §2.4.1 lets an activity of the kernel
+/// suspend ONLY on a primitive of the executor or on a port -- primitives in the plural: that
+/// `nap` is the only one is this crate's state, not the rule's ceiling. The request is written
 /// into the one `Sleep` cell and the activity then returns `Pending` exactly once, which is what
 /// turns a written request into an actual suspension. Writing to the cell WITHOUT returning
 /// `Pending` leaves the request to be read by whoever is polled next -- finding K-1 of the
-/// 2026-08-11 audit, and the clearing in `poll_one_turn` is what contains it.
+/// 2026-08-11 audit, and the clearing in `poll_one_turn` is what contains it. ⚠️ RECALL OF
+/// 2026-10-13 -- audit of 2026-09-30, AUD-744.
 ///
 /// ⛔ IT IS PUBLIC BECAUSE ACTIVITIES ARE WRITTEN OUTSIDE THIS CRATE TOO. `gui/fake-core` runs
 /// `crate::serving::serve` beside a tap of its own (§7 of the sub-project 2 design), and every
 /// bench since milestone 2 of sub-project 1 has been carrying a private copy of this two-line future.
 ///
-/// ⚠️ A DEADLINE ALREADY REACHED BEHAVES AS A YIELD, and that is `Sleep::until`'s rule rather than
-/// a second one: the executor promotes the activity and polls it again without touching the clock.
+/// ⚠️ A DEADLINE ALREADY REACHED BEHAVES AS A YIELD FOR THE CLOCK AND NOT FOR THE ORDER, and that
+/// is `Sleep::until`'s rule rather than a second one: the executor promotes the activity and
+/// polls it again without touching the clock, once no other activity is `Runnable`. ⚠️ RECALL OF
+/// 2026-10-13 -- audit of 2026-09-30, AUD-1179.
 pub async fn nap(sleep: &Sleep, deadline: Monotonic) {
     sleep.until(deadline);
     Suspended(false).await;
 }
 
 /// The one-shot `Pending`. ⚠️ PRIVATE: what callers need is `nap`, and a bare yield with no
-/// deadline would be a second way to suspend -- §2.4.1 allows exactly one.
+/// deadline, made public, would be a second primitive with no caller in the product. §2.4.1 does
+/// not cap the primitives at one: it counts queues, channels and waits between activities among
+/// what the executor owns, so the day an activity needs another, it is added beside `nap` and
+/// not argued against the rule. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-744.
 struct Suspended(bool);
 
 impl Future for Suspended {

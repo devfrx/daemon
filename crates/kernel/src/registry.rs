@@ -4,11 +4,14 @@
 //! ⛔ THE MECHANISM AND NOT THE CONTENT, which is rule 1 of ADR-0038 and the shape ADR-0009 gives
 //! every kernel registry. This module knows how to HOLD a function, how to check its triple and
 //! how to JOURNAL an invocation; WHICH functions exist is brought by the gui and by the
-//! capabilities. ⛔ AND THE RULE IS HELD AT LEVEL 1 RATHER THAN BY GOOD INTENTIONS: nothing here
-//! IMPORTS `Arbiter`, `VramPolicy` or any other effect -- the `use` block at the top of this
-//! file is the whole list, and a reader checks it in one glance. The day the gesture arrives (sub-project 12) it registers ITS functions from
-//! outside, exactly as the click does — which is what "no gesture-only logic" means when it stops
-//! being a sentence.
+//! capabilities. ⛔ AND WHAT HOLDS THE RULE IS THE SHAPE, NOT A CHECK: `invoke` takes the effect
+//! as a closure, so the mechanism never needs to name one, and nothing here IMPORTS `Arbiter`,
+//! `VramPolicy` or any other effect -- the `use` block at the top of this file is the whole
+//! list, and a reader checks it in one glance. ⚠️ IT IS NOT A LEVEL 1 RULE: no compiler error and
+//! no script refuses the day somebody adds such an import, so it is kept by review. ⚠️ RECALL OF
+//! 2026-10-13 -- audit of 2026-09-30, AUD-1244. The day the gesture arrives (sub-project 12) it
+//! registers ITS functions from outside, exactly as the click does — which is what "no
+//! gesture-only logic" means when it stops being a sentence.
 //!
 //! ⛔ SO `invoke` TAKES THE EFFECT AS A CLOSURE. That is the only shape in which the mechanism can
 //! run something it does not know, and the closure receives the journal because the effect writes
@@ -130,9 +133,14 @@ pub enum Approval {
 /// reported as "not granted" is forbidden, and folding them here would undo that at the call site
 /// that matters most.
 ///
-/// ⚠️ AND TWO OF THESE FOUR VARIANTS ARE EXERCISED BY NO PROBE, declared rather than left to be
-/// discovered: `Permission(..)` and `Journal(..)` are built at six sites of `invoke`, and
-/// `tests/registry.rs` reaches neither — every journal it hands `invoke` answers every call.
+/// ⚠️ AND NO PROBE ASSERTS TWO OF THESE VARIANTS, declared rather than left to be discovered:
+/// `Permission(..)` and `Journal(..)`, built by the `map_err`s of `invoke`. `tests/registry.rs`
+/// reaches neither — every journal it hands `invoke` answers every call. `Journal(..)` IS
+/// PRODUCED, by the crash campaign of `crates/simulator/tests/serving_campaign.rs`, whose
+/// `CrashingJournal` refuses the write it falls on and every one after, and `crate::serving`
+/// folds it into `Outcome::Keep` with `NotRegistered` and `Permission(..)`; `Permission(..)` is
+/// reached by nothing, since that campaign's approval does not ask `is_granted` and its journal
+/// still replays after the fall. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1243.
 /// They stay because they are PROPAGATION arms, which every kernel module that touches a port
 /// has, and because folding them into a refusal would be exactly the "unknown reported as no"
 /// the paragraph above forbids. ⛔ AND NO TRIGGER IS NAMED HERE: which consumer will first hand
@@ -154,6 +162,10 @@ pub enum InvokeError {
 
 /// The registry itself.
 ///
+/// ⚠️ NOT TO BE CONFUSED WITH `gui/src/panels/registry.ts`, the SPA's registry of PANEL TYPES:
+/// another thing in another tree, and rule 5 of ADR-0038 keeps the manipulation of panels out of
+/// THIS registry. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-764.
+///
 /// ⛔ IT HOLDS STATE AND `permission::is_granted` DOES NOT, and the asymmetry is not an
 /// inconsistency. That one is a PROJECTION of the journal, and a projection with state would
 /// answer from when it was built instead of from what the archive says. This is a REGISTRATION
@@ -170,8 +182,10 @@ impl Registry {
     /// A registry that holds nothing yet.
     ///
     /// ⚠️ `const` IS PROMISED BY NAME AND EXERCISED BY NOTHING, and it is declared here rather
-    /// than left to be found: both call sites are `let` bindings, and no `const` or `static` in
-    /// this repository depends on it, so removing the qualifier leaves every bench green. It
+    /// than left to be found: every call site is a `let` binding --
+    /// `grep -rn 'Registry::new' crates gui/fake-core --include=*.rs` lists them -- and no `const`
+    /// or `static` in this repository depends on it, so removing the qualifier leaves every bench
+    /// green (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1242). It
     /// stays for the reason `E27` kept the derives of `custody`: a name promised to the tasks
     /// that come after is a CONTRACT, and what is not yet exercised is declared instead of being
     /// removed or claimed. ⛔ AND NO TRIGGER IS NAMED: which consumer will first want a registry
@@ -203,10 +217,11 @@ impl Registry {
 
     /// The function held under this name, if the registry holds one.
     ///
-    /// ⛔ IT EXISTS FOR THE APPROVAL PATH AND ITS CALLER ARRIVES WITH `crate::serving` IN TASK 7,
-    /// and until then `invoke` is the only one: `crate::serving` compares the triple a peer sends
-    /// back against the triple THE REGISTRY holds, rather than trusting the strings that came in
-    /// (ADR-0014, and the doc of `crate::wire::ipc::Triple` asks that consumer for it by name).
+    /// ⛔ IT EXISTS FOR THE APPROVAL PATH, AND `crate::serving` IS ITS CALLER THERE: `Core::approve`
+    /// compares the triple a peer sends back against the triple THE REGISTRY holds, rather than
+    /// trusting the strings that came in (ADR-0014, and the doc of `crate::wire::ipc::Triple` asks
+    /// that consumer for it by name); `invoke` is the other. ⚠️ RECALL OF 2026-10-13 -- audit of
+    /// 2026-09-30, AUD-1242, AUD-1185.
     pub fn held(&self, name: &str) -> Option<Function> {
         self.functions.iter().find(|held| held.name == name).copied()
     }

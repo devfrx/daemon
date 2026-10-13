@@ -1,12 +1,13 @@
 //! The sub-project 2 campaign: `kernel::serving::serve` under two faults -- a gui that dies on the
 //! port, and an archive that falls in the middle of an invocation.
 //!
-//! ⛔ WHY NOT `simulator::ipc::DyingGui`, WHICH §5 OF THE DESIGN NAMES. Three reasons, each
+//! ⛔ WHY NOT `simulator::ipc::DyingGui`, WHICH §5 OF THE DESIGN NAMES. Two reasons, each
 //! measured on 2026-09-14 while this task was written. It says exactly ONE thing --
 //! `IpcMessage::Request` -- and the dispatch drops it on the floor (D5), so no grant is ever
 //! issued and the property would compare empty sets. It can pronounce neither `Hello` nor
-//! `Approve`, so the second fault is out of reach with it. And it would be MOVED INTO `Core`,
-//! which does not expose its transport, so nothing could read it afterwards.
+//! `Approve`, so the second fault is out of reach with it. ⚠️ Being read after the run is not
+//! one of them: `Core::ipc` hands the transport back, so a `DyingGui` moved into `Core` could be
+//! asked afterwards (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1429).
 //!
 //! ⛔ SO THE WIRE LIVES OUTSIDE THE CORE, behind a `RefCell` the campaign owns, and the port holds
 //! a borrow of it. That is the shape of `crates/kernel/tests/serving.rs`, repeated here rather
@@ -50,7 +51,11 @@
 //!   the register directly; what is under test HERE is the ACTIVITY -- that `serve` reads the
 //!   death from the port and reconciles, at a turn the seed chooses.
 //! - it does NOT reach `Reactor::wait_until` on a real clock: the clock is virtual, so a wait is
-//!   an assignment. The wall-clock half is the daemon's, and its own probe declares it.
+//!   an assignment. ⚠️ AND NO PROBE REACHES THAT HALF -- `serve`'s nap on `SystemReactor` with a
+//!   tick that is not zero: the probes of `crates/daemon/src/main.rs` and of `gui/fake-core` all
+//!   deliver a zero tick, which makes the nap a yield, and the daemon's hands the half to this
+//!   campaign, which cannot hold it. Covering it is an open choice (⚠️ RECALL OF 2026-10-13 --
+//!   audit of 2026-09-30, AUD-2173).
 //! - it does NOT sweep a gui that dies AFTER its window. That road is
 //!   `crates/kernel/tests/client_grants.rs::a_disconnect_after_the_window_reports_already_collected`.
 //!
@@ -70,11 +75,12 @@
 //! WRITING to depend on `simulator`, the reactors these copies wrap are not even the same type,
 //! and one home for all of them would want a wrapper generic over `R: Reactor` -- more machinery
 //! than the lines it would save (P-59, P-74). ⚠️ ITS TRIGGER, DECLARED RATHER THAN LEFT TO BE
-//! DISCOVERED, WITH THE THRESHOLD AND THE TWO QUALIFIERS D34 GAVE IT: a FIFTH home, born inside
+//! DISCOVERED, WITH THE TWO QUALIFIERS D34 GAVE IT: a NEW home, born inside
 //! `simulator` or in a crate that can import it, AND wrapping the SAME reactor -- on that day the
 //! measure is taken again. How many homes there are is what the command above prints, never this
-//! line. ⛔ AND THE FIFTH IS ALREADY CENSUSED AND ALREADY RULED OUT, so that the next pass does
-//! not reopen a settled measure: `gui/fake-core`, which task 12 builds, wraps `SystemReactor`, and
+//! line (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1432). ⛔ AND `gui/fake-core` IS
+//! ALREADY CENSUSED AND ALREADY RULED OUT, so that the next pass does not reopen a settled
+//! measure: it wraps `SystemReactor`, and
 //! P-74 read the trigger against it on 2026-09-14 -- before it existed -- and answered that it
 //! does not fire. ⛔ AND WHAT HOLDS THAT ANSWER IS THE REACTOR, WHICH IS P-74's REASON: the
 //! trigger does not ask whether anyone can import a copy -- "a `tests/` is a crate of its own and
@@ -146,10 +152,14 @@ const STANDING: ClientId = ClientId::new(2);
 const TICK: Millis = Millis::new(50);
 
 /// Enough turns for the longest round here, with room to spare. ⛔ FIXED AND VERSIONED WITH THIS
-/// FILE (constraint 7 of §11), never drawn from the clock or from an environment variable.
+/// FILE, never drawn from the clock or from an environment variable -- the rule constraint 7 of
+/// §11 sets for the seed count, held here for the turns too, because the world a seed produces
+/// depends on both (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1431).
 const TURNS: u64 = 64;
 
-/// How many seeds the SHORT campaign sweeps. ⛔ FIXED AND VERSIONED, for `TURNS`' reason. It is the
+/// How many seeds the SHORT campaign sweeps. ⛔ FIXED AND VERSIONED WITH THIS FILE, never drawn
+/// from the clock or from an environment variable: constraint 7 of §11, so two runs of the gate
+/// sweep the same seeds (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1431). It is the
 /// figure the campaigns beside this one already use -- ⚠️ WITHOUT A TALLY, which is the cure and
 /// not a looseness: this line said "the two campaigns" and
 /// `grep -rln 'const SHORT_CAMPAIGN_SEEDS' crates/simulator/tests/` listed FOUR besides this one on
@@ -307,7 +317,8 @@ impl Reactor for SharedClock<'_> {
 
 /// The seed the death point is drawn from. ⛔ DERIVED, and a DIFFERENT mixing from the one the
 /// executor is seeded with: two draws from the same number move together, and the campaign would
-/// explore a DIAGONAL of the space instead of the space (decision D2 of the milestone 4 plan).
+/// explore a DIAGONAL of the space instead of the space (decision D4 of the milestone 4 plan;
+/// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1430).
 ///
 /// ⚠️ THE DIAGONAL IS NOT A RISK THIS SCENARIO RUNS TODAY, AND THAT IS SAID RATHER THAN LEFT TO BE
 /// ASSUMED: the executor's own seed is INERT here -- frozen to `SeededRng::new(0)` in `one_death`
@@ -354,10 +365,11 @@ fn standing_grant(
 ///
 /// ⚠️ THE OPERATION CANNOT BE, AND SAYING SO IS THE POINT. `Triple::operation` is
 /// `wire::ipc::Access` and `POLICY_FUNCTION.permission.operation` is `permission::Operation` --
-/// twins by D11 -- and NO conversion exists between them: measured on 2026-09-19 with
-/// `grep -rn 'impl From<Operation>' crates/kernel/src/`, which returns nothing. So ONE field of
-/// the three is a literal, and a doc claiming all three were built would be the shape `E56`
-/// exists for.
+/// twins by D11 -- and the one conversion between them is PRIVATE to `kernel::serving`,
+/// `triple_of`, which `grep -rn 'Operation::Read => Access::Read' crates/kernel/src/` finds:
+/// from out here there is none to call. So ONE field of the three is a literal, and a doc
+/// claiming all three were built would be the shape `E56` exists for (⚠️ RECALL OF 2026-10-13
+/// -- audit of 2026-09-30, AUD-2172).
 ///
 /// ⛔ AND IT IS `Approve` AND NOT `Invoke`: `Registry::invoke` asks `is_granted` BEFORE opening the
 /// step, so an `Invoke` on a triple nobody granted answers `PermissionRequired` having written
@@ -563,10 +575,17 @@ fn one_crash(seed: u64) -> Crashed {
 
 /// How many operations the activity performs on a client it has welcomed.
 ///
-/// ⛔ IT IS THE PREMISE THE DEATH POINT IS DRAWN AGAINST, and it is HELD rather than trusted by
-/// `the_activity_operates_on_a_welcomed_client_at_least_this_many_times`. A point drawn past the
-/// last operation never fires, and a campaign whose fault never arrives is green for having done
-/// nothing (gotcha #17).
+/// ⛔ IT IS THE PREMISE THE DEATH POINT IS DRAWN AGAINST, and it is HELD FROM BELOW rather than
+/// trusted, by `the_activity_operates_on_a_welcomed_client_at_least_this_many_times`. A point
+/// drawn past the last operation never fires, and a campaign whose fault never arrives is green
+/// for having done nothing (gotcha #17). ⚠️ AND ONLY FROM BELOW: an activity that came to perform
+/// MORE operations would leave the ones past this number never drawn, and nothing would go red --
+/// `EXPECTED_DEATH_WORLDS` counts the points drawn below this number, so it does not see them
+/// either: measured on 2026-10-13, with `TURNS` doubled,
+/// `cargo test --locked -p simulator --test serving_campaign` stays green. Its twin
+/// `WRITES_PER_APPROVAL` is pinned both ways. Pinning this one too changes what
+/// a DST campaign asserts, and it is an open choice (⚠️ RECALL OF 2026-10-13 -- audit of
+/// 2026-09-30, AUD-2174).
 ///
 /// ⛔ HOW ONE REMEDIES A RED HERE: RE-MEASURE AND RE-CHOOSE. Editing this until the bar goes green
 /// is gotcha #25. What invalidates it: a change to `TURNS`, to the welcome of sequence 1, or to

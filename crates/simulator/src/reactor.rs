@@ -4,8 +4,10 @@
 //! > stands still; when none is, the reactor takes the clock TO THE FIRST FUTURE
 //! > DEADLINE.
 //!
-//! ⚠️ Milestone 2 builds the clock and nothing else. Fault injection, the campaign and
-//! the seed list are §3.3 to §3.5, milestone 4.
+//! ⚠️ THIS FILE IS THE CLOCK AND NOTHING ELSE. Fault injection, the campaigns and the seed list
+//! are §3.3 to §3.5, and they live elsewhere: the falling doubles beside this file, in
+//! `journal.rs` and `ipc.rs`, the campaigns in `crates/simulator/tests/`, the seeds in
+//! `docs/semi-dst.md`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1404.
 
 use kernel::ports::reactor::Reactor;
 use kernel::time::{Monotonic, WallTime};
@@ -15,6 +17,9 @@ pub struct VirtualReactor {
     wall: WallTime,
 }
 
+// ⛔ NO `impl Default` — the same decision, for the same reason, as `SystemReactor` and
+// `MemoryJournal`: nothing calls it. The argument is written out once, in
+// `crates/platform/src/reactor.rs`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-792.
 impl VirtualReactor {
     pub const fn new() -> Self {
         VirtualReactor {
@@ -48,7 +53,11 @@ impl Reactor for VirtualReactor {
         // ⚠️ The two clocks move TOGETHER, by the same amount. A virtual wall clock frozen
         // at the origin while the monotonic one jumps twenty seconds would hand the
         // journal a stamp that contradicts its own ordering — and §2.1 forbids a decision
-        // from reading this one, not the record from being consistent with it.
+        // from reading this one, not the record from being consistent with it. ⚠️ THE STAMP IS
+        // §2.1's DESIGN AND NOT TODAY'S RECORD: no record carries one yet, as
+        // `Reactor::wall_time` says, so what the lockstep keeps today is a fake consistent with
+        // itself, ready for the reader that will come. ⚠️ RECALL OF 2026-10-13 -- audit of
+        // 2026-09-30, AUD-1434.
         self.wall = WallTime::from_millis_since_epoch(
             self.wall
                 .as_millis_since_epoch()

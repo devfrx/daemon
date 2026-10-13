@@ -1,6 +1,9 @@
 //! The in-memory journal, checked on its own. What BOTH implementations promise lives in
-//! the conformance suite (`kernel/tests/journal_contract.rs`); this file holds only what is
-//! true of THIS one.
+//! the conformance suite (`kernel/tests/journal_contract.rs`); this file holds what the suite
+//! does not hold of THIS one -- many notes upon one step, the third answer of `prune`, a refused
+//! prune that leaves the record whole, a journal that does not outlive its drop -- and it asks
+//! this one again much of what the suite asks both, with the reason, where there is one, in the
+//! test's own comment. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1426.
 
 use kernel::ports::journal::{Journal, JournalError, StepId};
 use simulator::journal::MemoryJournal;
@@ -48,13 +51,17 @@ fn an_outcome_without_an_intent_is_refused() {
 fn an_outcome_after_its_intent_is_accepted() {
     // ⛔ THE HAPPY PATH OF THE WRITE-AHEAD PROTOCOL, and the refusal above is vacuous without
     // it. MEASURED, AND THE CLAIM IS BOUND TO WHAT WAS MEASURED AND TO WHEN (gotcha #31, which
-    // is what happens to a claim tied to a container that grows): an `outcome` answering
-    // `Err(OutOfOrder)` ALWAYS leaves green ALL FOUR TESTS THE PLAN DICTATED — which is the
-    // whole of the plan's closing criterion for this task, satisfied by a journal that records
-    // no outcome at all. Against the file as it ships it takes three down: this one and the
-    // two that write an outcome before reading back. It is the direction of a control that
-    // gets forgotten (§7.1.1, rule 3), on the only sequence the protocol actually walks —
-    // intent, then effect, then outcome.
+    // is what happens to a claim tied to a container that grows): on 2026-08-10, an `outcome`
+    // answering `Err(OutOfOrder)` ALWAYS left green ALL FOUR TESTS THE PLAN DICTATED — which is
+    // the whole of the plan's closing criterion for this task, satisfied by a journal that
+    // records no outcome at all. Against the file as it ships it takes down this one and the
+    // tests that write an outcome before reading back,
+    // `read_back_returns_the_intent_and_not_the_outcome` and
+    // `each_step_reads_back_its_own_first_record` — measured again on 2026-10-13 with
+    // `cargo test --locked -p simulator --test memory_journal` (⚠️ RECALL OF 2026-10-13 -- audit
+    // of 2026-09-30, AUD-1427). It is the direction of a control that gets forgotten (§7.1.1,
+    // rule 3), on the only sequence the protocol actually walks — intent, then effect, then
+    // outcome.
     let mut journal = MemoryJournal::new();
     let step = StepId::new(4);
 
@@ -142,9 +149,11 @@ fn each_step_reads_back_its_own_first_record() {
     // "Re-reads EVERYTHING, in write order" and "WRITE ORDER IS PART OF THE PROMISE" — and
     // conformance DOES reach inside a step: promise 8(c) asserts `[(step, intent), (step, note)]`,
     // two records of one step in write order. What the suite does not exercise is TWO NOTES upon
-    // ONE step: measured, of the four `.note` calls in `assert_journal_contract` two are asserted
-    // refused and the two that succeed sit on different steps. So the scope claimed above is
-    // wider than the truth, and it is the SUITE that stops, never the contract.
+    // ONE step: the notes `assert_journal_contract` writes are refused or land on different
+    // steps, as `awk '/^pub fn assert_journal_contract/,/^}/'
+    // crates/kernel/tests/journal_contract.rs | grep '\.note('` lists them (⚠️ RECALL OF
+    // 2026-10-13 -- audit of 2026-09-30, AUD-1398). So the scope claimed above is wider than the
+    // truth, and it is the SUITE that stops, never the contract.
     let mut journal = MemoryJournal::new();
     let first = StepId::new(1);
     let second = StepId::new(2);
@@ -210,12 +219,17 @@ fn an_intent_for_another_step_is_still_accepted() {
     //
     // ⚠️ AND IT IS NOT A MEASURED HOLE — THE FIRST DRAFT OF THIS COMMENT CLAIMED IT WAS, AND
     // THE MEASUREMENT SAID OTHERWISE. Writing the guard as `if !self.entries.is_empty()` — one
-    // that refuses every intent after the first, anywhere — is caught by SIX tests, not by
-    // this one alone: `each_step_reads_back_its_own_first_record` here, and five in the
-    // conformance suite, which die on the SETUP of promise 4 because it writes two intents for
-    // two different steps. So this test is not what stands between that mutation and a green
-    // bench. What it buys is that the property is NAMED: a rule held only as a side effect of
-    // a test about something else is a rule the next reader re-decides, which is the same
+    // that refuses every intent after the first, anywhere — is caught by other tests than this
+    // one: `each_step_reads_back_its_own_first_record` here, and the conformance suite on its
+    // FIRST promise, whose bystander is an intent on another step written before the step under
+    // test — the suite run on this journal goes red there, and so do the liars of
+    // `journal_contract.rs` that reach this guard, caught on promise 1 instead of their own.
+    // Measured on 2026-10-13, the mutation applied, with
+    // `cargo test --locked -p simulator --test memory_journal` and
+    // `cargo test --locked -p kernel --test journal_contract` (⚠️ RECALL OF 2026-10-13 -- audit
+    // of 2026-09-30, AUD-1424, AUD-1427). So this test is not what stands between that mutation
+    // and a green bench. What it buys is that the property is NAMED: a rule held only as a side
+    // effect of a test about something else is a rule the next reader re-decides, which is the same
     // argument that keeps `read_back_returns_the_intent_and_not_the_outcome` next to its
     // neighbour. ⛔ The claim was written before the measure and the measure contradicted it;
     // it is corrected here rather than quietly dropped.
@@ -325,8 +339,9 @@ fn a_note_does_not_take_the_intents_place_in_read_back() {
 // note, and V6 would fall. THE MUTATION WAS RUN AND NOTHING WENT RED, that test included, and
 // the reason is sound rather than a gap: `note` itself REFUSES a step with no intent, so a
 // note-only step cannot be built through the port, so `has_intent` can only be made true by a
-// note on a step that already had an intent. The variant is genuinely unobservable from out
-// here, exactly as `crates/simulator/src/journal.rs` declares beside it.
+// note on a step that already had an intent. Filing a note under `Intent` is genuinely
+// unobservable from out here, exactly as `crates/simulator/src/journal.rs` declares beside the
+// variant (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1400).
 //
 // ⚠️ THE TEST WENT AND THE MEASUREMENT STAYED, because the two failures are not the same size: a
 // probe whose comment claims a defect it cannot see teaches the next reader that the defect is
@@ -342,10 +357,16 @@ fn prune_refuses_and_leaves_the_record_where_it_was() {
     // was true, and a reader meeting `StepInDoubt` deserves to see when `Missing` stopped being
     // the answer.
     //
-    // ⛔ WHAT IS HELD HERE AND NOT IN THE CONFORMANCE SUITE, which is the whole reason this test
-    // survives promise 7: that the refusal DID NOT PRUNE ANYWAY. The suite reads the error and
-    // stops there; an irreversible operation that half-happened and then reported failure is
-    // worse than one nobody wrote, and no promise looks.
+    // ⛔ WHAT IS HELD HERE AND ONLY IN PART BY THE CONFORMANCE SUITE, which is the whole reason
+    // this test survives promise 7: that the refusal DID NOT PRUNE ANYWAY. A refusal that took
+    // the step away the suite does see, though not by name: promise 7 writes a note upon the
+    // refused step next, the note finds no intent, and its `expect` goes red. A refusal that kept
+    // the entry and lost its bytes it does not, because no promise reads the record BACK.
+    // Measured on 2026-10-13 with `cargo test --locked -p kernel --test journal_contract`: with
+    // `prune` removing the step before refusing, red on promise 7's note; with `prune` emptying
+    // the bytes before refusing, green, and this test red. An irreversible operation that
+    // half-happened and then reported failure is worse than one nobody wrote (⚠️ RECALL OF
+    // 2026-10-13 -- audit of 2026-09-30, AUD-1425).
     let mut journal = MemoryJournal::new();
     let step = StepId::new(5);
     journal
@@ -394,12 +415,14 @@ fn the_memory_journal_does_not_survive_being_dropped() {
     // ⚠️ AND "ON ITS OWN" CARRIES THE WHOLE PROOF, so it says why instead of sitting there.
     // The mutant's flag is per PROCESS, so in a shared run whichever test writes an intent
     // first poisons the twin too, and WHICH ONE THAT IS DEPENDS ON THE POPULATION OF THE FILE.
-    // Measured, and the two figures are the argument: with nine tests the twin survived 5 runs
-    // out of 5; with the tenth added — it writes intents and its name sorts ahead of the
-    // twin's — the twin went down 20 out of 20. Nothing about the journal changed between the
-    // two. Run one test per process and the mutant is unambiguous every time: twin green, this
-    // one red. ⛔ The instability belongs to THE MUTANT, not to what ships: the journal here
-    // holds no global state and comes out green in every arrangement.
+    // Measured on 2026-08-10, with a mutant this repository does not keep and on the file as it
+    // stood that day, so the figures are that day's and nothing re-runs them from here (⚠️ RECALL
+    // OF 2026-10-13 -- audit of 2026-09-30, AUD-1427); the two figures are the argument: with
+    // nine tests the twin survived 5 runs out of 5; with the tenth added — it writes intents and
+    // its name sorts ahead of the twin's — the twin went down 20 out of 20. Nothing about the
+    // journal changed between the two. Run one test per process and the mutant is unambiguous
+    // every time: twin green, this one red. ⛔ The instability belongs to THE MUTANT, not to what
+    // ships: the journal here holds no global state and comes out green in every arrangement.
     let mut journal = MemoryJournal::new();
     journal.intent(StepId::new(1), b"gone").expect("intent");
     drop(journal);

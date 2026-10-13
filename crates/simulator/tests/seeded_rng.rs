@@ -1,10 +1,12 @@
 //! The seeded generator, and the guard that spike SP-5 paid for (gotcha #10).
 //!
 //! It is also the counter-probe of `tests/compile_fail/override_below.rs`: the probe that
-//! must FIRE forbids a hand-written `RngExt` impl, and the four `below_*` tests here are
-//! the other direction, the one that is forgotten (§7.1.1, rule 3). The other three
-//! counter-probe files name their cases in this same place; this one did not until
-//! 2026-08-10, and the mapping lived only in `docs/porta-di-qualita.md`.
+//! must FIRE forbids a hand-written `RngExt` impl, and the tests of `below` here are the
+//! other direction, the one that is forgotten (§7.1.1, rule 3). Other counter-probe files
+//! name their cases in this same place -- which files are counter-probes is the table «Le
+//! contro-sonde delle righe nuove» of `docs/porta-di-qualita.md`, never a count here; this one
+//! did not until 2026-08-10, and the mapping lived only in that table. ⚠️ RECALL OF 2026-10-13
+//! -- audit of 2026-09-30, AUD-1428.
 
 use kernel::rng::{Rng, RngExt};
 use simulator::rng::SeededRng;

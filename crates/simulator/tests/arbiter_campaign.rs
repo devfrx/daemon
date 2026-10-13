@@ -45,7 +45,7 @@ use kernel::arbiter::{
     Admission, Arbiter, ArbiterId, ComputeClass, Grant, LocalPolicy, Mib, Preemption, ReleaseError,
     Released, RemotePolicy, ResourceProfile, VramPolicy,
 };
-use kernel::executor::{Executor, Sleep};
+use kernel::executor::{Executor, Sleep, nap};
 use kernel::parameters::Parameters;
 use kernel::ports::journal::StepId;
 use kernel::ports::reactor::Reactor;
@@ -108,12 +108,15 @@ const TRANSITION_STEP: u64 = 900;
 /// than its name promises. ⚠️ AND THE GUARD BELOW DID NOT CATCH IT BECAUSE IT LOOKS ONE WAY: it
 /// fires when the transition writes FEWER records than this number, never when it writes MORE.
 ///
-/// ⛔ IT IS THE PREMISE `crash_point` RESTS ON, and it is held rather
+/// ⛔ IT IS THE PREMISE `crash_point` RESTS ON, and it is held from below rather
 /// than trusted: the fall point is drawn modulo this number, so a transition that wrote fewer
 /// records would leave the tail of the range firing on nothing, and
 /// `property_4_a_severed_transition_leaves_a_reconcilable_step` asserts that EVERY seed
-/// reaches its point. It is the shape `WRITES_PER_RUN` has in `dst_campaign.rs`, for the same
-/// reason.
+/// reaches its point. ⚠️ IT IS HALF THE SHAPE `WRITES_PER_RUN` HAS IN `dst_campaign.rs`: there a
+/// run without a crash also pins the count from above, `writes_done()` against the constant,
+/// and here nothing does -- the direction the recall above names. Pinning it changes what a DST
+/// campaign asserts, so it is the owner's: voice `E55` of the part-2 plan, open (⚠️ RECALL OF
+/// 2026-10-13 -- audit of 2026-09-30, AUD-2166).
 const WRITES_PER_TRANSITION: u64 = 3;
 
 /// How many seeds the SHORT campaign sweeps. ⛔ FIXED AND VERSIONED WITH THIS FILE, never
@@ -318,6 +321,10 @@ static PARTIES: [Party; 4] = [
 /// mutated it was seen RED on all five probes, naming the seed and both values
 /// (`docs/porta-di-qualita.md`, Milestone 5 Task 12). What was false is only the claim of
 /// INDEPENDENCE, and building a second, genuinely independent sum is a decision for the owner.
+/// ⚠️ AND AN OPEN DECISION IS AN OPEN ENTRY, WHICH A COMMENT IS NOT: its home is the table of the
+/// open items of milestone 5 in `docs/porta-di-qualita.md`, and this comment points there rather
+/// than standing in for it (gotcha #36; ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1407,
+/// AUD-1408).
 ///
 /// ⛔ IT IS ALSO THE POINT IN THE OUTCOME SPACE, which is why it derives `Ord`: the campaign
 /// counts how many DISTINCT ones a sweep produces, and that count is what
@@ -495,12 +502,15 @@ fn run(seed: u64, journal: CrashingJournal) -> (CrashingJournal, Observed) {
                         .push((grant, now.saturating_add(party.hold)));
                 }
 
-                sleep.until(now.saturating_add(if granted {
+                let pause = if granted {
                     party.after_grant
                 } else {
                     party.after_queue
-                }));
-                Yield::once().await;
+                };
+                // ⛔ THROUGH `kernel::executor::nap`, THE ONE WAY §2.4.1 LETS AN ACTIVITY SUSPEND,
+                // and the very code the activities of the kernel run (⚠️ RECALL OF 2026-10-13 --
+                // audit of 2026-09-30, AUD-794, AUD-2112).
+                nap(sleep, now.saturating_add(pause)).await;
             }
         });
     }
@@ -552,34 +562,6 @@ fn watch(seed: u64, arbiter: &RefCell<Arbiter>, observed: &RefCell<Observed>) {
     }
 }
 
-/// A future that returns `Pending` exactly once.
-///
-/// ⚠️ DUPLICATED WORD FOR WORD from `dst_campaign.rs`, and it is declared rather than left to
-/// be discovered: TEST CODE DOES NOT CROSS CRATE BOUNDARIES, so there is no place both
-/// benches could reach. Unifying them would put a test helper on the wire of a shipped crate.
-struct Yield(bool);
-
-impl Yield {
-    fn once() -> Self {
-        Yield(false)
-    }
-}
-
-impl core::future::Future for Yield {
-    type Output = ();
-    fn poll(
-        mut self: core::pin::Pin<&mut Self>,
-        _context: &mut core::task::Context<'_>,
-    ) -> core::task::Poll<()> {
-        if self.0 {
-            core::task::Poll::Ready(())
-        } else {
-            self.0 = true;
-            core::task::Poll::Pending
-        }
-    }
-}
-
 /// The fall point for a seed. ⛔ `WRITES_PER_TRANSITION` WRITES PER RUN -- the intent and the
 /// outcome -- so the space of fall points has cardinality two, and both members are
 /// interesting: 0 falls before the intent and leaves no doubt, 1 falls between the two and
@@ -594,8 +576,8 @@ impl core::future::Future for Yield {
 ///
 /// ⛔ IT COMES FROM A DERIVED MIXING AND NOT FROM THE SAME GENERATOR AS THE INTERLEAVING: two
 /// `SeededRng` built from the same number give the SAME sequence, so the campaign would
-/// explore a DIAGONAL of the space instead of the space (decision D2 of the milestone 4
-/// plan).
+/// explore a DIAGONAL of the space instead of the space (decision D4 of the milestone 4
+/// plan; ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1430).
 fn crash_point(seed: u64) -> u64 {
     (seed.wrapping_mul(0xBF58_476D_1CE4_E5B9) >> 33) % WRITES_PER_TRANSITION
 }
@@ -792,6 +774,13 @@ fn property_5_expiry_frees_the_budget_under_the_scenario() {
 /// seed must reach its point. A single seed that did not crash would mean the transition
 /// wrote fewer times than the number the point was drawn against, which is the silent no-op
 /// of gotcha #17; `> 0` would let all but one seed go quiet.
+///
+/// ⚠️ WHAT IS NOT ASSERTED, said rather than left to be assumed: that EACH fall point leaves
+/// what it must -- no doubt at 0, a doubt at 1 and at 2. `doubted > 0` holds the sweep and not
+/// each point, so a point that stopped leaving its doubt would only lower the figure this test
+/// prints. Asserting it per seed changes what a DST campaign asserts, which voice `E55` of the
+/// part-2 plan leaves to the owner: an open choice (⚠️ RECALL OF 2026-10-13 -- audit of
+/// 2026-09-30, AUD-2167).
 #[test]
 fn property_4_a_severed_transition_leaves_a_reconcilable_step() {
     let started = std::time::Instant::now();

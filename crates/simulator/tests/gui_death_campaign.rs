@@ -17,8 +17,12 @@
 //! calls it. ⚠️ AND NO TALLY OF THOSE MENTIONS IS WRITTEN HERE, deliberately: a line that said
 //! how many there are would be made false by adding it, which is what happened when this
 //! paragraph first tried (gotcha #31). ⛔ AND THE OTHER DIRECTION, without which a zero measures
-//! nothing: the anchored command returns 6 on `crates/simulator/tests/dying_gui.rs`, which is
-//! where asking the fake is the right thing to do.
+//! nothing: the anchored command returns MORE THAN ZERO on `crates/simulator/tests/dying_gui.rs`,
+//! which is where asking the fake is the right thing to do -- how many is the command's to say,
+//! never a figure here. ⚠️ AND IT IS A COMMAND, NOT A CHECK: no step of `scripts/gate.sh` or of
+//! the CI runs it, so a call to `has_died` added to `run` would leave every test here green.
+//! Turning it into a check is an open choice (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+//! AUD-2170).
 //!
 //! ⛔ AND THE BASELINE IS NOT ZERO, which is the second half nothing else would catch. "The sum
 //! comes back to the baseline" is green for a reconciliation that releases EVERYTHING when the
@@ -104,8 +108,10 @@ const OPERATIONS: u64 = 3;
 
 /// How many seeds the SHORT campaign sweeps. ⛔ FIXED AND VERSIONED WITH THIS FILE, never drawn
 /// from the clock or from an environment variable: constraint 7 of §11, so two runs of the gate
-/// sweep the same seeds. It is the figure `arbiter_campaign.rs` already uses, and the space here
-/// is far smaller than that one's.
+/// sweep the same seeds. It is the figure `arbiter_campaign.rs` uses, BORROWED rather than
+/// measured against this space: what holds it here is `EXPECTED_WORLDS`, which goes red the day
+/// this many seeds stop reaching every world, and at which seed the space closes is not measured
+/// in this file (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1421).
 const SHORT_CAMPAIGN_SEEDS: u64 = 2_000;
 
 /// What a gui may ask for. ⛔ THE FOUR ARE SIZED AGAINST `TOTAL` AND `CORE_QUOTA` SO THAT THE
@@ -182,9 +188,16 @@ struct Observed {
 
 /// The seed the death point is drawn from. ⛔ IT IS DERIVED, and it is a DIFFERENT mixing from
 /// the one that chooses the ask: two draws taken from the same number move together, and the
-/// campaign would then explore a DIAGONAL of the space instead of the space (decision D2 of the
-/// milestone 4 plan). ✅ Held rather than argued — with the two mixings made equal the world
-/// count collapses and `EXPECTED_WORLDS` goes red.
+/// campaign would then explore a DIAGONAL of the space instead of the space (decision D4 of the
+/// milestone 4 plan; ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1430).
+///
+/// ⚠️ AND HERE THE RULE IS KEPT, NOT HELD. `DyingGui::from_seed` scrambles this seed again
+/// through `SeededRng::new`, and `ask` draws by plain arithmetic, so the death point and the ask
+/// stay independent under any natural wiring: measured on 2026-10-13, with this mixing made equal
+/// to `ask`'s, or with the bare seed, `cargo test --locked -p simulator --test
+/// gui_death_campaign` stays green and the sweep still sees every world. `EXPECTED_WORLDS` does
+/// not guard the rule, and nothing in this file does (⚠️ RECALL OF 2026-10-13 -- audit of
+/// 2026-09-30, AUD-2171).
 fn death_seed(seed: u64) -> u64 {
     seed.wrapping_mul(0xBF58_476D_1CE4_E5B9)
 }
@@ -443,8 +456,10 @@ fn property_3_a_gui_that_dies_holding_a_grant_gives_it_back() {
 /// and the reconciliation would only ever be exercised on one kind of grant.
 ///
 /// ⚠️ WHAT IT MEASURES IS THE WORLD SPACE: how many DISTINCT `Observed` the sweep produces. One
-/// distinct world across two thousand seeds would mean the two mixings move together and the
-/// campaign is one run repeated.
+/// distinct world across `SHORT_CAMPAIGN_SEEDS` seeds would mean the seed moves neither the ask
+/// nor the death point, and the campaign is one run repeated -- two mixings made equal do not
+/// do it, as the doc of `death_seed` says (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+/// AUD-2171).
 #[test]
 fn the_campaign_sweeps_every_world_this_scenario_has() {
     let mut distinct = BTreeSet::new();
@@ -457,8 +472,8 @@ fn the_campaign_sweeps_every_world_this_scenario_has() {
 
     assert!(
         distinct.len() > 1,
-        "every seed produced the SAME world: the two mixings are moving together, so this \
-         campaign is one run repeated {SHORT_CAMPAIGN_SEEDS} times"
+        "every seed produced the SAME world: the seed moves neither the ask nor the death \
+         point, so this campaign is one run repeated {SHORT_CAMPAIGN_SEEDS} times"
     );
     assert_eq!(
         distinct.len(),

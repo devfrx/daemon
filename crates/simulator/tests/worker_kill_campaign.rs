@@ -28,7 +28,7 @@
 //! the CODE word for word, the docs abridged where they described that bench's subject rather
 //! than this one — and it is declared rather than left to be discovered:
 //! TEST CODE DOES NOT CROSS CRATE BOUNDARIES, so there is no place both benches could reach.
-//! It is the same deviation `Yield` carries in `arbiter_campaign.rs`, for the same reason.
+//! ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-794.
 //! ⚠️ A SEED-DRIVEN FAKE IN `crates/simulator/src/` WOULD BUY NOTHING HERE: what the seed decides
 //! is WHEN THE CORE KILLS, and the core is this bench. The worker has no say in it.
 
@@ -82,9 +82,13 @@ struct Recruit {
     valid_for: Millis,
 }
 
-/// ⚠️ A `static` AND NOT A `const`, the reason `PARTIES` carries in `arbiter_campaign.rs`: the
-/// loop takes `&'static Recruit`, and `&SOME_CONST` reaches that lifetime only through rvalue
-/// static promotion.
+/// ⚠️ A `static` AND NOT A `const`, AND THE REASON IS NOT THIS FILE'S: nothing here takes a
+/// `&'static Recruit` -- `RECRUITS` is read through `iter`, by index and for its `len`, and its one
+/// `'static` is the `name` field, which is copied -- so a `const` would serve as well: measured on
+/// 2026-10-13, with `const` in its place `cargo test --locked -p simulator --test
+/// worker_kill_campaign` builds and passes. The `static` follows `PARTIES` in
+/// `arbiter_campaign.rs`, whose activities do capture `&'static Party` (⚠️ RECALL OF 2026-10-13
+/// -- audit of 2026-09-30, AUD-1437).
 ///
 /// ⛔ THE FOUR RESERVATIONS ADD UP TO 10 240 AGAINST A MACHINE OF 16 384, so every one of them
 /// STARTS — which is the point: this campaign is about what a KILL gives back, and a worker the
@@ -180,8 +184,9 @@ struct Observed {
 
 /// The instants this seed kills at, one per recruit, in `RECRUITS` order.
 ///
-/// ⛔ IT COMES FROM A DERIVED MIXING AND NOT FROM THE CAMPAIGN'S SEED ITSELF — decision D2 of the
-/// milestone 4 plan, and the shape `crash_point` has in `arbiter_campaign.rs`. Two `SeededRng`
+/// ⛔ IT COMES FROM A DERIVED MIXING AND NOT FROM THE CAMPAIGN'S SEED ITSELF — decision D4 of the
+/// milestone 4 plan (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1435), and the shape
+/// `crash_point` has in `arbiter_campaign.rs`. Two `SeededRng`
 /// built from the same number give the SAME sequence, so a draw taken from the bare seed moves
 /// with everything else that seed decides.
 fn kill_instants(seed: u64) -> [Monotonic; RECRUITS.len()] {

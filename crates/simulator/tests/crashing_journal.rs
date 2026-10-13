@@ -305,14 +305,15 @@ fn the_drawn_point_lies_inside_the_writes_the_scenario_performs() {
 #[test]
 fn every_write_of_the_scenario_can_be_the_one_that_falls() {
     // ⛔ THE OTHER HALF OF #17, AND `> 1` WAS NOT ENOUGH FOR IT. A point that never moves would
-    // make five hundred seeds one experiment repeated — but so would a generator that only ever
-    // draws two of the eight, and the position that matters most is THE LAST one: that is where
-    // the surviving archive is fullest and the set of steps in doubt is largest, which is
+    // make `SEEDS` seeds one experiment repeated — but so would a generator that only ever draws
+    // two of the `WRITES` positions, and the position that matters most is THE LAST one: that is
+    // where the surviving archive is fullest and the set of steps in doubt is largest, which is
     // exactly what C7b measures.
     //
     // ⚠️ DECLARED COUPLING: this holds because `SEEDS` is far above `WRITES`, not by construction
-    // of `below`. Measured on 2026-08-11 over these seeds: every one of the eight positions comes
-    // out, 57 to 69 times each.
+    // of `below`. How often each position comes out over these seeds was counted by hand, outside
+    // the repository, on 2026-08-11 — T4-1-h of `docs/riferimenti.md`; the assertion below holds
+    // only that each one comes out. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1410.
     let mut seen = std::collections::BTreeSet::new();
     for seed in 0..SEEDS {
         seen.insert(CrashingJournal::from_seed(seed, WRITES).falls_at());

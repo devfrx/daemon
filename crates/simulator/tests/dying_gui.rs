@@ -86,6 +86,28 @@ fn a_dead_client_is_not_presented_again() {
 }
 
 #[test]
+fn a_client_that_died_before_it_was_accepted_is_never_presented() {
+    // ⛔ THE ONE STATE IN WHICH THE `died` CLAUSE OF `accept` DECIDES. In
+    // `a_dead_client_is_not_presented_again` the client was accepted before it died, so the
+    // `None` after the death is already owed to `accepted`, and the clause could go with that
+    // probe still green. Here the gui dies on its first operation -- `receive` asks whether the
+    // identifier is its own, not whether it was accepted -- and `accept` must still not offer it,
+    // for the reason `accept` gives: it would hand the core a live identifier for a process that
+    // is gone. Measured on 2026-10-13: with `self.died ||` taken out of `accept`, every other
+    // probe of this file and `gui_death_campaign.rs` stay green, and this one goes red (audit of
+    // 2026-09-30, AUD-2169).
+    let mut gui = DyingGui::dying_at(GUI, a_request(), 0);
+
+    assert_eq!(gui.receive(GUI), Err(IpcError::Disconnected));
+    assert!(gui.has_died());
+    assert_eq!(
+        gui.accept(),
+        None,
+        "a client that died before it was accepted is not offered at all"
+    );
+}
+
+#[test]
 fn what_the_gui_said_before_dying_is_a_real_encoded_request() {
     // ⛔ THE REQUEST CROSSES AS BYTES AND MUST DECODE, which is what makes the campaign exercise
     // the schema instead of going around it. A fake that handed over an empty body would leave
@@ -135,6 +157,42 @@ fn an_operation_named_on_another_client_does_not_consume_a_death_position() {
 }
 
 #[test]
+fn an_operation_named_on_another_client_at_the_death_point_does_not_mark_the_death() {
+    // ⛔ THE ORDER `may_operate` DECLARES -- "after the identity check and before the work" -- AND
+    // A DIFFERENT MUTATION FROM THE ONE ABOVE. `an_operation_named_on_another_client_does_not_
+    // consume_a_death_position` sends the stranger while the count is still BELOW the death
+    // point, so it holds that the stranger does not MOVE the count; with the two checks swapped,
+    // `may_operate` answers `true` there and marks nothing, and that probe stays green. Here the
+    // stranger arrives AT the point, where asking `may_operate` first would MARK the death.
+    // Measured on 2026-10-13: with the two checks swapped in `send` and in `receive`, every other
+    // probe of this file and `gui_death_campaign.rs` stay green, and this one goes red (audit of
+    // 2026-09-30, AUD-2168).
+    let stranger = ClientId::new(9);
+    let mut gui = DyingGui::dying_at(GUI, a_request(), 1);
+
+    assert!(gui.receive(GUI).expect("the first operation").is_some());
+    assert_eq!(
+        gui.operations_done(),
+        1,
+        "the count now stands on the death point"
+    );
+
+    assert_eq!(gui.receive(stranger), Err(IpcError::Disconnected));
+    assert_eq!(
+        gui.send(stranger, b"a verdict"),
+        Err(IpcError::Disconnected)
+    );
+    assert!(
+        !gui.has_died(),
+        "a stranger at the death point is not the death"
+    );
+
+    // And the death still lands on THIS client's next operation.
+    assert_eq!(gui.send(GUI, b"a verdict"), Err(IpcError::Disconnected));
+    assert!(gui.has_died());
+}
+
+#[test]
 fn a_gui_told_not_to_die_never_does() {
     // ⛔ THE OTHER DIRECTION (rule 3 of §7.1.1): a control that fires where it must not is worse
     // than one that is absent. Without this, a fake that died on every call would satisfy every
@@ -179,10 +237,10 @@ fn the_drawn_point_lies_inside_the_operations_the_path_performs() {
 #[test]
 fn every_operation_of_the_path_can_be_the_one_that_kills_it() {
     // ⛔ THE OTHER HALF OF #17, AND `> 1` IS NOT ENOUGH FOR IT. A point that never moved would
-    // make five hundred seeds one experiment repeated — but so would a generator that only ever
-    // drew two of the three, and the positions are not worth the same: only the ones AFTER the
+    // make `SEEDS` seeds one experiment repeated — but so would a generator that only ever drew
+    // some of the `OPERATIONS`, and the positions are not worth the same: only the ones AFTER the
     // request has crossed leave the gui holding a grant when it dies, which is the whole subject
-    // of property 3.
+    // of property 3 (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1410).
     //
     // ⚠️ DECLARED COUPLING: this holds because `SEEDS` is far above `OPERATIONS`, not by
     // construction of `below`.

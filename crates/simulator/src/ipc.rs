@@ -68,7 +68,8 @@ impl DyingGui {
     /// whose fault never arrives reports green for having done nothing.
     ///
     /// ⛔ THE SEED MUST BE DERIVED, AND DIFFERENT FROM THE ONE DRIVING THE INTERLEAVING —
-    /// decision D2 of the milestone 4 plan, and the obvious wiring is the wrong one. Two
+    /// decision D4 of the milestone 4 plan (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+    /// AUD-1430), and the obvious wiring is the wrong one. Two
     /// `SeededRng` built from the same number give the SAME sequence, so passing a campaign's
     /// seed straight through ties the death point to everything else that seed decides: the
     /// campaign would then explore a DIAGONAL of the space instead of the space. Nothing on this
@@ -120,6 +121,8 @@ impl DyingGui {
     /// ⚠️ IT IS ASKED AFTER THE IDENTITY CHECK AND BEFORE THE WORK, which is `CrashingJournal`'s
     /// order and for its reason: an operation named on a client this gui is not never reached
     /// anything, so it must not consume a position in the count the death point is drawn against.
+    /// Held by `an_operation_named_on_another_client_at_the_death_point_does_not_mark_the_death`
+    /// (audit of 2026-09-30, AUD-2168).
     fn may_operate(&mut self) -> bool {
         if self.died {
             return false;
@@ -146,7 +149,11 @@ impl Ipc for DyingGui {
         // ⛔ IT DOES NOT PRESENT THE CLIENT AGAIN AFTER THE DEATH, and that is the difference
         // between a crash and a reconnection. A core that accepted the same gui a second time
         // would be handed a live identifier for a process that is gone, and the reconciliation
-        // it had just performed would be undone by the fake rather than by the world.
+        // it had just performed would be undone by the fake rather than by the world. And it
+        // does not present one that died before it was ever accepted, which is the one case the
+        // `died` clause decides -- held by
+        // `a_client_that_died_before_it_was_accepted_is_never_presented` (audit of 2026-09-30,
+        // AUD-2169).
         if self.died || self.accepted {
             return None;
         }

@@ -19,9 +19,13 @@
 //! hand the journal a stamp that CONTRADICTS ITS OWN ORDERING — every record of a simulated run
 //! carrying the same instant, in an order the stamps deny. §2.1 forbids a DECISION from reading
 //! wall time; it does not excuse the record from being consistent with it.
+//!
+//! ⚠️ THAT READER IS §2.1's DESIGN AND NOT TODAY'S RECORD: no record carries a stamp yet, as
+//! `Reactor::wall_time` says, so what these tests keep today is a fake consistent with itself,
+//! ready for the reader that will come. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1434.
 
 use kernel::ports::reactor::Reactor;
-use kernel::time::{Millis, Monotonic, WallTime};
+use kernel::time::{Millis, Monotonic};
 use simulator::reactor::VirtualReactor;
 
 #[test]
@@ -97,18 +101,35 @@ fn a_refused_wait_moves_neither_clock() {
 fn consecutive_waits_accumulate_on_both_clocks() {
     // Neither clock restarts, and they stay in step across several waits — a per-wait reset
     // would satisfy the single-wait test above and still lose the total.
+    //
+    // ⚠️ THE TOTALS ARE DELTAS FROM WHERE EACH CLOCK STARTED, for the reason the first test of
+    // this file gives: the two origins coinciding at zero is a fact about this fake's
+    // construction, not the thing under test. Measured on 2026-10-13: with the fake's wall
+    // origin fixed at another value this test stays green, and with a per-wait reset it goes
+    // red (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2175).
     let mut reactor = VirtualReactor::new();
+    let start_monotonic = reactor.now();
+    let start_wall = reactor.wall_time().as_millis_since_epoch();
     for deadline in [1_000, 1_500, 9_000] {
         reactor
             .wait_until(Monotonic::from_millis(deadline))
             .expect("each of these deadlines is strictly ahead of the one before");
     }
 
-    assert_eq!(reactor.now(), Monotonic::from_millis(9_000));
+    let monotonic_total = reactor.now().saturating_since(start_monotonic);
+    let wall_total = reactor
+        .wall_time()
+        .as_millis_since_epoch()
+        .saturating_sub(start_wall);
     assert_eq!(
-        reactor.wall_time(),
-        WallTime::from_millis_since_epoch(9_000),
-        "the wall clock lost the total: this fake starts BOTH clocks at zero, so after 9 s of \
-         virtual time the two numbers coincide"
+        monotonic_total,
+        Millis::new(9_000),
+        "the monotonic clock lost the total"
+    );
+    assert_eq!(
+        wall_total,
+        monotonic_total.get(),
+        "the wall clock lost the total: monotonic moved {} ms in all, wall moved {wall_total} ms",
+        monotonic_total.get()
     );
 }

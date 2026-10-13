@@ -8,7 +8,7 @@ use core::cell::RefCell;
 use std::collections::BTreeSet;
 
 use kernel::arbiter::{ArbiterId, Mib};
-use kernel::executor::{Executor, Sleep};
+use kernel::executor::{Executor, Sleep, nap};
 use kernel::parameters::Parameters;
 use kernel::ports::journal::{Journal, StepId};
 use kernel::reconcile::{Resolution, steps_in_doubt};
@@ -55,22 +55,25 @@ const WRITES_PER_RUN: u64 = (ACTIVITIES * STEPS * 2) as u64;
 /// seed reaches its crash point, which is sound only because the write count does not depend on
 /// the seed — and the only thing holding that is `C7a`'s `writes_done() == WRITES_PER_RUN`. When
 /// `C7a` swept a bare `0..50` and this one was 200, three quarters of the crash campaign rested
-/// on a premise nobody checked for them. Measured on 2026-08-11: it held, zero deviations over
-/// fifty thousand seeds — so this is a premise brought back under guard, not a defect repaired.
+/// on a premise nobody checked for them. Measured by hand on 2026-08-11, it held with zero
+/// deviations — T4-3-b of `docs/riferimenti.md` — so this is a premise brought back under guard,
+/// not a defect repaired. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1418.
 /// ⚠️ The day this number is raised, the support rises with it instead of falling silently.
 ///
 /// ⛔ THE BUDGET IS MEASURED IN `debug` AND NOT IN `--release`, and the difference is not a
 /// rounding. `gate.sh` runs `cargo test --workspace` with no `--release`, so debug is the profile
-/// that pays. Measured on 2026-08-11, one crashing run: 4.4 µs optimised against 18.9 µs
-/// unoptimised — a factor of 4.3. A budget set on the release figure overruns by that factor
-/// exactly where the gate collects it.
+/// that pays. Measured on 2026-08-11, one crashing run costs several times more unoptimised than
+/// optimised, and a budget set on the release figure overruns by that factor exactly where the
+/// gate collects it. The figures live in one place, T4-4-a of `docs/riferimenti.md` (⚠️ RECALL
+/// OF 2026-10-13 -- audit of 2026-09-30, AUD-796).
 ///
 /// ⛔ AND THE BUDGET IS ON THE WHOLE BINARY, NOT ON A LOOP, because more than one loop scales
 /// with this number. ⚠️ The obvious `2 x seeds x cost` model is wrong by better than a third: a
-/// crashing run STOPS at its point, so it does about half the writes and costs 18.9 µs, while
-/// `C7a` runs the scenario to the end and costs 32.7 µs. The binary costs about `seeds x 51.6 µs`
-/// — the interleaving probe breaks early and the pin uses one seed — which puts the one-second
-/// ceiling near 19 000 seeds, not near 26 000.
+/// crashing run STOPS at its point, so it does about half the writes, while `C7a` runs the
+/// scenario to the end and costs nearly twice as much — and the interleaving probe breaks early
+/// and the pin uses one seed. The per-run costs, the binary's, and where they put the one-second
+/// ceiling are T4-4-b and T4-4-c of `docs/riferimenti.md` (⚠️ RECALL OF 2026-10-13 -- audit of
+/// 2026-09-30, AUD-796).
 ///
 /// ⛔ AND IT IS NOT SET TO THAT CEILING. A ceiling is a constraint and not a target, and past a
 /// point more seeds buy nothing this campaign ASSERTS. Measured on 2026-08-11 over 20 000 seeds:
@@ -88,8 +91,16 @@ const WRITES_PER_RUN: u64 = (ACTIVITIES * STEPS * 2) as u64;
 /// most one step open. And the doubt vectors this campaign can ever compare are a FINITE set of
 /// 109: the last one first appeared at seed 1038, and 19 000 further seeds produced not one more.
 /// So this number closes that space, raises the thinnest crash point from 4 samples to 64, and
-/// costs about 103 ms — a tenth of the ceiling, which is the margin for a machine slower than
-/// the one that measured it.
+/// costs about a tenth of the ceiling — T4-4-k of `docs/riferimenti.md` — which is the margin for
+/// a machine slower than the one that measured it.
+///
+/// ⚠️ WHERE THE TABLE COMES FROM, since only part of it comes back from a command. The largest
+/// doubt set and the distinct doubt sets of a row come back by setting this constant to its
+/// figure and running `cargo test --locked -p simulator --test dst_campaign -- --nocapture`: on
+/// the line `campaign` prints, or, for a row short of the space, the distinct count alone, in the
+/// message of its coverage red. The crash points hit and the least hit were counted by hand on
+/// 2026-08-11, with an instrument this repository does not keep. ⚠️ RECALL OF 2026-10-13 -- audit
+/// of 2026-09-30, AUD-796, AUD-1418.
 ///
 /// ⚠️ AND THE MARGIN IS THINNER THAN "1.9x" MADE IT SOUND, which is why that phrasing is gone:
 /// seed 1038 is the 52nd percentile of the sweep, not a comfortable early finish. Measured over
@@ -98,10 +109,10 @@ const WRITES_PER_RUN: u64 = (ACTIVITIES * STEPS * 2) as u64;
 /// 1.7x, not 1.9x.
 ///
 /// ⚠️ WHAT MORE SEEDS DO STILL BUY, said so the paragraph above is not read as "the space is
-/// exhausted": the distinct ARCHIVES handed to `steps_in_doubt` never saturate — 1 206 here,
-/// 16 360 at a hundred times this. Interleaving diversity keeps growing; only the OUTCOMES it
-/// produces stop. That growth is the whole reason `the_deep_campaign` exists, and its table is
-/// on `DEEP_CAMPAIGN_SEEDS`.
+/// exhausted": the distinct ARCHIVES handed to `steps_in_doubt` never saturate — T4-4-i of
+/// `docs/riferimenti.md`. Interleaving diversity keeps growing; only the OUTCOMES it produces
+/// stop. That growth is the whole reason `the_deep_campaign` exists, and its reasoning is on
+/// `DEEP_CAMPAIGN_SEEDS` (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1417).
 const SHORT_CAMPAIGN_SEEDS: u64 = 2_000;
 
 /// How many DISTINCT doubt vectors this scenario can produce at all. ⛔ IT IS THE ONE NUMBER THAT
@@ -135,7 +146,10 @@ const SHORT_CAMPAIGN_SEEDS: u64 = 2_000;
 ///
 /// The COUNT is invariant across all six; only WHEN the space closes moves. So 109 belongs to
 /// `ACTIVITIES`, `STEPS` and the write-ahead shape, and a reshuffle does not disturb it — which
-/// is what makes the assertion below a check rather than a bet.
+/// is what makes the assertion below a check rather than a bet. ⚠️ The distinct counts come
+/// back by that recipe and the command on `SHORT_CAMPAIGN_SEEDS`; the seed of the last new set
+/// was counted by hand, with an instrument this repository does not keep (⚠️ RECALL OF
+/// 2026-10-13 -- audit of 2026-09-30, AUD-1418).
 ///
 /// ⚠️ WHAT INVALIDATES IT, named so a red is read as a decision and not as a defect: a change to
 /// `ACTIVITIES`, to `STEPS`, or to the scenario's write pattern. When that red arrives the right
@@ -191,7 +205,8 @@ type Trace = Vec<(u64, RecordKind)>;
 /// ⚠️ THE SHAPE IS NAMED AND NOT SPELLED OUT — this line read "3 activities x 4 steps" and
 /// "5000 VIRTUAL milliseconds" until the review of 2026-08-11. Prose that restates a constant
 /// goes false IN SILENCE the day the constant moves, which is gotcha #31, and the numbers here
-/// are `ACTIVITIES`, `STEPS` and the literal in the `sleep.until(..)` call below. ⚠️ The same sentence in
+/// are `ACTIVITIES`, `STEPS` and the literal in the `nap(..)` call below (⚠️ RECALL OF 2026-10-13
+/// -- audit of 2026-09-30, AUD-2114). ⚠️ The same sentence in
 /// `crates/kernel/tests/executor_determinism.rs` is CORRECT as it stands, and the difference is
 /// worth the line: there the numbers are the literals of the code itself, with no constant to
 /// drift away from.
@@ -241,9 +256,10 @@ fn run(seed: u64, journal: CrashingJournal) -> (CrashingJournal, Trace) {
                 trace.borrow_mut().push((id, RecordKind::Intent));
 
                 // Suspend on a PORT: the reactor is the only thing that can bring this activity
-                // back. §2.4.1.
-                sleep.until(Monotonic::from_millis(((step as u64) + 1) * 5_000));
-                Yield::once().await;
+                // back. §2.4.1, and `kernel::executor::nap` is the one way it allows -- the very
+                // code the activities of the kernel run (⚠️ RECALL OF 2026-10-13 -- audit of
+                // 2026-09-30, AUD-794, AUD-2114).
+                nap(sleep, Monotonic::from_millis(((step as u64) + 1) * 5_000)).await;
 
                 if journal
                     .borrow_mut()
@@ -264,37 +280,6 @@ fn run(seed: u64, journal: CrashingJournal) -> (CrashingJournal, Trace) {
     (journal.into_inner(), trace.into_inner())
 }
 
-/// A future that returns `Pending` exactly once. It is how an activity hands control back to
-/// the executor after declaring a suspension.
-///
-/// ⚠️ DUPLICATED WORD FOR WORD from `crates/kernel/tests/executor_determinism.rs`, and it is
-/// declared rather than left to be discovered: TEST CODE DOES NOT CROSS CRATE BOUNDARIES, so
-/// there is no place both benches could reach. Whoever is tempted to unify the two would have
-/// to promote it into a shipped crate, which would put a test helper on the wire of `kernel`
-/// for the convenience of not repeating the lines below.
-struct Yield(bool);
-
-impl Yield {
-    fn once() -> Self {
-        Yield(false)
-    }
-}
-
-impl core::future::Future for Yield {
-    type Output = ();
-    fn poll(
-        mut self: core::pin::Pin<&mut Self>,
-        _context: &mut core::task::Context<'_>,
-    ) -> core::task::Poll<()> {
-        if self.0 {
-            core::task::Poll::Ready(())
-        } else {
-            self.0 = true;
-            core::task::Poll::Pending
-        }
-    }
-}
-
 #[test]
 fn the_scenario_really_writes_what_the_campaign_assumes() {
     // ⛔ GOTCHA #17, and it is asserted rather than commented: the crash point is drawn below
@@ -303,8 +288,9 @@ fn the_scenario_really_writes_what_the_campaign_assumes() {
     //
     // ⛔ THE PIN BELOW FIXES A RELATION, NOT A NUMBER, and a relation is satisfied by zero. With
     // `ACTIVITIES` or `STEPS` at zero the constant is 0, both assertions read `0 == 0` and stay
-    // green — while task 3 would hand that 0 to `from_seed`, whose own guard against it is a
-    // `debug_assert!` and is compiled away in release.
+    // green — while `campaign` would hand that 0 to `CrashingJournal::from_seed`, whose own guard
+    // against it is a `debug_assert!` and is compiled away in release (⚠️ RECALL OF 2026-10-13 --
+    // audit of 2026-09-30, AUD-1419).
     //
     // ⛔ AND IT IS A `const` BLOCK AND NOT A RUNTIME `assert!`, since 2026-08-21: the operand is
     // a CONSTANT, so the guard belongs to the compiler and a run of this test cannot be what
@@ -425,8 +411,9 @@ fn expected_doubt(trace: &Trace) -> Vec<u64> {
             // SECOND INTENT ABOVE: nothing here runs a sensor, so no verdict can enter this
             // trace. Writing the empty arm `reconcile` writes would make this oracle agree with
             // the implementation BY CONSTRUCTION on a case it has never seen -- which is the one
-            // thing the paragraph four above says this oracle must not do. The day the scenario
-            // grows a sensor, the red is a decision being asked for, not a defect being reported.
+            // thing the doc of `expected_doubt` says this oracle must not do (⚠️ RECALL OF
+            // 2026-10-13 -- audit of 2026-09-30, AUD-1419). The day the scenario grows a sensor,
+            // the red is a decision being asked for, not a defect being reported.
             // ⚠️ AND THE MESSAGE BELOW CARRIED A RUN OF SPACES UNTIL 2026-08-31, where a line
             // continuation had collapsed: gotcha #97, and this was its FIRST instance — found
             // reviewing task 5, one census after the same defect was corrected in the reviewer's
@@ -495,9 +482,11 @@ fn expected_doubt(trace: &Trace) -> Vec<u64> {
 /// The campaign itself, over `seeds` seeds, answering `(how many crashed, the largest doubt set)`.
 ///
 /// ⛔ THE PER-SEED ASSERTIONS LIVE IN HERE AND NOT IN THE CALLER, because they are WHAT THE
-/// CAMPAIGN VERIFIES and not a garnish on it. What comes back out are the two NON-VACUITY
-/// oracles — the numbers that say the sweep did work — and a caller that got only those and
-/// asserted the rest itself would leave the deep campaign checking nothing per seed.
+/// CAMPAIGN VERIFIES and not a garnish on it. What comes back out are the numbers that say the
+/// sweep did work: `crashes`, the non-vacuity oracle the callers assert, and `largest`, which is
+/// evidence and no longer an oracle of theirs — its guard, `largest > 1`, is asserted in here,
+/// below. A caller that got only those and asserted the rest itself would leave the deep campaign
+/// checking nothing per seed. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2113.
 ///
 /// ⛔ AND IT IS A FUNCTION AND NOT A SECOND `#[test]`. The draft of this task added a `campaign`
 /// ALONGSIDE `c7b_…`, which would have duplicated its body minus the resolution loop and minus
@@ -653,11 +642,12 @@ fn campaign(seeds: u64) -> (u64, usize) {
 
 /// C7b, and it IS the short campaign — one sweep per commit, not a second one beside it.
 ///
-/// ⛔ CONSTRAINT 7 OF §11 IS DISCHARGED IN PART HERE, AND THE PART MATTERS. The constraint has
-/// two halves. The first — the seed count is FIXED AND VERSIONED, not drawn from the clock or the
-/// environment — is discharged: it is `SHORT_CAMPAIGN_SEEDS`, in this file, under review. The
-/// second — the wall time is printed EVERY RUN, *so that the slowdown becomes visible* — splits
-/// once more, into PRODUCING the number and SHOWING it.
+/// ⛔ WHAT THIS FILE DOES FOR CONSTRAINT 7 OF §11 — and whether the constraint is discharged is
+/// said in §11 alone, as the doc of `campaign` says (⚠️ RECALL OF 2026-10-13 -- audit of
+/// 2026-09-30, AUD-795). The constraint has two halves. The first — the seed count is FIXED AND
+/// VERSIONED, not drawn from the clock or the environment — is `SHORT_CAMPAIGN_SEEDS`, in this
+/// file, under review. The second — the wall time is printed EVERY RUN, *so that the slowdown
+/// becomes visible* — splits once more, into PRODUCING the number and SHOWING it.
 ///
 /// ⚠️ PRODUCING IT IS DONE SINCE 2026-08-11, AND AT BOTH LEVELS: `campaign` prints it here, and
 /// task 7 put the same line on the level-2 sweep in
@@ -665,15 +655,16 @@ fn campaign(seeds: u64) -> (u64, usize) {
 /// not its time — so the constraint was produced at one level of two and this paragraph did not
 /// know it. ⛔ SHOWING IT IS DONE TOO, SINCE 2026-08-11: task 9 added the step "DST campaigns --
 /// wall time" of `gate.sh` (⚠️ RECALL OF 2026-10-07 -- audit of 2026-09-30: named by its label,
-/// never by its place), which re-runs the three campaign binaries with `--nocapture`, and
-/// task 12 of milestone 5 gave it its third target. ⛔ RECALL OF 2026-08-28, AUD-028: this said
+/// never by its place), which re-runs with `--nocapture` the campaign binaries it lists — which
+/// ones is that list, never a count here (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+/// AUD-1411). ⛔ RECALL OF 2026-08-28, AUD-028: this said
 /// "SHOWING it is what is still missing ... **TASK 9 adds the gate step that shows them**", in
 /// the PRESENT and the FUTURE tense, about work that had been finished for seventeen days.
 ///
-/// ⚠️ WHY THE DISTINCTION IS WORTH SEVEN LINES rather than a tidier "discharged": the closing
-/// audit of this milestone reads these claims. A file saying "discharged" here would mark the
-/// constraint closed and Task 9 redundant, and what would be left uncovered is the constraint's
-/// entire PURPOSE — not that a number exists, but that somebody SEES the campaign getting slower.
+/// ⚠️ WHY THIS FILE DOES NOT WRITE "discharged", WITH BOTH HALVES DONE: what the constraint is
+/// FOR is not that a number exists but that somebody SEES the campaign getting slower, and no
+/// assertion here can hold that — so this file says what it produces and what the gate shows,
+/// and the verdict stays in §11 (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-795).
 /// The file also said "the gate does not yet collect it" further up. ⛔ RECALL OF 2026-08-28,
 /// AUD-028: this ended "so before this correction it asserted both things at once" -- and THAT
 /// CORRECTION WAS NEVER MADE. The other line was still standing when this audit found it, so the
@@ -723,21 +714,15 @@ fn c7b_a_crash_leaves_exactly_the_steps_the_scenario_left_open() {
 /// the short campaign already. It is the count of DISTINCT ARCHIVES handed to `steps_in_doubt`.
 ///
 /// ⛔ AND THE MULTIPLIER IS MEASURED, NOT EXTRAPOLATED. This doc declared an extrapolation until
-/// 2026-08-11 — honest, but this repository measures, and the measurement cost two seconds:
-///
-/// | seeds   | distinct archives |
-/// |---------|-------------------|
-/// | 2 000   | 1 206             |
-/// | 20 000  | 6 168             |
-/// | 50 000  | 10 082            |
-/// | 100 000 | 13 348            |
-/// | 200 000 | 16 360            |
-///
-/// The curve is still rising at the far end — the last new archive arrived at seed 199 898, of
-/// 200 000 — and it rises SUBLINEARLY, about `n^0.42`. That is the number this constant is
-/// chosen against: `x100` buys **2.65 times** the archives of `x10`, not ten times, and 13.6
-/// times the archives of the short campaign. The price is 3.9 s in debug, which is what makes
-/// 2.65x worth having on a long cycle and not on a commit.
+/// 2026-08-11 — honest, but this repository measures, and the measurement cost two seconds. The
+/// curve is still rising at the far end of the deep sweep, and it rises SUBLINEARLY: a hundred
+/// times the short campaign buys a few times the archives of ten times it, not ten. That is the
+/// number this constant is chosen against, and the figures live in one place, T4-4-i of
+/// `docs/riferimenti.md`: nothing in this repository counts distinct archives, so they were
+/// counted by hand, with an instrument it does not keep. The price is the time the line of
+/// `campaign` prints — `cargo test --locked -p simulator --test dst_campaign -- --ignored
+/// --nocapture the_deep_campaign` — and it is what makes the multiplier worth having on a long
+/// cycle and not on a commit. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1416, AUD-1417.
 const DEEP_CAMPAIGN_SEEDS: u64 = SHORT_CAMPAIGN_SEEDS * 100;
 
 #[test]
@@ -761,13 +746,16 @@ fn the_deep_campaign() {
 
 #[test]
 fn a_crash_leaves_more_than_one_step_in_doubt_on_at_least_one_seed() {
-    // ⛔ FINDING 2 OF §3.6.1, held on the campaign rather than on a hand-built archive. The
+    // ⛔ FINDING 1 OF §3.6.1 (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1414), held on
+    // the campaign rather than on a hand-built archive. The
     // in-tree probe `a_crash_leaves_more_than_one_step_in_doubt` in
     // `crates/kernel/tests/reconciliation.rs` builds the state BY HAND; this one gets there
     // through the executor, which is the only way to know the interleaving really produces it.
     //
-    // ⛔ AND IT IS THE ONLY THING HOLDING THAT THIS SCENARIO INTERLEAVES AT ALL — the doc of
-    // `run` says so and names this test, so the name is a commitment. Measured on 2026-08-11
+    // ⛔ AND IT IS THE PROBE THAT HOLDS, BY NAME, THAT THIS SCENARIO INTERLEAVES AT ALL — the doc
+    // of `run` says so and names this test, so the name is a commitment. It is not the only thing
+    // that holds it: `campaign` asserts the same predicate, as the paragraph on THE OVERLAP
+    // says (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1415). Measured on 2026-08-11
     // against a sequential counterfactual: the largest doubt set drops from THREE to ONE, so
     // this probe really does go red if the activities stop overlapping.
     //

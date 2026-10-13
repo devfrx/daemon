@@ -41,9 +41,11 @@ use kernel::rng::RngExt;
 /// says "Re-reads EVERYTHING, in write order" and "WRITE ORDER IS PART OF THE PROMISE" — and
 /// conformance DOES reach inside a step: promise 8(c) asserts `[(step, intent), (step, note)]`,
 /// two records of one step in write order. What the suite does not exercise is TWO NOTES upon
-/// ONE step: measured, of the four `.note` calls in `assert_journal_contract` two are asserted
-/// refused and the two that succeed sit on different steps. That untested case is the one
-/// `kernel::degradation::degradation_now` rests on, and it is declared beside its loop.
+/// ONE step: the notes `assert_journal_contract` writes are refused or land on different steps,
+/// as `awk '/^pub fn assert_journal_contract/,/^}/' crates/kernel/tests/journal_contract.rs |
+/// grep '\.note('` lists them (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1398). That
+/// untested case is the one `kernel::degradation::degradation_now` rests on, and it is declared
+/// beside its loop.
 pub struct MemoryJournal {
     entries: Vec<Entry>,
 }
@@ -55,23 +57,28 @@ struct Entry {
 }
 
 /// ⚠️ THE JOURNAL'S OWN BOOKKEEPING, and NOT the record's `RecordKind` — the two are separate
-/// on purpose and the separation is the answer to the question `crate`'s reconciliation had
-/// open until 2026-08-10. This one exists so `has_intent` can be asked; the record's `kind` is
+/// on purpose and the separation is the answer to the question `kernel::reconcile` had open
+/// until 2026-08-10 (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1399). This one
+/// exists so `has_intent` can be asked; the record's `kind` is
 /// what the KERNEL reads, and the kernel is the authority. They are kept in step by the caller,
 /// not by a type.
 ///
-/// ⚠️ `Note` IS HERE RATHER THAN FILED UNDER ONE OF THE OTHER TWO, AND NOTHING HOLDS IT — which
-/// was MEASURED and not supposed. Filing a note under `EntryKind::Intent` leaves the ENTIRE
-/// workspace green, and the reason is sound rather than a hole in the bench: `note` refuses a
-/// step with no intent, so a note-only step cannot be built through the port at all, and
-/// `has_intent` can only be made true by a note on a step that already had one. The distinction
-/// is real inside this file and invisible outside it.
+/// ⚠️ `Note` IS HERE RATHER THAN FILED UNDER ONE OF THE OTHER TWO, AND HALF OF IT IS HELD. Filed
+/// under `EntryKind::Outcome`, a note would close its step and `prune` would accept a step still
+/// in doubt: promise 7 of the conformance suite goes red — measured on 2026-10-13, with
+/// `cargo test --locked -p kernel --test journal_contract`. Filed under `EntryKind::Intent`,
+/// nothing goes red — MEASURED on 2026-08-10, `cargo test --locked --workspace` green — and the
+/// reason is sound rather than a hole in the bench: `note` refuses a step with no intent, so a
+/// note-only step cannot be built through the port at all, and `has_intent` can only be made
+/// true by a note on a step that already had one. That half is real inside this file and
+/// invisible outside it.
 ///
-/// ⚠️ SO WHY IT IS HERE, since no test would notice its going: `has_intent` asks a question
-/// about `Intent`, and a third state that answers "neither" is the shape that stays right when
-/// somebody writes `has_outcome` — which nobody has yet. It is an argument, not a red, and it is
-/// labelled as one. A test was written to hold it and REMOVED when the mutation survived; the
-/// note on that removal is in `crates/simulator/tests/memory_journal.rs`.
+/// ⚠️ SO WHAT KEEPS IT APART FROM `Intent` IS AN ARGUMENT, and it is labelled as one:
+/// `has_intent` asks about `Intent` and `is_outcome`, below, about `Outcome` — the question
+/// `prune` asks — and a third state that answers "neither" to both is the shape that stays right
+/// under each. A test was written to hold the `Intent` half and REMOVED when the mutation
+/// survived; the note on that removal is in `crates/simulator/tests/memory_journal.rs`.
+/// ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1400, AUD-1401.
 enum EntryKind {
     Intent,
     Outcome,
@@ -89,10 +96,10 @@ impl EntryKind {
     /// ⚠️ AND THE `Outcome` ARM IS HELD BY NOTHING, for a reason that is a property of this
     /// journal and not a gap: `outcome` refuses a step without an intent (`OutOfOrder`), so no
     /// step ever carries an `Outcome` entry without an `Intent` one, and answering `true` for
-    /// `Outcome` changes no answer. Measured on 2026-09-01, tenth review round: the whole
-    /// workspace stayed green, `43 · 326 · 0 · 2`. The `Note` arm's equivalence is declared on
-    /// the enum above; this one was not, and a reader mutating it would have read a gap
-    /// (errata `E135`).
+    /// `Outcome` changes no answer. Measured on 2026-09-01, tenth review round, with that arm
+    /// answering `true`: `cargo test --locked --workspace` stayed green (⚠️ RECALL OF 2026-10-13
+    /// -- audit of 2026-09-30, AUD-1398). The `Note` arm's equivalence is declared on the enum
+    /// above; this one was not, and a reader mutating it would have read a gap (errata `E135`).
     fn is_intent(&self) -> bool {
         match self {
             EntryKind::Intent => true,
@@ -114,7 +121,8 @@ impl EntryKind {
 // (`new_without_default`); the warning is ACCEPTED and NOT silenced, because §7.4.3 gives clippy
 // no voice in the gate and an `#[allow]` would hide the next occurrence too. The argument is
 // written out once, in `crates/platform/src/reactor.rs`, and this comment points at it rather
-// than restating it. Added 2026-08-21: two of the three sites carried it and this one did not.
+// than restating it. Added 2026-08-21; all three carry it (⚠️ RECALL OF 2026-10-13 -- audit
+// of 2026-09-30, AUD-792).
 impl MemoryJournal {
     pub const fn new() -> Self {
         MemoryJournal {

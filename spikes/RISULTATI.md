@@ -48,12 +48,14 @@ Le otto mosse, Q3, Q4, la CPU con la chat nascosta e la VRAM a pagina intera: **
 | M4 — CPU con la chat **nascosta**, picco / media (% di un core) | senza soglia | 146,8 / 111,6 | 138,1 / 97,3 |
 | M5 — VRAM a riposo, picco (MB): dedicata / condivisa — su questa macchina la webview gira sull'integrata, dove la dedicata è zero per costruzione (richiamo E10 del protocollo) | si riporta | 0 / 126; 0 / 112,6 | 0 / 85,9; 0 / 85,9 |
 | M5 — VRAM con la scena **a pagina intera**, picco (MB): dedicata / condivisa | si riporta | 0 / 167 | 0 / 168,8 |
-| P1, P2 dal titolo — `msgs= lost= holes=`, `p2max= p2mean=` | si riporta — `p2mean` con un errore di troncamento fino a 1 ms (`Date.now()` in millisecondi contro `emesso_micros`) | msgs=2000 lost=0 holes=0 p2max=43.9ms p2mean=3.13ms; msgs=2000 lost=0 holes=0 p2max=41.3ms p2mean=11.91ms | msgs=2000 lost=0 holes=0 p2max=33.6ms p2mean=6.03ms; msgs=2000 lost=0 holes=0 p2max=26.9ms p2mean=5.96ms |
+| P1, P2 dal titolo — `msgs= lost= holes=`, `p2max= p2mean=` | si riporta — `p2mean` con un errore di troncamento fino a 1 ms (`Date.now()` in millisecondi contro `emesso_micros`) | msgs=2000 lost=0 holes=0 p2max=43.9ms p2mean=3.13ms; msgs=2000 lost=0 holes=0 p2max=41.3ms p2mean=11.91ms | msgs=2000 lost=0 holes=0 p2max=33.6ms p2mean=6.03ms; msgs=2000 lost=0 holes=0 p2max=26.9ms p2mean=5.96ms — ⚠️ richiamo del 2026-10-13: per Tauri lo zero di `lost` lo dà l'ordine delle corse, il guscio prima e l'emettitore dopo (`-EmitterAt` di `tree.ps1`), perché il guscio legge la pipe già in `setup`, prima che la pagina ascolti; quello Electron la apre a pagina caricata; audit del 2026-09-30, AUD-1121 |
 | processi nell'albero, minimo / massimo per corsa | si riporta | 4 / 4; 4 / 4 | 7 / 7; 7 / 7 |
 | Q1 — chi decodifica `bincode` lato GUI | letto dall'architettura, non misurato | il processo principale Node — `electron/main.js` — con `bincode-ts` (M-11 di ADR-0037) | il guscio Rust — `tauri/src-tauri/src/main.rs` — col decodificatore del kernel |
 | Q2 — le webview in uso | letto | il Chromium impacchettato: `Chrome/152.0.7977.78` | WebView2 `152.0.4191.66` dal registro; **WebKitGTK**, alle fonti il 2026-09-10: assente dalla tabella Safari/WebKit di gpuweb (solo macOS, iOS/iPadOS, visionOS — nessuna riga Linux/GTK) — https://github.com/gpuweb/gpuweb/wiki/Implementation-Status |
 | Q3 — la finestra staccata si apre dentro il guscio | per guscio, dal comando ↗ | REFUSED, nessuna finestra: dockview 8.2.0 rifiuta prima di aprirla perché la pagina vive su `file://` («popout URL must be same-origin http(s)»); il guscio la ammetterebbe — O7 | REFUSED, nessuna finestra: la pagina vive su `http://tauri.localhost`, dockview chiama `window.open` e WebView2 rende null («perhaps you need to allow pop-ups») — O7 |
 | Q4 — `dndStrategy` che basta nella webview | per guscio, la mossa 2 col mouse | `'auto'` basta; provata anche `'pointer'`, va | serve `'pointer'`: con `'auto'` il trascinamento non parte |
+
+⚠️ **Richiamo del 2026-10-13 — lo zero d'innesco e la finestra del flusso di `tree.ps1`.** In ogni corsa il primo campione, a riposo, ha `cpu_pct` 0 senza essere una lettura — non ha un campione prima di sé — e conta in `samples`, nella media e nel massimo della fase `rest`: le medie di M4 a riposo sono sottostimate di circa 1/N, con N i campioni della fase, le righe `rest: samples 1` delle corse con la chat nascosta sono quel solo zero, e lo zero in testa alle sequenze di O1 non è il renderer fermo. La fase `stream` di M1 e M4 comprende il ritentativo dei gusci e la coda dopo l'uscita dell'emettitore (O5): è più larga dei dieci secondi del protocollo. Il verdetto di P3 non cambia: la sola scena, a riposo, sta già sopra la soglia (O2). Audit del 2026-09-30, AUD-2222, AUD-2223.
 
 **Le otto mosse — il giudizio del proprietario, con le sue parole**, nel browser il 2026-09-10 (il suo Chrome a `http://localhost:5173`, schermo 2048×1280): `dndStrategy` `auto` per le mosse 1–7 e `pointer` per la 8.
 
@@ -68,9 +70,11 @@ Le otto mosse, Q3, Q4, la CPU con la chat nascosta e la VRAM a pagina intera: **
 | 7 | salva, ricarica, ritrova — una misura | ✅ `passa` sul canonico | `move 7: canonical EQUAL; raw DIFFERENT at byte 1798 (3052 vs 3052 bytes)` — dopo «azzera», «salva (mossa 7)», «ricarica»; il grezzo differisce solo per l'ordine delle chiavi (richiamo E4 del protocollo); il caso di una disposizione salvata con una finestra a parte è in O6 | «salva e reload:» |
 | 8 | la pinza afferra la presa grande e la tessera segue — il sì o no **tecnico** | ✅ `passa`, sì tecnico | 137 pinze in tutto: 15 sulla presa grande — 10 `on div.bigtab`, 5 `on span.bigtab-title` — 5 sui bordi (`on div.dv-sash`), 117 sul corpo delle tessere o nel vuoto; per esempio `move 8: pointerdown at 270,444 on div.bigtab` … `move 8: pointerup at 843,696 on div.tile`; con la pinza sulla presa grande la tessera ha seguito la mano | «non capisco quando è rosso/verde il pallino che si trova sull'indice cosa sta ad indicare, inoltre il movimento della mano nella vita reale rapportato con quello sulla ui è strano: per arrivare a pinzare una tab verso la fine (in altezza) del monitor esco dall'inquadratura della camera, oltre al fatto che devo essere super preciso (scomodo) per pinzare un bordo di qualcosa o una tab da spostare»; «i pulsanti affianco al titolo della tab di una scheda con la mano non riesco a premerli solo» — senza soglia; il pallino è il cursore, verde a pinza aperta e rosso a pinza chiusa (`hand.ts`), e i comandi accanto al titolo non rispondono a un puntatore sintetico perché fermano la propagazione senza produrre un click |
 
+⚠️ **Richiamo del 2026-10-13:** i «byte» delle righe `move 7`, qui e in O6, sono unità UTF-16 — la lunghezza di una stringa JavaScript e l'indice del primo carattere diverso —, non byte: la disposizione porta titoli e parametri non ASCII, quindi le lunghezze non sono quelle in UTF-8, e «at byte n» è un offset in byte solo prima del primo di quei caratteri. La mossa 1 è provata trascinando, come il protocollo chiede: i comandi da tastiera e i pulsanti della barra agiscono sulla tessera attiva senza guardare il blocco del suo gruppo, e spostano il nucleo o la striscia se è attivo uno dei due — letto nei sorgenti di `app/src/home.ts` e di `dockview-core` 8.2.0, non provato nella pagina. Audit del 2026-09-30, AUD-1119, AUD-1118.
+
 **`dockview`:** resta — otto su otto.
 
-**La decisione sul guscio, del proprietario, il 2026-09-10: A — Electron.** La tabella a due colonne che ha avuto davanti è quella qui sopra, M1–M5 e Q1–Q4; il consiglio del coordinatore era A, derivato dall'asimmetria dei costi di ADR-0029 letta contro i numeri: dove i due sono pari (M1, M3, M4 bocciati allo stesso modo, M5) decide l'asimmetria, e Q2 su Linux, Q3 senza rimedio e Q4 col trucco sono costi di capacità di Tauri, mentre M2 è un costo di peso di Electron. Le sue parole: «A».
+**La decisione sul guscio, del proprietario, il 2026-09-10: A — Electron.** La tabella a due colonne che ha avuto davanti è quella qui sopra, M1–M5 e Q1–Q4; il consiglio del coordinatore era A, derivato dall'asimmetria dei costi di ADR-0029 letta contro i numeri: dove i due sono pari (M1, M3, M4 bocciati allo stesso modo, M5) decide l'asimmetria, e Q2 su Linux, Q3 senza rimedio e Q4 col trucco sono costi di capacità di Tauri, mentre M2 è un costo di peso di Electron. Le sue parole: «A». ⚠️ **Richiamo del 2026-10-13:** Q1–Q4 sono i nomi del [protocollo](gui-shell/PROTOCOLLO.md), congelato, e non i requisiti Q1–Q4 del kernel; nel [disegno del 2](../docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) la lettera di queste quattro righe la sceglie e la dice, sola, la tabella della §2, perché il controllo V30 di `scripts/check-docs.sh` non le legga come requisiti Q. Audit del 2026-09-30, AUD-2215.
 
 ### SP-8 · Osservazioni registrate — non criteri
 
@@ -120,8 +124,8 @@ registrata in `docs/porta-di-qualita.md`.
 
 | Criterio | Esito | Misura |
 |---|---|---|
-| S1 — su CPU, due mani, 640×480, LIVE_STREAM: mediana e p95 < 33 ms su ≥ 600 risultati a due mani | ❌ **`non passa`** | mediana **31,67 ms**, p95 **35,54 ms**, massimo 54,98 ms; 895 risultati, 28,5 al secondo, 897 inviati, 2 scartati; 895 risultati a due mani su 895. ⛔ La mediana regge, il **p95 no**. Ripetuto sulla stessa configurazione: **bocciato una seconda volta e peggio** — vedi O1 |
-| S2 — relay → pagina p95 < 100 ms (P2); cattura → disegno **riportato** | ✅ **`passa`** | relay → disegno: mediana **1 ms**, p95 **1 ms**, massimo 38 ms; cattura → disegno: mediana **114 ms**, p95 **144 ms**, massimo 203 ms; 627 campioni. ⚠️ Il criterio passa di cento volte perché misura un salto su `localhost`: vedi O5 |
+| S1 — su CPU, due mani, 640×480, LIVE_STREAM: mediana e p95 < 33 ms su ≥ 600 risultati a due mani | ❌ **`non passa`** | mediana **31,67 ms**, p95 **35,54 ms**, massimo 54,98 ms; 895 risultati, 28,5 al secondo, 897 inviati, 2 scartati; 895 risultati a due mani su 895. ⛔ La mediana regge, il **p95 no**. Ripetuto sulla stessa configurazione: **bocciato una seconda volta e peggio** — vedi O1. ⚠️ **Richiamo del 2026-10-13:** i «risultati al secondo» di `s1_bench.py`, qui e nelle Evidenze, dividono per un tempo che va da prima del caricamento del modello a dopo l'attesa finale di 0,5 s e il rilascio della telecamera, più lungo della finestra d'invio: sottostimano il ritmo del flusso, e i fotogrammi inviati, 897 in non più di 30 s, ne danno almeno 29,9 al secondo. Audit del 2026-09-30, AUD-1117, AUD-2221 |
+| S2 — relay → pagina p95 < 100 ms (P2); cattura → disegno **riportato** | ✅ **`passa`** | relay → disegno: mediana **1 ms**, p95 **1 ms**, massimo 38 ms; cattura → disegno: mediana **114 ms**, p95 **144 ms**, massimo 203 ms; 627 campioni. ⚠️ Il criterio passa di cento volte perché misura un salto su `localhost`: vedi O5. ⚠️ **Richiamo del 2026-10-13:** il ramo «Parziale» del protocollo — sotto i 30 Hz, o a una mano sola — non è osservato: il dump di `relay/page.html` dà i campioni e tre statistiche, senza la frequenza dei risultati né le mani di ciascun campione, e `s2_worker.py` scrive una riga anche senza mani in campo; `passa` quindi non lo esclude con un dato, e la mediana da cattura a disegno mescola campioni con e senza mani, in una quota non misurata. Audit del 2026-09-30, AUD-2219, AUD-2220 |
 
 **Il giudizio del proprietario sulla mano che muove il pannello, con le sue parole:** «il pinch lo prende e la mano si vede, solo che non si vede a schermo intero ma in una piccola area della pagina (non funzionale al successo del test, solo un'accortezza), lo scheletro della mano si vede e pinchando riesco a spostare la forma verde, unica cosa, sembra che io non debba obbligatoriamente pinchare la forma verder per poterla muovere (anche se pincho dove l'area è vuota riesco a muovere il rettangolo nella posizione dove si trova, inoltre anche facendo il pungo (va bene non fa niente, è anche comodo ma bisogna ponderare quali azioni servono per fare altri comandi come il click etc..), di base funziona».
 
@@ -208,6 +212,8 @@ Per la regola di applicazione di C6:
 | O1 motore di persistenza conforme a §10.6 | candidati esistono: `redb` 4.1.0 · `fjall` 3.1.8 (LSM, adatto alla potatura selettiva) · `rusqlite` 0.40.1 · `sled` 1.0.0-alpha.124. **Requisito 4 (I/O iniettabile) da confermare** nell'ADR sulla persistenza: è il discriminante, non la disponibilità | candidati esistono: `go.etcd.io/bbolt` v1.5.0 · `github.com/dgraph-io/badger/v4` v4.9.6 · `github.com/cockroachdb/pebble` v1.1.5. Stessa riserva sul requisito 4 | non verificato: il candidato non passa nessuno dei due spike |
 | O2 daemon a vita lunga, istanza singola | via consolidata; nessun runtime esterno da impacchettare, binario singolo | via consolidata; binario singolo. È il caso d'uso per cui il linguaggio è nato | richiede il runtime Node accanto all'eseguibile: il packaging non è un binario singolo |
 
+⚠️ **Richiamo del 2026-10-13:** O1 e O2 sono registrate senza la fonte che il [protocollo](PROTOCOLLO.md) chiede alle osservazioni — le versioni di O1 senza il comando che le ha lette, mentre il solo `madsim` ha il suo, in «SP-5 · Rust», e le tre celle di O2 senza nessuna —; e la cella TypeScript di O2 tace le *single executable applications* di Node, una via sperimentale al binario singolo: `node --help` elenca `--experimental-sea-config` (node v24.19.0, letto il 2026-10-13). Audit del 2026-09-30, AUD-2094.
+
 ## Versioni degli strumenti
 
 | Candidato | Comando | Output |
@@ -269,7 +275,9 @@ i tipi vietati: `RandomState` è seminato casualmente **per processo**, quindi l
 di iterazione non è riproducibile fra esecuzioni. È una violazione di V29 che non
 compare in nessun elenco di «chiamate OS» e che C1 scoprirebbe solo come traccia
 divergente e inspiegabile. Vale per ogni candidato: va verificata anche su Go e
-TypeScript.
+TypeScript. ⚠️ **Richiamo del 2026-10-13:** su Go è verificata, in «SP-6 · Go»; su TypeScript **non è stata fatta**,
+e il prototipo non usava mappe né iterava le chiavi di un oggetto nel codice sotto test —
+`git grep -nE 'Map|Object\.(keys|entries)' da653a1 -- spikes/ts/src` non rende niente. Audit del 2026-09-30, AUD-2092.
 
 ### SP-5 · Rust — eseguito il 2026-08-06, rustc 1.95.0
 
@@ -395,9 +403,11 @@ istante) e Q5 (riavvio a metà run) sono verificabili **solo** per simulazione
 deterministica (ADR-0021, design/08). Con l'interlacciamento non riproducibile, un
 difetto trovato in simulazione non conserva il proprio seed — e V31 cade con lui.
 
-**I test restano nel repository come guardie**, non come fallimenti: asseriscono il non
-determinismo misurato. Se una versione futura di Go lo eliminasse, falliscono e C6 va
-rimisurato.
+**I test di C6 non sono più nel repository:** sono andati via col prototipo di Go dopo
+ADR-0026, e restano nella storia — `git show da653a1:spikes/go/sched/c6_test.go`. Asserivano
+il non determinismo misurato, e oggi non lo sorveglia nessuno: se una versione futura di Go
+lo eliminasse, nessun test fallirebbe, e C6 si rimisura rifacendo il prototipo da quel
+commit. Richiamo del 2026-10-13, audit del 2026-09-30, AUD-1100, AUD-2097.
 
 ### SP-6 e SP-5 · TypeScript — eseguito il 2026-08-06, tsc 5.9.3 su node 24.9
 

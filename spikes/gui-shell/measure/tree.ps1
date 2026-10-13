@@ -82,6 +82,9 @@ while ((Get-Date) -lt $end) {
   $ps = @(Get-Process -Id $pids -ErrorAction SilentlyContinue)
   $rss = ($ps | Measure-Object WorkingSet64 -Sum).Sum
   $cpu = ($ps | ForEach-Object { $_.TotalProcessorTime.TotalMilliseconds } | Measure-Object -Sum).Sum
+  # The first round has no previous sample: its cpu_pct is a 0 that nobody measured, and the row goes into
+  # the REST phase all the same -- its samples, mean and max below. RECALL OF 2026-10-13 -- audit of
+  # 2026-09-30, AUD-2222, AUD-2223.
   $pct = 0
   if ($null -ne $prevCpu) { $pct = ($cpu - $prevCpu) / ($now - $prevT).TotalMilliseconds * 100 }
   if (($now - $lastVram).TotalMilliseconds -ge 1000) {

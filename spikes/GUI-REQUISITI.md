@@ -36,7 +36,7 @@ requisito.**
 | G12 | costo corrente e distanza dal tetto | V8, sezione 3 |
 | G13 | provenienza del contenuto: fidato o non fidato | V23, ADR-0014 |
 | G14 | run in `AttesaUmano`, con notifica | V9 |
-| G15 | `Rifiutata` e `InCoda` come esiti **distinti** | V4, sezione 2 |
+| G15 | `Rifiutata` e `InCoda` come esiti **distinti** — le parole di V4, che nel codice sono `Admission::Refused` e `Admission::Queued` (richiamo del 2026-10-13, audit del 2026-09-30, AUD-1096) | V4, sezione 2 |
 | G16 | che la cifratura vale quanto l'account OS | ADR-0023 |
 | G17 | cosa il backup **non** contiene, al momento del backup | ADR-0022 |
 | G18 | cosa copre l'ambito di checkpoint, **prima** che l'agente scriva | ADR-0024 |
@@ -60,9 +60,9 @@ sono rumore che il prossimo lettore dovrà filtrare a mano.
 | Rust | **interfaccia web** in un guscio nativo | dipende dal guscio | no, schema duplicato | libreria web matura | ✅ **scelta** — ADR-0027, per G7 |
 | Rust | toolkit nativo del linguaggio | binario singolo | sì | da scrivere | ❌ scartata: non regge G7 |
 
-**Il guscio che ospita la webview — Tauri o Electron — è una decisione separata e
-ancora aperta**: [ADR-0029](../docs/adr/0029-guscio-della-gui.md), `Proposed` — ✅ **chiusa il 2026-09-10 con SP-8: Electron**. Il
-framework è **Vue 3**, [ADR-0030](../docs/adr/0030-framework-dell-interfaccia.md).
+**Il guscio che ospita la webview — Tauri o Electron — è una decisione separata**, chiusa il
+2026-09-10 con SP-8: **Electron**, [ADR-0029](../docs/adr/0029-guscio-della-gui.md). Il
+framework è **Vue 3**, [ADR-0030](../docs/adr/0030-framework-dell-interfaccia.md). Richiamo del 2026-10-13, audit del 2026-09-30, AUD-1098.
 
 ## Criteri di passaggio del prototipo IPC
 

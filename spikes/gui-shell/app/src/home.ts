@@ -15,8 +15,11 @@ import Chat from './tiles/Chat.vue';
 import Scene from './tiles/Scene.vue';
 import Hand from './tiles/Hand.vue';
 
-/** The panel types of the fake Home. Task 3 replaces `chat`, `scene` and `hand` with live tiles;
- * the names stay, so a layout saved before task 3 still restores after it. */
+/** The panel types of the fake Home. Task 3 replaced the placeholders of `chat`, `scene` and `hand` with
+ * live tiles and kept the names, so a layout saved before task 3 still restores after it. The live tiles
+ * read no `params`: the `who` and `text` that `defaultLayout` still gives those three panels are left over
+ * from the placeholders, and end up in the saved JSON all the same. ⚠️ RECALL OF 2026-10-13 -- audit of
+ * 2026-09-30, AUD-2103. */
 export const tiles: Record<string, () => VueContent> = {
   tile: () => new VueContent(Tile),
   chat: () => new VueContent(Chat),
@@ -146,7 +149,11 @@ export function moveActive(dir: 'left' | 'right' | 'up' | 'down'): void {
 /** Move 7: save is dockview's own JSON. After a reload the page compares the CANONICAL form (object keys
  * sorted) and names the first diverging path, and reports the raw string equality beside it -- a measure,
  * not a judgement. Measured on 2026-09-10 with dockview-core 8.2.0: `panels` comes back in another key
- * order after `fromJSON`, and a floating group grows by 2 px per round trip (errata E4 of the plan). */
+ * order after `fromJSON`, and a floating group grows by 2 px per round trip (errata E4 of the plan).
+ * The `bytes` and the `byte n` of the log lines are UTF-16 code units -- the `length` of a JavaScript string
+ * and the index `firstDifference` returns --, not bytes: the default layout carries non-ASCII titles and
+ * params, so a length is not the UTF-8 one, and `byte n` is a byte offset only before the first non-ASCII
+ * character. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1119. */
 export function saveLayout(): void {
   const json = JSON.stringify(api.toJSON());
   localStorage.setItem(LAYOUT_KEY, json);
@@ -191,7 +198,14 @@ function firstDivergence(a: unknown, b: unknown, path = '$'): string | undefined
   return a === b ? undefined : `${path}: ${JSON.stringify(a)} -> ${JSON.stringify(b)}`;
 }
 
-/** Move 1: the nucleus and the strip do not move, and take nothing dropped on them. */
+/** Move 1: the nucleus and the strip do not move when dragged, and take nothing dropped in their centre.
+ * That is all `locked` does in `dockview-core` 8.2.0: it refuses a drop on the group's tabs, on its header
+ * and in the centre of its content, while the edges of its content still take one. `floatPanel`,
+ * `togglePage`, `popout` and `moveActive` act on the active panel without looking at its group, so F, M, P,
+ * Ctrl+Alt+arrows and the bar's buttons move the nucleus or the strip when one of them is active (read in
+ * the sources, not tried in the page); the SPA's `moveActive` refuses a locked group as a source too
+ * (`gui/src/frame/moveActive.ts`, AUD-537 and AUD-538). ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+ * AUD-1118. */
 function lock(id: string): void {
   const group = api.getPanel(id)?.group;
   if (!group) return;
@@ -269,6 +283,9 @@ function onKey(e: KeyboardEvent): void {
     }
     return;
   }
+  // The letters fire also with Ctrl, Meta or Alt held on its own, and call no `preventDefault`: Ctrl+P asks
+  // for the separate window while the browser opens its print dialog, Ctrl+F floats the tile while it opens
+  // its find bar. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1120.
   const active = api.activePanel;
   if (!active) return;
   if (e.key === 'f' || e.key === 'F') floatPanel(active.id);

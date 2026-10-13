@@ -59,6 +59,9 @@ new EventSource('/stream').onmessage = (e) => {
   relayToDraw.push(now - m.t_relay_ms);
 };
 
+// The dump has neither the rate of the results nor the hands of each sample: every message is a sample,
+// one with no hand in the frame too, so the "Parziale" branch of S2 -- below 30 Hz, or one hand only --
+// cannot be read from it. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2219, AUD-2220.
 document.getElementById('dump').onclick = () => {
   const stats = {
     samples: captureToDraw.length,

@@ -81,6 +81,9 @@ def main():
             sent += 1
         time.sleep(0.5)  # let the last callbacks land before the landmarker closes
     cap.release()
+    # From before the model loads to after the 0.5 s wait, the landmarker's close and the camera's release:
+    # longer than the window in which frames are sent, so the "results/s" printed below understates the
+    # rate of the stream. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1117, AUD-2221.
     elapsed_s = (time.perf_counter_ns() - start) / 1e9
 
     if not latencies_ms:

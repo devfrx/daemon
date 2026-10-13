@@ -1,5 +1,10 @@
 # SP-8 — Il guscio della GUI, e l'accettazione di `dockview`: il protocollo
 
+⚠️ **Richiamo del 2026-10-13 — Q1–Q4 sono i nomi di questo protocollo, non i requisiti Q1–Q4 del kernel.** Nel
+[disegno del 2](../../docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) la lettera di queste
+quattro righe la sceglie e la dice, sola, la tabella della §2, perché il controllo V30 di `scripts/check-docs.sh` non
+le legga come requisiti Q; qui, congelate, tengono i loro nomi. Audit del 2026-09-30, AUD-2215.
+
 Criteri scritti **prima** della misura, come vogliono la §2 del
 [disegno del 2](../../docs/superpowers/specs/2026-09-06-sottoprogetto-2-gui-minima-design.md) e la §4 della
 [stella polare della GUI](../../docs/superpowers/specs/2026-09-07-direzione-gui-design.md), e **congelati al
@@ -53,6 +58,8 @@ e lo script di misura lo legge da fuori.
 
 ⚠️ **Richiamo del 2026-09-10 — M5, misurata durante i compiti 4 e 5 (errata E10 del piano).** Su una GPU **integrata** `Dedicated Usage` è zero per costruzione, e su questa macchina la webview ci gira (richiamo E9): `tree.ps1` legge **anche** `\GPU Process Memory(*)\Shared Usage` sugli stessi PID e riporta due colonne, `vram_mb` (dedicata, com'era) e `vram_shared_mb`; l'esito riporta **entrambe** nella riga M5. Modifica al metro, dichiarata: M5 su questa macchina è la memoria condivisa dell'integrata, un proxy della VRAM dedicata della macchina di ADR-0002; il confronto fra i gusci regge, perché la GPU è la stessa per entrambi. Forzare i gusci sulla RTX 4060 con la preferenza grafica di Windows, o rimisurare sulla macchina con la RTX 5080, resta del proprietario: registrato, non preso.
 
+⚠️ **Richiamo del 2026-10-13 — le finestre di M1 e M4, come `measure/tree.ps1` le ha misurate.** Il flusso è tutto ciò che segue l'avvio dell'emettitore — il ritentativo dei gusci, i 2000 messaggi e la coda dopo la sua uscita —, più largo dei dieci secondi che le righe M1 e M4 nominano; e il primo campione di ogni corsa, a riposo, ha `cpu_pct` 0 senza essere una lettura, perché non ha un campione prima di sé, e conta nel riposo. Modifica al metro, detta dopo la misura: le medie di [`RISULTATI.md`](../RISULTATI.md) stanno su quelle finestre, e il verdetto di P3 non cambia, perché la sola scena a riposo sta già sopra la soglia (O2 di quel file). Audit del 2026-09-30, AUD-2222, AUD-2223.
+
 ## Le righe qualitative — Q1–Q4, per guscio
 
 | # | Domanda | Come si risponde |
@@ -74,19 +81,21 @@ due gusci per Q4 e Q3. La mossa 8 vuole il relay di SP-7 in ascolto e la telecam
 | 1 | il nucleo al centro e la striscia in basso non si spostano; le tessere intorno sì | trascinando qualsiasi cosa, i due restano dove sono |
 | 2 | una tessera si sgancia, galleggia sopra le altre, si riaggancia | si sgancia, si muove, torna, senza perdersi |
 | 3 | una tessera a pagina intera e ritorno | un gesto per andare, uno per tornare, la disposizione sotto resta |
-| 4 | una tessera in un'altra finestra | la finestra si apre **dentro il guscio** (riga Q3); chiusa, la tessera torna. Si fa **dal comando**, non trascinando fra due finestre (decisione 34) |
+| 4 | una tessera in un'altra finestra | la finestra si apre **dentro il guscio** (riga Q3); chiusa, la tessera torna. Si fa **dal comando**, non trascinando fra due finestre (decisione 34 del coordinatore) |
 | 5 | la presa grande, disegnata da noi, si afferra col mouse e col tocco | si afferra senza mirare a una linguetta sottile |
 | 6 | spostare una tessera con la tastiera | una scorciatoia nostra sposta la tessera attiva nelle quattro direzioni |
-| 7 | salva, ricarica, ritrova | i due JSON, prima e dopo, sono **uguali**: una misura, non un giudizio (decisione 32) — la pagina li confronta e scrive «EQUAL» o «DIFFERENT al byte n» |
+| 7 | salva, ricarica, ritrova | i due JSON, prima e dopo, sono **uguali**: una misura, non un giudizio (decisione 32 del coordinatore) — la pagina li confronta e scrive «EQUAL» o «DIFFERENT al byte n» |
 | 8 | la pinza afferra la presa grande e la tessera segue la mano | la tessera segue la pinza, si sgancia e si riaggancia: un sì o un no **tecnico**; come si sente lo dice il proprietario, con le sue parole, **senza soglia** |
 
 ⚠️ **Richiamo del 2026-09-10 — la mossa 7, misurata nel browser durante il compito 2 (errata E4 del piano).** «I due JSON uguali» si legge sul JSON **canonico** — le chiavi degli oggetti ordinate — perché `dockview` 8.2.0 emette `panels` in un ordine diverso dopo `fromJSON` (misurato a 1920×1080: stesso contenuto, stessa lunghezza, primo byte diverso dentro `panels`), e l'ordine delle chiavi non è la disposizione; la pagina scrive **entrambi** i confronti — `canonical EQUAL` o `canonical DIFFERENT at <percorso>: <prima> -> <dopo>`, e `raw EQUAL` o `raw DIFFERENT at byte n` — così il grezzo resta leggibile. Due fatti misurati che il giudizio del proprietario tiene in mano: un gruppo **galleggiante** cresce di **2 px** in larghezza e altezza a ogni salva-e-ricarica (`dv-resize-container`, bordo di 1 px in `content-box`: 462×322 → 464×324 → 466×326), quindi con una tessera staccata il canonico è `DIFFERENT` per costruzione di `dockview`, non per un accorgimento nostro; e su un viewport stretto (1024 px) il ripristino impone i minimi di `dockview` — 100 px per pannello, quattro pannelli sopra il Nucleo — e ridistribuisce le colonne (341 → 400), mentre a 1920 px la griglia torna identica: le prove si fanno alla taglia dello schermo del proprietario, e l'esito la dichiara. È una modifica al metro dopo il congelamento, e sta qui per questo.
+
+⚠️ **Richiamo del 2026-10-13 — tre precisazioni, e il metro non cambia.** Le decisioni 32 e 34 delle mosse sono del coordinatore, nella stella polare; le taglie e le colonne del richiamo qui sopra vengono dalle letture a mano nel browser del revisore del compito 2, a 1024×768, e del coordinatore, a 1920×1080 (errata E4 del piano), e nessuno ha registrato con che cosa: sono un'osservazione datata, non una misura che un comando rifà; e il «byte n» della mossa 7 è, nella pagina, l'indice di un'unità UTF-16 della stringa JavaScript, che coincide col byte solo prima del primo carattere non ASCII. Audit del 2026-09-30, AUD-2101, AUD-2102, AUD-1119.
 
 **La mossa 8, come si fa.** Il worker `s2_worker.py` e il relay di `spikes/gesti/` **com'è**, righe JSON in
 SSE; la Home disegna la mano dai 21 punti — come `page.html` di SP-7 — e traduce la pinza in eventi del
 puntatore: `pointerdown` alla chiusura, `pointermove`, `pointerup` all'apertura, con `dockview` in
 `'pointer'`. La pinza è il segnaposto e un pugno vale come pinza (O7 di SP-7). Il ritardo che si sente è
-quello misurato in SP-7 — cattura → disegno, mediana 114 ms — della pipeline e non di `dockview`. ⚠️ La
+quello misurato in SP-7 — cattura → disegno, S2 di [`RISULTATI.md`](../RISULTATI.md) — della pipeline e non di `dockview` (richiamo del 2026-10-13, audit del 2026-09-30, AUD-1104). ⚠️ La
 pagina di Vite raggiunge il relay da un proxy sulla propria origine (`/stream`): il relay non cambia.
 
 **Come si decide.** Tutte e otto passano: `dockview` resta. Una mossa che passa solo con un trucco è

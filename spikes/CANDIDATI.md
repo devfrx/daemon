@@ -1,7 +1,17 @@
 # Candidati e pre-selezione
 
+⚠️ **Richiamo del 2026-10-13 — la gara è chiusa.** [ADR-0026](../docs/adr/0026-linguaggio-del-core.md) ha scelto
+**Rust** il 2026-08-06, l'unico dei tre che passa entrambi gli spike; i prototipi di Go e di TypeScript sono rimossi e
+restano nella storia — [`RISULTATI.md`](RISULTATI.md), «Esito» e «Dove sono i prototipi» —, e la regola in fondo a
+questo file non è servita. Audit del 2026-09-30, AUD-2089.
+
 Il proprietario del progetto è operativo su Python, TypeScript/web e un linguaggio
-compilato. La pre-selezione applica i vincoli globali della spec, non le preferenze.
+compilato. La pre-selezione applica i vincoli globali della spec e, accanto a loro, la
+**competenza dell'utente**, che non è uno di quei vincoli: è una delle tre ragioni che
+ammettono TypeScript, ed è l'unica ragione scritta che esclude C#/.NET. Rust è ammesso
+senza di lei, ed è il linguaggio su cui il proprietario non è operativo: un costo che
+ADR-0026 dichiara fra le conseguenze negative accettate. Richiamo del 2026-10-13, audit
+del 2026-09-30, AUD-1095.
 
 **I tre candidati competono per un solo posto: il linguaggio del `core`.** Due dei tre
 prototipi vengono cancellati alla chiusura di ADR-0026. Non è una scelta di usare tre

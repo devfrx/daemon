@@ -3,10 +3,15 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import MarkdownIt from 'markdown-it';
 import { wire, type Wire } from '../bridge';
 
-// The chat tile: renders the stream of `Token` messages as markdown, ONE render per animation frame at
-// most, and only of the message being streamed; finished messages are frozen as rendered HTML. The
-// preset 'default' has html:false and linkify:false (decision 51 of the north star): raw HTML in the text
-// is escaped and links do not open by themselves. The text of a model is untrusted, and the tile says so.
+// The chat tile: renders the stream of `Token` messages as markdown -- the message being streamed at most
+// ONCE per animation frame; when it passes FREEZE_AT it is rendered once more, right away inside the message
+// handler, and kept as frozen HTML. The preset 'default' has html:false and linkify:false (the coordinator's
+// decision 51 of the north star): raw HTML in the text is escaped, and a bare address does not become a
+// link. Explicit markdown still renders: a link becomes an `<a href>` that a click follows, and an image an
+// `<img src>` that the browser fetches with nobody clicking -- so neither the preset nor the template's label
+// («... mai come HTML») keeps an untrusted text from making the page reach an address of its choosing; the
+// SPA's renderer, gui/src/components/markdown.ts, rewrites both (P-87). The text of a model is untrusted,
+// and the tile says so. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2104, AUD-2126.
 defineProps<{ title?: string; api?: unknown; containerApi?: unknown; params?: unknown }>();
 
 const md = new MarkdownIt();

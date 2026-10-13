@@ -2,9 +2,11 @@
 
 One JSON line per result on stdout: {"t_capture_ms": <wall-clock ms when the frame was read>,
 "hands": [[[x, y], ... 21 points ...], ...]}, with x and y as INTEGER pixels of a 640x480 frame:
-integers on the wire is the rule of the design (§2.3), and the worker does the scaling. The relay
-spawns this script as a child process and reads its stdout, which is the topology of the core and
-a worker. Stops when stdout is closed by the relay, or on Ctrl-C.
+integers on the wire is the rule of the design (§2.3), and the worker does the scaling. A result with
+no hand in the frame is a line too, with `hands` empty, and the page counts it as a sample (⚠️ RECALL
+OF 2026-10-13 -- audit of 2026-09-30, AUD-2220). The relay spawns this script as a child process and
+reads its stdout, which is the topology of the core and a worker. Stops when stdout is closed by the
+relay, or on Ctrl-C.
 
 Usage: py -3.10 s2_worker.py hand_landmarker.task
 """

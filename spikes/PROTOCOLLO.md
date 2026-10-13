@@ -55,6 +55,11 @@ esattamente il rischio RK-3.
 C7 verifica anche l'ordine write-ahead: **intento prima dell'effetto, esito dopo**. Un
 crash fra i due deve lasciare un passo `InDubbio` rilevabile, non invisibile.
 
+⚠️ **Richiamo del 2026-10-13 — che cosa di quest'ordine osservano le prove.** Nei tre prototipi le prove di C7
+osservano l'ordine **intento → esito** nel giornale e il passo in dubbio dopo una caduta; l'effetto non lo registra
+nessun doppio — nel codice sotto test è un commento fra le due scritture —, quindi «prima dell'effetto» sta
+nell'ordine delle istruzioni, e nessun oracolo lo vede. Il metro non cambia. Audit del 2026-09-30, AUD-2225.
+
 ### Regola di applicazione di C6
 
 Fissata **prima** di misurare, perché decide il peso dello spareggio #1 dell'ADR.
@@ -82,8 +87,9 @@ I criteri 3 e 4 della spec — nessuna chiamata OS nel kernel (I3), nessun model
 percorso decisionale (V28) — chiedono la stessa capacità: **vietare che un modulo ne
 importi un altro, e verificarlo automaticamente su tutto il progetto.**
 
-Senza T6 quei due criteri sarebbero risposti a opinione. I3 è una delle tre proprietà
-che [HANDOFF.md](../docs/HANDOFF.md) elenca come non aggiungibili dopo.
+Senza T6 quei due criteri sarebbero risposti a opinione. I3 è una delle proprietà che non
+si aggiungono dopo, e vivono nella §3 del [compendio](../docs/COMPENDIO.md): richiamo del
+2026-10-13, audit del 2026-09-30, AUD-2091.
 
 **Provato in negativo** è la parte che conta: un controllo che passa sempre non prova
 nulla. Vale la stessa lezione già imparata sul Task 7 di TypeScript, e sul gotcha #9

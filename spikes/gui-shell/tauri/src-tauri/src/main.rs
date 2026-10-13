@@ -17,6 +17,12 @@ fn main() {
     tauri::Builder::default()
         .setup(|app| {
             let handle = app.handle().clone();
+            // The reader starts here, in `setup`, before the page has registered `listen('line')`, and an
+            // event reaches only the listeners already registered (tauri 2.11.5, `event/listener.rs`, as
+            // the audit read it): a line emitted before that is lost. The Electron shell opens the pipe on
+            // `did-finish-load` instead (P1). In the SP-8 runs nothing was lost because `measure/tree.ps1`
+            // starts the shell first and the emitter later (`-EmitterAt`). ⚠️ RECALL OF 2026-10-13 --
+            // audit of 2026-09-30, AUD-1121.
             thread::spawn(move || loop {
                 let connected = NAME
                     .to_ns_name::<GenericNamespaced>()

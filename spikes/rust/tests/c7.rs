@@ -37,8 +37,13 @@ fn c7_il_crash_avviene_davvero() {
 
 #[test]
 fn c7_il_passo_in_dubbio_e_rilevabile() {
-    // Si cerca un seed che cada su un numero DISPARI di scritture, cioè fra
-    // l'intento e l'esito: è il caso che ADR-0007 chiama "passo in dubbio".
+    // Si cerca un seed che cada fra l'intento e l'esito: è il caso che ADR-0007 chiama
+    // "passo in dubbio". Il seed lo sceglie il rilevatore sotto prova — il primo dei 200 per
+    // cui risponde un passo: il seed 0, che cade dopo la sola prima scrittura —, e il dubbio
+    // si prova solo lì. Il «non scatta dove non deve» lo prova soltanto il test che segue,
+    // sulla traccia completa: nessuna prova guarda una caduta dopo un passo chiuso, né che
+    // ogni caduta fra intento ed esito sia rilevata.
+    // ⚠️ RICHIAMO DEL 2026-10-13 — audit del 2026-09-30, AUD-2226.
     let seed_con_dubbio = (0..200_u64)
         .find(|s| passo_in_dubbio(&esecuzione(*s)).is_some())
         .expect("almeno un seed su 200 deve cadere fra intento ed esito");
@@ -73,6 +78,10 @@ fn c7_senza_crash_nessun_passo_resta_in_dubbio() {
 
 #[test]
 fn c7_l_ordine_e_write_ahead_intento_prima_dell_esito() {
+    // Si osserva l'ordine intento → esito nel giornale. L'effetto non lo registra nessun
+    // doppio — in `esegui` è un commento fra le due scritture —, quindi il «PRIMA
+    // dell'effetto» del messaggio qui sotto sta nell'ordine delle istruzioni di `esegui`, e
+    // questa asserzione non lo vede. ⚠️ RICHIAMO DEL 2026-10-13 — audit del 2026-09-30, AUD-2225.
     let mut g = GiornaleCadente::senza_crash();
     esegui(&mut g, 3);
     let ordine: Vec<&str> = g
@@ -89,8 +98,12 @@ fn c7_l_ordine_e_write_ahead_intento_prima_dell_esito() {
 
 #[test]
 fn c7_il_giornale_e_sostituibile_senza_toccare_il_codice_sotto_test() {
-    // Un secondo doppio, che conta soltanto. Se `esegui` conoscesse il filesystem
-    // questo non compilerebbe: il confine è nel tipo, non nella disciplina.
+    // Un secondo doppio, che conta soltanto: `esegui` lo accetta così com'è, perché conosce il
+    // giornale solo attraverso il tratto. Il tipo prova la sostituibilità, non l'assenza del
+    // filesystem: in questa crate con `std` una scrittura su file dentro `esegui` compilerebbe,
+    // e questo test passerebbe lo stesso. Quel divieto lo tengono il grep di C5 (`std::fs`) e,
+    // per due funzioni, `disallowed-methods` di `clippy.toml`; nel kernel, `no_std`.
+    // ⚠️ RICHIAMO DEL 2026-10-13 — audit del 2026-09-30, AUD-2107.
     struct Contatore(u32);
     impl Giornale for Contatore {
         fn intento(&mut self, _p: u64, _d: &str) -> Result<(), kernel_spike::giornale::Caduto> {

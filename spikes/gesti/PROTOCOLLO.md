@@ -31,7 +31,7 @@ si dichiara.
 | | |
 |---|---|
 | Domanda | la latenza da **cattura** a **disegno** della mano su una pagina, passando per un relay Rust che sta al posto del core |
-| Criterio | il solo salto **relay → pagina** ha **p95 < 100 ms**, che è **P2** di [`GUI-REQUISITI.md`](../GUI-REQUISITI.md); la latenza **totale** da cattura a disegno si **riporta**, mediana e p95, **senza soglia**: l'accettabilità della mano sul pannello la giudica il **proprietario provandola** — il pannello che segue il pinch — e il giudizio va nell'esito con le sue parole |
+| Criterio | il solo salto **relay → pagina** ha **p95 < 100 ms**, che è **P2** di [`GUI-REQUISITI.md`](../GUI-REQUISITI.md); la latenza **totale** da cattura a disegno si **riporta** — che cosa, lo dice la riga qui sotto —, **senza soglia**: l'accettabilità della mano sul pannello la giudica il **proprietario provandola** — il pannello che segue il pinch — e il giudizio va nell'esito con le sue parole |
 | Che cosa si riporta | mediana, p95 **e massimo** di cattura → disegno e di relay → disegno su almeno **600** campioni; il giudizio del proprietario |
 | Come | `s2_worker.py` emette una riga JSON per risultato; `relay/` lo spawna come processo figlio, legge lo stdout, timbra, e serve la riga in Server-Sent Events a `page.html`, che disegna i 21 punti e misura col proprio orologio. Tre orologi di parete della stessa macchina, in millisecondi |
 | Parziale | se regge solo sotto i 30 Hz, o solo a una mano |
@@ -42,13 +42,17 @@ questo file pretende che sia detta.** La riga *«Che cosa si riporta»* di S2 di
 e p95»*, e ora dice *«mediana, p95 e massimo»*. ⚠️ **Il criterio NON cambia:** resta
 `p95 < 100 ms` sul salto relay → pagina, che è ciò che la §4.2 del disegno approva —
 *«mediana e p95»*, *«nessuna soglia inventata»*. ⚠️ **Ciò che va detto è che P2 è un
-MASSIMO:** la riga 77 di [`GUI-REQUISITI.md`](../GUI-REQUISITI.md) lo enuncia come *«ritardo
-massimo fra emissione e rendering»*, e la riga 103 lo misurò come picco. Provarlo su un p95
+MASSIMO:** la riga P2 dei criteri di [`GUI-REQUISITI.md`](../GUI-REQUISITI.md) lo enuncia come *«ritardo
+massimo fra emissione e rendering»*, e la riga P2 della sua corsa 1 lo misurò come picco. Provarlo su un p95
 è una lettura **più debole** del metro citato, e su seicento campioni lascia passare fino
 a trenta campioni sopra i 100 ms senza che il criterio cada. Riportare **anche** il massimo
 rende l'esito di SP-7 **confrontabile** con quella riga invece che soltanto accostabile — ed
 è la forma che **S1 di questo stesso file già usa**. Trovato dalla revisione del compito 7
 il 2026-09-04, deciso dal **proprietario** lo stesso giorno; voce **E11** dell'errata del piano.
+
+⚠️ **Richiamo del 2026-10-13:** ciò che S2 riporta lo elenca la sola riga *«Che cosa si riporta»*, e le righe di
+[`GUI-REQUISITI.md`](../GUI-REQUISITI.md) si citano per nome, non per numero; il metro non cambia. Audit del
+2026-09-30, AUD-1101, AUD-2098.
 
 ## Registrazione
 

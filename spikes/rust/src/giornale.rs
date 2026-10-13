@@ -31,7 +31,9 @@ pub struct GiornaleCadente {
 }
 
 impl GiornaleCadente {
-    /// `cade_alla == None` significa nessun crash: serve al caso di controllo.
+    /// Cade prima di arrivare a `scritture_previste`: alla scrittura, contata da zero, che il
+    /// seed sceglie sotto quel numero. Il caso di controllo, senza crash, è `senza_crash`.
+    /// ⚠️ RICHIAMO DEL 2026-10-13 — audit del 2026-09-30, AUD-2106.
     pub fn nuovo(seed: u64, scritture_previste: u32) -> Self {
         let mut rng = Rng::new(seed);
         GiornaleCadente {
@@ -41,6 +43,8 @@ impl GiornaleCadente {
         }
     }
 
+    /// Il caso di controllo: non cade mai, perché `cade_alla` è la sentinella `u32::MAX`, che il
+    /// contatore delle scritture non raggiunge.
     pub fn senza_crash() -> Self {
         GiornaleCadente {
             righe: Vec::new(),
@@ -86,6 +90,13 @@ pub fn esegui<G: Giornale>(giornale: &mut G, passi: u64) {
 ///
 /// È la proprietà che ADR-0007 compra con la seconda scrittura durevole. Un giornale
 /// scritto *dopo* l'esecuzione non potrebbe rispondere a questa domanda.
+///
+/// ⚠️ RICHIAMO DEL 2026-10-13 — audit del 2026-09-30, AUD-1122. Sa leggere le righe di
+/// `GiornaleCadente`, e solo quelle: una riga che non comincia con `passo=N` fa rispondere
+/// `None` all'intera funzione, anche dopo un passo aperto, quindi un giornale illeggibile si
+/// legge «nessun dubbio»; intento ed esito si riconoscono cercando ` INTENTO ` ed ` ESITO `
+/// nella riga intera, testo libero compreso; e tiene un solo passo aperto, quindi con
+/// l'interlacciamento ne perde (gotcha #20). Per questo non sale così com'è.
 pub fn passo_in_dubbio(righe: &[String]) -> Option<u64> {
     let mut aperto: Option<u64> = None;
     for riga in righe {

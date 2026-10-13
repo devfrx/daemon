@@ -7,6 +7,11 @@ import { stats } from '../stats';
 // The 3D tile: a field of instanced cubes under two lights, rendered by WebGPURenderer, which falls back
 // to WebGL2 by itself (P-6). M3: fps counted per second, mean and min over the last 30 seconds; the API
 // read from the backend the renderer actually obtained, with the adapter or the unmasked renderer string.
+// Unmounting releases nothing of the GPU: `onUnmounted` stops the loop and disconnects the observer, but
+// calls no `renderer.dispose()` (three 0.185.1 has it) and frees neither the geometry nor the material; and
+// an unmount that lands while `onMounted` awaits `init()` finds no observer yet, so the one created after it
+// stays attached to a detached element. Latent here -- no command of the fake Home unmounts a tile --, to
+// fix before this tile seeds a viewer of the product. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2123.
 defineProps<{ title?: string; api?: unknown; containerApi?: unknown; params?: unknown }>();
 
 const host = ref<HTMLDivElement>();

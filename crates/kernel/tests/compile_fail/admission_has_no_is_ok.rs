@@ -4,8 +4,8 @@
 // NAMES ONE ROAD. With `is_ok` added that case stays `ok`, and one case naming both methods would
 // stay red while EITHER was still missing — it would hold neither on its own. The design of
 // milestone 5 forbids three shortcuts — `is_ok()`, `is_granted()` and a conversion to a boolean —
-// so the cases are three: this one, `admission_has_no_is_granted.rs` and
-// `admission_is_not_a_bool.rs`. Audit of 2026-09-30, AUD-695.
+// and each has its case: this one, `admission_has_no_is_granted.rs`, `admission_is_not_a_bool.rs`
+// and, by reference, `admission_by_reference_is_not_a_bool.rs`. Audit of 2026-09-30, AUD-695.
 //
 // ⚠️ IT NEEDS NO ARBITER, DELIBERATELY — the shape of `admission_is_not_two_ways.rs`: a shortcut
 // is a property of the TYPE, so the case takes an `Admission` as an argument instead of obtaining
@@ -29,3 +29,6 @@ fn main() {
 //
 // ⛔ THE NOTE IS DOWN HERE ON PURPOSE: the oracle quotes the line of the call, so a paragraph added
 // at the top would move the code and break it. Whoever writes here appends.
+//
+// ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2141: the conversion to a boolean has a case
+// by reference besides the one by value, and the list at the head names both.

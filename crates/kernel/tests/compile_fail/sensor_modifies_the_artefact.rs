@@ -47,9 +47,10 @@ fn main() {}
 // The day V10 breaks the natural way — `Sensor::observe` handing the artefact over as
 // `&mut Untrusted` — this impl stops matching the trait (`E0053`, the second road above) and the
 // case goes on failing with an output its oracle does not carry: `mismatch`, the verdict a bulk
-// `TRYBUILD=overwrite` blesses in silence, never `error`. Its strong partner would be that second
-// road written as a case of its own — an impl that DECLARES `&mut Untrusted`, `E0053` today and
-// compiling the day the trait widens — and it is not written. Until it is, every regeneration of
-// the oracle next door is read by hand (gotcha #25); the two impls of `tests/sensor_ring.rs`
-// declare `&Untrusted` as well, and that bench would stop compiling the same day. ⚠️ RECALL OF
-// 2026-10-13 -- audit of 2026-09-30, AUD-2141.
+// `TRYBUILD=overwrite` blesses in silence, never `error`. Its strong partner is that second road
+// written as a case of its own, `sensor_declares_a_mutable_artefact.rs` — an impl that DECLARES
+// `&mut Untrusted`, `E0053` today and compiling the day the trait widens, which trybuild reports
+// as `error`: measured on 2026-10-14, with this case `mismatch` the same day. This case stays the
+// weak one, and every regeneration of its oracle is still read by hand (gotcha #25); the two impls
+// of `tests/sensor_ring.rs` declare `&Untrusted` as well, and that bench would stop compiling the
+// same day. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2141.

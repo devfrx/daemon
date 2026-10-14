@@ -31,6 +31,10 @@ fn main() {
 // satisfied and appends `help: consider borrowing here`, and the case goes `mismatch` — the shape
 // a bulk regeneration blesses in silence. Measured on 2026-10-13. ⚠️ RECALL OF 2026-10-13 --
 // audit of 2026-09-30, AUD-2235.
+// That road has its strong case, `admission_by_reference_is_not_a_bool.rs`, which goes `error`
+// with `impl From<&Admission> for bool` and with `impl Into<bool> for &Admission`, while this case
+// stays `mismatch` under both: measured on 2026-10-14. ⚠️ RECALL OF 2026-10-14 -- audit of
+// 2026-09-30, AUD-2141.
 //
 // ⛔ Names `kernel::` and declares no attributes of its own — gotcha #39.
 //

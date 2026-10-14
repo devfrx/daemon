@@ -153,15 +153,17 @@ impl TicketId {
 /// ⛔ THERE IS NO `is_ok()`, NO `is_granted()`, AND NO CONVERSION TO A BOOLEAN. That is how
 /// `V4` becomes a SIGNATURE instead of a recommendation: "refused" and "queued" are
 /// different answers that call for different behaviour, and a boolean would collapse them.
-/// The negative cases are THREE, one per shortcut, because a case names ONE road:
-/// `tests/compile_fail/admission_has_no_is_granted.rs`, `admission_has_no_is_ok.rs` and
-/// `admission_is_not_a_bool.rs` — RECALL OF 2026-10-02, audit of 2026-09-30, AUD-695. Each
-/// names what does not exist, so the day somebody adds it that case starts COMPILING and
-/// trybuild reports `error`, which no bulk regeneration disarms (gotcha #42, strong form).
-/// ✅ MEASURED, not asserted: with one shortcut added, its own case comes back `error` and
-/// EVERY OTHER CASE stays `ok`. ⚠️ RECALL OF 2026-08-28, AUD-045 -- no total here:
-/// `tests/compile_fail.rs` globs the directory; the story is in
-/// `docs/archivio/sorgenti-storico.md`.
+/// The negative cases are one per ROAD, because a case names ONE road:
+/// `tests/compile_fail/admission_has_no_is_granted.rs`, `admission_has_no_is_ok.rs`, and for the
+/// conversion `admission_is_not_a_bool.rs`, by value, and `admission_by_reference_is_not_a_bool.rs`,
+/// by reference — RECALL OF 2026-10-02, audit of 2026-09-30, AUD-695; and of 2026-10-14, same
+/// audit, AUD-2141, AUD-2235. Each names what does not exist, so the day somebody adds it that
+/// case starts COMPILING and trybuild reports `error`, which no bulk regeneration disarms
+/// (gotcha #42, strong form). ✅ MEASURED, not asserted: with one shortcut added, its own case
+/// comes back `error` and EVERY OTHER CASE stays `ok` -- save a conversion BY REFERENCE, which
+/// `admission_is_not_a_bool.rs` also sees through its oracle, as `mismatch` (measured on
+/// 2026-10-14). ⚠️ RECALL OF 2026-08-28, AUD-045 -- no total here: `tests/compile_fail.rs` globs
+/// the directory; the story is in `docs/archivio/sorgenti-storico.md`.
 ///
 /// ⛔ `Refused` CARRIES TWO NUMBERS AND NOT A SENTENCE. design/02 wants "why it does not fit,
 /// and the workable alternative": the alternative is built by the interface, the kernel
@@ -541,22 +543,33 @@ impl Arbiter {
     /// interacts with. ⚠️ RECALL OF 2026-08-21 -- the story is in
     /// `docs/archivio/sorgenti-storico.md`.
     ///
-    /// ⛔ AND NOTHING IN THIS REPOSITORY HOLDS THE PARAGRAPH ABOVE -- said here rather than
-    /// left to be discovered, because a claim about behaviour that no probe exercises is the
-    /// species this task has already paid for once. ✅ MEASURED on 2026-08-19, not deduced:
-    /// with `!self.queues.is_empty() ||` added to the second guard below -- so a latecomer
-    /// QUEUES BEHIND the waiters instead of jumping them -- NOTHING goes red under
-    /// `cargo test --locked --workspace`, `tests/arbiter_admission.rs` included. ⚠️ RECALL OF
-    /// 2026-10-13 -- audit of 2026-09-30, AUD-1154, AUD-1245. THE MUTANT IS ALIVE, so the day
-    /// whoever builds the first orchestration cycle -- the one that decides when to call
-    /// `promote` relative to `admit` -- decides the other way, this paragraph becomes FALSE IN
-    /// SILENCE with nothing going red to say so. ⚠️ RECALL OF 2026-08-21 -- the story is in
-    /// `docs/archivio/sorgenti-storico.md`.
-    /// ⚖️ AND IT IS NOT PINNED, ON PURPOSE AND ON THE MERITS: a probe
+    /// ⛔ AND ONE WITNESS HOLDS THE PARAGRAPH ABOVE, IN THE ARBITER'S CAMPAIGN AND NOT IN THIS
+    /// CRATE -- said here rather than left to be discovered, because a claim about behaviour that
+    /// no probe exercises is the species this task has already paid for once. ✅ MEASURED on
+    /// 2026-08-19, not deduced: with `!self.queues.is_empty() ||` added to the second guard below,
+    /// NOTHING went red under `cargo test --locked --workspace`, `tests/arbiter_admission.rs`
+    /// included. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1154, AUD-1245.
+    /// ✅ MEASURED AGAIN ON 2026-10-14, AND THE MUTANT DIES: that line turns
+    /// `property_5_expiry_frees_the_budget_under_the_scenario` of
+    /// `crates/simulator/tests/arbiter_campaign.rs` red, and so does the mutant that says what the
+    /// line meant -- `self.queued() > 0 ||`, a latecomer QUEUES BEHIND a lane that holds a ticket
+    /// instead of jumping it --; nothing else under `cargo test --locked --workspace` goes red for
+    /// either. ⚠️ THE LITERAL LINE IS STRONGER THAN ITS MEANING: `queues` keeps a lane once it is
+    /// opened, empty or not, so `!self.queues.is_empty()` refuses every admission after the first
+    /// ticket ever queued. What dies is property 5's second witness, a request seated on room the
+    /// sweep had just freed: in that scenario every such seat goes to a latecomer while tickets
+    /// wait -- `queued()` printed before each seat, the same day. So the day whoever builds the
+    /// first orchestration cycle -- the one that decides when to call `promote` relative to
+    /// `admit` -- decides the other way, that witness goes red. ⚠️ RECALL OF 2026-08-21 -- the
+    /// story is in `docs/archivio/sorgenti-storico.md`; and of 2026-10-14 -- audit of 2026-09-30,
+    /// AUD-2288.
+    /// ⚖️ AND NO PROBE OF THIS CRATE PINS IT, ON PURPOSE AND ON THE MERITS: a probe
     /// asserting `Granted` for the latecomer would freeze exactly the choice the errata voice
     /// `E51` puts in front of the owner, and a probe that has to be deleted to take a decision
     /// is a vote against taking it -- the precedent is `E39`, which refused a probe for the
-    /// same reason. Registered as `E53`.
+    /// same reason. Registered as `E53`. ⚠️ THE CAMPAIGN'S WITNESS HOLDS IT ALL THE SAME, by the
+    /// shape of its scenario and not by a decision: `E51` stays the owner's, and deciding it the
+    /// other way rewrites that witness with it.
     ///
     /// ⛔ AND SINCE TASK 8 THAT JUMP IS NO LONGER THEORETICAL, WHICH IS A CHANGE OF KIND AND NOT
     /// A DETAIL. Until task 8 `ask_back` had no production caller, so NO revocation ever happened
@@ -575,13 +588,16 @@ impl Arbiter {
     /// species `E99` had to rewrite in THIS file on the SAME day. They live in `E100` and in the
     /// task 8 section of `docs/porta-di-qualita.md`: two houses, not three. Registered as `E109`.
     ///
-    /// ⚠️ AND NO PROBE HOLDS ANY OF THIS EITHER, said here for the same reason as the paragraph
-    /// above: the behaviour is measured and NOT pinned, because pinning it would freeze the
-    /// choice `E51` and `E53` put in front of the owner. ⚖️ THE CLOSER IS WHOEVER BUILDS THE
-    /// FIRST ORCHESTRATION CYCLE -- the one that decides when to call `promote` relative to
-    /// `admit` -- and it is still an ORCHESTRATION decision: what changed at task 8 is only
-    /// that the cost of leaving it open is now paid in production and not on paper. None exists
-    /// yet in this repository. ⚠️ RECALL OF 2026-08-21 -- the story is in
+    /// ⚠️ AND NO PROBE HOLDS IT UNDER `VramPolicy::Local`, said here for the same reason as the
+    /// paragraph above: the campaign's witness runs under `VramPolicy::Remote`, where the room
+    /// comes from an expiry and never from an `ask_back`, and no other bench went red when the
+    /// jump went -- the two mutants of the measure of 2026-10-14. ⚠️ RECALL OF 2026-10-14 --
+    /// audit of 2026-09-30, AUD-2288. The behaviour is measured and NOT pinned, because pinning
+    /// it would freeze the choice `E51` and `E53` put in front of the owner. ⚖️ THE CLOSER IS
+    /// WHOEVER BUILDS THE FIRST ORCHESTRATION CYCLE -- the one that decides when to call
+    /// `promote` relative to `admit` -- and it is still an ORCHESTRATION decision: what changed
+    /// at task 8 is only that the cost of leaving it open is now paid in production and not on
+    /// paper. None exists yet in this repository. ⚠️ RECALL OF 2026-08-21 -- the story is in
     /// `docs/archivio/sorgenti-storico.md`. Registered as `E100`.
     ///
     /// ⛔ THE TWO GUARDS BELOW ANSWER DIFFERENTLY SINCE TASK 6, and until task 6 they did
@@ -689,8 +705,10 @@ impl Arbiter {
     /// ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-010. So it
     /// is REGISTERED FOR THE OWNER in the plan's errata instead of being chosen here.
     ///
-    /// ⛔ AND NOTHING HOLDS THE PARAGRAPH ABOVE EITHER, which is declared here for the same
-    /// reason as beside `admit`. ✅ MEASURED on 2026-08-19, not deduced: with the WHOLE PASS
+    /// ⛔ AND NOTHING HOLDS THE PARAGRAPH ABOVE, which is declared here for the reason written
+    /// beside `admit` -- where, unlike here, the arbiter's campaign holds the jump: the mutant
+    /// below was alive again on 2026-10-14, the whole workspace green (⚠️ RECALL OF 2026-10-14 --
+    /// audit of 2026-09-30, AUD-2288). ✅ MEASURED on 2026-08-19, not deduced: with the WHOLE PASS
     /// made to stop at the first lane whose head does not fit -- a flag on the inner `break`,
     /// then `break` on the outer loop, so no lane ever falls through -- NOTHING goes red under
     /// `cargo test --locked --workspace`, `tests/arbiter_admission.rs` included. ⚠️ RECALL OF

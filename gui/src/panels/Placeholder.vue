@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// ⛔ ONE PLACEHOLDER AND NOT EIGHTEEN (decision 17 of the north star): every module the sub-project
+// ⛔ ONE PLACEHOLDER AND NOT EIGHTEEN (the coordinator's decision 17 of the north star): every module the sub-project
 // does not build says, in words, WHO fills it -- which is the rule §1 of the north star states
 // for the whole catalogue.
 import type { DockviewPanelApi } from "dockview-core";

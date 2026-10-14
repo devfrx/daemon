@@ -18,7 +18,7 @@ const connection = useConnection();
   <header class="bar">
     <Overview v-model:open="overview" :snapshot="snapshot" />
 
-    <!-- ⚠️ DISABLED AND SAYING WHO FILLS IT, not hidden: decision 16 of the north star wants the search box to say who fills
+    <!-- ⚠️ DISABLED AND SAYING WHO FILLS IT, not hidden: the coordinator's decision 16 of the north star wants the search box to say who fills
          it, and a control that is simply absent teaches nothing. -->
     <div class="search">
       <BaseTextField model-value="" type="search" icon="search" :label="$t('bar.search')" :placeholder="$t('bar.searchHint')" disabled />

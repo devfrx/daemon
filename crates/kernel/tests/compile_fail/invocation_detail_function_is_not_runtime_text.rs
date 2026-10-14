@@ -18,9 +18,11 @@ fn main() {
 
 // ⛔ THIS CASE REPORTS BY COMPILING, which is the strong shape (gotcha #42): widen the `function`
 // parameter of `InvocationDetail::new` to `&str` and this file COMPILES, with trybuild reporting
-// "expected compilation to fail" outright instead of through its oracle. A bulk
-// `TRYBUILD=overwrite` cannot disarm it. Measured on 2026-10-02 in both directions: with
-// `function` widened this case is `error`, with the signature as it is it is `ok`.
+// `error` -- "Expected test case to fail to compile, but it succeeded." -- outright instead of
+// through its oracle. A bulk `TRYBUILD=overwrite` cannot disarm it. Measured on 2026-10-02 in both
+// directions: with `function` widened this case is `error`, with the signature as it is it is `ok`.
+// ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2283: the quotation is trybuild's own
+// (`message.rs`, trybuild 1.0.120).
 //
 // ⚠️ IT IS NOT A COPY OF `routing_detail_model_is_not_runtime_text.rs` NOR OF THE TWO PERMISSION
 // CASES: each holds the text road of a DIFFERENT species. With `function` widened those three stay

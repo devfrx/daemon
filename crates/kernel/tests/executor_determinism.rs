@@ -2,8 +2,10 @@
 //!
 //! ⚠️ The interleaving figure is MEASURED HERE and not carried over from SP-5: this
 //! executor polls every runnable activity once per turn in a seeded order (decision D4),
-//! while the spike picked one at random. Citing the spike's 13-out-of-17 would be an
-//! expectation written before the measurement, which is gotcha #15.
+//! while the spike picked one at random. Citing the 13-out-of-17 of probe M-5 (§2.6 of the
+//! sub-project 1 spec, a throwaway prototype outside the repository) would be an expectation
+//! written before the measurement, which is gotcha #15. ⚠️ RECALL OF 2026-10-14 -- audit of
+//! 2026-09-30, AUD-2224.
 
 use core::cell::{Cell, RefCell};
 
@@ -166,10 +168,13 @@ fn c3_virtual_time_does_not_wait() {
 
 #[test]
 fn non_vacuity_the_interleaving_is_real() {
-    // ⛔ THE PROBE THAT IS EASY TO GET WRONG. SP-5's first version counted "task0 twice
-    // in a row", which happens by chance one time in three. Corrected by counting TASK
-    // SWITCHES — and it is counted again here, on this executor, because the ordering
-    // policy is not the spike's.
+    // ⛔ THE PROBE THAT IS EASY TO GET WRONG. M-5's first version counted "task0 twice in a
+    // row", which happens by chance one time in three, and was corrected by counting TASK
+    // SWITCHES -- the story §2.6 of the sub-project 1 spec tells of that probe. The spike's own
+    // `tests/c6.rs` never counted that way: it had a `windows(2).any(..)` that could not fire,
+    // and since 2026-10-02 it counts the runs (AUD-730). It is counted again here, on this
+    // executor, because the ordering policy is not the spike's. ⚠️ RECALL OF 2026-10-14 -- audit
+    // of 2026-09-30, AUD-2224.
     let trace = trace_of(20_260_806);
     let (switches, transitions) = switches_and_transitions(&trace);
 

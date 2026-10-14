@@ -360,6 +360,43 @@ fn a_journal_that_will_not_replay_is_not_an_answer_of_false() {
 }
 
 #[test]
+fn a_grant_past_another_grant_is_found_and_a_third_is_not() {
+    // ⛔ TWO GRANTS IN ONE JOURNAL, which no other probe writes: an `is_granted` that answered at
+    // the FIRST permission record it met, or kept only the last, stayed green on every probe above.
+    // ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2132.
+    const WRITE_B: Permission = Permission {
+        tool: "file",
+        resource: "/b",
+        operation: Operation::Write,
+    };
+    const READ_C: Permission = Permission {
+        tool: "file",
+        resource: "/c",
+        operation: Operation::Read,
+    };
+    let mut journal = MemoryJournal::new();
+    open_the_step(&mut journal, StepId::new(1));
+    grant(&mut journal, StepId::new(1), &READ_A).expect("grant");
+    open_the_step(&mut journal, StepId::new(2));
+    grant(&mut journal, StepId::new(2), &WRITE_B).expect("grant");
+    assert_eq!(
+        is_granted(&journal, &WRITE_B),
+        Ok(true),
+        "the second, past the first"
+    );
+    assert_eq!(
+        is_granted(&journal, &READ_A),
+        Ok(true),
+        "the first, before the second"
+    );
+    assert_eq!(
+        is_granted(&journal, &READ_C),
+        Ok(false),
+        "a third nobody granted"
+    );
+}
+
+#[test]
 fn a_record_that_will_not_decode_is_not_an_answer_of_false() {
     // ⛔ ERROR ROAD ②, AND IT IS THE ONE THE DOC DECLARES LOAD-BEARING (P-15 · D20).
     // `PermissionError` says in so many words that folding an unreadable record into `false` is

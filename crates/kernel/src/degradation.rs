@@ -10,10 +10,11 @@ use crate::arbiter::Arbiter;
 use crate::ports::journal::{Journal, JournalError};
 use crate::record::{Detail, Record, RecordError, RecordKind};
 
-/// What is degraded right now. ⛔ THE SELECTION CRITERION IS §7.5's, and it is the reason this
-/// struct is short: what is shown is what CHANGES WHAT THE USER CAN DO, not every internal
-/// variation. "An interface that signals everything is indistinguishable from one that signals
-/// nothing."
+/// What is degraded right now. ⛔ THE SELECTION CRITERION IS THAT OF §7.5 OF THE KERNEL SPEC,
+/// `docs/superpowers/specs/2026-08-06-kernel-design.md`, and it is the reason this struct is
+/// short: what is shown is what CHANGES WHAT THE USER CAN DO, not every internal variation. "An
+/// interface that signals everything is indistinguishable from one that signals nothing."
+/// ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-1306.
 ///
 /// ⛔ EVERY INPUT OF ADR-0019 BUT THE ARBITER HAS NO SOURCE YET, and each is declared rather than
 /// faked: CONNECTIVITY (§7 — `network` has no real implementation, §8.2.2) and PROVIDER HEALTH
@@ -74,9 +75,11 @@ pub enum DegradationError {
 /// the journal's checkpoint carries.
 ///
 /// ⛔ A FREE FUNCTION TAKING THE ARBITER AND THE PORT, exactly like `permission::is_granted` and
-/// `reconcile::steps_in_doubt`. A struct holding either would give the projection STATE (`I1`,
-/// `I5`), and state is the one thing a projection must not have: the answer would then depend on
-/// when the struct was built rather than on what the world says now.
+/// `reconcile::steps_in_doubt`. A struct holding either would give the projection STATE, and
+/// state is the one thing a projection must not have -- §5.2 of the milestone 6 design: it is
+/// RECOMPUTED, not cached, which makes ADR-0019's "never authoritative of itself" true by
+/// construction --: the answer would then depend on when the struct was built rather than on what
+/// the world says now. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-1188.
 ///
 /// ⚠️ DECLARED DIVERGENCE, and the owner may read it the other way: ADR-0019 and §6.7 say the
 /// core "MAINTAINS a current degradation state, FED BY EVENTS", and those words also read as
@@ -93,9 +96,10 @@ pub fn degradation_now<J: Journal>(
 ) -> Result<Degradation, DegradationError> {
     // ⛔ THE LAST ROUTING AND NOT ANY ROUTING: a degradation that happened and was then resolved
     // is not the state NOW, and "ever degraded" would be a fact about history rather than about
-    // what the user can do — which is the §7.5 criterion this file is built on. The assignment is
-    // therefore an assignment and never an `|=`, and `tests/degradation_state.rs` holds the
-    // difference with two dispatches upon one step.
+    // what the user can do — which is the criterion of §7.5 of the kernel spec this file is built
+    // on (⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-1306). The assignment is therefore
+    // an assignment and never an `|=`, and `tests/degradation_state.rs` holds the difference with
+    // two dispatches upon one step.
     //
     // ⚠️ AND "LAST" IS `replay`'s WRITE ORDER, WHICH THE PORT DOES OWE — it promises to "re-read
     // EVERYTHING, in write order", and that "WRITE ORDER IS PART OF THE PROMISE". What the

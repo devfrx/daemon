@@ -27,10 +27,12 @@
 //! ⚠️ `FakeWorker` AND `FakeProcess` ARE COPIED from `crates/kernel/tests/worker_tokens.rs` —
 //! the CODE word for word, the docs abridged where they described that bench's subject rather
 //! than this one — and it is declared rather than left to be discovered:
-//! TEST CODE DOES NOT CROSS CRATE BOUNDARIES, so there is no place both benches could reach.
+//! TEST CODE DOES NOT CROSS CRATE BOUNDARIES, so neither bench can import what the other defines.
 //! ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-794.
-//! ⚠️ A SEED-DRIVEN FAKE IN `crates/simulator/src/` WOULD BUY NOTHING HERE: what the seed decides
-//! is WHEN THE CORE KILLS, and the core is this bench. The worker has no say in it.
+//! ⚠️ A PLACE BOTH COULD REACH DOES EXIST, `crates/simulator/src/` -- `kernel` has `simulator`
+//! among its dev-dependencies -- and a seed-driven fake there WOULD BUY NOTHING HERE: what the
+//! seed decides is WHEN THE CORE KILLS, and the core is this bench. The worker has no say in it.
+//! ⚠️ RECALL OF 2026-10-14 -- same audit, AUD-794.
 
 use std::collections::BTreeSet;
 
@@ -228,7 +230,9 @@ fn run(seed: u64, tally: &mut Tally) -> Observed {
     let mut arbiter = new_arbiter();
     let instants = kill_instants(seed);
 
-    // Every recruit starts, with a grant obtained the only way there is.
+    // Every recruit starts, with a grant obtained from a real admission — one of the two doors the
+    // doc of `Grant` names, `Arbiter::promote` being the other. ⚠️ RECALL OF 2026-10-14 -- audit of
+    // 2026-09-30, AUD-2268.
     let mut running: Vec<(usize, FakeWorker)> = Vec::new();
     for (index, recruit) in RECRUITS.iter().enumerate() {
         let profile = ResourceProfile {

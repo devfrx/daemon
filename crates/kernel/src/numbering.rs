@@ -60,9 +60,11 @@ use crate::ports::journal::{Journal, JournalError};
 /// counter started at `u64::MAX` on its first `take`: the `+ 1` panics where overflow checks are
 /// on, as in the `dev` and `test` profiles, and wraps to zero where they are off, as in the
 /// `release` profile this workspace leaves at its default -- a counter reseeded beneath every
-/// step already written, the defect this module exists to prevent. Whether these doors refuse
-/// instead, and with what error, is the owner's choice. ⚠️ RECALL OF 2026-10-13 -- audit of
-/// 2026-09-30, AUD-1111.
+/// step already written, the defect this module exists to prevent. ⚖️ THE TWO DOORS STAY
+/// UNGUARDED BY THE OWNER'S DECISION, declared here rather than closed: every journal this core
+/// reads today is one this core wrote. The trigger is the first consumer that brings into the
+/// core a journal this core did not write: the guard -- whether the doors refuse, and with what
+/// error -- is that consumer's to bring. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-1111.
 pub struct Progressive {
     next: Rc<Cell<u64>>,
 }

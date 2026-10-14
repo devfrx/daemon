@@ -13,10 +13,16 @@
 //! test binaries one after the other -- "run serially", `man cargo-test` of the toolchain this
 //! repository pins -- so inside one invocation two files never meet. Two processes do: two
 //! `cargo test` invocations that overlap on one machine, or a runner that starts the binaries
-//! together. ⚠️ AND IT DOES NOT KEEP APART TWO RUNS OF THE SAME FILE: no directory name carries the
-//! process id, so two overlapping runs of one bench share every directory -- whether they should
-//! carry it is the owner's, audit of 2026-09-30, AUD-2127. ⚠️ RECALL OF 2026-10-13 -- same audit,
-//! AUD-1383, AUD-1388, AUD-1390.
+//! together. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1383, AUD-1388, AUD-1390.
+//! ⛔ AND THE PROCESS ID KEEPS APART TWO RUNS OF THE SAME FILE, which the prefix cannot: every
+//! directory name carries it, as `channel_for_line` of `crates/daemon/src/main.rs` carries it in a
+//! channel's, because `temp_dir()` is shared by every process of the account and two overlapping
+//! runs of one bench would otherwise share every directory -- the second emptying it under the
+//! first, the shape of gotcha #52. ⛔ AND A GUARD REMOVES THE DIRECTORY WHEN THE PROBE IS DONE:
+//! with the process id in its name no later run reuses it, so one left behind would stay for good.
+//! The same pair -- the process id and the guard -- is in every bench that makes its directories
+//! this way, `crates/daemon/src/main.rs` included, each with a copy of its own: test code does not
+//! cross a crate boundary. ⚠️ RECALL OF 2026-10-14 -- same audit, AUD-2127.
 
 use std::io;
 use std::sync::Arc;
@@ -26,7 +32,7 @@ use kernel::ports::journal::{Journal, JournalError, StepId};
 use platform::journal::{FileBackend, FileJournal, OpenError};
 use redb::StorageBackend;
 
-/// A directory of this test's own, emptied on entry.
+/// A directory of this test's own, fresh on entry and removed by its guard when the test is done.
 ///
 /// ⛔ ONE DIRECTORY PER CALL SITE, AND THE LINE NUMBER IS WHAT MAKES IT ONE. The obvious
 /// arrangement — one shared directory emptied on entry, with a different FILE NAME per test —
@@ -50,11 +56,32 @@ macro_rules! private_dir {
     };
 }
 
-fn private_dir_for_line(line: u32) -> std::path::PathBuf {
-    let dir = std::env::temp_dir().join(format!("daemon-file-journal-{line}"));
+fn private_dir_for_line(line: u32) -> PrivateDir {
+    let dir =
+        std::env::temp_dir().join(format!("daemon-file-journal-{}-{line}", std::process::id()));
     let _ = std::fs::remove_dir_all(&dir);
     std::fs::create_dir_all(&dir).expect("create the test directory");
-    dir
+    PrivateDir(dir)
+}
+
+/// The directory `private_dir_for_line` hands out, REMOVED WHEN IT FALLS -- on a red too, since a
+/// panicking test drops its locals as it unwinds. Why the guard exists is at the head of this file.
+/// ⚠️ A REMOVAL THAT FAILS IS IGNORED: on Windows a file still open refuses to go, and a guard that
+/// panicked in `drop` would turn a green probe red for a reason that is not the probe's.
+struct PrivateDir(std::path::PathBuf);
+
+impl std::ops::Deref for PrivateDir {
+    type Target = std::path::Path;
+
+    fn deref(&self) -> &std::path::Path {
+        &self.0
+    }
+}
+
+impl Drop for PrivateDir {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_dir_all(&self.0);
+    }
 }
 
 /// ⛔ ADR-0023 PROMISES "PROTECTED AS MUCH AS YOUR SYSTEM ACCOUNT IS", AND 0644 IS LESS.

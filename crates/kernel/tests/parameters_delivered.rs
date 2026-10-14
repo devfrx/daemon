@@ -131,9 +131,10 @@ fn the_constructor_substitutes_nothing_for_the_total_it_is_handed() {
 
 #[test]
 fn the_arbiter_identity_is_delivered_and_not_invented() {
-    // ⛔ THE POINT IS THE ABSENCE OF A DEFAULT. §6.1.3 forbids the kernel to MINT an
-    // identifier, and ADR-0034 says a decision reads only what it was handed: an arbiter
-    // that chose its own id would be doing both.
+    // ⛔ THE POINT IS THE ABSENCE OF A DEFAULT. ADR-0034 says a decision reads only what it
+    // was handed, and an arbiter that chose its own id would be reading a value nobody handed
+    // it; §6.1.3 rules only that the identifiers the kernel does produce are progressives,
+    // never random. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-1160.
     //
     // ⛔ TWO VALUES AND NOT ONE, for the reason the sisters above carry: a reader that
     // answered a CONSTANT would satisfy a single-value probe, so one value tests the

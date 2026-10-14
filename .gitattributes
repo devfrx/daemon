@@ -1,51 +1,54 @@
-# ⛔ REGOLE STRETTE, CIASCUNA SU UNA CARTELLA SOLA: LA RISTRETTEZZA È IL PUNTO.
-# ⚠️ RICHIAMO DEL 2026-10-09 — audit del 2026-09-30, AUD-1123, AUD-1126.
+# ⛔ NARROW RULES, EACH ON ONE DIRECTORY ONLY: THE NARROWNESS IS THE POINT.
+# ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1123, AUD-1126.
+# ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-732: these comments are in English, as are
+# those of every other configuration file of the repository; the rules are unchanged.
 #
-# I byte congelati del record durevole (`crates/kernel/tests/frozen/*.cbor`) sono l'unico
-# artefatto del progetto che non si rigenera mai: se cambiano non è un aggiornamento, è un
-# cambio di formato. Un `text=auto` che li trattasse come testo potrebbe riscrivere un `0d 0a`
-# in `0a` fra l'albero di lavoro e l'indice, e il file tornerebbe DIVERSO da quello che è stato
-# misurato — con l'oracolo rosso e nessun colpevole.
+# The frozen bytes of the durable record (`crates/kernel/tests/frozen/*.cbor`) are the only
+# artefact of the project that is never regenerated: if they change it is not an update, it is a
+# change of format. A `text=auto` that treated them as text could rewrite a `0d 0a` into `0a`
+# between the working tree and the index, and the file would come back DIFFERENT from the one
+# that was measured -- with the oracle red and nobody to blame.
 #
-# ⚠️ RICHIAMO DEL 2026-09-01: questa riga diceva «NESSUNO DEI **TRE** FILE» e i file erano
-# quattro; il quinto è arrivato col compito 6 del Traguardo 6. ⛔ Il numerale è TOLTO e non
-# riallineato — gotcha #31, e il rimedio è una sottrazione: quanti sono lo dice
-# `ls crates/kernel/tests/frozen/*.cbor`, che non marcisce.
-# ⚠️ OGGI NESSUNO DEI FILE CONGELATI CONTIENE UN `0a` O UN `0d`, e per giunta contengono `00`, che
-# basta a git per riconoscerli binari da sé. ⛔ MA È UN ACCIDENTE DEL CONTENUTO E NON UNA
-# GARANZIA: un record congelato di domani può portare quei byte, e allora la protezione
-# servirebbe e non ci sarebbe. Dichiarata adesso, mentre costa una riga.
+# ⚠️ RECALL OF 2026-09-01: this line said "NONE OF THE **THREE** FILES" and the files were four;
+# the fifth arrived with task 6 of milestone 6. ⛔ The numeral is REMOVED and not realigned --
+# gotcha #31, and the remedy is a subtraction: how many there are is what
+# `ls crates/kernel/tests/frozen/*.cbor` says, which does not rot.
+# ⚠️ TODAY NONE OF THE FROZEN FILES CONTAINS A `0a` OR A `0d`, and they contain `00` besides, which
+# is enough for git to recognise them as binary by itself. ⛔ BUT THAT IS AN ACCIDENT OF THE
+# CONTENT AND NOT A GUARANTEE: a frozen record of tomorrow can carry those bytes, and then the
+# protection would be needed and would not be there. Declared now, while it costs one line.
 #
-# ⛔ E NIENTE `* text=auto`, MAI, in questo file. I fine-riga di questo repository sono MISTI
-# PER FILE — non c'è una convenzione da seguire, c'è un file da non cambiare — e una regola
-# globale normalizzerebbe sorgenti che nessuno ha toccato, dichiarando centinaia di righe
-# cambiate in `git diff`. È già successo due volte, con uno script; da un `.gitattributes`
-# sarebbe peggio, perché nessuno lo rilegge.
+# ⛔ AND NO `* text=auto`, EVER, in this file. The line endings of this repository are MIXED PER
+# FILE -- there is no convention to follow, there is a file not to change -- and a global rule
+# would normalise sources nobody touched, declaring hundreds of lines changed in `git diff`. It
+# has already happened twice, with a script; from a `.gitattributes` it would be worse, because
+# nobody rereads it.
 crates/kernel/tests/frozen/*.cbor binary
 
-# ⛔ LE FIXTURE DEL FILO `ipc` -- LA SECONDA REGOLA, E LA RISTRETTEZZA VALE ANCORA.
+# ⛔ THE FIXTURES OF THE `ipc` WIRE -- THE SECOND RULE, AND THE NARROWNESS STILL HOLDS.
 #
-# `gui/schema/fixtures/` nasce col compito 3 del sotto-progetto 2. I `.json` portano il VALORE
-# ATTESO di ogni variante e `the_committed_fixtures_match_the_schema` li confronta BYTE A BYTE
-# con cio' che `variant_json` produce, che finisce sempre in un solo `\n`. Con `core.autocrlf=true`
-# -- un'impostazione della MACCHINA e non del repository, e il valore di quella su cui si lavora
-# lo dice `git config --show-origin --get core.autocrlf` -- un checkout fresco li riscriverebbe in
-# CRLF, e il controllo andrebbe rosso su TUTTI: verde dove sono stati scritti, rosso su ogni clone.
-# ⚠️ RICHIAMO DEL 2026-10-09 -- audit del 2026-09-30, AUD-1125.
-# ✅ MISURATO IL 2026-09-17 e non dedotto: `git checkout-index -a --prefix=<dir>/` rende **14** CR
-# nei `.json` contro **0** nell'albero di lavoro. La mappa reggeva da se', perche' `str::lines()`
-# toglie il `\r`; i `.json` no, perche' il confronto e' sui byte.
+# `gui/schema/fixtures/` was born with task 3 of sub-project 2. The `.json` files carry the
+# EXPECTED VALUE of every variant, and `the_committed_fixtures_match_the_schema` compares them
+# BYTE FOR BYTE with what `variant_json` produces, which always ends in a single `\n`. With
+# `core.autocrlf=true` -- a setting of the MACHINE and not of the repository, and its value on the
+# machine being worked on is what `git config --show-origin --get core.autocrlf` says -- a fresh
+# checkout would rewrite them in CRLF, and the check would go red on ALL of them: green where they
+# were written, red on every clone.
+# ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1125.
+# ✅ MEASURED ON 2026-09-17 and not deduced: `git checkout-index -a --prefix=<dir>/` gives **14**
+# CRs in the `.json` files against **0** in the working tree. The map held by itself, because
+# `str::lines()` strips the `\r`; the `.json` files do not, because the comparison is on bytes.
 #
-# ⚠️ E I `.bin` SONO LA STESSA STORIA DEI `.cbor` QUI SOPRA: oggi git li riconosce binari da se' --
-# `i/-text` in `git ls-files --eol 'gui/schema/fixtures/*.bin'` --, e un `00` gli basta, come gli
-# basterebbe un `0d` che non precede un `0a`. Il byte che la protezione salva e' l'`0a`: una
-# lettura da testo lo riscriverebbe in `0d 0a` al checkout con `core.autocrlf=true`, e alcuni
-# `.bin` lo portano gia' -- quali, lo dice `wc -l gui/schema/fixtures/*.bin`, che conta gli `0a`.
-# La protezione servirebbe davvero il giorno che git smettesse di riconoscerli da se', ed e' un
-# accidente del contenuto come lo e' lassu'.
-# ⚠️ RICHIAMO DEL 2026-10-09 -- audit del 2026-09-30, AUD-1127.
+# ⚠️ AND THE `.bin` FILES ARE THE SAME STORY AS THE `.cbor` ABOVE: today git recognises them as
+# binary by itself -- `i/-text` in `git ls-files --eol 'gui/schema/fixtures/*.bin'` --, and a `00`
+# is enough for it, as a `0d` that does not precede a `0a` would be. The byte the protection saves
+# is the `0a`: a read as text would rewrite it into `0d 0a` at checkout with `core.autocrlf=true`,
+# and some `.bin` files already carry it -- which ones is what `wc -l gui/schema/fixtures/*.bin`
+# says, as it counts the `0a`. The protection would really be needed the day git stopped
+# recognising them by itself, and that is an accident of the content, as it is up there.
+# ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1127.
 #
-# ⛔ E RESTA VIETATO UN `* text=auto`: queste tre righe nominano UNA cartella, che e' il punto.
+# ⛔ AND A `* text=auto` STAYS FORBIDDEN: these three lines name ONE directory, which is the point.
 gui/schema/fixtures/*.bin  binary
 gui/schema/fixtures/*.json text eol=lf
 gui/schema/fixtures/*.map  text eol=lf

@@ -91,9 +91,11 @@ export const useLayout = defineStore("layout", () => {
    * flight. What `apply` reads. */
   const saved = ref<LayoutPack | null>(null);
   /** ⛔ HOW MANY PACKAGES ARRIVED THAT ARE NOT THE ECHO OF OUR OWN SAVE (D89): the dock watches
-   * it and shows what arrived. A counter and not an event, because the dock is a Vue watcher. */
+   * it and shows what arrived. A counter and not an event, because the dock is a Vue watcher. ⚠️ A package the ceiling
+   * kept back counts too: what we hold comes back on screen the same way (AUD-051 of the audit of 2026-09-30). */
   const arrivals = ref(0);
-  let wire: Bridge | null = null;
+  /** The bridge, and the ceiling on a package it is handed with it -- `attach` delivers both at once. */
+  let wire: { bridge: Bridge; ceiling: number } | null = null;
   /** ⛔ EVERY SAVE SENT SINCE THE LAST ARRIVAL WHOSE ANSWER HAS NOT COME, OLDEST FIRST, and not the last one alone (AUD-542
    * of the audit of 2026-09-30): a settle and a theme chosen at once put two in flight, and with one slot the answer to
    * the first was shown as a package of someone else's -- the theme back to `system`, the screen back a move.
@@ -101,8 +103,25 @@ export const useLayout = defineStore("layout", () => {
    * stays here until the next arrival empties the list: the cost is the bytes of the saves made while no core listens. */
   let inFlight: (readonly number[])[] = [];
 
-  function attach(bridge: Bridge): void {
-    wire = bridge;
+  /**
+   * ⛔ THE CEILING IS DELIVERED, NOT CHOSEN HERE (AUD-051 of the audit of 2026-09-30): the composition root hands it in
+   * with the bridge -- `LAYOUT_CEILING` of `main.ts` -- as the daemon hands its transport `MAX_BODY`, and a probe hands
+   * its own. It is the largest package, in bytes, that `keep` sends.
+   */
+  function attach(bridge: Bridge, ceiling: number): void {
+    wire = { bridge, ceiling };
+  }
+
+  /** What we hold, put on screen: the dock follows `arrivals` and draws `saved` -- the view of always, and the named view
+   * that is open, if the package holds it. */
+  function show(pack: LayoutPack | null): void {
+    saved.value = pack;
+    if (pack !== null) view.value = pack.view;
+    // ⛔ AND THE NAMED VIEW THAT IS OPEN (R3-19 of the design-system review), or none -- ALSO WHEN NOTHING READABLE ARRIVED
+    // (E75 of the design-system plan): the dock then shows the view of always, and a name left open would send the next
+    // move nowhere.
+    openNamed.value = pack?.openNamed ?? null;
+    arrivals.value += 1;
   }
 
   function receive(message: IpcMessage): void {
@@ -126,13 +145,7 @@ export const useLayout = defineStore("layout", () => {
     // says what the core holds after it, and is shown in its turn -- the last leaves the gui holding
     // what the core holds.
     inFlight = [];
-    saved.value = unpack(message.value);
-    if (saved.value !== null) view.value = saved.value.view;
-    // ⛔ AND THE NAMED VIEW THAT IS OPEN (R3-19 of the design-system review), or none -- ALSO WHEN NOTHING
-    // READABLE ARRIVED (E75 of the design-system plan): the dock then shows the view of always, and a name left
-    // open would send the next move nowhere.
-    openNamed.value = saved.value?.openNamed ?? null;
-    arrivals.value += 1;
+    show(unpack(message.value));
   }
 
   /** The package we hold, with what is on screen: the view of always, and the named view if one is open. */
@@ -205,11 +218,24 @@ export const useLayout = defineStore("layout", () => {
   }
 
   function keep(pack: LayoutPack): void {
-    saved.value = pack;
-    if (wire === null) return;
+    if (wire === null) {
+      saved.value = pack;
+      return;
+    }
     const bytes = [...pack_(pack)];
+    // ⛔ OVER THE CEILING THE PACKAGE DOES NOT LEAVE, AND THE LAYOUT GOES BACK TO THE ONE WE HOLD (AUD-051 of the audit of
+    // 2026-09-30, the owner's decision). Sent, it would pass the transport's cap, and the core poisons a client over its cap
+    // and answers nothing: the gui would be unheard for the rest of its session. So it stops here, and the failed write
+    // shows the way the coordinator's decision 13 of the north star has a write that did not stick show -- the old
+    // package comes back on screen. ⚠️ `saveNamed` still answers "saved" for it, as it does for a write the core refuses:
+    // in both, what the owner sees is the old layout coming back.
+    if (bytes.length > wire.ceiling) {
+      show(saved.value);
+      return;
+    }
+    saved.value = pack;
     inFlight.push(bytes);
-    wire.send({ kind: "SaveLayout", value: bytes });
+    wire.bridge.send({ kind: "SaveLayout", value: bytes });
   }
 
   return { state, view, openNamed, saved, arrivals, theme, attach, receive, settle, showView, showNamed, saveNamed, chooseTheme };

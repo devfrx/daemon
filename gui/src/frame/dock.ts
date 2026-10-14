@@ -57,6 +57,13 @@ function same(a: SerializedDockview, b: SerializedDockview): boolean {
   return JSON.stringify(canonical(a)) === JSON.stringify(canonical(b));
 }
 
+/** What `createDock` hands back: the grid, and the one way to take it down. */
+export interface Dock {
+  readonly api: DockviewApi;
+  /** Stops the watchers, takes the listeners off `window`, and disposes of the grid: nothing of it answers after. */
+  dispose(): void;
+}
+
 /**
  * ⛔ THE DOCK FOLLOWS THE STORE (D89), in the three ways the store changes under it: one of the
  * three views is shown (`showView`), a named view opens or closes (`openNamed`, the (d) of the
@@ -81,13 +88,9 @@ function same(a: SerializedDockview, b: SerializedDockview): boolean {
  * ⛔ WHAT IT REGISTERS OUTSIDE THE GRID GOES WITH IT (AUD-2116 of the audit of 2026-09-30): its
  * watchers and its two listeners on `window` hold the dock, and `dispose` takes them away before
  * the grid -- as `watchTheme` hands back its stop, and `Frame.vue` takes its own `keydown` off.
+ *
+ * ⚠️ THIS DOC IS `createDock`'s, and `Dock` carries one of its own (AUD-2274 of the audit of 2026-09-30).
  */
-export interface Dock {
-  readonly api: DockviewApi;
-  /** Stops the watchers, takes the listeners off `window`, and disposes of the grid: nothing of it answers after. */
-  dispose(): void;
-}
-
 export function createDock(host: HTMLElement): Dock {
   const layout = useLayout();
   const api = createDockview(host, {

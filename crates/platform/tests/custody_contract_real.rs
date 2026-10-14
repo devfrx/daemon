@@ -51,8 +51,10 @@ fn the_real_custody_honours_the_contract() {
     });
 }
 
-/// A directory of this test's own, emptied on entry -- the same mechanism
-/// `crates/platform/tests/file_journal.rs` uses, and for the same reason.
+/// A directory of this test's own, fresh on entry and removed by its guard when the test is done
+/// -- the same mechanism `crates/platform/tests/file_journal.rs` uses, and for the same reason:
+/// the process id in the name and the guard are explained once, at the head of that file
+/// (⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2127).
 ///
 /// ⛔ ONE DIRECTORY PER CALL SITE, AND THE LINE NUMBER IS WHAT MAKES IT ONE. libtest runs the
 /// tests inside one binary on parallel threads, so a directory emptied on entry is only safe if
@@ -65,9 +67,30 @@ fn the_real_custody_honours_the_contract() {
 /// other bench may share this prefix. What the prefix keeps apart, and what it does not, is
 /// written once, at the head of `file_journal.rs`, with the command that lists the prefixes in
 /// use. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1383, AUD-1388, AUD-1390.
-fn private_dir_for_line(line: u32) -> std::path::PathBuf {
-    let dir = std::env::temp_dir().join(format!("daemon-custody-contract-{line}"));
+fn private_dir_for_line(line: u32) -> PrivateDir {
+    let dir = std::env::temp_dir().join(format!(
+        "daemon-custody-contract-{}-{line}",
+        std::process::id()
+    ));
     let _ = std::fs::remove_dir_all(&dir);
     std::fs::create_dir_all(&dir).expect("create the test directory");
-    dir
+    PrivateDir(dir)
+}
+
+/// The directory `private_dir_for_line` hands out, removed when it falls -- the guard of
+/// `file_journal.rs`, copied because test code does not cross a crate boundary.
+struct PrivateDir(std::path::PathBuf);
+
+impl std::ops::Deref for PrivateDir {
+    type Target = std::path::Path;
+
+    fn deref(&self) -> &std::path::Path {
+        &self.0
+    }
+}
+
+impl Drop for PrivateDir {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_dir_all(&self.0);
+    }
 }

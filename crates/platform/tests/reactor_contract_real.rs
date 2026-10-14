@@ -16,8 +16,9 @@
 // SECOND TIME in this binary. None of them sleeps -- a liar is a fake clock and only the real
 // implementation waits -- so it costs a few milliseconds, and it buys the single copy of the
 // assertions, which is not a trade worth reversing. ⛔ HOW MANY THEY ARE IS NOT WRITTEN HERE: the
-// included file owns that figure and states it beside the tests themselves;
+// included file owns that count and gives the command that makes it;
 // `grep -c '^#\[test\]' crates/kernel/tests/reactor_contract.rs` answered 8 on 2026-08-28.
+// ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2156.
 //
 // ⛔ RECALL OF 2026-08-28, FINDINGS AUD-030 AND AUD-059 (the same defect, filed twice) -- THIS
 // NAMED TWO TESTS BY NAME, `the_fake_reactor_honours_the_contract` and

@@ -130,8 +130,9 @@ describe("the judge itself (AUD-2212 of the audit of 2026-09-30)", () => {
   });
 
   it("puts a pair under its threshold among the failures, and leaves the pair over it out", () => {
-    // ⛔ THE PROBE OF EVERY PAIR GOES RED, AND NOT ONLY GREEN: two greys on white either side of 4.5:1 -- the darkest grey that
-    // passes and the lightest that does not, by the formula of WCAG 2.2 -- and only the second is a failure.
+    // ⛔ THE PROBE OF EVERY PAIR GOES RED, AND NOT ONLY GREEN: two greys on white either side of 4.5:1 -- the lightest grey that
+    // passes and the darkest that does not, by the formula of WCAG 2.2 -- and only the second is a failure (AUD-2276 of the
+    // audit of 2026-09-30).
     const roles = { "color-text": "#777777", "color-mark": "#767676", "color-bg": "#ffffff" };
     const pairs: [string, string, number][] = [
       ["color-text", "color-bg", 4.5],

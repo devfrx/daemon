@@ -20,6 +20,10 @@ beforeEach(() => {
   setActivePinia(createPinia());
 });
 
+/** The ceiling the layout probes hand the store with the bridge: none of their packages comes near it. The probes of the
+ * ceiling itself hand their own (AUD-051 of the audit of 2026-09-30). */
+const ROOM = 1024 * 1024;
+
 describe("the connection", () => {
   it("starts waiting and sends Hello with the stamp from the map", () => {
     const bridge = createFakeBridge();
@@ -129,7 +133,7 @@ describe("the layout", () => {
   it("sends SaveLayout as bytes when the layout settles", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
-    layout.attach(bridge);
+    layout.attach(bridge, ROOM);
     layout.settle({} as never);
     const sent = bridge.sent[0];
     expect(sent?.kind).toBe("SaveLayout");
@@ -139,7 +143,7 @@ describe("the layout", () => {
   it("merges the open view into the package it holds, and keeps the other views (D80)", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
-    layout.attach(bridge);
+    layout.attach(bridge, ROOM);
     const home = { marker: "home, as the owner left it" } as never;
     layout.receive({ kind: "Layout", value: { state: "Package", bytes: [...pack_({ view: "home", layouts: { home } })] } });
     layout.view = "work";
@@ -155,7 +159,7 @@ describe("the layout", () => {
   it("does not count its own save coming back, and does count any other package (D89)", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
-    layout.attach(bridge);
+    layout.attach(bridge, ROOM);
     layout.settle({ marker: "mine" } as never);
     const sent = bridge.sent[0];
     const echo = sent?.kind === "SaveLayout" ? sent.value : [];
@@ -185,7 +189,7 @@ describe("the layout", () => {
   it("does not count the echo of an earlier save while a later one is in flight (D89, AUD-542 of the audit of 2026-09-30)", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
-    layout.attach(bridge);
+    layout.attach(bridge, ROOM);
     // ⛔ TWO SAVES BEFORE THE FIRST ANSWER: a settle, then a theme chosen -- each `keep` sends at once.
     const home = { marker: "home, moved" } as never;
     layout.settle(home);
@@ -206,10 +210,46 @@ describe("the layout", () => {
     expect(unpack({ state: "Package", bytes: sentBytes(bridge, 2) })).toEqual({ view: "work", layouts: { home, work }, theme: "dark" });
   });
 
+  it("sends a package as long as the ceiling it was handed, keeps back one a byte longer, and shows again the layout it holds (AUD-051 of the audit of 2026-09-30)", () => {
+    // ⛔ BOTH DIRECTIONS, AT THE BOUNDARY ITSELF: a package of exactly the ceiling leaves, one a byte longer does not -- and
+    // the layout goes back to the one the store holds, as it does when the core answers a write that did not stick with the
+    // old package (the coordinator's decision 13 of the north star): `saved` unchanged, and an arrival for the dock to show.
+    const sized = (length: number): never => ({ marker: "x".repeat(length) }) as never;
+    const ceiling = pack_({ view: "home", layouts: { home: sized(0) } }).length + 100;
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge, ceiling);
+    layout.receive(held([...pack_({ view: "home", layouts: { home: { marker: "held" } as never } })]));
+    const arrived = layout.arrivals;
+
+    layout.settle(sized(100));
+    expect(sentBytes(bridge, 0)).toHaveLength(ceiling);
+    expect(layout.arrivals).toBe(arrived);
+
+    layout.settle(sized(101));
+    expect(bridge.sent).toHaveLength(1);
+    expect(layout.saved).toEqual({ view: "home", layouts: { home: sized(100) } });
+    expect(layout.arrivals).toBe(arrived + 1);
+  });
+
+  it("closes again a named view the ceiling kept back, and holds the package it held before (AUD-051 of the audit of 2026-09-30)", () => {
+    // ⛔ `saveNamed` OPENS THE NAME BEFORE IT SAVES: a package kept back over the ceiling must take the name back too, or the
+    // next move would go into a view the package does not have -- the loss of E75, by another door.
+    const before: LayoutPack = { view: "home", layouts: {} };
+    const bridge = createFakeBridge();
+    const layout = useLayout();
+    layout.attach(bridge, pack_(before).length + 10);
+    layout.receive(held([...pack_(before)]));
+    layout.saveNamed("Revisione", { marker: "x".repeat(100) } as never, ["Home", "Lavoro", "Compatta"]);
+    expect(bridge.sent).toEqual([]);
+    expect(layout.openNamed).toBeNull();
+    expect(layout.saved).toEqual(before);
+  });
+
   it("does count what the core holds after a write that did not stick, with a later save in flight, and then the later one (decision 13)", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
-    layout.attach(bridge);
+    layout.attach(bridge, ROOM);
     const welcome = [...pack_({ view: "home", layouts: {} })];
     layout.receive(held(welcome));
     expect(layout.arrivals).toBe(1);
@@ -250,7 +290,7 @@ describe("the theme in the package (design system, section (a))", () => {
   it("sends the choice at once, and a settle after it keeps it", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
-    layout.attach(bridge);
+    layout.attach(bridge, ROOM);
     const work = { marker: "work, as the owner left it" } as never;
     layout.receive({ kind: "Layout", value: { state: "Package", bytes: [...pack_({ view: "home", layouts: { work } })] } });
     layout.chooseTheme("dark");
@@ -317,7 +357,7 @@ describe("the named views in the package (design system, section (d))", () => {
   it("writes a move in an open named view into THAT view, and leaves the three and the other named views as they were (R3-19)", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
-    layout.attach(bridge);
+    layout.attach(bridge, ROOM);
     const home = { marker: "home, as the owner left it" } as never;
     // ⛔ TWO NAMED VIEWS, THE OPEN ONE SECOND (E82 of the plan): with one alone, "that view" reads the same as "every
     // named view" or "the first", and a move written into the wrong one loses it in silence (D4).
@@ -335,7 +375,7 @@ describe("the named views in the package (design system, section (d))", () => {
   it("shows one of the three by closing the named view, saves nothing for showing, and settles into the three after", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
-    layout.attach(bridge);
+    layout.attach(bridge, ROOM);
     const review = { marker: "review" } as never;
     layout.receive(fromTheCore({ view: "home", layouts: {}, named: [{ name: "Revisione", layout: review }], openNamed: "Revisione" }));
     layout.showView("compact");
@@ -363,7 +403,7 @@ describe("the named views in the package (design system, section (d))", () => {
   it("saves the layout on screen under a new name at once and opens it, keeps those saved before, and refuses an empty or a taken name (D4)", () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
-    layout.attach(bridge);
+    layout.attach(bridge, ROOM);
     // ⛔ A NAMED VIEW SAVED BEFORE (E82 of the plan): the new name joins the list, and the one before stays.
     const before = { marker: "saved before" } as never;
     layout.receive(fromTheCore({ view: "home", layouts: {}, named: [{ name: "Prima", layout: before }] }));
@@ -389,7 +429,7 @@ describe("the named views in the package (design system, section (d))", () => {
       setActivePinia(createPinia());
       const bridge = createFakeBridge();
       const layout = useLayout();
-      layout.attach(bridge);
+      layout.attach(bridge, ROOM);
       layout.receive(held);
       expect(layout.saveNamed("Revisione", { marker: "on screen" } as never, ["Home", "Lavoro", "Compatta"])).toBe("saved");
       // The dock shows the view of always, and a name left open would send the next move nowhere: not into

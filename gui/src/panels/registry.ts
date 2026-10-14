@@ -17,6 +17,9 @@ export interface PanelType {
 
 /**
  * The module types of §1 of the north star, those of its full tables and those of its short one.
+ * ⚠️ NOT TO BE CONFUSED WITH THE KERNEL'S REGISTRY of the program's functions (`crates/kernel/src/registry.rs`,
+ * ADR-0038), which `functions.ts` beside this file speaks to: this is the SPA's registry of PANEL TYPES, and rule 5 of
+ * ADR-0038 keeps the manipulation of panels out of the kernel's. (AUD-764 of the audit of 2026-09-30)
  * ⛔ THE LIST IS THE CATALOGUE'S, NOT THIS FILE'S: a module type is added when §1 gains a row --
  * how many there are is §1's to say, and this file counts nothing (AUD-2069 of the audit of
  * 2026-09-30).
@@ -32,7 +35,8 @@ export interface PanelType {
  * of its row rather than the output of a rule. Read row by row on 2026-09-21 (E164): a reading of
  * prose, which no command repeats.
  * ⚠️ E163 claimed "the first sub-project" and "two rows", and both were wrong: its census
- * had read the SHORT table's "Chi" column and not the prose of the five full ones.
+ * had read the SHORT table's "Chi" column and not the prose of the full ones (AUD-2275 of the
+ * audit of 2026-09-30).
  *
  * ⚠️ `strip` IS NOT HERE, and that is the distinction D50 draws: the strip is a panel of the
  * grid, so it is registered as a component, but it is not a MODULE -- it does not appear in the
@@ -61,8 +65,9 @@ export const PANEL_TYPES: readonly PanelType[] = [
 
 const BUILT = new Map<string, Component>([["strip", Strip]]);
 
-/** Task 14 plugs the real modules in here. ⛔ ONE SEAM AND NOT EIGHTEEN IMPORTS in this file:
- * a module that is built must not make this file change shape, only its map gain a row. */
+/** Task 14 plugs the real modules in here. ⛔ ONE SEAM AND NOT ONE IMPORT PER MODULE in this file:
+ * a module that is built must not make this file change shape, only its map gain a row (AUD-2275 of
+ * the audit of 2026-09-30). */
 export function register(name: string, component: Component): void {
   BUILT.set(name, component);
 }

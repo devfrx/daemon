@@ -1,7 +1,7 @@
 import MarkdownIt from "markdown-it";
 
 /**
- * The renderer of the chat (decision 51 of the north star; §9 row 1 of the sub-project 2 design).
+ * The renderer of the chat (the coordinator's decision 51 of the north star; §9 row 1 of the sub-project 2 design).
  *
  * ⛔ PRESET `default` WITH `html: false` AND `linkify: false` WRITTEN OUT, not relied on -- read
  * INSIDE the 15.0.2 package on 2026-09-15 (task 14, step 2): raw HTML in the text is escaped,

@@ -285,8 +285,9 @@ fn releasing_gives_back_exactly_the_reservation() {
 ///
 /// ⚠️ WHAT IT STILL DOES NOT PROVE, so the trade is not silently upgraded: that two arbiters
 /// which were handed the SAME id can be told apart. Nothing can, and nothing should -- the
-/// identity is DELIVERED (§6.1.3), so "these are two arbiters" is the composition root's
-/// statement and not a fact the kernel could check.
+/// identity is DELIVERED (ADR-0034), so "these are two arbiters" is the composition root's
+/// statement and not a fact the kernel could check. ⚠️ RECALL OF 2026-10-14 -- audit of
+/// 2026-09-30, AUD-1160.
 ///
 /// ⛔ AND THE SECOND ARBITER HOLDS A GRANT OF ITS OWN, which is what lets the second assertion
 /// fail: on an EMPTY arbiter `allocated()` reads `Mib::ZERO` whatever `release` does --

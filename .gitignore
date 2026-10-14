@@ -19,11 +19,15 @@ Desktop.ini
 # dependency graph against the allow-list of ADR-0031. Without a versioned lockfile the
 # graph resolves differently on another machine or on another day, and the check would
 # measure a graph nobody has approved; this is the product.
-# ⚠️ AND THE SPIKES DO NOT ALL DO THE SAME. Every spike `Cargo.lock` listed below is ignored: a
-# spike redone from a seed needs none. Committed instead: the shell spike's lockfiles, npm and
-# Cargo, whose numbers entered ADR-0029 and must be redone as they were (the coordinator's
-# decision 49 of the GUI north star), and `spikes/gesti/requirements.lock`, the environment of
-# the measures of SP-7. RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1131, AUD-735.
+# ⚠️ AND THE SPIKES DO NOT ALL DO THE SAME. The spike `Cargo.lock` files listed below are ignored,
+# and not for one reason: `spikes/rust` is redone from its seeds (SP-5 and SP-6);
+# `spikes/gesti/relay` declares no dependency, so its lockfile would name the crate alone;
+# `spikes/gui-ipc`, the emitter of the SP-8 measures, has neither a seed nor an empty graph, and
+# whether its lockfile should be committed is open (audit of 2026-09-30, AUD-1029). Committed
+# instead: the shell spike's lockfiles, npm and Cargo, whose numbers entered ADR-0029 and must be
+# redone as they were (the coordinator's decision 49 of the GUI north star), and
+# `spikes/gesti/requirements.lock`, the environment of the measures of SP-7. RECALL OF 2026-10-09
+# -- audit of 2026-09-30, AUD-1131, AUD-735; and of 2026-10-14, same audit, AUD-2270.
 
 # Build artefacts of the gui -- the lockfile is committed, the tree it installs is not
 /gui/node_modules/

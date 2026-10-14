@@ -100,9 +100,11 @@ use alloc::vec::Vec;
 /// The sentence above is therefore still exact, and this line says which half moved.
 ///
 /// ⚠️ The derive list is short on purpose. No ordering and no `Hash`: nothing sorts or indexes
-/// these yet, and `Hash` in particular would be an invitation in a crate where a negative case
-/// forbids `HashMap` outright (gotcha #12). They come back the day something needs them, with
-/// the caller that needs them.
+/// these yet, and `Hash` in particular would be an invitation in a crate where `#![no_std]` keeps
+/// `HashMap` out of reach (gotcha #12) -- `lib.rs` declares it and `scripts/gate-attributes.sh`
+/// watches it; the negative case `tests/compile_fail/hashmap_in_kernel.rs` only demonstrates the
+/// mechanism (gotcha #39). ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-1174. They come
+/// back the day something needs them, with the caller that needs them.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct StepId(u64);
 

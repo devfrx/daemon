@@ -14,8 +14,8 @@
 // ⚠️ AND THE REST OF THE PREAMBLE BELOW IS REPEATED VERBATIM from `worker_tokens.rs` in
 // `crates/kernel/tests/`, with `kernel::` in place of its `use` statements and its `GUI_TICK`
 // written out as the `kernel::time::Millis::new(0)` it stands for: `trybuild` compiles every case
-// here as its own crate, and test code does not cross a crate boundary -- the reason `Yield` is
-// duplicated word for word between `executor_determinism.rs` and `dst_campaign.rs`.
+// here as its own crate, and test code does not cross a crate boundary: what that bench
+// defines, this case cannot import (⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-794).
 use kernel::ports::process::{Process as _, Worker as _};
 
 fn a_real_grant() -> kernel::arbiter::Grant {

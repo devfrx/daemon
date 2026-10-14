@@ -47,10 +47,13 @@ use crate::ports::journal::StepId;
 /// written here.
 ///
 /// ⚠️ The derive list is short on purpose, and it is `StepId`'s argument applied again. No
-/// ordering: nothing sorts these. No `Hash`: `HashMap` IS NOT NAMEABLE in this crate --
-/// `tests/compile_fail/hashmap_in_kernel.rs`, gotcha #12 -- so `Hash` would be a derive whose
-/// usual consumer cannot exist here. They come back the day something needs them, with the
-/// caller that needs them. ⛔ `Clone` is NOT in that category: it is LOAD-BEARING for
+/// ordering: nothing sorts these. No `Hash`: `HashMap` IS NOT NAMEABLE in this crate -- it lives
+/// in `std`, and `lib.rs` declares `#![no_std]`, watched by `scripts/gate-attributes.sh`;
+/// `tests/compile_fail/hashmap_in_kernel.rs` demonstrates the mechanism on a crate of its own and
+/// holds nothing here (gotcha #39); gotcha #12 -- so `Hash` would be a derive whose usual
+/// consumer cannot exist here. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-1174. They
+/// come back the day something needs them, with the caller that needs them. ⛔ `Clone` is NOT in
+/// that category: it is LOAD-BEARING for
 /// `declare_scope`, which hands the implementation a borrowed slice it has to retain.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Path(Vec<u8>);

@@ -19,10 +19,11 @@
 //! paragraph first tried (gotcha #31). ⛔ AND THE OTHER DIRECTION, without which a zero measures
 //! nothing: the anchored command returns MORE THAN ZERO on `crates/simulator/tests/dying_gui.rs`,
 //! which is where asking the fake is the right thing to do -- how many is the command's to say,
-//! never a figure here. ⚠️ AND IT IS A COMMAND, NOT A CHECK: no step of `scripts/gate.sh` or of
-//! the CI runs it, so a call to `has_died` added to `run` would leave every test here green.
-//! Turning it into a check is an open choice (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
-//! AUD-2170).
+//! never a figure here. ⛔ AND IT IS A CHECK TOO, BY THE OWNER'S DECISION:
+//! `this_file_never_asks_the_fake_whether_it_died` reads this very source and goes red on a call
+//! of `has_died` in a line that is not a comment, by method or by path -- measured on 2026-10-14
+//! in both directions, with a call added by hand to `run` and taken away again. ⚠️ RECALL OF
+//! 2026-10-14 -- audit of 2026-09-30, AUD-2170.
 //!
 //! ⛔ AND THE BASELINE IS NOT ZERO, which is the second half nothing else would catch. "The sum
 //! comes back to the baseline" is green for a reconciliation that releases EVERYTHING when the
@@ -488,5 +489,31 @@ fn the_campaign_sweeps_every_world_this_scenario_has() {
         4,
         "the admission reached {answers:?} and not all four of NeverAsked, Granted, Queued and \
          Refused: some arm of `admit` is not being exercised at all"
+    );
+}
+
+/// ⛔ THE DEATH IS READ FROM THE PORT AND NOWHERE ELSE, HELD AND NOT ONLY WRITTEN: this file never
+/// asks the fake whether it died. The probe reads this very source and refuses `has_died(` in any
+/// line that is not a comment -- a method call and a path call alike --, so the paragraphs that
+/// SAY the fake is not asked are not counted, and a call added to `run` is.
+///
+/// ⚠️ THE NEEDLE IS BUILT FROM TWO PIECES, so that the line that names it does not carry it whole
+/// and the probe does not find itself. ⚠️ WHAT IT DOES NOT SEE: a call inside a block comment, or
+/// split across two lines -- neither shape exists in this file. ⚠️ RECALL OF 2026-10-14 -- audit of
+/// 2026-09-30, AUD-2170.
+#[test]
+fn this_file_never_asks_the_fake_whether_it_died() {
+    let needle = ["has_", "died("].concat();
+    let calls: Vec<(usize, &str)> = include_str!("gui_death_campaign.rs")
+        .lines()
+        .enumerate()
+        .filter(|(_, line)| !line.trim_start().starts_with("//"))
+        .filter(|(_, line)| line.contains(needle.as_str()))
+        .map(|(index, line)| (index + 1, line.trim()))
+        .collect();
+    assert!(
+        calls.is_empty(),
+        "this file asks the fake whether it died, at {calls:?}: the death must come from the port, \
+         as `Err(IpcError::Disconnected)`, or the property stays inside the bench (P-16)"
     );
 }

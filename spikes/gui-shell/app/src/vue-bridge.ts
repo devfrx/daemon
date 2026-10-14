@@ -3,7 +3,9 @@ import type { GroupPanelPartInitParameters, IContentRenderer } from 'dockview-co
 
 /** Mounts a Vue component as the content of one dockview panel -- the bridge between Vue and the
  * panels that the north star (decision 2 of the coordinator) says we write ourselves. One Vue app
- * per panel: a panel that dockview disposes unmounts its app and nothing leaks. */
+ * per panel: a panel that dockview disposes unmounts its app, and nothing of the bridge is left.
+ * What a tile holds outside Vue is the tile's to release: `tiles/Scene.vue` does not release its
+ * renderer, as its head says. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2123, AUD-2287. */
 export class VueContent implements IContentRenderer {
   readonly element = document.createElement('div');
   private app?: App;

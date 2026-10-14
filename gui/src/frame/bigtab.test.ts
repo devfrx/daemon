@@ -1,5 +1,6 @@
 import type { TabPartInitParameters } from "dockview-core";
 import { describe, expect, it, vi } from "vitest";
+import { nextTick } from "vue";
 
 import { i18n } from "../i18n";
 
@@ -19,19 +20,36 @@ vi.mock("../panels/registry", async (importOriginal) => {
   return { ...actual, panelType: (name: string) => (name === RENAMED.name ? RENAMED : actual.panelType(name)) };
 });
 
-function parameters(id: string, title?: string, maximized = false) {
+type Place = "grid" | "floating";
+type Moved = (event: { location: { type: Place } }) => void;
+
+function parameters(id: string, title?: string, maximized = false, at: Place = "grid") {
   const calls: string[] = [];
+  let location: { type: Place } = { type: at };
+  const listeners: Moved[] = [];
   const api = {
     id,
     isMaximized: () => maximized,
     maximize: () => calls.push("maximize"),
     exitMaximized: () => calls.push("exit"),
+    get location() {
+      return location;
+    },
+    onDidLocationChange: (listener: Moved) => {
+      listeners.push(listener);
+      return { dispose: () => void listeners.splice(listeners.indexOf(listener), 1) };
+    },
   };
   const containerApi = {
     getPanel: (wanted: string) => (wanted === id ? { id } : undefined),
     addFloatingGroup: () => calls.push("float"),
   };
-  return { calls, init: { api, containerApi, title, params: {} } as unknown as TabPartInitParameters };
+  /** The tile moves, as `dockview` moves it: the location changes, and then the event says where it settled. */
+  const moveTo = (type: Place): void => {
+    location = { type };
+    for (const listener of [...listeners]) listener({ location });
+  };
+  return { calls, listeners, moveTo, init: { api, containerApi, title, params: {} } as unknown as TabPartInitParameters };
 }
 
 describe("the big tab", () => {
@@ -87,12 +105,34 @@ describe("the big tab", () => {
     expect(calls).toEqual(["exit"]);
   });
 
-  it("takes its face away when dockview disposes of the tab", () => {
+  it("puts «A pagina intera, o ritorno» off while the tile floats, and on again when it is back in the grid (AUD-2061 of the audit of 2026-09-30)", async () => {
+    // ⛔ OFF THE GRID `maximize()` DOES NOTHING (M-1 of the review, E187), so the command that would call it is offered
+    // off there -- the rule `dockview-core` 8.3.1 gives its own maximize item. BOTH DIRECTIONS, AND THE MOVE BETWEEN THEM:
+    // a tile born floating starts with the command off, and the location event turns it on and off again.
+    const { calls, moveTo, init } = parameters("status", undefined, false, "floating");
     const tab = new BigTab();
-    tab.init(parameters("status").init);
+    tab.init(init);
+    const page = (): HTMLButtonElement | undefined => tab.element.querySelectorAll("button")[1];
+    expect(page()?.disabled).toBe(true);
+    moveTo("grid");
+    await nextTick();
+    expect(page()?.disabled).toBe(false);
+    page()?.click();
+    expect(calls).toEqual(["maximize"]);
+    moveTo("floating");
+    await nextTick();
+    expect(page()?.disabled).toBe(true);
+  });
+
+  it("takes its face away when dockview disposes of the tab, and stops listening to where the tile is", () => {
+    const { listeners, init } = parameters("status");
+    const tab = new BigTab();
+    tab.init(init);
     expect(tab.element.childElementCount).toBeGreaterThan(0);
     tab.dispose();
-    // ⛔ ONE VUE APP PER TAB: a tab `dockview` throws away that kept its app would leak a reactive tree.
+    // ⛔ ONE VUE APP PER TAB: a tab `dockview` throws away that kept its app would leak a reactive tree, and a listener left
+    // on the panel's location would keep that tree reachable.
     expect(tab.element.childElementCount).toBe(0);
+    expect(listeners).toHaveLength(0);
   });
 });

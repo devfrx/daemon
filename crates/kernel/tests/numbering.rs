@@ -15,7 +15,7 @@
 //! with everybody.
 
 use kernel::numbering::{seeded_from, Progressive};
-use kernel::ports::journal::{Journal, StepId};
+use kernel::ports::journal::{Journal, JournalError, StepId};
 use simulator::journal::MemoryJournal;
 
 #[test]
@@ -111,4 +111,40 @@ fn a_reopened_journal_never_hands_back_a_number_it_already_holds() {
             "the restarted counter handed back {fresh}, which the journal already holds"
         );
     }
+}
+
+/// A journal that will not replay, and accepts every write.
+struct ReplayRefusingJournal;
+
+impl Journal for ReplayRefusingJournal {
+    fn intent(&mut self, _step: StepId, _record: &[u8]) -> Result<(), JournalError> {
+        Ok(())
+    }
+    fn outcome(&mut self, _s: StepId, _r: &[u8]) -> Result<(), JournalError> {
+        Ok(())
+    }
+    fn note(&mut self, _s: StepId, _r: &[u8]) -> Result<(), JournalError> {
+        Ok(())
+    }
+    fn read_back(&self, _s: StepId) -> Result<Vec<u8>, JournalError> {
+        Err(JournalError::Missing)
+    }
+    fn replay(&self) -> Result<Vec<(StepId, Vec<u8>)>, JournalError> {
+        Err(JournalError::NotDurable)
+    }
+    fn prune(&mut self, _s: StepId) -> Result<(), JournalError> {
+        Ok(())
+    }
+}
+
+#[test]
+fn a_journal_that_will_not_replay_seeds_nothing() {
+    // ⛔ THE ONE WAY `seeded_from` FAILS, held by nothing until this probe: with `?` swallowed
+    // into `unwrap_or_default()` every other probe here stays green, and a core restarted on an
+    // archive it cannot read would seed at zero -- the defect the head of this bench names.
+    // ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2131.
+    assert!(matches!(
+        seeded_from(&ReplayRefusingJournal),
+        Err(JournalError::NotDurable)
+    ));
 }

@@ -18,14 +18,35 @@ use kernel::ports::custody::{Custody, CustodyKey};
 use platform::custody::FileCustody;
 use platform::journal::OpenError;
 
-/// A directory of this test's own, emptied on entry. Same mechanism and same reasoning as
-/// `file_journal.rs`; ⛔ the PREFIX differs from every other bench's, because a line number alone
-/// does not keep two files apart.
-fn private_dir_for_line(line: u32) -> std::path::PathBuf {
-    let dir = std::env::temp_dir().join(format!("daemon-file-custody-{line}"));
+/// A directory of this test's own, fresh on entry and removed by its guard when the test is done.
+/// Same mechanism and same reasoning as `file_journal.rs`, at whose head the process id in the
+/// name and the guard are explained once; ⛔ the PREFIX differs from every other bench's, because
+/// a line number alone does not keep two files apart. ⚠️ RECALL OF 2026-10-14 -- audit of
+/// 2026-09-30, AUD-2127.
+fn private_dir_for_line(line: u32) -> PrivateDir {
+    let dir =
+        std::env::temp_dir().join(format!("daemon-file-custody-{}-{line}", std::process::id()));
     let _ = std::fs::remove_dir_all(&dir);
     std::fs::create_dir_all(&dir).expect("create the test directory");
-    dir
+    PrivateDir(dir)
+}
+
+/// The directory `private_dir_for_line` hands out, removed when it falls -- the guard of
+/// `file_journal.rs`, copied because test code does not cross a crate boundary.
+struct PrivateDir(std::path::PathBuf);
+
+impl std::ops::Deref for PrivateDir {
+    type Target = Path;
+
+    fn deref(&self) -> &Path {
+        &self.0
+    }
+}
+
+impl Drop for PrivateDir {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_dir_all(&self.0);
+    }
 }
 
 fn archive_in(dir: &Path) -> std::path::PathBuf {

@@ -39,12 +39,17 @@ describe("the tokens, in a real browser (design system, sections (a) and (f))", 
   it("load both fonts, and draw the tool font's digits at one width", async () => {
     // ⛔ LOAD BEFORE MEASURING (trap 2): a face loads only when some text needs it. And the oracle is the
     // FontFace's status, not `document.fonts.check()`, which says yes for a family no @font-face declares.
+    // ⛔ BARLOW IN THE WEIGHTS A ROLE NAMES AND IN NO OTHER (AUD-2076 of the audit of 2026-09-30, on answer 8):
+    // `--font-display` 300, `--font-numeric` 500, `--font-label` 600. The faces the page DECLARES are read whole, loaded or
+    // not, so a weight imported for nothing goes red here, and so does a weight a role names that the page does not carry.
+    const barlow = ["300", "500", "600"];
     await document.fonts.load('400 14px "Geist Variable"');
-    for (const weight of [300, 400, 500, 600]) await document.fonts.load(`${weight} 32px "Barlow"`);
-    const loaded = (family: string): number =>
-      [...document.fonts].filter((face) => face.family.replace(/"/g, "") === family && face.status === "loaded").length;
+    for (const weight of barlow) await document.fonts.load(`${weight} 32px "Barlow"`);
+    const faces = (family: string): FontFace[] => [...document.fonts].filter((face) => face.family.replace(/"/g, "") === family);
+    const loaded = (family: string): number => faces(family).filter((face) => face.status === "loaded").length;
     expect(loaded("Geist Variable")).toBeGreaterThan(0);
-    expect(loaded("Barlow")).toBeGreaterThanOrEqual(4);
+    expect(loaded("Barlow")).toBeGreaterThanOrEqual(barlow.length);
+    expect([...new Set(faces("Barlow").map((face) => face.weight))].sort()).toEqual(barlow);
 
     const width = (text: string, variant: string, family?: string): number => {
       const span = document.createElement("span");

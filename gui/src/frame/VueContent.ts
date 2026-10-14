@@ -17,7 +17,7 @@ function declared(component: Component, given: Record<string, unknown>): Record<
 
 /**
  * Mounts one Vue component as the content of one `dockview` panel -- the bridge between Vue and
- * the panels that decision 2 of the north star says we write ourselves, rather than taking
+ * the panels that the coordinator's decision 2 of the north star says we write ourselves, rather than taking
  * `dockview-vue` (ADR-0030 prefers framework-agnostic libraries, and the adapter has few users).
  *
  * ⛔ ONE VUE APP PER PANEL, AND `unmount` ON `dispose`: a panel `dockview` throws away must

@@ -18,10 +18,10 @@
 // one.
 //
 // ⚠️ DECLARED COST, accepted rather than unnoticed: `include!` brings the included file's
-// `#[test]` functions with it, so EVERY TEST OF THE SUITE — the double, the substring constraint
-// and the liars — RUNS A SECOND TIME inside this binary. None of them touches the disk or sleeps,
-// so it costs a few milliseconds, and it buys the single copy of the assertions. ⛔ HOW MANY THEY
-// ARE IS NOT WRITTEN HERE: the included file owns that figure, and
+// `#[test]` functions with it, so EVERY TEST OF THE SUITE RUNS A SECOND TIME inside this binary
+// (⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2165). None of them touches the disk or
+// sleeps, so it costs a few milliseconds, and it buys the single copy of the assertions.
+// ⛔ HOW MANY THEY ARE IS NOT WRITTEN HERE: the included file owns that figure, and
 // `grep -c '^#\[test\]' crates/kernel/tests/journal_contract.rs` answers it. ⚠️ Only
 // `the_real_journal_honours_the_contract` below reaches a file at all, which is what makes a red
 // in this binary readable: a broken `FileJournal` turns THAT test red and leaves the others green,
@@ -74,8 +74,10 @@ fn the_real_journal_honours_the_contract() {
     });
 }
 
-/// A directory of this test's own, emptied on entry — the same mechanism
-/// `crates/platform/tests/file_journal.rs` uses, and for the same reason.
+/// A directory of this test's own, fresh on entry and removed by its guard when the test is done
+/// — the same mechanism `crates/platform/tests/file_journal.rs` uses, and for the same reason:
+/// the process id in the name and the guard are explained once, at the head of that file
+/// (⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2127).
 ///
 /// ⛔ ONE DIRECTORY PER CALL SITE, AND THE LINE NUMBER IS WHAT MAKES IT ONE. libtest runs the
 /// tests inside one binary on parallel threads, so a directory emptied on entry is only safe if
@@ -93,9 +95,30 @@ fn the_real_journal_honours_the_contract() {
 /// ⚠️ Deliberately not a crate: `tempfile` would be a new entry in the dependency list for a
 /// helper of a few lines, and `platform` already names `std`. ⚠️ RECALL OF 2026-10-13 -- audit of
 /// 2026-09-30, AUD-1391.
-fn private_dir_for_line(line: u32) -> std::path::PathBuf {
-    let dir = std::env::temp_dir().join(format!("daemon-journal-contract-{line}"));
+fn private_dir_for_line(line: u32) -> PrivateDir {
+    let dir = std::env::temp_dir().join(format!(
+        "daemon-journal-contract-{}-{line}",
+        std::process::id()
+    ));
     let _ = std::fs::remove_dir_all(&dir);
     std::fs::create_dir_all(&dir).expect("create the test directory");
-    dir
+    PrivateDir(dir)
+}
+
+/// The directory `private_dir_for_line` hands out, removed when it falls -- the guard of
+/// `file_journal.rs`, copied because test code does not cross a crate boundary.
+struct PrivateDir(std::path::PathBuf);
+
+impl std::ops::Deref for PrivateDir {
+    type Target = std::path::Path;
+
+    fn deref(&self) -> &std::path::Path {
+        &self.0
+    }
+}
+
+impl Drop for PrivateDir {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_dir_all(&self.0);
+    }
 }

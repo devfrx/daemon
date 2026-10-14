@@ -1,0 +1,13 @@
+error[E0053]: method `observe` has an incompatible type for trait
+  --> tests/compile_fail/sensor_declares_a_mutable_artefact.rs:15:33
+   |
+15 |     fn observe(&self, artefact: &mut Untrusted) -> Verdict {
+   |                                 ^^^^^^^^^^^^^^ types differ in mutability
+   |
+   = note: expected signature `fn(&GreedySensor, &kernel::boundary::Untrusted) -> kernel::sensor::Verdict`
+              found signature `fn(&GreedySensor, &mut kernel::boundary::Untrusted) -> kernel::sensor::Verdict`
+help: change the parameter type to match the trait
+   |
+15 -     fn observe(&self, artefact: &mut Untrusted) -> Verdict {
+15 +     fn observe(&self, artefact: &kernel::boundary::Untrusted) -> Verdict {
+   |

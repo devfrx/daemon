@@ -121,6 +121,72 @@ fn a_quality_constraint_with_no_candidate_DEGRADES_AND_SAYS_SO() {
 }
 
 #[test]
+fn a_price_equal_to_the_ceiling_does_not_exceed_it() {
+    // ⛔ THE BOUNDARY OF `PriceCeiling`, which no other probe stands on: every ceiling in the
+    // workspace is far from every price, so `<=` mutated to `<` in `satisfied_by` stayed green.
+    // Both directions: at the ceiling nothing is degraded, one above it is.
+    // ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2130.
+    const AT: Candidate = Candidate {
+        model: "at-the-ceiling",
+        local: true,
+        retains: false,
+        price: 10,
+    };
+    const ABOVE: Candidate = Candidate {
+        model: "above-the-ceiling",
+        local: true,
+        retains: false,
+        price: 11,
+    };
+    assert!(
+        !resolve(&[AT], &[Constraint::PriceCeiling(10)])
+            .expect("resolve")
+            .was_degraded()
+    );
+    assert!(
+        resolve(&[ABOVE], &[Constraint::PriceCeiling(10)])
+            .expect("resolve")
+            .was_degraded()
+    );
+}
+
+#[test]
+fn two_data_constraints_must_both_hold() {
+    // ⛔ TWO CONSTRAINTS OF ONE CLASS, which no other call of `resolve` passes: with `.take(1)`
+    // before the `.all` of `admissible` only the first data constraint is read, and the local
+    // candidate that keeps the data would conform.
+    // ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2130.
+    let keeps = Candidate {
+        model: "local-but-keeps",
+        local: true,
+        retains: true,
+        price: 1,
+    };
+    let remote = Candidate {
+        model: "remote-but-forgets",
+        local: false,
+        retains: false,
+        price: 1,
+    };
+    let both = [Constraint::LocalOnly, Constraint::NoRetention];
+    assert!(matches!(
+        resolve(&[keeps, remote], &both),
+        Err(GatewayError::NoConformingCandidate)
+    ));
+    let conforms = Candidate {
+        model: "local-and-forgets",
+        local: true,
+        retains: false,
+        price: 1,
+    };
+    assert!(
+        !resolve(&[keeps, remote, conforms], &both)
+            .expect("one conforms")
+            .was_degraded()
+    );
+}
+
+#[test]
 fn an_empty_chain_fails_closed_too() {
     let refused = resolve(&[], &[]);
     assert!(

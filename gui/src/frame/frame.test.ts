@@ -25,6 +25,10 @@ beforeEach(() => {
   setActivePinia(createPinia());
 });
 
+/** The ceiling these probes hand the layout store with the bridge: none of their packages comes near it. The ceiling has
+ * probes of its own, in `stores.test.ts` (AUD-051 of the audit of 2026-09-30). */
+const ROOM = 1024 * 1024;
+
 /** The docks the probes built, each disposed after its probe: a dock left alive listens on `window`, and the next probe's
  * `beforeunload` would reach it too (AUD-2116 of the audit of 2026-09-30). */
 const docks: Dock[] = [];
@@ -171,7 +175,7 @@ describe("the dock", () => {
   it("shows a saved view under its own name, the shipped one under another, and saves neither (D80, D89)", async () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
-    layout.attach(bridge);
+    layout.attach(bridge, ROOM);
     const home = ownersHome();
     const api = dockOn(host());
     api.layout(1600, 1000);
@@ -196,7 +200,7 @@ describe("the dock", () => {
   it("saves nothing when the window closes untouched, and once when it closes changed (D81)", async () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
-    layout.attach(bridge);
+    layout.attach(bridge, ROOM);
     const api = dockOn(host());
     await flush();
     window.dispatchEvent(new Event("beforeunload"));
@@ -216,7 +220,7 @@ describe("the dock", () => {
     // ⛔ WHAT `dock.ts` TAKES FROM `dockview-core`, HELD ON THE VERSION INSTALLED: a change of the active panel fires
     // `onDidLayoutChange`, and `activeGroup` is in `toJSON()` -- so the click settles.
     const bridge = createFakeBridge();
-    useLayout().attach(bridge);
+    useLayout().attach(bridge, ROOM);
     const api = dockOn(host());
     api.layout(1600, 1000);
     await flush();
@@ -231,7 +235,7 @@ describe("the dock", () => {
 
   it("leaves the strip's params alone: only what nobody built gets them from the registry (R6-17)", async () => {
     const bridge = createFakeBridge();
-    useLayout().attach(bridge);
+    useLayout().attach(bridge, ROOM);
     const api = dockOn(host());
     await flush();
     // ⛔ THE STRIP CARRIES NO PARAMS AND MUST NOT GET `{ missing: true }`: before R6-17 it did, at
@@ -245,7 +249,7 @@ describe("the dock", () => {
   it("takes its watchers and its two listeners on the window away with it, and answers nothing once disposed (AUD-2116 of the audit of 2026-09-30)", async () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
-    layout.attach(bridge);
+    layout.attach(bridge, ROOM);
     const dock = createDock(host());
     const api = dock.api;
     await flush();
@@ -295,7 +299,7 @@ describe("the dock", () => {
   });
 
   it("wears our theme, and hands it to dockview again when the theme on screen changes (design system, section (c))", async () => {
-    useLayout().attach(createFakeBridge());
+    useLayout().attach(createFakeBridge(), ROOM);
     const where = host();
     const api = dockOn(where);
     // ⛔ THE SHELL WEARS OUR CLASS, the one `tokens/dock.css` dresses -- and the abyss theme's is gone (control 15).
@@ -331,7 +335,7 @@ describe("the dock", () => {
   it("shows the named view that is open, and the view of always once it closes -- saving neither (the (d))", async () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
-    layout.attach(bridge);
+    layout.attach(bridge, ROOM);
     const api = dockOn(host());
     api.layout(1600, 1000);
     // ⛔ TWO NAMED VIEWS, THE OPEN ONE SECOND (E82 of the plan): with one alone, "the one open" reads the same as
@@ -368,7 +372,7 @@ describe("the dock", () => {
         setActivePinia(createPinia());
         const bridge = createFakeBridge();
         const layout = useLayout();
-        layout.attach(bridge);
+        layout.attach(bridge, ROOM);
         const api = dockOn(host());
         api.layout(1600, 1000);
         await flush();
@@ -395,7 +399,7 @@ describe("the dock", () => {
 
   it("opens the view of always when the named view open is a layout `dockview` cannot read, and a saved view of always still wins (AUD-536)", async () => {
     const layout = useLayout();
-    layout.attach(createFakeBridge());
+    layout.attach(createFakeBridge(), ROOM);
     const api = dockOn(host());
     api.layout(1600, 1000);
     // ⛔ A NAME THE PACKAGE HOLDS WITHOUT A LAYOUT WE CAN OPEN falls back as a name it does not hold does: to the view of
@@ -409,7 +413,7 @@ describe("the dock", () => {
   it("saves a group maximized and a group restored, and nothing for showing a view left or opened maximized (E104)", async () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
-    layout.attach(bridge);
+    layout.attach(bridge, ROOM);
     const api = dockOn(host());
     api.layout(1600, 1000);
     await flush();
@@ -583,7 +587,7 @@ describe("the frame (the (d) of the design system)", () => {
 
   it("moves the active tile with Ctrl+Alt and an arrow, takes the chord from the browser, and leaves every other key alone (G20, move 6; AUD-720 of the audit of 2026-09-30)", async () => {
     const bridge = createFakeBridge();
-    useLayout().attach(bridge);
+    useLayout().attach(bridge, ROOM);
     await frame();
     const groups = (): number => document.querySelectorAll(".dv-groupview").length;
     const before = groups();
@@ -647,7 +651,7 @@ describe("the frame (the (d) of the design system)", () => {
   it("says under the field a name that is empty or taken, and saves a new one and opens it (D4, D12)", async () => {
     const bridge = createFakeBridge();
     const layout = useLayout();
-    layout.attach(bridge);
+    layout.attach(bridge, ROOM);
     // The core has answered, with nothing: before it «Salva questa vista» is off (E81).
     layout.receive({ kind: "Layout", value: { state: "Nothing" } });
     await frame();
@@ -756,7 +760,7 @@ describe("the frame (the (d) of the design system)", () => {
     expect(document.querySelector('.base-dialog[data-variant="sheet"]')).toBeNull();
   });
 
-  it("lists in the drawer every module type, in the registry's order, each with who fills it (decision 16 of the north star; AUD-2191 of the audit of 2026-09-30)", async () => {
+  it("lists in the drawer every module type, in the registry's order, each with who fills it (the coordinator's decision 16 of the north star; AUD-2191 of the audit of 2026-09-30)", async () => {
     // ⛔ THE ONE THING THE DRAWER DOES, READ ROW BY ROW: the probes above open it, close it and judge it with axe, and a
     // drawer short of a type, or with the numbers in the wrong place, passed them all.
     await frame();
@@ -770,7 +774,7 @@ describe("the frame (the (d) of the design system)", () => {
     );
   });
 
-  it("keeps the bar's search off, saying who fills it, rather than absent (decision 16 of the north star; AUD-2190 of the audit of 2026-09-30)", async () => {
+  it("keeps the bar's search off, saying who fills it, rather than absent (the coordinator's decision 16 of the north star; AUD-2190 of the audit of 2026-09-30)", async () => {
     // ⛔ THE DIRECTION IN WHICH THE FIELD IS OFF: without it, a search that took text and did nothing passed every probe.
     await frame();
     const input = document.querySelector<HTMLInputElement>(".search input");

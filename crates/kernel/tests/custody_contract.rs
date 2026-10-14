@@ -229,6 +229,14 @@ fn a_custody_that_files_an_empty_package_as_no_package_is_caught() {
 
 // ⛔ THE QUIET HOOK, PROVED IN BOTH DIRECTIONS — the same two probes as `journal_contract.rs`'s,
 // on this file's copy of the hook. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2165.
+//
+// ⚠️ WITH THE SAME DECLARED LIMIT, which `journal_contract.rs` writes out: neither probe holds
+// that the hook HANDS ON what it counts, because `PANICS_HANDED_ON_HERE` rises before
+// `found(info)`. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2293.
+
+/// How many rounds `the_quiet_hook_keeps_quiet_about_nothing_else` plays -- the number of
+/// `journal_contract.rs`, for the reason written beside it there.
+const OTHER_THREAD_ROUNDS: u32 = 100;
 
 #[test]
 fn the_quiet_hook_keeps_quiet_about_the_panic_its_thread_expects() {
@@ -247,22 +255,24 @@ fn the_quiet_hook_keeps_quiet_about_the_panic_its_thread_expects() {
 
 #[test]
 fn the_quiet_hook_keeps_quiet_about_nothing_else() {
-    // A red of another thread, raised while this one expects a panic.
-    let handed_on = expecting_a_panic(|| {
-        std::thread::spawn(|| {
-            let _ = std::panic::catch_unwind(|| {
-                panic!("a red of another thread, raised on purpose by this probe")
-            });
-            PANICS_HANDED_ON_HERE.with(std::cell::Cell::get)
+    // A red of another thread, raised while this one expects a panic -- in every round.
+    for round in 0..OTHER_THREAD_ROUNDS {
+        let handed_on = expecting_a_panic(|| {
+            std::thread::spawn(|| {
+                let _ = std::panic::catch_unwind(|| {
+                    panic!("a red of another thread, raised on purpose by this probe")
+                });
+                PANICS_HANDED_ON_HERE.with(std::cell::Cell::get)
+            })
+            .join()
+            .expect("the other thread caught its own panic")
         })
-        .join()
-        .expect("the other thread caught its own panic")
-    })
-    .expect("nothing panicked on this thread");
-    assert_eq!(
-        handed_on, 1,
-        "a red of another thread did not reach the hook that prints"
-    );
+        .expect("nothing panicked on this thread");
+        assert_eq!(
+            handed_on, 1,
+            "round {round}: a red of another thread did not reach the hook that prints"
+        );
+    }
 
     // And a later red of this same thread, once its expected panic is over.
     let before = PANICS_HANDED_ON_HERE.with(std::cell::Cell::get);
@@ -284,9 +294,11 @@ fn no_promise_message_is_a_substring_of_another() {
     // the SET, so every message added has to be checked against ALL the others, which is exactly
     // the check nobody repeats by eye.
     //
-    // ⚠️ THE SET IS WRITTEN BY HAND, with the declared limit `journal_contract.rs` writes beside
-    // its own: nothing ties it to the `pub const …_MESSAGE` of this file (⚠️ RECALL OF 2026-10-13
-    // -- audit of 2026-09-30, AUD-2152).
+    // ⚠️ THE SET IS WRITTEN BY HAND, AND THIS FILE HOLDS IT, as `journal_contract.rs` holds its
+    // own and with the limit it declares there: the loop at the end of this test reads this
+    // file's own source, comments skipped, and demands that every `pub const` whose name ends in
+    // `_MESSAGE` stand in the set as its own line, `("NAME", NAME_MESSAGE),`.
+    // ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2152.
     let messages = [
         ("KEPT_COMES_BACK", KEPT_COMES_BACK_MESSAGE),
         ("OPAQUE", OPAQUE_MESSAGE),
@@ -310,6 +322,34 @@ fn no_promise_message_is_a_substring_of_another() {
                  satisfy the test that names {name}"
             );
         }
+    }
+
+    // ⛔ AND THE SET IS HELD TO THE FILE, from THIS file's own path also inside `platform`'s
+    // binary, as in `journal_contract.rs`. Measured on 2026-10-14 in both directions: with
+    // `("OPAQUE", OPAQUE_MESSAGE),` taken out of the set this assertion goes red, here and in
+    // `platform`; with the line back, green. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30,
+    // AUD-2152.
+    let code: Vec<&str> = include_str!("custody_contract.rs")
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.starts_with("//"))
+        .collect();
+    for line in &code {
+        let Some(declared) = line.strip_prefix("pub const ") else {
+            continue;
+        };
+        let Some((constant, _)) = declared.split_once(':') else {
+            continue;
+        };
+        let Some(name) = constant.strip_suffix("_MESSAGE") else {
+            continue;
+        };
+        let entry = format!("(\"{name}\", {constant}),");
+        assert!(
+            code.contains(&entry.as_str()),
+            "{constant} is declared in this file and does not stand in the set above as \
+             `{entry}`: it is checked against nobody"
+        );
     }
 }
 

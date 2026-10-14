@@ -11,8 +11,11 @@ import type { IconName } from "../components/icons";
  * its pointer drag on `pointerdown`, stopped here and held by `bigtab.test.ts` -- without it, every press of a command
  * drags the tile a few pixels first (SP-8). ⚠️ `mousedown` and `click` stop too, as SP-8 judged the grab with them,
  * and no test holds those two (E54): 8.3.1 does not listen to `mousedown` at all.
+ *
+ * ⛔ `pageOff` PUTS THE SECOND COMMAND OFF WHILE THE TILE IS OUT OF THE GRID, where it would do nothing: `BigTab.ts` keeps it
+ * aligned with where the tile is (AUD-2061 of the audit of 2026-09-30).
  */
-defineProps<{ title: string; icon?: IconName }>();
+defineProps<{ title: string; icon?: IconName; pageOff: boolean }>();
 const emit = defineEmits<{ float: []; page: [] }>();
 </script>
 
@@ -20,7 +23,16 @@ const emit = defineEmits<{ float: []; page: [] }>();
   <div class="face">
     <BaseLabel :icon="icon" class="title">{{ title }}</BaseLabel>
     <BaseButton variant="quiet" size="sm" icon="float" :label="$t('menu.float')" @pointerdown.stop @mousedown.stop @click.stop="emit('float')" />
-    <BaseButton variant="quiet" size="sm" icon="fullPage" :label="$t('menu.page')" @pointerdown.stop @mousedown.stop @click.stop="emit('page')" />
+    <BaseButton
+      variant="quiet"
+      size="sm"
+      icon="fullPage"
+      :label="$t('menu.page')"
+      :disabled="pageOff"
+      @pointerdown.stop
+      @mousedown.stop
+      @click.stop="emit('page')"
+    />
   </div>
 </template>
 

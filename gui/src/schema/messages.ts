@@ -62,9 +62,11 @@ export type Verdict =
 /**
  * One message on the `ipc` wire, mirroring `kernel::wire::ipc::IpcMessage`.
  *
- * ⛔ ONE UNION FOR BOTH DIRECTIONS, as I4 has it on the Rust side. Which four the gui may send
- * is narrowed from this one by `OutboundMessage` in `../transport/bridge`, which names those
- * four BY HAND -- and says there what that does and does not buy (measured 2026-09-20).
+ * ⛔ ONE UNION FOR BOTH DIRECTIONS, as the Rust side has it -- the head of `crates/kernel/src/wire/ipc.rs`
+ * gives the reason: the port sees bytes, so a direction typed there would be seen by nothing (AUD-769 of the audit
+ * of 2026-09-30). Which four the gui may send is narrowed from this one by `OutboundMessage` in
+ * `../transport/bridge`, which names those four BY HAND -- and says there what that does and does not buy
+ * (measured 2026-09-20).
  */
 export type IpcMessage =
   | { kind: "Hello"; value: U64 }

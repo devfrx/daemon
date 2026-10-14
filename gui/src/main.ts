@@ -48,6 +48,19 @@ function fakeForTheReviewer(): FakeBridge {
 
 const bridge: Bridge = window.harnessBridge ?? fakeForTheReviewer();
 
+/**
+ * ⛔ THE CEILING ON THE LAYOUT PACKAGE, IN BYTES, AND THE GUI'S OWN (AUD-051 of the audit of 2026-09-30, the owner's
+ * decision): `keep` of `stores/layout.ts` does not send a package over it, and the layout on screen goes back to the one
+ * before -- where the core, past its cap, would poison the client and answer nothing. Delivered here, at the composition
+ * root, as the daemon delivers its own cap to the transport.
+ *
+ * ⛔ IT SITS UNDER THE CAP OF BOTH CORES -- `MAX_BODY` of `crates/daemon/src/main.rs` and of `gui/fake-core/src/main.rs`, a
+ * mebibyte each -- with a kibibyte to spare for what `IpcMessage::SaveLayout` adds around the package on the wire: the
+ * variant's index and the length of its bytes. ⚠️ THE THREE NUMBERS ARE COPIES THAT NO CONTROL COMPARES: the species of
+ * the open choice AUD-683 of the same audit, declared beside each of them.
+ */
+const LAYOUT_CEILING = 1024 * 1024 - 1024;
+
 // ⛔ BEFORE THE DOCK MOUNTS: `createDock` asks the registry for a component per panel of the view,
 // and a module registered after that would be a placeholder until the next `fromJSON`.
 registerModules();
@@ -71,7 +84,7 @@ watchTheme(() => layout.theme);
 app.mount("#app");
 
 connection.attach(bridge);
-layout.attach(bridge);
+layout.attach(bridge, LAYOUT_CEILING);
 invoke.attach(bridge);
 bridge.listen((message) => {
   connection.receive(message);

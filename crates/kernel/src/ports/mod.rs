@@ -15,10 +15,10 @@
 //!
 //! ⛔ A port discovered later means criterion C1 was verified on a world SMALLER than the
 //! real one, and NOTHING WOULD HAVE GONE RED. That is gotcha #17, and it is the whole
-//! reason all six are named in this milestone even though four of them have no caller yet:
-//! the campaign is milestone 4, and a trait that does not exist by then is a hole the
-//! campaign cannot see. It is the same argument with which F1a refused to let `process`
-//! wait for §5 (§2.3.1).
+//! reason a family is named here before it has a caller: the campaign is milestone 4, and a
+//! trait that does not exist by then is a hole the campaign cannot see. It is the same argument
+//! with which F1a refused to let `process` wait for §5 (§2.3.1). ⚠️ RECALL OF 2026-10-14 --
+//! audit of 2026-09-30.
 //!
 //! | Family       | Designed in | Real implementation arrives in           |
 //! |--------------|-------------|------------------------------------------|
@@ -40,21 +40,22 @@
 //! caller — `reactor`, which the executor needs, and `journal`, which the promotion of
 //! `crate::boundary` demands as an argument — and the other FIVE — `filesystem`, `network`,
 //! `process`, `ipc` and `custody` — had NO CALLER AT ALL and were here for the reason above.
-//! WHICH HAVE ONE TODAY IS SAID AT THE END OF THIS PARAGRAPH, BY THE RECALL OF 2026-10-03
-//! (AUD-549), and not by this sentence: the partition moves with every sub-project that brings a
-//! caller. ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1210, AUD-1212, AUD-1214.
+//! WHICH HAVE ONE TODAY IS SAID BY NAME, IN THE RECALL OF 2026-10-03 THAT OPENS "AND BOTH DATES
+//! FELL DUE" (AUD-549), and not by this sentence: the partition moves with every sub-project that
+//! brings a caller. ⚠️ RECALL OF
+//! 2026-10-09 -- audit of 2026-09-30, AUD-1210, AUD-1212, AUD-1214; and of 2026-10-14, same
+//! audit.
 //! ⚠️ DATED RECALL, 2026-09-17, sub-project 2 task 2: `ipc` HAS ITS REAL IMPLEMENTATION NOW --
 //! `platform::ipc::LocalSocketIpc` -- and its first caller arrives with task 7 (`kernel::serving`),
-//! so the FOUR above are THREE from there on. The figure in the sentence is dated here and NOT
-//! realigned (gotcha #31). `grep -rnE "^ *impl Ipc for" crates/` lists who IMPLEMENTS `ipc`
-//! and does not count it: having a caller is not something a plain `grep` sees. ⚠️ RECALL OF
-//! 2026-10-09 -- audit of 2026-09-30, AUD-1213.
-//! ⚠️ DATED RECALL, 2026-09-17, sub-project 2 task 4: THE BASE WENT FROM FOUR TO FIVE, and the
-//! subtraction above is UNTOUCHED because it is still right. `custody` joined the submodules with
-//! no caller, so the partition here reads TWO PLUS FIVE and the list had to NAME it: the command
-//! that counts the whole is `grep -c "^pub mod " crates/kernel/src/ports/mod.rs`, SEVEN on
-//! 2026-09-17. ⛔ A LIST THAT OMITS A MEMBER IS GOTCHA #17 ARRIVING AS AN OMISSION RATHER THAN AS
-//! A DIGIT, which is why the count and the names moved together rather than the count alone.
+//! so `ipc` leaves the ports with no caller from there on. `grep -rnE "^ *impl Ipc for" crates/`
+//! lists who IMPLEMENTS `ipc` and does not count it: having a caller is not something a plain
+//! `grep` sees. ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1213; and of 2026-10-14, same
+//! audit.
+//! ⚠️ DATED RECALL, 2026-09-17, sub-project 2 task 4: `custody` JOINED THE SUBMODULES WITH NO
+//! CALLER, and the list had to NAME it: the command that counts the whole is
+//! `grep -c "^pub mod " crates/kernel/src/ports/mod.rs`, SEVEN on 2026-09-17. ⛔ A LIST THAT
+//! OMITS A MEMBER IS GOTCHA #17 ARRIVING AS AN OMISSION RATHER THAN AS A DIGIT, which is why the
+//! count and the names moved together rather than the count alone.
 //! ⛔ AND BOTH DATES FELL DUE ON 2026-09-18, WITH TASK 7: `crate::serving::Core` calls `ipc` and
 //! takes `custody` BY VALUE, and each has its real implementation in `platform` -- so the ports
 //! with NEITHER a caller nor an implementation are `filesystem`, `network` and `process`. Which

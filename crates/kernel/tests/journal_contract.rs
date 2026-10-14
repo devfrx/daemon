@@ -603,17 +603,17 @@ fn no_promise_message_is_a_substring_of_another() {
     //
     // ⚠️ IT WAS RE-RUN RATHER THAN TRUSTED when `NOTE_MESSAGE` arrived, and again when
     // `PRUNE_RECONCILED_MESSAGE` did, which is the whole reason it is a test now: the constraint
-    // is over the SET, so every message added has to be checked against ALL the others — NINE
-    // messages are 72 ordered pairs, and re-reading nine strings by eye is exactly the check
-    // nobody repeats. ⚠️ The two prune messages are the closest pair the set has ever held, both
-    // opening "a step ", which is why the count is written down instead of the reassurance.
+    // is over the SET, so every message added has to be checked against ALL the others, and
+    // re-reading every pair by eye is exactly the check nobody repeats. ⚠️ The two prune messages
+    // are the closest pair the set has ever held, both opening "a step ".
     //
-    // ⛔ DECLARED LIMIT: THE SET BELOW IS WRITTEN BY HAND, and nothing ties it to the
-    // `pub const …_MESSAGE` of this file. A message added to the suite and forgotten here is
-    // checked against nobody, so the diligence this test took off the messages is still asked of
-    // this array: `grep -c 'pub const [A-Z_]*_MESSAGE' <this file>` against its length is the
-    // check, by hand. What would hold it is a mechanism this file does not have, and choosing one
-    // is the owner's: an open choice (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2152).
+    // ⛔ THE SET BELOW IS WRITTEN BY HAND, AND THIS FILE HOLDS IT: the loop at the end of this test
+    // reads this file's own source, comments skipped, and demands that every `pub const` whose
+    // name ends in `_MESSAGE` stand in the set as its own line, `("NAME", NAME_MESSAGE),` -- a
+    // message added to the suite and forgotten here goes red instead of being checked against
+    // nobody. ⚠️ WHAT IT DOES NOT SEE: a message that is not a `pub const`, or whose name does
+    // not end in `_MESSAGE`, or whose declaration does not open its line.
+    // ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2152.
     let messages = [
         ("READ_BACK", READ_BACK_MESSAGE),
         ("READ_BACK_IS_THE_INTENT", READ_BACK_IS_THE_INTENT_MESSAGE),
@@ -642,27 +642,59 @@ fn no_promise_message_is_a_substring_of_another() {
             );
         }
     }
+
+    // ⛔ AND THE SET IS HELD TO THE FILE. `include_str!` resolves its path from the file that
+    // invokes it, which is THIS one also inside `platform`'s binary, that `include!`s it -- so one
+    // relative path serves both. Measured on 2026-10-14 in both directions: with
+    // `("NOTE", NOTE_MESSAGE),` taken out of the set this assertion goes red, here and in
+    // `platform`; with the line back, green. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30,
+    // AUD-2152.
+    let code: Vec<&str> = include_str!("journal_contract.rs")
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.starts_with("//"))
+        .collect();
+    for line in &code {
+        let Some(declared) = line.strip_prefix("pub const ") else {
+            continue;
+        };
+        let Some((constant, _)) = declared.split_once(':') else {
+            continue;
+        };
+        let Some(name) = constant.strip_suffix("_MESSAGE") else {
+            continue;
+        };
+        let entry = format!("(\"{name}\", {constant}),");
+        assert!(
+            code.contains(&entry.as_str()),
+            "{constant} is declared in this file and does not stand in the set above as \
+             `{entry}`: it is checked against nobody"
+        );
+    }
 }
 
 // ⛔ THE DIRECTION ONE FORGETS (§7.1.1 rule 3): a suite never seen to fail is not a suite. The
-// thirteen tests below break the port's promises ONE EACH, and demand that the suite notices each —
-// and notices it ON THE RIGHT PROMISE, which is what reading the payload buys over `is_err()`.
+// liars below break the port's promises ONE EACH, and demand that the suite notices each — and
+// notices it ON THE RIGHT PROMISE, which is what reading the payload buys over `is_err()`. How
+// many they are is `grep -c '^fn a_journal.*is_caught' <this file>` — anchored, so that this line
+// is not counted — and not a figure here, the form `custody_contract.rs` has. ⚠️ RECALL OF
+// 2026-10-14 -- audit of 2026-09-30, AUD-2289.
 //
-// ⛔ THIRTEEN AND NOT THREE, and the ten that were added are the lesson of gotcha #14. The suite
-// dies at the FIRST promise a journal breaks, so a liar that violates promise 1 never reaches
-// promise 5: with the three liars this task was dictated with, promises 2, 3 and 5 WERE NEVER
-// SEEN TO FIRE. `SilentJournal` violates promise 5 as well — its `outcome` answers `Ok(())` —
-// and dies on promise 1 long before getting there, which is exactly the shape of a control that
-// looks covered and is not.
+// ⛔ MORE THAN THE THREE THIS TASK WAS DICTATED WITH, and the ones added are the lesson of gotcha
+// #14. The suite dies at the FIRST promise a journal breaks, so a liar that violates promise 1
+// never reaches promise 5: with the three liars this task was dictated with, promises 2, 3 and 5
+// WERE NEVER SEEN TO FIRE. `SilentJournal` violates promise 5 as well — its `outcome` answers
+// `Ok(())` — and dies on promise 1 long before getting there, which is exactly the shape of a
+// control that looks covered and is not.
 //
 // ⚠️ THE COUNT WAS "SIX", THEN "EIGHT", THEN "NINE" DURING 2026-08-10, and is dated rather than
 // quietly bumped: promise 6 and its liar arrived with the guard on `intent`, promise 8 and its
-// liar with `note`, promise 7b and its liar with `prune`. It was TWELVE from 2026-08-17, and it is
-// THIRTEEN since 2026-08-27: `EmptinessIsMissingJournal` arrived with the bystander of promise 3
+// liar with `note`, promise 7b and its liar with `prune`. It was TWELVE from 2026-08-17, and
+// THIRTEEN from 2026-08-27: `EmptinessIsMissingJournal` arrived with the bystander of promise 3
 // (finding AUD-019). A number inside a sentence that stays true is the exact shape of gotcha #31.
 //
-// ⚠️ THE PROMISES ARE STILL NINE AND THE BLOCKS STILL TEN, and that is the news rather than an
-// aside: the thirteenth liar did not add a promise, it added the STATE in which the third one
+// ⚠️ THE PROMISES AND THE BLOCKS DID NOT GROW WITH IT, and that is the news rather than an aside:
+// `EmptinessIsMissingJournal` did not add a promise, it added the STATE in which the third one
 // stops being satisfied by every plausible guard. The same shape as 2026-08-17, and for the same
 // reason.
 //
@@ -800,6 +832,28 @@ fn the_liars_of_promises_5_and_8_reach_the_direction_their_docs_name() {
 // keeping quiet about one nobody expected, which hides a red's message. `PANICS_HANDED_ON_HERE` is
 // how the two probes see what the hook did. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
 // AUD-2165.
+//
+// ⚠️ WHAT NEITHER PROBE HOLDS, declared rather than left to be found: that the hook HANDS ON what
+// it counts. `PANICS_HANDED_ON_HERE` rises BEFORE `found(info)`, so a hook that counted and no
+// longer called the hook that prints would leave both probes green, and every unexpected panic
+// without its message -- what a test cannot see, since what a hook prints is not read back from
+// inside one. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2293.
+
+/// How many rounds `the_quiet_hook_keeps_quiet_about_nothing_else` plays: a red raised on another
+/// thread while this one expects a panic.
+///
+/// ⛔ ONE ROUND IS NOT ENOUGH, AND THAT WAS MEASURED. A flag kept in ONE `static` for the whole
+/// process -- the regression the flag per thread exists to refuse -- is LOWERED by the other tests
+/// of the binary, which run beside this one, and a single round saw it raised in a minority of the
+/// runs only. Repeated, the chance that NO round sees it raised becomes negligible -- negligible,
+/// not nil. A barrier alone would not do: what lowers a global flag is the other tests, not this
+/// one. ✅ MEASURED ON 2026-10-14 with the rounds at this number, on a sample of two hundred runs
+/// of each of the three kernel binaries that carry the probe -- this suite, `custody_contract.rs`
+/// and `reactor_contract.rs` --, each run the WHOLE binary on libtest's default threads, as the
+/// gate runs it: with the flag moved into a `static AtomicBool` -- stored by `expecting_a_panic`,
+/// loaded by the hook -- the probe was red in every run of the sample; with the flag per thread,
+/// green in every run. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2293.
+const OTHER_THREAD_ROUNDS: u32 = 100;
 
 #[test]
 fn the_quiet_hook_keeps_quiet_about_the_panic_its_thread_expects() {
@@ -819,22 +873,25 @@ fn the_quiet_hook_keeps_quiet_about_the_panic_its_thread_expects() {
 #[test]
 fn the_quiet_hook_keeps_quiet_about_nothing_else() {
     // ⛔ A RED OF ANOTHER THREAD, RAISED WHILE THIS ONE EXPECTS A PANIC: the overlap that could
-    // leave a silent hook installed for good. It has to reach the hook that prints.
-    let handed_on = expecting_a_panic(|| {
-        std::thread::spawn(|| {
-            let _ = std::panic::catch_unwind(|| {
-                panic!("a red of another thread, raised on purpose by this probe")
-            });
-            PANICS_HANDED_ON_HERE.with(std::cell::Cell::get)
+    // leave a silent hook installed for good. It has to reach the hook that prints -- in EVERY
+    // round, and why the rounds are many is the doc of `OTHER_THREAD_ROUNDS`.
+    for round in 0..OTHER_THREAD_ROUNDS {
+        let handed_on = expecting_a_panic(|| {
+            std::thread::spawn(|| {
+                let _ = std::panic::catch_unwind(|| {
+                    panic!("a red of another thread, raised on purpose by this probe")
+                });
+                PANICS_HANDED_ON_HERE.with(std::cell::Cell::get)
+            })
+            .join()
+            .expect("the other thread caught its own panic")
         })
-        .join()
-        .expect("the other thread caught its own panic")
-    })
-    .expect("nothing panicked on this thread");
-    assert_eq!(
-        handed_on, 1,
-        "a red of another thread did not reach the hook that prints"
-    );
+        .expect("nothing panicked on this thread");
+        assert_eq!(
+            handed_on, 1,
+            "round {round}: a red of another thread did not reach the hook that prints"
+        );
+    }
 
     // ⛔ AND A LATER RED OF THIS SAME THREAD, once its expected panic is over: the flag has to
     // come down with the window.

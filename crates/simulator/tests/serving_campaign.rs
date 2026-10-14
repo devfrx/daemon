@@ -51,11 +51,9 @@
 //!   the register directly; what is under test HERE is the ACTIVITY -- that `serve` reads the
 //!   death from the port and reconciles, at a turn the seed chooses.
 //! - it does NOT reach `Reactor::wait_until` on a real clock: the clock is virtual, so a wait is
-//!   an assignment. ⚠️ AND NO PROBE REACHES THAT HALF -- `serve`'s nap on `SystemReactor` with a
-//!   tick that is not zero: the probes of `crates/daemon/src/main.rs` and of `gui/fake-core` all
-//!   deliver a zero tick, which makes the nap a yield, and the daemon's hands the half to this
-//!   campaign, which cannot hold it. Covering it is an open choice (⚠️ RECALL OF 2026-10-13 --
-//!   audit of 2026-09-30, AUD-2173).
+//!   an assignment. That half -- `serve`'s nap on `SystemReactor` with a tick that is not zero --
+//!   is held by `the_serving_activity_naps_on_the_system_reactor_with_a_tick_that_is_not_zero` in
+//!   `crates/daemon/src/main.rs`. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2173.
 //! - it does NOT sweep a gui that dies AFTER its window. That road is
 //!   `crates/kernel/tests/client_grants.rs::a_disconnect_after_the_window_reports_already_collected`.
 //!
@@ -168,7 +166,10 @@ const TURNS: u64 = 64;
 const SHORT_CAMPAIGN_SEEDS: u64 = 2_000;
 
 /// Everything the gui side holds, and the only thing the probes read. ⛔ IT LIVES OUTSIDE `Core`,
-/// which is what makes it readable after the run at all.
+/// behind a `RefCell` the campaign owns -- the shape of `crates/kernel/tests/serving.rs` --, and
+/// not because a port inside `Core` could not be read after the run: `Core::ipc` hands the
+/// transport back, as the head of this file says. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30,
+/// AUD-1429.
 struct Wire {
     waiting: Vec<ClientId>,
     /// What each client will say, in order.
@@ -575,17 +576,15 @@ fn one_crash(seed: u64) -> Crashed {
 
 /// How many operations the activity performs on a client it has welcomed.
 ///
-/// ⛔ IT IS THE PREMISE THE DEATH POINT IS DRAWN AGAINST, and it is HELD FROM BELOW rather than
-/// trusted, by `the_activity_operates_on_a_welcomed_client_at_least_this_many_times`. A point
-/// drawn past the last operation never fires, and a campaign whose fault never arrives is green
-/// for having done nothing (gotcha #17). ⚠️ AND ONLY FROM BELOW: an activity that came to perform
-/// MORE operations would leave the ones past this number never drawn, and nothing would go red --
-/// `EXPECTED_DEATH_WORLDS` counts the points drawn below this number, so it does not see them
-/// either: measured on 2026-10-13, with `TURNS` doubled,
-/// `cargo test --locked -p simulator --test serving_campaign` stays green. Its twin
-/// `WRITES_PER_APPROVAL` is pinned both ways. Pinning this one too changes what
-/// a DST campaign asserts, and it is an open choice (⚠️ RECALL OF 2026-10-13 -- audit of
-/// 2026-09-30, AUD-2174).
+/// ⛔ IT IS THE PREMISE THE DEATH POINT IS DRAWN AGAINST, and it is HELD IN BOTH DIRECTIONS rather
+/// than trusted, by `the_activity_operates_on_a_welcomed_client_this_many_times` -- an equality,
+/// as its twin `WRITES_PER_APPROVAL` has. FROM BELOW: a point drawn past the last operation never
+/// fires, and a campaign whose fault never arrives is green for having done nothing (gotcha #17).
+/// FROM ABOVE: an activity that came to perform MORE operations would leave the ones past this
+/// number never drawn -- `EXPECTED_DEATH_WORLDS` counts the points drawn below this number, so it
+/// does not see them. Measured on 2026-10-14 in both directions: with `TURNS` doubled,
+/// `cargo test --locked -p simulator --test serving_campaign` goes red on that probe, and as it
+/// is, green. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2174.
 ///
 /// ⛔ HOW ONE REMEDIES A RED HERE: RE-MEASURE AND RE-CHOOSE. Editing this until the bar goes green
 /// is gotcha #25. What invalidates it: a change to `TURNS`, to the welcome of sequence 1, or to
@@ -614,7 +613,7 @@ const WRITES_PER_APPROVAL: u64 = 7;
 
 /// ⛔ THE FIRST PRIZE, COUNTED IN A RUN WHERE NOBODY DIES -- the twin of `without_crash()`.
 #[test]
-fn the_activity_operates_on_a_welcomed_client_at_least_this_many_times() {
+fn the_activity_operates_on_a_welcomed_client_this_many_times() {
     let parameters = Parameters::new(TURNS, TOTAL, ArbiterId::new(1), TICK);
     let mut arbiter = Arbiter::new(parameters, VramPolicy::Remote(RemotePolicy));
     let _core_quota = standing_grant(&mut arbiter, "core-presentation", CORE_QUOTA, FOREVER);
@@ -661,11 +660,11 @@ fn the_activity_operates_on_a_welcomed_client_at_least_this_many_times() {
     drop(executor);
 
     let done = wire.borrow().operations;
-    assert!(
-        done >= OPERATIONS,
+    assert_eq!(
+        done, OPERATIONS,
         "the activity performed {done} operations on a welcomed client while `OPERATIONS` says \
-         {OPERATIONS}: every death point drawn from the tail of that range can never fire, and \
-         those seeds would sweep nothing at all"
+         {OPERATIONS}: below it, every death point drawn from the tail of that range can never \
+         fire; above it, the operations past the number are never drawn"
     );
 }
 

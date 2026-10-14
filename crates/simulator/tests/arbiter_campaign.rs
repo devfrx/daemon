@@ -108,15 +108,16 @@ const TRANSITION_STEP: u64 = 900;
 /// than its name promises. ⚠️ AND THE GUARD BELOW DID NOT CATCH IT BECAUSE IT LOOKS ONE WAY: it
 /// fires when the transition writes FEWER records than this number, never when it writes MORE.
 ///
-/// ⛔ IT IS THE PREMISE `crash_point` RESTS ON, and it is held from below rather
-/// than trusted: the fall point is drawn modulo this number, so a transition that wrote fewer
-/// records would leave the tail of the range firing on nothing, and
-/// `property_4_a_severed_transition_leaves_a_reconcilable_step` asserts that EVERY seed
-/// reaches its point. ⚠️ IT IS HALF THE SHAPE `WRITES_PER_RUN` HAS IN `dst_campaign.rs`: there a
-/// run without a crash also pins the count from above, `writes_done()` against the constant,
-/// and here nothing does -- the direction the recall above names. Pinning it changes what a DST
-/// campaign asserts, so it is the owner's: voice `E55` of the part-2 plan, open (⚠️ RECALL OF
-/// 2026-10-13 -- audit of 2026-09-30, AUD-2166).
+/// ⛔ IT IS THE PREMISE `crash_point` RESTS ON, and it is held in BOTH DIRECTIONS rather than
+/// trusted -- the shape `WRITES_PER_RUN` has in `dst_campaign.rs`. FROM BELOW: the fall point is
+/// drawn modulo this number, so a transition that wrote fewer records would leave the tail of the
+/// range firing on nothing, and `property_4_a_severed_transition_leaves_a_reconcilable_step`
+/// asserts that EVERY seed reaches its point. FROM ABOVE: a transition that wrote MORE would leave
+/// the points past this number never drawn, and `the_scenario_really_makes_the_admission_decide`
+/// counts the writes of its run without a crash, `writes_done()` against this constant -- the
+/// direction the recall above names, held since 2026-10-14 by the owner's decision. Measured that
+/// day in both directions: with the constant at 2 or at 4 the run is red, at 3 green.
+/// ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2166.
 const WRITES_PER_TRANSITION: u64 = 3;
 
 /// How many seeds the SHORT campaign sweeps. ⛔ FIXED AND VERSIONED WITH THIS FILE, never
@@ -603,7 +604,18 @@ fn smallest_reservation() -> Mib {
 /// on every one of the 2 000 seeds.
 #[test]
 fn the_scenario_really_makes_the_admission_decide() {
-    let (_journal, observed) = run(20_260_818, CrashingJournal::without_crash());
+    let (journal, observed) = run(20_260_818, CrashingJournal::without_crash());
+
+    // ⛔ THE PREMISE OF `crash_point`, FROM ABOVE: a run that does not fall writes exactly the
+    // records the fall point is drawn against -- the twin of `C7a`'s `WRITES_PER_RUN` in
+    // `dst_campaign.rs`. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2166.
+    assert_eq!(
+        journal.writes_done(),
+        WRITES_PER_TRANSITION,
+        "the transition wrote {} records and `WRITES_PER_TRANSITION` says \
+         {WRITES_PER_TRANSITION}: the fall points are drawn against the constant",
+        journal.writes_done()
+    );
 
     assert_eq!(
         observed.granted + observed.queued + observed.refused,
@@ -775,12 +787,17 @@ fn property_5_expiry_frees_the_budget_under_the_scenario() {
 /// wrote fewer times than the number the point was drawn against, which is the silent no-op
 /// of gotcha #17; `> 0` would let all but one seed go quiet.
 ///
-/// ⚠️ WHAT IS NOT ASSERTED, said rather than left to be assumed: that EACH fall point leaves
-/// what it must -- no doubt at 0, a doubt at 1 and at 2. `doubted > 0` holds the sweep and not
-/// each point, so a point that stopped leaving its doubt would only lower the figure this test
-/// prints. Asserting it per seed changes what a DST campaign asserts, which voice `E55` of the
-/// part-2 plan leaves to the owner: an open choice (⚠️ RECALL OF 2026-10-13 -- audit of
-/// 2026-09-30, AUD-2167).
+/// ⛔ AND EACH FALL POINT LEAVES WHAT IT MUST, asserted per seed by the owner's decision: no doubt
+/// at 0, a doubt at 1 and at 2 -- `doubts.is_empty()` against `crash_point(seed) == 0`, the
+/// outcome the write-ahead protocol of ADR-0007 dictates and not the one the reconciliation
+/// happens to give. A point that stopped leaving its doubt is red on its own seeds, where
+/// `doubted > 0` would only have lowered the figure this test prints. ✅ MEASURED ON 2026-10-14:
+/// with the `Policy` arm of `kernel::reconcile` closing the step (`leave`), so that the fall at 2
+/// leaves no doubt, this test goes red and `doubted > 0` alone stayed green.
+/// ⚠️ `doubted > 0` STAYS, AND IT IS NOT REDUNDANT: the per-seed assertion reads `crash_point`
+/// on both sides, so a `crash_point` that answered 0 for every seed would satisfy it everywhere --
+/// and the sweep's oracle is what catches that one (M3 of the archived register of mutations),
+/// measured the same day. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2167.
 #[test]
 fn property_4_a_severed_transition_leaves_a_reconcilable_step() {
     let started = std::time::Instant::now();
@@ -796,6 +813,13 @@ fn property_4_a_severed_transition_leaves_a_reconcilable_step() {
 
         let survivor = journal.into_survivor();
         let doubts = steps_in_doubt(&survivor).expect("the archive reads back");
+        assert_eq!(
+            doubts.is_empty(),
+            crash_point(seed) == 0,
+            "seed {seed}: the fall at point {} of the transition left {doubts:?}, and the \
+             write-ahead protocol wants no doubt only when the fall comes before the intent",
+            crash_point(seed)
+        );
         for doubt in &doubts {
             assert_eq!(
                 doubt.step,

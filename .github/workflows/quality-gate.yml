@@ -5,6 +5,16 @@ on:
     branches: ["**"]
   pull_request:
 
+# ⛔ THE TOKEN GETS `contents: read` AND NOTHING ELSE, and it is the least the gate needs: the gate
+# reads the repository and writes nothing to it -- no step pushes, comments or publishes. GitHub
+# sets every scope this key does not name to none, so the token's reach no longer depends on the
+# repository's default, which the file cannot show; every run prints what the token got, under
+# "GITHUB_TOKEN Permissions" in the log of its first step. The owner's decision, with
+# `persist-credentials: false` on the checkout. RECALL OF 2026-10-14 -- audit of 2026-09-30,
+# AUD-2124.
+permissions:
+  contents: read
+
 jobs:
   gate:
     # ⛔ TWO OPERATING SYSTEMS, AND THAT IS X-1 OF THE 2026-08-27 AUDIT. ADR-0002 says "we develop
@@ -25,6 +35,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+        # ⛔ THE TOKEN DOES NOT STAY IN THE JOB'S GIT CONFIG: with the default, `actions/checkout`
+        # writes it there for every later step, the crates and the npm packages the gate builds and
+        # installs among them. No step talks to GitHub through git -- the gate's one git call is
+        # `git check-ignore`, which is local. RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2124.
+        with:
+          persist-credentials: false
       # rust-toolchain.toml declares version and target: rustup installs them by itself,
       # and that is why constraint 4 of §11 does not require a step here.
       - run: rustup show
@@ -37,11 +53,9 @@ jobs:
       # on 2026-09-15 -- the same premise the owner's decision 44 used for the matrix), and a third
       # party in CI's trust path runs with the repository token. The other way is REGISTERED AND
       # NOT TAKEN: if wall time ever becomes a MEASURED problem, it is the owner's decision.
-      # ⚠️ AND THAT TOKEN'S SCOPE IS NOT SET IN THIS FILE: there is no `permissions:` key, and
-      # `actions/checkout` keeps the token in the job's git config, `persist-credentials` being
-      # true by default. It is read-only today by the REPOSITORY's default -- `gh api
-      # repos/devfrx/daemon/actions/permissions/workflow`, read on 2026-10-09 -- and writing it
-      # here is an open choice. RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-2124.
+      # ⚠️ AND THAT TOKEN'S SCOPE IS SET IN THIS FILE, at the workflow's `permissions:` key, and
+      # the checkout does not leave it in the job's git config. RECALL OF 2026-10-14 -- audit of
+      # 2026-09-30, AUD-2124.
       - run: cargo install cargo-audit --locked --version 0.22.2
       # Node for the web step of the gate. `node-version-file` reads `engines.node` from the
       # manifest, so the version lives in ONE house (the coordinator's decision 46): re-read at the

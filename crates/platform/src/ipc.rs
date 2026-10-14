@@ -55,8 +55,10 @@
 //! the wire, give the same four bytes two meanings, and leave the TypeScript peer stripping two.
 //! `send` therefore writes VERBATIM, and `receive` gives back THE WHOLE FRAME -- envelope
 //! included -- which is what `decode` expects. The envelope is read here only to find where one
-//! message ends and the next begins, which is the one thing a byte stream does not carry and the
-//! two `Vec<Vec<u8>>` fakes of this port get for free.
+//! message ends and the next begins, which is the one thing a byte stream does not carry and every
+//! fake of this port, holding whole messages and no stream, gets for free -- which implementations
+//! there are is what `grep -rnE "^ *impl Ipc for" crates/` prints, not this line. ⚠️ RECALL OF
+//! 2026-10-14 -- audit of 2026-09-30, AUD-1301.
 //!
 //! ⛔ `send` IS BLOCKING, AND THAT IS A DECLARED LIMIT RATHER THAN AN OVERSIGHT: a gui that stops
 //! reading fills the pipe, and the next `send` stalls the core's activity until it reads again.
@@ -88,13 +90,18 @@
 //! for the reader thread, a measurement for sub-project 3 -- is therefore the same question for
 //! them all. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-2120.
 //!
-//! ⚠️ AND IT IS NOT ONLY A BROKEN OR HOSTILE PEER THAT REACHES THAT BRANCH. ADR-0041 narrows who
-//! can send a body to the processes of the core's own account and does not remove a bad one, which
-//! a faulty gui can send too; and a SOUND gui reaches it with a layout package over the cap the
-//! daemon delivers -- and is then unheard for the rest of its session, with no word to anyone,
-//! because `kernel::serving` keeps a `MalformedMessage` client and answers nothing. Whether the
-//! overflow should be told, or the package capped before the transport, is the owner's: audit of
-//! 2026-09-30, AUD-051. ⚠️ RECALL OF 2026-10-02 -- same audit, AUD-051 and ADR-0041.
+//! ⚠️ AND WHAT REACHES THAT BRANCH IS A BROKEN OR HOSTILE PEER, AND NOT A SOUND GUI. ADR-0041
+//! narrows who can send a body to the processes of the core's own account and does not remove a
+//! bad one, which a faulty gui can send too -- and it is then unheard for the rest of its session,
+//! with no word to anyone, because `kernel::serving` keeps a `MalformedMessage` client and answers
+//! nothing. A SOUND gui does not send a layout package over its own ceiling: `keep` of
+//! `gui/src/stores/layout.ts` does not send it and the layout goes back to the one before, and that
+//! ceiling, delivered by `gui/src/main.ts`, sits under the cap the daemon delivers, with a margin
+//! for what `IpcMessage::SaveLayout` adds around the package -- the variant's index and the length
+//! of its bytes. The owner's decision, audit of 2026-09-30, AUD-051.
+//! ⚠️ THE GUI'S NUMBER AND THE TWO CORES' ARE COPIES THAT NO CONTROL COMPARES -- the species of
+//! the open choice AUD-683 of the same audit, declared beside each of the three values.
+//! ⚠️ RECALL OF 2026-10-14 -- same audit, AUD-051, AUD-2110 and ADR-0041.
 //!
 //! ⛔ A `Vec` AND NOT A `HashMap` for the client table, the reckoning gotcha #12 records for the
 //! kernel: the table holds ONE client in sub-project 2 (the gui is 0..1, ADR-0004), and a map

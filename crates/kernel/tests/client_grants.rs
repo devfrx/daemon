@@ -30,9 +30,11 @@ use kernel::time::{Millis, Monotonic};
 
 /// ⚠️ BOTH TAKEN FROM `crates/kernel/tests/arbiter_admission.rs`, and declared rather than left
 /// to be noticed: TEST CODE DOES NOT CROSS CRATE BOUNDARIES, let alone bench boundaries, so a
-/// figure shared with another bench is COPIED and the copy is named. It is the deviation `Yield`
-/// carries in `crates/simulator/tests/arbiter_campaign.rs`, for the same reason. Nothing here
-/// depends on their staying equal: they are a machine big enough that every profile below fits.
+/// figure shared with another bench is COPIED and the copy is named. It is the deviation
+/// `FakeWorker` and `FakeProcess` carry in `crates/simulator/tests/worker_kill_campaign.rs`, for
+/// the same reason (⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-794, AUD-2278). Nothing
+/// here depends on their staying equal: they are a machine big enough that every profile below
+/// fits.
 const TURN_LIMIT: u64 = 10_000;
 const TOTAL: Mib = Mib::new(16_384);
 
@@ -53,9 +55,10 @@ const CORE_QUOTA: Mib = Mib::new(2_048);
 /// What a gui asks for.
 const GUI_QUOTA: Mib = Mib::new(1_024);
 
-/// The window a client declares. ⛔ IT IS SHORT ON PURPOSE and the core's is not: the fourth
-/// probe disconnects at `WINDOW + 1`, and with one window for both the core's own grant would
-/// have expired too and the baseline would have gone with it.
+/// The window a client declares. ⛔ IT IS SHORT ON PURPOSE and the core's is not:
+/// `a_disconnect_after_the_window_reports_already_collected` disconnects at `WINDOW + 1`, and
+/// with one window for both the core's own grant would have expired too and the baseline would
+/// have gone with it. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-1302.
 const WINDOW: Millis = Millis::new(5_000);
 
 /// The window the core's own quota declares — long enough that nothing here ever collects it.
@@ -225,10 +228,11 @@ fn a_disconnect_of_a_client_that_holds_nothing_changes_nothing() {
 
 #[test]
 fn a_disconnect_after_the_window_reports_already_collected() {
-    // ⛔ THE DIRECTION THE THREE PROBES ABOVE DO NOT REACH, and it is `E30` arriving on the gui:
-    // a client that dies AFTER its own window has one already-swept reservation to hand back,
-    // and the campaign produces exactly that on a share of its seeds. Without this probe an
-    // `on_disconnect` that discarded or refused `AlreadyCollected` would compile green.
+    // ⛔ THE DIRECTION THE PROBES OF A DISCONNECT INSIDE THE WINDOW DO NOT REACH, and it is `E30`
+    // arriving on the gui: a client that dies AFTER its own window has one already-swept
+    // reservation to hand back, and the campaign produces exactly that on a share of its seeds.
+    // Without this probe an `on_disconnect` that discarded or refused `AlreadyCollected` would
+    // compile green. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-1302.
     let (mut arbiter, _core) = an_arbiter_with_a_baseline();
     let gui = ClientId::new(1);
 
@@ -254,14 +258,16 @@ fn a_disconnect_after_the_window_reports_already_collected() {
 #[test]
 fn a_foreign_grant_is_the_caller_s_defect_and_leaves_the_rest_registered() {
     // ⛔ THE ONLY PROBE THAT REACHES THE `Err` ARM, and until it existed the whole argument for
-    // the shape of `on_disconnect` rested on a paragraph. The four probes above all take the
-    // happy path, so `drain(..)` WITH repartition -- the form the plan prescribed -- was green on
-    // every one of them and diverged from the shipped form on exactly the road none of them
-    // walked. Measured: it dies here and nowhere else.
+    // the shape of `on_disconnect` rested on a paragraph. Every other probe of this file takes the
+    // happy path -- `grep -n '^fn a_' crates/kernel/tests/client_grants.rs` lists them -- so
+    // `drain(..)` WITH repartition -- the form the plan prescribed -- was green on every one of
+    // them and diverged from the shipped form on exactly the road none of them walked. Measured:
+    // it dies here and nowhere else. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-1302.
     //
     // ⛔ AND THE `Err` IS THE CALLER'S DEFECT AND NOT THE CLOCK'S. `Arbiter::release` answers
     // `Err(UnknownGrant)` for one cause only since 2026-08-30 -- a grant ANOTHER arbiter issued.
-    // The window closing is `Ok(AlreadyCollected)`, which the probe above holds.
+    // The window closing is `Ok(AlreadyCollected)`, which
+    // `a_disconnect_after_the_window_reports_already_collected` holds.
     let (mut arbiter, _core) = an_arbiter_with_a_baseline();
 
     // ⛔ THE SECOND ARBITER'S IDENTITY IS LOAD-BEARING: `release` compares `Grant::issuer`, so two

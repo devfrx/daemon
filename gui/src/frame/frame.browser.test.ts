@@ -333,7 +333,7 @@ describe("the bar, and the focus in a panel that scrolls", () => {
     // ⛔ NO SURFACE AND NO LINE UNDER IT (E57): the bar is part of the page, as the board's `.m-bar` is.
     expect(getComputedStyle(bar).backgroundColor).toBe("rgba(0, 0, 0, 0)");
     expect(getComputedStyle(bar).borderBottomStyle).toBe("none");
-    // ⛔ THE BOX SAYS WHO FILLS IT (E39, decision 16 of the north star): the whole placeholder fits the field, measured
+    // ⛔ THE BOX SAYS WHO FILLS IT (E39, the coordinator's decision 16 of the north star): the whole placeholder fits the field, measured
     // in the field's own font -- 315 px in 334 on 2026-09-27; in the 320 px of task 5 it was cut.
     const input = document.querySelector(".search input") as HTMLInputElement;
     const style = getComputedStyle(input);

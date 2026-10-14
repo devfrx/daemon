@@ -124,6 +124,19 @@ impl Process for FakeProcess {
     }
 }
 
+/// A worker started with a grant from a real admission.
+///
+/// ⛔ THE CALL BELOW IS WHERE "ONE GRANT STARTS ONE WORKER" LIVES: `Process::start` takes
+/// `grant: Grant` BY VALUE, so the call spends the grant, and a second `.start(grant, ..)` on it
+/// would not compile -- `grant` was moved into the first. WHAT HOLDS IT IS THE COMPILER, not a
+/// case of this repository: none of `tests/compile_fail/` names a `Grant` moved by `start`
+/// (⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1360).
+/// ⚠️ AND IT HOLDS ONLY WHILE `Grant` HAS NEITHER `Clone` NOR `Copy`: `Copy` would let the second
+/// call compile, and `Clone` would disarm the property by another road, `start(grant.clone(), ..)`
+/// twice (AUD-783). Nothing that can go red holds either absence -- the doc of `Grant` in
+/// `crates/kernel/src/arbiter/mod.rs` says so with its measure (AUD-740) --, and the case that
+/// would is the open item of milestone 5 on the fifth `compile_fail` case, which is the owner's.
+/// ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-740, AUD-2162.
 fn a_started_worker() -> FakeWorker {
     let Started::Running(worker) =
         FakeProcess.start(a_real_grant(), WorkerDescriptor::new(b"asr.exe".to_vec()))
@@ -167,46 +180,6 @@ fn reading_once_with_the_receipt_compiles() {
     let expected = receipt.id();
     let answer = worker.read_one(receipt).expect("answered");
     assert_eq!(answer.as_bytes(), &expected.to_le_bytes());
-}
-
-/// ⛔ AND THE ONE THAT SAYS THE GRANT IS SPENT: `start` CONSUMES it, so one grant starts one
-/// worker.
-///
-/// ⚠️ RECALL OF 2026-08-21, TASK 11 BRIEF PART A4. The comment that used to close this
-/// function claimed this property was held by a `compile_fail` case -- "a second `start`
-/// would need a second grant... held by `compile_fail/`, not here". FALSE, measured against
-/// the cases of `tests/compile_fail/` as they stood on 2026-08-21, before this task
-/// (`ls crates/kernel/tests/compile_fail/*.rs`): none names a `Grant` moved by `start`, and the
-/// two that name `Grant` at all hold different rules (no public constructor; matched only
-/// inside `Admission`). ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1360.
-/// ⛔ WHAT HOLDS "one grant starts one worker" IS THE COMPILER, not a case in this repository:
-/// `Process::start` takes `grant: Grant` BY VALUE and `Grant` is not `Copy` -- and could not be
-/// made so alone, since `Copy` needs `Clone` and `Grant` has neither
-/// (`crates/kernel/src/arbiter/mod.rs`, no `#[derive]` above `pub struct Grant`), so a
-/// second `.start(grant, ..)` below would not compile -- `grant` was moved into the call that
-/// is already there. ⚠️ FOR THAT SECOND CALL `Copy` IS THE HINGE AND `Clone` IS NOT, which is
-/// what the oracles say too (`reading_twice_from_one_receipt.stderr`: "does not implement the
-/// `Copy` trait"): adding `Clone` alone would leave it a use after move, adding `Copy` would
-/// compile it. ⛔ BUT `Clone` WOULD DISARM THE PROPERTY ALL THE SAME, by another road:
-/// `start(grant.clone(), ..)` twice is one grant starting two workers, which is why the doc of
-/// `Grant` calls each absence load-bearing, `Clone` included. ⚠️ RECALL OF 2026-10-13 -- audit
-/// of 2026-09-30, AUD-783. That is why this function calls `start` exactly once: a second call
-/// on the same grant is not refused at runtime, it does not exist to be written.
-#[test]
-fn one_grant_starts_one_worker() {
-    let grant = a_real_grant();
-    // ⚠️ NOT `assert!(matches!(first, Started::Running(_)))`: the fake always answers
-    // `Running`, so that assertion could never fail and would prove nothing -- a vacuous
-    // probe. And this function holds no shape that `a_started_worker` above does not already
-    // compile: it is a declared place to hang the reasoning, not a probe. The `else` arm below
-    // is for the panic message, not for coverage. ⚠️ Whether it stays a `#[test]` at all, or
-    // its reasoning moves to a doc, is an open choice (⚠️ RECALL OF 2026-10-13 -- audit of
-    // 2026-09-30, AUD-2162).
-    let Started::Running(_worker) =
-        FakeProcess.start(grant, WorkerDescriptor::new(b"asr.exe".to_vec()))
-    else {
-        panic!("the fake always starts");
-    };
 }
 
 /// A `Process` that never manages to spawn.

@@ -65,8 +65,11 @@ pub struct Verdict {
 }
 
 /// The contract. ⛔ `observe` TAKES THE ARTEFACT BY SHARED REFERENCE AND THAT IS `V10` — a
-/// sensor observes and changes nothing; correcting is ring 1's job (§6.4.2). The negative case
-/// is `tests/compile_fail/sensor_modifies_the_artefact.rs`.
+/// sensor observes and changes nothing; correcting is ring 1's job (§6.4.2). The negative cases
+/// are two: `tests/compile_fail/sensor_modifies_the_artefact.rs` writes through the reference,
+/// and `tests/compile_fail/sensor_declares_a_mutable_artefact.rs` declares it `&mut` -- the one
+/// that COMPILES, and so reports as `error`, the day this method widens (gotcha #42).
+/// ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2141.
 pub trait Sensor {
     /// Read BEFORE running, and it decides admission to the tight ring (§6.4.1, V11).
     fn declared_cost(&self) -> CostClass;
@@ -116,10 +119,12 @@ pub trait Sensor {
 /// (`crate::reconcile`), `step` owes only its own outcome, and nothing in the archive ties `next`
 /// to the verdict. `the_second_write_of_the_ring_is_not_swallowed_either`, in
 /// `tests/sensor_ring.rs`, holds the second write's REFUSAL, not the fall, and no DST campaign
-/// calls this function. Declared rather than closed: nothing outside the benches calls it and no
-/// inferential sensor exists, and which road closes the window -- the corrective intent written
-/// first, a resume that looks for a negative verdict with nothing after it, or the window kept as
-/// it is -- is the owner's choice. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30, AUD-1112.
+/// calls this function. ⚖️ DECLARED RATHER THAN CLOSED, BY THE OWNER'S DECISION: nothing outside
+/// the benches calls it and no inferential sensor exists. The trigger is the first production
+/// caller of this function -- the first real sensor, which V11 waits for too -- and on that day
+/// the order turns: the corrective intent upon `next` first, then the note of the verdict upon
+/// `step`, with `the_second_write_of_the_ring_is_not_swallowed_either` realigned to it.
+/// ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-1112.
 ///
 /// Returns the id of the step it opened, or `None` when nothing was opened — either the verdict
 /// passed, or the sensor was refused by the tight ring.

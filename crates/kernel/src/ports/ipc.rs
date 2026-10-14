@@ -50,7 +50,8 @@
 //! not this one, so the paragraph above said "the choice is not [made]" for a day after it was.
 //!
 //! ⛔ DATED RECALL, 2026-08-31 -- THE OTHER HALF OF THAT SENTENCE, AND IT IS THE HALF NOTHING
-//! HAS CORRECTED: THE BUILD STAMP DOES NOT ARRIVE WITH MILESTONE 6. §3.4 takes it out of the
+//! HAS CORRECTED: THE BUILD STAMP DOES NOT ARRIVE WITH MILESTONE 6. §3.4 of the milestone 6
+//! design (⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-1268) takes it out of the
 //! perimeter and makes it a DECLARED NON-CONSTRUCTION, so "milestone 6 brings ... the BUILD
 //! STAMP of §6.1.2" above is A DEADLINE WRITTEN IN PROSE (gotcha #77), and this is the run in
 //! which it falls due. Nothing ever went red for it, and nothing could have: a sentence about
@@ -202,9 +203,11 @@ use alloc::vec::Vec;
 ///   can be added later by anyone, in one line, breaking nothing. That is a convenience, not the
 ///   entry door of whoever comes. ⚠️ RECALL OF 2026-10-03 -- audit of 2026-09-30, AUD-550.
 /// - `Hash` -- worse than unused, and refused for the reason `Path` and `StepId` refuse it:
-///   its consumer is `HashMap`, which `tests/compile_fail/hashmap_in_kernel.rs` forbids
-///   outright. ⛔ A DERIVE THAT ENABLES THE FORBIDDEN THING IS WORSE THAN ONE NOBODY CALLS: it
-///   makes the violation one keystroke cheaper in `platform`, where `std` is reachable.
+///   its consumer is `HashMap`, which this crate cannot name -- `#![no_std]` in `lib.rs`,
+///   watched by `scripts/gate-attributes.sh`; the compile_fail case only demonstrates the
+///   mechanism (gotcha #39) --. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-1174.
+///   ⛔ A DERIVE THAT ENABLES THE FORBIDDEN THING IS WORSE THAN ONE NOBODY CALLS: it makes the
+///   violation one keystroke cheaper in `platform`, where `std` is reachable.
 ///
 /// ⛔ AND EVERY DERIVE THAT REMAINS IS ACCOUNTED FOR, three by a red and one by the compiler on
 /// the day they were weighed, 2026-08-10 -- the list is closed on purpose, so that nobody arriving

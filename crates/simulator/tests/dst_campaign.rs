@@ -331,11 +331,12 @@ fn c7a_without_a_crash_no_step_is_in_doubt() {
     // ⚠️ THE SUPPORT IS FOR THE SHORT CAMPAIGN ONLY, AND THE GAP IS DECLARED RATHER THAN LEFT TO
     // BE FOUND: `the_deep_campaign` sweeps a hundred times these seeds and this loop does not
     // follow it there. ⚠️ BUT THE GAP IS NOT AN INFERENCE, and calling it one over-declared it —
-    // the range was MEASURED on 2026-08-11 over the exact interval `the_deep_campaign` uses:
-    // `writes_done() == WRITES_PER_RUN` for two hundred thousand seeds out of two hundred
-    // thousand, zero deviations. What is missing is the guard on every future run, not the
-    // evidence. The price of closing it would be a `C7a`-shaped loop inside the deep campaign,
-    // which doubles the cost of the long cycle to re-check a claim measured twice.
+    // the range was MEASURED on 2026-08-11 over the exact interval `the_deep_campaign` uses, and
+    // no seed of it wrote other than `WRITES_PER_RUN` times: the measure lives in ONE house, row
+    // T4-4-j of `docs/riferimenti.md`, and is not repeated here. ⚠️ RECALL OF 2026-10-14 -- audit
+    // of 2026-09-30. What is missing is the guard on every future run, not the evidence. The price
+    // of closing it would be a `C7a`-shaped loop inside the deep campaign, which doubles the cost
+    // of the long cycle to re-check a claim measured twice.
     //
     // ⚠️ AND NO FALSE GREEN CAN HIDE IN THE GAP, which is what makes that trade acceptable rather
     // than merely cheap. If some seed did write fewer than `WRITES_PER_RUN` times, `expected_doubt`

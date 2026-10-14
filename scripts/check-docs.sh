@@ -122,10 +122,11 @@ echo "== every Q requirement has a verification method (V30) =="
 #
 # ⚠️ DECLARED LIMIT: EVERY `| Qn |` ROW OF EVERY SPEC IS TAKEN FOR A QUALITY REQUIREMENT, and paired
 # with design/08 by NAME. A row that uses the letter for something else enters the set and passes
-# by homonymy -- the qualitative rows Q1..Q4 of the shell spike, in the sub-project 2 design, pass
-# on the methods of the kernel's Q1..Q4 -- and a later spec that numbers Q rows of its own is
-# paired the same way. Which side gives way, the letter or the reading, is an open choice.
-# RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-2215.
+# by homonymy. The owner chose that THE LETTER GIVES WAY, NOT THE READING: the qualitative rows
+# Q1..Q4 of the shell spike, in the sub-project 2 design, are to take another letter, which that
+# design chooses and states -- so this check reads every `| Qn |` row as it does today, and V30
+# does not change. The limit stays for a later spec that numbers Q rows of its own, which this
+# check would pair the same way. RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2215.
 missing=$(comm -23 \
   <(grep -ohE '^\| Q[0-9]+ \|' docs/superpowers/specs/*.md | grep -oE 'Q[0-9]+' | sort -u) \
   <(grep -ohE '^\| Q[0-9]+ \|' docs/design/08-strategia-di-test.md | grep -oE 'Q[0-9]+' | sort -u) |

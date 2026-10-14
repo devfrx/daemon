@@ -156,11 +156,13 @@ const TOTAL_VRAM: Mib = Mib::new(16_384);
 
 /// Which arbiter this binary runs.
 ///
-/// ⛔ A LITERAL, ON THE SAME BOUNDARY AS `TOTAL_VRAM` and for the same reason: §6.1.3 forbids
-/// the kernel to MINT an identifier, so the value has to be chosen HERE and delivered through
-/// `Parameters`. There is nothing to derive it from — this process runs exactly one arbiter,
-/// and the identity exists so `Arbiter::release` can tell a grant of its own from a grant of
-/// somebody else's arbiter, not so anyone can enumerate them.
+/// ⛔ A LITERAL, ON THE SAME BOUNDARY AS `TOTAL_VRAM` and for the same reason: a decision of the
+/// kernel reads only what it is handed (ADR-0034), and an identity that tells two arbiters apart,
+/// minted inside the kernel, would need state every arbiter shares -- so the value has to be
+/// chosen HERE and delivered through `Parameters`. ⚠️ RECALL OF 2026-10-14 -- audit of
+/// 2026-09-30, AUD-1160. There is nothing to derive it from — this process runs exactly one
+/// arbiter, and the identity exists so `Arbiter::release` can tell a grant of its own from a grant
+/// of somebody else's arbiter, not so anyone can enumerate them.
 ///
 /// ⚠️ THE VALUE IS ARBITRARY AND THAT IS NOT A GAP: what `release` compares is EQUALITY, so
 /// any value works as long as two arbiters that are meant to differ are given different ones.
@@ -232,13 +234,17 @@ const SOCKET_NAME: &str = "harness-core";
 /// yet to measure. What the value has to be is COMFORTABLY ABOVE that and FAR BELOW a memory
 /// problem, and a mebibyte is both.
 ///
-/// ⛔ AND WHAT HAPPENS PAST IT IS SILENT, SO THIS LINE HAS NO TRIGGER ANYBODY CAN SEE. A `SaveLayout`
-/// over the cap does not come back as anything: the transport poisons that client (D9), and
-/// `kernel::serving` keeps it and answers nothing -- so the gui waits for a `Layout` that never
-/// comes, and is unheard for the rest of its session. Whether the overflow should be told, or the
-/// package capped before the transport, is the owner's: audit of 2026-09-30, AUD-051. Until then
-/// the remedy for a package that grows past this line is still this literal, and nothing will say
-/// when it is due. ⚠️ RECALL OF 2026-10-02 — same audit, AUD-051.
+/// ⛔ AND THE PACKAGE IS CAPPED BEFORE THE TRANSPORT, SO THE TRIGGER TO REVISE THIS LINE IS ONE THAT
+/// SHOWS. Past this cap the transport poisons the client (D9) and `kernel::serving` keeps it and
+/// answers nothing, so a SOUND gui must never reach it: the gui caps the package itself, under this
+/// value -- `LAYOUT_CEILING` of `gui/src/main.ts`, delivered to the layout store -- and a move whose
+/// package would pass it is not sent, and the layout on screen goes back to the one before, the
+/// rule of the coordinator's decision 13 of the north star. That return is the trigger: the day a
+/// layout grows past the gui's ceiling it shows on the screen, and both numbers are revised
+/// together. The owner's decision, audit of 2026-09-30, AUD-051. ⚠️ THE GUI'S NUMBER, THIS ONE AND
+/// `MAX_BODY` of `gui/fake-core/src/main.rs` ARE COPIES THAT NO CONTROL COMPARES -- the species of
+/// the open choice AUD-683 of the same audit. ⚠️ RECALL OF 2026-10-14 — same audit, AUD-051,
+/// AUD-2110.
 ///
 /// ⚠️ IT BOUNDS THE ENVELOPE AND NOT THE COUNTS INSIDE IT: a body well under this cap can still
 /// declare a container the decoder allocates before reading it. That limit, and the choice it
@@ -549,9 +555,8 @@ fn run_the_production_graph(journal_path: &Path, layout_path: &Path) -> Result<(
 /// a fixed socket NAME is worse, because it is shared across the whole machine rather than a
 /// directory: two probes binding `SOCKET_NAME` at once make the second fail with "already in use",
 /// and `cargo test` runs them at once BY DEFAULT. Every probe hands its own name, built from
-/// `line!()` as `private_dir_for_line` builds its directory, and from the process id besides,
-/// which the directory does not carry (P-55; ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
-/// AUD-2127).
+/// `line!()` and from the process id, exactly as `private_dir_for_line` builds its directory
+/// (⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2127).
 /// ⚠️ RECALL OF 2026-10-02 — audit of 2026-09-30, ADR-0041: what is handed is now a CHANNEL and
 /// the ACCOUNT it is for -- a pipe on Windows, a socket file in a private directory on Linux -- and
 /// every probe builds its own with `channel_for_line`.
@@ -880,23 +885,49 @@ mod tests {
     /// ⚠️ AND THE PREFIX IS THIS FILE'S OWN, as every bench of `platform` that makes its directories
     /// this way has its own, because a line number is unique inside ONE file only. What the prefix
     /// keeps apart, and what it does not, is written once, at the head of
-    /// `crates/platform/tests/file_journal.rs`. ⚠️ AND NOTHING HERE CARRIES THE PROCESS ID that
-    /// `channel_for_line` carries, below, for two `cargo test` invocations that overlap: the
-    /// directory is under `temp_dir()`, shared by every process of the account, so two overlapping
-    /// runs of these probes share every directory. Whether it should carry it is the owner's: audit
-    /// of 2026-09-30, AUD-2127. ⚠️ RECALL OF 2026-10-13 -- same audit, AUD-1139, AUD-1141,
-    /// AUD-1388.
-    fn private_dir_for_line(line: u32) -> std::path::PathBuf {
-        let dir = std::env::temp_dir().join(format!("daemon-production-graph-{line}"));
+    /// `crates/platform/tests/file_journal.rs`. ⚠️ RECALL OF 2026-10-13 -- audit of 2026-09-30,
+    /// AUD-1139, AUD-1141, AUD-1388.
+    /// ⛔ AND THE PROCESS ID IS IN IT, AS IT IS IN `channel_for_line`, AND FOR THE SAME REASON: two
+    /// `cargo test` invocations can overlap, and the directory is under `temp_dir()`, shared by every
+    /// process of the account -- without it two overlapping runs of these probes would share every
+    /// directory. ⛔ AND THE GUARD IT COMES IN REMOVES IT WHEN THE PROBE IS DONE, since no later run
+    /// reuses a name that carries a process id: the head of `file_journal.rs` says it once for every
+    /// bench that makes its directories this way. ⚠️ RECALL OF 2026-10-14 -- same audit, AUD-2127.
+    fn private_dir_for_line(line: u32) -> PrivateDir {
+        let dir = std::env::temp_dir().join(format!(
+            "daemon-production-graph-{}-{line}",
+            std::process::id()
+        ));
         let _ = std::fs::remove_dir_all(&dir);
         std::fs::create_dir_all(&dir).expect("a fresh directory for this call site");
-        dir
+        PrivateDir(dir)
     }
 
-    /// ⛔ A CHANNEL OF ITS OWN PER CALL SITE, and it is the socket twin of `private_dir_for_line`
-    /// (P-55). A channel is machine-wide rather than directory-wide, so two probes sharing one
-    /// pass alone and fail together — the flakiest red there is — and `cargo test` runs them at
-    /// once by default. The process id is in it because two `cargo test` invocations can overlap.
+    /// The directory `private_dir_for_line` hands out, removed when it falls -- on a red too,
+    /// since a panicking probe drops its locals as it unwinds. ⚠️ A REMOVAL THAT FAILS IS IGNORED:
+    /// on Windows a file still open refuses to go, and a guard that panicked in `drop` would turn a
+    /// green probe red for a reason that is not the probe's.
+    struct PrivateDir(std::path::PathBuf);
+
+    impl std::ops::Deref for PrivateDir {
+        type Target = std::path::Path;
+
+        fn deref(&self) -> &std::path::Path {
+            &self.0
+        }
+    }
+
+    impl Drop for PrivateDir {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_dir_all(&self.0);
+        }
+    }
+
+    /// ⛔ A CHANNEL OF ITS OWN PER CALL SITE, and it is the socket twin of `private_dir_for_line`:
+    /// two probes sharing one pass alone and fail together — the flakiest red there is — and
+    /// `cargo test` runs them at once by default. The process id is in it because two `cargo test`
+    /// invocations can overlap, and it is in the directory's name for the same reason.
+    /// ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2127.
     ///
     /// ⛔ ON LINUX IT IS A SOCKET FILE IN A DIRECTORY OF ITS OWN, CLOSED TO EVERY OTHER ACCOUNT:
     /// `LocalSocketIpc::bound` refuses a directory others can enter (ADR-0041, point 5), and a probe
@@ -1051,8 +1082,9 @@ mod tests {
     /// tick would cost tick × turns of wall clock inside `bash scripts/gate.sh`. A deadline already
     /// reached makes the activity READY instead (`Sleep::until`'s own rule), so the turn is polling
     /// and the ceiling costs milliseconds. ⚠️ What the zero tick does NOT buy is that
-    /// `Reactor::wait_until` is reached on this graph; that half is the sub-project 2 campaign's
-    /// (task 10), where the clock is virtual.
+    /// `Reactor::wait_until` is reached on this graph; that half is held by
+    /// `the_serving_activity_naps_on_the_system_reactor_with_a_tick_that_is_not_zero`, which
+    /// delivers a tick of its own (⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2173).
     ///
     /// ⚠️ THE RESIDUAL OF THIS PROBE GREW, and it is the same residual said wider: it did not cover
     /// the VALUE of `EXECUTOR_TURN_LIMIT`, and now it does not cover the wiring of
@@ -1073,6 +1105,45 @@ mod tests {
         match outcome {
             Err(StartupError::Run(RunError::TurnLimitReached)) => {}
             other => panic!("the graph must assemble and the serving loop must run: {other:?}"),
+        }
+    }
+
+    /// ⛔ THE WALL-CLOCK HALF OF `serve`'s NAP, ON THE REACTOR THIS BINARY MOUNTS. Every other probe
+    /// here delivers a zero tick, which makes a nap a yield (`Sleep::until`'s rule), so on this
+    /// graph `Reactor::wait_until` is reached by this probe alone: with a tick that is not zero,
+    /// every nap of `serve` is a deadline ahead of the clock, and the executor hands it to
+    /// `SystemReactor::wait_until`, which sleeps until it. What it holds is that the graph serves
+    /// THROUGH real waits to its turn limit -- a `wait_until` that refused the deadline would end the
+    /// run as `RunError::ReactorWillNotAdvance` instead, and a nap that never woke would hang it.
+    /// ✅ MEASURED ON 2026-10-14 in both directions: with `SystemReactor::wait_until` answering
+    /// `None` at once, this probe goes red and every other probe of the binary stays green.
+    ///
+    /// ⚠️ WHAT IT DOES NOT HOLD: that each wait LASTED its tick. The wall time of this run is mostly
+    /// the opening of the two archives, measured on 2026-10-14 at many times the naps it holds, so a
+    /// lower bound on it would be green for a wait that returned at once; that the real reactor
+    /// sleeps until the deadline is the business of its conformance suite,
+    /// `crates/platform/tests/reactor_contract_real.rs`.
+    ///
+    /// ⚠️ IT COSTS A FEW MILLISECONDS OF REAL WAITING IN THE GATE, AND THAT IS ITS PRICE: a nap takes
+    /// two turns -- the one that arms it and the one that wakes it (the doc of `Executor::run`) -- so
+    /// the turns below hold half as many real waits of one tick each, and no more.
+    /// ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2173.
+    #[test]
+    fn the_serving_activity_naps_on_the_system_reactor_with_a_tick_that_is_not_zero() {
+        const TICK: Millis = Millis::new(2);
+        let dir = private_dir_for_line(line!());
+
+        let outcome = run_the_graph(
+            Parameters::new(8, TOTAL_VRAM, ARBITER_ID, TICK),
+            &dir.join("journal.redb"),
+            &dir.join("layout.redb"),
+            &channel_for_line(line!()),
+            &this_account(),
+        );
+
+        match outcome {
+            Err(StartupError::Run(RunError::TurnLimitReached)) => {}
+            other => panic!("the serving loop must nap on the real clock to its limit: {other:?}"),
         }
     }
 
@@ -1118,9 +1189,12 @@ mod tests {
     /// The other direction of the same rule (§7.1.1 rule 3): a journal that CANNOT be opened
     /// must stop the start-up instead of being carried on without.
     ///
-    /// ⚠️ THE FAILURE IS PROVOKED BY A DIRECTORY THAT IS NOT THERE, which is the one way to
-    /// make `open` fail that needs no privileges and behaves the same on both of the project's
-    /// systems -- a read-only path would need a mode change Windows spells differently.
+    /// ⚠️ THE FAILURE IS PROVOKED BY A DIRECTORY THAT IS NOT THERE, which is a way to make `open`
+    /// fail that needs no privileges and behaves the same on both of the project's systems -- a
+    /// read-only path would need a mode change Windows spells differently. The lock is another such
+    /// way, and it answers `OpenError::AlreadyOpen`, not `OpenError::File`: it is the subject of
+    /// `a_second_core_on_the_same_journal_stops_at_the_journal_and_not_at_the_bind`.
+    /// ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2282.
     ///
     /// ⛔ AND THE VARIANT IS NAMED, `OpenError::File`, because the start-up stopping is half of
     /// what a human reads: the other half is WHY, and `StartupError::Journal` carries the very

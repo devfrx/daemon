@@ -3,7 +3,7 @@ import BaseButton from "../components/BaseButton.vue";
 import { useCore } from "../stores/core";
 import { useDrawer } from "../stores/drawer";
 
-// ⚠️ ONLY WHAT IS ALIVE IN SUB-PROJECT 2 (decision 16 of the north star): degradation and
+// ⚠️ ONLY WHAT IS ALIVE IN SUB-PROJECT 2 (the coordinator's decision 16 of the north star): degradation and
 // permissions. Seven "arrives with N" in a thin strip is noise, and the drawer is where "who
 // fills what" belongs.
 // ⛔ AND THE DRAWER'S BUTTON, "moduli", came down from the bar (the (d) of the design system): the strip is a panel, a Vue

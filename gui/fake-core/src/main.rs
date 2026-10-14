@@ -42,6 +42,13 @@ const SOCKET_NAME: &str = "harness-core";
 
 /// This tool's own cap (D9). ⚠️ It need NOT equal the daemon's: the cap is local to a core, and
 /// D31 says so. Only the NAME has to match.
+///
+/// ⛔ BUT IT MUST STAY ABOVE THE GUI'S CEILING: `LAYOUT_CEILING` of `gui/src/main.ts` is what a
+/// sound gui never sends past, and it is chosen under the cap of BOTH cores, with a margin for
+/// what `IpcMessage::SaveLayout` adds around the package. ⚠️ THE THREE NUMBERS -- the gui's, this
+/// one and `MAX_BODY` of `crates/daemon/src/main.rs` -- ARE COPIES THAT NO CONTROL COMPARES, the
+/// species of the open choice AUD-683 of the audit of 2026-09-30. ⚠️ RECALL OF 2026-10-14 --
+/// same audit, AUD-051.
 const MAX_BODY: usize = 1024 * 1024;
 
 const TOTAL_VRAM: Mib = Mib::new(16_384);
@@ -398,9 +405,13 @@ mod tests {
     // with "already in use", which is a red in the wrong probe's box. The lesson is task 9's.
     // ⛔ ON LINUX IT IS A SOCKET FILE IN A DIRECTORY OF ITS OWN, CLOSED TO EVERY OTHER ACCOUNT: the
     // transport refuses a directory others can enter (ADR-0041, point 5), and a probe must not lean
-    // on the `$XDG_RUNTIME_DIR` of whatever machine runs it. The process id keeps two runs apart.
+    // on the `$XDG_RUNTIME_DIR` of whatever machine runs it. ⛔ AND THE PROCESS ID KEEPS TWO RUNS
+    // APART ON BOTH SYSTEMS: a pipe name is shared by the whole machine on Windows, and a directory
+    // under `temp_dir()` by every process that reads the same one on Linux, and two `cargo test`
+    // invocations can overlap -- the reason `channel_for_line` of `crates/daemon/src/main.rs` gives
+    // for its own. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30, AUD-2127.
     fn a_channel_for(what: &str) -> std::path::PathBuf {
-        let name = format!("fake-core-probe-{what}");
+        let name = format!("fake-core-probe-{}-{what}", std::process::id());
         #[cfg(windows)]
         {
             std::path::PathBuf::from(format!(r"\\.\pipe\{name}"))
@@ -408,7 +419,7 @@ mod tests {
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
-            let directory = std::env::temp_dir().join(format!("{name}-{}", std::process::id()));
+            let directory = std::env::temp_dir().join(&name);
             let _ = std::fs::remove_dir_all(&directory);
             std::fs::create_dir_all(&directory).expect("a fresh directory for this channel");
             std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(0o700))

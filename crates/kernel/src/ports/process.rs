@@ -69,9 +69,12 @@
 //! `15095be` the very next day, to announce those four cases, and `f275f0c` on 2026-08-27.
 //! ⛔ SO THE COUNT IS GONE RATHER THAN REALIGNED: it lived in THREE houses -- here, `ipc.rs`
 //! and `ports/mod.rs` -- and `CLAUDE.md` says a figure kept in more than one house is REMOVED,
-//! not re-corrected. `grep -rn 'impl Worker for' crates/` names the benches, and a count
-//! written here would age again. ⚠️ For `filesystem` and `network` the old sentence is still
-//! TRUE: what implements them is what
+//! not re-corrected. What implements `Worker` is what
+//! `grep -rnE '^ *impl(<[^>]*>)? *([A-Za-z_]+::)*Worker for' --include=*.rs crates/ gui/` prints:
+//! anchored, so it does not count a line that cites it, and qualified, so it sees the
+//! `impl kernel::ports::process::Worker for` of the `compile_fail` cases. A count written here
+//! would age again. ⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30. ⚠️ For `filesystem` and
+//! `network` the old sentence is still TRUE: what implements them is what
 //! `grep -rnE '^ *impl(<[^>]*>)? *([A-Za-z_]+::)*(Filesystem|Network) for' --include=*.rs crates/ gui/`
 //! prints, and on 2026-10-09 that is the one fake of each in `tests/ports_are_implementable.rs`.
 //! ⚠️ RECALL OF 2026-10-09 -- audit of 2026-09-30, AUD-1221.
@@ -321,7 +324,8 @@ pub struct Killed {
     pub outcome: Result<(), ProcessError>,
 }
 
-/// The handle of a live worker, which is what `Process::start` returns. ⚠️ HOLDING ONE DOES
+/// The handle of a live worker, which `Process::start` hands back inside `Started::Running`
+/// (⚠️ RECALL OF 2026-10-14 -- audit of 2026-09-30). ⚠️ HOLDING ONE DOES
 /// NOT PROVE THAT A `start` HAPPENED: this trait is implementable from outside the crate, and the
 /// benches build one with no `start` at all (the P-2 recall at the head of this module). What the
 /// compiler guarantees is `start`'s: it takes a `Grant`. ⚠️ RECALL OF 2026-10-09 -- audit of
